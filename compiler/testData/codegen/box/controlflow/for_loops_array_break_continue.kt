@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // DUMP_IR
+// DUMP_IR_DIFFERENCE: JS_IR, JS_IR_ES6
+
 import kotlin.test.*
 
 val sb = StringBuilder()

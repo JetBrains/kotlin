@@ -1,0 +1,268 @@
+--- a/LambdaTest.ir.txt
++++ b/LambdaTest.ir.js_ir.txt
+@@ -1,86 +1,35 @@
+ FILE fqName:<root> fileName:/LambdaTest.kt
+   CLASS CLASS name:LambdaTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LambdaTest
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private
+-        annotations:
+-          Volatile
++    PROPERTY name:a visibility:private modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final]
+         EXPRESSION_BODY
+-          CONST Int type=kotlin.Int value=0
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
++          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
++            ARG initial: CONST Int type=kotlin.Int value=0
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
++        correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' type=kotlin.Int origin=null
+-              receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<get-a$volatile>' type=<root>.LambdaTest origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<set-a$volatile>' type=<root>.LambdaTest origin=null
+-              value: GET_VAR 'value: kotlin.Int declared in <root>.LambdaTest.<set-a$volatile>' type=kotlin.Int origin=null
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private
+-        annotations:
+-          Volatile
++          RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final]' type=kotlinx.atomicfu.AtomicInt origin=null
++              receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<get-a>' type=<root>.LambdaTest origin=null
++    PROPERTY name:rs visibility:private modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:rs type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final]
+         EXPRESSION_BODY
+-          CONST String type=kotlin.String value="bbbb"
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-rs$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
++          CALL 'public final fun atomic <T> (initial: T of kotlinx.atomicfu.atomic): kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.atomic> declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
++            TYPE_ARG T: kotlin.String
++            ARG initial: CONST String type=kotlin.String value="bbbb"
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rs> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicRef<kotlin.String>
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
++        correspondingProperty: PROPERTY name:rs visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-rs$volatile> (): kotlin.Any? declared in <root>.LambdaTest'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LambdaTest' type=kotlin.Any? origin=null
+-              receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<get-rs$volatile>' type=<root>.LambdaTest origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-rs$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LambdaTest'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<set-rs$volatile>' type=<root>.LambdaTest origin=null
+-              value: GET_VAR 'value: kotlin.Any? declared in <root>.LambdaTest.<set-rs$volatile>' type=kotlin.Any? origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-rs> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.LambdaTest'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rs type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final]' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
++              receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<get-rs>' type=<root>.LambdaTest origin=null
+     CONSTRUCTOR visibility:public returnType:<root>.LambdaTest [primary]
+       BLOCK_BODY
+         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LambdaTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+-    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+-      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Any?, kotlin.Unit>
+-      BLOCK_BODY
+-        WHILE label=null origin=null
+-          condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                TYPE_ARG T: kotlin.Any?
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
+-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LambdaTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+-              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.LambdaTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LambdaTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+-    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+-      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LambdaTest
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> [crossinline]
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+-      BLOCK_BODY
+-        WHILE label=null origin=null
+-          condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                TYPE_ARG T: kotlin.Int
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
+-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.LambdaTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+-              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.LambdaTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_1: T of kotlin.concurrent.atomicGetField declared in <root>.LambdaTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=T of kotlin.concurrent.atomicGetField origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -117,25 +66,19 @@
+               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                 VALUE_PARAMETER kind:Regular name:arg index:0 type:kotlin.Int
+                 BLOCK_BODY
+-                  CALL 'private final fun loop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+-                    ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda1' type=<root>.LambdaTest origin=null
+-                    ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+-                      FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
+-                        BLOCK_BODY
+-                          RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LambdaTest.loopInLambda1.<anonymous>'
+-                            PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                              ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda1' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+-                    ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
++                  CALL 'public final fun loop (<this>: kotlinx.atomicfu.AtomicInt, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
++                    ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++                      ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda1' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++                    ARG action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                         VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
+                         BLOCK_BODY
+                           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+-                            CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+-                              TYPE_ARG T: kotlin.Int
+-                              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                                ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda1' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+-                              ARG expectedValue: GET_VAR 'value: kotlin.Int declared in <root>.LambdaTest.loopInLambda1.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+-                              ARG newValue: GET_VAR 'arg: kotlin.Int declared in <root>.LambdaTest.loopInLambda1.<anonymous>' type=kotlin.Int origin=null
++                            CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
++                              ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++                                ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda1' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++                              ARG expect: GET_VAR 'value: kotlin.Int declared in <root>.LambdaTest.loopInLambda1.<anonymous>.<anonymous>' type=kotlin.Int origin=null
++                              ARG update: GET_VAR 'arg: kotlin.Int declared in <root>.LambdaTest.loopInLambda1.<anonymous>' type=kotlin.Int origin=null
+                           RETURN type=kotlin.Nothing from='local final fun <anonymous> (arg: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest.loopInLambda1'
+                             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+     FUN name:loopInLambda2 visibility:public modality:FINAL returnType:kotlin.Unit
+@@ -159,25 +102,19 @@
+                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                         VALUE_PARAMETER kind:Regular name:arg2 index:0 type:kotlin.Int
+                         BLOCK_BODY
+-                          CALL 'private final fun loop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+-                            ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2' type=<root>.LambdaTest origin=null
+-                            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+-                              FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
+-                                BLOCK_BODY
+-                                  RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LambdaTest.loopInLambda2.<anonymous>.<anonymous>'
+-                                    PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                                      ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+-                            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
++                          CALL 'public final fun loop (<this>: kotlinx.atomicfu.AtomicInt, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
++                            ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++                              ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++                            ARG action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+                               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                                 VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
+                                 BLOCK_BODY
+                                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+-                                    CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+-                                      TYPE_ARG T: kotlin.Int
+-                                      ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                                        ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+-                                      ARG expectedValue: GET_VAR 'value: kotlin.Int declared in <root>.LambdaTest.loopInLambda2.<anonymous>.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+-                                      ARG newValue: GET_VAR 'arg2: kotlin.Int declared in <root>.LambdaTest.loopInLambda2.<anonymous>.<anonymous>' type=kotlin.Int origin=null
++                                    CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
++                                      ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++                                        ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++                                      ARG expect: GET_VAR 'value: kotlin.Int declared in <root>.LambdaTest.loopInLambda2.<anonymous>.<anonymous>.<anonymous>' type=kotlin.Int origin=null
++                                      ARG update: GET_VAR 'arg2: kotlin.Int declared in <root>.LambdaTest.loopInLambda2.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (arg2: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest.loopInLambda2.<anonymous>'
+                                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+     FUN name:loopInLambda2Ref visibility:public modality:FINAL returnType:kotlin.Unit
+@@ -201,25 +138,20 @@
+                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                         VALUE_PARAMETER kind:Regular name:arg2 index:0 type:kotlin.String
+                         BLOCK_BODY
+-                          CALL 'private final fun loop$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+-                            ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2Ref' type=<root>.LambdaTest origin=null
+-                            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
+-                              FUN ATOMICFU_GENERATED_FUNCTION name:<rs$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+-                                BLOCK_BODY
+-                                  RETURN type=kotlin.Nothing from='local final fun <rs$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LambdaTest.loopInLambda2Ref.<anonymous>.<anonymous>'
+-                                    PROPERTY_REFERENCE 'private final rs$volatile: kotlin.Any? declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LambdaTest' getter='private final fun <get-rs$volatile> (): kotlin.Any? declared in <root>.LambdaTest' setter='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                                      ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2Ref' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+-                            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
++                          CALL 'public final fun loop <T> (<this>: kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.loop>, action: kotlin.Function1<T of kotlinx.atomicfu.loop, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
++                            TYPE_ARG T: kotlin.String
++                            ARG <this>: CALL 'private final fun <get-rs> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=GET_PROPERTY
++                              ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2Ref' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++                            ARG action: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
+                               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                                 VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
+                                 BLOCK_BODY
+                                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+-                                    CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+-                                      TYPE_ARG T: kotlin.Any?
+-                                      ARG <this>: PROPERTY_REFERENCE 'private final rs$volatile: kotlin.Any? declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LambdaTest' getter='private final fun <get-rs$volatile> (): kotlin.Any? declared in <root>.LambdaTest' setter='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                                        ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2Ref' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+-                                      ARG expectedValue: GET_VAR 'value: kotlin.String declared in <root>.LambdaTest.loopInLambda2Ref.<anonymous>.<anonymous>.<anonymous>' type=kotlin.String origin=null
+-                                      ARG newValue: GET_VAR 'arg2: kotlin.String declared in <root>.LambdaTest.loopInLambda2Ref.<anonymous>.<anonymous>' type=kotlin.String origin=null
++                                    CALL 'public final fun compareAndSet (expect: T of kotlinx.atomicfu.AtomicRef, update: T of kotlinx.atomicfu.AtomicRef): kotlin.Boolean declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Boolean origin=null
++                                      ARG <this>: CALL 'private final fun <get-rs> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=GET_PROPERTY
++                                        ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.loopInLambda2Ref' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++                                      ARG expect: GET_VAR 'value: kotlin.String declared in <root>.LambdaTest.loopInLambda2Ref.<anonymous>.<anonymous>.<anonymous>' type=kotlin.String origin=null
++                                      ARG update: GET_VAR 'arg2: kotlin.String declared in <root>.LambdaTest.loopInLambda2Ref.<anonymous>.<anonymous>' type=kotlin.String origin=null
+                                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (arg2: kotlin.String): kotlin.Unit declared in <root>.LambdaTest.loopInLambda2Ref.<anonymous>'
+                                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+     FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+@@ -228,36 +160,30 @@
+         CALL 'public final fun loopInLambda1 (to: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+           ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+           ARG to: CONST Int type=kotlin.Int value=34
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG expected: CONST Int type=kotlin.Int value=34
+-          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-              TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++          ARG a: CONST Int type=kotlin.Int value=34
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
++            ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+         CALL 'public final fun loopInLambda1 (to: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+           ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+           ARG to: CONST Int type=kotlin.Int value=77
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG expected: CONST Int type=kotlin.Int value=77
+-          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-              TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LambdaTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++          ARG a: CONST Int type=kotlin.Int value=77
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
++            ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+         CALL 'public final fun loopInLambda2Ref (to: kotlin.String): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.Unit origin=null
+           ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+           ARG to: CONST String type=kotlin.String value="bbb"
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.String
+-          ARG expected: CONST String type=kotlin.String value="bbb"
+-          ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-              TYPE_ARG T: kotlin.Any?
+-              ARG <this>: PROPERTY_REFERENCE 'private final rs$volatile: kotlin.Any? declared in <root>.LambdaTest' field='FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LambdaTest' getter='private final fun <get-rs$volatile> (): kotlin.Any? declared in <root>.LambdaTest' setter='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LambdaTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
++          ARG a: CONST String type=kotlin.String value="bbb"
++          ARG b: CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.String origin=GET_PROPERTY
++            ARG <this>: CALL 'private final fun <get-rs> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.LambdaTest' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.test' type=<root>.LambdaTest origin=IMPLICIT_ARGUMENT
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+     BLOCK_BODY
+       VAR name:testClass type:<root>.LambdaTest [val]

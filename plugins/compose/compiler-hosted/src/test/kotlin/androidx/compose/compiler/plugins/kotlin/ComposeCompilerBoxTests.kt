@@ -88,9 +88,6 @@ open class AbstractJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractJsTe
             +DUMP_KT_IR
         }
         builder.useCustomRuntimeClasspathProviders(::ComposeJsClasspathProvider)
-        builder.configureIrHandlersStep {
-            setupIrTextDumpHandlers()
-        }
         builder.configureFirHandlersStep {
             useHandlers(
                 ::FirDiagnosticsHandler

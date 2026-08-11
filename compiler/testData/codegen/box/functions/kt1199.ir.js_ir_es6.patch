@@ -1,0 +1,9 @@
+--- a/kt1199.ir.txt
++++ b/kt1199.ir.js_ir_es6.txt
+@@ -126,6 +126,6 @@
+                           TYPE_ARG T0: {T of <root>.iterator & Any}
+                           ARG arg0: GET_VAR '<this>: T of <root>.iterator? declared in <root>.iterator' type=T of <root>.iterator? origin=null
+                 THROW type=kotlin.Nothing
+-                  CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
++                  CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.NoSuchElementException' type=kotlin.NoSuchElementException origin=null
+           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.iterator.<no name provided>' type=<root>.iterator.<no name provided><T of <root>.iterator> origin=OBJECT_LITERAL

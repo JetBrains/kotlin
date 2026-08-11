@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -65,6 +66,9 @@ abstract class AbstractJsTest(
                     ::FirCfgConsistencyHandler,
                     ::FirResolvedTypesVerifier,
                 )
+            }
+            configureIrHandlersStep {
+                setupIrTextDumpHandlers()
             }
             configureJsArtifactsHandlersStep {
                 useHandlers(

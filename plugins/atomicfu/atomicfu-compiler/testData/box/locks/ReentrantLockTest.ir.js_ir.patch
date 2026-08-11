@@ -1,0 +1,61 @@
+--- a/ReentrantLockTest.ir.txt
++++ b/ReentrantLockTest.ir.js_ir.txt
+@@ -2,15 +2,15 @@
+   CLASS CLASS name:ReentrantLockFieldTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ReentrantLockFieldTest
+     PROPERTY name:lock visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:lock type:kotlinx.atomicfu.locks.SynchronizedObject visibility:private [final]
++      FIELD PROPERTY_BACKING_FIELD name:lock type:kotlinx.atomicfu.locks.ReentrantLock visibility:private [final]
+         EXPRESSION_BODY
+-          CALL 'public final fun reentrantLock (): kotlinx.atomicfu.locks.SynchronizedObject declared in kotlinx.atomicfu.locks' type=kotlinx.atomicfu.locks.SynchronizedObject origin=null
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lock> visibility:private modality:FINAL returnType:kotlinx.atomicfu.locks.SynchronizedObject
++          CALL 'public final fun reentrantLock (): kotlinx.atomicfu.locks.ReentrantLock declared in kotlinx.atomicfu.locks' type=kotlinx.atomicfu.locks.ReentrantLock origin=null
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lock> visibility:private modality:FINAL returnType:kotlinx.atomicfu.locks.ReentrantLock
+         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ReentrantLockFieldTest
+         correspondingProperty: PROPERTY name:lock visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-lock> (): kotlinx.atomicfu.locks.SynchronizedObject declared in <root>.ReentrantLockFieldTest'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lock type:kotlinx.atomicfu.locks.SynchronizedObject visibility:private [final]' type=kotlinx.atomicfu.locks.SynchronizedObject origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-lock> (): kotlinx.atomicfu.locks.ReentrantLock declared in <root>.ReentrantLockFieldTest'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lock type:kotlinx.atomicfu.locks.ReentrantLock visibility:private [final]' type=kotlinx.atomicfu.locks.ReentrantLock origin=null
+               receiver: GET_VAR '<this>: <root>.ReentrantLockFieldTest declared in <root>.ReentrantLockFieldTest.<get-lock>' type=<root>.ReentrantLockFieldTest origin=null
+     PROPERTY name:state visibility:private modality:FINAL [var]
+       FIELD PROPERTY_BACKING_FIELD name:state type:kotlin.Int visibility:private
+@@ -51,9 +51,9 @@
+     FUN name:testLock visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ReentrantLockFieldTest
+       BLOCK_BODY
+-        CALL 'public final fun withLock <T> (<this>: kotlinx.atomicfu.locks.SynchronizedObject, block: kotlin.Function0<T of kotlinx.atomicfu.locks.withLock>): T of kotlinx.atomicfu.locks.withLock declared in kotlinx.atomicfu.locks' type=kotlin.Unit origin=null
++        CALL 'public final fun withLock <T> (<this>: kotlinx.atomicfu.locks.ReentrantLock, block: kotlin.Function0<T of kotlinx.atomicfu.locks.withLock>): T of kotlinx.atomicfu.locks.withLock declared in kotlinx.atomicfu.locks' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Unit
+-          ARG <this>: CALL 'private final fun <get-lock> (): kotlinx.atomicfu.locks.SynchronizedObject declared in <root>.ReentrantLockFieldTest' type=kotlinx.atomicfu.locks.SynchronizedObject origin=GET_PROPERTY
++          ARG <this>: CALL 'private final fun <get-lock> (): kotlinx.atomicfu.locks.ReentrantLock declared in <root>.ReentrantLockFieldTest' type=kotlinx.atomicfu.locks.ReentrantLock origin=GET_PROPERTY
+             ARG <this>: GET_VAR '<this>: <root>.ReentrantLockFieldTest declared in <root>.ReentrantLockFieldTest.testLock' type=<root>.ReentrantLockFieldTest origin=IMPLICIT_ARGUMENT
+           ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+@@ -61,17 +61,17 @@
+                 CALL 'private final fun <set-state> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ReentrantLockFieldTest' type=kotlin.Unit origin=EQ
+                   ARG <this>: GET_VAR '<this>: <root>.ReentrantLockFieldTest declared in <root>.ReentrantLockFieldTest.testLock' type=<root>.ReentrantLockFieldTest origin=IMPLICIT_ARGUMENT
+                   ARG <set-?>: CONST Int type=kotlin.Int value=1
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG expected: CONST Int type=kotlin.Int value=1
+-          ARG actual: CALL 'private final fun <get-state> (): kotlin.Int declared in <root>.ReentrantLockFieldTest' type=kotlin.Int origin=GET_PROPERTY
++          ARG a: CONST Int type=kotlin.Int value=1
++          ARG b: CALL 'private final fun <get-state> (): kotlin.Int declared in <root>.ReentrantLockFieldTest' type=kotlin.Int origin=GET_PROPERTY
+             ARG <this>: GET_VAR '<this>: <root>.ReentrantLockFieldTest declared in <root>.ReentrantLockFieldTest.testLock' type=<root>.ReentrantLockFieldTest origin=IMPLICIT_ARGUMENT
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun tryLock (): kotlin.Boolean declared in kotlinx.atomicfu.locks.SynchronizedObject' type=kotlin.Boolean origin=null
+-            ARG <this>: CALL 'private final fun <get-lock> (): kotlinx.atomicfu.locks.SynchronizedObject declared in <root>.ReentrantLockFieldTest' type=kotlinx.atomicfu.locks.SynchronizedObject origin=GET_PROPERTY
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun tryLock (): kotlin.Boolean declared in kotlinx.atomicfu.locks.ReentrantLock' type=kotlin.Boolean origin=null
++            ARG <this>: CALL 'private final fun <get-lock> (): kotlinx.atomicfu.locks.ReentrantLock declared in <root>.ReentrantLockFieldTest' type=kotlinx.atomicfu.locks.ReentrantLock origin=GET_PROPERTY
+               ARG <this>: GET_VAR '<this>: <root>.ReentrantLockFieldTest declared in <root>.ReentrantLockFieldTest.testLock' type=<root>.ReentrantLockFieldTest origin=IMPLICIT_ARGUMENT
+-        CALL 'public final fun unlock (): kotlin.Unit declared in kotlinx.atomicfu.locks.SynchronizedObject' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'private final fun <get-lock> (): kotlinx.atomicfu.locks.SynchronizedObject declared in <root>.ReentrantLockFieldTest' type=kotlinx.atomicfu.locks.SynchronizedObject origin=GET_PROPERTY
++        CALL 'public final fun unlock (): kotlin.Unit declared in kotlinx.atomicfu.locks.ReentrantLock' type=kotlin.Unit origin=null
++          ARG <this>: CALL 'private final fun <get-lock> (): kotlinx.atomicfu.locks.ReentrantLock declared in <root>.ReentrantLockFieldTest' type=kotlinx.atomicfu.locks.ReentrantLock origin=GET_PROPERTY
+             ARG <this>: GET_VAR '<this>: <root>.ReentrantLockFieldTest declared in <root>.ReentrantLockFieldTest.testLock' type=<root>.ReentrantLockFieldTest origin=IMPLICIT_ARGUMENT
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+     BLOCK_BODY

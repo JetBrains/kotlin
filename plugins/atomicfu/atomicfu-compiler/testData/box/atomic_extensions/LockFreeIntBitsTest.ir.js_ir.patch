@@ -1,0 +1,196 @@
+--- a/LockFreeIntBitsTest.ir.txt
++++ b/LockFreeIntBitsTest.ir.js_ir.txt
+@@ -1,59 +1,22 @@
+ FILE fqName:<root> fileName:/LockFreeIntBitsTest.kt
+   CLASS CLASS name:LockFreeIntBits modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeIntBits
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:bits$volatile visibility:private modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private
+-        annotations:
+-          Volatile
++    PROPERTY name:bits visibility:private modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:bits type:kotlinx.atomicfu.AtomicInt visibility:private [final]
+         EXPRESSION_BODY
+-          CONST Int type=kotlin.Int value=0
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-bits$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeIntBits
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:bits$volatile visibility:private modality:FINAL [var]
++          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
++            ARG initial: CONST Int type=kotlin.Int value=0
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bits> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeIntBits
++        correspondingProperty: PROPERTY name:bits visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' type=kotlin.Int origin=null
+-              receiver: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.<get-bits$volatile>' type=<root>.LockFreeIntBits origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-bits$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeIntBits
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:bits$volatile visibility:private modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.<set-bits$volatile>' type=<root>.LockFreeIntBits origin=null
+-              value: GET_VAR 'value: kotlin.Int declared in <root>.LockFreeIntBits.<set-bits$volatile>' type=kotlin.Int origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-bits> (): kotlinx.atomicfu.AtomicInt declared in <root>.LockFreeIntBits'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bits type:kotlinx.atomicfu.AtomicInt visibility:private [final]' type=kotlinx.atomicfu.AtomicInt origin=null
++              receiver: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.<get-bits>' type=<root>.LockFreeIntBits origin=null
+     CONSTRUCTOR visibility:public returnType:<root>.LockFreeIntBits [primary]
+       BLOCK_BODY
+         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LockFreeIntBits modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+-    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+-      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeIntBits
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> [crossinline]
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+-      BLOCK_BODY
+-        WHILE label=null origin=null
+-          condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=kotlin.Unit origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                TYPE_ARG T: kotlin.Int
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
+-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.LockFreeIntBits.update$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:R of kotlin.Function1 [val]
+-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+-                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.LockFreeIntBits.update$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
+-                ARG p1: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeIntBits.update$atomicfu$NATIVE_PROPERTY_REF$Int' type=T of kotlin.concurrent.atomicGetField origin=null
+-            WHEN type=kotlin.Unit origin=null
+-              BRANCH
+-                if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+-                  TYPE_ARG T: kotlin.Int
+-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
+-                    ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.LockFreeIntBits.update$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+-                  ARG expectedValue: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeIntBits.update$atomicfu$NATIVE_PROPERTY_REF$Int' type=T of kotlin.concurrent.atomicGetField origin=null
+-                  ARG newValue: GET_VAR 'val tmp_1: R of kotlin.Function1 declared in <root>.LockFreeIntBits.update$atomicfu$NATIVE_PROPERTY_REF$Int' type=R of kotlin.Function1 origin=null
+-                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.LockFreeIntBits'
+-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -132,15 +95,10 @@
+       VALUE_PARAMETER kind:Regular name:check index:1 type:kotlin.Function1<kotlin.Int, kotlin.Boolean>
+       VALUE_PARAMETER kind:Regular name:upd index:2 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+       BLOCK_BODY
+-        CALL 'private final fun update$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.Unit origin=null
+-          ARG <this>: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.bitUpdate' type=<root>.LockFreeIntBits origin=null
+-          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+-            FUN ATOMICFU_GENERATED_FUNCTION name:<bits$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
+-              BLOCK_BODY
+-                RETURN type=kotlin.Nothing from='local final fun <bits$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LockFreeIntBits.bitUpdate'
+-                  PROPERTY_REFERENCE 'private final bits$volatile: kotlin.Int declared in <root>.LockFreeIntBits' field='FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' getter='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits' setter='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.bitUpdate' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
+-          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
++        CALL 'public final fun update (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in kotlinx.atomicfu' type=kotlin.Unit origin=null
++          ARG <this>: CALL 'private final fun <get-bits> (): kotlinx.atomicfu.AtomicInt declared in <root>.LockFreeIntBits' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++            ARG <this>: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.bitUpdate' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
++          ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+               BLOCK_BODY
+@@ -165,11 +123,9 @@
+           CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+               ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+-                ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                  CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                    TYPE_ARG T: kotlin.Int
+-                    ARG <this>: PROPERTY_REFERENCE 'private final bits$volatile: kotlin.Int declared in <root>.LockFreeIntBits' field='FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' getter='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits' setter='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                      ARG 1: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.get' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
++                ARG <this>: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
++                  ARG <this>: CALL 'private final fun <get-bits> (): kotlinx.atomicfu.AtomicInt declared in <root>.LockFreeIntBits' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++                    ARG <this>: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.get' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
+                 ARG other: CALL 'private final fun mask (<this>: kotlin.Int): kotlin.Int declared in <root>.LockFreeIntBits' type=kotlin.Int origin=null
+                   ARG <this>(index:0): GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.get' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
+                   ARG <this>(index:1): GET_VAR 'index: kotlin.Int declared in <root>.LockFreeIntBits.get' type=kotlin.Int origin=null
+@@ -206,62 +162,62 @@
+       BLOCK_BODY
+         VAR name:bs type:<root>.LockFreeIntBits [val]
+           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeIntBits' type=<root>.LockFreeIntBits origin=null
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+             ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
+               ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+             ARG <this>: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+               ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+             ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
+               ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+               ARG index: CONST Int type=kotlin.Int value=1
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=1
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=1
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+             ARG <this>: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+               ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+               ARG index: CONST Int type=kotlin.Int value=1
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+             ARG <this>: CALL 'public final fun bitSet (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+               ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun bitClear (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun bitClear (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+             ARG <this>: CALL 'public final fun bitClear (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=null
+               ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG actual: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
++        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG x: CALL 'public final fun get (index: kotlin.Int): kotlin.Boolean declared in <root>.LockFreeIntBits' type=kotlin.Boolean origin=GET_ARRAY_ELEMENT
+             ARG <this>: GET_VAR 'val bs: <root>.LockFreeIntBits declared in <root>.LockFreeIntBitsTest.testBasic' type=<root>.LockFreeIntBits origin=null
+             ARG index: CONST Int type=kotlin.Int value=1
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String

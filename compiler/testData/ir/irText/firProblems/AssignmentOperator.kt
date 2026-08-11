@@ -1,3 +1,4 @@
+// DUMP_IR
 package foo
 
 class A {

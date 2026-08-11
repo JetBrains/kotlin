@@ -1,0 +1,180 @@
+FILE fqName:<root> fileName:/InitializationOrderTest.kt
+  CLASS CLASS name:Delegator modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Delegator
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Any? declared in <root>.Delegator'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Any? visibility:private declared in <root>.Delegator' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-a$volatile>' type=<root>.Delegator origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.Delegator'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Any? visibility:private declared in <root>.Delegator' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-a$volatile>' type=<root>.Delegator origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.Delegator.<set-a$volatile>' type=kotlin.Any? origin=null
+    FIELD ATOMICFU_GENERATED_FIELD name:d$volatile type:kotlin.Any? visibility:private
+      annotations:
+        Volatile
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=""
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.Delegator'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.Delegator' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-b$volatile>' type=<root>.Delegator origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-b$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.Delegator'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.Delegator' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-b$volatile>' type=<root>.Delegator origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.Delegator.<set-b$volatile>' type=kotlin.Int origin=null
+    ANONYMOUS_INITIALIZER isStatic=false
+      BLOCK_BODY
+        CALL 'private final fun <set-d> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+          ARG <set-?>: CONST String type=kotlin.String value="initialized"
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.Delegator' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST String type=kotlin.String value="initialized"
+        CALL 'private final fun <set-bDelegate> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+          ARG <set-?>: CONST Int type=kotlin.Int value=-1
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.Delegator' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Int type=kotlin.Int value=42
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="a$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.Delegator'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.Delegator' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:b$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="b$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.Delegator'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.Delegator' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Delegator [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegator modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="initialized"
+          ARG actual: CALL 'private final fun <get-d> (): kotlin.String declared in <root>.Delegator' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.test' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="initialized"
+          ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.Delegator' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.test' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=42
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.Delegator' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.test' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=42
+          ARG actual: CALL 'private final fun <get-bDelegate> (): kotlin.Int declared in <root>.Delegator' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.test' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
+    PROPERTY name:bDelegate visibility:private modality:FINAL [delegated,var]
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-bDelegate> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        correspondingProperty: PROPERTY name:bDelegate visibility:private modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-bDelegate> (): kotlin.Int declared in <root>.Delegator'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.Delegator' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-bDelegate>' type=<root>.Delegator origin=null
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-bDelegate> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:bDelegate visibility:private modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-bDelegate> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Delegator'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.Delegator' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-bDelegate>' type=<root>.Delegator origin=null
+              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Delegator.<set-bDelegate>' type=kotlin.Int origin=null
+    PROPERTY name:d visibility:private modality:FINAL [delegated,var]
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-d> visibility:private modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        correspondingProperty: PROPERTY name:d visibility:private modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-d> (): kotlin.String declared in <root>.Delegator'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:d$volatile type:kotlin.Any? visibility:private declared in <root>.Delegator' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-d>' type=<root>.Delegator origin=null
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-d> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:d visibility:private modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-d> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegator'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:d$volatile type:kotlin.Any? visibility:private declared in <root>.Delegator' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-d>' type=<root>.Delegator origin=null
+              value: GET_VAR '<set-?>: kotlin.String declared in <root>.Delegator.<set-d>' type=kotlin.String origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun test (): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=null
+        ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Delegator' type=<root>.Delegator origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
