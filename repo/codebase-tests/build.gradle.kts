@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.tooling.core.linearClosure
 
 plugins {
     id("common-configuration")
@@ -13,6 +14,7 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(kotlin("test-junit5", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
+    implementation(kotlin("tooling-core", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
 
     testImplementation(libs.jackson.dataformat.xml)
     testImplementation(libs.jackson.module.kotlin)
@@ -86,6 +88,14 @@ tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
     classpath = project.files(sourceSets.test.map { it.runtimeClasspath })
     mainClass.set($$"org.jetbrains.kotlin.code.TestLifecycleTaskTest$Update")
     workingDir = rootDir
+}
+
+tasks.register<JavaExec>("updateDomainsDump") {
+    doNotTrackState("Should always run")
+    description = "Updates the 'domains.dump.txt' file"
+    classpath = files(sourceSets.test.map { it.runtimeClasspath })
+    workingDir = rootDir
+    mainClass = $$"org.jetbrains.kotlin.code.DomainsDumpTest$Update"
 }
 
 tasks.configureEach {
