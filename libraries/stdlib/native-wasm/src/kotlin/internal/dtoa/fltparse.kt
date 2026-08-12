@@ -16,7 +16,7 @@
  */
 
 @file:OptIn(ExperimentalUnsignedTypes::class)
-@file:Suppress("RETURN_VALUE_NOT_USED")
+@file:Suppress("RETURN_VALUE_NOT_USED", "NOTHING_TO_INLINE")
 
 package kotlin.internal.dtoa
 
@@ -34,9 +34,10 @@ private val TENS = intArrayOf(
     0x47c35000, 0x49742400, 0x4b189680, 0x4cbebc20, 0x4e6e6b28, 0x501502f9
 )
 
-private fun floatToIntBits(flt: Float): UInt = flt.toRawBits().toUInt()
-private fun intBitsToFloat(bits: UInt): Float = Float.fromBits(bits.toInt())
-private fun tenToTheEFloat(e: Int): Float = Float.fromBits(TENS[e])
+// Macro replacements as functions
+private inline fun floatToIntBits(flt: Float): UInt = flt.toRawBits().toUInt()
+private inline fun intBitsToFloat(bits: UInt): Float = Float.fromBits(bits.toInt())
+private inline fun tenToTheEFloat(e: Int): Float = Float.fromBits(TENS[e])
 
 private fun floatMantissa(z: Float): UInt {
     var m = floatToIntBits(z)

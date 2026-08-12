@@ -38,6 +38,7 @@ private val TENS = doubleArrayOf(
     1.0e19, 1.0e20, 1.0e21, 1.0e22
 )
 
+// Macro replacements as functions
 internal fun sizeOfTenToTheE(e: Int): Int = (e / 19) + 1
 private fun tenToTheE(e: Int): Double = TENS[e]
 private fun errorOccured(x: Double): Boolean = (x.toRawBits() shr 32).toInt() < 0
