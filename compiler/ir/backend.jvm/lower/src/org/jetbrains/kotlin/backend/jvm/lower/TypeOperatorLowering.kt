@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.render
@@ -54,9 +54,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private fun IrExpression.transformVoid() = transform(this@TypeOperatorLowering, null)
 
+    private val IrType.isReified: Boolean
+        get() = backendContext.typeSystem.extractReificationArgument(this) != null
+
     private fun lowerInstanceOf(argument: IrExpression, type: IrType) = with(builder) {
         when {
-            type.isReifiedTypeParameter ->
+            type.isReified ->
                 irIs(argument, type)
             argument.type.isNullable() && type.isNullable() -> {
                 irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
@@ -74,7 +77,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private fun lowerCast(argument: IrExpression, type: IrType): IrExpression =
         when {
-            type.isReifiedTypeParameter ->
+            type.isReified ->
                 builder.irAs(argument, type)
             argument.type.isInlineClassType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
                 argument
@@ -114,6 +117,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         }
 
     private fun isCompatibleArrayType(actualType: IrType, expectedType: IrType): Boolean {
+        if (actualType.isReified || expectedType.isReified) return false
         var actual = actualType
         var expected = expectedType
         while ((actual.isArray() || actual.isNullableArray()) && (expected.isArray() || expected.isNullableArray())) {
@@ -171,7 +175,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                 lowerCast(expression.argument.transformVoid(), expression.typeOperand)
 
             IrTypeOperator.SAFE_CAST ->
-                if (expression.typeOperand.isReifiedTypeParameter) {
+                if (expression.typeOperand.isReified) {
                     expression.transformChildrenVoid()
                     expression
                 } else {

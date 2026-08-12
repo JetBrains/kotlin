@@ -1077,9 +1077,8 @@ class ExpressionCodegen(
                 result.materializeAt(boxedLeftType, expression.argument.type)
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
-                if (typeOperand.isReifiedTypeParameter) {
-                    val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)
+                val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
+                if (putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)) {
                     mv.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
@@ -1097,8 +1096,7 @@ class ExpressionCodegen(
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
-                if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
+                if (putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)) {
                     mv.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, typeOperand, type)

@@ -244,7 +244,8 @@ class ReifiedTypeInliner(
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
         // it's safe to remove cast to Object as FrameMap will use it as default value for merged branches
-        if (stubCheckcast.desc == AsmTypes.OBJECT_TYPE.internalName) {
+        val stubDesc = stubCheckcast.desc
+        if (stubDesc == AsmTypes.OBJECT_TYPE.internalName || (stubDesc.startsWith("[") && stubDesc.trimStart('[') == "L${AsmTypes.OBJECT_TYPE.internalName};")) {
             instructions.remove(stubCheckcast)
         }
 
