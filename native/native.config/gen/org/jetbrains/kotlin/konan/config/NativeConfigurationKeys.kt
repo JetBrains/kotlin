@@ -168,9 +168,6 @@ object NativeConfigurationKeys {
     val KONAN_PRODUCED_ARTIFACT_KIND = CompilerConfigurationKey.create<CompilerOutputKind>("KONAN_PRODUCED_ARTIFACT_KIND")
 
     @JvmField
-    val KONAN_PURGE_USER_LIBS = CompilerConfigurationKey.create<Boolean>("KONAN_PURGE_USER_LIBS")
-
-    @JvmField
     val RUNTIME_FILE = CompilerConfigurationKey.create<String>("RUNTIME_FILE")
 
     // Klibs processed in the same manner as source files.
@@ -448,10 +445,6 @@ var CompilerConfiguration.konanPrintFiles: Boolean
 var CompilerConfiguration.konanProducedArtifactKind: CompilerOutputKind?
     get() = get(NativeConfigurationKeys.KONAN_PRODUCED_ARTIFACT_KIND)
     set(value) { put(NativeConfigurationKeys.KONAN_PRODUCED_ARTIFACT_KIND, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.konanPurgeUserLibs: Boolean
-    get() = getBoolean(NativeConfigurationKeys.KONAN_PURGE_USER_LIBS)
-    set(value) { put(NativeConfigurationKeys.KONAN_PURGE_USER_LIBS, value) }
 
 var CompilerConfiguration.runtimeFile: String?
     get() = get(NativeConfigurationKeys.RUNTIME_FILE)
