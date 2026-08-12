@@ -6,23 +6,22 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentElementType
 
 @OptIn(KtImplementationDetail::class)
 class KotlinValueArgumentStubImpl<T : KtValueArgument>(
     parent: StubElement<*>?,
-    elementType: KtValueArgumentElementType<T>,
+    elementType: IElementType,
     override val isSpread: Boolean
 ) : KotlinPlaceHolderStubImpl<T>(parent, elementType), KotlinValueArgumentStub<T> {
     @KtImplementationDetail
-    @Suppress("UNCHECKED_CAST")
     override fun copyInto(newParent: StubElement<*>?): KotlinValueArgumentStubImpl<T> = KotlinValueArgumentStubImpl(
         parent = newParent,
-        elementType = elementType as KtValueArgumentElementType<T>,
+        elementType = elementType,
         isSpread = isSpread,
     )
 

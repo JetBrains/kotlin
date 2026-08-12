@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -284,18 +284,18 @@ private class ClassClsStubBuilder(
         // if single supertype is any then no delegation specifier list is needed
         if (supertypeIds.isEmpty()) return
 
-        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtStubElementTypes.SUPER_TYPE_LIST)
+        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtNodeTypes.SUPER_TYPE_LIST)
 
         classProto.supertypes(c.typeTable).forEach { type ->
             val superClassStub = KotlinPlaceHolderStubImpl<KtSuperTypeEntry>(
-                delegationSpecifierListStub, KtStubElementTypes.SUPER_TYPE_ENTRY
+                delegationSpecifierListStub, KtNodeTypes.SUPER_TYPE_ENTRY
             )
             typeStubBuilder.createTypeReferenceStub(superClassStub, type)
         }
     }
 
     private fun createClassBodyAndMemberStubs() {
-        val classBody = KotlinPlaceHolderStubImpl<KtClassBody>(classOrObjectStub, KtStubElementTypes.CLASS_BODY)
+        val classBody = KotlinPlaceHolderStubImpl<KtClassBody>(classOrObjectStub, KtNodeTypes.CLASS_BODY)
         createEnumEntryStubs(classBody)
         createCompanionObjectStub(classBody)
         createCallableMemberStubs(classBody)

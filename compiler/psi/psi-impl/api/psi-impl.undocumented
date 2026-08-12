@@ -241,7 +241,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:constr
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:isClassRef()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement<?>, IStubElementType<?, ?>)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement<?>, IElementType)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
 
 public class KotlinPlaceHolderStubImpl<T extends KtElementImplStub<? extends StubElement<?>>> extends KotlinStubBaseImpl<T>
         implements KotlinPlaceHolderStub<T> {
-    public KotlinPlaceHolderStubImpl(StubElement<?> parent, IStubElementType<?, ?> elementType) {
+    public KotlinPlaceHolderStubImpl(StubElement<?> parent, IElementType elementType) {
         super(parent, elementType);
     }
 
     @Override
     @KtImplementationDetail
     public @NotNull KotlinPlaceHolderStubImpl<T> copyInto(@Nullable StubElement<?> newParent) {
-        return new KotlinPlaceHolderStubImpl<>(newParent, (IStubElementType<?, ?>) getElementType());
+        return new KotlinPlaceHolderStubImpl<>(newParent, getElementType());
     }
 
 
