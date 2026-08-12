@@ -1,0 +1,43 @@
+// MODULE: lib
+// FILE: lib.kt
+package def
+
+open class MyBase : MyInterface {
+  private /* final field */ val $$delegate_0: MyInterface = delegate
+  constructor(delegate: MyInterface) /* primary */
+
+  override fun foo(): String {
+    return <this>.#$$delegate_0.foo()
+  }
+
+}
+
+open class MyDelegate : MyInterface {
+  constructor() /* primary */
+
+  override fun foo(): String {
+  }
+
+}
+
+interface MyInterface {
+  abstract fun foo(): String
+
+}
+
+// MODULE: main
+// FILE: main.kt
+
+class MySub : MyBase {
+  constructor(delegate: MyInterface) /* primary */ {
+    super/*MyBase*/(delegate = delegate)
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  return "OK"
+}
+

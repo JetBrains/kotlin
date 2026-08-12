@@ -1,0 +1,29 @@
+Module: lib
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <lib>
+open class def/MyBase : def/MyInterface { // def/MyBase|null[0]
+    constructor <init>(def/MyInterface) // def/MyBase.<init>|<init>(def.MyInterface){}[0]
+    open fun foo(): kotlin/String // def/MyBase.foo|foo(){}[0]
+}
+open class def/MyDelegate : def/MyInterface { // def/MyDelegate|null[0]
+    constructor <init>() // def/MyDelegate.<init>|<init>(){}[0]
+    open fun foo(): kotlin/String // def/MyDelegate.foo|foo(){}[0]
+}
+abstract interface def/MyInterface { // def/MyInterface|null[0]
+    abstract fun foo(): kotlin/String // def/MyInterface.foo|foo(){}[0]
+}
+Module: main
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /MySub : def/MyBase { // /MySub|null[0]
+    constructor <init>(def/MyInterface) // /MySub.<init>|<init>(def.MyInterface){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]
