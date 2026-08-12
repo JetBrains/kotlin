@@ -291,7 +291,7 @@ class LightTreeRawFirExpressionBuilder(
             context.firFunctionTargets.removeLast()
         }.also {
             target.bind(it)
-            it.addResultVariables(resultVariables)
+            if (resultVariables.isNotEmpty()) it.addResultVariables(resultVariables)
         }
         return buildAnonymousFunctionExpression {
             source = expressionSource
