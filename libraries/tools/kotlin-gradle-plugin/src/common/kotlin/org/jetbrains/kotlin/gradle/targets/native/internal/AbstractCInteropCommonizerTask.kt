@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskProvider
@@ -23,7 +24,7 @@ import java.io.File
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuildMetricsService {
     @get:OutputDirectory
-    abstract val outputDirectory: File
+    abstract val outputDirectory: DirectoryProperty
 }
 
 internal const val CINTEROP_COMMONIZER_OUTPUT_PATH = "classes/kotlin/commonizer"
@@ -37,7 +38,7 @@ internal val Project.copyCInteropCommonizerForIdeOutputRoot: File
         .resolve(path.removePrefix(":").replace(":", "/"))
 
 internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File =
-    outputDirectory.commonizerGroupDirectory(group)
+    outputDirectory.get().asFile.commonizerGroupDirectory(group)
 
 private fun File.commonizerGroupDirectory(group: CInteropCommonizerGroup): File {
     val interopsDirectoryName = group.interops.map { it.interopName }.toSet().joinToString("_")

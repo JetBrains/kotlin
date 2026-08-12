@@ -32,9 +32,6 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     val cInteropCommonizerTaskOutputDirectories: Provider<Set<File>> =
         commonizeCInteropTask.map { it.allOutputDirectories }
 
-    @get:OutputDirectory
-    override val outputDirectory: File = project.copyCInteropCommonizerForIdeOutputRoot
-
     @get:Internal
     val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
@@ -56,7 +53,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     protected fun copy() {
         val metricReporter = metrics.get()
         addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
-            outputDirectory.mkdirs()
+            outputDirectory.get().asFile.mkdirs()
             for ((group, source) in allInteropGroups) {
                 if (!source.exists()) continue
                 val target = outputDirectory(group)
