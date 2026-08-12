@@ -115,10 +115,11 @@ class ScriptingHostTest {
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
         val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
-        val classloader = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
-        val scriptClass = classloader.loadClass("SavedScript")
-        val output = captureOut {
-            scriptClass.newInstance()
+        val output = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader).use { classloader ->
+            val scriptClass = classloader.loadClass("SavedScript")
+            captureOut {
+                scriptClass.newInstance()
+            }
         }
         assertEquals(greeting, output)
     }
@@ -131,10 +132,11 @@ class ScriptingHostTest {
         val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
         Thread.sleep(100)
-        val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
-        val scriptClass = classloader.loadClass("SavedScript")
-        val output = captureOut {
-            scriptClass.newInstance()
+        val output = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader).use { classloader ->
+            val scriptClass = classloader.loadClass("SavedScript")
+            captureOut {
+                scriptClass.newInstance()
+            }
         }
         assertEquals(greeting, output)
     }
@@ -162,19 +164,20 @@ class ScriptingHostTest {
         Thread.sleep(100)
 
         val classpathFromJar = run {
-            val manifest = JarFile(outJar).manifest
+            val manifest = JarFile(outJar).use { it.manifest }
             manifest.mainAttributes.getValue("Class-Path").split(" ") // TODO: quoted paths
                 .map { File(it).toURI().toURL() }
         } + outJar.toURI().toURL()
 
         fun checkInvokeMain(baseClassLoader: ClassLoader?) {
-            val classloader = URLClassLoader(classpathFromJar.toTypedArray(), baseClassLoader)
-            val scriptClass = classloader.loadClass(scriptName)
-            val mainMethod = scriptClass.methods.find { it.name == "main" }
-            assertNotNull(mainMethod)
-            val output = captureOutAndErr {
-                mainMethod.invoke(null, emptyArray<String>())
-            }.toList().filterNot(String::isEmpty).joinToString("\n")
+            val output = URLClassLoader(classpathFromJar.toTypedArray(), baseClassLoader).use { classloader ->
+                val scriptClass = classloader.loadClass(scriptName)
+                val mainMethod = scriptClass.methods.find { it.name == "main" }
+                assertNotNull(mainMethod)
+                captureOutAndErr {
+                    mainMethod.invoke(null, emptyArray<String>())
+                }.toList().filterNot(String::isEmpty).joinToString("\n")
+            }
             assertEquals(greeting, output)
         }
 
@@ -850,8 +853,8 @@ class ScriptingHostTest {
         assertNotNull(classAsResourceUrl)
         assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream.readBytes()
+        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().use { it.readBytes() }
+        val classAsResourceStreamData = classAssResourceStream.use { it.readBytes() }
 
         assertContentEquals(classAsResourceData, classAsResourceStreamData)
 
@@ -867,7 +870,7 @@ internal fun runScriptFromJar(jar: File): List<String> {
     val r = run {
         val process = processBuilder.start()
         process.waitFor(10, TimeUnit.SECONDS)
-        val out = process.inputStream.reader().readText()
+        val out = process.inputStream.reader().use { it.readText() }
         if (process.isAlive) {
             process.destroyForcibly()
             "Error: timeout, killing script process\n$out"
