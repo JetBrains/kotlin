@@ -36,7 +36,7 @@ abstract class GenerateSupportSources : DefaultTask() {
 
         val immediateActualizations = mutableMapOf<String, MutableSet<String>>()
 
-        traverseRawSources(rawSourceDir.get().asFile) { file, _ ->
+        traverseRawSources(rawSourceDir.get().asFile) { file, _, _ ->
             val contents = file.readText()
 
             for (nextMatch in actualTypealiasPattern.findAll(contents)) {
@@ -60,8 +60,9 @@ abstract class GenerateSupportSources : DefaultTask() {
         val classesThatNeedIterator = mutableSetOf<String>()
         val classesThatNeedVar = mutableSetOf<String>()
 
-        traverseRawSources(rawSourceDir.get().asFile) { file, destination ->
+        traverseRawSources(rawSourceDir.get().asFile) { file, destination, destinationRoot ->
             var contents = file.readText().replace("package support.raw", "package support")
+            val kotlinxXCinteropFileContents = mutableListOf<String>()
 
             for (nextMatch in expectNumberClassPattern.findAll(contents)) {
                 val (entireMatch, name) = nextMatch.groupValues
@@ -89,13 +90,28 @@ abstract class GenerateSupportSources : DefaultTask() {
                     }
                     .let {
                         val varOfVariant = "expect class ${name}VarOf<T : $name> : kotlinx.cinterop.CVariable"
+//                        val valueAccessor = """
+//                            @Suppress("WRONG_MODIFIER_TARGET")
+//                            expect inline var <T : $name> ${name}VarOf<T>.${name}Value: T
+//
+//                            @Suppress("WRONG_MODIFIER_TARGET")
+//                            inline var <T : $name> ${name}VarOf<T>.value: T
+//                                get() = ${name}Value
+//                                set(value) { ${name}Value = value }
+//                        """.trimIndent()
                         val valueAccessor = """
-                        expect object ${name}VarOfSupport {
-                            @Suppress("WRONG_MODIFIER_TARGET")
-                            expect var <T : $name> ${name}VarOf<T>.value: T
+                            @Suppress("WRONG_MODIFIER_TARGET", "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT", "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT")
+                            @OptIn(ExperimentalMultiplatform::class)
+                            @kotlin.experimental.ExpectRefinement
+                            expect inline var <T : support.$name> support.${name}VarOf<T>.value: T
+                        """.trimIndent()
+
+                        if (name in classesThatNeedVar) {
+                            kotlinxXCinteropFileContents += valueAccessor
+                            it.plus("\n\n$varOfVariant")
+                        } else {
+                            it
                         }
-                    """.trimIndent()
-                        if (name in classesThatNeedVar) it.plus("\n\n$varOfVariant\n\n$valueAccessor") else it
                     }
                     .replace("AnyNumber", name)
                     .let { content ->
@@ -117,9 +133,14 @@ abstract class GenerateSupportSources : DefaultTask() {
 
             destination.parentFile.mkdirs()
             destination.writeText(contents)
+
+            if (kotlinxXCinteropFileContents.isNotEmpty()) {
+                val cinteropFolder = destinationRoot.resolve("kotlinx").resolve("cinterop").also { it.mkdirs() }
+                cinteropFolder.resolve("Bridges.kt").appendText(kotlinxXCinteropFileContents.joinToString("\n") + "\n")
+            }
         }
 
-        traverseRawSources(rawSourceDir.get().asFile) { _, destination ->
+        traverseRawSources(rawSourceDir.get().asFile) { _, destination, _ ->
             var contents = destination.readText()
 
             for (nextMatch in actualTypealiasPattern.findAll(contents)) {
@@ -133,22 +154,21 @@ abstract class GenerateSupportSources : DefaultTask() {
                     val expandsToBuiltin = expansion in listOf("Byte", "Short", "Int", "Long", "UByte", "UShort", "UInt", "ULong", "Float", "Double")
                     val getterBody = when {
                         expandsToBuiltin -> "valueFromCinterop"
-                        else -> "with(${expansion}VarOfSupport) { value }"
+                        else -> "${expansion}Value"
                     }
                     val setterBody = when {
                         expandsToBuiltin -> "valueFromCinterop = newValue"
-                        else -> "with(${expansion}VarOfSupport) { value = newValue }"
+                        else -> "${expansion}Value = newValue"
                     }
-                    val valueAccessor = """
-                    actual object ${name}VarOfSupport {
+                    val valueAccessor = """    
                         @Suppress("FINAL_UPPER_BOUND")
-                        actual var <T : $name> ${name}VarOf<T>.value: T
+                        actual inline var <T : $name> ${name}VarOf<T>.${name}Value: T
                             get() = $getterBody
                             set(newValue) { $setterBody }
-                    }
-                """.trimIndent()
+                    """.trimIndent()
 
-                    "\n$varOfVariant\n\n$valueAccessor\n"
+//                    "\n$varOfVariant\n\n$valueAccessor\n"
+                    "\n$varOfVariant\n"
                 } else {
                     ""
                 }
@@ -245,7 +265,7 @@ private fun String.withAppendixIfMentioned(variants: List<String>, classToConten
     return this.plus("\n\n").plus(appendix).transformFor(variant)
 }
 
-private inline fun traverseRawSources(location: File, block: (File, File) -> Unit) {
+private inline fun traverseRawSources(location: File, block: (File, File, File) -> Unit) {
     location.traverseTopDown { file ->
         val relativeToSrc = file.relativeTo(location)
         val sourceSetName = relativeToSrc.toPath().firstOrNull()?.toString() ?: return@traverseTopDown
@@ -258,11 +278,12 @@ private inline fun traverseRawSources(location: File, block: (File, File) -> Uni
             else -> return@traverseTopDown
         }
 
-        val destination = location.resolve("../build/src-gen/").resolve(sourceSetName).resolve("kotlin")
+        val destinationRoot = location.resolve("../build/src-gen/").resolve(sourceSetName).resolve("kotlin")
+        val destination = destinationRoot
             .resolve("support")
             .resolve(relativeToPrefix)
 
-        block(file, destination)
+        block(file, destination, destinationRoot)
     }
 }
 

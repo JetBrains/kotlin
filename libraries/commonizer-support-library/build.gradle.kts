@@ -103,6 +103,8 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
         freeCompilerArgs.add("-XXLanguage:+AllowExpectValueClassesWithNoPrimaryConstructor")
+        freeCompilerArgs.add("-XXLanguage:+AllowMultipleExpectsForSameActual")
+        freeCompilerArgs.add("-XXLanguage:+ExpectRefinement")
         optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
     }
 }
