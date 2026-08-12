@@ -192,8 +192,10 @@ fun KJvmCompiledScript.toBytes(): ByteArray {
 fun createScriptFromClassLoader(scriptClassFQName: String, classLoader: ClassLoader): KJvmCompiledScript {
     val scriptDataStream = classLoader.getResourceAsStream(scriptMetadataPath(scriptClassFQName))
         ?: throw IllegalArgumentException("Cannot find metadata for script $scriptClassFQName")
-    val script = ObjectInputStream(scriptDataStream).use {
-        it.readObject() as KJvmCompiledScript
+    val script = scriptDataStream.use { dataStream ->
+        ObjectInputStream(dataStream).use {
+            it.readObject() as KJvmCompiledScript
+        }
     }
     script.compiledModule = KJvmCompiledModuleFromClassLoader(classLoader)
     return script
