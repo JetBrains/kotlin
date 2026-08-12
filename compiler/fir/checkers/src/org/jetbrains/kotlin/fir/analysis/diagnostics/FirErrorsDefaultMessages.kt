@@ -290,6 +290,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_ENTRY_AS_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
@@ -472,6 +474,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFIX_MODIFIER_REQUIRED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INHERITED_INTERSECTION_EQUALITY_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZATION_BEFORE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZATION_BEFORE_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION
@@ -1560,6 +1563,25 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED,
             "Equality bound argument must be a star-projected type, but expands to ''{0}''.",
+            RENDER_TYPE,
+        )
+        map.put(
+            EQUALITY_BOUND_MISMATCH_ON_INHERITANCE,
+            "{0} clashes with {1}: equality bounds are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+        map.put(
+            EQUALITY_BOUND_MISMATCH_BY_DELEGATION,
+            "{0} clashes with {1} from delegation: equality bounds are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+        map.put(
+            INHERITED_INTERSECTION_EQUALITY_BOUND,
+            "Equality bound of ''{0}'' is inferred to intersection type ''{1}''. " +
+            "Specify explicit equality bound.",
+            SYMBOL,
             RENDER_TYPE,
         )
 
