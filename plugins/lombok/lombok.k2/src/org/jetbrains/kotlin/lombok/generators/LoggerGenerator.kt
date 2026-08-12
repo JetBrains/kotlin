@@ -232,7 +232,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         logContainingClass: FirClassSymbol<*>,
         logTargetClass: FirClassSymbol<*>
     ): FirVariableSymbol<*>? {
-        val fieldVisibility = log.visibility ?: return null
+        val fieldVisibility = log.accessLevel.toVisibility(logContainingClass) ?: return null
 
         val loggerClassType = log.loggerClassId.constructClassLikeType()
         val config = session.lombokService.config

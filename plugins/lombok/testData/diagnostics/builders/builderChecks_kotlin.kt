@@ -66,5 +66,5 @@ class BuilderAccessLevelPackage(val id: Int)
 class BuilderAccessLevelModule(val id: Int)
 
 fun testAccessLevels() {
-    BuilderAccessLevelProtected.builder() // OK, but INVISIBLE_REFERENCE is expected (KT-88337, KT-88203)
+    BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
 }

@@ -451,7 +451,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         containingClassSymbol: FirClassSymbol<*>,
     ) {
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-            val visibility = builder.visibility ?: continue
+            val visibility = builder.accessLevel.toVisibility(containingClassSymbol) ?: continue
             val entityClassId = entitySymbol.classId
             val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
             val builderClassId = entityClassId.createNestedClassId(builderClassName)
@@ -614,7 +614,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-                if (builder.visibility == null) continue
+                if (builder.accessLevel.toVisibility(classSymbol) == null) continue
                 val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
 
                 // Don't generate classes if they already exist
@@ -631,7 +631,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(owner) ?: return null
 
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-            val visibility = builder.visibility ?: continue
+            val visibility = builder.accessLevel.toVisibility(owner) ?: continue
             val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
 
             if (builderName == name) {
@@ -706,7 +706,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
         val builderType = getBuilderType(builderSymbol) ?: return
-        val visibility = builder.builderFunctionsVisibility ?: return
+        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
 
         addIfNonClashing(setterName, existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
@@ -844,7 +844,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
 
         // Early return in case of `AccessLevel.NONE` is used (it means not generating anything at all)
-        val visibility = builder.builderFunctionsVisibility ?: return
+        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
             createJavaOrKotlinMemberFunction(

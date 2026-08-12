@@ -51,7 +51,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
     private fun createWith(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
         val nonStaticFieldsWithWith = computeNonStaticFieldsWithWithAnnotation(classSymbol) ?: return null
         return nonStaticFieldsWithWith.mapNotNull { [field, withInfo] ->
-            val visibility = withInfo.visibility ?: return@mapNotNull null
+            val visibility = withInfo.accessLevel.toVisibility(classSymbol) ?: return@mapNotNull null
             val withName = computeWithName(field)
 
             val function = classSymbol.createJavaMethod(
