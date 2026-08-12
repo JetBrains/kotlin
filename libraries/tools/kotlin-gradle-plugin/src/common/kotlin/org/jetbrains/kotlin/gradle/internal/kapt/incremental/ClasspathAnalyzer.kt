@@ -126,8 +126,12 @@ private fun analyzeInputStream(input: InputStream, internalName: String, entryDa
 class ClasspathEntryData : Serializable {
 
     object ClasspathEntrySerializer {
+        // `output.bin` only ever holds a single `ClasspathEntryData` whose custom `readObject` reads primitives. Restrict
+        // deserialization to that class to prevent gadget-chain attacks via a tampered structure file (KT-88432).
+        private val ALLOWED_CLASSES = setOf(ClasspathEntryData::class.java.name)
+
         fun loadFrom(file: File): ClasspathEntryData {
-            ObjectInputStream(BufferedInputStream(file.inputStream())).use {
+            FilteringObjectInputStream(BufferedInputStream(file.inputStream()), ALLOWED_CLASSES).use {
                 return it.readObject() as ClasspathEntryData
             }
         }

@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
 import org.jetbrains.kotlin.gradle.testing.newTempDirectory
 import org.jetbrains.kotlin.gradle.testing.newTempFile
 import org.junit.jupiter.api.io.TempDir
+import java.io.BufferedOutputStream
 import java.io.File
+import java.io.ObjectOutputStream
 import java.nio.file.Path
+import java.util.Hashtable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -34,6 +37,48 @@ class ClasspathSnapshotTest : WithTemporaryFolder {
 
         val diff = loadedSnapshot.diff(currentSnapshot, setOf(data)) as KaptClasspathChanges.Known
         assertEquals(emptySet<String>(), diff.names)
+    }
+
+    @Test
+    fun testSerializationWithNonEmptyClasspath() {
+        val data = generateStructureData(
+            ClassData("first/A"), ClassData("first/B")
+        )
+
+        // Build the lists exactly as production does (`FileCollection.files.toList()`): a Set.toList() yields ArrayList
+        // for >=2 elements and Collections$SingletonList for a single element - both must pass the whitelist (KT-88432).
+        val classpath = setOf(File("a.jar"), File("b.jar")).toList()
+        val annotationProcessorClasspath = setOf(File("ap.jar")).toList()
+
+        val snapshotDir = newTempDirectory().toFile()
+        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            snapshotDir, classpath, annotationProcessorClasspath, setOf(data)
+        )
+        currentSnapshot.writeToCache()
+
+        val loadedSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(snapshotDir)
+
+        val diff = loadedSnapshot.diff(currentSnapshot, setOf(data)) as KaptClasspathChanges.Known
+        assertEquals(emptySet<String>(), diff.names)
+    }
+
+    @Test
+    fun testTamperedStructureFileIsRejected() {
+        val data = generateStructureData(ClassData("first/A"))
+        val snapshotDir = newTempDirectory().toFile()
+        val snapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            snapshotDir, listOf(File("a.jar")), listOf(File("ap.jar")), setOf(data)
+        )
+        snapshot.writeToCache()
+
+        // Overwrite the structure file with a serialized instance of a class that is not on the whitelist, standing in
+        // for a deserialization-gadget payload. loadFrom must reject it and fall back to a non-incremental run (KT-88432).
+        val structureFile = snapshotDir.resolve("classpath-structure.bin")
+        ObjectOutputStream(BufferedOutputStream(structureFile.outputStream())).use {
+            it.writeObject(Hashtable<String, String>().apply { put("payload", "value") })
+        }
+
+        assertEquals(UnknownSnapshot, ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(snapshotDir))
     }
 
     @Test
