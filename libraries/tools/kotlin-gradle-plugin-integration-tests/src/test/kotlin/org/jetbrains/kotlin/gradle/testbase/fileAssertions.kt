@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.jetbrains.kotlin.test.Assertions
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -232,6 +234,23 @@ fun assertDirectoryDoesNotExist(
     message: String? = null,
 ) {
     assert(!Files.exists(dirPath)) {
+        message ?: buildString {
+            append("Directory $dirPath is expected to not exist. ")
+            if (Files.isDirectory(dirPath)) {
+                appendLine("The directory contents: ")
+                appendDirectory(dirPath)
+            } else {
+                append("However, it is not even a directory.")
+            }
+        }
+    }
+}
+
+fun assumeDirectoryDoesNotExist(
+    dirPath: Path,
+    message: String? = null,
+) {
+    Assumptions.assumeTrue(!Files.exists(dirPath)) {
         message ?: buildString {
             append("Directory $dirPath is expected to not exist. ")
             if (Files.isDirectory(dirPath)) {

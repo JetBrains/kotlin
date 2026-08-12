@@ -54,6 +54,10 @@ abstract class KGPBaseTest {
     @BeforeEach
     fun setUpNewCounter() {
         counter.set(Counter())
+        if (isTeamCityRun) {
+            val userHomeDir = System.getProperty("user.home")
+            assumeDirectoryDoesNotExist(Paths.get("$userHomeDir/.konan"))
+        }
     }
 
     class Counter(var counter: Int = 0)
