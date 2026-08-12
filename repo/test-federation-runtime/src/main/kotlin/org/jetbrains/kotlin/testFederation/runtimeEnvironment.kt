@@ -22,38 +22,35 @@ const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
  * @return true: If the test federation is enabled (typically only on CI environments)
  * false: Locally: All tests will be executed.
  */
-val testFederationEnabled: Boolean
-    get() = resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
+val testFederationEnabled: Boolean =
+    resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
 
 /**
  * @return the current [TestFederationMode]. Only relevant if the [testFederationEnabled] returns true
  */
-val testFederationMode: TestFederationMode?
-    get() {
-        val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return null
-        return TestFederationMode.valueOf(raw)
-    }
+val testFederationMode: TestFederationMode? = run {
+    val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
+    TestFederationMode.valueOf(raw)
+}
 
 /**
  * @return All affected [Domain]s. Only relevant if the [testFederationEnabled] returns true
  */
-val testFederationAffectedDomains: Set<Domain>?
-    get() {
-        val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return null
-        if (raw.isBlank()) return null
-        return domainsFromString(raw)
-    }
+val testFederationAffectedDomains: Set<Domain>? = run {
+    val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return@run null
+    if (raw.isBlank()) return@run null
+    domainsFromString(raw)
+}
 
 /**
  * @return only domains changed by the current set of changes.
  * Only relevant if the [testFederationEnabled] returns true
  */
-val testFederationChangedDomains: Set<Domain>?
-    get() {
-        val raw = resolve(TEST_FEDERATION_CHANGED_DOMAINS_KEY, TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY) ?: return null
-        if (raw.isBlank()) return null
-        return domainsFromString(raw)
-    }
+val testFederationChangedDomains: Set<Domain>? = run {
+    val raw = resolve(TEST_FEDERATION_CHANGED_DOMAINS_KEY, TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY) ?: return@run null
+    if (raw.isBlank()) return@run null
+    domainsFromString(raw)
+}
 
 
 /**
@@ -62,7 +59,7 @@ val testFederationChangedDomains: Set<Domain>?
  * development flows.
  * @return 'true' if nightly tests are enabled, 'false' if nightly tests shall be skipped.
  */
-val testFederationNightly: Boolean by lazy {
+val testFederationNightly: Boolean = run {
     resolve(TEST_FEDERATION_NIGHTLY_KEY, TEST_FEDERATION_NIGHTLY_ENV_KEY)?.toBoolean() ?: false
 }
 
