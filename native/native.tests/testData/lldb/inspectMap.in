@@ -1,0 +1,24 @@
+b main.kt:14
+r
+fr var map
+fr var -A -P 5 map
+fr var simpleMap
+fr var -A -P 5 simpleMap
+fr var simpleHashMap
+fr var -A -P 5 simpleHashMap
+fr var simpleMutableMap
+fr var -A -P 5 simpleMutableMap
+fr var emptyMap
+fr var -A -P 5 emptyMap
+fr var nestedMap
+fr var -A -P 10 nestedMap
+field_type nestedMap
+field_type nestedMap.0
+field_type nestedMap.0.value
+field_type nestedMap.0.value.0
+field_type nestedMap.0.value.0.x
+field_type nestedMap.0.value.0.y
+field_type nestedMap.0.value.1
+field_type nestedMap.0.value.1.x
+field_type nestedMap.0.value.1.y
+q
