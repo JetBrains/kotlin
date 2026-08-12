@@ -68,17 +68,17 @@ internal class PwRunnerSpec(
     val isDebugEnabled: Boolean = debugOptions != null,
 )
 
-private const val DEFAULT_DEBUG_PORT = 9222
-private const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
+internal const val DEFAULT_DEBUG_PORT = 9222
+internal const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
 
 private const val NO_TIMEOUT = 0.0
 
 internal class PwDebugOptions(
     // A CDP debugger can attach to Chromium on this port.
-    val remoteDebuggingPort: Int = DEFAULT_DEBUG_PORT,
+    val remoteDebuggingPort: Int,
     // Set when the run should wait until a debugger is attached.
-    val debuggerReadyPort: Int? = null,
-    val debuggerReadyTimeoutMillis: Int = DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS,
+    val debuggerReadyPort: Int?,
+    val debuggerReadyTimeoutMillis: Int,
 )
 
 /**

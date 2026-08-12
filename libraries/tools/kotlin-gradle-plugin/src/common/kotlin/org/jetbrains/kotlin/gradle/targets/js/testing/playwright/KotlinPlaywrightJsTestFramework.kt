@@ -106,19 +106,15 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val executable: Property<String> = objects.property(nodeJs.executable)
 
-    private val debugOptions: Property<PwDebugOptions> = objects.property<PwDebugOptions>()
-        .convention(PwDebugOptions())
+    @get:Nested
+    @get:Optional
+    override val debugOptions: Property<KotlinJsBrowserDebugOptions> = objects.property<KotlinJsBrowserDebugOptions>()
 
-    override fun configureDebug(options: KotlinJsBrowserDebugOptions) {
-        val defaultPwOptions = debugOptions.get()
-        debugOptions.set(
-            PwDebugOptions(
-                remoteDebuggingPort = options.debugPort ?: defaultPwOptions.remoteDebuggingPort,
-                debuggerReadyPort = options.debuggerReadyPort ?: defaultPwOptions.debuggerReadyPort,
-                debuggerReadyTimeoutMillis = options.debuggerReadyTimeoutMillis ?: defaultPwOptions.debuggerReadyTimeoutMillis,
-            )
-        )
-    }
+    private fun KotlinJsBrowserDebugOptions.toPwDebugOptions() = PwDebugOptions(
+        remoteDebuggingPort = debugPort.getOrElse(DEFAULT_DEBUG_PORT),
+        debuggerReadyPort = debuggerReadyPort.orNull,
+        debuggerReadyTimeoutMillis = debuggerReadyTimeoutMillis.getOrElse(DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS),
+    )
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
@@ -181,17 +177,17 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
-        val debugOptions = if (debug) debugOptions.get() else null
+        val pwDebugOptions = debugOptions.orNull?.toPwDebugOptions()
 
         val pwRunners = buildList {
-            if (debugOptions != null) {
+            if (pwDebugOptions != null) {
                 val runner = pickDebugRunner(task)
                 add(
                     runner.createPwRunnerSpec(
                         PwBrowserKind.CHROMIUM,
                         browsersDirectory,
                         cliArgs,
-                        debugOptions,
+                        pwDebugOptions,
                     )
                 )
             } else {

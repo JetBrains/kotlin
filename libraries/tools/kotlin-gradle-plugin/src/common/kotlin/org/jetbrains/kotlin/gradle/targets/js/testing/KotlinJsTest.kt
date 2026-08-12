@@ -249,12 +249,12 @@ internal constructor(
         }
 
         debug = true
-        debuggableFramework.configureDebug(
-            KotlinJsBrowserDebugOptions(
-                debugPort = browserDebugPort.orNull?.let { parsePort(it, "--browser-debug-port") },
-                debuggerReadyPort = browserDebugReadyPort.orNull?.let { parsePort(it, "--browser-debug-ready-port") },
-                debuggerReadyTimeoutMillis = browserDebugReadyTimeout.orNull?.let { parseTimeoutMillis(it) },
-            )
+        debuggableFramework.debugOptions.set(
+            objects.newInstance(KotlinJsBrowserDebugOptions::class.java).apply {
+                debugPort.set(browserDebugPort.orNull?.let { parsePort(it, "--browser-debug-port") })
+                debuggerReadyPort.set(browserDebugReadyPort.orNull?.let { parsePort(it, "--browser-debug-ready-port") })
+                debuggerReadyTimeoutMillis.set(browserDebugReadyTimeout.orNull?.let { parseTimeoutMillis(it) })
+            }
         )
     }
 

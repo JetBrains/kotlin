@@ -26,8 +26,9 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.DEFAULT_DEBUG_PORT
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
-import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwDebugOptions
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwRunnerSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
@@ -379,10 +380,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
         val debugOptions = spec.runners.single().debugOptions
 
-        val defaults = PwDebugOptions()
-        assertEquals(defaults.remoteDebuggingPort, debugOptions?.remoteDebuggingPort)
+        assertEquals(DEFAULT_DEBUG_PORT, debugOptions?.remoteDebuggingPort)
         assertNull(debugOptions?.debuggerReadyPort, "Without a readiness port the run must not wait for a debugger")
-        assertEquals(defaults.debuggerReadyTimeoutMillis, debugOptions?.debuggerReadyTimeoutMillis)
+        assertEquals(DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS, debugOptions?.debuggerReadyTimeoutMillis)
     }
 
     @Test
@@ -404,10 +404,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
         val debugOptions = spec.runners.single().debugOptions
 
-        val defaults = PwDebugOptions()
-        assertEquals(defaults.remoteDebuggingPort, debugOptions?.remoteDebuggingPort, "An unset debug port must fall back to the default")
+        assertEquals(DEFAULT_DEBUG_PORT, debugOptions?.remoteDebuggingPort, "An unset debug port must fall back to the default")
         assertEquals(54321, debugOptions?.debuggerReadyPort)
-        assertEquals(defaults.debuggerReadyTimeoutMillis, debugOptions?.debuggerReadyTimeoutMillis)
+        assertEquals(DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS, debugOptions?.debuggerReadyTimeoutMillis)
     }
 
     @Test
