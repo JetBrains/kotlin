@@ -321,18 +321,21 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         log.warn("Playwright executor doesn't support immediate stop")
     }
 
-    private fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
-        // Drop any CDP port the user passed, it would clash with the one we were given.
-        val args = mutableListOf<String>()
-        var skipNext = false
-        for (arg in this) {
-            when {
-                skipNext -> skipNext = false
-                arg == "--remote-debugging-port" -> skipNext = true
-                arg.startsWith("--remote-debugging-port=") -> Unit
-                else -> args.add(arg)
-            }
+}
+
+private const val REMOTE_DEBUGGING_PORT_ARG = "--remote-debugging-port"
+
+// Drops any CDP port the user passed, it would clash with the one we were given.
+internal fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
+    val args = mutableListOf<String>()
+    var skipPort = false
+    for ((index, arg) in withIndex()) {
+        when {
+            skipPort -> skipPort = false
+            arg.startsWith("$REMOTE_DEBUGGING_PORT_ARG=") -> Unit
+            arg == REMOTE_DEBUGGING_PORT_ARG -> skipPort = getOrNull(index + 1)?.toIntOrNull() != null
+            else -> args.add(arg)
         }
-        return args + "--remote-debugging-port=$port"
     }
+    return args + "$REMOTE_DEBUGGING_PORT_ARG=$port"
 }
