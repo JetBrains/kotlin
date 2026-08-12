@@ -1617,12 +1617,18 @@ def field_type_command(_, field_address, exe_ctx, result, internal_dict):
     for field_name in fields[1:]:
         if variable is not None:
             try:
-                provider = KonanProxyTypeProvider(variable, internal_dict)
-                field_index = provider.get_child_index(field_name)
-                if field_index < 0:
-                    variable = None
-                    break
-                variable = provider.get_child_at_index(field_index)
+                if variable.GetTypeName() == "ObjHeader *":
+                    provider = KonanProxyTypeProvider(variable, internal_dict)
+                    field_index = provider.get_child_index(field_name)
+                    if field_index < 0:
+                        variable = None
+                        break
+                    variable = provider.get_child_at_index(field_index)
+                else:
+                    variable = variable.GetChildMemberWithName(field_name)
+                    if variable is None or not variable.IsValid():
+                        variable = None
+                        break
             except (DebuggerException, ValueError):
                 variable = None
                 break
