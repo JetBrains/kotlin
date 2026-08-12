@@ -59,10 +59,10 @@ class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
 @Builder(access = AccessLevel.PROTECTED)
 class BuilderAccessLevelProtected(val id: Int)
 
-@Builder(access = AccessLevel.PACKAGE) // TODO: it should be prohibited, KT-88337
+@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
 class BuilderAccessLevelPackage(val id: Int)
 
-@Builder(access = AccessLevel.<!DEPRECATION!>MODULE<!>) // TODO: it should be prohibited, KT-88337
+@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>) // Prohibited, KT-88337
 class BuilderAccessLevelModule(val id: Int)
 
 fun testAccessLevels() {

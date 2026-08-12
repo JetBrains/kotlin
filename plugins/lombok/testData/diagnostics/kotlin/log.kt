@@ -94,10 +94,10 @@ class LogOnClassWithMemberLogPropertyAndCompanion {
 @Log(access = AccessLevel.PROTECTED)
 class LogAccessLevelProtected
 
-@Log(access = AccessLevel.PACKAGE) // TODO: it should be prohibited, KT-88337
+@Log(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
 class LogAccessLevelPackage
 
-@Log(access = AccessLevel.<!DEPRECATION!>MODULE<!>) // TODO: it should be prohibited, KT-88337
+@Log(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>) // Prohibited, KT-88337
 class LogAccessLevelModule
 
 fun test() {
