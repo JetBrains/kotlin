@@ -12,13 +12,18 @@ import org.jetbrains.kotlin.gradle.testing.newTempFile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.jupiter.api.io.TempDir
+import java.io.BufferedOutputStream
 import java.io.File
+import java.io.InvalidClassException
+import java.io.ObjectOutputStream
 import java.nio.file.Path
+import java.util.Hashtable
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class ClasspathAnalyzerTest : WithTemporaryFolder {
@@ -154,6 +159,20 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B", "test/C"), data.classAbiHash.keys)
         assertEquals(setOf("test/A", "test/B", "test/C"), data.classDependencies.keys)
+    }
+
+    @Test
+    fun testTamperedStructureFileIsRejected() {
+        // A structure file referencing a class outside the whitelist stands in for a deserialization-gadget payload;
+        // loadFrom must reject it instead of deserializing it (KT-88432).
+        val tampered = newTempFile("output.bin").toFile()
+        ObjectOutputStream(BufferedOutputStream(tampered.outputStream())).use {
+            it.writeObject(Hashtable<String, String>().apply { put("payload", "value") })
+        }
+
+        assertFailsWith<InvalidClassException> {
+            ClasspathEntryData.ClasspathEntrySerializer.loadFrom(tampered)
+        }
     }
 
     private fun emptyClass(internalName: String, superClass: String = "java/lang/Object"): ByteArray {

@@ -13,6 +13,24 @@ private const val CLASSPATH_ENTRIES_FILE = "classpath-entries.bin"
 private const val ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE = "ap-classpath-entries.bin"
 private const val CLASSPATH_STRUCTURE_FILE = "classpath-structure.bin"
 
+// Whitelist of classes that may appear as class descriptors (i.e. reach `resolveClass`) when deserializing the classpath
+// entry files (`classpath-entries.bin` / `ap-classpath-entries.bin`), which contain a `List<File>`. `Iterable.toList()`
+// produces one of `EmptyList` / `Collections$SingletonList` / `ArrayList`. `String` (the `File.path`) is written as
+// `TC_STRING`, so it never reaches `resolveClass` and is intentionally not listed. See KT-88432.
+private val CLASSPATH_ENTRIES_ALLOWED_CLASSES = setOf(
+    "java.io.File",
+    "java.util.ArrayList",
+    "java.util.Collections\$SingletonList",
+    "kotlin.collections.EmptyList",
+)
+
+// Whitelist for `classpath-structure.bin`, which contains a `HashMap<File, ClasspathEntryData?>`.
+private val CLASSPATH_STRUCTURE_ALLOWED_CLASSES = setOf(
+    "java.io.File",
+    "java.util.HashMap",
+    ClasspathEntryData::class.java.name,
+)
+
 open class ClasspathSnapshot protected constructor(
     private val cacheDir: File,
     private val classpath: List<File>,
@@ -28,23 +46,30 @@ open class ClasspathSnapshot protected constructor(
                 return UnknownSnapshot
             }
 
-            val classpathFiles = ObjectInputStream(BufferedInputStream(classpathEntries.inputStream())).use {
+            // The cache files are deserialized with a whitelisting stream and any failure falls back to a full,
+            // non-incremental run. This guards against Java-deserialization gadget attacks via a tampered cache and
+            // against corrupt caches (KT-88432).
+            return try {
                 @Suppress("UNCHECKED_CAST")
-                it.readObject() as List<File>
+                val classpathFiles = FilteringObjectInputStream(
+                    BufferedInputStream(classpathEntries.inputStream()), CLASSPATH_ENTRIES_ALLOWED_CLASSES
+                ).use { it.readObject() as List<File> }
+
+                @Suppress("UNCHECKED_CAST")
+                val annotationProcessorClasspathFiles = FilteringObjectInputStream(
+                    BufferedInputStream(annotationProcessorClasspathEntries.inputStream()), CLASSPATH_ENTRIES_ALLOWED_CLASSES
+                ).use { it.readObject() as List<File> }
+
+                @Suppress("UNCHECKED_CAST")
+                val dataForFiles = FilteringObjectInputStream(
+                    BufferedInputStream(classpathStructureData.inputStream()), CLASSPATH_STRUCTURE_ALLOWED_CLASSES
+                ).use { it.readObject() as MutableMap<File, ClasspathEntryData?> }
+
+                ClasspathSnapshot(cacheDir, classpathFiles, annotationProcessorClasspathFiles, dataForFiles)
+            } catch (_: Exception) {
+                // Cache is corrupt, was rejected by the class whitelist, or has an unexpected shape.
+                UnknownSnapshot
             }
-
-            val annotationProcessorClasspathFiles =
-                ObjectInputStream(BufferedInputStream(annotationProcessorClasspathEntries.inputStream())).use {
-                    @Suppress("UNCHECKED_CAST")
-                    it.readObject() as List<File>
-                }
-
-            val dataForFiles =
-                ObjectInputStream(BufferedInputStream(classpathStructureData.inputStream())).use {
-                    @Suppress("UNCHECKED_CAST")
-                    it.readObject() as MutableMap<File, ClasspathEntryData?>
-                }
-            return ClasspathSnapshot(cacheDir, classpathFiles, annotationProcessorClasspathFiles, dataForFiles)
         }
 
         fun createCurrent(cacheDir: File, classpath: List<File>, annotationProcessorClasspath: List<File>, allStructureData: Set<File>): ClasspathSnapshot {
