@@ -1,0 +1,1 @@
+/phasesAmbiguity.kt:27:48: error: Equality bound argument is ambiguous between following candidates: Outer.A.B, A.B.

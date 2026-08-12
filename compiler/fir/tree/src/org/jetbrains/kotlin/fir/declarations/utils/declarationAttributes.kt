@@ -246,6 +246,11 @@ val FirProperty.correspondingValueParameterFromPrimaryConstructor: FirValueParam
         return reference.resolvedSymbol as? FirValueParameterSymbol
     }
 
+/**
+ * Note: [equalityBoundType] can be a [org.jetbrains.kotlin.fir.types.ConeErrorType].
+ * It means that `EqualityBound` annotation was found on the parameter of `equals`,
+ * but its argument could not be resolved during [FirResolvePhase.TYPES] phase for whatever reason.
+ */
 var FirValueParameter.equalityBoundType: ConeKotlinType? by FirDeclarationDataRegistry.data(EqualityBoundType)
 val FirValueParameterSymbol.equalityBoundType: ConeKotlinType?
     get() {

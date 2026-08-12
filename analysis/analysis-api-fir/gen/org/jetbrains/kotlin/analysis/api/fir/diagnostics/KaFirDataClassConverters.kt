@@ -6563,6 +6563,15 @@ private fun KaDiagnosticConverterBuilder.addConversions143() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions144() {
+    add(FirErrors.AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT) { firDiagnostic ->
+        AmbiguouslyResolvedEqualityBoundArgumentImpl(
+            firDiagnostic.a.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN) { firDiagnostic ->
         OptInMarkerCanOnlyBeUsedAsAnnotationOrArgumentInOptInImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -8135,6 +8144,12 @@ private fun KaDiagnosticConverterBuilder.addConversions183() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions184() {
+    add(FirErrors.UNRESOLVED_EQUALITY_BOUND_ARGUMENT) { firDiagnostic ->
+        UnresolvedEqualityBoundArgumentImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ITERATOR_MISSING) { firDiagnostic ->
         IteratorMissingImpl(
             firDiagnostic as KtPsiDiagnostic,

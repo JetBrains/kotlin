@@ -1,0 +1,21 @@
+/test.kt:25:40: error: Annotation argument must be a compile-time constant.
+
+/test.kt:25:40: error: None of the following candidates is applicable:
+
+interface A : Any:
+  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+
+interface A : Any:
+  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+
+/test.kt:29:40: error: Annotation argument must be a compile-time constant.
+
+/test.kt:29:40: error: None of the following candidates is applicable:
+
+interface A : Any:
+  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+
+interface A : Any:
+  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+
+/test.kt:34:40: error: Equality bound argument is ambiguous between following candidates: p.B, q.B.
