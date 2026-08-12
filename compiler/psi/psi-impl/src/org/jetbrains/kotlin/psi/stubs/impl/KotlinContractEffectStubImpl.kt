@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtContractEffect
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeTypeBean
 import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
 
 @OptIn(KtImplementationDetail::class)
 class KotlinContractEffectStubImpl(parent: StubElement<*>?) : KotlinPlaceHolderStubImpl<KtContractEffect>(
     /* parent = */ parent,
-    /* elementType = */ KtStubElementTypes.CONTRACT_EFFECT,
+    /* elementType = */ KtNodeTypes.CONTRACT_EFFECT,
 ), KotlinContractEffectStub {
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinContractEffectStubImpl = KotlinContractEffectStubImpl(

@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -29,7 +29,7 @@ class KotlinUserTypeStubImpl(
     parent: StubElement<*>?,
     val upperBound: KotlinTypeBean?,
     val abbreviatedType: KotlinClassTypeBean?,
-) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub {
+) : KotlinStubBaseImpl<KtUserType>(parent, KtNodeTypes.USER_TYPE), KotlinUserTypeStub {
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinUserTypeStubImpl = KotlinUserTypeStubImpl(
         parent = newParent,

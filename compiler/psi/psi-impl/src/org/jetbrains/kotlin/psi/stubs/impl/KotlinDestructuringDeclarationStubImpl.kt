@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
 internal class KotlinDestructuringDeclarationStubImpl(
     parent: StubElement<*>?,
     override val isVar: Boolean,
     override val hasInitializer: Boolean,
-) : KotlinStubBaseImpl<KtDestructuringDeclaration>(parent, KtStubElementTypes.DESTRUCTURING_DECLARATION),
+) : KotlinStubBaseImpl<KtDestructuringDeclaration>(parent, KtNodeTypes.DESTRUCTURING_DECLARATION),
     KotlinDestructuringDeclarationStub {
 
     @KtImplementationDetail

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,11 +9,11 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<KtNameReferenceExpression> implements
                                                                                                        KotlinNameReferenceExpressionStub {
@@ -26,7 +26,7 @@ public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<Kt
             @NotNull StringRef referencedName,
             boolean myClassRef
     ) {
-        super(parent, KtStubElementTypes.REFERENCE_EXPRESSION);
+        super(parent, KtNodeTypes.REFERENCE_EXPRESSION);
         this.referencedName = referencedName;
         this.myClassRef = myClassRef;
     }

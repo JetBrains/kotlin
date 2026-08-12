@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
 class KotlinEnumEntryStubImpl(
@@ -24,7 +24,7 @@ class KotlinEnumEntryStubImpl(
     override val isLocal: Boolean,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
-    elementType = KtStubElementTypes.ENUM_ENTRY,
+    elementType = KtNodeTypes.ENUM_ENTRY,
 ), KotlinClassStub {
     override val isClsStubCompiledToJvmDefaultImplementation: Boolean
         get() = false
@@ -45,7 +45,7 @@ class KotlinEnumEntryStubImpl(
 
     override val superNames: List<String>
         get() {
-            if (findChildStubByType(KtStubElementTypes.INITIALIZER_LIST) == null) {
+            if (findChildStubByElementType(KtNodeTypes.INITIALIZER_LIST) == null) {
                 return emptyList()
             }
 
