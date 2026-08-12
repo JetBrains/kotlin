@@ -13,8 +13,8 @@ fun use() {
 
 fun checkArrays(): Array<Any> {
     val someArray = arrayOfNulls<Any>(5)
-    someArray <!UNCHECKED_CAST!>as Array<Int><!>
-    return someArray <!UNCHECKED_CAST!>as Array<Any><!>
+    someArray as Array<Int>
+    return someArray as Array<Any>
 }
 
 class Wrapper<T>(val x: T)
@@ -26,9 +26,9 @@ fun checkArrays2(): Array<Wrapper<String>> {
 
 fun checkArrays3() {
     val someArray = arrayOfNulls<String>(1)
-    someArray <!UNCHECKED_CAST!>as Array<Any><!>
+    someArray as Array<Any>
     val intArray = arrayOfNulls<Int>(1)
-    intArray <!UNCHECKED_CAST!>as Array<Any><!>
+    intArray as Array<Any>
 }
 
 fun println(s: String) = s

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -52,8 +54,8 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
 
     // downcasting to a non-reified type parameter is always erased
     if (isNonReifiedTypeParameter) return true
-    // downcasting to a reified type parameter is never erased
-    else if (subtype is ConeTypeParameterType) return false
+
+    if (subtype.isRuntimeAvailable()) return false
 
     val regularClassSymbol = subtype.toRegularClassSymbol() ?: return true
 
@@ -224,3 +226,29 @@ internal fun isRefinementUseless(
 context(context: CheckerContext)
 private fun isExactTypeCast(lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false)
+
+context(context: CheckerContext)
+fun ConeKotlinType.isRuntimeAvailable(): Boolean {
+    val expanded = fullyExpandedType()
+    return when (expanded) {
+        is ConeTypeParameterType -> expanded.lookupTag.typeParameterSymbol.isReified
+        is ConeClassLikeType -> {
+            val symbol = expanded.toRegularClassSymbol() ?: return true
+            if (symbol.typeParameterSymbols.isEmpty()) {
+                true
+            } else if (symbol.classId == StandardClassIds.Array) {
+                val elemProjection = expanded.typeArguments.singleOrNull() ?: return false
+                when (elemProjection) {
+                    is ConeStarProjection -> true
+                    is ConeKotlinTypeProjection -> elemProjection.type.isRuntimeAvailable()
+                }
+            } else {
+                expanded.typeArguments.all { it is ConeStarProjection }
+            }
+        }
+        is ConeFlexibleType -> expanded.lowerBound.isRuntimeAvailable()
+        is ConeDefinitelyNotNullType -> expanded.original.isRuntimeAvailable()
+        is ConeIntersectionType -> expanded.intersectedTypes.all { it.isRuntimeAvailable() }
+        else -> true
+    }
+}

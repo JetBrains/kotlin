@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -129,9 +130,7 @@ object CastDiagnosticsUtil {
         // downcasting to a non-reified type parameter is always erased
         if (isNonReifiedTypeParameter) return true
 
-        // Check that we are actually casting to a generic type
-        // NOTE: this does not account for 'as Array<List<T>>'
-        if (allParametersReified(subtype)) return false
+        if (isRuntimeAvailable(subtype)) return false
 
         val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.constructor).resultingType ?: return true
 
@@ -209,6 +208,28 @@ object CastDiagnosticsUtil {
     }
 
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }
+
+    @JvmStatic
+    fun isRuntimeAvailable(type: KotlinType): Boolean {
+        if (TypeUtils.isNonReifiedTypeParameter(type)) return false
+        if (type.constructor.declarationDescriptor is TypeParameterDescriptor) {
+            return true
+        }
+        val descriptor = type.constructor.declarationDescriptor
+        if (descriptor is TypeAliasDescriptor) {
+            return isRuntimeAvailable(descriptor.expandedType)
+        }
+        val classDescriptor = descriptor as? ClassDescriptor ?: return true
+        if (classDescriptor.declaredTypeParameters.isEmpty()) return true
+
+        if (KotlinBuiltIns.isArray(type)) {
+            val typeProjection = type.arguments.singleOrNull() ?: return false
+            if (typeProjection.isStarProjection) return true
+            return isRuntimeAvailable(typeProjection.type)
+        }
+
+        return type.arguments.all { it.isStarProjection }
+    }
 
     fun castIsUseless(
         expression: KtBinaryExpressionWithTypeRHS,
