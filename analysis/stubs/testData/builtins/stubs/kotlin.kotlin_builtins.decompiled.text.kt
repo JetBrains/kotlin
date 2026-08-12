@@ -673,8 +673,9 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
-@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 @kotlin.SinceKotlin(version = "2.5")
+@kotlin.annotation.MustBeDocumented
 public final annotation class EqualityBound public constructor(
     public final val bound: kotlin.reflect.KClass<*>,
 ) : kotlin.Annotation {

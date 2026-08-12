@@ -4,7 +4,7 @@
 public typealias BaseAlias = Base
 
 public interface Base {
-    public abstract operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean
+    public abstract operator fun equals(other: kotlin.Any?): kotlin.Boolean
 }
 
 public final class Inherited public constructor() : Base {
@@ -12,11 +12,11 @@ public final class Inherited public constructor() : Base {
 }
 
 public final class Generic<T> public constructor() {
-    public open operator fun equals(@kotlin.EqualityBound(bound = Generic::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class Aliased public constructor() : Base {
-    public open operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final data class Data public constructor(value: kotlin.Int) {
