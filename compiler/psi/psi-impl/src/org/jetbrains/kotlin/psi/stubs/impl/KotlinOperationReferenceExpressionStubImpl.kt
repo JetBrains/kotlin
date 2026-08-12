@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinOperationReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
  * @see org.jetbrains.kotlin.psi.KtOperationReferenceExpression
@@ -22,7 +22,7 @@ class KotlinOperationReferenceExpressionStubImpl(
     parent: StubElement<*>?,
     private val referencedNameRef: StringRef,
     override val operationToken: IElementType,
-) : KotlinStubBaseImpl<KtOperationReferenceExpression>(parent, KtStubElementTypes.OPERATION_REFERENCE),
+) : KotlinStubBaseImpl<KtOperationReferenceExpression>(parent, KtNodeTypes.OPERATION_REFERENCE),
     KotlinOperationReferenceExpressionStub {
     override val referencedName: String
         get() = referencedNameRef.string

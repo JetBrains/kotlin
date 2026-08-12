@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.constant.ConstantValue;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtProperty;
@@ -41,18 +41,18 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
         IElementType parentElementType = parentNode.getElementType();
 
         // Simple check for non-local properties inside classes and files
-        if (parentElementType == KtStubElementTypes.CLASS_BODY || parentElementType == KtFileElementType.INSTANCE) {
+        if (parentElementType == KtNodeTypes.CLASS_BODY || parentElementType == KtNodeTypes.FILE) {
             return true;
         }
 
         // Simple check for local and non-local properties inside blocks
-        if (parentElementType == KtStubBasedElementTypes.BLOCK) {
+        if (parentElementType == KtNodeTypes.BLOCK) {
             IElementType grandparentElementType = parentNode.getTreeParent().getElementType();
-            if (grandparentElementType == KtStubElementTypes.SCRIPT) {
+            if (grandparentElementType == KtNodeTypes.SCRIPT) {
                 return true;
             }
 
-            if (grandparentElementType == KtStubElementTypes.FUNCTION || grandparentElementType == KtStubElementTypes.PROPERTY_ACCESSOR) {
+            if (grandparentElementType == KtNodeTypes.FUN || grandparentElementType == KtNodeTypes.PROPERTY_ACCESSOR) {
                 return false;
             }
         }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi.stubs
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
@@ -55,7 +55,7 @@ object StubUtils {
         return when (parentStub) {
             is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
             is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
-            is KotlinPlaceHolderStub<*> if parentStub.elementType == KtStubElementTypes.CLASS_BODY -> {
+            is KotlinPlaceHolderStub<*> if parentStub.elementType == KtNodeTypes.CLASS_BODY -> {
                 val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
                     containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)

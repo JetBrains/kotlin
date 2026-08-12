@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
  * @param equalityBoundType The equality bound of an `operator fun equals` parameter, see `kotlin.EqualityBound`.
@@ -36,7 +36,7 @@ class KotlinParameterStubImpl(
     val equalityBoundType: KotlinTypeBean?,
     val kdocText: String?,
     val constantInitializer: ConstantValue<*>?,
-) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
+) : KotlinStubBaseImpl<KtParameter>(parent, KtNodeTypes.VALUE_PARAMETER), KotlinParameterStub {
 
     override fun getName(): String? = name?.string
 

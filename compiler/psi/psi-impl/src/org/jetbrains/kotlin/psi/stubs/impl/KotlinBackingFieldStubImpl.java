@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.KtBackingField;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinBackingFieldStubImpl extends KotlinStubBaseImpl<KtBackingField>
         implements KotlinBackingFieldStub {
     private final boolean hasInitializer;
 
     public KotlinBackingFieldStubImpl(StubElement<?> parent, boolean hasInitializer) {
-        super(parent, KtStubElementTypes.BACKING_FIELD);
+        super(parent, KtNodeTypes.BACKING_FIELD);
         this.hasInitializer = hasInitializer;
     }
 
