@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.js.testOld.utils;
 
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.ast.JsFunction;
-import org.jetbrains.kotlin.js.backend.ast.JsName;
 import org.jetbrains.kotlin.js.backend.ast.JsNode;
-import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives;
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective;
 import org.jetbrains.kotlin.test.TargetBackend;
@@ -22,37 +18,11 @@ import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import static kotlin.test.AssertionsKt.assertTrue;
 
 public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
-
-    private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler() {
-        @Override
-        public void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            String functionName = arguments.getNamedArgument("function");
-
-            Set<String> except = new HashSet<>();
-            String exceptString = arguments.findNamedArgument("except");
-            if (exceptString != null) {
-                for (String exceptId : StringUtil.split(exceptString, ";")) {
-                    except.add(exceptId.trim());
-                }
-            }
-
-            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            Set<JsName> freeVars = CollectUtilsKt.collectFreeVariables(function);
-            for (JsName freeVar : freeVars) {
-                assertTrue(except.contains(freeVar.getIdent()),
-                           "Function " + functionName + " captures free variable " + freeVar.getIdent());
-            }
-        }
-    };
 
     private static final List<Pair<ValueDirective<? extends ArgumentsHelper>, DirectiveHandler>> DIRECTIVE_HANDLERS = Arrays.asList(
             new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), new DirectiveHandler<>()),
@@ -78,7 +48,7 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_IF_COUNT(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_SUPER_COUNT(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_STRING_LITERAL_COUNT(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getHAS_NO_CAPTURED_VARS(), HAS_NO_CAPTURED_VARS)
+            new Pair<>(JsAstDirectives.INSTANCE.getHAS_NO_CAPTURED_VARS(), new DirectiveHandler<>())
     );
 
     @SuppressWarnings("unchecked")
