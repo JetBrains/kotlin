@@ -20,7 +20,7 @@ internal fun testDataPath(path: String): Path {
 }
 
 internal fun compileToNativeKLib(kLibSourcesRoot: Path): Path {
-    val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
+    val ktFiles = Files.walk(kLibSourcesRoot).use { paths -> paths.asSequence().filter { it.extension == "kt" }.toList() }
     val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
 
     val arguments = buildList {
