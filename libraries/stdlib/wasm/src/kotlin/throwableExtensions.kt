@@ -85,8 +85,8 @@ private class ExceptionTraceBuilder {
         }
         visited.add(this)
 
-        var stack = this.stack as String?
-        if (stack != null) {
+        var stack = this.stack
+        if (stack.isNotEmpty()) {
             target.append(shortInfo).append("\n")
             if (topStack.isEmpty()) {
                 topStack = stack
