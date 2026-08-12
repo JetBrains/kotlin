@@ -1,7 +1,7 @@
 // KT-78707, KT-78998
 // WITH_STDLIB
 
-// TARGET_BACKEND: WASM_JS, WASM_WASI
+// TARGET_BACKEND: WASM
 // WASM_STANDALONE
 // ^^^ in non-standalone run, test classes will be placed in a sub-package, so `Throwable.toString()` would give different result
 
@@ -10,7 +10,7 @@ package a
 class MyException(message: String) : RuntimeException(message)
 
 // "    ... and 3 more common stack frames skipped" - replaces the frames a throwable shares with the trace it is
-// printed inside of. How many are shared is target-specific, so only the presence of the line is comparable.
+// printed inside of. How many are shared is engine-specific, so only the presence of the line is comparable.
 private fun isCommonFramesLine(line: String): Boolean = line.trimStart().startsWith("... and ")
 
 // Frame lines look different on every target and engine, so they are only recognized, never compared:
@@ -26,11 +26,8 @@ private fun isFrameLine(line: String): Boolean {
 private fun headerLines(trace: String): List<String> =
     trace.lines().filter { it.isNotEmpty() && !isFrameLine(it) }
 
-// A stack trace must start with exactly one header line, equal to Throwable.toString().
-// More than one header line means a platform-specific header leaked in addition to the Kotlin one, e.g.
-//     kotlin.RuntimeException
-//     RuntimeException:
-//         at ...
+// A stack trace must start with header lines, equal to Throwable.toString().
+// Stack trace header can also contain engine specific header - we don't check it.
 private fun checkTrace(e: Throwable, expectedHeader: String): String? {
     val actualHeader = e.toString()
     if (actualHeader != expectedHeader)

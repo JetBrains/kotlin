@@ -3,7 +3,7 @@
 // WITH_STDLIB
 
 // "    ... and 3 more common stack frames skipped" - replaces the frames a throwable shares with the trace it is
-// printed inside of. How many are shared is target-specific, so only the presence of the line is comparable.
+// printed inside of. How many are shared is engine-specific, so only the presence of the line is comparable.
 private fun isCommonFramesLine(line: String): Boolean = line.trimStart().startsWith("... and ")
 
 // Frame lines look different on every target and engine, so they are only recognized, never compared:
@@ -34,7 +34,6 @@ fun throwJsExceptionWithCustomName(): Int = js("{ const e = new Error('Test'); e
 // ECMA-262 leaves just the message when the name is empty, so there is no leading colon.
 fun throwJsExceptionWithEmptyName(): Int = js("{ const e = new Error('Test'); e.name = ''; throw e; }")
 
-// A subclass that does not assign `name` inherits \"Error\" from Error.prototype rather than its class name.
 fun throwJsExceptionSubclass(): Int = js("{ class MyError extends Error {}; throw new MyError('Test'); }")
 
 fun throwJsExceptionWithCause(): Int = js("{ throw new Error('outer', { cause: new Error('inner') }); }")
@@ -72,7 +71,6 @@ private fun checkJsException(
     if (e.message != expectedMessage)
         return "message: expected <$expectedMessage>, got <${e.message}>"
 
-    // The description of the thrown value is printed once: the engine's own copy of it is dropped.
     val trace = e.stackTraceToString()
     val expectedLines = expectedToString.lines()
     if (headerLines(trace).take(expectedLines.size) != expectedLines)
