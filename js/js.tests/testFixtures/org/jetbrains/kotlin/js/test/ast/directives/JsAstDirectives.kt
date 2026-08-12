@@ -20,9 +20,6 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
     private fun <T : ArgumentsHelper> directiveWithArguments(description: String, parser: (String) -> T) =
         valueDirective(description, DirectiveApplicability.Any, splitValuesOnSpaces = false, parser = parser)
 
-    private fun directiveWithArguments(description: String) =
-        directiveWithArguments(description, ::ArgumentsHelper)
-
     val EXPECT_GENERATED_JS by directiveWithArguments(
         "Checks the generated JS of a specific function against the specified file",
         ::ExpectGeneratedJsDirective,
@@ -147,5 +144,8 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         CountNodesDirective.counting<JsStringLiteral>(),
     )
 
-    val HAS_NO_CAPTURED_VARS by directiveWithArguments("Checks that the specified function doesn't capture any variables")
+    val HAS_NO_CAPTURED_VARS by directiveWithArguments(
+        "Checks that the specified function doesn't capture any variables",
+        ::CheckNoCapturedVarsDirective,
+    )
 }
