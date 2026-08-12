@@ -4341,7 +4341,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/subtargets/DefaultDist
 	public fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	protected fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
 	protected fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public final fun environment (Ljava/lang/String;Ljava/lang/String;)V
@@ -4356,6 +4356,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTes
 	public final fun getTestFramework ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;
 	public final fun getTestFrameworkSettings ()Ljava/lang/String;
 	public final fun onTestFrameworkSet (Lorg/gradle/api/Action;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public fun setCompilation (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public final fun setDebug (Z)V
 	public final fun setEnvironment (Ljava/util/Map;)V
