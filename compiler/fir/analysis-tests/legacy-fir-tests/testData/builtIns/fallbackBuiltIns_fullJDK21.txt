@@ -759,7 +759,7 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(2.5)) public final annotation class EqualityBound : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class EqualityBound : R|kotlin/Annotation| {
     public final val bound: R|kotlin/reflect/KClass<*>|
         public get(): R|kotlin/reflect/KClass<*>|
 

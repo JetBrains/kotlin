@@ -18,21 +18,6 @@ Aliased.class:
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
               equalityBoundType: Base (abbreviatedType: BaseAlias)
-              MODIFIER_LIST[]
-                ANNOTATION_ENTRY[hasValueArguments=true, shortName=EqualityBound]
-                  valueArguments: [ bound -> NormalClass(value=/Base) ]
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION[referencedName=kotlin]
-                        REFERENCE_EXPRESSION[referencedName=EqualityBound]
-                  VALUE_ARGUMENT_LIST
-                    VALUE_ARGUMENT[isSpread=false]
-                      VALUE_ARGUMENT_NAME
-                        REFERENCE_EXPRESSION[referencedName=bound]
-                      CLASS_LITERAL_EXPRESSION
-                        REFERENCE_EXPRESSION[referencedName=Base]
               TYPE_REFERENCE
                 NULLABLE_TYPE
                   USER_TYPE
@@ -58,21 +43,6 @@ Base.class:
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
               equalityBoundType: Base
-              MODIFIER_LIST[]
-                ANNOTATION_ENTRY[hasValueArguments=true, shortName=EqualityBound]
-                  valueArguments: [ bound -> NormalClass(value=/Base) ]
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION[referencedName=kotlin]
-                        REFERENCE_EXPRESSION[referencedName=EqualityBound]
-                  VALUE_ARGUMENT_LIST
-                    VALUE_ARGUMENT[isSpread=false]
-                      VALUE_ARGUMENT_NAME
-                        REFERENCE_EXPRESSION[referencedName=bound]
-                      CLASS_LITERAL_EXPRESSION
-                        REFERENCE_EXPRESSION[referencedName=Base]
               TYPE_REFERENCE
                 NULLABLE_TYPE
                   USER_TYPE
@@ -194,21 +164,6 @@ Generic.class:
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
               equalityBoundType: Generic<STAR>
-              MODIFIER_LIST[]
-                ANNOTATION_ENTRY[hasValueArguments=true, shortName=EqualityBound]
-                  valueArguments: [ bound -> NormalClass(value=/Generic) ]
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION[referencedName=kotlin]
-                        REFERENCE_EXPRESSION[referencedName=EqualityBound]
-                  VALUE_ARGUMENT_LIST
-                    VALUE_ARGUMENT[isSpread=false]
-                      VALUE_ARGUMENT_NAME
-                        REFERENCE_EXPRESSION[referencedName=bound]
-                      CLASS_LITERAL_EXPRESSION
-                        REFERENCE_EXPRESSION[referencedName=Generic]
               TYPE_REFERENCE
                 NULLABLE_TYPE
                   USER_TYPE

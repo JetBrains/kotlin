@@ -5457,7 +5457,7 @@ FILE[kind=File[packageFqName=kotlin]]
                   REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
                 REFERENCE_EXPRESSION[referencedName=VALUE_PARAMETER]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
-        valueArguments: [ value -> AnnotationRetention.BINARY ]
+        valueArguments: [ value -> AnnotationRetention.SOURCE ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -5476,7 +5476,7 @@ FILE[kind=File[packageFqName=kotlin]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
-              REFERENCE_EXPRESSION[referencedName=BINARY]
+              REFERENCE_EXPRESSION[referencedName=SOURCE]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "2.5" ]
         CONSTRUCTOR_CALLEE
@@ -5491,6 +5491,16 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=version]
             STRING_TEMPLATE
               LITERAL_STRING_TEMPLATE_ENTRY[text=2.5]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=EqualityBound]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
