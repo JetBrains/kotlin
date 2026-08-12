@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
@@ -73,7 +72,7 @@ class LightTreeRawFirDeclarationBuilder(
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parsePreamble]
      */
     fun convertFile(file: LighterASTNode, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
-        if (file.tokenType != KT_FILE) {
+        if (file.tokenType != KtNodeTypes.FILE) {
             //TODO throw error
             throw Exception()
         }

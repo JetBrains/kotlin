@@ -8,13 +8,15 @@ package org.jetbrains.kotlin;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtNodeTypes {
     @NotNull IFileElementType FILE = KtStubBasedElementTypes.FILE;
 
-    @NotNull IFileElementType KT_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
+    /**
+     * @deprecated Use {@code FILE} instead.
+     */
+    @Deprecated @NotNull IFileElementType KT_FILE = FILE;
 
     @NotNull IElementType CLASS     = KtStubBasedElementTypes.CLASS;
     @NotNull IElementType FUN       = KtStubBasedElementTypes.FUNCTION;
