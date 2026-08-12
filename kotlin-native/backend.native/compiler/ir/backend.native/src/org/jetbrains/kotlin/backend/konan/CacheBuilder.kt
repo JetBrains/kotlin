@@ -560,7 +560,7 @@ class CacheBuilder(
             konanLibraryToAddToCache = libraryPath
             konanNoDefaultLibs = true
             konanNoStdlib = true
-            konanLibraries = libraries
+            konanLibraries = libraries + libraryPath
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
                 konanFriendLibraries = config.friendModuleFiles.map { it.absolutePathString() }
