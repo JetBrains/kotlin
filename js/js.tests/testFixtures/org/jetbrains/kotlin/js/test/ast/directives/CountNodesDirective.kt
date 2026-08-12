@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil.getFunction
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
+import kotlin.reflect.KClass
 
-class CountNodesDirective<T : JsNode>(entry: String, private val klass: Class<T>) : ArgumentsHelper(entry), JsAstDirective {
+class CountNodesDirective<T : JsNode>(entry: String, private val klass: KClass<T>) : ArgumentsHelper(entry), JsAstDirective {
     companion object {
-        inline fun <reified T : JsNode> counting(): (String) -> CountNodesDirective<T> = { CountNodesDirective(it, T::class.java) }
+        inline fun <reified T : JsNode> counting(): (String) -> CountNodesDirective<T> = { CountNodesDirective(it, T::class) }
     }
 
     val function by required()
@@ -35,11 +36,11 @@ class CountNodesDirective<T : JsNode>(entry: String, private val klass: Class<T>
 
         if (count != null) {
             assertEquals(count, actualCount) {
-                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected count is $count"
+                "Function $functionName contains $actualCount nodes of type ${klass.simpleName}, but expected count is $count"
             }
         } else if (maxCount != null) {
             assertTrue(maxCount >= actualCount) {
-                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected max is $maxCount"
+                "Function $functionName contains $actualCount nodes of type ${klass.simpleName}, but expected max is $maxCount"
             }
         } else {
             throw IllegalArgumentException("'max' or 'count' argument should be provided")
