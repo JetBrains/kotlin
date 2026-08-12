@@ -19,7 +19,6 @@ import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.contracts.contract
 
 /**
  * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
@@ -51,9 +50,9 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var jitStartTime: Long? = null
     private var garbageCollectorMXBeans: List<GarbageCollectorMXBean> = emptyList()
 
-    private val phaseMeasurements: SortedMap<PhaseType, Time> = sortedMapOf()
-    private val phaseSideMeasurements: SortedMap<PhaseSideType, SideStats> = sortedMapOf()
-    private var gcMeasurements: SortedMap<String, GarbageCollectionStats> = sortedMapOf()
+    private val phaseMeasurements: MutableMap<PhaseType, Time> = sortedMapOf()
+    private val phaseSideMeasurements: MutableMap<PhaseSideType, SideStats> = sortedMapOf()
+    private var gcMeasurements: MutableMap<String, GarbageCollectionStats> = sortedMapOf()
     private var jitTimeMillis: Long? = null
     private val extendedStats: MutableList<String> = mutableListOf()
 

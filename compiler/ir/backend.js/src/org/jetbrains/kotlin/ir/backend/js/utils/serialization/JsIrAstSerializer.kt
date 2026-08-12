@@ -457,7 +457,7 @@ private class JsIrAstSerializer {
             override fun visitObjectLiteral(x: JsObjectLiteral) {
                 writeByte(ExpressionIds.OBJECT_LITERAL)
                 writeCollection(x.propertyInitializers) {
-                    when (it) {
+                    when (it!!) {
                         is JsPropertyInitializer.KeyValue -> {
                             writeInt(PropertyInitializerKinds.KEY_VALUE)
                             writeExpression(it.labelExpr)

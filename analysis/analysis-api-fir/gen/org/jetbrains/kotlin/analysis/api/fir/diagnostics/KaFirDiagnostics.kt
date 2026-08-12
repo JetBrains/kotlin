@@ -5071,6 +5071,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val subjectType: KaType
     }
 
+    interface WhenSubjectCanBeNullInJava : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WhenSubjectCanBeNullInJava::class
+        val subjectType: KaType
+    }
+
     interface UpperBoundCannotBeArray : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UpperBoundCannotBeArray::class
     }
