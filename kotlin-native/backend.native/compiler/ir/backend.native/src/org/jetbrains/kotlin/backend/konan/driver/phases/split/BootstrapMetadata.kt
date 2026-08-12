@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.backend.konan.ResolvedCacheBinaries
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.resolveCacheBinaries
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.TempFiles
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -30,6 +33,7 @@ private const val MANIFEST_ENTRY_SIZE: Long = 1L + Long.SIZE_BYTES + Long.SIZE_B
 
 private val FORCE_LOADED_CACHES_FQN = setOf(
         "kotlin.native.internal", // This points to the Runtime code
+        "org.jetbrains.kotlin.native.platform.",
         "skiko",
         "libkotlin",
         "libstdlib-cache"
@@ -43,7 +47,7 @@ private val String.isForceLoadCache: Boolean
 
 internal data class BootstrapCompilationMetadata(
         val forceLoadCaches: List<String>,
-        val cachesToLoadAtRuntime: List<String>,
+        val payloadsToLoadAtRuntime: List<String>,
         val resolvedCaches: ResolvedCacheBinaries
 )
 
@@ -76,16 +80,25 @@ private data class Manifest(
         val entries: List<ManifestEntry>
 )
 
-private fun BootstrapCompilationMetadata.toManifest(): Manifest {
-    val cachesToSize = cachesToLoadAtRuntime
+private fun BootstrapCompilationMetadata.toManifest(configuration: CompilerConfiguration): Manifest {
+    val [existingPayloads, missingPayloads] = payloadsToLoadAtRuntime
             .map { Path(it) }
-            .filter { it.exists() }
-            .associateWith { it.fileSize() }
-    val bundleSize = cachesToSize.values.sum()
-    val manifestSize = MANIFEST_HEADER_SIZE + MANIFEST_ENTRY_SIZE * cachesToSize.size + bundleSize
+            .partition { it.exists() }
+
+    for (missingPayload in missingPayloads) {
+        configuration.report(
+                CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
+                "Bootstrap payload does not exist and will be omitted from the embedded manifest: $missingPayload." +
+                        "Please report this issue in our tracker."
+        )
+    }
+
+    val payloadsToSize = existingPayloads.associateWith { it.fileSize() }
+    val bundleSize = payloadsToSize.values.sum()
+    val manifestSize = MANIFEST_HEADER_SIZE + MANIFEST_ENTRY_SIZE * payloadsToSize.size + bundleSize
 
     var offset = 0L
-    val entries = cachesToSize.map { [path, size] ->
+    val entries = payloadsToSize.map { [path, size] ->
         ManifestEntry(
                 path = path,
                 kind = path.toPayloadKind(),
@@ -125,8 +138,12 @@ private fun Manifest.toByteArray(byteOrder: ByteOrder): ByteArray {
  *
  * At the time of writing, this function works mainly for Darwin (i.e., macOS, iOS, ...).
  */
-private fun LLVMModuleRef.embedBootstrapManifest(context: LLVMContextRef, metadata: BootstrapCompilationMetadata) {
-    val manifest = metadata.toManifest()
+private fun LLVMModuleRef.embedBootstrapManifest(
+        context: LLVMContextRef,
+        configuration: CompilerConfiguration,
+        metadata: BootstrapCompilationMetadata,
+) {
+    val manifest = metadata.toManifest(configuration)
     val targetByteOrder = if (LLVMByteOrder(LLVMGetModuleDataLayout(this)) == LLVMByteOrdering.LLVMBigEndian) {
         ByteOrder.BIG_ENDIAN
     } else {
@@ -151,15 +168,20 @@ private fun LLVMModuleRef.embedBootstrapManifest(context: LLVMContextRef, metada
 
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.resolveBootstrapMetadata(
         dependenciesTrackingResult: DependenciesTrackingResult,
+        bootstrapObjectPath: Path,
 ): BootstrapCompilationMetadata {
     // Resolve cache binaries (stdlib, platform libs, etc.) that the host must link against
     val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, dependenciesTrackingResult)
     val [forceLoadCaches, jitCaches] = resolvedCaches.static.partition { it.isForceLoadCache }
-    return BootstrapCompilationMetadata(forceLoadCaches, jitCaches, resolvedCaches)
+    return BootstrapCompilationMetadata(
+            forceLoadCaches,
+            listOf(bootstrapObjectPath.absolutePathString()) + jitCaches,
+            resolvedCaches,
+    )
 }
 
 /**
- * The split-compilation manifest defines with objects from the cache should be loaded
+ * The split-compilation manifest defines which object and archive payloads should be loaded
  * at the start of the host.
  */
 internal fun PhaseEngine<NativeGenerationState>.generateManifestObject(
@@ -170,7 +192,7 @@ internal fun PhaseEngine<NativeGenerationState>.generateManifestObject(
     val manifestBitcodePath = temporaryFiles.createBitcodeFile(MANIFEST_MODULE_NAME)
     val manifestModule = LLVMModuleCreateWithNameInContext(MANIFEST_MODULE_NAME, context.llvmContext)!!.apply {
         LLVMSetDataLayout(this, context.runtime.dataLayout)
-        embedBootstrapManifest(context.llvmContext, manifest)
+        embedBootstrapManifest(context.llvmContext, context.config.configuration, manifest)
     }
     runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(manifestModule, manifestBitcodePath))
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(manifestBitcodePath, manifestObjectPath))
