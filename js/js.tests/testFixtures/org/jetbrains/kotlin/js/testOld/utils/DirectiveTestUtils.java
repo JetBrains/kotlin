@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives;
+import org.jetbrains.kotlin.js.test.ast.directives.CountNodesDirective;
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives;
@@ -25,63 +26,11 @@ import java.util.List;
 import java.util.Set;
 
 import static kotlin.test.AssertionsKt.assertTrue;
-import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
-
-    private static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
-
-        @NotNull
-        private final Class<T> klass;
-
-        CountNodesDirective(@NotNull Class<T> klass) {
-            super();
-            this.klass = klass;
-        }
-
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            String functionName = arguments.getNamedArgument("function");
-            String countStr = arguments.findNamedArgument("count");
-            String maxCountStr = arguments.findNamedArgument("max");
-            String includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations");
-
-            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            List<T> nodes = collectInstances(klass, function.getBody(), includeNestedDeclarations != null && includeNestedDeclarations.equals("true"));
-            int actualCount = 0;
-
-            for (T node : nodes) {
-                actualCount += getActualCountFor(node, arguments);
-            }
-
-            if (countStr != null) {
-                int expectedCount = Integer.valueOf(countStr);
-
-                String message = "Function " + functionName + " contains " + actualCount +
-                                 " nodes of type " + klass.getName() +
-                                 ", but expected count is " + expectedCount;
-                assertEquals(expectedCount, actualCount, message);
-            } else if (maxCountStr != null) {
-                int expectedCount = Integer.valueOf(maxCountStr);
-
-                String message = "Function " + functionName + " contains " + actualCount +
-                                 " nodes of type " + klass.getName() +
-                                 ", but expected max is " + expectedCount;
-                assertTrue(expectedCount >= actualCount, message);
-
-            } else {
-                throw new IllegalArgumentException("'max' or 'count' argument should be provided");
-            }
-        }
-
-        protected int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments) {
-            return 1;
-        }
-    }
 
     private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>(JsLabel.class) {
         @Override
@@ -112,7 +61,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler() {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
+        public void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String reference = arguments.getPositionalArgument(0);
 
             JsVisitor visitor = new RecursiveJsVisitor() {
@@ -128,7 +77,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler() {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
+        public void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String functionName = arguments.getNamedArgument("function");
 
             Set<String> except = new HashSet<>();
@@ -197,7 +146,10 @@ public class DirectiveTestUtils {
         return node;
     }
 
-    private static class DirectiveHandler<A extends ArgumentsHelper> {
+    public static class DirectiveHandler<A extends ArgumentsHelper> {
+
+        public DirectiveHandler() {
+        }
 
         /**
          * Processes directive entries.
@@ -207,7 +159,7 @@ public class DirectiveTestUtils {
          *
          * @see ArgumentsHelper for arguments format
          */
-        void process(@NotNull JsNode ast,
+        public void process(@NotNull JsNode ast,
                 @NotNull File sourceFile,
                 @NotNull List<A> directiveEntries,
                 @NotNull TargetBackend targetBackend
@@ -219,7 +171,7 @@ public class DirectiveTestUtils {
             }
         }
 
-        void processEntry(@NotNull JsNode ast, @NotNull A arguments, File sourceFile) throws Exception {
+        public void processEntry(@NotNull JsNode ast, @NotNull A arguments, File sourceFile) throws Exception {
             if (arguments instanceof JsAstDirective) {
                 ((JsAstDirective) arguments).evaluate(ast, sourceFile);
             }
