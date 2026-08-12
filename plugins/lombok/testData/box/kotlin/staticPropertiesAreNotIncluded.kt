@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 // ISSUE: KT-88367
 
