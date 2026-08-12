@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2PlatformAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectWithPolicyCreator
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
+import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Proxy
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.io.path.createDirectories
 
 /**
  * Tests that the shared ApplicationEnvironment is kept alive within the BuildSession lifetime.
@@ -140,9 +145,114 @@ class BuildSessionApplicationEnvironmentReuseTest : BaseCompilationTest() {
         )
     }
 
+    @DisplayName("A failed compilation neither disposes the ApplicationEnvironment nor leaks its pin")
+    @BtaV2PlatformAgnosticCompilationTest
+    fun environmentSurvivesFailedCompilation(projectCreator: ProjectWithPolicyCreator, toolchains: KotlinToolchains) {
+        val project = projectCreator.inProcess(toolchains)
+        lateinit var disposalCount: AtomicInteger
+        project {
+            module(MODULE_A).compile()
+
+            disposalCount = EnvironmentDisposal.observeCurrentEnvironment()
+
+            module(MODULE_BROKEN).compile { expectFail() }
+
+            assertEquals(
+                0, disposalCount.get(),
+                "Expected no ApplicationEnvironment disposal after a failed compilation while the session is still open"
+            )
+
+            module(MODULE_B).compile()
+
+            assertEquals(
+                0, disposalCount.get(),
+                "Expected no ApplicationEnvironment disposal after recovering from a failed compilation"
+            )
+        }
+
+        assertEquals(
+            1, disposalCount.get(),
+            "Expected exactly one ApplicationEnvironment disposal at session end, even after a failed compilation"
+        )
+    }
+
+    @DisplayName("A cancelled operation neither disposes the ApplicationEnvironment nor leaks its pin")
+    @Test
+    fun environmentSurvivesCancelledOperation() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        lateinit var disposalCount: AtomicInteger
+
+        jvmProject(toolchains, toolchains.createInProcessExecutionPolicy()) {
+            module(MODULE_A).compile()
+
+            disposalCount = EnvironmentDisposal.observeCurrentEnvironment()
+
+            module(MODULE_B).compileAndThrow(compilationAction = { operation -> operation.cancel() }) { thrown ->
+                assertTrue(thrown is OperationCancelledException) { "Expected a cancellation, got: $thrown" }
+            }
+
+            assertEquals(
+                0, disposalCount.get(),
+                "Expected no ApplicationEnvironment disposal after a failed operation while the session is still open"
+            )
+        }
+
+        assertEquals(
+            1, disposalCount.get(),
+            "Expected exactly one ApplicationEnvironment disposal at session end, even after a failed operation"
+        )
+    }
+
+    @DisplayName("Sessions closed on other threads do not dispose the ApplicationEnvironment of an open session")
+    @Test
+    fun environmentSharedAcrossConcurrentSessions() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        val executionPolicy = toolchains.createInProcessExecutionPolicy()
+        lateinit var disposalCount: AtomicInteger
+
+        jvmProject(toolchains, executionPolicy) {
+            module(MODULE_A).compile()
+
+            disposalCount = EnvironmentDisposal.observeCurrentEnvironment()
+
+            compileInConcurrentSessions(toolchains, executionPolicy)
+
+            assertEquals(
+                0, disposalCount.get(),
+                "Expected the shared environment to stay alive while the keeper session is open, " +
+                        "no matter how many sessions were opened and closed on other threads"
+            )
+        }
+
+        assertEquals(
+            1, disposalCount.get(),
+            "Expected exactly one ApplicationEnvironment disposal once the last session ends"
+        )
+    }
+
     private fun ProjectWithPolicyCreator.inProcess(toolchains: KotlinToolchains): ProjectCreator {
         val inProcess = toolchains.createInProcessExecutionPolicy()
         return { action -> this@inProcess(this, inProcess, action) }
+    }
+
+    private fun compileInConcurrentSessions(toolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        val executor = Executors.newFixedThreadPool(CONCURRENT_SESSIONS)
+        try {
+            val startLine = CountDownLatch(CONCURRENT_SESSIONS)
+            val sessionRuns = (0 until CONCURRENT_SESSIONS).map { sessionIndex ->
+                executor.submit {
+                    startLine.countDown()
+                    startLine.await()
+                    val projectDirectory = workingDirectory.resolve("concurrent-$sessionIndex").createDirectories()
+                    JvmProject(toolchains, executionPolicy, projectDirectory).use { concurrentProject ->
+                        concurrentProject.module(MODULE_A).compile()
+                    }
+                }
+            }
+            sessionRuns.forEach { it.get() }
+        } finally {
+            executor.shutdownNow()
+        }
     }
 
     /**
@@ -222,5 +332,8 @@ class BuildSessionApplicationEnvironmentReuseTest : BaseCompilationTest() {
 
         const val MODULE_A = "basic-multimodule-project/module-1"
         const val MODULE_B = "basic-multimodule-project/module-3"
+        const val MODULE_BROKEN = "compilation-error"
+
+        const val CONCURRENT_SESSIONS = 3
     }
 }
