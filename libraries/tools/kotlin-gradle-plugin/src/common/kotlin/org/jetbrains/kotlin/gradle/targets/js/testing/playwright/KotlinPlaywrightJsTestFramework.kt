@@ -219,7 +219,7 @@ internal class KotlinPlaywrightJsTestFramework(
         browserKind = kind,
         browsersDirectory = browsersDirectory,
         testsLocation = testsLocation.get(),
-        buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs) },
+        buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs, isDebugEnabled = debugOptions != null) },
         timeout = timeout.get().toKotlinDuration(),
         finishMarker = finishMarker.get(),
         headless = headless.get(),
@@ -229,9 +229,9 @@ internal class KotlinPlaywrightJsTestFramework(
         debugOptions = debugOptions,
     )
 
-    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
+    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>, isDebugEnabled: Boolean): URI {
         val runnerConfig = KotlinBrowserRunnerConfig(
-            timeout = timeout.get(),
+            timeout = if (isDebugEnabled) Duration.ZERO else timeout.get(),
             testsFinishedMarker = finishMarker.get(),
             kotlinTestCliArguments = cliArgs
         )

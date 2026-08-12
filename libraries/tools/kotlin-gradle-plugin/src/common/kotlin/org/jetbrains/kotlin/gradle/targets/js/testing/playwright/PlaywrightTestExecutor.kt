@@ -24,6 +24,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
+import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.impl.Connection
 import com.microsoft.playwright.impl.driver.Driver
@@ -69,6 +70,8 @@ internal class PwRunnerSpec(
 
 private const val DEFAULT_DEBUG_PORT = 9222
 private const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
+
+private const val NO_TIMEOUT = 0.0
 
 internal class PwDebugOptions(
     // A CDP debugger can attach to Chromium on this port.
@@ -267,6 +270,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             val page = browser.newPage()
             page.use {
                 runner.awaitDebuggerAttached()
+                val timeoutMillis = if (runner.isDebugEnabled) NO_TIMEOUT else runner.timeout.inWholeMilliseconds.toDouble()
                 page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
                 page.onConsoleMessage {
@@ -279,8 +283,10 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                 }
                 val url = runner.buildTestsExecutionerUrl(testLocationUrl)
                 log.info("Execute JS tests with ${runner.name} runner at URL: $url")
-                page.navigate(url.toString())
-                page.waitForCondition({ finished })
+                // Zero has to be passed per call: setDefaultTimeout(0) leaves waitForCondition with an
+                // already expired deadline instead of disabling it.
+                page.navigate(url.toString(), Page.NavigateOptions().setTimeout(timeoutMillis))
+                page.waitForCondition({ finished }, Page.WaitForConditionOptions().setTimeout(timeoutMillis))
             }
         }
     }

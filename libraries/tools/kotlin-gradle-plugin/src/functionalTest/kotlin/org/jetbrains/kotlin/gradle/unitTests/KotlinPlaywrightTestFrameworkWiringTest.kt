@@ -12,6 +12,9 @@ import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.provider.Provider
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrigh
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwDebugOptions
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwRunnerSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -34,6 +38,7 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companio
 import java.net.ServerSocket
 import org.junit.jupiter.api.io.TempDir
 import java.net.URI
+import java.net.URLDecoder
 import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.Test
@@ -46,6 +51,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -405,6 +411,35 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
+    fun `a debug run has no test runner timeout`() {
+        val setup = buildBrowserTestProject {
+            chromium {
+                it.timeout.set(30L.seconds)
+            }
+        }
+        setup.prepareExecutableFramework()
+        setup.jsBrowserTestTask.browserDebug.set(true)
+
+        val runner = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project)).runners.single()
+
+        assertEquals("0", runner.browserRunnerTimeoutMillis())
+    }
+
+    @Test
+    fun `a regular run keeps the configured test runner timeout`() {
+        val setup = buildBrowserTestProject {
+            chromium {
+                it.timeout.set(30L.seconds)
+            }
+        }
+        setup.prepareExecutableFramework()
+
+        val runner = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project)).runners.single()
+
+        assertEquals("30000", runner.browserRunnerTimeoutMillis())
+    }
+
+    @Test
     fun `browser debug port implies browser debug`() {
         val setup = buildBrowserTestProject { chromium() }
 
@@ -465,6 +500,36 @@ private fun KotlinJsTest.buildExecutionSpec(project: ProjectInternal): TestExecu
         nodeJsArgs = mutableListOf(),
         debug = debug,
     )
+}
+
+private fun BrowserTestProject.prepareExecutableFramework(): KotlinPlaywrightJsTestFramework {
+    val framework = assertIs<KotlinPlaywrightJsTestFramework>(jsBrowserTestTask.testFramework)
+    val location = mockLocation(project, URI("http://localhost:12345/test.html"))
+    with(framework.frameworkTaskInputs) {
+        (chromiumRunners.get() + firefoxRunners.get() + webkitRunners.get()).forEach { it.testsLocation.set(location) }
+    }
+
+    val npmToolingEnv = project.layout.buildDirectory.dir("test-npm-tooling").get().asFile
+    npmToolingEnv.resolve("node_modules/playwright-core/cli.js").apply {
+        parentFile.mkdirs()
+        writeText("")
+    }
+    framework.npmToolingEnvDir.set(npmToolingEnv)
+
+    return framework
+}
+
+private fun PwRunnerSpec.browserRunnerTimeoutMillis(): String {
+    val query = buildTestsExecutionerUrl(URI("http://localhost:12345/test.html")).rawQuery
+    val config = query.split("&")
+        .single { it.startsWith("kotlinTestConfig=") }
+        .substringAfter('=')
+        .let { URLDecoder.decode(it, Charsets.UTF_8) }
+
+    return Json.parseToJsonElement(config)
+        .jsonObject.getValue("mochaSetupOptions")
+        .jsonObject.getValue("timeout")
+        .jsonPrimitive.content
 }
 
 private class BrowserTestProject(
