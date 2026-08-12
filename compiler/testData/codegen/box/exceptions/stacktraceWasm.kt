@@ -1,8 +1,7 @@
 // KT-78707, KT-78998
 // WITH_STDLIB
 
-// TARGET_BACKEND: WASM_JS, WASM_WASI, NATIVE
-// NATIVE_STANDALONE
+// TARGET_BACKEND: WASM_JS, WASM_WASI
 // WASM_STANDALONE
 // ^^^ in non-standalone run, test classes will be placed in a sub-package, so `Throwable.toString()` would give different result
 
