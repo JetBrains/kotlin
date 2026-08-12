@@ -11,7 +11,8 @@ open class C {
 <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!>
 object O
 
-// TODO KT-87871: don't generate anything in case of `ANNOTATION_HAS_NO_EFFECT` diagnostic
+// Nothing is generated when `ANNOTATION_HAS_NO_EFFECT` is reported: neither the constructor (which would be
+// illegal in an interface) nor the `staticName` factory, so both are unresolved at the use sites below.
 <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "iface")<!> // isn't applicable to interface unlike `@NoArg` from noarg plugin
 interface I
 
@@ -129,8 +130,8 @@ fun test() {
     StaticNameTakenByExtensionOnly()
     StaticNameTakenByExtensionOnly.make()
 
-    I.iface() // TODO: should be unresolved, KT-87871
-    AnnotationClass.annotationClass() // TODO: should be unresolved, KT-87871
+    I.<!UNRESOLVED_REFERENCE!>iface<!>() // Nothing is generated, KT-87871
+    AnnotationClass.<!UNRESOLVED_REFERENCE!>annotationClass<!>() // Nothing is generated, KT-87871
 }
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
