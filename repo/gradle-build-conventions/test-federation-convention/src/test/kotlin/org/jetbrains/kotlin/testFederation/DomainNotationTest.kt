@@ -29,7 +29,7 @@ class DomainNotationTest {
 
     @Test
     fun `default notation`() {
-        assertEquals("Compiler;Gradle", setOf(Domain.Compiler, Domain.Gradle).toArgumentString())
-        assertEquals(setOf(Domain.Compiler, Domain.Gradle), Domain.fromArgumentString("Compiler;Gradle"))
+        assertEquals("CompilerInfrastructure;Gradle", setOf(Domain.CompilerInfrastructure, Domain.Gradle).toArgumentString())
+        assertEquals(setOf(Domain.CompilerInfrastructure, Domain.Gradle), Domain.fromArgumentString("CompilerInfrastructure;Gradle"))
     }
 }

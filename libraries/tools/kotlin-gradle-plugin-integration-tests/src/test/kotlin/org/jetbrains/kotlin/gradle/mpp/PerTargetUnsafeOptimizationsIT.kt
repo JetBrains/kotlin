@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByCompilerInfrastructure
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
@@ -24,7 +24,7 @@ import kotlin.io.path.writeText
  */
 @MppGradlePluginTests
 @DisplayName("Per-target unsafe optimizations for KMP incremental compilation")
-@AffectedByCompiler
+@AffectedByCompilerInfrastructure
 @AffectedByBuildToolsApi
 class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
 

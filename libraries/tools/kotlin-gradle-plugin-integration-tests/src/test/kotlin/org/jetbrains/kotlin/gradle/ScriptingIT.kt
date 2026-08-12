@@ -11,7 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByCompilerInfrastructure
 import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -23,7 +23,7 @@ import kotlin.io.path.relativeTo
     enabledOnCI = [OS.LINUX], // Compiler plugin is leaking file descriptor preventing cleaning the project on Windows
 )
 @DisplayName("Scripting plugin")
-@AffectedByCompiler
+@AffectedByCompilerInfrastructure
 @AffectedByCompilerPlugins
 @AffectedByBuildToolsApi
 @OtherGradlePluginTests

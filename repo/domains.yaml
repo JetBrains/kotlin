@@ -1,6 +1,6 @@
 $schema: domains.schema.json
 
-Compiler:
+CompilerInfrastructure:
   include:
   - "core"
   - "build-common"
@@ -62,7 +62,7 @@ Frontend:
     - "compiler/tests-spec"
   fullyAffectedBy:
     - CoreLibs
-    - Compiler
+    - CompilerInfrastructure
 
 CommonBackend:
   include:
@@ -80,7 +80,7 @@ CommonBackend:
     - "compiler/ir/serialization.jklib"
   fullyAffectedBy:
     - CoreLibs
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
 
 Jvm:
@@ -93,7 +93,7 @@ Jvm:
     - "compiler/tests-different-jdk"
   fullyAffectedBy:
     - CoreLibs
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - CommonBackend
 
@@ -110,7 +110,7 @@ Wasm:
     - "js/js.config/src/org/jetbrains/kotlin/js/config"
   fullyAffectedBy:
     - CoreLibs
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - CommonBackend
 
@@ -123,7 +123,7 @@ Js:
     - "libraries/tools/dukat"
   fullyAffectedBy:
     - CoreLibs
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - CommonBackend
 
@@ -138,7 +138,7 @@ Native:
     - "native/swift"
   fullyAffectedBy:
     - CoreLibs
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - CommonBackend
 
@@ -165,7 +165,7 @@ AnalysisApi:
   exclude:
     - "compiler/psi/parser"
   fullyAffectedBy:
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - CoreLibs
 
@@ -178,7 +178,7 @@ BuildToolsApi:
     - "compiler/compiler-runner"
     - "compiler/compiler-runner-unshaded"
   fullyAffectedBy:
-    - Compiler
+    - CompilerInfrastructure
 
 SwiftExport:
   include:
@@ -195,7 +195,7 @@ CompilerPlugins:
     - "libraries/tools/kotlin-main-kts-test"
     - "libraries/scripting"
   fullyAffectedBy:
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - CommonBackend
     - CoreLibs
@@ -216,7 +216,7 @@ IntelliJ:
   include:
     - "prepare/ide-plugin-dependencies"
   fullyAffectedBy:
-    - Compiler
+    - CompilerInfrastructure
     - Frontend
     - AnalysisApi
     - CoreLibs
@@ -238,4 +238,4 @@ Unknown:
   # Files not matching other domains will be sorted into 'Unknown' by default.
   include: [ ]
   fullyAffectedBy:
-    - Compiler
+    - CompilerInfrastructure

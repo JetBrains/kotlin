@@ -33,7 +33,7 @@ class TestFederationFunctionalTest {
 
     @Test
     fun `test - smoke - compiler contract`() {
-        val result = runTestBuild(TestFederationMode.Smoke, Domain.Compiler)
+        val result = runTestBuild(TestFederationMode.Smoke, Domain.CompilerInfrastructure)
         assertEquals(
             setOf(TestResult("PseudoTest", "smoke test")),
             result.executedTests
