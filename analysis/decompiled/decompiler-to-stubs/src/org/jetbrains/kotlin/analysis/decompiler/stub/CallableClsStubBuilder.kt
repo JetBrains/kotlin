@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -48,7 +49,7 @@ fun createDeclarationsStubs(
     functionProtos: List<ProtoBuf.Function>,
     propertyProtos: List<ProtoBuf.Property>,
 ) {
-    val isInsideClassBody = parentStub.elementType == KtStubElementTypes.CLASS_BODY
+    val isInsideClassBody = parentStub.elementType == KtNodeTypes.CLASS_BODY
     var currentCompanionBlockBody: StubElement<out PsiElement>? = null
     fun wrapIntoCompanionBlockOnDemand(
         flags: Int,

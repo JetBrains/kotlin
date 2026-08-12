@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -123,7 +122,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         if (origin == FirFunctionCallOrigin.Infix) {
             val lastArgument = arguments.lastOrNull()
             if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
-                return if (lastArgument.source?.lighterASTNode?.tokenType == KtStubElementTypes.FUNCTION) {
+                return if (lastArgument.source?.lighterASTNode?.tokenType == KtNodeTypes.FUN) {
                     SuspendCallArgumentKind.FUN
                 } else {
                     SuspendCallArgumentKind.LAMBDA
