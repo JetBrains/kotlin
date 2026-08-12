@@ -11,8 +11,12 @@ open class C {
 <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!>
 object O
 
-<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!> // isn't applicable to interface unlike `@NoArg` from noarg plugin
+// TODO KT-87871: don't generate anything in case of `ANNOTATION_HAS_NO_EFFECT` diagnostic
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "iface")<!> // isn't applicable to interface unlike `@NoArg` from noarg plugin
 interface I
+
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "annotationClass")<!>
+annotation class AnnotationClass
 
 // any encountered val param requires `force = true`
 <!NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED!>@NoArgsConstructor<!>
@@ -124,6 +128,9 @@ fun test() {
 
     StaticNameTakenByExtensionOnly()
     StaticNameTakenByExtensionOnly.make()
+
+    I.iface() // TODO: should be unresolved, KT-87871
+    AnnotationClass.annotationClass() // TODO: should be unresolved, KT-87871
 }
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)

@@ -59,12 +59,40 @@ class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
 @Builder(access = AccessLevel.PROTECTED)
 class BuilderAccessLevelProtected(val id: Int)
 
+// TODO KT-87871: unlike `@Log`/`@ToString`/`@NoArgsConstructor`, these two are not even warned about, because
+//  `@Builder` allows the broad `KotlinTarget.CLASS` (which covers interfaces and annotation classes) rather
+//  than `CLASS_ONLY` - so no `ANNOTATION_HAS_NO_EFFECT` is reported here.
+@Builder
+interface BuilderInterface
+
+@Builder
+annotation class BuilderAnnotationClass
+
+// An enum constructor takes the synthetic name and ordinal parameters, so a generated `build()` wouldn't find the
+// one it calls: it used to fail with `NoSuchMethodError` at run time, KT-87871.
+@Builder
+enum class BuilderEnum(val id: Int) { A(1) }
+
+// An object has no constructor to call.
+@Builder
+object BuilderObject
+
 @Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
 class BuilderAccessLevelPackage(val id: Int)
 
 @Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>) // Prohibited, KT-88337
 class BuilderAccessLevelModule(val id: Int)
 
-fun testAccessLevels() {
+fun test() {
     BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
+    BuilderInterface.builder() // TODO: should be unresolved, KT-87871
+    BuilderAnnotationClass.builder() // TODO: should be unresolved, KT-87871
+    BuilderEnum.builder() // TODO: should be unresolved, KT-87871
+    BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
+
+   // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
+    @Builder
+    class BuilderLocal(val id: Int)
+
+    BuilderLocal.<!UNRESOLVED_REFERENCE!>builder<!>()
 }
