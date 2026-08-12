@@ -33,7 +33,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-            )
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
@@ -166,6 +166,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             plugins {
                 kotlin("multiplatform")
