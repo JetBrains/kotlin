@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -144,7 +144,7 @@ abstract class AbstractFirMetadataSessionFactory(
     data class JarMetadataProviderComponents(
         val packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
         val librariesScope: AbstractProjectFileSearchScope,
-        val projectEnvironment: AbstractProjectEnvironment
+        val projectEnvironment: JvmCompilationEnvironment
     )
 
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
@@ -170,7 +170,7 @@ abstract class AbstractFirMetadataSessionFactory(
      */
     fun createSourceSession(
         moduleData: FirModuleData,
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: JvmCompilationEnvironment,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 
 /*

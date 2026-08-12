@@ -10,6 +10,7 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -86,6 +87,7 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
             configuration = configuration,
             projectEnvironment = previous.projectEnvironment,
             librariesScope = previous.librariesScope,
+            javaInterop = previous.javaInterop,
         )
     }
 }
@@ -224,6 +226,7 @@ fun createCompilerState(
         configuration = compilerConfiguration,
         projectEnvironment = projectEnvironment,
         librariesScope = projectFileSearchScope,
+        javaInterop = projectEnvironment.psiJavaInterop(),
     )
     val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
         mainModuleName = moduleName,

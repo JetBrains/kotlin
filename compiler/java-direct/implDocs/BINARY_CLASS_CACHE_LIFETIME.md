@@ -7,8 +7,9 @@
 
 `BinaryJavaClassCache`
 (`compiler/frontend.common.jvm/src/.../load/java/structure/impl/classFiles/BinaryJavaClassCache.kt`) is
-created once per compilation in `JvmFrontendPipelinePhase.prepareJvmSessions`, held by
-`FirJvmSessionFactory.Context.binaryJavaClassCache` (`null` on the PSI path) and shared by the
+created once per compilation in `JvmFrontendPipelinePhase.prepareJvmSessions`, held by the
+java-direct `FirJavaInterop` of that compilation (`createJavaDirectJavaInterop`, itself
+held by `FirJvmSessionFactory.Context.javaInterop`) and shared by the
 `JavaClassFinderOverBinaryIndex` of every binary session. It holds:
 
 | Cache | Key | Value |
@@ -30,8 +31,8 @@ over a plain `(ClassId) -> JavaClass?` resolver, and `JavaClassFinderOverBinaryI
 classpath, not of the compilation — which is exactly the property that a cross-build cache needs.
 
 The injection point is already in place: `BinaryJavaClassCache` is a plain object constructed by the
-caller and handed to `FirJvmSessionFactory.Context`, so a build session can supply a longer-lived
-instance by passing a different one — no other signature has to change.
+caller and handed to `createJavaDirectJavaInterop`, so a build session can supply a
+longer-lived instance by passing a different one — only that one call site has to change.
 
 ## 3. The four questions that must be answered first
 

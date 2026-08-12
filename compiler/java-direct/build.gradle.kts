@@ -16,11 +16,11 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
+    implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir-jvm"))
-    implementation(project(":compiler:fir:entrypoint"))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))

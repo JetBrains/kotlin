@@ -41,7 +41,7 @@ fun IncrementalCompilationContext.createSymbolProviders(
                 kotlinScopeProvider,
                 precompiledBinariesPackagePartProvider,
                 context.projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope),
-                context.javaFacadeFactory.createJavaFacade(session, moduleData, precompiledBinariesFileScope),
+                context.javaInterop.createJavaFacade(session, moduleData, precompiledBinariesFileScope),
                 defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
             )
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation =

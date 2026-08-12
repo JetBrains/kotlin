@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 @ObsoleteTestInfrastructure
 object FirSessionFactoryHelper {
@@ -29,7 +30,6 @@ object FirSessionFactoryHelper {
         librariesScope: AbstractProjectFileSearchScope,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        needRegisterJavaElementFinder: Boolean,
         dependenciesConfigurator: DependencyListForCliModule.Builder.BuilderForDefaultDependenciesModule.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
@@ -40,6 +40,7 @@ object FirSessionFactoryHelper {
             configuration,
             projectEnvironment,
             librariesScope,
+            projectEnvironment.psiJavaInterop(),
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -71,7 +72,6 @@ object FirSessionFactoryHelper {
             extensionRegistrars,
             configuration,
             context,
-            needRegisterJavaElementFinder,
             kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)

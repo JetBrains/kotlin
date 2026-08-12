@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.nio.file.Path
@@ -162,6 +163,7 @@ class K2ReplCompiler(
                 configuration = compilerContext.environment.configuration,
                 projectEnvironment = projectEnvironment,
                 librariesScope = projectFileSearchScope,
+                javaInterop = projectEnvironment.psiJavaInterop(),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = moduleName,
@@ -368,7 +370,7 @@ private fun compileImpl(
             compilerConfiguration,
             getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
             getJavaFacade = {
-                state.sessionFactoryContext.javaFacadeFactory
+                state.sessionFactoryContext.javaInterop
                     .createJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope)
             }
         )
@@ -385,7 +387,6 @@ private fun compileImpl(
         compilerConfiguration,
         // TODO: from script config
         context = state.sessionFactoryContext,
-        needRegisterJavaElementFinder = true,
         kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     )

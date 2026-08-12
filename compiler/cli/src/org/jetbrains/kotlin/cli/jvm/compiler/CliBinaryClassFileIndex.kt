@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileScope
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFil
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.virtualFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 /**
  * [BinaryClassFileIndex] over the CLI [JvmDependenciesIndex].

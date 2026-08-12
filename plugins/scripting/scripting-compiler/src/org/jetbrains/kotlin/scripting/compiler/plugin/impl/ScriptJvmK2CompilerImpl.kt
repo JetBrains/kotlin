@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createSourceSession
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBa
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -224,7 +224,6 @@ class ScriptJvmK2CompilerImpl(
             state.extensionRegistrars,
             compilerConfiguration,
             context = state.sessionFactoryContext,
-            needRegisterJavaElementFinder = true,
             kmpModuleKind = KmpModuleKind.SingleModule,
             init = {},
         )
@@ -338,7 +337,6 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         extensionRegistrars,
         compilerContext.environment.configuration,
         context = sessionFactoryContext,
-        needRegisterJavaElementFinder = true,
         kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     ).apply {

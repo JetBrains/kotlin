@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
@@ -80,6 +81,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             configuration,
             projectEnvironment,
             librariesSearchScope,
+            projectEnvironment.psiJavaInterop(),
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -152,7 +154,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             configuration = compilerConfiguration,
             context = replCompilationEnvironment.jvmSessionFactoryContext,
-            needRegisterJavaElementFinder = true,
             kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {

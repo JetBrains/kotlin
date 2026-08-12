@@ -123,11 +123,10 @@ on the java-direct path.
 ### C. Merge into a single "binary classpath session state" object
 
 Go one step further than B: one object per compilation that owns the index, the contents, the Kotlin
-headers *and* the Java models, handed to `FirJvmSessionFactory.Context` as a single field (today
-`Context.binaryJavaClassCache` is exactly the first half of that).
+headers *and* the Java models (today `BinaryJavaClassCache` is exactly the first half of that).
 
 - *Pro*: one lifetime, one disposal point, one obvious place for the BTA-supplied longer-lived
-  instance; `Context` grows one field instead of three.
+  instance; one object to hand over instead of three.
 - *Con*: couples the Kotlin and Java binary readers in one type before there is a real reason to;
   makes the object the single hottest shared structure, so its thread-safety story must be solved up
   front rather than later.

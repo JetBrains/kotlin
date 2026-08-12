@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -91,7 +92,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             configuration.getCompilerExtensions(FirExtensionRegistrar),
             configuration,
             context,
-            needRegisterJavaElementFinder = true,
             kmpModuleKind = KmpModuleKind.SingleModule,
             init = {
                 registerComponent(
@@ -119,7 +119,8 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesScope
+            librariesScope,
+            projectEnvironment.psiJavaInterop(),
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(

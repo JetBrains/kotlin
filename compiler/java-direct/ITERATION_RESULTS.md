@@ -36,16 +36,103 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
-### 2026-08-11 — the Java implementation is chosen once per compilation (`FirJavaFacadeFactory`)
+### 2026-08-12 — both directions of the Java bridge in one object; the environment leaves FIR
+- **Change**: `FirJavaFacadeFactory` → `FirJavaInterop`, which now also owns
+  `registerKotlinDeclarationsForJava` (was `AbstractProjectEnvironment.registerAsJavaElementFinder`).
+  The PSI implementation registers `FirJavaElementFinder`, java-direct leaves the default no-op, and the
+  parallel `needRegisterJavaElementFinder` flag is deleted from both session factories and all 10 call
+  sites — it was a second copy of the same PSI/not-PSI decision and had already drifted (JKlib passed
+  `true` unconditionally).
+- **Why**: that method was the last FIR reference in the environment and the one member unimplementable
+  without PSI. With it gone, `AbstractProjectEnvironment` moved to `:compiler:frontend.common.jvm` as
+  `JvmCompilationEnvironment` (package `org.jetbrains.kotlin.jvm.environment`), next to the
+  `KotlinClassFinder`/`PackagePartProvider`/`JavaModuleResolver` it hands out; a PSI-free environment is
+  now expressible, and `org.jetbrains.kotlin.fir.session` is no longer a split package.
+- **Files**: `FirJavaInterop.kt` (fir-jvm, renamed), `JvmCompilationEnvironment.kt` (new location),
+  `VfsBasedProjectEnvironment.kt`, `FirJvmSessionFactory.kt`, `FirJKlibSessionFactory.kt`,
+  `JavaDirectJavaInterop.kt` (renamed), `JvmFrontendPipelinePhase.kt`, scripting + test fixtures.
+- **Tests**: see below.
+- **Result**: green.
+
+### 2026-08-12 — the Java implementation is stated, never defaulted
+- **Change**: `JvmCompilationEnvironment.getFirJavaFacade` is gone. It made the PSI Java view a property
+  of the environment — obtainable by anyone holding one, and therefore the invisible default that let the
+  incremental-compilation consumer drift onto PSI under `-Xjava-direct`. Its body moved to
+  `:compiler:cli` as `VfsBasedProjectEnvironment.psiJavaInterop()`, a free-function peer of
+  java-direct's `createJavaDirectJavaInterop`: two implementations, neither privileged.
+  `FirJvmSessionFactory.Context.javaInterop` is now a required constructor parameter, so a
+  consumer which does not choose no longer silently gets PSI. That surfaced `FirJKlibSessionFactory` as
+  a compile error, as intended: its `createLibrarySession`/`createSourceSession` take a
+  `FirJavaInterop` instead of reaching for the environment, and `prepareJKlibSessions` supplies
+  the PSI one — same behaviour as before, but now explicit and one parameter away from java-direct.
+- **Files**: `fir-jvm/.../session/environment/JvmCompilationEnvironment.kt`,
+  `fir-jvm/.../session/FirJavaInterop.kt`, `cli/.../VfsBasedProjectEnvironment.kt`,
+  `fir/entrypoint/.../FirJvmSessionFactory.kt`, `cli-jklib/.../FirJKlibSessionFactory.kt`, and the ten
+  `Context(...)` construction sites (`JvmFrontendPipelinePhase`, `FirSessionConstructionUtils`,
+  `FirFrontendFacade`, `FirReplFrontendFacade`, `FirSessionFactoryHelper`, `K2ReplCompiler`,
+  `K2ScriptingCompilerEnvironment` ×2, `CollectAdditionalScriptSourcesExtension`, Compose
+  `K2CompilerFacade`); `implDocs/PSI_FREE_ROADMAP.md` §3/§7.
+- **Tests**: `compileKotlin` of `fir:fir-jvm`, `fir:entrypoint`, `cli`, `cli-jvm`, `cli-jklib`,
+  `java-direct`, `kotlin-scripting-compiler` and the fixture modules; `:compiler:java-direct:test`;
+  `PhasedJvmDiagnosticLightTreeTestGenerated`; `*CompileKotlinAgainstKotlin*`;
+  `IncrementalK2FirICJvmCompilerRunnerTestGenerated`; `:compiler:jklib.tests:test`.
+- **Result**: green; no behaviour change. The Compose integration-tests module could not be compiled
+  offline (its `protobuf-test-classes` needs `com.google.protobuf:protoc`, unrelated); the edit there is
+  one added argument plus an import.
+
+### 2026-08-12 — the seam abstractions moved below the PSI default; `java-direct → fir:entrypoint` dropped
+- **Change**: java-direct depended on `:compiler:fir:entrypoint` only for two symbols — the abstraction
+  it implements (`FirJavaInterop`) and the scope type in its signatures
+  (`AbstractProjectFileSearchScope`) — both of which sat next to the PSI default that also implements
+  them. Two destinations, because the two types are on different layers:
+  `AbstractProjectFileSearchScope` imports nothing and has non-JVM users (metadata and JKlib
+  pipelines), so it went to `:compiler:frontend.common` under the neutral package
+  `org.jetbrains.kotlin.search`; `JvmCompilationEnvironment` is JVM-specific in five of its ten
+  members (`KotlinClassFinder`, `PackagePartProvider`, `JavaModuleResolver`,
+  `registerAsJavaElementFinder`, `getFirJavaFacade`) and has a single JVM implementation, so it went
+  to `:compiler:fir:fir-jvm` together with `FirJavaInterop`, whose `FirJavaFacade` already lives
+  there. The `fir.session[.environment]` packages are unchanged, so only the ~20 scope imports moved.
+- **Files**: `frontend.common/.../search/AbstractProjectFileSearchScope.kt` (new),
+  `fir-jvm/.../session/environment/JvmCompilationEnvironment.kt` and
+  `fir-jvm/.../session/FirJavaInterop.kt` (moved out of `fir:entrypoint`),
+  `fir-jvm/build.gradle.kts` (`frontend.common`, `frontend.common.jvm`, `core:compiler.common.jvm`
+  become `api` — they are in the moved public signatures), `java-direct/build.gradle.kts`
+  (`fir:entrypoint` out, `frontend.common` in), plus the import in 17 CLI/JKlib/scripting/test-fixture
+  files and `implDocs/PSI_FREE_ROADMAP.md` §2/§3/§4.
+- **Tests**: `compileKotlin` of `frontend.common`, `fir:fir-jvm`, `fir:entrypoint`, `java-direct`,
+  `cli`, `cli-jvm`, `cli-jklib`, `kotlin-scripting-compiler` and the test-fixture modules;
+  `:compiler:java-direct:test` (box + phased, `JavaDirectModuleBoundaryTest`, `JavaParsingTest`);
+  both gates for the shared files touched (`PhasedJvmDiagnosticLightTreeTestGenerated`,
+  `CompileKotlinAgainstKotlin`).
+- **Result**: green; move only, no behaviour change.
+
+### 2026-08-12 — `Context.binaryJavaClassCache` removed as a leftover
+- **Change**: after the `FirJavaInterop` round the cache was written into
+  `FirJvmSessionFactory.Context` but read by nobody: the only consumer is the java-direct
+  `JavaClassFinderOverBinaryIndex`, which gets it from `createJavaDirectJavaInterop`, and the
+  factory is itself the context's per-compilation Java decision. The field (and its `null`-means-PSI
+  double of `javaInterop == null`) is gone; the cache is constructed inside the java-direct
+  branch in `prepareJvmSessions`, so its lifetime is still the compilation, now stated where it is held.
+  Nothing else was left dangling: no unused parameters or imports remain from the round, and
+  `FirJKlibSessionFactory` is the only self-deciding consumer, already recorded in
+  `implDocs/PSI_FREE_ROADMAP.md` §7.
+- **Files**: `FirJvmSessionFactory.kt`, `JvmFrontendPipelinePhase.kt`, `BinaryJavaClassCache.kt` (KDoc),
+  `implDocs/BINARY_CLASS_CACHE_LIFETIME.md`, `implDocs/CLASS_FILE_READ_LAYER.md`,
+  `implDocs/PSI_FREE_ROADMAP.md`.
+- **Tests**: `:compiler:java-direct:test` full suite; `PhasedJvmDiagnosticLightTreeTestGenerated` and
+  `CompileKotlinAgainstKotlin` gates for the shared `JvmFrontendPipelinePhase.kt`.
+- **Result**: green; no behaviour change.
+
+### 2026-08-11 — the Java implementation is chosen once per compilation (`FirJavaInterop`)
 - **Change**: the choice between the PSI Java view and java-direct was a `createJavaFacade` lambda passed
   into each construction site, so sites which did not know about it silently kept the PSI default — most
   notably the symbol provider for the *precompiled binaries* of incremental compilation. It is now a
-  `FirJavaFacadeFactory` held by `FirJvmSessionFactory.Context` (default `psiJavaFacadeFactory()`), read by
+  `FirJavaInterop` held by `FirJvmSessionFactory.Context` (default `psiJavaInterop()`), read by
   the library/source sessions, `IncrementalCompilationContext.createSymbolProviders` (takes the context
   instead of the project environment), the HMPP-common JVM provider and the scripting/REPL library session.
-  `createJavaDirectJavaFacadeBuilder` → `createJavaDirectJavaFacadeFactory`. Remaining consumer:
+  `createJavaDirectJavaFacadeBuilder` → `createJavaDirectJavaInterop`. Remaining consumer:
   `FirJKlibSessionFactory`, see `implDocs/PSI_FREE_ROADMAP.md` §7.
-- **Files**: `FirJavaFacadeFactory.kt` (new), `FirJvmSessionFactory.kt`,
+- **Files**: `FirJavaInterop.kt` (new), `FirJvmSessionFactory.kt`,
   `FirJvmIncrementalCompilationSymbolProviders.kt`, `JvmFrontendPipelinePhase.kt`,
   `JavaDirectFacadeFactory.kt` (renamed), `sessionUtils.kt`, `K2ReplCompiler.kt`,
   `FirFrontendFacade.kt`, `FirSessionFactoryHelper.kt`.

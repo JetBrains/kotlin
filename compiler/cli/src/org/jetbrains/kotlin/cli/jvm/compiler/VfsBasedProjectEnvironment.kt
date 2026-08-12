@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForModule
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.fir.session.FirJavaInterop
+import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -38,6 +39,7 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : AbstractProjectFileSearchScope {
 
@@ -58,7 +60,7 @@ open class VfsBasedProjectEnvironment(
     val project: Project,
     val knownFileSystems: List<VirtualFileSystem>,
     private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
-) : AbstractProjectEnvironment {
+) : JvmCompilationEnvironment {
 
     constructor(
         project: Project,
@@ -79,21 +81,6 @@ open class VfsBasedProjectEnvironment(
      * A (maybe temporary) mechanism for extending the classpath handled by package providers; nop by default
      */
     open fun updateClasspath(classpath: List<File>) {}
-
-    @OptIn(SessionConfiguration::class)
-    override fun registerAsJavaElementFinder(firSession: FirSession) {
-        val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
-        psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
-
-        val firJavaElementFinder = FirJavaElementFinder(firSession, project)
-        firSession.register(FirJavaElementFinder::class, firJavaElementFinder)
-        // see comment and TODO in KotlinCoreEnvironment.registerKotlinLightClassSupport (KT-64296)
-        @Suppress("DEPRECATION")
-        PsiElementFinder.EP.getPoint(project).registerExtension(firJavaElementFinder)
-        Disposer.register(project) {
-            psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
-        }
-    }
 
     private fun List<VirtualFile>.toSearchScope(allowOutOfProjectRoots: Boolean) =
         takeIf { it.isNotEmpty() }
@@ -199,17 +186,6 @@ open class VfsBasedProjectEnvironment(
     override fun getSearchScopeForProjectJavaSources(): AbstractProjectFileSearchScope =
         PsiBasedProjectFileSearchScope(AllJavaSourcesInProjectScope(project))
 
-    override fun getFirJavaFacade(
-        firSession: FirSession,
-        baseModuleData: FirModuleData,
-        fileSearchScope: AbstractProjectFileSearchScope,
-    ): FirJavaFacadeForModule {
-        val javaAnnotationProvider = firSession.javaAnnotationProvider
-        // the default, PSI-based java class finder.
-        val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
-        return FirJavaFacadeForModule(firSession, baseModuleData, javaClassFinder)
-    }
-
     class DirectoriesScope(
         project: Project,
         private val directories: Set<VirtualFile>
@@ -227,6 +203,39 @@ open class VfsBasedProjectEnvironment(
         }
 
         override fun toString() = "All files under: $directories"
+    }
+}
+
+/**
+ * The PSI-based Java view: the `JavaClassFinder` reads the `.java` sources and the `.class` files of the scope
+ * through PSI, and the Kotlin declarations of a source session are registered back as PSI stubs so that this
+ * Java resolution can see them. The peer of `createJavaDirectJavaInterop` in `:compiler:java-direct`; an
+ * alternative Java implementation replaces not the facade but the
+ * [org.jetbrains.kotlin.load.java.JavaClassFinder] inside it.
+ */
+fun VfsBasedProjectEnvironment.psiJavaInterop(): FirJavaInterop = object : FirJavaInterop {
+    override fun createJavaFacade(
+        session: FirSession,
+        moduleData: FirModuleData,
+        fileSearchScope: AbstractProjectFileSearchScope,
+    ): FirJavaFacade {
+        val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), session.javaAnnotationProvider)
+        return FirJavaFacadeForModule(session, moduleData, javaClassFinder)
+    }
+
+    @OptIn(SessionConfiguration::class)
+    override fun registerKotlinDeclarationsForJava(session: FirSession) {
+        val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
+        psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
+
+        val firJavaElementFinder = FirJavaElementFinder(session, project)
+        session.register(FirJavaElementFinder::class, firJavaElementFinder)
+        // see comment and TODO in KotlinCoreEnvironment.registerKotlinLightClassSupport (KT-64296)
+        @Suppress("DEPRECATION")
+        PsiElementFinder.EP.getPoint(project).registerExtension(firJavaElementFinder)
+        Disposer.register(project) {
+            psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
+        }
     }
 }
 

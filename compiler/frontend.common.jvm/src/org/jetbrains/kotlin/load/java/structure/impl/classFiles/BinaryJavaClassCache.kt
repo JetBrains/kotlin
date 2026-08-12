@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * The classpath-wide state of the binary Java model: class-file lookups in a [BinaryClassFileIndex] and the
- * classes read from them. This state is created once per compilation and shared by the binary `JavaClassFinder` of
- * every session: the JDK and the libraries are then looked up and parsed once, and a session applies its own
- * [BinaryClassFileScope] after the lookup.
+ * classes read from them. This state is created once per compilation, by whoever builds the Java view of that
+ * compilation, and shared by the binary `JavaClassFinder` of every session: the JDK and the libraries are then
+ * looked up and parsed once, and a session applies its own [BinaryClassFileScope] after the lookup.
  */
 class BinaryJavaClassCache(private val index: BinaryClassFileIndex) {
 

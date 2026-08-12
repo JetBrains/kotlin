@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -101,6 +102,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 configuration,
                 projectEnvironment,
                 librariesScope,
+                projectEnvironment.psiJavaInterop(),
             )
         }
         val librarySession = createLibrarySession(
@@ -370,7 +372,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     extensionRegistrars,
                     configuration,
                     jvmSessionFactoryContext!!,
-                    needRegisterJavaElementFinder = true,
                     kmpModuleKind = KmpModuleKind.SingleModule,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)

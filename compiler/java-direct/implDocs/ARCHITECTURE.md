@@ -38,7 +38,7 @@ already-resolved supertype chains transitively when resolving inherited inner cl
 ### 3. Single-Sided Class Finders
 Every FIR session gets a `JavaClassFinder` that answers for exactly one side, so no use site has to
 ask for "only the source half": `JavaClassFinderOverAstImpl` for source sessions,
-`JavaClassFinderOverBinaryIndex` for binary sessions. `JavaDirectFacadeFactory` picks one by scope
+`JavaClassFinderOverBinaryIndex` for binary sessions. `JavaDirectJavaInterop` picks one by scope
 identity and wraps it in a `FirJavaFacade`.
 
 The dispatch identifies the **source** scope (`scope === javaSourcesScope`, threaded from
@@ -98,7 +98,7 @@ Java classes have implicit inheritance:
 | `JavaPackageInfoIndexer.kt` | `package-info.java` parsing and package-annotation aggregation |
 | `JavaClassCache.kt` | `ClassId → JavaClass` memoization and on-demand file parsing |
 | `JavaClassFinderOverBinaryIndex.kt` | Binary class finder over `JvmDependenciesIndex` + ASM |
-| `JavaDirectFacadeFactory.kt` | The module's `FirJavaFacadeFactory`: per-scope finder selection and `FirJavaFacade` wiring |
+| `JavaDirectJavaInterop.kt` | The module's `FirJavaInterop`: per-scope finder selection and `FirJavaFacade` wiring |
 
 ### Resolution
 | File | Purpose |

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import kotlin.script.experimental.api.*
@@ -202,6 +203,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 configuration = configuration,
                 projectEnvironment = projectEnvironment,
                 librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(projectEnvironment.project)),
+                javaInterop = projectEnvironment.psiJavaInterop(),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = Name.special("<dummy>"),
@@ -225,7 +227,6 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 extensionRegistrars = extensionRegistrars,
                 configuration = configuration,
                 context = sessionFactoryContext,
-                needRegisterJavaElementFinder = true,
                 kmpModuleKind = KmpModuleKind.SingleModule,
                 init = {},
             ).apply {

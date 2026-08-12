@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 private fun createIncrementalCompilationScope(
     configuration: CompilerConfiguration,

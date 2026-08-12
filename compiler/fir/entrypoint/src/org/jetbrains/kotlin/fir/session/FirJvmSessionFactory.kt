@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -98,7 +97,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                     projectEnvironment.getSearchScopeByClassPath(paths)
                 }?.takeUnless { it.isEmpty } ?: context.librariesScope
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
-                val javaFacade = context.javaFacadeFactory.createJavaFacade(session, moduleData, context.librariesScope)
+                val javaFacade = context.javaInterop.createJavaFacade(session, moduleData, context.librariesScope)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,
@@ -146,7 +145,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         context: Context,
-        needRegisterJavaElementFinder: Boolean,
         kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
@@ -159,7 +157,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
-                val javaFacade = context.javaFacadeFactory.createJavaFacade(session, moduleData, javaSourcesScope)
+                val javaFacade = context.javaInterop.createJavaFacade(session, moduleData, javaSourcesScope)
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, javaFacade)
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -179,9 +177,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                 )
             }
         ).also {
-            if (needRegisterJavaElementFinder) {
-                projectEnvironment.registerAsJavaElementFinder(it)
-            }
+            context.javaInterop.registerKotlinDeclarationsForJava(it)
         }
     }
 
@@ -227,41 +223,37 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
 
     class Context(
         val jvmTarget: JvmTarget,
-        val projectEnvironment: AbstractProjectEnvironment,
+        val projectEnvironment: JvmCompilationEnvironment,
         val librariesScope: AbstractProjectFileSearchScope,
         val registerJvmDeserializationExtension: Boolean,
         val inlineConstTracker: InlineConstTracker?,
         /**
-         * The binary Java classes of this compilation's classpath, shared by every session created with this
-         * context. `null` for the PSI-based Java facade, which caches binary classes in its own file manager.
+         * The Java implementation of this compilation: every session created with this context, and every
+         * other consumer which needs Java declarations of some scope (the symbol provider for the precompiled
+         * binaries of incremental compilation, the JVM interpretation of an HMPP common fragment's
+         * classpath), builds its [FirJavaFacade] here instead of choosing an implementation on its own, and
+         * a source session exposes its Kotlin declarations to Java resolution through the same object.
+         *
+         * There is no default: `VfsBasedProjectEnvironment.psiJavaInterop()` (the PSI view) and
+         * `createJavaDirectJavaInterop` (java-direct) are peers, and a consumer which does not state
+         * its choice is a consumer which has not made one.
          */
-        val binaryJavaClassCache: BinaryJavaClassCache? = null,
-        javaFacadeFactory: FirJavaFacadeFactory? = null,
+        val javaInterop: FirJavaInterop,
     ) {
         constructor(
             configuration: CompilerConfiguration,
-            projectEnvironment: AbstractProjectEnvironment,
+            projectEnvironment: JvmCompilationEnvironment,
             librariesScope: AbstractProjectFileSearchScope,
+            javaInterop: FirJavaInterop,
             registerJvmDeserializationExtension: Boolean = true,
-            binaryJavaClassCache: BinaryJavaClassCache? = null,
-            javaFacadeFactory: FirJavaFacadeFactory? = null,
         ) : this(
             jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT,
             projectEnvironment,
             librariesScope,
             registerJvmDeserializationExtension = registerJvmDeserializationExtension,
             inlineConstTracker = configuration.inlineConstTracker,
-            binaryJavaClassCache = binaryJavaClassCache,
-            javaFacadeFactory = javaFacadeFactory,
+            javaInterop = javaInterop,
         )
-
-        /**
-         * The Java view of this compilation: every session created with this context, and every other
-         * consumer which needs Java declarations of some scope (the symbol provider for the precompiled
-         * binaries of incremental compilation, the JVM interpretation of an HMPP common fragment's
-         * classpath), builds its [FirJavaFacade] here instead of choosing an implementation on its own.
-         */
-        val javaFacadeFactory: FirJavaFacadeFactory = javaFacadeFactory ?: projectEnvironment.psiJavaFacadeFactory()
 
         val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
 
@@ -269,7 +261,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
     }
 
     private fun initializeForStdlibIfNeeded(
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: JvmCompilationEnvironment,
         session: FirSession,
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): FirSymbolProvider? {

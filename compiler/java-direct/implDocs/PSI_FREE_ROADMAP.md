@@ -18,9 +18,21 @@ even though it is semantically a `VirtualFile` predicate, so it counts as PSI.
 
 ## 2. What java-direct depends on now
 
-`compiler/java-direct/build.gradle.kts` no longer has `implementation(project(":compiler:cli"))`;
-the `main` source set sees `frontend.common.jvm`, `fir:resolve`, `fir:fir-jvm`, `fir:entrypoint`,
-`plugin-api`, `core:compiler.common.jvm` and `compileOnly(intellijCore())`.
+`compiler/java-direct/build.gradle.kts` no longer has `implementation(project(":compiler:cli"))`
+nor `implementation(project(":compiler:fir:entrypoint"))`; the `main` source set sees
+`frontend.common`, `frontend.common.jvm`, `fir:resolve`, `fir:fir-jvm`, `plugin-api`,
+`core:compiler.common.jvm` and `compileOnly(intellijCore())`.
+
+The `fir:entrypoint` edge existed only because the two abstractions java-direct implements —
+`FirJavaInterop` and `AbstractProjectFileSearchScope` — were declared next to the PSI default
+that also implements them. They now live below it: the scope in `:compiler:frontend.common`
+(package `org.jetbrains.kotlin.search`, since it references nothing and the metadata and JKlib
+pipelines use it too) and `FirJavaInterop` in `:compiler:fir:fir-jvm` next to the `FirJavaFacade`
+it produces. The environment went one module further down: `JvmCompilationEnvironment`
+(`:compiler:frontend.common.jvm`, package `org.jetbrains.kotlin.jvm.environment`, formerly
+`AbstractProjectEnvironment`) now hands out only `KotlinClassFinder`,
+`PackagePartProvider`, `JavaModuleResolver` and search scopes, and mentions FIR nowhere — so a
+PSI-free environment is expressible.
 
 The only IntelliJ types left in the module are the standalone syntax library
 (`com.intellij.java.syntax.*`, `com.intellij.platform.syntax.*`) plus the light-tree types
@@ -35,10 +47,10 @@ compiled output, so anything else is a test failure rather than a silent regress
 |------|-------|---------|
 | `BinaryClassFileIndex`, `BinaryClassFileScope`, `BinaryClassFileHandle` | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation and the part of it one session sees, with no scope object and no `JvmDependenciesIndex` |
 | `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` + `binaryClassFileScope()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the only place that owns a `GlobalSearchScope`, the `asPsiSearchScope()` downcast and the `ct.sym` `.sig` extension choice |
-| `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by `FirJvmSessionFactory.Context` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
-| `FirJavaFacadeFactory` | `fir/entrypoint/.../session/FirJavaFacadeFactory.kt`, held by `FirJvmSessionFactory.Context` | which Java implementation serves a scope, as one per-compilation decision instead of a `createJavaFacade` lambda per construction site; `createJavaDirectJavaFacadeFactory` supplies the java-direct one, `psiJavaFacadeFactory()` is the default |
-| `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectFacadeFactory.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
-| `javaSourceRoots: List<JavaSourceRootEntry>` parameter | `JavaDirectFacadeFactory.kt` | replaces reading `CLIConfigurationKeys.CONTENT_ROOTS` inside the module |
+| `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by the compilation's java-direct `FirJavaInterop` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
+| `FirJavaInterop` | `fir/fir-jvm/.../session/FirJavaInterop.kt`, held by `FirJvmSessionFactory.Context` (required, no default) | which Java implementation serves a scope, as one per-compilation decision instead of a `createJavaFacade` lambda per construction site; `createJavaDirectJavaInterop` (java-direct) and `VfsBasedProjectEnvironment.psiJavaInterop()` (`compiler/cli/`) are peers |
+| `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectJavaInterop.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
+| `javaSourceRoots: List<JavaSourceRootEntry>` parameter | `JavaDirectJavaInterop.kt` | replaces reading `CLIConfigurationKeys.CONTENT_ROOTS` inside the module |
 | `readBinaryJavaClass(topLevelClassFile: BinaryClassFileHandle, …)` | `frontend.common.jvm/.../BinaryJavaClassReader.kt` | lets the reader be driven from a handle instead of a `VirtualFile` |
 | `JavaModuleInfo.read(file, classesByClassId)` | `frontend.common.jvm/.../JavaModuleInfo.kt` | takes a `ClassIdToJavaClass` resolver instead of a `KotlinCliJavaFileManager` + scope |
 
@@ -59,7 +71,8 @@ The platform-free axis needs, in rough dependency order:
   `KotlinBinaryClassCache` — the Kotlin-side binary reader;
 - `JvmDependenciesIndexImpl`, `JvmDependenciesDynamicCompoundIndex`, `JavaRoot` — the classpath
   index behind `JvmDependenciesIndexBinaryRoots`;
-- `PsiBasedProjectFileSearchScope` — the sole implementation of `AbstractProjectFileSearchScope`.
+- `PsiBasedProjectFileSearchScope` (`compiler/cli/`) — the sole implementation of
+  `AbstractProjectFileSearchScope` (`frontend.common/.../search/`).
 
 That switch has LL-API, incremental-compilation and scripting consumers, so it is a separate
 effort; `implDocs/archive/EXTERNAL_DEPENDENCIES_RESOLUTION_ANALYSIS.md` §5.2/§6.2 is the only
@@ -75,8 +88,9 @@ written design for it.
   `JvmBinaryClassFinderInputs`-style seam for this — it was tried and deleted.
 - `FirJavaElementFinder` is **unreachable** under java-direct. Evidence: with `findClass`,
   `findClasses`, `getClasses` and `findPackage` all throwing, the full `JavaUsingAst*` suites passed
-  2798/2798. `JvmFrontendPipelinePhase` therefore passes
-  `needRegisterJavaElementFinder = !configuration.useJavaDirect`. kapt is unaffected — it runs as a
+  2798/2798. Registering it is therefore `FirJavaInterop.registerKotlinDeclarationsForJava`, which
+  the PSI implementation performs and the java-direct one leaves a no-op — there is no separate
+  `needRegisterJavaElementFinder` flag to keep in sync. kapt is unaffected — it runs as a
   `FirAnalysisHandlerExtension` and returns before `prepareJvmSessions`; `-Xuse-javac` was removed
   in 2.4.0.
 
@@ -91,18 +105,34 @@ written design for it.
 
 ## 7. Who decides which Java implementation a session uses
 
-Since the choice lives in `FirJvmSessionFactory.Context.javaFacadeFactory`, everything constructed
-from that context — the library and source sessions, the symbol provider for the precompiled
-binaries of incremental compilation (`FirJvmIncrementalCompilationSymbolProviders`), the JVM
-interpretation of an HMPP common fragment's classpath, the scripting/REPL additional-libraries
-session — follows the compilation's decision, and a context which chooses nothing stays on PSI.
+The choice lives in `FirJvmSessionFactory.Context.javaInterop`, so everything constructed from
+that context — the library and source sessions, the symbol provider for the precompiled binaries of
+incremental compilation (`FirJvmIncrementalCompilationSymbolProviders`), the JVM interpretation of an
+HMPP common fragment's classpath, the scripting/REPL additional-libraries session — follows the
+compilation's decision.
 
-What is left:
+`FirJavaInterop` covers **both directions** of the Kotlin/Java bridge: `createJavaFacade` gives FIR
+the Java declarations of a scope, `registerKotlinDeclarationsForJava` exposes a source session's
+Kotlin declarations to Java resolution (the `FirJavaElementFinder` PSI stubs). They are one object
+because they are one decision, and because as two knobs they had already drifted apart.
 
-- `FirJKlibSessionFactory` (`compiler/cli/cli-jklib/`) is a sibling of `FirJvmSessionFactory` with
-  its own `Context`, and calls `projectEnvironment.getFirJavaFacade` directly for both the JVM
-  classpath and the module's own `.java` files; it also registers `FirJavaElementFinder`
-  unconditionally. Bringing it to the same denominator means giving its `Context` a
-  `FirJavaFacadeFactory` and deriving it in `prepareJKlibSessions` as `prepareJvmSessions` does.
-  Untested for java-direct today, so it needs the JKlib suites as a gate.
-- The LL-API/IDE and K1 sides are out of scope entirely (see above).
+There is **no default**, and no way to obtain a Java view without stating a choice:
+
+- `JvmCompilationEnvironment` has neither `getFirJavaFacade` nor `registerAsJavaElementFinder`. An
+  environment describes the files a compilation may look in; which Java implementation reads them,
+  and whether Kotlin is exposed back to it, is not a property of it.
+- The two implementations are peers of each other, both constructed by the caller:
+  `VfsBasedProjectEnvironment.psiJavaInterop()` (`compiler/cli/.../VfsBasedProjectEnvironment.kt`)
+  and `createJavaDirectJavaInterop` (`compiler/java-direct/.../JavaDirectJavaInterop.kt`).
+- `Context.javaInterop` is a required constructor parameter, so a new consumer cannot inherit
+  the PSI path by omission — which is exactly how the incremental-compilation consumer had drifted.
+
+`FirJKlibSessionFactory` (`compiler/cli/cli-jklib/`) is a sibling of `FirJvmSessionFactory` with its
+own `Context`; `createLibrarySession`/`createSourceSession` now take a `FirJavaInterop` instead
+of reaching for the environment, and `prepareJKlibSessions` passes `psiJavaInterop()`. It is
+therefore *explicitly* on PSI, for the JVM classpath and for the module's own `.java` files alike,
+and it therefore also registers `FirJavaElementFinder`, since that now follows from the same object.
+Wiring java-direct into it means deriving the interop there as `prepareJvmSessions` does — one
+argument, nothing else; untested for java-direct today, so it needs the JKlib suites as a gate.
+
+The LL-API/IDE and K1 sides are out of scope entirely (see above).

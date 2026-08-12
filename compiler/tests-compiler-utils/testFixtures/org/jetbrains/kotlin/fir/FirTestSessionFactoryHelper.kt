@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.nio.file.Path
 import kotlin.io.path.pathString
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
@@ -47,7 +47,6 @@ object FirTestSessionFactoryHelper {
             librariesScope,
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
-            needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
                 friendDependencies(friendsPaths.map { it.pathString })
             }
@@ -77,7 +76,6 @@ object FirTestSessionFactoryHelper {
             PsiBasedProjectFileSearchScope(librariesScope),
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
-            needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
                 friendDependencies(friendsPaths.map { it.pathString })
             }

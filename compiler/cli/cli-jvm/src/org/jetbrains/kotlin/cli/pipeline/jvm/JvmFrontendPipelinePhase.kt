@@ -48,9 +48,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
-import org.jetbrains.kotlin.java.direct.createJavaDirectJavaFacadeFactory
+import org.jetbrains.kotlin.java.direct.createJavaDirectJavaInterop
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -66,6 +65,7 @@ import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -378,25 +378,20 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
-        // The lifetime of the binary Java classes is the lifetime of the context, i.e. this compilation.
-        val binaryJavaClassCache = runIf(configuration.useJavaDirect) {
-            BinaryJavaClassCache(projectEnvironment.binaryClassFileIndex())
-        }
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
             librariesScope,
-            binaryJavaClassCache = binaryJavaClassCache,
-            // `null` leaves the PSI-based Java view, see `FirJvmSessionFactory.Context.javaFacadeFactory`.
-            javaFacadeFactory = binaryJavaClassCache?.let { binaryClasses ->
-                createJavaDirectJavaFacadeFactory(
+            javaInterop = runIf(configuration.useJavaDirect) {
+                createJavaDirectJavaInterop(
                     configuration.javaSourceRootEntries(),
-                    binaryClasses,
+                    // The binary Java classes live as long as the factory, i.e. as long as the context: this compilation.
+                    BinaryJavaClassCache(projectEnvironment.binaryClassFileIndex()),
                     ::binaryClassFileScope,
                     projectEnvironment.javaModuleFinder(),
                     javaSourcesScope,
                 )
-            },
+            } ?: projectEnvironment.psiJavaInterop(),
         )
 
         return SessionConstructionUtils.prepareSessions(
@@ -427,7 +422,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     scopeProvider,
                     context.packagePartProviderForLibraries,
                     kotlinClassFinder,
-                    context.javaFacadeFactory.createJavaFacade(session, moduleData, context.librariesScope)
+                    context.javaInterop.createJavaFacade(session, moduleData, context.librariesScope)
                 )
                 val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
                     session,
@@ -493,7 +488,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                     // `FirJavaElementFinder` exposes Kotlin classes to PSI-based Java resolution as PSI class
                     // stubs. java-direct serves the Kotlin-to-Java direction from FIR instead.
-                    needRegisterJavaElementFinder = !configuration.useJavaDirect,
                     kmpModuleKind = kmpModuleKind,
                     init = sessionConfigurator,
                 )

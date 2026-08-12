@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 data class IncrementalCompilationContext(
     val precompiledBinariesPackagePartProvider: PackagePartProvider,
