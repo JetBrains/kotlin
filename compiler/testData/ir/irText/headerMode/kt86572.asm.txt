@@ -1,0 +1,63 @@
+Module: lib
+public class def/MyBase : java/lang/Object, def/MyInterface {
+    private final def.MyInterface $$delegate_0
+
+    public void <init>(def.MyInterface delegate) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String foo() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public class def/MyDelegate : java/lang/Object, def/MyInterface {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String foo() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public abstract interface def/MyInterface : java/lang/Object {
+    public abstract java.lang.String foo()
+}
+Module: main
+public final class MainKt : java/lang/Object {
+    public final static java.lang.String box() {
+        LABEL (L0)
+        LINENUMBER (25)
+          LDC (OK)
+          ARETURN
+    }
+}
+
+public final class MySub : def/MyBase {
+    public void <init>(def.MyInterface delegate) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (delegate)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (22)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKESPECIAL (def/MyBase, <init>, (Ldef/MyInterface;)V)
+          RETURN
+        LABEL (L2)
+    }
+}

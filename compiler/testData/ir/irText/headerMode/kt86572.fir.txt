@@ -1,0 +1,32 @@
+Module: lib
+FILE: lib.kt
+    package def
+
+    public abstract interface MyInterface : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/String|
+
+    }
+    public open class MyDelegate : R|def/MyInterface| {
+        public constructor(): R|def/MyDelegate|
+
+        public open override fun foo(): R|kotlin/String| {
+        }
+
+    }
+    public open class MyBase : R|def/MyInterface| {
+        public constructor(delegate: R|def/MyInterface|): R|def/MyBase|
+
+        private final field $$delegate_0: R|def/MyInterface| = R|<local>/delegate|
+
+    }
+Module: main
+FILE: main.kt
+    public final class MySub : R|def/MyBase| {
+        public constructor(delegate: R|def/MyInterface|): R|MySub| {
+            super<R|def/MyBase|>(R|<local>/delegate|)
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
