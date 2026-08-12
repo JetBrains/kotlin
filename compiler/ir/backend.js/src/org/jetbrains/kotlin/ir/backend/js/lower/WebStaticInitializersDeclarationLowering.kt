@@ -10,9 +10,15 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.correspondingField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
@@ -114,20 +120,21 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         // 1. To create a call to a parent static_init in the child static_init body.
         // 2. To create child static_init even if the child doesn't have any initializers, but super class has.
         var hasSuperTypeWithStaticInitializer = false
-        container.dependencySuperTypes.forEach {
+        val dependencySuperTypes = container.dependencySuperTypes
+        dependencySuperTypes.forEach {
             processDeclarationContainer(it)
             if (it.staticInitFunction != null) hasSuperTypeWithStaticInitializer = true
         }
-
         val needsStaticInitFunction = container.declarations.any {
             when (it) {
                 is IrEnumEntry -> it.correspondingField?.isStatic == true
                 is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
                         it.correspondingPropertySymbol?.owner?.isLateinit == false
                 is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
-                // We always generate static_init function if class has companion object even without explicit companion block initializers
-                // to preserve correct order of super companion objects initialization
-                is IrClass if it.isCompanion -> true
+                // A companion object is initialized together with its container, so the container needs
+                // a static_init as soon as the companion has anything observable to initialize. Otherwise, we omit it to
+                // not blow up the bundle size.
+                is IrClass if it.isCompanion && !it.isInitializersFreeClass() -> true
                 else -> false
             }
         }
@@ -169,25 +176,28 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
 
         // It is important to define stable signature via restrictTo to be able to reference static_init of super class
         // defined in a separate module.
-        val staticInitCalledField = context.irFactory.stageController.restrictTo(container) {
-            initializationGenerator.createStateField(
+        //
+        // Both declarations must be created within the *same* restrictTo block: the stage controller resets its signature index
+        // on every restrictTo call, so creating them in two separate blocks gives both the very same
+        // `IdSignature.LoweredDeclarationSignature`. Cross-file references are resolved by the rendered signature, so the
+        // collision makes a reference to `static_init` resolve to `static_init_called` instead.
+        val [staticInitCalledField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
+            val stateField = initializationGenerator.createStateField(
                 name = Name.identifier(STATIC_INIT_CALLED_PROPERTY_NAME),
                 origin = STATIC_CLASS_INITIALIZER,
             ).apply {
                 parent = container
             }
-        }
-        val staticInitFunction = context.irFactory.stageController.restrictTo(container) {
-            initializationGenerator.createStaticInitFunction(
+            val initFunction = initializationGenerator.createStaticInitFunction(
                 name = Name.identifier(STATIC_INIT_FUNCTION_NAME),
                 klass = container,
                 origin = STATIC_CLASS_INITIALIZER,
-                stateField = staticInitCalledField,
+                stateField = stateField,
                 initializers = initializers,
                 visibility = DescriptorVisibilities.PUBLIC,
             ) {
                 val [dependencySuperInterfaces, dependencySuperClasses] =
-                    container.dependencySuperTypes.partition { it.isInterface }
+                    dependencySuperTypes.partition { it.isInterface }
                 for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
                     superClass.staticInitFunction?.let {
                         +irCall(it.symbol)
@@ -196,10 +206,12 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             }.apply {
                 parent = container
             }
+            stateField to initFunction
         }
 
         // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
         container.staticInitFunction = staticInitFunction
+        container.companionObject()?.staticInitFunction = staticInitFunction
         container.declarations.addAll(0, listOf(staticInitCalledField, staticInitFunction))
     }
 
@@ -225,5 +237,14 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         is IrSimpleFunction if isReal && modality != Modality.ABSTRACT && dispatchReceiverParameter != null -> true
         is IrProperty if isReal && modality != Modality.ABSTRACT && (getter ?: setter)?.dispatchReceiverParameter != null -> true
         else -> false // nested classes, companion object, fields, etc. don't count
+    }
+
+    private fun IrClass.isInitializersFreeClass(): Boolean {
+        return when {
+            superTypes.any { !it.isAny() } -> false
+            declarations.any { it is IrField } -> false
+            declarations.any { it is IrAnonymousInitializer } -> false
+            else -> true
+        }
     }
 }

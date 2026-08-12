@@ -13,10 +13,11 @@ interface DDD {
 // NO_COMMON_FILES
 // FILE: main.kt
 fun box() : String {
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         return II.bar()
-    } catch (e: IllegalStateException) {
-        return e.message ?: "FAIL 2"
+    } catch (e: ExceptionInInitializerError) {
+        return (e.cause as? IllegalStateException)?.message ?: "FAIL 2"
     }
 
     return "FAIL"

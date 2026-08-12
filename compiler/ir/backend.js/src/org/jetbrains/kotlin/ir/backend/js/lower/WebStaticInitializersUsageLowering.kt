@@ -106,6 +106,7 @@ abstract class WebStaticInitializersUsageLowering(
 
     private fun insertStaticInitCall(container: IrClass) {
         if (container.isEffectivelyExternal()) return
+        if (container.isCompanion) return
         val staticInitFunction = container.staticInitFunction ?: return
 
         val builder = context.irBuiltIns.createIrBuilder(container.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
