@@ -19,7 +19,7 @@ object Impl : A, GA<A> {
     override fun foo(): A = this
 }
 
-class P : A by Impl, AB, C
+<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class P<!> : A by Impl, AB, C
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Q<!> : A by Impl, C
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class R<!> : A by Impl, B, C
 
@@ -35,7 +35,7 @@ interface GAB<T> : GA<T>, GB<T>
 interface GAB2 : GA<A>, GB<A>
 
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class GP<!> : GA<A> by Impl, GAB<A>, C
-class GP2 : GAB2, GA<A> by Impl, C
+<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class GP2<!> : GAB2, GA<A> by Impl, C
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration,
 objectDeclaration, override, thisExpression */
