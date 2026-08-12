@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test.directives.model
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+
+@RequiresOptIn
+annotation class SensitiveDirectiveAPI(val reason: String)
 
 sealed class DirectivesContainer {
     object Empty : SimpleDirectivesContainer()
@@ -16,8 +19,6 @@ sealed class DirectivesContainer {
 }
 
 abstract class SimpleDirectivesContainer : DirectivesContainer() {
-    @RequiresOptIn
-    annotation class SensitiveDirectiveAPI(val reason: String)
 
     private val registeredDirectives: MutableMap<String, Directive> = mutableMapOf()
 
