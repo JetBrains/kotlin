@@ -1280,6 +1280,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val receiverType: KaType
     }
 
+    interface EqualityNotApplicableByEqualityBounds : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualityNotApplicableByEqualityBounds::class
+        val leftType: KaType
+        val rightType: KaType
+        val leftIsEqualityBound: String
+        val rightIsEqualityBound: String
+    }
+
     interface OptInUsage : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerClassId: ClassId

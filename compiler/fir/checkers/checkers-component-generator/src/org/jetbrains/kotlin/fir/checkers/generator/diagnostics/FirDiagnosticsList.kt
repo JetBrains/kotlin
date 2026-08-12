@@ -559,6 +559,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("equalityBoundType")
             parameter<ConeKotlinType>("receiverType")
         }
+        val EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<String>("leftIsEqualityBound")
+            parameter<String>("rightIsEqualityBound")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

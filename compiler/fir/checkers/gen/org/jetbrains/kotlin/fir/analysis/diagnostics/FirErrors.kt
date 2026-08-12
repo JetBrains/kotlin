@@ -390,6 +390,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val EQUALITY_BOUND_MISMATCH_BY_DELEGATION: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("EQUALITY_BOUND_MISMATCH_BY_DELEGATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
     val INHERITED_INTERSECTION_EQUALITY_BOUND: KtDiagnosticFactory2<FirCallableSymbol<*>, ConeKotlinType> = KtDiagnosticFactory2("INHERITED_INTERSECTION_EQUALITY_BOUND", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
     val EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
+    val EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS: KtDiagnosticFactory4<ConeKotlinType, ConeKotlinType, String, String> = KtDiagnosticFactory4("EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
 
     // OptIn
     val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())
