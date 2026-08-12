@@ -32,6 +32,9 @@ abstract class KtContractDescriptionVisitor<out R, in D, Type, Diagnostic> {
     open fun visitReturnsResultOfEffectDeclaration(returnsResultOfEffect: KtReturnsResultOfDeclaration<Type, Diagnostic>, data: D): R =
         visitEffectDeclaration(returnsResultOfEffect, data)
 
+    open fun visitReturnsParameterEffectDeclaration(returnsParameterEffect: KtReturnsParameterDeclaration<Type, Diagnostic>, data: D): R =
+        visitEffectDeclaration(returnsParameterEffect, data)
+
     open fun visitErroneousCallsEffectDeclaration(callsEffect: KtErroneousCallsEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitCallsEffectDeclaration(callsEffect, data)
 

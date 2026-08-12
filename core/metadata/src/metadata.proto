@@ -636,6 +636,9 @@ message Effect {
 
     // ReturnsResultOf(callable: ParameterReference)
     RETURNS_RESULT_OF = 3;
+
+    // ReturnsParameter(callable: ParameterReference)
+    RETURNS_PARAMETER = 4;
   }
   optional EffectType effect_type = 1;
 

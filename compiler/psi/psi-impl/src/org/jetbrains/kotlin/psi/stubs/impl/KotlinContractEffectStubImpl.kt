@@ -133,6 +133,12 @@ enum class KotlinContractEffectType {
             return KtReturnsResultOfDeclaration(declaration as KtValueParameterReference)
         }
     },
+    RETURNS_PARAMETER {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtReturnsParameterDeclaration(declaration as KtValueParameterReference)
+        }
+    },
     ;
 
     abstract fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?>
@@ -188,6 +194,14 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
     ) {
         dataStream.writeVarInt(KotlinContractEffectType.RETURNS_RESULT_OF.ordinal)
         dataStream.writeVarInt(returnsResultOfEffect.valueParameterReference.parameterIndex)
+    }
+
+    override fun visitReturnsParameterEffectDeclaration(
+        returnsParameterEffect: KtReturnsParameterDeclaration<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
+        dataStream.writeVarInt(KotlinContractEffectType.RETURNS_PARAMETER.ordinal)
+        dataStream.writeVarInt(returnsParameterEffect.valueParameterReference.parameterIndex)
     }
 
     override fun visitLogicalBinaryOperationContractExpression(

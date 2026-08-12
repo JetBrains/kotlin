@@ -24,6 +24,7 @@ typealias ConeConditionalEffectDeclaration = KtConditionalEffectDeclaration<Cone
 typealias ConeConditionalReturnsDeclaration = KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeHoldsInEffectDeclaration = KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeReturnsResultOfDeclaration = KtReturnsResultOfDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeReturnsParameterDeclaration = KtReturnsParameterDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeReturnsEffectDeclaration = KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConstantReference = KtConstantReference<ConeKotlinType, ConeDiagnostic>
 typealias ConeIsNullPredicate = KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>
