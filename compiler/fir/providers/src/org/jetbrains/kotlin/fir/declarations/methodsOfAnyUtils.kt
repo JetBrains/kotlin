@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
@@ -78,4 +84,24 @@ fun FirNamedFunction.setEqualityBoundTypeFromOverridden(
             equalityBoundTypeOfParameter = session.typeContext.intersectTypes(bounds)
         }
     }
+}
+
+context(holder: SessionAndScopeSessionHolder)
+fun ConeKotlinType.calculateEqualityBoundType(): ConeKotlinType? {
+    var result: ConeKotlinType? = null
+    var equalsFound = false
+    this.scope(CallableCopyTypeCalculator.DoNothing, requiredMembersPhase = FirResolvePhase.STATUS)?.processFunctionsByName(
+        OperatorNameConventions.EQUALS,
+    ) { function ->
+        // there should only be a single such function in green code
+        // for red code let's always consider the first one
+        if (!equalsFound && function.isEquals(holder.session)) {
+            equalsFound = true
+            function.equalityBoundTypeOfParameter?.let {
+                result = it
+            }
+        }
+    }
+    // currently, flexible LHS results in nullable RHS
+    return result?.withNullability(this.canBeNull(), holder.session.typeContext)
 }
