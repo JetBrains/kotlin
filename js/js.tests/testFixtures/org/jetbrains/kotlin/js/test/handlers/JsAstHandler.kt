@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.js.test.handlers
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives
-import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils.processDirectives
+import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective
 import org.jetbrains.kotlin.js.translate.utils.name
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.CHECK_OPTIMIZED_JS
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
+import java.io.File
 
 class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -54,6 +57,19 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         )
 
         jsProgram.verifyAst()
+    }
+
+    private fun processDirectives(ast: JsNode, sourceFile: File, targetBackend: TargetBackend, registeredDirectives: RegisteredDirectives) {
+        val parsedDirectives: List<JsAstDirective> = JsAstDirectives.allDirectives.flatMap(registeredDirectives::get)
+        testServices.assertions.assertAll(
+            parsedDirectives.map { directive ->
+                {
+                    if (directive.shouldRunWithBackend(targetBackend)) {
+                        directive.evaluate(ast, sourceFile)
+                    }
+                }
+            }
+        )
     }
 
     private fun JsProgram.verifyAst() {
