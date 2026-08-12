@@ -24,9 +24,11 @@ dependencies {
     implementation(libs.caffeine)
     api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
+    implementation(project(":analysis:analysis-api-fir"))
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":analysis:light-classes-base"))
     api(project(":analysis:analysis-api-platform-interface"))
+    implementation(libs.analysis.api.intellij.patched.kotlinx.coroutines.core.jvm)
 }
 
 
