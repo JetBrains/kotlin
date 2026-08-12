@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -29,7 +29,6 @@ object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         projectEnvironment: VfsBasedProjectEnvironment,
-        javaSourceScope: GlobalSearchScope,
         librariesClasspath: JvmClasspath = JvmClasspath.ProjectLibraries(),
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
@@ -43,7 +42,7 @@ object FirTestSessionFactoryHelper {
             JvmPlatforms.unspecifiedJvmPlatform,
             projectEnvironment,
             configuration,
-            projectEnvironment.psiJavaInterop(javaSources = { javaSourceScope }),
+            projectEnvironment.javaInterop(configuration),
             librariesClasspath,
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
@@ -56,7 +55,6 @@ object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         project: Project,
-        sourceScope: GlobalSearchScope,
         configuration: CompilerConfiguration,
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
@@ -72,7 +70,7 @@ object FirTestSessionFactoryHelper {
             JvmPlatforms.unspecifiedJvmPlatform,
             projectEnvironment,
             configuration,
-            projectEnvironment.psiJavaInterop(javaSources = { sourceScope }),
+            projectEnvironment.javaInterop(configuration),
             JvmClasspath.ProjectLibraries(),
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),

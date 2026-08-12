@@ -14,7 +14,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiPackageStatement
 import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
@@ -144,11 +143,8 @@ abstract class AbstractFirTypeEnhancementTest {
             val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
             val psiFiles = virtualFiles.map { factory.trySetupPsiForFile(it, JavaLanguage.INSTANCE, true, false)!! }
 
-            val scope = GlobalSearchScope.filesScope(project, virtualFiles)
-                .uniteWith(AllJavaSourcesInProjectScope(project))
             val session = FirTestSessionFactoryHelper.createSessionForTests(
-                environment.toVfsBasedProjectEnvironment(),
-                scope
+                environment.toVfsBasedProjectEnvironment()
             )
 
             val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }

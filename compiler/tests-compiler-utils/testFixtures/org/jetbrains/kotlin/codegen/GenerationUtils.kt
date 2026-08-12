@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.runAnalysisHandlerExtensions
@@ -67,10 +66,8 @@ object GenerationUtils {
             throw CompilationErrorException()
         }
 
-        val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
-            .uniteWith(AllJavaSourcesInProjectScope(project))
         val session = FirTestSessionFactoryHelper.createSessionForTests(
-            project, scope, configuration, "main", getPackagePartProvider = packagePartProvider,
+            project, configuration, "main", getPackagePartProvider = packagePartProvider,
         )
 
         // TODO: add running checkers and check that it's safe to compile

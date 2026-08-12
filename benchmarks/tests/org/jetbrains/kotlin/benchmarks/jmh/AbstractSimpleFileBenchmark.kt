@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
@@ -91,9 +90,7 @@ abstract class AbstractSimpleFileBenchmark {
 
     @OptIn(ObsoleteTestInfrastructure::class)
     protected fun analyzeGreenFile(bh: Blackhole) {
-        val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
-            .uniteWith(AllJavaSourcesInProjectScope(env.project))
-        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope)
+        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment())
         val firProvider = session.firProvider as FirProviderImpl
         val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
 

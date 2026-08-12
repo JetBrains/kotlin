@@ -123,10 +123,9 @@ drifted apart.
 
 The facade side is split **by role**, not by scope: `createBinaryJavaFacade(session, moduleData,
 classpath)` and `createJavaSourcesFacade(session, moduleData)`. Which files are "the `.java` sources
-of this compilation" is the implementation's own knowledge — java-direct has its
-`javaSourceRoots`, the PSI peer takes a per-module scope function (`AllJavaSourcesInProjectScope` in
-the CLI, empty for scripting and the REPL, the module's own files in the test infrastructure). This
-is what removed java-direct's `fileSearchScope === javaSourcesScope` identity check and the
+of this compilation" is the implementation's own knowledge — java-direct has its `javaSourceRoots`,
+the PSI peer uses `AllJavaSourcesInProjectScope` (or nothing, in scripting and the REPL). This is
+what removed java-direct's `fileSearchScope === javaSourcesScope` identity check and the
 `IdentityHashMap` that made it work.
 
 The choice itself is *derived from the compiler configuration*, in one shared helper:
@@ -136,9 +135,10 @@ the JVM CLI pipeline, `prepareJKlibSessions`, the scripting compiler, the REPL a
 additional-sources extension — so `-Xjava-direct` is effective everywhere rather than in one
 pipeline. `withJavaSources` is a single switch on purpose: java-direct describes its `.java` sources
 as source roots and the PSI peer as a search scope, and a caller must not be able to state the two
-inconsistently. A caller needing a narrower answer than "all or none" (the multi-module test
-infrastructure, which gives each module its own files) is PSI-only and calls `psiJavaInterop`
-directly.
+inconsistently. "All or none" is also the whole observable domain: the multi-module test
+infrastructure used to hand the PSI peer a per-module scope, but its Kotlin half was filtered out
+again by `FilterOutKotlinSourceFilesScope` and its Java half was `AllJavaSourcesInProjectScope`, so
+the fixtures now call the same helper as every pipeline (§8, item 1).
 
 One consumer states that it makes **no** choice: `FirSessionConstructionUtils.prepareMetadataSessions`
 (metadata compilation) passes `NoJavaInterop` (`fir/fir-jvm/.../session/FirJavaInterop.kt`). It builds
@@ -171,17 +171,17 @@ The LL-API/IDE and K1 sides are out of scope entirely (see above).
 
 ## 8. The PSI that is left in the API, and how it goes
 
-With `AbstractProjectFileSearchScope` deleted and `PsiScopeJvmClasspath` gone, `GlobalSearchScope`
-appears in exactly one cross-module signature, and in one internal adapter:
+With `AbstractProjectFileSearchScope` deleted, `PsiScopeJvmClasspath` gone and the Java-sources
+parameter reduced to a boolean, `GlobalSearchScope` no longer appears in any cross-module signature
+of the Java view — only in CLI-internal adapters:
 
-1. **`psiJavaInterop(javaSources: (FirModuleData) -> GlobalSearchScope)`**
-   (`compiler/cli/.../VfsBasedProjectEnvironment.kt`) — the last `GlobalSearchScope` in a signature
-   called from outside `:compiler:cli`. Callers: `FirFrontendFacade`, `FirReplFrontendFacade`,
-   `FirTestSessionFactoryHelper` (×2), `FirSessionFactoryHelper`, `K2CompilerFacade`; the CLI,
-   JKlib, scripting and REPL sites no longer pass it. It is the mirror of the problem `JvmClasspath`
+1. **`psiJavaInterop(javaSources: (FirModuleData) -> GlobalSearchScope)`** — *landed: it is now
+   `psiJavaInterop(withJavaSources: Boolean = true)`.* It was the last `GlobalSearchScope` in a
+   signature called from outside `:compiler:cli`, and the mirror of the problem `JvmClasspath`
    solved for the binary side: the *Java sources* side never got its own description.
 
-   *Plan.* Give it one, in the same shape and in `frontend.common.jvm` next to `JvmClasspath`:
+   *Plan (obsolete, kept for the reasoning).* Give it one, in the same shape and in
+   `frontend.common.jvm` next to `JvmClasspath`:
    `sealed interface JavaSources { object None; object OfThisCompilation; class Roots(List<JavaSourceRootEntry>) }`.
    java-direct already speaks the third form (`javaSourceRoots`), the PSI peer converts it exactly
    as `psiSearchScope` converts a `JvmClasspath` (`EMPTY_SCOPE` / `AllJavaSourcesInProjectScope` /
@@ -189,8 +189,19 @@ appears in exactly one cross-module signature, and in one internal adapter:
    the parameter stops being PSI-shaped, and the remaining fixture cases ("this test module's own
    `.java` files", which is a `filesScope` over `KtSourceFile`s) need one more shape —
    `Files(List<File>)` — or stay behind a cli-internal `psiJavaInterop` overload marked as test-only.
-   Blocker: none technical; the only open question is whether the per-module fixture scopes are
-   expressible as file lists (they are built from `TestModule` java files, so almost certainly yes).
+
+   *What happened instead.* Measured against its call sites, the lambda had no observable range
+   beyond "all or none", so the parameter became `psiJavaInterop(withJavaSources: Boolean = true)`
+   and no `JavaSources` type was needed. All four non-CLI callers passed the same expression —
+   `filesScope(<the module's Kotlin files>).uniteWith(AllJavaSourcesInProjectScope)`, the K1-era
+   `TopDownAnalyzerFacadeForJVM.newModuleSearchScope` — whose Kotlin half is removed again by
+   `FilterOutKotlinSourceFilesScope` in `JavaClassFinderImpl` and cannot reach a `PsiElementFinder`
+   either (`FirJavaElementFinder.findClass` ignores its scope), while the Java half is exactly the
+   default. So `FirFrontendFacade`/`FirReplFrontendFacade` no longer keep a
+   `FirModuleData -> GlobalSearchScope` map, `FirTestSessionFactoryHelper.createSessionForTests` no
+   longer takes a scope, and all of them go through `javaInterop(configuration)` — which also makes
+   the fixtures honour `-Xjava-direct` for the first time. Should a genuine per-module answer ever be
+   needed, it must be described as *files or roots*, not as a scope; nothing wants it today.
 
 2. **`VfsBasedProjectEnvironment.psiSearchScope(JvmClasspath)`** — CLI-internal, and the intended
    end state until the platform-free axis (§4) replaces the index itself. It is not API and needs no

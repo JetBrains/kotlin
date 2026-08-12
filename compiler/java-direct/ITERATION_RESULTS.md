@@ -36,6 +36,29 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-12 — the Java-sources scope leaves the API; test fixtures follow the flag
+- **Change**: `psiJavaInterop` took a `(FirModuleData) -> GlobalSearchScope`, but all four non-CLI
+  callers passed the same K1-era expression (`filesScope(<module's Kotlin files>)` ∪
+  `AllJavaSourcesInProjectScope`), whose Kotlin half is filtered out again by
+  `FilterOutKotlinSourceFilesScope` in `JavaClassFinderImpl` and whose Java half *is* the default —
+  so the parameter is now `withJavaSources: Boolean = true` and `GlobalSearchScope` no longer appears
+  in any cross-module signature of the Java view. `FirFrontendFacade`/`FirReplFrontendFacade` lost
+  their `FirModuleData -> GlobalSearchScope` maps, `newModuleSearchScope` and (in the first) two
+  parameters of `createModuleBasedSession`; `FirTestSessionFactoryHelper.createSessionForTests` lost
+  the scope parameter of both overloads and all callers use `javaInterop(configuration)`, i.e. the
+  fixtures honour `-Xjava-direct` for the first time.
+- **Files**: `cli/.../VfsBasedProjectEnvironment.kt`, `cli-jvm/.../JavaInterop.kt`,
+  `tests-common-new/.../FirFrontendFacade.kt`, `.../FirReplFrontendFacade.kt`,
+  `tests-compiler-utils/.../FirTestSessionFactoryHelper.kt`, `.../session/FirSessionFactoryHelper.kt`
+  (stale import), `.../codegen/GenerationUtils.kt`, `legacy-fir-tests/.../AbstractFirTypeEnhancementTest.kt`,
+  `modularized-tests/.../FirResolveModularizedTotalKotlinTestPure.kt`,
+  `benchmarks/.../AbstractSimpleFileBenchmark.kt`, `implDocs/PSI_FREE_ROADMAP.md` §7/§8.
+- **Tests**: java-direct 21771/0; gates `PhasedJvmDiagnosticLightTreeTestGenerated` 10993/0 and
+  `*CompileKotlinAgainstKotlin*` 153/0; `FirTypeEnhancementTestGenerated` 289/0 (its `.java` files are
+  in-memory `LightVirtualFile`s, covered by `AllJavaSourcesInProjectScope`), `*ForeignAnnotations*`
+  982/0, scripting/REPL 402/0, kapt 351/0 (`GenerationUtils`); `:benchmarks:compileTestKotlin` green.
+- **Result**: green, behaviour-preserving off `-Xjava-direct`.
+
 ### 2026-08-12 — metadata compilation states that it reads no Java; Compose follows the flag
 - **Change**: `prepareMetadataSessions` passed `psiJavaInterop()`, implying metadata compilation
   resolves Java through PSI. It creates a `FirJvmSessionFactory.Context` only to register the JVM

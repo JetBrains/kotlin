@@ -133,11 +133,13 @@ open class VfsBasedProjectEnvironment(
  * can see them. The peer of `createJavaDirectJavaInterop` in `:compiler:java-direct`; an alternative Java
  * implementation replaces not the facade but the [org.jetbrains.kotlin.load.java.JavaClassFinder] inside it.
  *
- * [javaSources] is what this compilation calls the `.java` sources of a module: all of them by default,
- * none for scripting and the REPL, the module's own files in the multi-module test infrastructure.
+ * [withJavaSources] says whether this compilation has `.java` sources of its own at all: it has them by
+ * default, and it has none in scripting and the REPL. There is nothing in between, because the Kotlin half
+ * of a narrower scope is unobservable — [org.jetbrains.kotlin.load.JavaClassFinderImpl] wraps whatever scope
+ * it is given in `FilterOutKotlinSourceFilesScope` — and the Java half is always all `.java` files.
  */
 fun VfsBasedProjectEnvironment.psiJavaInterop(
-    javaSources: (FirModuleData) -> GlobalSearchScope = { AllJavaSourcesInProjectScope(project) },
+    withJavaSources: Boolean = true,
 ): FirJavaInterop = object : FirJavaInterop {
     override fun createBinaryJavaFacade(
         session: FirSession,
@@ -148,7 +150,10 @@ fun VfsBasedProjectEnvironment.psiJavaInterop(
     override fun createJavaSourcesFacade(
         session: FirSession,
         moduleData: FirModuleData,
-    ): FirJavaFacade = createJavaFacade(session, moduleData, javaSources(moduleData))
+    ): FirJavaFacade = createJavaFacade(
+        session, moduleData,
+        if (withJavaSources) AllJavaSourcesInProjectScope(project) else GlobalSearchScope.EMPTY_SCOPE,
+    )
 
     private fun createJavaFacade(session: FirSession, moduleData: FirModuleData, scope: GlobalSearchScope): FirJavaFacade {
         val javaClassFinder = project.createJavaClassFinder(scope, session.javaAnnotationProvider)

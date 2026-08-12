@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.contentRoots
-import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -76,9 +73,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         return shouldRunFirFrontendFacade(module, testServices)
     }
 
-    /** The `.java` sources of each test module, as `FirJavaInterop` needs them; see [createModuleBasedSession]. */
-    private val javaSourcesScopes: MutableMap<FirModuleData, GlobalSearchScope> = mutableMapOf()
-
     private fun registerExtraComponents(session: FirSession) {
         testServices.firSessionComponentRegistrar?.registerAdditionalComponent(session)
     }
@@ -103,8 +97,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 configuration,
                 projectEnvironment,
                 JvmClasspath.ProjectLibraries(),
-                // Each test module sees only its own `.java` files.
-                projectEnvironment.psiJavaInterop(javaSources = { javaSourcesScopes[it] ?: GlobalSearchScope.EMPTY_SCOPE }),
+                projectEnvironment.javaInterop(configuration),
             )
         }
         val librarySession = createLibrarySession(
@@ -306,8 +299,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             extensionRegistrars,
             sessionConfigurator,
             jvmSessionFactoryContext,
-            project,
-            ktFiles.values,
         )
 
         val firAnalyzerFacade = FirAnalyzerFacade(
@@ -345,8 +336,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         extensionRegistrars: List<FirExtensionRegistrar>,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
-        project: Project,
-        ktFiles: Collection<KtFile>,
     ): FirSession {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
@@ -367,7 +356,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 ).also(::registerExtraComponents)
             }
             targetPlatform.isJvm() -> {
-                javaSourcesScopes[moduleData] = newModuleSearchScope(project, ktFiles)
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     createIncrementalCompilationSymbolProviders = { null },
@@ -483,13 +471,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             } else {
                 true
             }
-        }
-
-        fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
-            // In case of separate modules, the source module scope generally consists of the following scopes:
-            // 1) scope which only contains passed Kotlin source files (.kt and .kts)
-            // 2) scope which contains all Java source files (.java) in the project
-            return GlobalSearchScope.filesScope(project, files.map { it.virtualFile }.toSet()).uniteWith(AllJavaSourcesInProjectScope(project))
         }
     }
 }

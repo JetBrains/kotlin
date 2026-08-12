@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -28,24 +27,24 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
  *
  * [withJavaSources] says whether this compilation has `.java` sources of its own at all. It is a single
  * switch because the two implementations describe those sources differently — java-direct by source root,
- * PSI by search scope — and a caller must not be able to tell them different things. A compilation which
- * needs a narrower answer than "all or none" (the multi-module test infrastructure, which gives each module
- * its own files) is PSI-only and calls [psiJavaInterop] directly.
+ * PSI by search scope — and a caller must not be able to tell them different things. "All or none" is the
+ * whole domain: neither implementation can be told about a subset of the compilation's `.java` sources.
  */
 fun VfsBasedProjectEnvironment.javaInterop(
     configuration: CompilerConfiguration,
     withJavaSources: Boolean = true,
-): FirJavaInterop = when {
-    configuration.useJavaDirect -> createJavaDirectJavaInterop(
-        if (withJavaSources) configuration.javaSourceRootEntries() else emptyList(),
-        // The binary Java classes live as long as the interop, i.e. as long as the compilation which built it.
-        BinaryJavaClassCache(binaryClassFileIndex()),
-        this::binaryClassFileScope,
-        javaModuleFinder(),
-    )
-    withJavaSources -> psiJavaInterop()
-    else -> psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE })
-}
+): FirJavaInterop =
+    if (configuration.useJavaDirect) {
+        createJavaDirectJavaInterop(
+            if (withJavaSources) configuration.javaSourceRootEntries() else emptyList(),
+            // The binary Java classes live as long as the interop, i.e. as long as the compilation which built it.
+            BinaryJavaClassCache(binaryClassFileIndex()),
+            this::binaryClassFileScope,
+            javaModuleFinder(),
+        )
+    } else {
+        psiJavaInterop(withJavaSources)
+    }
 
 private fun CompilerConfiguration.javaSourceRootEntries(): List<JavaSourceRootEntry> =
     getList(CLIConfigurationKeys.CONTENT_ROOTS)

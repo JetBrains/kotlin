@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
@@ -56,9 +55,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val jvmSessionFactoryContext: FirJvmSessionFactory.Context,
     )
 
-    /** The `.java` sources of each snippet module, as `FirJavaInterop` needs them. */
-    private val javaSourcesScopes: MutableMap<FirModuleData, GlobalSearchScope> = mutableMapOf()
-
     @OptIn(SessionConfiguration::class)
     private val replCompilationEnvironment: ReplCompilationEnvironment by lazy {
         val testModule = testServices.moduleStructure.modules.first()
@@ -83,8 +79,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             configuration,
             projectEnvironment,
             JvmClasspath.ProjectLibraries(),
-            // Each snippet sees only its own `.java` files, of which there are none.
-            projectEnvironment.psiJavaInterop(javaSources = { javaSourcesScopes[it] ?: GlobalSearchScope.EMPTY_SCOPE }),
+            projectEnvironment.javaInterop(configuration),
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -150,7 +145,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val project = compilerConfigurationProvider.getProject(module)
 
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
-        javaSourcesScopes[moduleData] = FirFrontendFacade.newModuleSearchScope(project, ktFiles.values)
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
             createIncrementalCompilationSymbolProviders = { null },
