@@ -62,8 +62,11 @@ internal class CompilerMessageRendererAdapter(
             CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> {
                 CompilerMessageRenderer.Severity.ERROR
             }
-            CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT -> {
+            CompilerMessageSeverity.LOGGING -> {
                 CompilerMessageRenderer.Severity.DEBUG
+            }
+            CompilerMessageSeverity.OUTPUT -> {
+                CompilerMessageRenderer.Severity.OUTPUT
             }
             CompilerMessageSeverity.INFO -> {
                 CompilerMessageRenderer.Severity.INFO

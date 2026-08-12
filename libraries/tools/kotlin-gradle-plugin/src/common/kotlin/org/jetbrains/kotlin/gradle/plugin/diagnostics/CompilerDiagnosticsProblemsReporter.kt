@@ -102,19 +102,20 @@ internal val CompilerMessageRenderer.Severity.problemId: String
         CompilerMessageRenderer.Severity.WARNING -> "compiler-warning"
         CompilerMessageRenderer.Severity.INFO -> "compiler-info"
         CompilerMessageRenderer.Severity.DEBUG -> "compiler-debug"
+        CompilerMessageRenderer.Severity.OUTPUT -> "compiler-debug"
     }
 
 internal fun CompilerMessageRenderer.Severity.toDiagnosticGroup(): DiagnosticGroup = when (this) {
     CompilerMessageRenderer.Severity.ERROR -> DiagnosticGroup.Compiler.Error
     CompilerMessageRenderer.Severity.WARNING -> DiagnosticGroup.Compiler.Warning
-    CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG -> DiagnosticGroup.Compiler.Default
+    CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG, CompilerMessageRenderer.Severity.OUTPUT -> DiagnosticGroup.Compiler.Default
 }
 
 internal fun CompilerMessageRenderer.Severity.toDisplayName(): String = when (this) {
     CompilerMessageRenderer.Severity.ERROR -> "Kotlin compiler error"
     CompilerMessageRenderer.Severity.WARNING -> "Kotlin compiler warning"
     CompilerMessageRenderer.Severity.INFO -> "Kotlin compiler info"
-    CompilerMessageRenderer.Severity.DEBUG -> "Kotlin compiler debug"
+    CompilerMessageRenderer.Severity.DEBUG, CompilerMessageRenderer.Severity.OUTPUT -> "Kotlin compiler debug"
 }
 
 internal fun CompilerMessageRenderer.Severity.resolvedProblemId(diagnosticId: String?): String =

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 internal fun CompilerMessageRenderer.Severity.toGradleSeverity(): Severity? = when (this) {
     CompilerMessageRenderer.Severity.ERROR -> Severity.ERROR
     CompilerMessageRenderer.Severity.WARNING -> Severity.WARNING
-    CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG -> null
+    CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG, CompilerMessageRenderer.Severity.OUTPUT -> null
 }
 
 // Default setup for all gradle variants since 8.6 till Gradle 9.6

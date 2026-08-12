@@ -27,7 +27,8 @@ public interface CompilerMessageRenderer {
         ERROR,
         WARNING,
         INFO,
-        DEBUG
+        DEBUG,
+        OUTPUT
     }
 
     /**
