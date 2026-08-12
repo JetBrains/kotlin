@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.Resources
@@ -242,7 +243,7 @@ class CachingTest {
             K2JVMCompilerArguments::classpath.cliArgument,
             standardJars.joinToString(File.pathSeparator),
             CommonCompilerArguments::languageVersion.cliArgument,
-            if (isK2) "2.0" else "1.9",
+            if (isK2) LanguageVersion.LATEST_STABLE.versionString else "1.9",
             CommonCompilerArguments::suppressVersionWarnings.cliArgument,
             inKt.path
         )

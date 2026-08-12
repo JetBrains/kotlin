@@ -8,8 +8,8 @@ repositories {
 }
 
 compileKotlin {
-    kotlinOptions {
-        languageVersion = "2.1"
-        apiVersion = "2.1"
+    compilerOptions {
+        languageVersion = "2.5"
+        apiVersion = "2.5"
     }
 }
