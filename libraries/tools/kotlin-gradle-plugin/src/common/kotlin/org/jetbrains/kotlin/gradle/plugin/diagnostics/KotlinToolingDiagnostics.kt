@@ -2422,6 +2422,39 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NoChromiumRunnerForBrowserDebug : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String) = build {
+            title { "No Chromium runner is configured for browser test debugging" }
+                .description {
+                    "Browser test debugging attaches a debugger to Chromium, but no Chromium runner is configured. " +
+                            "Kotlin launches Chromium with the test settings of the '$runnerName' runner."
+                }
+                .solution {
+                    "Declare a chromium() runner in the browser test DSL to configure the debug browser"
+                }
+        }
+    }
+
+    internal object SeveralChromiumRunnersForBrowserDebug : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerNames: List<String>, debuggedRunnerName: String) = build {
+            title { "Several Chromium runners are configured for browser test debugging" }
+                .description {
+                    "A debug session attaches a debugger to a single browser, but several Chromium runners are configured: " +
+                            runnerNames.joinToString { "'$it'" } + ". " +
+                            "Kotlin debugs '$debuggedRunnerName', the other Chromium runners are not run in this build."
+                }
+                .solution {
+                    "Declare the Chromium runner that should be debugged first, or leave a single Chromium runner declared"
+                }
+        }
+    }
+
     internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

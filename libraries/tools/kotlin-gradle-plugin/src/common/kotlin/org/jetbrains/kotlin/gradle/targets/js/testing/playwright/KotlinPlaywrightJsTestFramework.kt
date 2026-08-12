@@ -14,6 +14,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -133,25 +134,21 @@ internal class KotlinPlaywrightJsTestFramework(
         val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
         chromiumRunners.firstOrNull()?.let { debugRunner ->
             if (chromiumRunners.size > 1) {
-                task.logger.warn(
-                    "Several Chromium runners are configured for '${task.path}': " +
-                            chromiumRunners.joinToString { "'${it.name.get()}'" } + ". " +
-                            "A debug session attaches to a single browser, so only '${debugRunner.name.get()}' is launched. " +
-                            "The other Chromium runners are not run in this build."
+                task.reportDiagnostic(
+                    KotlinToolingDiagnostics.SeveralChromiumRunnersForBrowserDebug(
+                        runnerNames = chromiumRunners.map { it.name.get() },
+                        debuggedRunnerName = debugRunner.name.get(),
+                    )
                 )
             }
             return debugRunner
         }
 
-        task.logger.warn(
-            "No Chromium runner is configured for Playwright debugging. " +
-                    "Kotlin will launch Chromium using the first configured browser runner's test settings. " +
-                    "Define a Chromium runner in the browser test DSL to customize the debug browser configuration."
-        )
-
         val configuredRunner = frameworkTaskInputs.firefoxRunners.get().firstOrNull()
             ?: frameworkTaskInputs.webkitRunners.get().firstOrNull()
             ?: error("No Playwright browser runners configured")
+
+        task.reportDiagnostic(KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug(configuredRunner.name.get()))
 
         return createChromiumInputs(objects).apply {
             name.convention("chromium")

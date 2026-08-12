@@ -73,6 +73,47 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `debugging without a chromium runner reports a diagnostic`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            jsProject {
+                firefox("myFirefox")
+            }
+
+            build(":jsBrowserTest", "--browser-debug") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug,
+                    withSubstring = "Kotlin launches Chromium with the test settings of the 'myFirefox' runner.",
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `debugging with several chromium runners reports a diagnostic`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            jsProject {
+                chromium("first")
+                chromium("second")
+            }
+
+            build(":jsBrowserTest", "--browser-debug") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SeveralChromiumRunnersForBrowserDebug,
+                    withSubstring = "Kotlin debugs 'first', the other Chromium runners are not run in this build.",
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `verify launchArgs configuration with browser api access`(gradleVersion: GradleVersion) {
         project(
             "empty",
