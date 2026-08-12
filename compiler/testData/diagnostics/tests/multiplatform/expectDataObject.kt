@@ -1,5 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
+
 // MODULE: m1-common
 // FILE: common.kt
 <!INCOMPATIBLE_MODIFIERS!>expect<!> <!INCOMPATIBLE_MODIFIERS!>data<!> object DataObject

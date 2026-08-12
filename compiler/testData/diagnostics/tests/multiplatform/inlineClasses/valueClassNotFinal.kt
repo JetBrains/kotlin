@@ -1,6 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 // WITH_STDLIB
 
 // MODULE: common

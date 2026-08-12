@@ -1770,6 +1770,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         // Callables
         val EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES by expectActualIncompatibilityError

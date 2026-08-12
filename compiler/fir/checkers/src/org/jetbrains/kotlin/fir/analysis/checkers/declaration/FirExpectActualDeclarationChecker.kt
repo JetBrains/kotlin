@@ -442,6 +442,7 @@ private fun ExpectActualIncompatibility<*>.toDiagnostic(): KtDiagnosticFactory3<
     ExpectActualIncompatibility.PropertyKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND
     ExpectActualIncompatibility.PropertyLateinitModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_LATEINIT_MODIFIER
     ExpectActualIncompatibility.ReturnType -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE
+    ExpectActualIncompatibility.EqualityBoundsAreDifferent -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS
     ExpectActualIncompatibility.Supertypes -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES
     ExpectActualIncompatibility.TypeParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES
     ExpectActualIncompatibility.TypeParameterReified -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_REIFIED

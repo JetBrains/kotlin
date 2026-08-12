@@ -1,6 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +InlineClasses
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // MODULE: m1-common
 // FILE: common.kt

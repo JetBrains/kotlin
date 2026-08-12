@@ -3510,6 +3510,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface ExpectActualIncompatibleEqualityBounds : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleEqualityBounds::class
+        val expectDeclaration: KaSymbol
+        val actualDeclaration: KaSymbol
+        val reason: String
+    }
+
     interface ExpectActualIncompatibleParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExpectActualIncompatibleParameterNames::class
         val expectDeclaration: KaSymbol
