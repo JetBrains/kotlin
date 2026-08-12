@@ -51,7 +51,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
             statements += context.createIrBuilder(getInstanceFun.symbol).irBlockBody(getInstanceFun) {
                 +irIfThen(
                     irNullabilityCheck(instanceField),
-                    // Instance field is initialized inside constructor
+                    // Instance field initialized inside constructor
                     irCallConstructor(primaryConstructor.symbol, emptyList())
                 )
                 +irReturn(irGetField(null, instanceField))

@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.backend.js.lower.InlineObjectsWithPureInitializationLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.CleanupPurifiedLeftoverUsagesLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-class WasmInlineObjectsWithPureInitializationLowering(context: WasmBackendContext) : InlineObjectsWithPureInitializationLowering(context) {
+@PhasePrerequisites(
+    WasmPurifyObjectInstanceGettersLowering::class,
+    WasmInlineObjectsWithPureInitializationLowering::class
+)
+class WasmCleanupPurifiedLeftoverUsagesLowering(context: WasmBackendContext) : CleanupPurifiedLeftoverUsagesLowering(context) {
     override fun lower(irModule: IrModuleFragment) {
         val disableCrossFileOptimisations = context.configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS)
         val isDebugFriendlyCompilation = context.configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)

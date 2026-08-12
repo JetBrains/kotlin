@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.hasPureInitialization
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.isLeftoverAfterObjectPurification
 import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
+import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceGetter
 import org.jetbrains.kotlin.ir.backend.js.utils.primaryConstructorReplacement
@@ -19,6 +22,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /**
@@ -68,14 +74,29 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  *
  * More details of pure checking logic can be found at [isPureStatementForObjectInitialization] and at [isPure].
  *
- * [InlineObjectsWithPureInitializationLowering] as the next step will replace `_getInstance` call with `_instance` field access
- * when applicable.
+ * For companion objects, the `static_init` static initializer comes into play.
+ *
+ * We check `static_init` for incompatible expressions:
+ * - Super `static_init` calls are not compatible
+ * - Static initializers coming from `companion` blocks are not compatible
+ *
+ * In case `companion object`'s `static_init` is compatible with purification, it's declaration is marked
+ * using `isLeftoverAfterObjectPurification` attribute and later, depending on the backend:
+ * - in JS, specialized [JsCleanupPurifiedLeftoverDeclarationsLowering] runs a dumb declaration removal phase. DCE has been already run
+ *   at that moment, so we can't rely on it
+ * - in Wasm, the declaration is removed by the regular DCE
+ *
+ * Leftover usages of such `static_init` for both backends are removed by [CleanupPurifiedLeftoverUsagesLowering].
+ *
+ * For both `object`s and `companion object`s, [InlineObjectsWithPureInitializationLowering] as the next step will replace
+ * `_getInstance` call with `_instance` field access when applicable.
  */
 open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
             is IrFunction if declaration.isObjectConstructor() -> declaration.removeInstanceFieldInitializationIfPossible()
             is IrSimpleFunction if declaration.isObjectInstanceGetter() -> declaration.purifyObjectGetterIfPossible()
+            is IrClass if declaration.isCompanion -> declaration.staticInitFunction?.markStaticInitForRemovalIfPossible(declaration)
             is IrField if declaration.isObjectInstanceField() -> declaration.purifyObjectInstanceFieldIfPossible()
         }
 
@@ -108,6 +129,12 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
         )
     }
 
+    private fun IrSimpleFunction.markStaticInitForRemovalIfPossible(companionObject: IrClass) {
+        if (!companionObject.isPureObject()) return
+
+        isLeftoverAfterObjectPurification = true
+    }
+
     private fun IrField.purifyObjectInstanceFieldIfPossible() {
         val objectToCreate = type.classOrNull?.owner ?: return
         if (!objectToCreate.isPureObject()) return
@@ -133,9 +160,51 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
                 superClass != null -> false
                 constructor?.body?.statements?.any { !it.isPureStatementForObjectInitialization(this@isPureObject) } == true ->
                     false
+                isCompanion && staticInitFunction?.body?.isPureStaticInitFunctionBody() == false ->
+                    false
                 else -> true
             }
         }
+
+    /**
+     * As `static_init` has a synthetic well known structure, we assume that `static_init` function is pure.
+     *
+     * There are 2 cases when body of static_init can be impure:
+     * - Static initializers from companion blocks are presented (`IrSetField` with the corresponding origin)
+     * - Calls to super `static_init` functions are presented (`IrCall` with the corresponding origin)
+     *
+     * Otherwise, the `static_init` is safe and the corresponding companion object can be purified.
+     */
+    private fun IrBody.isPureStaticInitFunctionBody(): Boolean {
+        var isPureStaticInitFunction = true
+        // Using visitor here because static_init has 'try-catch' and 'if' structured nodes,
+        // which means we no longer can rely on body statement list.
+        acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                // Calls to `static_init` coming from super types are also not suitable in purification at the moment.
+                if (expression.symbol.owner.origin == WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER) {
+                    isPureStaticInitFunction = false
+                    return
+                }
+                expression.acceptChildrenVoid(this)
+            }
+
+            override fun visitSetField(expression: IrSetField) {
+                // Any `IrSetField` for a companion block-related initializer, which means we can't purify.
+                if (expression.origin == WebStaticInitializersDeclarationLowering.STATIC_FIELD_INITIALIZER) {
+                    isPureStaticInitFunction = false
+                    return
+                }
+                expression.acceptChildrenVoid(this)
+            }
+        })
+
+        return isPureStaticInitFunction
+    }
 
     private fun IrStatement.isPureStatementForObjectInitialization(owner: IrClass): Boolean {
         return when (this) {

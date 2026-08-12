@@ -117,3 +117,9 @@ var IrClass.staticInitFunction: IrSimpleFunction? by irAttribute(copyByDefault =
  * of a specific class.
  */
 internal var IrClass.staticInitializerProcessed: Boolean by irFlag(copyByDefault = false)
+
+/**
+ * Marks function declarations processed by [org.jetbrains.kotlin.ir.backend.js.lower.PurifyObjectInstanceGettersLowering] as such that
+ * needs removal.
+ */
+internal var IrSimpleFunction.isLeftoverAfterObjectPurification: Boolean by irFlag(copyByDefault = false)
