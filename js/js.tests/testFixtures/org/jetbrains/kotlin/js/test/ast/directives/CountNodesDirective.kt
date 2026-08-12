@@ -2,71 +2,42 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.js.test.ast.directives
 
-package org.jetbrains.kotlin.js.test.ast.directives;
+import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.inline.util.collectInstances
+import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
+import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil.getFunction
+import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import java.io.File
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.backend.ast.JsFunction;
-import org.jetbrains.kotlin.js.backend.ast.JsNode;
-import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper;
-import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil;
-import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils;
+open class CountNodesDirective<T : JsNode>(private val klass: Class<T>) : DirectiveTestUtils.DirectiveHandler<ArgumentsHelper>() {
+    override fun processEntry(ast: JsNode, arguments: ArgumentsHelper, sourceFile: File?) {
+        val functionName = arguments.getNamedArgument("function")
+        val countStr = arguments.findNamedArgument("count")
+        val maxCountStr = arguments.findNamedArgument("max")
+        val includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations")
 
-import java.io.File;
-import java.util.List;
-
-import static kotlin.test.AssertionsKt.assertTrue;
-import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class CountNodesDirective<T extends JsNode> extends DirectiveTestUtils.DirectiveHandler {
-
-    @NotNull
-    private final Class<T> klass;
-
-    public CountNodesDirective(@NotNull Class<T> klass) {
-        super();
-        this.klass = klass;
-    }
-
-    @Override
-    public void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-        String functionName = arguments.getNamedArgument("function");
-        String countStr = arguments.findNamedArgument("count");
-        String maxCountStr = arguments.findNamedArgument("max");
-        String includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations");
-
-        JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-        List<T> nodes =
-                collectInstances(klass, function.getBody(), includeNestedDeclarations != null && includeNestedDeclarations.equals("true"));
-        int actualCount = 0;
-
-        for (T node : nodes) {
-            actualCount += getActualCountFor(node, arguments);
-        }
+        val function = getFunction(ast, functionName)
+        val nodes = collectInstances(klass, function.body, includeNestedDeclarations != null && includeNestedDeclarations == "true")
+        val actualCount = nodes.fold(0) { acc, node -> acc + getActualCountFor(node, arguments) }
 
         if (countStr != null) {
-            int expectedCount = Integer.valueOf(countStr);
-
-            String message = "Function " + functionName + " contains " + actualCount +
-                             " nodes of type " + klass.getName() +
-                             ", but expected count is " + expectedCount;
-            assertEquals(expectedCount, actualCount, message);
-        }
-        else if (maxCountStr != null) {
-            int expectedCount = Integer.valueOf(maxCountStr);
-
-            String message = "Function " + functionName + " contains " + actualCount +
-                             " nodes of type " + klass.getName() +
-                             ", but expected max is " + expectedCount;
-            assertTrue(expectedCount >= actualCount, message);
-        }
-        else {
-            throw new IllegalArgumentException("'max' or 'count' argument should be provided");
+            val expectedCount = countStr.toInt()
+            assertEquals(expectedCount, actualCount) {
+                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected count is $expectedCount"
+            }
+        } else if (maxCountStr != null) {
+            val expectedCount = maxCountStr.toInt()
+            assertTrue(expectedCount >= actualCount) {
+                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected max is $expectedCount"
+            }
+        } else {
+            throw IllegalArgumentException("'max' or 'count' argument should be provided")
         }
     }
 
-    protected int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments) {
-        return 1;
-    }
+    protected open fun getActualCountFor(node: T, arguments: ArgumentsHelper): Int = 1
 }
