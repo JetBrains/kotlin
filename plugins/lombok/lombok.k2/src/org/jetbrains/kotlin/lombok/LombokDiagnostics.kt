@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTU
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.STATIC_CONSTRUCTOR_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_NOT_CALLED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS
@@ -73,6 +75,8 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
     val TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
     val NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED by error0<KtAnnotationEntry>()
+    val NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
+    val STATIC_CONSTRUCTOR_ALREADY_EXISTS by warning2<KtAnnotationEntry, Name, Name>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST by error0<KtAnnotationEntry>()
 
     val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
@@ -141,6 +145,15 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED,
             "Class contains required properties. " +
                     "Use '@NoArgsConstructor(force = true)' to force-initialize them to default values (0 / false / null)."
+        )
+        // Lombok itself stays silent about both clashes below and lets `javac` reject the duplicate it generated,
+        // so the wording follows `javac`'s "{0} {1} is already defined in {2} {3}" rather than a Lombok original.
+        map.put(NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS, "Constructor without parameters is already defined.")
+        map.put(
+            STATIC_CONSTRUCTOR_ALREADY_EXISTS,
+            "Method ''{0}()'' is already defined in ''{1}''.",
+            CommonRenderers.NAME,
+            CommonRenderers.NAME,
         )
         map.put(
             EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST,
