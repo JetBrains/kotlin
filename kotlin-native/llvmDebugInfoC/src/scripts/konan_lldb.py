@@ -1271,6 +1271,14 @@ def _object_field_value(object_proxy, field_name):
     return object_proxy.get_child_at_index(field_index)
 
 
+def _has_only_serial_version_uid_field(object_proxy):
+    if object_proxy is None:
+        return False
+    if object_proxy.num_children() != 1:
+        return False
+    return object_proxy.get_child_index("serialVersionUID") == 0
+
+
 def _synthetic_value_or_self(value):
     if value is None or not value.IsValid():
         return None
@@ -1315,6 +1323,9 @@ class KonanListSyntheticProvider:
                 break
 
         if backing is None:
+            # Try to recognize EmptyList singleton via the presence of `serialVersionUID`
+            if _has_only_serial_version_uid_field(object_proxy):
+                return KonanListSyntheticProvider(valobj, None, 0)
             return None
 
         size = None
@@ -1331,6 +1342,8 @@ class KonanListSyntheticProvider:
         return self._children_count
 
     def get_child_index(self, name):
+        if self._children_count <= 0 or self._backing is None:
+            return -1
         child_index = _synthetic_child_index(self._backing, name)
         return child_index if 0 <= child_index < self.num_children() else -1
 
@@ -1358,6 +1371,9 @@ class KonanSetSyntheticProvider:
 
         backing = _object_field_value(object_proxy, "backing")
         if backing is None or not backing.IsValid() or backing.unsigned == 0:
+            # Try to recognize EmptySet singleton via the presence of `serialVersionUID`
+            if _has_only_serial_version_uid_field(object_proxy):
+                return KonanSetSyntheticProvider(valobj, None, 0)
             return None
 
         backing_object_proxy = KonanObjectSyntheticProvider(backing, internal_dict)
@@ -1423,6 +1439,8 @@ class KonanMapSyntheticProvider:
             or not values.IsValid()
             or values.unsigned == 0
         ):
+            if _has_only_serial_version_uid_field(object_proxy):
+                return KonanMapSyntheticProvider(valobj, None, None, 0)
             return None
 
         size_value = _object_field_value(object_proxy, "length")
