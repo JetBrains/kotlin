@@ -171,9 +171,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         require(source.isDirectory) {
             "Expected shared synthetic package root is missing: $source"
         }
+        val sourceFiles = source.walkTopDown().filter { it.isFile }.toList()
+        sourceFiles.forEach { destination.resolve(it.toRelativeString(source)).setWritable(true) }
         fs.sync {
             it.from(source)
             it.into(destination)
+        }
+        sourceFiles.forEach {
+            if (!it.canWrite()) destination.resolve(it.toRelativeString(source)).setReadOnly()
         }
     }
 
