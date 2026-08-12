@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("MoveLambdaOutsideParentheses")
+
 package org.jetbrains.kotlin.js.test.ast
 
 import org.jetbrains.kotlin.js.test.ast.directives.*
@@ -84,9 +86,15 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         ::CheckDeclarationExistsDirective.bind(CheckDeclarationExistsDirective.DeclarationKind.FUNCTION),
     )
 
-    val CHECK_CALLED_IN_SCOPE by directiveWithArguments("Checks that the specified function is called in the given scope")
+    val CHECK_CALLED_IN_SCOPE by directiveWithArguments(
+        "Checks that the specified function is called in the given scope",
+        ::HasCallsDirective,
+    )
 
-    val CHECK_NOT_CALLED_IN_SCOPE by directiveWithArguments("Checks that the specified function is not called in the given scope")
+    val CHECK_NOT_CALLED_IN_SCOPE by directiveWithArguments(
+        "Checks that the specified function is not called in the given scope",
+        { HasCallsDirective(it, inverted = true) },
+    )
 
     val CHECK_COMMENT_EXISTS by directiveWithArguments("Checks that the specified comment exists")
 
