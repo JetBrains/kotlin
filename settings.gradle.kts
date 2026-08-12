@@ -727,7 +727,6 @@ include(
     ":analysis:light-classes-base",
     ":analysis:analysis-api-standalone",
     ":analysis:analysis-api-standalone:analysis-api-standalone-base",
-    ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",

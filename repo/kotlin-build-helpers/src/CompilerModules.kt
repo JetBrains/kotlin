@@ -213,7 +213,6 @@ object CompilerModules {
 
     val analysisApiStandaloneModules = arrayOf(
         *analysisApiStandaloneSurfaceModules,
-        ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
         ":analysis:analysis-api-standalone:analysis-api-standalone-base",
     )
 
