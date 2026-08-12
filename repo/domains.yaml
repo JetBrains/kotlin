@@ -1,29 +1,101 @@
 $schema: domains.schema.json
 
-# CLI + Frontend + JVM backend
 Compiler:
   include:
-    - "compiler"
-    - "core"
-    - "build-common"
-    - "compiler/psi/parser"
-    - "jps"
-  exclude:
-    - "compiler/psi"
-    - "compiler/build-tools"
-    - "compiler/incremental-compilation-*"
-    - "compiler/daemon"
-    - "compiler/compiler-runner"
-    - "compiler/compiler-runner-unshaded"
-    - "compiler/plugin-api"
-    - "compiler/ir/backend.wasm"
-    - "compiler/ir/backend.js"
-    - "compiler/ir/serialization.js"
-    - "compiler/ir/backend.native"
-    - "compiler/ir/ir.objcinterop"
-    - "compiler/ir/serialization.native"
+  - "core"
+  - "build-common"
+  - "compiler/arguments"
+  - "compiler/arguments.common"
+  - "compiler/cli/bin"
+  - "compiler/arguments.common"
+  - "compiler/cli/cli-arguments-generator"
+  - "compiler/cli/cli-base"
+  - "compiler/cli/cli-js"
+  - "compiler/cli/cli-jvm"
+  - "compiler/cli/cli-metadata"
+  - "compiler/cli/cli-native-klib"
+  - "compiler/cli/cli-runner"
+  - "compiler/cli/src"
+  - "compiler/cli/resources"
+  - "compiler/cli/build.gradle.kts"
+  - "compiler/compiler.version"
+  - "compiler/config"
+  - "compiler/config.jvm"
+  - "compiler/container"
+  - "compiler/preloader"
+  - "compiler/test-infrastructure"
+  - "compiler/test-infrastructure-utils"
+  - "compiler/test-infrastructure-utils.common"
+  - "compiler/testResources"
+  - "compiler/testData"
+  - "compiler/tests"
+  - "compiler/tests-common"
+  - "compiler/tests-common-new"
+  - "compiler/tests-compiler-utils"
+  - "compiler/tests-integration"
+  - "compiler/tests-mutes"
+  - "compiler/util"
+  - "compiler/util-io"
+  - "compiler/build.gradle.kts"
+  - "jps"
   fullyAffectedBy:
     - CoreLibs
+
+Frontend:
+  include:
+    - "compiler/fir"
+    - "compiler/frontend"
+    - "compiler/frontend.common"
+    - "compiler/frontend.common.jvm"
+    - "compiler/frontend.common-psi"
+    - "compiler/frontend.java"
+    - "compiler/ir/ir.psi2ir"
+    - "compiler/java-direct"
+    - "compiler/multiplatform-parsing"
+    - "compiler/psi/parser"
+    - "compiler/resolution"
+    - "compiler/resolution.common"
+    - "compiler/resolution.common.jvm"
+    - "compiler/serialization"
+    - "compiler/serialization.common"
+    - "compiler/tests-java8"
+    - "compiler/tests-spec"
+  fullyAffectedBy:
+    - CoreLibs
+    - Compiler
+
+CommonBackend:
+  include:
+    - "compiler/ir/ir.actualization"
+    - "compiler/ir/ir.inline"
+    - "compiler/ir/ir.tree"
+    - "compiler/ir/ir.validation"
+    - "compiler/ir/serialization.common"
+    - "compiler/ir/backend.common"
+    - "compiler/util-klib"
+    - "compiler/util-klib-abi"
+    - "compiler/util-klib-metadata"
+    - "compiler/cli/cli-jklib"
+    - "compiler/jklib.tests"
+    - "compiler/ir/serialization.jklib"
+  fullyAffectedBy:
+    - CoreLibs
+    - Compiler
+    - Frontend
+
+Jvm:
+  include:
+    - "compiler/android-tests"
+    - "compiler/backend"
+    - "compiler/backend.common.jvm"
+    - "compiler/ir/backend.jvm"
+    - "compiler/ir/serialization.jvm"
+    - "compiler/tests-different-jdk"
+  fullyAffectedBy:
+    - CoreLibs
+    - Compiler
+    - Frontend
+    - CommonBackend
 
 Wasm:
   include:
@@ -37,8 +109,11 @@ Wasm:
     - "js/js.tests/testFixtures/org/jetbrains/kotlin"
     - "js/js.config/src/org/jetbrains/kotlin/js/config"
   fullyAffectedBy:
-    - Compiler
     - CoreLibs
+    - Compiler
+    - Frontend
+    - CommonBackend
+
 Js:
   include:
     - "js"
@@ -47,8 +122,10 @@ Js:
     - "libraries/tools/analysis-api-based-klib-reader"
     - "libraries/tools/dukat"
   fullyAffectedBy:
-    - Compiler
     - CoreLibs
+    - Compiler
+    - Frontend
+    - CommonBackend
 
 Native:
   include:
@@ -60,8 +137,10 @@ Native:
   exclude:
     - "native/swift"
   fullyAffectedBy:
-    - Compiler
     - CoreLibs
+    - Compiler
+    - Frontend
+    - CommonBackend
 
 CoreLibs:
   include:
@@ -87,6 +166,7 @@ AnalysisApi:
     - "compiler/psi/parser"
   fullyAffectedBy:
     - Compiler
+    - Frontend
     - CoreLibs
 
 BuildToolsApi:
@@ -116,6 +196,9 @@ CompilerPlugins:
     - "libraries/scripting"
   fullyAffectedBy:
     - Compiler
+    - Frontend
+    - CommonBackend
+    - CoreLibs
 
 Gradle:
   include:
@@ -134,6 +217,7 @@ IntelliJ:
     - "prepare/ide-plugin-dependencies"
   fullyAffectedBy:
     - Compiler
+    - Frontend
     - AnalysisApi
     - CoreLibs
     - BuildToolsApi # small set of BTA tests, opportunity for optimizations.

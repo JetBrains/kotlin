@@ -12,6 +12,27 @@ import org.junit.jupiter.api.Tag
 annotation class AffectedByCompiler
 
 /**
+* Will mark tests as 'affected by' the given domain [Domain.Frontend].
+* Such tests will run, additionally, for all commits affecting the Frontend domain.
+*/
+@Tag("affectedBy:Frontend")
+annotation class AffectedByFrontend
+
+/**
+* Will mark tests as 'affected by' the given domain [Domain.CommonBackend].
+* Such tests will run, additionally, for all commits affecting the CommonBackend domain.
+*/
+@Tag("affectedBy:CommonBackend")
+annotation class AffectedByCommonBackend
+
+/**
+* Will mark tests as 'affected by' the given domain [Domain.Jvm].
+* Such tests will run, additionally, for all commits affecting the Jvm domain.
+*/
+@Tag("affectedBy:Jvm")
+annotation class AffectedByJvm
+
+/**
 * Will mark tests as 'affected by' the given domain [Domain.Wasm].
 * Such tests will run, additionally, for all commits affecting the Wasm domain.
 */
@@ -104,6 +125,9 @@ annotation class AffectedByUnknown
 
 fun affectedByAnnotationOf(domain: Domain) = when (domain) {
     Domain.Compiler -> AffectedByCompiler::class
+    Domain.Frontend -> AffectedByFrontend::class
+    Domain.CommonBackend -> AffectedByCommonBackend::class
+    Domain.Jvm -> AffectedByJvm::class
     Domain.Wasm -> AffectedByWasm::class
     Domain.Js -> AffectedByJs::class
     Domain.Native -> AffectedByNative::class

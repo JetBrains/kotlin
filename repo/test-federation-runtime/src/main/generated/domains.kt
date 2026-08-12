@@ -5,6 +5,9 @@ package org.jetbrains.kotlin.testFederation
 
 enum class Domain {
     Compiler,
+    Frontend,
+    CommonBackend,
+    Jvm,
     Wasm,
     Js,
     Native,
