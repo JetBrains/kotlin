@@ -13,7 +13,6 @@ org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType
 org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType:constructor()
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType:constructor()
-org.jetbrains.kotlin.psi.impl.KotlinElementTypeProviderImpl
 org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator
 org.jetbrains.kotlin.psi.psiUtil.StringTemplateExpressionManipulator
 org.jetbrains.kotlin.psi.stubs.StubUtils

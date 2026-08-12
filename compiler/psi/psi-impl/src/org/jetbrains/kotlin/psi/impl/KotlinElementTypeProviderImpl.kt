@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @KtImplementationDetail
-@Suppress("unused") // Initiated via reflection in 'KotlinElementTypeProvider'
-object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
+internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val fileType: IFileElementType
         get() = KtFileElementType
 
