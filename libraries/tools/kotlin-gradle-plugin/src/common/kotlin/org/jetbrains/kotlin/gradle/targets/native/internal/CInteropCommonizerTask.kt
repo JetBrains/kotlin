@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -51,7 +50,6 @@ private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, L
 internal abstract class CInteropCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val projectLayout: ProjectLayout,
     providerFactory: ProviderFactory,
 ) : AbstractCInteropCommonizerTask(),
     UsesClassLoadersCachingBuildService,
@@ -100,8 +98,6 @@ internal abstract class CInteropCommonizerTask
         }
 
     }
-
-    override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve(CINTEROP_COMMONIZER_OUTPUT_PATH)
 
     @get:Nested
     internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
