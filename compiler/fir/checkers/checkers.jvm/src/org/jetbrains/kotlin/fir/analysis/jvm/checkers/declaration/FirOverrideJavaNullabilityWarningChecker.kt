@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAbstractOverrideChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.OverrideCheckerUtils
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) : FirAbstractOverrideChecker(mppKind) {
+sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirOverrideJavaNullabilityWarningChecker(MppCheckerKind.Platform) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirClass) {
@@ -77,7 +78,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
+                    OverrideCheckerUtils.checkReturnType(memberSymbol, enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
                             memberSymbol.source, FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
@@ -104,7 +105,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
+                    OverrideCheckerUtils.checkReturnType(memberSymbol, enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
                             memberSymbol.source, FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
