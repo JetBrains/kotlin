@@ -214,7 +214,13 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkForSplitHost(
     val hostObjectFile = temporaryFiles.create(outputFiles.outputName, ".host.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(splitCompilationOutput.hostBitcodePath, hostObjectFile))
 
-    val manifest = resolveBootstrapMetadata(splitCompilationOutput.dependenciesTrackingResult)
+    val bootstrapObjectPath = temporaryFiles.create(outputFiles.outputName, ".bootstrap.o")
+    runAndMeasurePhase(
+            ObjectFilesPhase,
+            ObjectFilesPhaseInput(splitCompilationOutput.bootstrapBitcodePath, bootstrapObjectPath),
+    )
+
+    val manifest = resolveBootstrapMetadata(splitCompilationOutput.dependenciesTrackingResult, bootstrapObjectPath)
     val manifestObjectPath = generateManifestObject(manifest, temporaryFiles)
 
     val allLoadCaches = manifest.forceLoadCaches
@@ -252,7 +258,10 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkSplitFramework(
     // The user code in the binary is dead weight, live execution goes through HotReload runtime module.
     val configurables = context.config.platform.configurables
 
-    val manifest = resolveBootstrapMetadata(moduleOutput.dependenciesTrackingResult)
+    val bootstrapObjectPath = temporaryFiles.create(outputFiles.outputName, ".bootstrap.o")
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleOutput.bitcodePath, bootstrapObjectPath))
+
+    val manifest = resolveBootstrapMetadata(moduleOutput.dependenciesTrackingResult, bootstrapObjectPath)
     val manifestObjectPath = generateManifestObject(manifest, temporaryFiles)
 
     val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, moduleOutput.dependenciesTrackingResult)
@@ -263,7 +272,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkSplitFramework(
     val linkerPhaseInput = LinkerPhaseInput(
             outputFiles.mainFileName,
             linkerOutputKind,
-            listOf(manifestObjectPath.absolutePathString()),
+            listOf(bootstrapObjectPath.absolutePathString(), manifestObjectPath.absolutePathString()),
             moduleOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
