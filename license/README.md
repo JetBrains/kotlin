@@ -174,7 +174,19 @@ the Kotlin IntelliJ IDEA plugin:
     - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
     - Origin: Copyright (C) 2024 The Android Open Source Project
 
- - Path: libraries/stdlib/native-wasm/src/kotlin/dtoa
+ - Path: libraries/stdlib/native-wasm/src/kotlin/internal/dtoa
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/text/HexStringParser.kt
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/text/FloatingPointParser.kt
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/NumberConverter.kt
     - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
     - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
 
