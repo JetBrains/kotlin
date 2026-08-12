@@ -108,6 +108,23 @@ FILE: noArgsConstructorStatic.kt
         }
 
     }
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithMemberOfTheSameName : R|kotlin/Any| {
+        public constructor(any: R|kotlin/Any|): R|ConstructorExampleStaticWithMemberOfTheSameName| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val any: R|kotlin/Any| = R|<local>/any|
+            public get(): R|kotlin/Any|
+
+        public final fun make(): R|kotlin/String| {
+            ^make String(member)
+        }
+
+        public final fun callUnqualified(): R|kotlin/String| {
+            ^callUnqualified this@R|/ConstructorExampleStaticWithMemberOfTheSameName|.R|/ConstructorExampleStaticWithMemberOfTheSameName.make|()
+        }
+
+    }
     public final fun box(): R|kotlin/String| {
         lval zeroObject: R|ConstructorExampleStatic| = Q|ConstructorExampleStatic|.R|/ConstructorExampleStatic.make|()
         R|/assertEquals|<R|kotlin/Boolean|>(Boolean(false), R|<local>/zeroObject|.R|/ConstructorExampleStatic.boolean|)
@@ -120,5 +137,7 @@ FILE: noArgsConstructorStatic.kt
         R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|SubstitutionOverride</ConstructorExampleStaticWithGenerics.param: R|kotlin/String|>|)
         lval zeroObjectWithBoundedGenerics: R|ConstructorExampleStaticWithBoundedGenerics<kotlin/Int>| = Q|ConstructorExampleStaticWithBoundedGenerics|.R|/ConstructorExampleStaticWithBoundedGenerics.make|<R|kotlin/Int|>()
         R|/assertEquals|<R|kotlin/Int?|>(Null(null), R|<local>/zeroObjectWithBoundedGenerics|.R|SubstitutionOverride</ConstructorExampleStaticWithBoundedGenerics.param: R|kotlin/Int|>|)
+        lval withMemberOfTheSameName: R|ConstructorExampleStaticWithMemberOfTheSameName| = R|/ConstructorExampleStaticWithMemberOfTheSameName.ConstructorExampleStaticWithMemberOfTheSameName|(String(any))
+        R|/assertEquals|<R|kotlin/String|>(String(member), R|<local>/withMemberOfTheSameName|.R|/ConstructorExampleStaticWithMemberOfTheSameName.callUnqualified|())
         ^box String(OK)
     }
