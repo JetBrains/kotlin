@@ -36,6 +36,39 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-12 — PSI search scopes leave the API: `JvmClasspath` and a Java view split by role
+- **Change**: `AbstractProjectFileSearchScope` is **deleted**. It was never an abstraction over PSI —
+  one implementation (`PsiBasedProjectFileSearchScope`), a downcast (`asPsiSearchScope()`) at every
+  point of use, and IDEA semantics (`not()` only means something against an ambient "all files in the
+  project", which a compilation does not have; `ANY.minus` already threw). It is replaced by
+  `JvmClasspath`: `Roots(List<Path>)` or `ProjectLibraries(excludedRoots)`, i.e. what
+  `DependencyListForCliModule` already speaks. `JvmCompilationEnvironment` is down to
+  `getKotlinClassFinder` / `getPackagePartProvider` / `getJavaModuleResolver`; the six scope producers
+  are gone, two of which (`getSearchScopeByIoFiles`, `getSearchScopeBySourceFiles`) had **zero callers
+  repo-wide**, and `allowOutOfProjectRoots` went with them, never having been `true` in any
+  compilation. `FirJavaInterop` is split by role — `createBinaryJavaFacade(classpath)` /
+  `createJavaSourcesFacade()` — which deletes java-direct's `scope === javaSourcesScope` identity
+  check and its `IdentityHashMap`.
+- **Why**: the goal was to get PSI scopes out of the API; everything else fell out of it. The
+  incremental-compilation "hack" the OSIP-191 comment predicted would go away has gone away: the
+  libraries scope is now `ProjectLibraries(excludedRoots = outputDir)`, and the second subtraction
+  (`- sourceScope`, the explicit PSI file set ∪ "any `.java` file") is simply gone — a classpath
+  consumed by a `.class` reader has no source files in it by construction. `getSearchScopeByPsiFiles`
+  and its one caller disappeared with it, so the Kotlin PSI file set no longer crosses any module
+  boundary. The only remaining classpath → `GlobalSearchScope` conversion is
+  `VfsBasedProjectEnvironment.psiSearchScope`, private to `:compiler:cli` apart from the documented
+  `PsiScopeJvmClasspath` escape hatch (legacy JKlib IR phase, two test fixtures).
+- **Files**: `JvmClasspath.kt` (new), `JvmCompilationEnvironment.kt`, `FirJavaInterop.kt`,
+  `VfsBasedProjectEnvironment.kt`, `CliBinaryClassFileIndex.kt`, `IncrementalCompilationContext*.kt`,
+  `FirJvmSessionFactory.kt`, `FirJvmIncrementalCompilationSymbolProviders.kt`,
+  `FirMetadataSessionFactory.kt`, `FirJKlibSessionFactory.kt`, `JvmFrontendPipelinePhase.kt`,
+  `JavaDirectJavaInterop.kt`, scripting/REPL (5 files), test fixtures (7 files);
+  `frontend.common/.../search/AbstractProjectFileSearchScope.kt` deleted.
+- **Tests**: java-direct 21771/0; PSI gate `PhasedJvmDiagnosticLightTree` 10993/0;
+  `*CompileKotlinAgainstKotlin*` 153/0; `IncrementalK2FirICJvmCompilerRunnerTest` 371/0;
+  jklib.tests 843/0; scripting-tests 402/0.
+- **Result**: green.
+
 ### 2026-08-12 — both directions of the Java bridge in one object; the environment leaves FIR
 - **Change**: `FirJavaFacadeFactory` → `FirJavaInterop`, which now also owns
   `registerKotlinDeclarationsForJava` (was `AbstractProjectEnvironment.registerAsJavaElementFinder`).

@@ -9,17 +9,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
@@ -77,6 +76,9 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         return shouldRunFirFrontendFacade(module, testServices)
     }
 
+    /** The `.java` sources of each test module, as `FirJavaInterop` needs them; see [createModuleBasedSession]. */
+    private val javaSourcesScopes: MutableMap<FirModuleData, GlobalSearchScope> = mutableMapOf()
+
     private fun registerExtraComponents(session: FirSession) {
         testServices.firSessionComponentRegistrar?.registerAdditionalComponent(session)
     }
@@ -97,12 +99,12 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             val projectEnvironment = VfsBasedProjectEnvironment(
                 project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             ) { packagePartProviderFactory.invoke(it) }
-            val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
             FirJvmSessionFactory.Context(
                 configuration,
                 projectEnvironment,
-                librariesScope,
-                projectEnvironment.psiJavaInterop(),
+                JvmClasspath.ProjectLibraries(),
+                // Each test module sees only its own `.java` files.
+                projectEnvironment.psiJavaInterop(javaSources = { javaSourcesScopes[it] ?: GlobalSearchScope.EMPTY_SCOPE }),
             )
         }
         val librarySession = createLibrarySession(
@@ -202,7 +204,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         extensionRegistrars = extensionRegistrars,
                         JarMetadataProviderComponents(
                             jvmSessionFactoryContext.packagePartProviderForLibraries as PackageAndMetadataPartProvider,
-                            jvmSessionFactoryContext.librariesScope,
+                            jvmSessionFactoryContext.librariesClasspath,
                             jvmSessionFactoryContext.projectEnvironment,
                         ),
                         resolvedKLibs = klibs,
@@ -365,9 +367,9 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 ).also(::registerExtraComponents)
             }
             targetPlatform.isJvm() -> {
+                javaSourcesScopes[moduleData] = newModuleSearchScope(project, ktFiles)
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    PsiBasedProjectFileSearchScope(newModuleSearchScope(project, ktFiles)),
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     configuration,

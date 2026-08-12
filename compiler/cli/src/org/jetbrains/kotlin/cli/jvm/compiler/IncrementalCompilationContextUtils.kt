@@ -8,15 +8,24 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
-private fun createIncrementalCompilationScope(
+/**
+ * The output directory of the previous build, which incremental compilation reads as a separate classpath.
+ */
+private fun CompilerConfiguration.precompiledBinariesClasspath(): JvmClasspath.Roots? {
+    if (modules.isEmpty()) return null
+    if (incrementalCompilationComponents == null) return null
+
+    val dir = outputDirectory ?: return null
+    return JvmClasspath.Roots(listOf(dir.toPath()))
+}
+
+fun prepareIncrementalCompilationContextAndLibrariesClasspath(
     configuration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    incrementalExcludesScope: AbstractProjectFileSearchScope?
-): AbstractProjectFileSearchScope? {
+): Pair<JvmClasspath, IncrementalCompilationContext?> {
     if (configuration.modules.isEmpty()) return null
 
     val incrementalCompilationComponents = configuration.incrementalCompilationComponents ?: return null
@@ -24,22 +33,9 @@ private fun createIncrementalCompilationScope(
         return incrementalCompilationComponents.createSearchScope(projectEnvironment)
     }
 
-    val dir = configuration.outputDirectory ?: return null
-    return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
-        if (incrementalExcludesScope?.isEmpty != false) it
-        else it - incrementalExcludesScope
-    }
-}
+    val precompiledBinaries = configuration.precompiledBinariesClasspath()
+        ?: return JvmClasspath.ProjectLibraries() to null
 
-fun prepareIncrementalCompilationContextAndLibrariesScope(
-    configuration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    incrementalExcludesScope: AbstractProjectFileSearchScope?
-): Pair<AbstractProjectFileSearchScope, IncrementalCompilationContext?> {
-    val incrementalCompilationScope = createIncrementalCompilationScope(configuration, projectEnvironment, incrementalExcludesScope)
-
-    val originalLibrariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    if (incrementalCompilationScope == null) return originalLibrariesScope to null
     val targetIds = configuration.modules.map(::TargetId)
     val incrementalComponents = configuration.incrementalCompilationComponents!!
 
@@ -48,19 +44,14 @@ fun prepareIncrementalCompilationContextAndLibrariesScope(
             configuration.languageVersionSettings,
             targetIds.map(incrementalComponents::getIncrementalCache)
         ),
-        precompiledBinariesFileScope = incrementalCompilationScope
+        precompiledBinaries = precompiledBinaries
     )
     /*
-     * This is required because JVM dependencies are handled using the IJ infrastructure in the compiler, which creates
-     * one big index over all possible binaries and then allows to restrict it for callers using search scopes.
-     *
-     * So in IC one big `JvmPackagePartProvider` is created for both regular classpath and incremental classpath,
-     * which is then split into two symbol providers.
-     *
-     * When we stop using IJ for JVM dependencies traversal, we can remove this hack (OSIP-191).
+     * The output directory is read twice — once as the regular classpath and once as the precompiled binaries of
+     * this build — so it has to be taken out of the first one, otherwise one big `JvmPackagePartProvider` would
+     * serve both symbol providers.
      *
      * See also the corresponding comment in `IncrementalJvmCompilerRunnerBase.performWorkBeforeCompilation`
      */
-    val librariesScope = originalLibrariesScope - incrementalCompilationScope
-    return librariesScope to context
+    return JvmClasspath.ProjectLibraries(excludedRoots = precompiledBinaries.roots) to context
 }

@@ -11,12 +11,11 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForModule
 import org.jetbrains.kotlin.fir.session.FirJavaInterop
 import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackagesOverModuleGraph
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileScope
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
-import java.util.IdentityHashMap
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 /**
  * The java-direct Java view of a compilation, to be put into `FirJvmSessionFactory.Context`.
@@ -27,29 +26,29 @@ import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 fun createJavaDirectJavaInterop(
     javaSourceRoots: List<JavaSourceRootEntry>,
     binaryClasses: BinaryJavaClassCache,
-    binaryClassFileScopeFor: (AbstractProjectFileSearchScope) -> BinaryClassFileScope,
+    binaryClassFileScopeFor: (JvmClasspath) -> BinaryClassFileScope,
     javaModuleFinder: JavaModuleFinder,
-    javaSourcesScope: AbstractProjectFileSearchScope,
 ): FirJavaInterop {
     val moduleImportedPackages = JavaModuleImportedPackagesOverModuleGraph(javaModuleFinder)
 
-    // Indexed by search scope identity.
-    val binaryFinders: MutableMap<AbstractProjectFileSearchScope, JavaClassFinder> = IdentityHashMap()
+    val binaryFinders = HashMap<JvmClasspath, JavaClassFinder>()
 
     return object : FirJavaInterop {
-        override fun createJavaFacade(
+        override fun createBinaryJavaFacade(
             session: FirSession,
             moduleData: FirModuleData,
-            fileSearchScope: AbstractProjectFileSearchScope,
+            classpath: JvmClasspath,
         ): FirJavaFacade {
-            val finder: JavaClassFinder = when {
-                fileSearchScope === javaSourcesScope ->
-                    JavaClassFinderOverAstImpl(session, javaSourceRoots, moduleImportedPackages)
-                else -> binaryFinders.getOrPut(fileSearchScope) {
-                    JavaClassFinderOverBinaryIndex(binaryClasses, binaryClassFileScopeFor(fileSearchScope))
-                }
+            val finder = binaryFinders.getOrPut(classpath) {
+                JavaClassFinderOverBinaryIndex(binaryClasses, binaryClassFileScopeFor(classpath))
             }
             return FirJavaFacadeForModule(session, moduleData, finder)
         }
+
+        override fun createJavaSourcesFacade(
+            session: FirSession,
+            moduleData: FirModuleData,
+        ): FirJavaFacade =
+            FirJavaFacadeForModule(session, moduleData, JavaClassFinderOverAstImpl(session, javaSourceRoots, moduleImportedPackages))
     }
 }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrAndActualizeForJvm
@@ -87,7 +87,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     ): FirSession {
         return FirJvmSessionFactory.createSourceSession(
             moduleData,
-            PsiBasedProjectFileSearchScope(AllJavaSourcesInProjectScope(project)),
             createIncrementalCompilationSymbolProviders = { null },
             configuration.getCompilerExtensions(FirExtensionRegistrar),
             configuration,
@@ -114,12 +113,10 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             environment::createPackagePartProvider
         )
-        val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
-
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesScope,
+            JvmClasspath.ProjectLibraries(),
             projectEnvironment.psiJavaInterop(),
         )
 

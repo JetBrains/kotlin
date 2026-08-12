@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBa
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -219,7 +218,6 @@ class ScriptJvmK2CompilerImpl(
 
         val session = createSourceSession(
             moduleData,
-            AbstractProjectFileSearchScope.EMPTY,
             createIncrementalCompilationSymbolProviders = { null },
             state.extensionRegistrars,
             compilerConfiguration,
@@ -332,7 +330,6 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
     }
     return dummySessionForAnnotationResolution ?: (createSourceSession(
         moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-        AbstractProjectFileSearchScope.EMPTY,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerContext.environment.configuration,

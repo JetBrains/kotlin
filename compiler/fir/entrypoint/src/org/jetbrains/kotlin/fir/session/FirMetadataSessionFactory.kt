@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -116,13 +116,13 @@ abstract class AbstractFirMetadataSessionFactory(
             createSeparateSharedProvidersInHmppCompilation,
             createProviders = { session, kotlinScopeProvider ->
                 buildList {
-                    jarMetadataProviderComponents?.let { (packageAndMetadataPartProvider, librariesScope, projectEnvironment) ->
+                    jarMetadataProviderComponents?.let { (packageAndMetadataPartProvider, librariesClasspath, projectEnvironment) ->
                         this += MetadataSymbolProvider(
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
                             packageAndMetadataPartProvider,
-                            projectEnvironment.getKotlinClassFinder(librariesScope)
+                            projectEnvironment.getKotlinClassFinder(librariesClasspath)
                         )
                     }
                     runIf(resolvedKLibs.isNotEmpty()) {
@@ -143,7 +143,7 @@ abstract class AbstractFirMetadataSessionFactory(
 
     data class JarMetadataProviderComponents(
         val packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
-        val librariesScope: AbstractProjectFileSearchScope,
+        val librariesClasspath: JvmClasspath,
         val projectEnvironment: JvmCompilationEnvironment
     )
 
@@ -186,15 +186,15 @@ abstract class AbstractFirMetadataSessionFactory(
             kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
-                val symbolProviderForBinariesFromIncrementalCompilation = incrementalCompilationContext?.let { (precompiledBinariesPackagePartProvider, precompiledBinariesFileScope) -> // ->
-                        if (precompiledBinariesFileScope == null) return@let null
+                val symbolProviderForBinariesFromIncrementalCompilation = incrementalCompilationContext?.let { (precompiledBinariesPackagePartProvider, precompiledBinaries) -> // ->
+                        if (precompiledBinaries == null) return@let null
                         val moduleDataProvider = SingleModuleDataProvider(moduleData)
                         MetadataSymbolProvider(
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
                             precompiledBinariesPackagePartProvider as PackageAndMetadataPartProvider,
-                            projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope) as KotlinMetadataFinder,
+                            projectEnvironment.getKotlinClassFinder(precompiledBinaries) as KotlinMetadataFinder,
                             defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
                         )
                     }

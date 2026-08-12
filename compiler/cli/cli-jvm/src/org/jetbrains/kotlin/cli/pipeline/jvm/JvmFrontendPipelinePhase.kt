@@ -65,7 +65,7 @@ import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -132,25 +132,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         perfManager?.notifyPhaseStarted(PhaseType.Analysis)
-        val sourceScope: AbstractProjectFileSearchScope
-        when (configuration.useLightTree) {
-            true -> {
-                sourceScope = AbstractProjectFileSearchScope.EMPTY
-            }
-            false -> {
-                val ktFiles = allSources.map { (it as KtPsiSourceFile).psiFile as KtFile }
-                sourceScope = environment.getSearchScopeByPsiFiles(ktFiles) + environment.getSearchScopeForProjectJavaSources()
-                if (checkIfScriptsInCommonSources(configuration, ktFiles)) {
-                    return null
-                }
+        if (!configuration.useLightTree) {
+            val ktFiles = allSources.map { (it as KtPsiSourceFile).psiFile as KtFile }
+            if (checkIfScriptsInCommonSources(configuration, ktFiles)) {
+                return null
             }
         }
 
-        val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
-            configuration,
-            environment,
-            incrementalExcludesScope = sourceScope
-        )
+        val [librariesClasspath, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesClasspath(configuration)
 
         val moduleName = when {
             chunk.modules.size > 1 -> chunk.modules.joinToString(separator = "+") { it.getModuleName() }
@@ -168,7 +157,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             rootModuleName = Name.special("<$moduleName>"),
             configuration = configuration,
             projectEnvironment = environment,
-            librariesScope = librariesScope,
+            librariesClasspath = librariesClasspath,
             libraryList = libraryList,
             isCommonSource = sources.isCommonSourceForLt,
             isScript = { ((it as? KtPsiSourceFile)?.psiFile as? KtFile)?.isScript() == true },
@@ -359,7 +348,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         rootModuleName: Name,
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
-        librariesScope: AbstractProjectFileSearchScope,
+        librariesClasspath: JvmClasspath,
         libraryList: DependencyListForCliModule,
         isCommonSource: (F) -> Boolean,
         isScript: (F) -> Boolean,
@@ -367,7 +356,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         incrementalCompilationContext: IncrementalCompilationContext?,
     ): List<SessionWithSources<F>> {
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-        val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
         /*
          * TODO(OSIP-75): This code is needed to preserve the legacy implementation of IC in KMP scenario, which was generally incorrect,
@@ -381,15 +369,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesScope,
+            librariesClasspath,
             javaInterop = runIf(configuration.useJavaDirect) {
                 createJavaDirectJavaInterop(
                     configuration.javaSourceRootEntries(),
                     // The binary Java classes live as long as the factory, i.e. as long as the context: this compilation.
                     BinaryJavaClassCache(projectEnvironment.binaryClassFileIndex()),
-                    ::binaryClassFileScope,
+                    projectEnvironment::binaryClassFileScope,
                     projectEnvironment.javaModuleFinder(),
-                    javaSourcesScope,
                 )
             } ?: projectEnvironment.psiJavaInterop(),
         )
@@ -413,8 +400,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 if (libraries.isNotEmpty()) return@l emptyList()
                 val dependencies = (rawRegularDependencies + rawFriendDependencies).map { Path(it) }
                 if (dependencies.isEmpty()) return@l emptyList()
-                val scope = projectEnvironment.getSearchScopeByClassPath(dependencies)
-                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
+                val classpath = JvmClasspath.Roots(dependencies)
+                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
                 val moduleData = moduleDataProvider.allModuleData.first { it.session == session }
                 val provider = JvmClassFileBasedSymbolProvider(
                     session,
@@ -422,7 +409,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     scopeProvider,
                     context.packagePartProviderForLibraries,
                     kotlinClassFinder,
-                    context.javaInterop.createJavaFacade(session, moduleData, context.librariesScope)
+                    context.javaInterop.createBinaryJavaFacade(session, moduleData, context.librariesClasspath)
                 )
                 val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
                     session,
@@ -453,7 +440,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    javaSourcesScope,
                     createIncrementalCompilationSymbolProviders = ic@{ session ->
                         // TODO(OSIP-75): should be removed, see the comment above
                         if (isKmpCompilationWithLegacyIC) {
@@ -486,8 +472,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration,
                     context,
-                    // `FirJavaElementFinder` exposes Kotlin classes to PSI-based Java resolution as PSI class
-                    // stubs. java-direct serves the Kotlin-to-Java direction from FIR instead.
                     kmpModuleKind = kmpModuleKind,
                     init = sessionConfigurator,
                 )
@@ -722,8 +706,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
-        override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
-            return super.getPackagePartProvider(fileSearchScope).also {
+        override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider {
+            return super.getPackagePartProvider(classpath).also {
                 (it as? JvmPackagePartProvider)?.run {
                     addRoots(currentRoots, configuration)
                     packagePartProviders += this

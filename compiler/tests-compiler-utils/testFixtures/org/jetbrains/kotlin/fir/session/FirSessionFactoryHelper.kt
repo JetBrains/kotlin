@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfac
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 
 @ObsoleteTestInfrastructure
 object FirSessionFactoryHelper {
@@ -26,8 +26,8 @@ object FirSessionFactoryHelper {
         platform: TargetPlatform,
         projectEnvironment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
-        javaSourcesScope: AbstractProjectFileSearchScope,
-        librariesScope: AbstractProjectFileSearchScope,
+        javaInterop: FirJavaInterop,
+        librariesClasspath: JvmClasspath,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         dependenciesConfigurator: DependencyListForCliModule.Builder.BuilderForDefaultDependenciesModule.() -> Unit = {},
@@ -39,8 +39,8 @@ object FirSessionFactoryHelper {
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesScope,
-            projectEnvironment.psiJavaInterop(),
+            librariesClasspath,
+            javaInterop,
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -67,7 +67,6 @@ object FirSessionFactoryHelper {
         )
         return FirJvmSessionFactory.createSourceSession(
             mainModuleData,
-            javaSourcesScope,
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, context) },
             extensionRegistrars,
             configuration,

@@ -11,8 +11,9 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.asJvmClasspath
+import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -23,14 +24,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.nio.file.Path
 import kotlin.io.path.pathString
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 
 object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         projectEnvironment: VfsBasedProjectEnvironment,
-        javaSourceScope: AbstractProjectFileSearchScope,
-        librariesScope: AbstractProjectFileSearchScope = !javaSourceScope,
+        javaSourceScope: GlobalSearchScope,
+        librariesClasspath: JvmClasspath = JvmClasspath.ProjectLibraries(),
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
@@ -43,8 +44,8 @@ object FirTestSessionFactoryHelper {
             JvmPlatforms.unspecifiedJvmPlatform,
             projectEnvironment,
             configuration,
-            javaSourceScope,
-            librariesScope,
+            projectEnvironment.psiJavaInterop(javaSources = { javaSourceScope }),
+            librariesClasspath,
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
             dependenciesConfigurator = {
@@ -63,17 +64,18 @@ object FirTestSessionFactoryHelper {
         friendsPaths: List<Path> = emptyList(),
         getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     ): FirSession {
+        val projectEnvironment = VfsBasedProjectEnvironment(
+            project,
+            VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+            getPackagePartProvider
+        )
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),
             JvmPlatforms.unspecifiedJvmPlatform,
-            VfsBasedProjectEnvironment(
-                project,
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-                getPackagePartProvider
-            ),
+            projectEnvironment,
             configuration,
-            PsiBasedProjectFileSearchScope(sourceScope),
-            PsiBasedProjectFileSearchScope(librariesScope),
+            projectEnvironment.psiJavaInterop(javaSources = { sourceScope }),
+            librariesScope.asJvmClasspath(),
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
             dependenciesConfigurator = {

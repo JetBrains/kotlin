@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
+import org.jetbrains.kotlin.cli.jvm.compiler.asJvmClasspath
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
@@ -224,7 +224,7 @@ object JKlibIrCompilationPhase :
 
         val configureJavaClassFinder = null
         val implicitsResolutionFilter = null
-        val packagePartProvider = projectEnvironment.getPackagePartProvider(dependencyScope.toAbstractProjectFileSearchScope())
+        val packagePartProvider = projectEnvironment.getPackagePartProvider(dependencyScope.asJvmClasspath())
         val trace = NoScopeRecordCliBindingTrace(projectContext.project)
         val dependenciesContainer = createContainerForLazyResolveWithJava(
             platform,

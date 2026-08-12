@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesScope
+import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
@@ -80,11 +80,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
 
         val projectEnvironment = environment.toVfsBasedProjectEnvironment()
-        val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
-            configuration,
-            projectEnvironment,
-            incrementalExcludesScope = null
-        )
+        val [librariesClasspath, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesClasspath(configuration)
 
         val groupedSources = collectSources(configuration, projectEnvironment)
 
@@ -104,7 +100,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             projectEnvironment,
             rootModuleName,
             extensionRegistrars,
-            librariesScope,
+            librariesClasspath,
             libraryList,
             resolvedLibraries = klibs,
             isCommonSource = groupedSources.isCommonSourceForLt,

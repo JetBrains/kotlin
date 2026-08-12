@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
@@ -67,24 +67,22 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         val projectEnvironment = environment.toVfsBasedProjectEnvironment()
         val project = environment.project
 
-        val [sourceFiles: Collection<KtSourceFile>, scope] =
+        val [sourceFiles: Collection<KtSourceFile>, javaSourcesScope: GlobalSearchScope] =
             if (USE_LIGHT_TREE) {
                 (val platformSources, val _ = commonSources) = collectSources(environment.configuration, projectEnvironment)
-                platformSources to projectEnvironment.getSearchScopeForProjectJavaSources()
+                platformSources to AllJavaSourcesInProjectScope(project)
             } else {
                 val ktFiles = environment.getSourceFiles()
                 ktFiles.map { KtPsiSourceFile(it) } to
                         GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
                             .uniteWith(AllJavaSourcesInProjectScope(project))
-                            .toAbstractProjectFileSearchScope()
             }
-        val librariesScope = ProjectScope.getLibrariesScope(project)
 
         val session =
             FirTestSessionFactoryHelper.createSessionForTests(
                 projectEnvironment,
-                scope,
-                librariesScope.toAbstractProjectFileSearchScope(),
+                javaSourcesScope,
+                JvmClasspath.ProjectLibraries(),
                 moduleData.qualifiedName,
                 moduleData.friendDirs.map { it.toPath() },
                 environment.configuration.languageVersionSettings

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesScope
+import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 import kotlin.script.experimental.api.*
@@ -249,11 +249,7 @@ private fun doCompileWithK2(
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-    val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
-        configuration,
-        projectEnvironment,
-        incrementalExcludesScope = null
-    )
+    val [librariesClasspath, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesClasspath(configuration)
 
     val session = prepareJvmSessionsForScripting(
         projectEnvironment,
@@ -261,7 +257,7 @@ private fun doCompileWithK2(
         ktFiles,
         rootModuleNameAsString = targetId.name,
         friendPaths = emptyList(),
-        librariesScope,
+        librariesClasspath,
         isScript = { false },
         incrementalCompilationContext,
     ).single().session
@@ -371,7 +367,7 @@ private fun prepareJvmSessionsForScripting(
     files: List<KtFile>,
     rootModuleNameAsString: String,
     friendPaths: List<String>,
-    librariesScope: AbstractProjectFileSearchScope,
+    librariesClasspath: JvmClasspath,
     isScript: (KtFile) -> Boolean,
     incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<KtFile>> {
@@ -382,7 +378,7 @@ private fun prepareJvmSessionsForScripting(
         rootModuleName,
         configuration,
         projectEnvironment,
-        librariesScope,
+        librariesClasspath,
         libraryList,
         isCommonSourceForPsi,
         isScript,

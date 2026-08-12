@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -93,11 +93,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             createProviders = { session, kotlinScopeProvider ->
                 val projectEnvironment = context.projectEnvironment
                 val moduleData = moduleDataProvider.allModuleData.last()
-                val searchScope = moduleDataProvider.getModuleDataPaths(moduleData)?.let { paths ->
-                    projectEnvironment.getSearchScopeByClassPath(paths)
-                }?.takeUnless { it.isEmpty } ?: context.librariesScope
-                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
-                val javaFacade = context.javaInterop.createJavaFacade(session, moduleData, context.librariesScope)
+                val classpath = moduleDataProvider.getModuleDataPaths(moduleData)
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let { JvmClasspath.Roots(it.toList()) }
+                    ?: context.librariesClasspath
+                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
+                val javaFacade = context.javaInterop.createBinaryJavaFacade(session, moduleData, context.librariesClasspath)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,
@@ -140,7 +141,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
      */
     fun createSourceSession(
         moduleData: FirModuleData,
-        javaSourcesScope: AbstractProjectFileSearchScope,
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
@@ -157,7 +157,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
-                val javaFacade = context.javaInterop.createJavaFacade(session, moduleData, javaSourcesScope)
+                val javaFacade = context.javaInterop.createJavaSourcesFacade(session, moduleData)
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, javaFacade)
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -224,7 +224,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
     class Context(
         val jvmTarget: JvmTarget,
         val projectEnvironment: JvmCompilationEnvironment,
-        val librariesScope: AbstractProjectFileSearchScope,
+        val librariesClasspath: JvmClasspath,
         val registerJvmDeserializationExtension: Boolean,
         val inlineConstTracker: InlineConstTracker?,
         /**
@@ -243,19 +243,19 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         constructor(
             configuration: CompilerConfiguration,
             projectEnvironment: JvmCompilationEnvironment,
-            librariesScope: AbstractProjectFileSearchScope,
+            librariesClasspath: JvmClasspath,
             javaInterop: FirJavaInterop,
             registerJvmDeserializationExtension: Boolean = true,
         ) : this(
             jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT,
             projectEnvironment,
-            librariesScope,
+            librariesClasspath,
             registerJvmDeserializationExtension = registerJvmDeserializationExtension,
             inlineConstTracker = configuration.inlineConstTracker,
             javaInterop = javaInterop,
         )
 
-        val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
+        val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath)
 
         val predefinedJavaComponents: FirSharableJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
     }
@@ -270,7 +270,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                     !session.moduleData.isCommon
                     && session.moduleData.dependsOnDependencies.isEmpty()
         ) {
-            val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(projectEnvironment.getSearchScopeForProjectLibraries())
+            val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(JvmClasspath.ProjectLibraries())
             FirJvmClasspathBuiltinSymbolProvider(
                 session,
                 session.moduleData,

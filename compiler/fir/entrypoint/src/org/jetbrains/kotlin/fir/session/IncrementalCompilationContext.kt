@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
 
 data class IncrementalCompilationContext(
     val precompiledBinariesPackagePartProvider: PackagePartProvider,
-    val precompiledBinariesFileScope: AbstractProjectFileSearchScope?
+    val precompiledBinaries: JvmClasspath?
 )

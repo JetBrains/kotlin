@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
@@ -192,14 +192,14 @@ fun <F> prepareMetadataSessions(
     projectEnvironment: VfsBasedProjectEnvironment,
     rootModuleName: Name,
     extensionRegistrars: List<FirExtensionRegistrar>,
-    librariesScope: AbstractProjectFileSearchScope,
+    librariesClasspath: JvmClasspath,
     libraryList: DependencyListForCliModule,
     resolvedLibraries: List<KotlinLibrary>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
-    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider
+    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath) as PackageAndMetadataPartProvider
     val languageVersionSettings = configuration.languageVersionSettings
     val targetPlatform = configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform
     val sessionFactory = FirMetadataSessionFactory(targetPlatform)
@@ -208,7 +208,7 @@ fun <F> prepareMetadataSessions(
             FirJvmSessionFactory.Context(
                 configuration,
                 projectEnvironment,
-                librariesScope,
+                librariesClasspath,
                 projectEnvironment.psiJavaInterop(),
                 registerJvmDeserializationExtension = false,
             )
@@ -234,7 +234,7 @@ fun <F> prepareMetadataSessions(
                 extensionRegistrars,
                 JarMetadataProviderComponents(
                     packagePartProvider,
-                    librariesScope,
+                    librariesClasspath,
                     projectEnvironment,
                 ),
                 resolvedLibraries,

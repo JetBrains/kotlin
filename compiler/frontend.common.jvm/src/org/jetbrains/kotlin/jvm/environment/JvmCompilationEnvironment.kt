@@ -5,39 +5,23 @@
 
 package org.jetbrains.kotlin.jvm.environment
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
-import java.io.File
-import java.nio.file.Path
 
 /**
- * The JVM environment of one compilation: the file sets it may look in, and the JVM-specific views of them —
- * a [KotlinClassFinder], a [PackagePartProvider] and a [JavaModuleResolver]. The metadata and JKlib pipelines
- * use it as such, since they too read JVM-shaped roots.
+ * The JVM views of the classpath of one compilation: a [KotlinClassFinder] and a [PackagePartProvider] over a
+ * given [JvmClasspath], and the module graph of the whole classpath. The metadata and JKlib pipelines use it as
+ * such, since they too read JVM-shaped roots.
  *
- * It hands out no Java view and knows nothing about FIR: which Java implementation serves a scope, and whether
- * the Kotlin declarations of a session are exposed to Java resolution, is a decision of the compilation, made
- * once by whoever builds its sessions (`FirJavaInterop`).
+ * It hands out no Java view and knows nothing about FIR: which Java implementation serves a classpath, and
+ * whether the Kotlin declarations of a session are exposed to Java resolution, is a decision of the
+ * compilation, made once by whoever builds its sessions (`FirJavaInterop`).
  */
 interface JvmCompilationEnvironment {
-    fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder
+    fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder
+
+    fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider
 
     fun getJavaModuleResolver(): JavaModuleResolver
-
-    fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider
-
-    fun getSearchScopeByIoFiles(files: Iterable<File>, allowOutOfProjectRoots: Boolean = false): AbstractProjectFileSearchScope
-
-    fun getSearchScopeBySourceFiles(files: Iterable<KtSourceFile>, allowOutOfProjectRoots: Boolean = false): AbstractProjectFileSearchScope
-
-    fun getSearchScopeByDirectories(directories: Iterable<File>): AbstractProjectFileSearchScope
-
-    fun getSearchScopeByClassPath(paths: Iterable<Path>): AbstractProjectFileSearchScope
-
-    fun getSearchScopeForProjectLibraries(): AbstractProjectFileSearchScope
-
-    fun getSearchScopeForProjectJavaSources(): AbstractProjectFileSearchScope
 }

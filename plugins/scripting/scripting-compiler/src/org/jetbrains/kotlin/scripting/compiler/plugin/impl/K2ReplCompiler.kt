@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
@@ -47,7 +46,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.nio.file.Path
@@ -155,15 +154,16 @@ class K2ReplCompiler(
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
             val extensionRegistrars = compilerContext.environment.configuration.getCompilerExtensions(FirExtensionRegistrar)
-            val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
+            val librariesClasspath = JvmClasspath.ProjectLibraries()
 
             val moduleDataProvider = ReplModuleDataProvider(classpath.map(File::toPath))
 
             val sessionFactoryContext = FirJvmSessionFactory.Context(
                 configuration = compilerContext.environment.configuration,
                 projectEnvironment = projectEnvironment,
-                librariesScope = projectFileSearchScope,
-                javaInterop = projectEnvironment.psiJavaInterop(),
+                librariesClasspath = librariesClasspath,
+                // A REPL compilation has no `.java` sources of its own.
+                javaInterop = projectEnvironment.psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE }),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = moduleName,
@@ -357,9 +357,9 @@ private fun compileImpl(
     val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
     if (libModuleData != null) {
         val projectEnvironment = state.sessionFactoryContext.projectEnvironment
-        val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
-            projectEnvironment.getSearchScopeByClassPath(paths)
-        } ?: state.sessionFactoryContext.librariesScope
+        val libraryClasspath = state.moduleDataProvider.getModuleDataPaths(libModuleData)
+            ?.let { JvmClasspath.Roots(it.toList()) }
+            ?: state.sessionFactoryContext.librariesClasspath
 
         createScriptingAdditionalLibrariesSession(
             libModuleData,
@@ -368,10 +368,10 @@ private fun compileImpl(
             state.sharedLibrarySession,
             extensionRegistrars,
             compilerConfiguration,
-            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
+            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(libraryClasspath) },
             getJavaFacade = {
                 state.sessionFactoryContext.javaInterop
-                    .createJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope)
+                    .createBinaryJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesClasspath)
             }
         )
         KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
@@ -381,7 +381,6 @@ private fun compileImpl(
 
     val session = FirJvmSessionFactory.createSourceSession(
         moduleData,
-        AbstractProjectFileSearchScope.EMPTY,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerConfiguration,

@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.fir
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.report
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
-import org.jetbrains.kotlin.search.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import kotlin.script.experimental.api.*
@@ -202,8 +201,9 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             val sessionFactoryContext = FirJvmSessionFactory.Context(
                 configuration = configuration,
                 projectEnvironment = projectEnvironment,
-                librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(projectEnvironment.project)),
-                javaInterop = projectEnvironment.psiJavaInterop(),
+                librariesClasspath = JvmClasspath.ProjectLibraries(),
+                // A script compilation has no `.java` sources of its own.
+                javaInterop = projectEnvironment.psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE }),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = Name.special("<dummy>"),
@@ -222,7 +222,6 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
 
             FirJvmSessionFactory.createSourceSession(
                 moduleData = moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-                javaSourcesScope = AbstractProjectFileSearchScope.EMPTY,
                 createIncrementalCompilationSymbolProviders = { null },
                 extensionRegistrars = extensionRegistrars,
                 configuration = configuration,

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
@@ -86,7 +86,7 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
         sessionFactoryContext = FirJvmSessionFactory.Context(
             configuration = configuration,
             projectEnvironment = previous.projectEnvironment,
-            librariesScope = previous.librariesScope,
+            librariesClasspath = previous.librariesClasspath,
             javaInterop = previous.javaInterop,
         )
     }
@@ -216,8 +216,10 @@ fun createCompilerState(
     compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
     val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
     val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
-    val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
-    val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
+    val librariesClasspath = JvmClasspath.ProjectLibraries()
+    // A script compilation has no `.java` sources of its own.
+    val javaInterop = projectEnvironment.psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE })
+    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath)
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
 
     val moduleDataProvider = ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), classpath.map(File::toPath))
@@ -225,8 +227,8 @@ fun createCompilerState(
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = compilerConfiguration,
         projectEnvironment = projectEnvironment,
-        librariesScope = projectFileSearchScope,
-        javaInterop = projectEnvironment.psiJavaInterop(),
+        librariesClasspath = librariesClasspath,
+        javaInterop = javaInterop,
     )
     val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
         mainModuleName = moduleName,

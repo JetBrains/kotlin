@@ -148,7 +148,7 @@ abstract class AbstractFirTypeEnhancementTest {
                 .uniteWith(AllJavaSourcesInProjectScope(project))
             val session = FirTestSessionFactoryHelper.createSessionForTests(
                 environment.toVfsBasedProjectEnvironment(),
-                scope.toAbstractProjectFileSearchScope()
+                scope
             )
 
             val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
