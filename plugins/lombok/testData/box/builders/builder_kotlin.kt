@@ -3,7 +3,7 @@
 import lombok.Builder
 import lombok.AccessLevel
 
-@Builder(toBuilder = true, access = AccessLevel.PROTECTED)
+@Builder(toBuilder = true)
 class User(val name: String, val age: Int, val info: String?)
 
 @Builder(access = AccessLevel.PRIVATE)

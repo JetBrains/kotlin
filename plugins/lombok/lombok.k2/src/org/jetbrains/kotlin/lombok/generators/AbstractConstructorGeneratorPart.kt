@@ -77,7 +77,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
      */
     fun generatesStaticFactory(classSymbol: FirClassSymbol<*>): Boolean {
         val constructorInfo = getConstructorInfo(classSymbol) ?: return false
-        if (constructorInfo.visibility == null) return false
+        if (constructorInfo.accessLevel.toVisibility(classSymbol) == null) return false
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) } ?: return false
 
         return !staticFactoryNameIsTaken(classSymbol, staticName, getFieldsForParameters(classSymbol).size)
@@ -152,7 +152,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             targetClassSymbol = classSymbol
         }
 
-        val visibility = constructorInfo.visibility ?: return
+        val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val fields = getFieldsForParameters(targetClassSymbol)
         val valuesParameterCount = fields.size
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }

@@ -101,5 +101,5 @@ class LogAccessLevelPackage
 class LogAccessLevelModule
 
 fun test() {
-    LogAccessLevelProtected.log.info("") // OK, but INVISIBLE_REFERENCE is expected (KT-88337, KT-88203)
+    LogAccessLevelProtected.<!INVISIBLE_REFERENCE!>log<!>.info("")
 }

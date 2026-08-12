@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.lombok.config
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 
 enum class AccessLevel {
     PUBLIC, MODULE, PROTECTED, PACKAGE, PRIVATE,
@@ -15,10 +17,22 @@ enum class AccessLevel {
     /** Represents not generating anything or the complete lack of a method. */
     NONE;
 
-    fun toVisibility(): Visibility? = when (this) {
+    fun toVisibility(symbol: FirBasedSymbol<*>): Visibility? = when (this) {
         PUBLIC -> Visibilities.Public
-        PROTECTED -> JavaVisibilities.ProtectedAndPackage
-        PACKAGE, MODULE -> JavaVisibilities.PackageVisibility
+        PROTECTED -> {
+            if (symbol.hasJavaOrigin) {
+                JavaVisibilities.ProtectedAndPackage
+            } else {
+                Visibilities.Protected
+            }
+        }
+        PACKAGE, MODULE -> {
+            if (symbol.hasJavaOrigin) {
+                JavaVisibilities.PackageVisibility
+            } else {
+                null
+            }
+        }
         PRIVATE -> Visibilities.Private
         NONE -> null
     }
