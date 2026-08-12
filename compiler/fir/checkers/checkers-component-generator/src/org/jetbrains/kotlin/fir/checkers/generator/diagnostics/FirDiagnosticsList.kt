@@ -2492,6 +2492,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
+
+    val BREAKS_USING_RUN by object : DiagnosticGroup("Breaks using `run`") {
+        val RUN_RETURN_USED_AS_BREAK by warning<PsiElement>()
+        val RUN_CALL_USED_TO_BREAK by warning<PsiElement>()
+        val RUN_BROKEN_FOR_EACH_LIKE_CALL by warning<PsiElement>()
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

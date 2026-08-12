@@ -553,6 +553,12 @@ private fun KaDiagnosticConverterBuilder.addConversions6() {
             token,
         )
     }
+    add(FirErrors.RUN_CALL_USED_TO_BREAK) { firDiagnostic ->
+        RunCallUsedToBreakImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER) { firDiagnostic ->
         RepeatedAnnotationWithContainerImpl(
             firDiagnostic.a,
@@ -4319,6 +4325,12 @@ private fun KaDiagnosticConverterBuilder.addConversions95() {
             token,
         )
     }
+    add(FirErrors.RUN_BROKEN_FOR_EACH_LIKE_CALL) { firDiagnostic ->
+        RunBrokenForEachLikeCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC) { firDiagnostic ->
         JvmExposeBoxedCannotExposeSyntheticImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5344,6 +5356,12 @@ private fun KaDiagnosticConverterBuilder.addConversions117() {
     }
     add(FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY) { firDiagnostic ->
         DeprecatedAccessToEntriesPropertyImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.RUN_RETURN_USED_AS_BREAK) { firDiagnostic ->
+        RunReturnUsedAsBreakImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

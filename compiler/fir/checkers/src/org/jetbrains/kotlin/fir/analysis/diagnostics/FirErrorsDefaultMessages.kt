@@ -779,6 +779,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED_COERCION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ROOT_IDE_PACKAGE_DEPRECATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RUN_BROKEN_FOR_EACH_LIKE_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RUN_CALL_USED_TO_BREAK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RUN_RETURN_USED_AS_BREAK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SAFE_CALLABLE_REFERENCE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SAFE_CAST_RELYING_ON_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
@@ -4089,6 +4092,18 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
+        )
+        map.put(
+            RUN_RETURN_USED_AS_BREAK,
+            "The following return expression from `run` call is used as `break` jump from its outer `forEach` call(s).",
+        )
+        map.put(
+            RUN_CALL_USED_TO_BREAK,
+            "The following `run` call is used to break from its nested `forEach` call(s).",
+        )
+        map.put(
+            RUN_BROKEN_FOR_EACH_LIKE_CALL,
+            "The following `forEach`-like call is broken by a return from its enclosing `run` call."
         )
     }
 }

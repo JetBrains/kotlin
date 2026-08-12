@@ -1154,5 +1154,10 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_RECEIVER_ANNOTATED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_RECEIVER_ANNOTATED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
+    // Breaks using `run`
+    val RUN_RETURN_USED_AS_BREAK: KtDiagnosticFactory0 = KtDiagnosticFactory0("RUN_RETURN_USED_AS_BREAK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val RUN_CALL_USED_TO_BREAK: KtDiagnosticFactory0 = KtDiagnosticFactory0("RUN_CALL_USED_TO_BREAK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val RUN_BROKEN_FOR_EACH_LIKE_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("RUN_BROKEN_FOR_EACH_LIKE_CALL", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

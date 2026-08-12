@@ -131,6 +131,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker> = setOf(
         FirReturnSyntaxAndLabelChecker,
         FirFunctionReturnTypeMismatchChecker,
+        FirBreaksUsingRunChecker,
     )
 
     override val blockCheckers: Set<FirBlockChecker> = setOf(
