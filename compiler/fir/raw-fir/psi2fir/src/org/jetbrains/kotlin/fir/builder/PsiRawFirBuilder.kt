@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -2860,16 +2859,12 @@ open class PsiRawFirBuilder(
             // 2. `(suspend @A () -> Int)?` is a nullable suspend function type, but the modifier list is on the child KtNullableType
             //
             // `getModifierList()` only returns the first one, so we have to get all modifier list children.
-            @Suppress("DEPRECATION") // KT-78356
-            fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
-                getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
-
-            val allModifierLists = mutableListOf<KtModifierList>(*getAllModifierLists())
+            val allModifierLists = allModifierLists.toMutableList()
 
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 when (this) {
                     is KtNullableType -> {
-                        allModifierLists += getAllModifierLists()
+                        allModifierLists += this.allModifierLists
                         this.innerType.unwrapNullable()
                     }
                     else -> this

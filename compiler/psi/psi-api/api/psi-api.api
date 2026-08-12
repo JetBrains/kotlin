@@ -1921,6 +1921,7 @@ public class org/jetbrains/kotlin/psi/KtModifierListOwnerStub : org/jetbrains/ko
 	public fun <init> (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IStubElementType;)V
 	public fun addAnnotationEntry (Lorg/jetbrains/kotlin/psi/KtAnnotationEntry;)Lorg/jetbrains/kotlin/psi/KtAnnotationEntry;
 	public fun addModifier (Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;)V
+	public fun getAllModifierLists ()Ljava/util/List;
 	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getModifierList ()Lorg/jetbrains/kotlin/psi/KtModifierList;
