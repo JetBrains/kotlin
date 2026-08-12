@@ -51,7 +51,7 @@ data class NamedMetadata(
 
 infix fun SerializedMetadata.named(name: String) = NamedMetadata(name, this)
 
-private fun nativeDistributionPath(): File =
+internal fun nativeDistributionPath(): File =
     System.getProperty("kotlin.internal.native.test.nativeHome")?.let(::File)
         ?: error("Missing 'kotlin.internal.native.test.nativeHome' system property")
 
@@ -117,6 +117,12 @@ fun serializeModuleAndAllDependenciesToMetadata(
 
     for (dependency in module.dependencies + module.refinesDependencies) {
         if (dependency !in dependencyToMetadata) {
+            if (dependency.precompiledArtifact != null) {
+                // NB: ignores transitive pre-compiled dependencies.
+                dependencyToMetadata[dependency] = dependency.precompiledArtifact
+                continue
+            }
+
             val [configuration, dependencyArtifact] = serializeModuleAndAllDependenciesToMetadata(
                 dependency, disposable, dependencyToMetadata, compiledDependenciesRoot,
             )
@@ -160,7 +166,9 @@ fun serializeModuleToMetadata(
     configuration.languageVersionSettings = LanguageVersionSettingsImpl(
         LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
         specificFeatures = mapOf(
-            LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+            LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED,
+            LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor to LanguageFeature.State.ENABLED,
+            LanguageFeature.AllowMultipleExpectsForSingleActual to LanguageFeature.State.ENABLED,
         ),
         analysisFlags = mapOf(AnalysisFlags.allowKotlinPackage to true)
     )
