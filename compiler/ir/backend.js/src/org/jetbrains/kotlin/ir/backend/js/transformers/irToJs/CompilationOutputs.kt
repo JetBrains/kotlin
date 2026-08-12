@@ -71,11 +71,12 @@ abstract class CompilationOutputs {
     }
 
     fun deleteNonWrittenFiles(outputDir: File, writtenFiles: Set<File>) {
-        Files.walk(outputDir.toPath())
-            .parallel()
-            .map { it.toFile().normalizedAbsoluteFile }
-            .filter { it != outputDir && it !in writtenFiles }
-            .forEach(File::delete)
+        Files.walk(outputDir.toPath()).use { paths ->
+            paths.parallel()
+                .map { it.toFile().normalizedAbsoluteFile }
+                .filter { it != outputDir && it !in writtenFiles }
+                .forEach(File::delete)
+        }
     }
 
     protected val File.normalizedAbsoluteFile

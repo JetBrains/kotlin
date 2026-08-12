@@ -39,7 +39,7 @@ object LibraryUtils {
         if (manifestProperties != null) {
             try {
                 val properties = Properties()
-                properties.load(manifestProperties)
+                manifestProperties.use { properties.load(it) }
                 jsStdLib = properties.getPropertyOrFail("manifest.impl.title.kotlin.javascript.stdlib")
             }
             catch (e: IOException) {
