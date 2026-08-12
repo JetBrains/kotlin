@@ -342,10 +342,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
                     } else {
                         entityClass.declarations.mapNotNull { declaration ->
+                            // A static field is never a builder field in Lombok. On the Kotlin side these are what a
+                            // `companion { }` block declares (KT-88367); on the Java side they are plain `static`
+                            // fields, which real Lombok leaves out of the builder just the same.
                             if (isJavaClass) {
                                 (declaration as? FirJavaField)?.takeIf { !it.isStatic }
                             } else {
-                                (declaration as? FirProperty)?.takeIf { it.hasBackingField }
+                                (declaration as? FirProperty)?.takeIf { it.hasBackingField && !it.isStatic }
                             }
                         }
                     }

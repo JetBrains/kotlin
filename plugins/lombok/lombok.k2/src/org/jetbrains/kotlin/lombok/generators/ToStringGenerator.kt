@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -132,6 +133,11 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         return buildList {
             declaredScope?.processAllProperties { variableSymbol ->
                 val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
+
+                // Lombok never renders a static field, and a `companion { }` block declares its members as statics
+                // on the class itself, so they show up here (KT-88367). Including one also breaks IR outright: the
+                // getter of a static property has no dispatch receiver for `toString()` to pass `this` in.
+                if (property.isStatic) return@processAllProperties
 
                 val propertyName = property.name
 

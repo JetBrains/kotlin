@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -184,6 +185,10 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             val config = session.lombokService.config
             declaredScope?.processAllProperties { variableSymbol ->
                 val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
+
+                // See the same guard in `ToStringGenerator`: a static property is never part of the generated
+                // members, and its getter takes no dispatch receiver for IR to pass `this`/`other` in (KT-88367).
+                if (property.isStatic) return@processAllProperties
 
                 val propertyName = property.name
 
