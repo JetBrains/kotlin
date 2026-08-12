@@ -1475,6 +1475,21 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xequality-bounds"
+        description = """
+            Enable experimental support for `@EqualityBound` annotations in `equals` operators.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.StrictEquals),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
         name = "Xintrinsic-const-evaluation"
         description = """
             Enables `IntrinsicConstEvaluation` language feature.`
