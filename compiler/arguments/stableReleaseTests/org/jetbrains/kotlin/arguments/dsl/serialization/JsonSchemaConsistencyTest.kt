@@ -36,6 +36,10 @@ class JsonSchemaConsistencyTest {
     @Test
     fun jsonSchemaVersionIsUpdated() {
         if (currentJsonSchema != previousJsonSchema) {
+            // To compare the diff:
+            // - set debugger on the next line
+            // - copy value of [previousJsonSchema.json.prettyPrint()] call value into clipboard
+            // - evaluate [currentJsonSchema.json.prettyPrint()], right click on the result and select "Compare Value with Clipboard"
             assertTrue(
                 actual = kotlinCompilerArguments.schemaVersion > stableKotlinCompilerArguments.schemaVersion,
                 message = "Current JSON schema version ${kotlinCompilerArguments.schemaVersion} was not updated. " +
