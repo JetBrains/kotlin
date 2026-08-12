@@ -289,6 +289,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_L
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_ENTRY_AS_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
@@ -1545,6 +1546,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             DECLARATION_NAME,
             TO_STRING,
         )
+
+        // EqualityBound
         map.put(
             UNRESOLVED_EQUALITY_BOUND_ARGUMENT,
             "Equality bound argument was not resolved during type resolution."
@@ -1553,6 +1556,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT,
             "Equality bound argument is ambiguous between following candidates: {0}.",
             RENDER_COLLECTION_OF_TYPES,
+        )
+        map.put(
+            EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED,
+            "Equality bound argument must be a star-projected type, but expands to ''{0}''.",
+            RENDER_TYPE,
         )
 
         // OptIn

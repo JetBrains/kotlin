@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -81,6 +83,17 @@ object FirExplicitEqualityBoundAnnotationChecker : FirValueParameterChecker(MppC
                         [typeFromTypesPhase, typeFromAnnotationArgumentsPhase],
                     )
                     return
+                }
+
+                if (typeFromTypesPhase.typeArguments.any { it !is ConeStarProjection }) {
+                    assert((argumentOfGetClass as? FirResolvedQualifier)?.qualifierSymbol is FirTypeAliasSymbol) {
+                        "Non-star type arguments can only come from type aliases."
+                    }
+                    reporter.reportOn(
+                        argumentOfGetClass.source,
+                        FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED,
+                        typeFromTypesPhase,
+                    )
                 }
             }
         }

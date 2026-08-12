@@ -1,0 +1,3 @@
+/typealiasInArgument.kt:26:40: error: Equality bound argument must be a star-projected type, but expands to 'BadGeneric<String>'.
+
+/typealiasInArgument.kt:31:40: error: Equality bound argument must be a star-projected type, but expands to 'BadGeneric2<String>'.
