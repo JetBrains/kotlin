@@ -540,7 +540,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 if (receiver !is FirPropertyAccessExpression?) return null
                 currentPropertyAccess = receiver
             }
-        }
+        }.reversed()
         val fakeTypeRef = buildUserTypeRef {
             isMarkedNullable = false
             source = getClassLhs.source!!
