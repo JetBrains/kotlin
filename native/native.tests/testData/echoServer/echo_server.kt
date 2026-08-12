@@ -18,13 +18,13 @@ fun main() {
                 .toInt().ensureUnixCallResult { it >= 0 }
 
         with(serverAddr) {
-            memset(this.ptr, 0, sockaddr_in.size.convert())
+            memset(this.ptr, 0, sizeOf<sockaddr_in>().convert())
             sin_family = AF_INET.convert()
             sin_addr.s_addr = htons(0u).convert()
             sin_port = htons(0u)
         }
 
-        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toUInt())
+        bind(listenFd, serverAddr.ptr.reinterpret(), sizeOf<sockaddr_in>().toUInt())
                 .toInt().ensureUnixCallResult { it == 0 }
 
         listen(listenFd, 10)
@@ -33,8 +33,8 @@ fun main() {
         val actualAddr = alloc<sockaddr_in>()
         val actualAddrLen = alloc<UIntVar>()
         val port = with(actualAddr) {
-            actualAddrLen.value = sockaddr_in.size.convert()
-            memset(this.ptr, 0, sockaddr_in.size.convert())
+            actualAddrLen.value = sizeOf<sockaddr_in>().convert()
+            memset(this.ptr, 0, sizeOf<sockaddr_in>().convert())
             getsockname(listenFd, actualAddr.ptr.reinterpret(), actualAddrLen.ptr)
                 .toInt().ensureUnixCallResult { it == 0 }
             interop_ntohs(sin_port.toShort()).toUShort()

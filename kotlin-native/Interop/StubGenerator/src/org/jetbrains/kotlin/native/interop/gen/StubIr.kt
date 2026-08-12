@@ -242,7 +242,7 @@ sealed class AnnotationStub(val classifier: Classifier) {
             val deprecatedCVariableCompanion = Deprecated(
                     "Use sizeOf<T>() or alignOf<T>() instead.",
                     "",
-                    DeprecationLevel.WARNING
+                    DeprecationLevel.ERROR
             )
 
             val deprecatedCEnumByValue = Deprecated(

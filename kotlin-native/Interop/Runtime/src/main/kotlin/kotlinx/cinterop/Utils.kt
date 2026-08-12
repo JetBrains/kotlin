@@ -112,11 +112,10 @@ public class Arena(parent: NativeFreeablePlacement = nativeHeap) : ArenaBase(par
  */
 @ExperimentalForeignApi
 public inline fun <reified T : CVariable> NativePlacement.alloc(): T =
-        @Suppress("DEPRECATION")
-        alloc(typeOf<T>()).reinterpret()
+        alloc(sizeOf<T>(), alignOf<T>()).reinterpret()
 
 @PublishedApi
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalForeignApi
 @UsedFromCompilerGeneratedCode
 internal fun NativePlacement.alloc(type: CVariable.Type): NativePointed =
@@ -312,7 +311,7 @@ public fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T>
     }
 }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @PublishedApi
 @ExperimentalForeignApi
 @UsedFromCompilerGeneratedCode
@@ -321,9 +320,8 @@ internal fun <T : CVariable> CPointed.readValue(type: CVariable.Type): CValue<T>
 
 // Note: can't be declared as property due to possible clash with a struct field.
 // TODO: find better name.
-@Suppress("DEPRECATION")
 @ExperimentalForeignApi
-public inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(typeOf<T>())
+public inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>(), alignOf<T>())
 
 @ExperimentalForeignApi
 public fun <T : CVariable> CValue<T>.write(location: NativePtr) {
