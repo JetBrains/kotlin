@@ -21,6 +21,26 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     @GradleTest
+    @DisplayName("Kotlin daemon memory limit should configure heap shrinking")
+    internal fun shouldConfigureHeapShrinking(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+        ) {
+            build("assemble") {
+                assertKotlinDaemonJvmOptions(
+                    listOf(
+                        "-Xmx1024m",
+                        "--Xms256m",
+                        "--XX:MinHeapFreeRatio=10",
+                        "--XX:MaxHeapFreeRatio=30",
+                    )
+                )
+            }
+        }
+    }
+
+    @GradleTest
     @DisplayName("Kotlin daemon by default should inherit Gradle daemon max jvm heap size")
     internal fun shouldInheritGradleDaemonArgsByDefault(gradleVersion: GradleVersion) {
         project(
