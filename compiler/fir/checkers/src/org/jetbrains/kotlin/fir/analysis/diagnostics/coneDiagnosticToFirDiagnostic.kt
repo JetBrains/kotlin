@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -785,7 +784,7 @@ private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, ses
         if (parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
             parent = treeStructure.getParent(parent) ?: return false
         }
-        if (parent.tokenType == KtStubElementTypes.LAMBDA_ARGUMENT) {
+        if (parent.tokenType == KtNodeTypes.LAMBDA_ARGUMENT) {
             var prevSibling = parent.getPreviousSibling(treeStructure)
             while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
                 if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {

@@ -20,6 +20,7 @@ import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.diff.DiffTree
 import com.intellij.util.diff.DiffTreeChangeBuilder
 import com.intellij.util.diff.ShallowNodeComparator
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
 import org.jetbrains.kotlin.psi.stubs.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 /**
@@ -141,7 +141,7 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
                     child.elementType !in KtTokenSets.STUBBED_EXPRESSIONS
 
         // Ignore everything in class initializers
-        is KotlinPlaceHolderStub<*> if elementType == KtStubElementTypes.CLASS_INITIALIZER -> false
+        is KotlinPlaceHolderStub<*> if elementType == KtNodeTypes.CLASS_INITIALIZER -> false
         else -> true
     }
 
@@ -152,7 +152,7 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
         // Functions with expression body (i.e. fun foo() = expr), different initializers might affect the return type
         is KotlinFunctionStub if !hasNoExpressionBody -> true
         // Class init blocks, most changes inside them are considered OOBM
-        is KotlinPlaceHolderStub<*> -> elementType == KtStubElementTypes.CLASS_INITIALIZER
+        is KotlinPlaceHolderStub<*> -> elementType == KtNodeTypes.CLASS_INITIALIZER
         // Property accessors, the code insight accessors might affect backing field instantiation
         is KotlinPropertyAccessorStub -> true
         else -> false

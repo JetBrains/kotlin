@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -704,7 +703,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
-            if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+            if (classNode.getParent()?.elementType == CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
             it.initContainingScriptOrReplAttr()
@@ -1404,7 +1403,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
-            if (typeAlias.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+            if (typeAlias.getParent()?.elementType == CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
             if (isDirectlyInsideCompanionBlock) {

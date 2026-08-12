@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.deepCopy
@@ -26,8 +26,8 @@ class SourceStubsTest : AbstractAnalysisApiExecutionTest("testData/source/custom
     fun localFunction(file: KtFile, testServices: TestServices) {
         val fileStub = file.calcStubTree().root as KotlinFileStubImpl
         fun KotlinFileStubImpl.findLocalFunction(): KotlinFunctionStubImpl {
-            val topLevelFunctionStub = findChildStubByType(KtStubElementTypes.FUNCTION) as KotlinFunctionStubImpl
-            val localFunctionStub = topLevelFunctionStub.findChildStubByType(KtStubElementTypes.FUNCTION) as KotlinFunctionStubImpl
+            val topLevelFunctionStub = findChildStubByElementType(KtNodeTypes.FUN) as KotlinFunctionStubImpl
+            val localFunctionStub = topLevelFunctionStub.findChildStubByElementType(KtNodeTypes.FUN) as KotlinFunctionStubImpl
             return localFunctionStub
         }
 
