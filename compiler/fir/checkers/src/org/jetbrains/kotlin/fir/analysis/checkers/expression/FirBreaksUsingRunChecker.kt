@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isBasicFunctionType
@@ -32,9 +33,9 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
 
     private object UsedToBreakUsingRun : FirDeclarationDataKey()
 
-    private var FirAnonymousFunction.isMarkedByBreakUsingRunFlag: Boolean? by FirDeclarationDataRegistry.data(UsedToBreakUsingRun)
+    private var FirAnonymousFunction.runBreaksData: MutableSet<FirAnonymousFunctionSymbol>? by FirDeclarationDataRegistry.data(UsedToBreakUsingRun)
 
-    private val FirAnonymousFunction.isMarkedByBreakUsingRun: Boolean get() = isMarkedByBreakUsingRunFlag ?: false
+    private val FirAnonymousFunction.runBreaks: Set<FirAnonymousFunctionSymbol> get() = runBreaksData ?: emptySet()
 
     private lateinit var runFunctions: List<FirCallableSymbol<*>>
 
@@ -60,12 +61,22 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
     private inline val FirFunctionCall.singleLambdaArgument: FirAnonymousFunction?
         get() = (argument as? FirAnonymousFunctionExpression)?.anonymousFunction?.takeIf(FirAnonymousFunction::isLambda)
 
-    private inline val FirFunctionCall.isMarked: Boolean
-        get() = singleLambdaArgument?.isMarkedByBreakUsingRun ?: false
+    private fun FirFunctionCall.hasMarkedBreak(lambda: FirAnonymousFunction): Boolean =
+        singleLambdaArgument?.let { lambda.symbol in it.runBreaks } ?: false
 
-    private fun FirFunctionCall.markLambdaArgument() {
-        singleLambdaArgument?.isMarkedByBreakUsingRunFlag = true
-    }
+    private val FirFunctionCall.isMarked: Boolean get() = singleLambdaArgument?.runBreaks?.isNotEmpty() ?: false
+
+    // Adds the lambda to the set of breaks, and returns true iff the set was previously empty, otherwise returns false
+    private fun FirFunctionCall.markBreak(lambda: FirAnonymousFunction): Boolean =
+        singleLambdaArgument?.let {
+            val runBreaks = it.runBreaksData ?: return run {
+                it.runBreaksData = mutableSetOf(lambda.symbol)
+                true
+            }
+            val result = runBreaks.isEmpty()
+            runBreaks += lambda.symbol
+            result
+        } ?: false
 
     private sealed interface BreakPathInfo {
 
@@ -76,10 +87,8 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
             context(context: CheckerContext, reporter: DiagnosticReporter)
             override fun reportDiagnostics() {
                 reporter.reportOn(runCall.source, FirErrors.RUN_CALL_USED_TO_BREAK)
-                runCall.markLambdaArgument()
                 capturedForEachLikeCalls.forEach {
                     reporter.reportOn(it.source, FirErrors.RUN_BROKEN_FOR_EACH_LIKE_CALL)
-                    it.markLambdaArgument()
                 }
             }
         }
@@ -89,7 +98,6 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
             override fun reportDiagnostics() {
                 capturedForEachLikeCalls.forEach {
                     reporter.reportOn(it.source, FirErrors.RUN_BROKEN_FOR_EACH_LIKE_CALL)
-                    it.markLambdaArgument()
                 }
             }
         }
@@ -104,7 +112,8 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
             val function = call.calleeReference.toResolvedNamedFunctionSymbol(discardErrorReference = true) ?: continue
             return when {
                 function.hasForEachLikeSignature -> when {
-                    call.isMarked -> BreakPathInfo.Partial(capturedForEachLikeCalls)
+                    // Partial information can only be valid
+                    call.hasMarkedBreak(lambda) -> BreakPathInfo.Partial(capturedForEachLikeCalls.filter { it.markBreak(lambda) })
                     else -> {
                         capturedForEachLikeCalls += call
                         continue
@@ -113,7 +122,18 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
                 // Need to break if we find the function the lambda belongs to BUT it's not the `run` function,
                 // otherwise we are traversing the entire call/assignment stack
                 call.arguments.any { it is FirAnonymousFunctionExpression && it.anonymousFunction == lambda } -> when {
-                    function in runFunctions -> BreakPathInfo.Complete(call, capturedForEachLikeCalls)
+                    function in runFunctions -> when {
+                        // Complete information can only be valid iff there is at least one captured forEach-like call, otherwise we emit diagnostics
+                        // for (trivial) immediate returns
+                        capturedForEachLikeCalls.isNotEmpty() -> when {
+                            call.isMarked -> BreakPathInfo.Partial(capturedForEachLikeCalls.filter { it.markBreak(lambda) })
+                            else -> {
+                                call.markBreak(lambda)
+                                BreakPathInfo.Complete(call, capturedForEachLikeCalls.filter { it.markBreak(lambda) })
+                            }
+                        }
+                        else -> break
+                    }
                     else -> break
                 }
                 else -> continue
@@ -125,6 +145,9 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirReturnExpression) {
         if (!tryCollectingRunFunctions()) return
+        // If we're "breaking" with `run`, we must be inside a lambda scope and returning with a label (mandatory with lambdas)
+        // Also we disregard implicit returns this way
+        if (expression.target.labelName == null) return
         val target = (expression.target.labeledElement as? FirAnonymousFunction)?.takeIf { it.isLambda } ?: return
         val info = findRunCallUsingLambda(target) ?: return
         reporter.reportOn(expression.source, FirErrors.RUN_RETURN_USED_AS_BREAK)
