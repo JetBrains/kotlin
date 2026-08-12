@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+import lombok.AccessLevel
 import lombok.NoArgsConstructor
 
 open class C {
@@ -123,4 +124,27 @@ fun test() {
 
     StaticNameTakenByExtensionOnly()
     StaticNameTakenByExtensionOnly.make()
+}
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+class NoArgsConstructorAccessLevelProtected(val x: Int)
+
+@NoArgsConstructor(access = AccessLevel.PACKAGE, force = true) // TODO: it should be prohibited, KT-88337
+class NoArgsConstructorAccessLevelPackage(val x: Int)
+
+@NoArgsConstructor(access = AccessLevel.<!DEPRECATION!>MODULE<!>, force = true) // TODO: it should be prohibited, KT-88337
+class NoArgsConstructorAccessLevelModule(val x: Int)
+
+// With `staticName`, `access` instead governs the visibility of the generated static factory function in the
+// companion object, not of a constructor - so this goes through the same function-visibility path as `@Log`.
+@NoArgsConstructor(access = AccessLevel.PROTECTED, staticName = "protectedCreate", force = true)
+class NoArgsConstructorAccessLevelProtectedStatic(val x: Int)
+
+fun testAccessLevels() {
+    // Unlike `@Log` (KT-88203), a `protected` constructor is already correctly rejected outside a super call -
+    // that visibility check is generic to constructors and doesn't go through the property/function-specific
+    // path KT-88337 is about.
+    <!PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>NoArgsConstructorAccessLevelProtected<!>()
+
+    NoArgsConstructorAccessLevelProtectedStatic.protectedCreate() // OK, but INVISIBLE_REFERENCE is expected (KT-88337, KT-88203)
 }
