@@ -219,7 +219,6 @@ object CompilerModules {
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-api-platform-interface",
-        ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
         ":analysis:analysis-api-standalone:analysis-api-standalone-base",
         ":analysis:analysis-internal-utils",
         ":analysis:decompiled:decompiler-js",
