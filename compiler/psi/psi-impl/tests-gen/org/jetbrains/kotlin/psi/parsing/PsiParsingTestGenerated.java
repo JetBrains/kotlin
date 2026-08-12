@@ -2526,6 +2526,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/contracts/good"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @Test
+      @TestMetadata("returnValueContracts.kt")
+      public void testReturnValueContracts() {
+        run("returnValueContracts.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/psi/psi-impl/testData/psi/contracts/good/callsInPlace")
       @TestDataPath("$PROJECT_ROOT")

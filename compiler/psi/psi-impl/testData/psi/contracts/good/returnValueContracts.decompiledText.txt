@@ -1,0 +1,6 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public inline fun <T> T.myAlso(block: (T) -> kotlin.Unit): T { contract { /* compiled contract */ }; /* compiled code */ }
+
+public inline fun <T, R> T.myLet(block: (T) -> R): R { contract { /* compiled contract */ }; /* compiled code */ }
