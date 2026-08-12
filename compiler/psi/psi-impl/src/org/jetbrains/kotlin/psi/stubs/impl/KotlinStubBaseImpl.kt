@@ -10,6 +10,7 @@ import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
@@ -26,7 +27,7 @@ private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = b
 }
 
 @OptIn(KtImplementationDetail::class)
-abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
+abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IElementType) :
     StubBase<T>(parent, elementType), KotlinStubElement<T> {
 
     @KtImplementationDetail

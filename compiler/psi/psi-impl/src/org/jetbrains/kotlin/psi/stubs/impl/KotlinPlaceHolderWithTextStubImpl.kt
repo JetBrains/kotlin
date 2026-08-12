@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 @OptIn(KtImplementationDetail::class)
 class KotlinPlaceHolderWithTextStubImpl<T : KtElementImplStub<*>>(
     parent: StubElement<*>?,
-    elementType: IStubElementType<*, *>,
+    elementType: IElementType,
     override val text: String,
 ) : KotlinStubBaseImpl<T>(parent, elementType), KotlinPlaceHolderWithTextStub<T> {
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinPlaceHolderWithTextStubImpl<T> = KotlinPlaceHolderWithTextStubImpl(
         parent = newParent,
-        elementType = elementType as IStubElementType<*, *>,
+        elementType = elementType,
         text = text,
     )
 
