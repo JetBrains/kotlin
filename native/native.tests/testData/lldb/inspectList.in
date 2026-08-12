@@ -1,0 +1,21 @@
+b main.kt:14
+r
+fr var list
+fr var -A -P 5 list
+fr var intList
+fr var -A -P 5 intList
+fr var mutableList
+fr var -A -P 5 mutableList
+fr var emptyList
+fr var -A -P 5 emptyList
+fr var nestedList
+fr var -A -P 10 nestedList
+field_type nestedList
+field_type nestedList.0
+field_type nestedList.0.0
+field_type nestedList.0.0.x
+field_type nestedList.0.0.y
+field_type nestedList.0.1
+field_type nestedList.0.1.x
+field_type nestedList.0.1.y
+q
