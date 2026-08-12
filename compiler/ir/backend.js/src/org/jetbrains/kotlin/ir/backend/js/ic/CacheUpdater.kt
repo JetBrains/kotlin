@@ -35,6 +35,7 @@ import java.io.File
 import java.io.OutputStream
 import java.nio.file.Files
 import java.util.*
+import kotlin.streams.toList
 
 abstract class IrICModule {
     abstract val moduleName: String
@@ -188,8 +189,10 @@ class CacheUpdater(
         private val removedIncrementalCaches = buildList {
             if (cacheRootDir.isDirectory) {
                 val availableCaches = incrementalCaches.values.mapTo(newHashSetWithExpectedSize(incrementalCaches.size)) { it.cacheDir }
-                val allDirs = Files.walk(cacheRootDir.toPath(), 1).map { it.toFile() }
-                allDirs.filter { it != cacheRootDir && it !in availableCaches }.forEach { removedCacheDir ->
+                val removedCacheDirs = Files.walk(cacheRootDir.toPath(), 1).use { paths ->
+                    paths.map { it.toFile() }.filter { it != cacheRootDir && it !in availableCaches }.toList()
+                }
+                removedCacheDirs.forEach { removedCacheDir ->
                     add(IncrementalCache(KotlinRemovedLibraryHeader(removedCacheDir), removedCacheDir))
                 }
             }
