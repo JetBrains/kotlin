@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsResultOfDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsParameterDeclaration
 import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -30,6 +31,20 @@ internal fun FirCallableSymbol<*>.indicesOfPropagatingFunctionalParameters(): Li
         for (effectDeclaration in contractDescription.effects) {
             val effect = effectDeclaration.effect
             if (effect is ConeReturnsResultOfDeclaration) {
+                add(effect.valueParameterReference.parameterIndex)
+            }
+        }
+    }
+}
+
+@OptIn(SymbolInternals::class)
+internal fun FirCallableSymbol<*>.indicesOfReturnsParameter(): List<Int> {
+    if (this !is FirFunctionSymbol<*>) return emptyList()
+    val contractDescription = resolvedContractDescription ?: return emptyList()
+    return buildList {
+        for (effectDeclaration in contractDescription.effects) {
+            val effect = effectDeclaration.effect
+            if (effect is ConeReturnsParameterDeclaration) {
                 add(effect.valueParameterReference.parameterIndex)
             }
         }

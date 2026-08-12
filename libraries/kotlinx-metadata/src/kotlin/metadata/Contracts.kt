@@ -38,7 +38,7 @@ public class KmEffect(
 ) {
     /**
      * Arguments of the effect constructor, i.e., the constant value for the [KmEffectType.RETURNS_CONSTANT] effect,
-     * or the parameter reference for the [KmEffectType.CALLS] effect.
+     * or the parameter reference for the [KmEffectType.CALLS]/[KmEffectType.RETURNS_PARAMETER]/[KmEffectType.RETURNS_RESULT_OF] effects.
      */
     public val constructorArguments: MutableList<KmEffectExpression> = ArrayList(1)
 
@@ -139,6 +139,14 @@ public enum class KmEffectType {
      * Referenced lambda is stored in the [KmEffect.constructorArguments].
      */
     RETURNS_RESULT_OF,
+
+    /**
+     * Represents `returnsParameter` contract effect:
+     * a situation when a function returns the value of the specified parameter (or receiver) as-is.
+     *
+     * Referenced parameter is stored in the [KmEffect.constructorArguments].
+     */
+    RETURNS_PARAMETER,
 }
 
 /**

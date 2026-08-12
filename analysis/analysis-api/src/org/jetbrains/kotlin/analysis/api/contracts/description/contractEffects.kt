@@ -87,6 +87,15 @@ public interface KaContractReturnsResultOfEffectDeclaration : KaContractEffectDe
 }
 
 /**
+ * Represents [kotlin.contracts.ContractBuilder.returnsParameter].
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaContractReturnsParameterEffectDeclaration : KaContractEffectDeclaration {
+    public val valueParameterReference: KaContractParameterValue
+}
+
+/**
  * Represents [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns].
  */
 @KaExperimentalApi

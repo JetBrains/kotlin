@@ -1,0 +1,13 @@
+KT element: KtNamedFunction
+KT element text:
+public inline fun <T> T.myApply(block: T.() -> kotlin.Unit): T { contract { /* compiled contract */ }; /* compiled code */ }
+FIR element: FirNamedFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(RAW_FIR)] R|T|.myApply([ResolvedTo(BODY_RESOLVE)] block: R|T.() -> kotlin/Unit|): R|T|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+        ReturnsParameter(this)
+    >
