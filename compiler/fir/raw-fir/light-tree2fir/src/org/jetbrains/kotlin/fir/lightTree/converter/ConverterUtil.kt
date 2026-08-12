@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.text
 
 fun String?.nameAsSafeName(defaultName: String = ""): Name {
     return when {
@@ -45,7 +43,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
         if (tokenType == PROPERTY || tokenType == FUN) {
             val grandParent = parent?.getParent()
             when {
-                parentTokenType == KT_FILE -> return true
+                parentTokenType == FILE -> return true
                 parentTokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent.getParent()?.tokenType == OBJECT_LITERAL) -> return true
                 parentTokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
             }
@@ -65,7 +63,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
 fun isCallableLocal(callableNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
     val parentNode = callableNode.getParent()
     return when (parentNode?.tokenType) {
-        KT_FILE, CLASS_BODY -> false
+        FILE, CLASS_BODY -> false
         BLOCK -> when (parentNode.getParent()?.tokenType) {
             SCRIPT -> false
             else -> true

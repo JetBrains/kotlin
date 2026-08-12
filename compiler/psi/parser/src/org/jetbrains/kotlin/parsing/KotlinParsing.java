@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -175,7 +175,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         checkUnclosedBlockComment();
-        fileMarker.done(KT_FILE);
+        fileMarker.done(FILE);
     }
 
     private void checkUnclosedBlockComment() {
@@ -254,7 +254,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         scriptMarker.done(SCRIPT);
         scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
 
-        fileMarker.done(KT_FILE);
+        fileMarker.done(FILE);
     }
 
     private void checkForUnexpectedSymbols() {

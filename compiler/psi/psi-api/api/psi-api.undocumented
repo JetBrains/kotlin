@@ -154,7 +154,6 @@ org.jetbrains.kotlin.KtNodeTypes:INITIALIZER_LIST
 org.jetbrains.kotlin.KtNodeTypes:INTEGER_CONSTANT
 org.jetbrains.kotlin.KtNodeTypes:INTERSECTION_TYPE
 org.jetbrains.kotlin.KtNodeTypes:IS_EXPRESSION
-org.jetbrains.kotlin.KtNodeTypes:KT_FILE
 org.jetbrains.kotlin.KtNodeTypes:LABEL
 org.jetbrains.kotlin.KtNodeTypes:LABELED_EXPRESSION
 org.jetbrains.kotlin.KtNodeTypes:LABEL_QUALIFIER
