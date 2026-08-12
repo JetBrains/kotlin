@@ -43,19 +43,21 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
             if (!file.exists()) return null
 
             try {
-                ObjectInputStream(file.inputStream().buffered()).use { input ->
-                    val version = input.readInt()
-                    if (version != CURRENT_VERSION) {
-                        reportFail("incompatible version $version, actual version is $CURRENT_VERSION")
-                        return null
-                    }
+                file.inputStream().buffered().use { fileStream ->
+                    ObjectInputStream(fileStream).use { input ->
+                        val version = input.readInt()
+                        if (version != CURRENT_VERSION) {
+                            reportFail("incompatible version $version, actual version is $CURRENT_VERSION")
+                            return null
+                        }
 
-                    val size = input.readInt()
-                    val result = ArrayList<BuildDifference>(size)
-                    repeat(size) {
-                        result.add(input.readBuildDifference())
+                        val size = input.readInt()
+                        val result = ArrayList<BuildDifference>(size)
+                        repeat(size) {
+                            result.add(input.readBuildDifference())
+                        }
+                        return result
                     }
-                    return result
                 }
             } catch (e: IOException) {
                 reportFail(e.toString())
@@ -69,13 +71,15 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
 
             try {
                 icContext.transaction.write(file.toPath()) {
-                    ObjectOutputStream(file.outputStream().buffered()).use { output ->
-                        output.writeInt(CURRENT_VERSION)
+                    file.outputStream().buffered().use { fileStream ->
+                        ObjectOutputStream(fileStream).use { output ->
+                            output.writeInt(CURRENT_VERSION)
 
-                        val diffsToWrite = storage.buildDiffs.sortedBy { it.ts }.takeLast(MAX_DIFFS_ENTRIES)
-                        output.writeInt(diffsToWrite.size)
-                        for (diff in diffsToWrite) {
-                            output.writeBuildDifference(diff)
+                            val diffsToWrite = storage.buildDiffs.sortedBy { it.ts }.takeLast(MAX_DIFFS_ENTRIES)
+                            output.writeInt(diffsToWrite.size)
+                            for (diff in diffsToWrite) {
+                                output.writeBuildDifference(diff)
+                            }
                         }
                     }
                 }

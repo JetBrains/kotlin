@@ -146,15 +146,19 @@ class AbiSnapshotImpl(override val protos: MutableMap<FqName, ProtoData>) : AbiS
 
         fun write(icContext: IncrementalCompilationContext, buildInfo: AbiSnapshot, file: File) {
             icContext.transaction.write(file.toPath()) {
-                ObjectOutputStream(FileOutputStream(file)).use {
-                    it.writeAbiSnapshot(buildInfo)
+                FileOutputStream(file).use { fileStream ->
+                    ObjectOutputStream(fileStream).use {
+                        it.writeAbiSnapshot(buildInfo)
+                    }
                 }
             }
         }
 
         fun read(file: File): AbiSnapshot {
-            return ObjectInputStream(FileInputStream(file)).use {
-                it.readAbiSnapshot()
+            return FileInputStream(file).use { fileStream ->
+                ObjectInputStream(fileStream).use {
+                    it.readAbiSnapshot()
+                }
             }
         }
     }
