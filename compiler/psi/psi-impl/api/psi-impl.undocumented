@@ -60,7 +60,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtScriptElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtScriptInitializerElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtSecondaryConstructorElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtStringInterpolationPrefixElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_TARGET
