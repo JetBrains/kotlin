@@ -7998,6 +7998,16 @@ private fun KaDiagnosticConverterBuilder.addConversions177() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions178() {
+    add(FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS) { firDiagnostic ->
+        EqualityNotApplicableByEqualityBoundsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR) { firDiagnostic ->
         TypeInferenceOnlyInputTypesErrorImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
