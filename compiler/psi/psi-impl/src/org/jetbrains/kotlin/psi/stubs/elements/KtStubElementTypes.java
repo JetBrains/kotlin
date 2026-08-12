@@ -5,9 +5,19 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.stubs.StubElementTypeHolderEP;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.*;
 
+/**
+ * A container for all stub-based elements {@link StubElementTypeHolderEP}.
+ * <p>
+ * The interface is not supposed to be used directly, use {@link KtNodeTypes} instead.
+ *
+ * @see KtNodeTypes
+ */
+@KtImplementationDetail
 public interface KtStubElementTypes {
     @NotNull KtClassElementType CLASS = KtClassElementType.INSTANCE;
     @NotNull KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
