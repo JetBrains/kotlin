@@ -403,7 +403,7 @@ class NativeSecondStageCompilationConfig(
             // Later upon the subsequent `getFullList()` call, some of the implicit dependencies will be added. But only if they
             // are mentioned in `depends=` manifest property in root libraries. Which means only a small really required subset
             // of them will be added.
-            it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs
+            it.library.isExplicitlySpecifiedByUserInCLIArgument
         }.getFullList()
     }
 
@@ -728,9 +728,6 @@ class NativeSecondStageCompilationConfig(
 
     val languageVersionSettings: LanguageVersionSettings
         get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-
-    val purgeUserLibs: Boolean
-        get() = configuration.konanPurgeUserLibs
 
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"
