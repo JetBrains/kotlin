@@ -129,10 +129,30 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
 
-    private fun getDebugRunner(): ChromiumRunnerInput {
-        frameworkTaskInputs.chromiumRunners.get().firstOrNull()?.let { return it }
+    private fun pickDebugRunner(task: KotlinJsTest): ChromiumRunnerInput {
+        val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
+        chromiumRunners.firstOrNull()?.let { debugRunner ->
+            if (chromiumRunners.size > 1) {
+                task.logger.warn(
+                    "Several Chromium runners are configured for '${task.path}': " +
+                            chromiumRunners.joinToString { "'${it.name.get()}'" } + ". " +
+                            "A debug session attaches to a single browser, so only '${debugRunner.name.get()}' is launched. " +
+                            "The other Chromium runners are not run in this build."
+                )
+            }
+            return debugRunner
+        }
 
-        val configuredRunner = firstRunnerInput()
+        task.logger.warn(
+            "No Chromium runner is configured for Playwright debugging. " +
+                    "Kotlin will launch Chromium using the first configured browser runner's test settings. " +
+                    "Define a Chromium runner in the browser test DSL to customize the debug browser configuration."
+        )
+
+        val configuredRunner = frameworkTaskInputs.firefoxRunners.get().firstOrNull()
+            ?: frameworkTaskInputs.webkitRunners.get().firstOrNull()
+            ?: error("No Playwright browser runners configured")
+
         return createChromiumInputs(objects).apply {
             name.convention("chromium")
             testsLocation.convention(configuredRunner.testsLocation)
@@ -166,17 +186,9 @@ internal class KotlinPlaywrightJsTestFramework(
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
         val debugOptions = if (debug) debugOptions.get() else null
 
-        if (debug && frameworkTaskInputs.chromiumRunners.get().isEmpty()) {
-            task.logger.warn(
-                "No Chromium runner is configured for Playwright debugging. " +
-                        "Kotlin will launch Chromium using the first configured browser runner's test settings. " +
-                        "Define a Chromium runner in the browser test DSL to customize the debug browser configuration."
-            )
-        }
-
         val pwRunners = buildList {
             if (debugOptions != null) {
-                val runner = getDebugRunner()
+                val runner = pickDebugRunner(task)
                 add(
                     runner.createPwRunnerSpec(
                         PwBrowserKind.CHROMIUM,
@@ -237,12 +249,6 @@ internal class KotlinPlaywrightJsTestFramework(
         )
         return runnerConfig.buildUrlWithConfigState(baseUrl)
     }
-
-    private fun firstRunnerInput(): BrowserRunnerInput =
-        frameworkTaskInputs.chromiumRunners.get().firstOrNull()
-            ?: frameworkTaskInputs.firefoxRunners.get().firstOrNull()
-            ?: frameworkTaskInputs.webkitRunners.get().firstOrNull()
-            ?: error("No Playwright browser runners configured")
 
     companion object {
         fun createInputs(objects: ObjectFactory): Inputs =

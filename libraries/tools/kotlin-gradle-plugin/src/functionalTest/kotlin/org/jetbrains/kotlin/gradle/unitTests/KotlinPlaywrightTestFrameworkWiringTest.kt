@@ -440,6 +440,34 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
+    fun `a debug run launches the first of several chromium runners`() {
+        val setup = buildBrowserTestProject {
+            chromium("first")
+            chromium("second")
+        }
+        setup.prepareExecutableFramework()
+        setup.jsBrowserTestTask.browserDebug.set(true)
+
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
+
+        // A debug session attaches to a single browser, so the other runners are left out.
+        assertEquals(listOf("first"), spec.runners.map { it.name })
+    }
+
+    @Test
+    fun `a regular run launches every chromium runner`() {
+        val setup = buildBrowserTestProject {
+            chromium("first")
+            chromium("second")
+        }
+        setup.prepareExecutableFramework()
+
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
+
+        assertEquals(listOf("first", "second"), spec.runners.map { it.name })
+    }
+
+    @Test
     fun `browser debug port implies browser debug`() {
         val setup = buildBrowserTestProject { chromium() }
 
