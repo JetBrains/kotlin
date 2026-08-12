@@ -96,4 +96,7 @@ open class ArgumentsHelper(private val entry: String) {
 
     protected fun optional(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, String?> =
         { arguments, prop -> arguments.findNamedArgument(argumentName ?: prop.name) }
+
+    protected fun boolean(argumentName: String? = null, defaultValue: Boolean = false): ReadOnlyProperty<ArgumentsHelper, Boolean> =
+        { arguments, prop -> arguments.findNamedArgument(argumentName ?: prop.name)?.toBoolean() ?: defaultValue }
 }

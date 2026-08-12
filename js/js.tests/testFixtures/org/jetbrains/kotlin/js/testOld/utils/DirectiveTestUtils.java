@@ -35,29 +35,6 @@ public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
 
-    private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            // Be more restrictive, check qualified match by default
-            checkCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
-                               parseBooleanArgument(arguments, "qualified", true));
-        }
-    };
-
-    private static final DirectiveHandler FUNCTION_NOT_CALLED_IN_SCOPE = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            // Be more restrictive, check unqualified match by default
-            checkNotCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
-                                  parseBooleanArgument(arguments, "qualified", false));
-        }
-    };
-
-    private static boolean parseBooleanArgument(@NotNull ArgumentsHelper arguments, @NotNull String name, boolean defaultValue) {
-        String value = arguments.findNamedArgument(name);
-        return value != null ? Boolean.parseBoolean(value) : defaultValue;
-    }
-
     private static abstract class NodeExistenceDirective extends DirectiveHandler {
         private boolean isElementExists = false;
         private boolean shouldCheckForExistence;
@@ -288,8 +265,8 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_WRITE_COUNT(),  new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CLASS_EXISTS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_FUNCTION_EXISTS(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), FUNCTION_CALLED_IN_SCOPE),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED_IN_SCOPE(), FUNCTION_NOT_CALLED_IN_SCOPE),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED_IN_SCOPE(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_COMMENT_EXISTS(), CHECK_COMMENT_EXISTS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_LABELS_COUNT(), COUNT_LABELS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_VARS_COUNT(), COUNT_VARS),
@@ -323,43 +300,6 @@ public class DirectiveTestUtils {
             return AstSearchUtil.getFunction(node, scopeFunctionName);
         }
         return node;
-    }
-
-    public static void checkCalledInScope(
-            @NotNull JsNode node,
-            @NotNull String functionName,
-            @NotNull String scopeFunctionName,
-            boolean checkQualifier
-    ) throws Exception {
-        String errorMessage = functionName + " is not called inside " + scopeFunctionName;
-        assertFalse(isCalledInScope(node, functionName, scopeFunctionName, checkQualifier), errorMessage);
-    }
-
-    public static void checkNotCalledInScope(
-            @NotNull JsNode node,
-            @NotNull String functionName,
-            @NotNull String scopeFunctionName,
-            boolean checkQualifier
-    ) throws Exception {
-        String errorMessage = functionName + " is called inside " + scopeFunctionName;
-        assertTrue(isCalledInScope(node, functionName, scopeFunctionName, checkQualifier), errorMessage);
-    }
-
-    private static boolean isCalledInScope(
-            @NotNull JsNode node,
-            @NotNull String functionName,
-            @NotNull String scopeFunctionName,
-            boolean checkQualifier
-    ) throws Exception {
-        JsNode scope = AstSearchUtil.getFunction(node, scopeFunctionName);
-
-        CallCounter counter = CallCounter.countCalls(scope);
-        if (checkQualifier) {
-            return counter.getQualifiedCallsCount(functionName) == 0;
-        }
-        else {
-            return counter.getUnqualifiedCallsCount(functionName) == 0;
-        }
     }
 
     private static class DirectiveHandler<A extends ArgumentsHelper> {
