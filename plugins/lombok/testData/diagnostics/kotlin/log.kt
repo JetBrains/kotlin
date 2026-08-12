@@ -90,3 +90,16 @@ class LogOnClassWithMemberLogPropertyAndCompanion {
         MyCompanion.<!UNRESOLVED_REFERENCE!>log<!>.info("Not generated into the existing companion object either")
     }
 }
+
+@Log(access = AccessLevel.PROTECTED)
+class LogAccessLevelProtected
+
+@Log(access = AccessLevel.PACKAGE) // TODO: it should be prohibited, KT-88337
+class LogAccessLevelPackage
+
+@Log(access = AccessLevel.<!DEPRECATION!>MODULE<!>) // TODO: it should be prohibited, KT-88337
+class LogAccessLevelModule
+
+fun test() {
+    LogAccessLevelProtected.log.info("") // OK, but INVISIBLE_REFERENCE is expected (KT-88337, KT-88203)
+}
