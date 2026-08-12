@@ -1,8 +1,7 @@
-// LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects +AllowMultipleExpectsForSameActual
 // ISSUE: KT-69909
 // WITH_STDLIB
-// IGNORE_BACKEND: ANY
-// IGNORE_IR_DESERIALIZATION_TEST: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: JVM_IR
 
 // MODULE: common
 // FILE: common.kt

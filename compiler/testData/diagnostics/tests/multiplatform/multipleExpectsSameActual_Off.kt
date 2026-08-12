@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects -AllowMultipleExpectsForSameActual
 // ISSUE: KT-69909
 // IGNORE_REVERSED_RESOLVE
 // IGNORE_NON_REVERSED_RESOLVE
