@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -24,6 +25,14 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 object ConstructorGeneratorKey : LombokDeclarationKey()
+
+/**
+ * Checks whether the current [FirDeclarationOrigin] instance is of type [FirDeclarationOrigin.Plugin] and carries
+ * [ConstructorGeneratorKey], that is, whether the declaration is a constructor or a static factory this generator
+ * produced.
+ */
+val FirDeclarationOrigin.isGeneratedConstructor: Boolean
+    get() = this is FirDeclarationOrigin.Plugin && key == ConstructorGeneratorKey
 
 class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
@@ -47,10 +56,8 @@ class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGeneratio
             initializeCompanionObjectIfNeeded(owner, context) {
                 // Generate companion object only if there is at least one constructor with visibility and a specified static name
                 // Because static constructors are being generated inside companion objects.
-                if (parts.none { part ->
-                        part.getConstructorInfo(owner)?.let { it.visibility != null && it.staticName != null } ?: false
-                    }
-                ) {
+                // A factory that would only be shadowed isn't generated, so it must not bring an empty companion either.
+                if (parts.none { part -> part.generatesStaticFactory(owner) }) {
                     null
                 } else {
                     ConstructorGeneratorKey
