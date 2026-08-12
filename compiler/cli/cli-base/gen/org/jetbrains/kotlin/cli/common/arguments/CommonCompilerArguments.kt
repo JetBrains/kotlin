@@ -487,6 +487,17 @@ It may only be used with specific checkers that are not enabled by default, and 
         }
 
     @Argument(
+        value = "-Xequality-bounds",
+        description = "Enable experimental support for `@EqualityBound` annotations in `equals` operators.",
+    )
+    @Enables(LanguageFeature.StrictEquals)
+    var equalityBounds: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xescaping-functions",
         valueDescription = "<+|-><fq.name>",
         description = "Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.",
