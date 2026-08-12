@@ -1,0 +1,45 @@
+FILE: phasesAmbiguity.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class B : R|kotlin/Any| {
+            public constructor(): R|A.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final class A : R|kotlin/Any| {
+            public constructor(): R|Outer.A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open class B : R|kotlin/Any| {
+                public constructor(): R|Outer.A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final class C : R|Outer.A.B| {
+                public constructor(): R|Outer.A.C| {
+                    super<R|Outer.A.B|>()
+                }
+
+                public open override operator fun equals([EqualityBoundType=Outer.A.B] @R|kotlin/EqualityBound|(bound = <getClass>(Q|A.B|) [evaluated = <getClass>(Q|A.B|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                    ^equals this@R|/Outer.A.C|.super<R|Outer.A.B|>.R|kotlin/Any.equals|(R|<local>/other|)
+                }
+
+            }
+
+        }
+
+    }

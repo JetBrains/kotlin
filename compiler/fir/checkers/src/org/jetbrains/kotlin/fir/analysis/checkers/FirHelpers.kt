@@ -1033,21 +1033,25 @@ private fun ConeKotlinType.containsMalformedArgument(allowNullableNothing: Boole
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun KtSourceElement?.requireFeatureSupport(
+inline fun KtSourceElement?.requireFeatureSupport(
     feature: LanguageFeature,
     positioningStrategy: SourceElementPositioningStrategy? = null,
+    ifSupported: () -> Unit = {},
 ) {
     if (feature.isDisabled()) {
         reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, positioningStrategy)
+    } else {
+        ifSupported()
     }
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun FirElement.requireFeatureSupport(
+inline fun FirElement.requireFeatureSupport(
     feature: LanguageFeature,
     positioningStrategy: SourceElementPositioningStrategy? = null,
+    ifSupported: () -> Unit = {},
 ) {
-    source.requireFeatureSupport(feature, positioningStrategy)
+    source.requireFeatureSupport(feature, positioningStrategy, ifSupported)
 }
 
 context(context: CheckerContext)
