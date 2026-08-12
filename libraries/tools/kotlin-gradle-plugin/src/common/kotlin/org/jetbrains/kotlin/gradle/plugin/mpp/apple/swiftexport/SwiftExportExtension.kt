@@ -65,6 +65,12 @@ interface SwiftExportAdvancedConfiguration {
     val freeCompilerArgs: ListProperty<String>
 }
 
+internal class SwiftExportRunConfiguration(
+    val exportedModules: Set<SwiftExportedDependency>,
+    val hiddenModules: Set<SwiftExportedDependency>,
+    val exportedModuleConfigurations: Set<SwiftExportedDependency>,
+)
+
 internal fun ObjectFactory.SwiftExportExtension(
     dependencies: DependencyHandler,
     projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
@@ -201,19 +207,33 @@ abstract class SwiftExportExtension @Inject constructor(
      * Configure Swift Export modules export.
      */
     @ExperimentalSwiftExportDsl
-    fun hide(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = export(dependency) {
+    fun hide(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = hide(dependency) {
         configure.execute(this)
     }
 
-    /**
-     * Returns a list of exported modules.
-     */
-    internal val exportedModules: Provider<Set<SwiftExportedDependency>> = providerFactory.provider {
-        _exportedModules
+    @ExperimentalSwiftExportDsl
+    fun component(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit) {
+        when (dependency) {
+            is Provider<*> -> {
+                addDependencyToExportedModuleConfigurations(dependency, configure)
+            }
+            else -> {
+                addDependencyToExportedModuleConfigurations(providerFactory.provider { dependency }, configure)
+            }
+        }
     }
 
-    internal val hiddenModules: Provider<Set<SwiftExportedDependency>> = providerFactory.provider {
-        _hiddenModules
+    @ExperimentalSwiftExportDsl
+    fun component(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = component(dependency) {
+        configure.execute(this)
+    }
+
+    internal val runConfiguration: Provider<SwiftExportRunConfiguration> = providerFactory.provider {
+        SwiftExportRunConfiguration(
+            exportedModules = _exportedModules,
+            hiddenModules = _hiddenModules,
+            exportedModuleConfigurations = _exportedModuleConfigurations,
+        )
     }
 
     /**
@@ -229,6 +249,7 @@ abstract class SwiftExportExtension @Inject constructor(
 
     private val _exportedModules = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
     private val _hiddenModules = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
+    private val _exportedModuleConfigurations = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
 
     private fun addDependencyToExportedModules(
         dependency: Provider<*>,
@@ -261,6 +282,14 @@ abstract class SwiftExportExtension @Inject constructor(
     ) {
         val dependencyId = dependency.toSwiftExportedDependency(configure)
         _hiddenModules.addLater(dependencyId)
+    }
+
+    private fun addDependencyToExportedModuleConfigurations(
+        dependency: Provider<*>,
+        configure: SwiftExportedModuleMetadata.() -> Unit
+    ) {
+        val dependencyId = dependency.toSwiftExportedDependency(configure)
+        _exportedModuleConfigurations.addLater(dependencyId)
     }
 
     private fun addDependencyToExportConfiguration(dependency: Provider<Dependency>) {

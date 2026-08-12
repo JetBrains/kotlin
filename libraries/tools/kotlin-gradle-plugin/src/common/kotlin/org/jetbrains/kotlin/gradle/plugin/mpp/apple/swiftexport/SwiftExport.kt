@@ -66,8 +66,7 @@ internal fun Project.registerSwiftExportTask(
         ),
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
-        exportedModules = swiftExportExtension.exportedModules,
-        hiddenModules = swiftExportExtension.hiddenModules,
+        runConfiguration = swiftExportExtension.runConfiguration,
         customSetting = swiftExportExtension.advancedConfiguration.settings
     )
 
@@ -129,8 +128,7 @@ private fun Project.registerSwiftExportRun(
     exportConfiguration: Configuration,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
-    exportedModules: Provider<Set<SwiftExportedDependency>>,
-    hiddenModules: Provider<Set<SwiftExportedDependency>>,
+    runConfiguration: Provider<SwiftExportRunConfiguration>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
@@ -160,8 +158,7 @@ private fun Project.registerSwiftExportRun(
             collectModules(
                 exportConfigurationProvider,
                 apiConfigProvider,
-                exportedModules,
-                hiddenModules,
+                runConfiguration,
             )
         )
 

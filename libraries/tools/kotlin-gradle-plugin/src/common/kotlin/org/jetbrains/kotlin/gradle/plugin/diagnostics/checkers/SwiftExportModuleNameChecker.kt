@@ -28,9 +28,11 @@ internal object SwiftExportModuleNameChecker : KotlinGradleProjectChecker {
             collector.validateSwiftExportModuleName(project, it)
         }
 
-        extension.exportedModules.orNull?.forEach { module ->
-            module.moduleName.orNull?.let {
-                collector.validateSwiftExportModuleName(project, it)
+        extension.runConfiguration.orNull?.let { runConfiguration ->
+            for (module in runConfiguration.exportedModules + runConfiguration.hiddenModules + runConfiguration.exportedModuleConfigurations) {
+                module.moduleName.orNull?.let {
+                    collector.validateSwiftExportModuleName(project, it)
+                }
             }
         }
     }

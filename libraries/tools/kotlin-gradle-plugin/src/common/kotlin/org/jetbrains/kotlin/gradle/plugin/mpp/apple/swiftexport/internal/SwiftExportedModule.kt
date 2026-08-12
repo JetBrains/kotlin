@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportRunConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule.ExportMode
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.getAllDependencies
@@ -57,11 +58,12 @@ internal fun createFullyExportedSwiftExportedModule(
 
 internal fun createTransitiveSwiftExportedModule(
     moduleName: String,
+    flattenPackage: String?,
     artifact: File,
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
         moduleName = moduleName,
-        flattenPackage = null,
+        flattenPackage = flattenPackage,
         artifact = artifact,
         exportMode = ExportMode.Transitive,
     )
@@ -82,12 +84,10 @@ internal fun createExcludedSwiftExportedModule(
 internal fun Project.collectModules(
     swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
-    exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-    hiddenModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider
-    .zip(apiConfigurationProvider, ::Pair)
-    .zip(exportedModulesProvider.zip(hiddenModulesProvider, ::Pair)) { (exportConfig, apiConfig), (exportedModules, hiddenModules) ->
-        swiftExportedModules(exportConfig, apiConfig, exportedModules, hiddenModules)
+    runConfigurationProvider: Provider<SwiftExportRunConfiguration>,
+): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider.zip(apiConfigurationProvider, ::Pair)
+    .zip(runConfigurationProvider) { (exportConfig, apiConfig), runConfiguration ->
+        swiftExportedModules(exportConfig, apiConfig, runConfiguration)
     }
 
 private class ResolvedArtifactWithVersionIdentifier(
@@ -118,11 +118,9 @@ private class ResolvedArtifactWithVersionIdentifier(
 private fun Project.swiftExportedModules(
     swiftExportConfiguration: LazyResolvedConfigurationWithArtifacts,
     apiConfiguration: LazyResolvedConfigurationWithArtifacts,
-    exportedModules: Set<SwiftExportedDependency>,
-    hiddenModules: Set<SwiftExportedDependency>,
+    runConfiguration: SwiftExportRunConfiguration,
 ) = findAndCreateSwiftExportedModules(
-    exportedModules = exportedModules,
-    hiddenModules = hiddenModules,
+    runConfiguration = runConfiguration,
     allResolvedArtifacts = swiftExportConfiguration.filteredArtifacts(LazyResolvedConfigurationWithArtifacts::allResolvedDependencies),
     resolvedDirectApiArtifacts = apiConfiguration.filteredArtifacts { root.dependencies.filterIsInstance<ResolvedDependencyResult>() },
 )
@@ -149,8 +147,7 @@ private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.cont
 private val File.isJavaJar get() = extension == "jar"
 
 private fun Project.findAndCreateSwiftExportedModules(
-    exportedModules: Set<SwiftExportedDependency>,
-    hiddenModules: Set<SwiftExportedDependency>,
+    runConfiguration: SwiftExportRunConfiguration,
     allResolvedArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
     resolvedDirectApiArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
 ): List<SwiftExportedModule> {
@@ -158,19 +155,33 @@ private fun Project.findAndCreateSwiftExportedModules(
     val missingModules = mutableListOf<SwiftExportedDependency>()
 
     val artifactsByComponentId = allResolvedArtifacts.associateBy { it.dependency.selected.id }
+    val configurationOverridesByArtifact = runConfiguration.exportedModuleConfigurations
+        .mapNotNull { moduleConfiguration ->
+            val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(moduleConfiguration)
+
+            if (matchingArtifact != null) {
+                matchingArtifact to moduleConfiguration
+            } else {
+                missingModules.add(moduleConfiguration)
+                null
+            }
+        }
+        .toMap()
 
     // Process all explicitly exported modules. They are fully exported and take precedence over hiddenModules.
     val fullyExportedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
-    for (explicitModule in exportedModules) {
+    for (explicitModule in runConfiguration.exportedModules) {
         val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(explicitModule)
 
         if (matchingArtifact != null) {
+            val configurationOverride = configurationOverridesByArtifact[matchingArtifact]
             result.add(
                 createFullyExportedSwiftExportedModule(
-                    moduleName = explicitModule.moduleName.orElse(
-                        normalizedAndValidatedModuleName(explicitModule.inheritedName)
-                    ).get(),
-                    flattenPackage = explicitModule.flattenPackage.orNull,
+                    moduleName = configurationOverride?.moduleName?.orNull
+                        ?: explicitModule.moduleName
+                            .orElse(normalizedAndValidatedModuleName(explicitModule.inheritedName))
+                            .get(),
+                    flattenPackage = configurationOverride?.flattenPackage?.orNull ?: explicitModule.flattenPackage.orNull,
                     artifact = matchingArtifact.artifact.file
                 )
             )
@@ -184,7 +195,7 @@ private fun Project.findAndCreateSwiftExportedModules(
     // Hidden modules, as well as all their transitive dependencies, need to be excluded from export.
     // exportedModules take precedence over hiddenModules, so explicitly exported components are never hidden.
     val hiddenComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
-    for (hiddenModule in hiddenModules) {
+    for (hiddenModule in runConfiguration.hiddenModules) {
         val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(hiddenModule)
 
         if (matchingArtifact != null) {
@@ -198,10 +209,12 @@ private fun Project.findAndCreateSwiftExportedModules(
     }
     hiddenComponents.removeAll(fullyExportedComponents)
     for (hiddenComponent in hiddenComponents) {
+        val configurationOverride = configurationOverridesByArtifact[hiddenComponent]
         result.add(
             createExcludedSwiftExportedModule(
-                hiddenComponent.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
-                hiddenComponent.artifact.file
+                moduleName = configurationOverride?.moduleName?.orNull
+                    ?: hiddenComponent.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
+                artifact = hiddenComponent.artifact.file
             )
         )
     }
@@ -217,10 +230,12 @@ private fun Project.findAndCreateSwiftExportedModules(
     for (apiArtifact in resolvedDirectApiArtifacts) {
         if (apiArtifact in fullyExportedComponents || apiArtifact in hiddenComponents) continue
 
+        val configurationOverride = configurationOverridesByArtifact[apiArtifact]
         result.add(
             createFullyExportedSwiftExportedModule(
-                moduleName = apiArtifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
-                flattenPackage = null,
+                moduleName = configurationOverride?.moduleName?.orNull
+                    ?: apiArtifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
+                flattenPackage = configurationOverride?.flattenPackage?.orNull,
                 artifact = apiArtifact.artifact.file
             )
         )
@@ -232,10 +247,13 @@ private fun Project.findAndCreateSwiftExportedModules(
         .filterNot { artifact -> artifact in fullyExportedComponents }
         .filterNot { artifact -> artifact in hiddenComponents }
         .forEach { artifact ->
+            val configurationOverride = configurationOverridesByArtifact[artifact]
             result.add(
                 createTransitiveSwiftExportedModule(
-                    artifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
-                    artifact.artifact.file
+                    moduleName = configurationOverride?.moduleName?.orNull
+                        ?: artifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
+                    flattenPackage = configurationOverride?.flattenPackage?.orNull,
+                    artifact = artifact.artifact.file
                 )
             )
         }
