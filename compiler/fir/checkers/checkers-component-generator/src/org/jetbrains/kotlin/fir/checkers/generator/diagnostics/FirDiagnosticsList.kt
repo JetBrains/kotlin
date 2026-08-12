@@ -565,6 +565,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("leftIsEqualityBound")
             parameter<String>("rightIsEqualityBound")
         }
+        val EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<ConeKotlinType>("leftEqualityBound")
+            parameter<ConeKotlinType>("rightEqualityBound")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

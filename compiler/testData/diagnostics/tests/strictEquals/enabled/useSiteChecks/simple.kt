@@ -36,8 +36,10 @@ fun direct(
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>c == e<!>) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>f == c<!>) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>c == f<!>) return false
-    if (c == d) return false
-    if (d == c) return false
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>c == d<!>) return false
+    if (c is D && c == d) return false
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>d == c<!>) return false
+    if (d is C && c == d) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>a == g<!>) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>g == a<!>) return false
     if (g == d) return false
@@ -60,8 +62,10 @@ fun neq(
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>c != e<!>) ++i
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>f != c<!>) ++i
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>c != f<!>) ++i
-    if (c != d) ++i
-    if (d != c) ++i
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>c != d<!>) ++i
+    if (c !is D || c != d) ++i
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>d != c<!>) ++i
+    if (c !is D || d != c) ++i
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>a != g<!>) ++i
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>g != a<!>) ++i
     if (g != d) ++i
@@ -86,8 +90,10 @@ fun throughSmartcasts(
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>c == e<!>) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>f == c<!>) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>c == f<!>) return false
-    if (c == d) return false
-    if (d == c) return false
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>c == d<!>) return false
+    if (c is D && c == d) return false
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>d == c<!>) return false
+    if (d is C && c == d) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>a == g<!>) return false
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>g == a<!>) return false
     if (g == d) return false

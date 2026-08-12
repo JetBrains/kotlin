@@ -2694,6 +2694,16 @@ private fun KaDiagnosticConverterBuilder.addConversions59() {
             token,
         )
     }
+    add(FirErrors.EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS) { firDiagnostic ->
+        EqualitySuspiciousByEqualityBoundsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.d),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NAME_FOR_AMBIGUOUS_PARAMETER) { firDiagnostic ->
         NameForAmbiguousParameterImpl(
             firDiagnostic as KtPsiDiagnostic,

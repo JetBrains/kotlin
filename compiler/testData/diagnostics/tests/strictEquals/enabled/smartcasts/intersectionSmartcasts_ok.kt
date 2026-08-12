@@ -13,24 +13,24 @@ interface B {
 
 fun useSite_1(x: Any, y: Any) {
     if (x !is A || y !is B) return
-    if (x != y) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>x != y<!>) return
     y.a()
     y.b()
 }
 
 fun useSite_2(a: A, b: B, c: Any) {
-    if (a == b) {
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>a == b<!>) {
         b.a()
         if (<!DEBUG_INFO_EXPRESSION_TYPE("A & B")!>b<!> == c) {
             <!DEBUG_INFO_EXPRESSION_TYPE("A & B")!>c<!>.a()
             c.b()
         }
     }
-    if (a == c && b == c) {
+    if (a == c && <!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>b == c<!>) {
         c.a()
         c.b()
     }
-    if (b == c && a == c) {
+    if (b == c && <!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>a == c<!>) {
         c.a()
         c.b()
     }
