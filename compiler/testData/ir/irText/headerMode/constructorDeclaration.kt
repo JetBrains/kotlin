@@ -1,4 +1,4 @@
-// FIR_DUMP
+// HEADER_MODE
 class A(val a: String, val b: Int) {
     constructor(e: String): this(e, 0) {
         val message = "Secondary constructor body"

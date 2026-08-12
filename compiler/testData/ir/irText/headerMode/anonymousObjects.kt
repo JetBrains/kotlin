@@ -1,4 +1,4 @@
-// FIR_DUMP
+// HEADER_MODE
 
 private fun createPrivateObject() =
         object {

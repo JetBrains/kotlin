@@ -1,5 +1,3 @@
-// DISABLE_WITH_PARSER: Psi
-// TARGET_BACKEND: JVM_IR
 // MODULE: lib
 // HEADER_MODE
 // FILE: first.kt
