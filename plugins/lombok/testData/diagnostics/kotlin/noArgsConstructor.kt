@@ -129,10 +129,10 @@ fun test() {
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 class NoArgsConstructorAccessLevelProtected(val x: Int)
 
-@NoArgsConstructor(access = AccessLevel.PACKAGE, force = true) // TODO: it should be prohibited, KT-88337
+@NoArgsConstructor(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>, force = true) // Prohibited, KT-88337
 class NoArgsConstructorAccessLevelPackage(val x: Int)
 
-@NoArgsConstructor(access = AccessLevel.<!DEPRECATION!>MODULE<!>, force = true) // TODO: it should be prohibited, KT-88337
+@NoArgsConstructor(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>, force = true) // Prohibited, KT-88337
 class NoArgsConstructorAccessLevelModule(val x: Int)
 
 // With `staticName`, `access` instead governs the visibility of the generated static factory function in the
