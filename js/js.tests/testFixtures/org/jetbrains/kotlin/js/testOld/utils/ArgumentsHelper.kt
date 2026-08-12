@@ -93,6 +93,9 @@ open class ArgumentsHelper(private val entry: String) {
     protected fun requiredInt(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, Int> =
         { arguments, prop -> arguments.getNamedArgument(argumentName ?: prop.name).toInt() }
 
+    protected fun optionalInt(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, Int?> =
+        { arguments, prop -> arguments.findNamedArgument(argumentName ?: prop.name)?.toInt() }
+
     protected fun optional(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, String?> =
         { arguments, prop -> arguments.findNamedArgument(argumentName ?: prop.name) }
 

@@ -4,40 +4,54 @@
  */
 package org.jetbrains.kotlin.js.test.ast.directives
 
+import org.jetbrains.kotlin.js.backend.ast.HasName
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.inline.util.collectInstances
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil.getFunction
-import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
 
-open class CountNodesDirective<T : JsNode>(private val klass: Class<T>) : DirectiveTestUtils.DirectiveHandler<ArgumentsHelper>() {
-    override fun processEntry(ast: JsNode, arguments: ArgumentsHelper, sourceFile: File?) {
-        val functionName = arguments.getNamedArgument("function")
-        val countStr = arguments.findNamedArgument("count")
-        val maxCountStr = arguments.findNamedArgument("max")
-        val includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations")
+class CountNodesDirective<T : JsNode>(entry: String, private val klass: Class<T>) : ArgumentsHelper(entry), JsAstDirective {
+    companion object {
+        inline fun <reified T : JsNode> counting(): (String) -> CountNodesDirective<T> = { CountNodesDirective(it, T::class.java) }
+    }
+
+    val function by required()
+    val count by optionalInt()
+    val max by optionalInt()
+    val includeNestedDeclarations by boolean()
+    val name by optional()
+
+    override fun evaluate(ast: JsNode, sourceFile: File) {
+        val functionName = function
+        val count = count
+        val maxCount = max
 
         val function = getFunction(ast, functionName)
-        val nodes = collectInstances(klass, function.body, includeNestedDeclarations != null && includeNestedDeclarations == "true")
-        val actualCount = nodes.fold(0) { acc, node -> acc + getActualCountFor(node, arguments) }
+        val nodes = collectInstances(klass, function.body, includeNestedDeclarations)
+        val actualCount = nodes.fold(0) { acc, node -> acc + getActualCountFor(node) }
 
-        if (countStr != null) {
-            val expectedCount = countStr.toInt()
-            assertEquals(expectedCount, actualCount) {
-                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected count is $expectedCount"
+        if (count != null) {
+            assertEquals(count, actualCount) {
+                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected count is $count"
             }
-        } else if (maxCountStr != null) {
-            val expectedCount = maxCountStr.toInt()
-            assertTrue(expectedCount >= actualCount) {
-                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected max is $expectedCount"
+        } else if (maxCount != null) {
+            assertTrue(maxCount >= actualCount) {
+                "Function $functionName contains $actualCount nodes of type ${klass.getName()}, but expected max is $maxCount"
             }
         } else {
             throw IllegalArgumentException("'max' or 'count' argument should be provided")
         }
     }
 
-    protected open fun getActualCountFor(node: T, arguments: ArgumentsHelper): Int = 1
+    private fun getActualCountFor(node: T): Int {
+        if (node is HasName) {
+            name?.let {
+                return if (node.name?.ident == it) 1 else 0
+            }
+        }
+        return 1
+    }
 }
