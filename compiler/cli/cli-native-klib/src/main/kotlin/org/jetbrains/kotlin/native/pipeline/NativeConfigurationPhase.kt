@@ -126,14 +126,14 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
     }
 
     private fun CompilerConfiguration.setupLibraries(arguments: K2NativeCompilerArguments, outputKind: CompilerOutputKind) {
-        konanLibraries = arguments.libraries.toList()
+        val regularLibraries = arguments.libraries.toList()
 
         arguments.friendModules?.let {
             konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
             checkForUnexpectedKlibLibraries(
                 librariesToCheck = konanFriendLibraries,
                 librariesToCheckArgument = K2NativeCompilerArguments::friendModules.cliArgument,
-                allLibraries = konanLibraries,
+                allLibraries = regularLibraries,
                 allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
             )
         }
@@ -142,7 +142,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         checkForUnexpectedKlibLibraries(
             librariesToCheck = exportedLibraries,
             librariesToCheckArgument = K2NativeCompilerArguments::exportedLibraries.cliArgument,
-            allLibraries = konanLibraries,
+            allLibraries = regularLibraries,
             allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
         )
 
@@ -151,7 +151,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         parseLibraryToAddToCache(arguments, outputKind)?.let { konanLibraryToAddToCache = it }
 
         konanLibraries = buildList {
-            this += konanLibraries
+            this += regularLibraries
             this += konanIncludedLibraries
             addIfNotNull(konanLibraryToAddToCache)
         }
