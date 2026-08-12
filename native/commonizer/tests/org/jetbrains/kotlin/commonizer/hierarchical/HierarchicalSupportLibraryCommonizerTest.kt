@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
     createModuleHierarchy(nameSourceSetsAs = { target -> "$target-support-module" }) {
-        sourceSet("(((iosArm64, iosX64), tvos, (watchosArm64, watchosDeviceArm64)), linuxArm64)") {
+        sourceSet("(((ios_arm64, ios_x64), tvos, (watchos_arm64, watchos_device_arm64)), linux_arm64)") {
             name = "native-main-support-module" // Workaround for `java.nio`'s "File name too long"
             source(
                 """
@@ -22,7 +22,7 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                 """.trimIndent(),
             )
         }.apply {
-            refinedBySourceSet("((iosArm64, iosX64), tvos, (watchosArm64, watchosDeviceArm64))") {
+            refinedBySourceSet("((ios_arm64, ios_x64), tvos, (watchos_arm64, watchos_device_arm64))") {
                 name = "apple-main-support-module" // Workaround for `java.nio`'s "File name too long"
                 source(
                     """
@@ -33,7 +33,7 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                     """.trimIndent(),
                 )
             }.apply {
-                refinedBySourceSet("(iosArm64, iosX64)") {
+                refinedBySourceSet("(ios_arm64, ios_x64)") {
                     source(
                         """
                             package support
@@ -41,8 +41,8 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                         """.trimIndent()
                     )
                 }.apply {
-                    refinedBySourceSet("iosArm64") {}
-                    refinedBySourceSet("iosX64") {}
+                    refinedBySourceSet("ios_arm64") {}
+                    refinedBySourceSet("ios_x64") {}
                 }
 
                 refinedBySourceSet("tvos") {
@@ -54,7 +54,7 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                     )
                 }
 
-                refinedBySourceSet("(watchosArm64, watchosDeviceArm64)") {
+                refinedBySourceSet("(watchos_arm64, watchos_device_arm64)") {
                     source(
                         """
                             package support
@@ -63,7 +63,7 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                         """.trimIndent()
                     )
                 }.apply {
-                    refinedBySourceSet("watchosArm64") {
+                    refinedBySourceSet("watchos_arm64") {
                         source(
                             """
                                 package support
@@ -72,7 +72,7 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                         )
                     }
 
-                    refinedBySourceSet("watchosDeviceArm64") {
+                    refinedBySourceSet("watchos_device_arm64") {
                         source(
                             """
                                 package support
@@ -83,7 +83,7 @@ private fun buildMockSupportLibrary(): Map<String, InlineSourceBuilder.Module> =
                 }
             }
 
-            refinedBySourceSet("linuxArm64") {
+            refinedBySourceSet("linux_arm64") {
                 source(
                     """
                         package support
@@ -99,16 +99,16 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
     @Test
     fun testFarawayLeaves() {
         val result = commonize {
-            outputTarget("(iosArm64, watchosArm64)")
+            outputTarget("(ios_arm64, watchos_arm64)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
 
-            registerFakeStdlibIntegersDependency("(iosArm64, watchosArm64)")
+            registerFakeStdlibIntegersDependency("(ios_arm64, watchos_arm64)")
 
-            "iosArm64" withSource """
+            "ios_arm64" withSource """
                 fun foo(arg: Long) {}
             """.trimIndent()
 
-            "watchosArm64" withSource """
+            "watchos_arm64" withSource """
                 fun foo(arg: Int) {}
             """.trimIndent()
 
@@ -116,7 +116,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
         }
 
         result.assertCommonized(
-            "(iosArm64, watchosArm64)",
+            "(ios_arm64, watchos_arm64)",
             """
                 expect fun foo(arg: support.AppleSSizeT)
             """.trimIndent()
@@ -126,17 +126,17 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
     @Test
     fun testTypealiasPreservation() {
         val result = commonize {
-            outputTarget("(iosArm64, watchosArm64)")
+            outputTarget("(ios_arm64, watchos_arm64)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
 
-            registerFakeStdlibIntegersDependency("(iosArm64, watchosArm64)")
+            registerFakeStdlibIntegersDependency("(ios_arm64, watchos_arm64)")
 
-            "iosArm64" withSource """
+            "ios_arm64" withSource """
                 typealias TA = Long
                 fun foo(arg: TA) {}
             """.trimIndent()
 
-            "watchosArm64" withSource """
+            "watchos_arm64" withSource """
                 typealias TA = Int
                 fun foo(arg: TA) {}
             """.trimIndent()
@@ -145,7 +145,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
         }
 
         result.assertCommonized(
-            "(iosArm64, watchosArm64)",
+            "(ios_arm64, watchos_arm64)",
             """
                 typealias TA = support.AppleSSizeT
                 expect fun foo(arg: TA)
@@ -153,67 +153,76 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
         )
     }
 
-    @Test
-    fun testIntermediateSupportClasses() {
+    private fun testIntermediateSupportClasses(configureSupportLibrary: ParametersBuilder.() -> Unit) {
         val result = commonize {
-            outputTarget("(watchosArm64, watchosDeviceArm64)", "(iosArm64, (watchosArm64, watchosDeviceArm64))")
+            outputTarget("(watchos_arm64, watchos_device_arm64)", "(ios_arm64, (watchos_arm64, watchos_device_arm64))")
             setting(OptimisticNumberCommonizationEnabledKey, true)
 
-            registerFakeStdlibIntegersDependency("(iosArm64, (watchosArm64, watchosDeviceArm64))")
+            registerFakeStdlibIntegersDependency("(ios_arm64, (watchos_arm64, watchos_device_arm64))")
 
-            "iosArm64" withSource """
+            "ios_arm64" withSource """
                 fun foo(arg: Long) {}
             """.trimIndent()
 
-            "watchosArm64" withSource """
+            "watchos_arm64" withSource """
                 fun foo(arg: Int) {}
             """.trimIndent()
 
-            "watchosDeviceArm64" withSource """
+            "watchos_device_arm64" withSource """
                 fun foo(arg: Long) {}
             """.trimIndent()
 
-            registerSupportLibrary(buildMockSupportLibrary())
+            configureSupportLibrary()
         }
 
         result.assertCommonized(
-            "(watchosArm64, watchosDeviceArm64)",
+            "(watchos_arm64, watchos_device_arm64)",
             """
                 expect fun foo(arg: support.WatchosSSizeT)
             """.trimIndent()
         )
 
         result.assertCommonized(
-            "(iosArm64, (watchosArm64, watchosDeviceArm64))",
+            "(ios_arm64, (watchos_arm64, watchos_device_arm64))",
             """
                 expect fun foo(arg: support.AppleSSizeT)
             """.trimIndent()
         )
     }
 
+    @Test
+    fun testIntermediateSupportClassesWithMockSupportLibrary() = testIntermediateSupportClasses {
+        registerSupportLibrary(buildMockSupportLibrary())
+    }
+
+    @Test
+    fun testIntermediateSupportClassesWithRealSupportLibrary() = testIntermediateSupportClasses {
+        registerRealSupportLibrary()
+    }
+
     // See the contents
     @Test
     fun testIncompleteHierarchyAmbiguity() {
         val result = commonize {
-            outputTarget("(iosArm64, iosX64)", "((iosArm64, iosX64), watchosArm64)")
+            outputTarget("(ios_arm64, ios_x64)", "((ios_arm64, ios_x64), watchos_arm64)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
 
-            registerFakeStdlibIntegersDependency("((iosArm64, iosX64), watchosArm64)")
+            registerFakeStdlibIntegersDependency("((ios_arm64, ios_x64), watchos_arm64)")
 
-            "iosArm64" withSource """
+            "ios_arm64" withSource """
                 fun foo(arg: Long) {}
             """.trimIndent()
 
-            "iosX64" withSource """
+            "ios_x64" withSource """
                 fun foo(arg: Int) {}
             """.trimIndent()
 
-            "watchosArm64" withSource """
+            "watchos_arm64" withSource """
                 fun foo(arg: Long) {}
             """.trimIndent()
 
             val mockSupportLibrary = createModuleHierarchy(nameSourceSetsAs = { target -> "$target-support-module" }) {
-                sourceSet("((iosArm64, iosX64), watchosArm64)") {
+                sourceSet("((ios_arm64, ios_x64), watchos_arm64)") {
                     source(
                         """
                             package support
@@ -222,7 +231,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
                         """.trimIndent(),
                     )
                 }.apply {
-                    refinedBySourceSet("iosArm64") {
+                    refinedBySourceSet("ios_arm64") {
                         source(
                             """
                                 package support
@@ -232,7 +241,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
                         )
                     }
 
-                    refinedBySourceSet("iosX64") {
+                    refinedBySourceSet("ios_x64") {
                         source(
                             """
                                 package support
@@ -242,7 +251,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
                         )
                     }
 
-                    refinedBySourceSet("watchosArm64") {
+                    refinedBySourceSet("watchos_arm64") {
                         source(
                             """
                                 package support
@@ -258,14 +267,14 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
         }
 
         result.assertCommonized(
-            "(iosArm64, iosX64)",
+            "(ios_arm64, ios_x64)",
             """
                 expect fun foo(arg: support.NativeSomethingA)
             """.trimIndent()
         )
 
         result.assertCommonized(
-            "((iosArm64, iosX64), watchosArm64)",
+            "((ios_arm64, ios_x64), watchos_arm64)",
             """
                 expect fun foo(arg: support.NativeSomethingB)
             """.trimIndent()
@@ -275,20 +284,20 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
     @Test
     fun testCustomUserSourceSets() {
         val result = commonize {
-            outputTarget("(iosArm64, iosX64, linuxArm64)")
+            outputTarget("(ios_arm64, ios_x64, linux_arm64)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
 
-            registerFakeStdlibIntegersDependency("(iosArm64, iosX64, linuxArm64)")
+            registerFakeStdlibIntegersDependency("(ios_arm64, ios_x64, linux_arm64)")
 
-            "iosArm64" withSource """
+            "ios_arm64" withSource """
                 fun foo(arg: Int) {}
             """.trimIndent()
 
-            "iosX64" withSource """
+            "ios_x64" withSource """
                 fun foo(arg: Int) {}
             """.trimIndent()
 
-            "linuxArm64" withSource """
+            "linux_arm64" withSource """
                 fun foo(arg: Long) {}
             """.trimIndent()
 
@@ -296,7 +305,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
         }
 
         result.assertCommonized(
-            "(iosArm64, iosX64, linuxArm64)",
+            "(ios_arm64, ios_x64, linux_arm64)",
             """
                 expect fun foo(arg: support.NativeIntFast32T)
             """.trimIndent()
