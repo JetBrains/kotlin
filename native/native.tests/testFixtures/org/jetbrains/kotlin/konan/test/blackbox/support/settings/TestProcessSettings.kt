@@ -344,6 +344,10 @@ internal class XCTestRunner(
                 KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
                 KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
                 KonanTarget.IOS_ARM64 -> "iphoneos"
+                KonanTarget.WATCHOS_SIMULATOR_ARM64, KonanTarget.WATCHOS_X64 -> "watchsimulator"
+                KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> "watchos"
+                KonanTarget.TVOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64 -> "appletvsimulator"
+                KonanTarget.TVOS_ARM64 -> "appletvos"
                 else -> error("Target $target is not supported buy the executor")
             }
         }
