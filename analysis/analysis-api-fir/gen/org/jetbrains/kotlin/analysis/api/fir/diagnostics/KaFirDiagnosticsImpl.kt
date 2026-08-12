@@ -1548,6 +1548,15 @@ internal class EqualityNotApplicableByEqualityBoundsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityNotApplicableByEqualityBounds
 
+internal class EqualitySuspiciousByEqualityBoundsImpl(
+    override val leftType: KaType,
+    override val rightType: KaType,
+    override val leftEqualityBound: KaType,
+    override val rightEqualityBound: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualitySuspiciousByEqualityBounds
+
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
     override val message: String,
