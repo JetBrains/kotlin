@@ -43,6 +43,27 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
         return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
     }
 
+    /**
+     * @return every modifier list directly under this element, in source order.
+     *
+     * <p>An element normally has at most one modifier list, and {@link #getModifierList()} is the accessor to use.
+     * There are two situations where a second one shows up, and only then is this method needed.
+     *
+     * <p>A parenthesized type keeps the modifiers written inside the parentheses on the enclosing
+     * {@link KtTypeReference}, because the parentheses themselves are not a PSI element:
+     *
+     * <pre>{@code
+     * val x: @Foo (suspend () -> Unit) = {}
+     * //     ^__^  ^_____^
+     * }</pre>
+     *
+     * <p>Code that does not parse cleanly may also leave several modifier lists on one element.
+     */
+    @NotNull
+    public List<KtDeclarationModifierList> getAllModifierLists() {
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST);
+    }
+
     @Override
     public boolean hasModifier(@NotNull KtModifierKeywordToken modifier) {
         KtModifierList modifierList = getModifierList();

@@ -19,13 +19,11 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -34,12 +32,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class StubBasedFirTypeDeserializer(
@@ -297,12 +295,17 @@ internal class StubBasedFirTypeDeserializer(
         simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
 
     private fun KtFunctionType.isSuspend(): Boolean {
-        val parent = parent as? KtElementImplStub<*>
-            ?: error("Expected parent of KtTypeElement to have type KtElementImplStub<*>, but actual $parent")
+        // `suspend` may sit on the enclosing type reference or on any nullable type in between, and each of them may
+        // carry more than one modifier list, so all of them have to be examined.
+        val parent = parent
+        requireWithAttachment(
+            condition = parent is KtModifierListOwnerStub<*>,
+            message = { "Expected parent of ${KtTypeElement::class.simpleName} to have type ${KtModifierListOwnerStub::class.simpleName}, but actual ${parent?.let { it::class.simpleName }}" }
+        ) {
+            withPsiEntry("parent", parent)
+        }
 
-        @Suppress("DEPRECATION") // KT-78356
-        val modifiers = parent.getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
-        return modifiers.any { it.hasSuspendModifier() }
+        return parent.allModifierLists.any { it.hasSuspendModifier() }
     }
 
     private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {

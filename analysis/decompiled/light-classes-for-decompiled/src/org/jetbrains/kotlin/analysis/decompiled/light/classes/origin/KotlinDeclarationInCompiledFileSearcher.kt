@@ -10,7 +10,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -445,7 +444,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         insideAnnotation: Boolean = false,
     ): Boolean {
         val qualifiedName =
-            getQualifiedName(ktTypeRef.typeElement, ktTypeRef.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
+            getQualifiedName(ktTypeRef.typeElement, ktTypeRef.allModifierLists.any { it.hasSuspendModifier() }) ?: return false
         return if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
             qualifiedName == StandardNames.FqNames.array.asString() ||
                     varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, varArgs = false, insideAnnotation = insideAnnotation)
