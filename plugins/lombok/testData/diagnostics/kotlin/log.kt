@@ -31,8 +31,13 @@ class LogExamplePrivate : LogExamplePrivateBase() {
     }
 }
 
+// TODO KT-87871: the warning is a lie for both of these - `LoggerGenerator` has no interface/annotation-class
+//  guard, so a companion object holding `log` is generated anyway.
 <!ANNOTATION_HAS_NO_EFFECT!>@Log<!> // `'@lombok.extern.java.Log' is legal only on classes and enums` in Java
 interface Interface
+
+<!ANNOTATION_HAS_NO_EFFECT!>@Log<!>
+annotation class AnnotationClass
 
 <!WRONG_ANNOTATION_TARGET!>@Log<!> // Prohibited
 fun func() {}
@@ -102,4 +107,6 @@ class LogAccessLevelModule
 
 fun test() {
     LogAccessLevelProtected.<!INVISIBLE_REFERENCE!>log<!>.info("")
+    Interface.<!INVISIBLE_REFERENCE!>log<!>.info("Interface") // TODO: should be unresolved, KT-87871
+    AnnotationClass.<!INVISIBLE_REFERENCE!>log<!>.info("AnnotationClass") // TODO: should be unresolved, KT-87871
 }
