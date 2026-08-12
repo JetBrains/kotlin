@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
 import org.junit.jupiter.api.Tag
 
 @Tag("klib")
-@AffectedByCompiler
+@AffectedByCommonBackend
 open class AbstractNativeLibraryAbiReaderTest :
     AbstractLibraryAbiReaderTest(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
 

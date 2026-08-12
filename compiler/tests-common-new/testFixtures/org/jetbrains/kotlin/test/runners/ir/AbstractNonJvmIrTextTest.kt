@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
 import org.jetbrains.kotlin.utils.bind
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCompiler
+@AffectedByCommonBackend
 abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     protected val targetPlatform: TargetPlatform,
     targetBackend: TargetBackend

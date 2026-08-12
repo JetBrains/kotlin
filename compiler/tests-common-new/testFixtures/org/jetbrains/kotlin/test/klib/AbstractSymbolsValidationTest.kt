@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCompiler
+@AffectedByCommonBackend
 abstract class AbstractSymbolsValidationTest(
     targetBackend: TargetBackend,
     private val targetPlatform: TargetPlatform,
