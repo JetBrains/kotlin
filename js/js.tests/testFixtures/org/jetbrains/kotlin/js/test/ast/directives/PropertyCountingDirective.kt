@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.ast.directives
 
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
-import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils
+import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil
 import org.jetbrains.kotlin.js.testOld.utils.PropertyReferenceCollector.Companion.collect
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import java.io.File
@@ -29,8 +29,15 @@ class PropertyCountingDirective(
 
     private fun getCount(expected: Int): Int = if (expected == FROM_ARGUMENT) count else expected
 
+    private fun findScope(node: JsNode): JsNode {
+        scope?.let {
+            return AstSearchUtil.getFunction(node, it)
+        }
+        return node
+    }
+
     override fun evaluate(ast: JsNode, sourceFile: File) {
-        val counter = collect(DirectiveTestUtils.findScope(ast, scope))
+        val counter = collect(findScope(ast))
 
         val expectedReadCount = getCount(this@PropertyCountingDirective.expectedReadCount)
         if (expectedReadCount != ANY_COUNT) {
