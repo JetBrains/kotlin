@@ -2003,13 +2003,11 @@ public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi
 public abstract interface annotation class org/jetbrains/kotlin/psi/KtNonPublicApi : java/lang/annotation/Annotation {
 }
 
-public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement, org/jetbrains/kotlin/resolution/KtResolvable {
+public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/KtModifierListOwnerStub, org/jetbrains/kotlin/psi/KtTypeElement, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getInnerType ()Lorg/jetbrains/kotlin/psi/KtTypeElement;
-	public fun getModifierList ()Lorg/jetbrains/kotlin/psi/KtModifierList;
 	public fun getQuestionMarkNode ()Lcom/intellij/lang/ASTNode;
 	public fun getTypeArgumentsAsTypes ()Ljava/util/List;
 }
