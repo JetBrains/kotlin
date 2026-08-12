@@ -63,8 +63,8 @@ struct NeonTraits {
 #if defined(__aarch64__)
     const bool neonSupported = true; // AArch64 always supports Neon.
 #elif defined(__ANDROID__)
-    #include <cpu-features.h>
-    const bool neonSupported = android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON;
+    // cortex-a7 baseline always has NEON; cpu-features.h unavailable in konan deps
+    const bool neonSupported = true;
 #elif defined(__APPLE__)
     const bool neonSupported = true; // It is supported starting from iPhone 3GS.
 #elif defined(__linux__) or defined(__unix__)
