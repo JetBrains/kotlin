@@ -141,10 +141,6 @@ class NoArgsConstructorAccessLevelModule(val x: Int)
 class NoArgsConstructorAccessLevelProtectedStatic(val x: Int)
 
 fun testAccessLevels() {
-    // Unlike `@Log` (KT-88203), a `protected` constructor is already correctly rejected outside a super call -
-    // that visibility check is generic to constructors and doesn't go through the property/function-specific
-    // path KT-88337 is about.
-    <!PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>NoArgsConstructorAccessLevelProtected<!>()
-
-    NoArgsConstructorAccessLevelProtectedStatic.protectedCreate() // OK, but INVISIBLE_REFERENCE is expected (KT-88337, KT-88203)
+    <!INVISIBLE_REFERENCE!>NoArgsConstructorAccessLevelProtected<!>()
+    NoArgsConstructorAccessLevelProtectedStatic.<!INVISIBLE_REFERENCE!>protectedCreate<!>()
 }

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -20,7 +20,7 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
         return lombokService.getAllArgsConstructor(classSymbol)
             ?: runIf(!containsExplicitConstructor(classSymbol)) {
                 lombokService.getBuilder(classSymbol)
-                    ?.let { builder -> AllArgsConstructor(JavaVisibilities.PackageVisibility, annotation = builder.annotation) }
+                    ?.let { builder -> AllArgsConstructor(AccessLevel.PACKAGE, annotation = builder.annotation) }
                     ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
             }
     }
