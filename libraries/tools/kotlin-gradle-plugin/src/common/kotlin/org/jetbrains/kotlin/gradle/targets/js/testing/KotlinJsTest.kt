@@ -14,6 +14,7 @@ import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
@@ -38,6 +39,7 @@ internal constructor(
     @Internal
     override var compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
+    providers: ProviderFactory,
     execOps: ExecOperations,
 ) : KotlinTest(execOps),
     RequiresNpmDependenciesTask {
@@ -80,12 +82,12 @@ internal constructor(
 
     // Frameworks that can't debug just warn that these were ignored. Karma is set up by the IDE init script.
     @get:Input
-    @get:Optional
     @get:Option(
         option = "browser-debug",
         description = "Runs the browser tests of this task in debug mode.",
     )
     internal val browserDebug: Property<Boolean> = objects.property(Boolean::class.java)
+        .convention(false)
 
     @get:Input
     @get:Optional
@@ -94,6 +96,7 @@ internal constructor(
         description = "The port a CDP-compatible debugger can attach to. Implies --browser-debug.",
     )
     internal val browserDebugPort: Property<String> = objects.property(String::class.java)
+        .convention(providers.environmentVariable(BROWSER_DEBUG_PORT_ENV))
 
     @get:Input
     @get:Optional
@@ -103,6 +106,7 @@ internal constructor(
                 "Implies --browser-debug.",
     )
     internal val browserDebugReadyPort: Property<String> = objects.property(String::class.java)
+        .convention(providers.environmentVariable(BROWSER_DEBUG_READY_PORT_ENV))
 
     @get:Input
     @get:Optional
@@ -111,6 +115,7 @@ internal constructor(
         description = "How long to wait for a debugger to attach, in milliseconds. Implies --browser-debug.",
     )
     internal val browserDebugReadyTimeout: Property<String> = objects.property(String::class.java)
+        .convention(providers.environmentVariable(BROWSER_DEBUG_READY_TIMEOUT_ENV))
 
     // True if any browser debug option was passed.
     @get:Internal
@@ -119,7 +124,6 @@ internal constructor(
             .orElse(browserDebugReadyPort.map { true })
             .orElse(browserDebugReadyTimeout.map { true })
             .orElse(browserDebug)
-            .orElse(false)
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
@@ -245,19 +249,12 @@ internal constructor(
         debug = true
         debuggableFramework.configureDebug(
             KotlinJsBrowserDebugOptions(
-                debugPort = (browserDebugPort.orNull ?: browserDebugEnv(BROWSER_DEBUG_PORT_ENV))
-                    ?.let { parsePort(it, "--browser-debug-port") },
-                debuggerReadyPort = (browserDebugReadyPort.orNull ?: browserDebugEnv(BROWSER_DEBUG_READY_PORT_ENV))
-                    ?.let { parsePort(it, "--browser-debug-ready-port") },
-                debuggerReadyTimeoutMillis = (browserDebugReadyTimeout.orNull ?: browserDebugEnv(BROWSER_DEBUG_READY_TIMEOUT_ENV))
-                    ?.let { parseTimeoutMillis(it) },
+                debugPort = browserDebugPort.orNull?.let { parsePort(it, "--browser-debug-port") },
+                debuggerReadyPort = browserDebugReadyPort.orNull?.let { parsePort(it, "--browser-debug-ready-port") },
+                debuggerReadyTimeoutMillis = browserDebugReadyTimeout.orNull?.let { parseTimeoutMillis(it) },
             )
         )
     }
-
-    // Don't use providers.environmentVariable here. It would become a config cache input and the port
-    // is different on every run.
-    private fun browserDebugEnv(name: String): String? = System.getenv(name)
 
     private fun parsePort(value: String, option: String): Int =
         value.toIntOrNull()?.takeIf { it in 1..65535 }
