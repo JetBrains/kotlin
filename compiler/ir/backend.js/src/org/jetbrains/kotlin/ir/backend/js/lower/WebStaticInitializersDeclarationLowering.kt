@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
@@ -112,23 +113,26 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         // This is needed for 2 reasons:
         // 1. To create a call to a parent static_init in the child static_init body.
         // 2. To create child static_init even if the child doesn't have any initializers, but super class has.
-        var hasSuperClassWithStaticInitializer = false
-        container.dependencySuperClasses.forEach {
+        var hasSuperTypeWithStaticInitializer = false
+        container.dependencySuperTypes.forEach {
             processDeclarationContainer(it)
-            if (it.staticInitFunction != null) hasSuperClassWithStaticInitializer = true
+            if (it.staticInitFunction != null) hasSuperTypeWithStaticInitializer = true
         }
 
-        val hasStaticFieldInitializer = container.declarations.any {
+        val needsStaticInitFunction = container.declarations.any {
             when (it) {
                 is IrEnumEntry -> it.correspondingField?.isStatic == true
                 is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
                         it.correspondingPropertySymbol?.owner?.isLateinit == false
                 is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
+                // We always generate static_init function if class has companion object even without explicit companion block initializers
+                // to preserve correct order of super companion objects initialization
+                is IrClass if it.isCompanion -> true
                 else -> false
             }
         }
 
-        if (!hasStaticFieldInitializer && !hasSuperClassWithStaticInitializer) return
+        if (!needsStaticInitFunction && !hasSuperTypeWithStaticInitializer) return
 
         val initializers = buildList {
             for (declaration in container.declarations) {
@@ -183,7 +187,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                 visibility = DescriptorVisibilities.PUBLIC,
             ) {
                 val [dependencySuperInterfaces, dependencySuperClasses] =
-                    container.dependencySuperClasses.partition { it.isInterface }
+                    container.dependencySuperTypes.partition { it.isInterface }
                 for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
                     superClass.staticInitFunction?.let {
                         +irCall(it.symbol)
@@ -209,7 +213,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             )
         }
 
-    private val IrClass.dependencySuperClasses: List<IrClass>
+    private val IrClass.dependencySuperTypes: List<IrClass>
         get() = superTypes
             .filter { !it.isAny() }
             .mapNotNull { it.classOrNull?.owner }
