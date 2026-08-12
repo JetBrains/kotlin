@@ -96,7 +96,10 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         { HasCallsDirective(it, inverted = true) },
     )
 
-    val CHECK_COMMENT_EXISTS by directiveWithArguments("Checks that the specified comment exists")
+    val CHECK_COMMENT_EXISTS by directiveWithArguments(
+        "Checks that the specified comment exists",
+        ::CheckCommentExistsDirective,
+    )
 
     val CHECK_LABELS_COUNT by directiveWithArguments("Checks that there is the specified number of labels with this name")
 

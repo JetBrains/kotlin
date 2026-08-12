@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.testOld.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -25,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static kotlin.test.AssertionsKt.assertFalse;
 import static kotlin.test.AssertionsKt.assertTrue;
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,45 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
-
-    private static abstract class NodeExistenceDirective extends DirectiveHandler {
-        private boolean isElementExists = false;
-        private boolean shouldCheckForExistence;
-
-        NodeExistenceDirective(@NotNull String directive, boolean shouldCheckForExistence) {
-            super();
-            this.shouldCheckForExistence = shouldCheckForExistence;
-        }
-
-        protected abstract String getTextForError();
-        protected abstract JsVisitor getJsVisitorForElement();
-        protected abstract void loadArguments(@NotNull ArgumentsHelper arguments);
-
-        protected void setElementExists(boolean isElementExists) {
-            this.isElementExists = isElementExists;
-        }
-
-        protected boolean isElementExists() {
-            return isElementExists;
-        }
-
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            loadArguments(arguments);
-            getJsVisitorForElement().accept(ast);
-            assertExistence();
-            setElementExists(false);
-        }
-
-        private void assertExistence() {
-            String message = getTextForError();
-            if (shouldCheckForExistence) {
-                assertTrue(isElementExists, message);
-            } else {
-                assertFalse(isElementExists, message);
-            }
-        }
-    }
 
     private static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
 
@@ -167,70 +126,6 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler CHECK_COMMENT_EXISTS = new NodeExistenceDirective("CHECK_COMMENT_EXISTS", true) {
-        private String text;
-        private boolean isMultiLine;
-
-        @Override
-        protected String getTextForError() {
-            return (isMultiLine ? "Multi line" : "Single line") + " comment with text '" + text + "' doesn't exist";
-        }
-
-        @Override
-        protected JsVisitor getJsVisitorForElement() {
-            return new RecursiveJsVisitor() {
-                @Override
-                protected void visitElement(@NotNull JsNode node) {
-                    checkCommentExistsIn(node.getCommentsBeforeNode());
-                    checkCommentExistsIn(node.getCommentsAfterNode());
-                    super.visitElement(node);
-                }
-
-                @Override
-                public void visitSingleLineComment(JsSingleLineComment comment) {
-                    checkCommentExistsIn(Arrays.asList(comment));
-                }
-
-                @Override
-                public void visitMultiLineComment(JsMultiLineComment comment) {
-                    checkCommentExistsIn(Arrays.asList(comment));
-                }
-                private void checkCommentExistsIn(List<JsComment> comments) {
-                    if (comments == null) return;
-                    for (JsComment comment : comments) {
-                        if (isNeededCommentType(comment) && isTheSameText(comment.getText(), text)) {
-                            setElementExists(true);
-                        }
-                    }
-                }
-
-                private boolean isNeededCommentType(JsComment comment) {
-                    return isMultiLine ? comment instanceof JsMultiLineComment : comment instanceof  JsSingleLineComment;
-                }
-            };
-        }
-
-        @Override
-        protected void loadArguments(@NotNull ArgumentsHelper arguments) {
-            this.text = arguments.findNamedArgument("text").replace("\\n", System.lineSeparator());;
-            this.isMultiLine = Boolean.parseBoolean(arguments.findNamedArgument("multiline"));
-        }
-
-        private boolean isTheSameText(String str1, String str2) {
-            List<String> lines1 = StringsKt.lines(str1);
-            List<String> lines2 = StringsKt.lines(str2);
-
-            if (lines1.size() != lines2.size()) return false;
-
-            for (int i = 0; i < lines1.size(); i++) {
-                if (!lines1.get(i).trim().equals(lines2.get(i).trim())) return false;
-            }
-
-            return true;
-        }
-
-    };
-
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
@@ -267,7 +162,7 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_FUNCTION_EXISTS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED_IN_SCOPE(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_COMMENT_EXISTS(), CHECK_COMMENT_EXISTS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_COMMENT_EXISTS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_LABELS_COUNT(), COUNT_LABELS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_VARS_COUNT(), COUNT_VARS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_BREAKS_COUNT(), COUNT_BREAKS),
