@@ -147,7 +147,5 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         CountNodesDirective.counting<JsStringLiteral>(),
     )
 
-    val CHECK_NOT_REFERENCED by directiveWithArguments("Checks that the specified function is never referenced")
-
     val HAS_NO_CAPTURED_VARS by directiveWithArguments("Checks that the specified function doesn't capture any variables")
 }
