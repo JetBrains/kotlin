@@ -41,6 +41,7 @@ public final class TestNullable {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.Nullable field s: java.lang.String
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: StringWrapper): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method getS(): StringWrapper
     public final @org.jetbrains.annotations.Nullable method getS-DSQDras(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String

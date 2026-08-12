@@ -1,7 +1,18 @@
 @kotlin.Metadata
 public final class BoxKt {
     // source: 'Box.kt'
+    private final static method box$lambda$0(p0: java.lang.reflect.Constructor): java.lang.CharSequence
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private varargs final static method constructorOrNull(p0: java.lang.Class[]): java.lang.reflect.Constructor
+}
+
+@kotlin.annotation.Retention(value=RUNTIME)
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[PARAMETER])
+@kotlin.Metadata
+public annotation class ParamAnn {
+    // source: 'IC.kt'
 }
 
 @kotlin.jvm.JvmInline
@@ -9,7 +20,7 @@ public final class BoxKt {
 public final class StringWrapper {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.Nullable field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
@@ -28,9 +39,8 @@ public final class StringWrapper {
 public final class Test {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.Nullable field s: StringWrapper
-    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: StringWrapper): void
-    public synthetic method <init>(p0: StringWrapper, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@ParamAnn @org.jetbrains.annotations.Nullable p0: StringWrapper): void
+    public synthetic method <init>(@ParamAnn p0: StringWrapper, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method getS(): StringWrapper
     public final @org.jetbrains.annotations.Nullable method getS-DSQDras(): StringWrapper
-    public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
 }
