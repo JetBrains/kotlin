@@ -4,7 +4,7 @@
 package org.jetbrains.kotlin.testFederation
 
 enum class Domain {
-    Compiler,
+    CompilerInfrastructure,
     Frontend,
     CommonBackend,
     Jvm,

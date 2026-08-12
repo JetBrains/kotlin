@@ -23,15 +23,15 @@ class AffectsCommandTest {
     @Test
     fun `test - multiple domains - different separators`() {
         assertEquals(
-            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.Compiler),
-            resolveAffectedDomainsFromCommitMessages(listOf("^affects: Gradle, IntelliJ AnalysisApi; Compiler"))
+            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.CompilerInfrastructure),
+            resolveAffectedDomainsFromCommitMessages(listOf("^affects: Gradle, IntelliJ AnalysisApi; CompilerInfrastructure"))
         )
     }
 
     @Test
     fun `test - multiple commands - in multiple messages`() {
         assertEquals(
-            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.Compiler),
+            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.CompilerInfrastructure),
             resolveAffectedDomainsFromCommitMessages(
                 listOf(
                     """
@@ -42,7 +42,7 @@ class AffectsCommandTest {
                     ^affects: AnalysisApi
                     foo
                     bar
-                    ^affects: Compiler
+                    ^affects: CompilerInfrastructure
                     """.trimIndent()
                 )
             )

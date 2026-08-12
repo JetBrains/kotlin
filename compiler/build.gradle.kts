@@ -66,14 +66,14 @@ projectTests {
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
 
         @OptIn(DelicateTestFederationApi::class)
-        testFederationDomains = listOf(Domain.Compiler)
+        testFederationDomains = listOf(Domain.CompilerInfrastructure)
     }
 
     testTask("fastJarFSLongTests", skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
 
         @OptIn(DelicateTestFederationApi::class)
-        testFederationDomains = listOf(Domain.Compiler)
+        testFederationDomains = listOf(Domain.CompilerInfrastructure)
     }
 
     testData(isolated, "testData/checkLocalVariablesTable")
