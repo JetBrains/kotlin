@@ -784,7 +784,8 @@ private fun collectGradleJvmOptions(
     if (connectSubprocessVMToDebugger) {
         add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=n,address=${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}")
     }
-    if (addHeapDumpOptions && isNotEmpty()) {
+
+    if (addHeapDumpOptions) {
         addAll(heapDumpJvmOptions())
     }
 }
