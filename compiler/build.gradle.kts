@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationDomains
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -60,10 +64,16 @@ projectTests {
         }
 
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
+
+        @OptIn(DelicateTestFederationApi::class)
+        testFederationDomains = listOf(Domain.Compiler)
     }
 
     testTask("fastJarFSLongTests", skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
+
+        @OptIn(DelicateTestFederationApi::class)
+        testFederationDomains = listOf(Domain.Compiler)
     }
 
     testData(isolated, "testData/checkLocalVariablesTable")
