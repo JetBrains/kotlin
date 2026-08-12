@@ -39,8 +39,6 @@ dependencies {
         embedded(it) { isTransitive = false }
     }
 
-    embedded(libs.opentelemetry.api) { isTransitive = false }
-
     compileOnly(project(":dependencies:intellij-java-psi-api"))
     compileOnly(kotlinStdlib())
     compileOnly(libs.intellij.fastutil)
