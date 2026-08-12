@@ -43,5 +43,5 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
     }
 
     override fun createMetadata(module: InlineSourceBuilder.Module): NamedMetadata =
-        createModule(module, disposable).second.metadata named module.name
+        module.precompiledArtifact?.namedMetadata ?: (createModule(module, disposable).second.metadata named module.name)
 }

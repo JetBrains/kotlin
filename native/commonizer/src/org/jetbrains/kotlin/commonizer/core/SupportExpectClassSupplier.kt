@@ -122,7 +122,7 @@ internal fun CommonizerSupportLibraryRepository.toModulesProvider(targets: Itera
             ?: error("No expect classes loaded for $target.")
     }
 
-private fun buildModulesProvider(supportLibraryRepository: Repository, target: CommonizerTarget): ModulesProvider =
+internal fun buildModulesProvider(supportLibraryRepository: Repository, target: CommonizerTarget): ModulesProvider =
     DefaultModulesProvider.create(NativeLibrariesToCommonize(target, supportLibraryRepository.getLibraries(target).toList()))
 
 fun CirProvided.Classifier.dependencyClassifierToCir(
