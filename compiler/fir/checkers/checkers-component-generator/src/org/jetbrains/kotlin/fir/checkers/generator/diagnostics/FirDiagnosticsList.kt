@@ -533,10 +533,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("dslMarkerSymbol")
             parameter<String>("actualTarget")
         }
+    }
 
+    val EQUALITY_BOUND by object : DiagnosticGroup("EqualityBound") {
         val UNRESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression>()
         val AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression> {
             parameter<List<ConeKotlinType>>("candidates")
+        }
+        val EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED by error<KtExpression> {
+            parameter<ConeKotlinType>("expandedType")
         }
     }
 
