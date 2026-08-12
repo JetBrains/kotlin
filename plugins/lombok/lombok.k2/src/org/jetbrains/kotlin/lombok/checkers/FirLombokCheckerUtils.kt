@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -19,8 +20,10 @@ import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CACHE_STRATEGY
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EXCLUDE
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.OF
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_PARAM
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REPLACES
+import org.jetbrains.kotlin.lombok.config.getAccessLevel
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -165,18 +169,32 @@ fun checkLombokAnnotations(annotations: List<FirAnnotation>, defaultTargets: Lis
             }
 
             for ([argumentName, argumentExpression] in annotation.argumentMapping.mapping) {
-                if (argumentName == DO_NOT_USE_GETTERS) {
-                    reporter.reportOn(
-                        argumentExpression.source,
-                        LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT,
-                        context
-                    )
-                } else if (unsupportedArguments.contains(argumentName)) {
-                    reporter.reportOn(
-                        argumentExpression.source,
-                        LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED,
-                        argumentName,
-                    )
+                when (argumentName) {
+                    DO_NOT_USE_GETTERS -> {
+                        reporter.reportOn(
+                            argumentExpression.source,
+                            LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT,
+                            context
+                        )
+                    }
+                    ACCESS -> {
+                        @OptIn(DirectDeclarationsAccess::class)
+                        val accessLevel = annotation.getAccessLevel(ACCESS)
+                        if (accessLevel == AccessLevel.PACKAGE || accessLevel == AccessLevel.MODULE) {
+                            reporter.reportOn(
+                                argumentExpression.source,
+                                LombokFirDiagnostics.UNSUPPORTED_ACCESS_LEVEL,
+                                Name.identifier(accessLevel.name),
+                            )
+                        }
+                    }
+                    in unsupportedArguments -> {
+                        reporter.reportOn(
+                            argumentExpression.source,
+                            LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED,
+                            argumentName,
+                        )
+                    }
                 }
             }
         } else if (classId.packageFqName.startsWith(LombokNames.LOMBOK)) {
