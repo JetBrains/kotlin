@@ -1274,6 +1274,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val candidates: KaType
     }
 
+    interface EqualityBoundNotSupertypeOfContainingClass : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualityBoundNotSupertypeOfContainingClass::class
+        val equalityBoundType: KaType
+        val receiverType: KaType
+    }
+
     interface OptInUsage : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerClassId: ClassId

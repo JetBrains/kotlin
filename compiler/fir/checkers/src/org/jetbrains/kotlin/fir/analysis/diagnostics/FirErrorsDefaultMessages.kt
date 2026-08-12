@@ -292,6 +292,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_ENTRY_AS_TYP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_ON_INHERITANCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
@@ -1582,6 +1583,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Equality bound of ''{0}'' is inferred to intersection type ''{1}''. " +
             "Specify explicit equality bound.",
             SYMBOL,
+            RENDER_TYPE,
+        )
+        map.put(
+            EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS,
+            "Equality bound ''{0}'' is not containing class ''{1}'' or its supertype.",
+            RENDER_TYPE,
             RENDER_TYPE,
         )
 
