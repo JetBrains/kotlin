@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -32,14 +31,13 @@ import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirExplicitEqualityBoundAnnotationChecker : FirValueParameterChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirValueParameter) {
         val annotation =
             declaration.annotations.getAnnotationByClassId(StandardClassIds.Annotations.EqualityBound, context.session) ?: return
-        if (!declaration.containingDeclarationSymbol.isOperatorEquals()) {
+        if ((declaration.containingDeclarationSymbol as? FirNamedFunctionSymbol)?.isEquals(context.session) != true) {
             reporter.reportOn(
                 annotation.source,
                 FirErrors.UNSUPPORTED,
@@ -112,9 +110,5 @@ object FirExplicitEqualityBoundAnnotationChecker : FirValueParameterChecker(MppC
                 }
             }
         }
-    }
-
-    private fun FirBasedSymbol<*>.isOperatorEquals(): Boolean {
-        return this is FirNamedFunctionSymbol && name == OperatorNameConventions.EQUALS && isOperator
     }
 }
