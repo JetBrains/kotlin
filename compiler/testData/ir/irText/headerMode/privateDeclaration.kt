@@ -1,5 +1,5 @@
+// HEADER_MODE
 // IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE
-// FIR_DUMP
 
 class TestClass {
     // 1. Properties

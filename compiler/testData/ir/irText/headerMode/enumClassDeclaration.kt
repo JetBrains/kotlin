@@ -1,4 +1,4 @@
-// FIR_DUMP
+// HEADER_MODE
 enum class A {
     EAST,
     WEST

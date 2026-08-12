@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_WITH_PARSER
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -77,9 +78,9 @@ fun TestConfigurationBuilder.additionalK2ConfigurationForIrTextTest(parser: FirP
 
     forTestsMatching("compiler/testData/ir/irText/headerMode/*") {
         defaultDirectives {
-            +HEADER_MODE
             +CHECK_ASM_LIKE_INSTRUCTIONS
             DISABLE_WITH_PARSER with FirParser.Psi
+            +FIR_DUMP
         }
     }
 

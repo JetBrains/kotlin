@@ -1,4 +1,4 @@
-// FIR_DUMP
+// HEADER_MODE
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 

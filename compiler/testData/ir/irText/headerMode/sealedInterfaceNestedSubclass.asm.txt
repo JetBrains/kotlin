@@ -22,15 +22,20 @@ Module: main
 public final class main/App : java/lang/Object {
     public void <init>() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+        LINENUMBER (19)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
         LABEL (L1)
     }
 
     public final void run() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+        LINENUMBER (21)
+          INVOKESTATIC (lib/FirstKt, myFunc, ()V)
         LABEL (L1)
+        LINENUMBER (22)
+          RETURN
+        LABEL (L2)
     }
 }
