@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
 import org.jetbrains.kotlin.test.services.jvm.JdkKindBoxTestChecker
 import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByJvm
 
-@AffectedByCompiler
+@AffectedByJvm
 abstract class AbstractJvmBlackBoxCodegenTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {

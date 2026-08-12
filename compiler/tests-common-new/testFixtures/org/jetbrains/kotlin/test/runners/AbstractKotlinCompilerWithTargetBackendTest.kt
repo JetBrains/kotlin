@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TargetBackend.*
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
-import org.jetbrains.kotlin.testFederation.AffectedByJs
-import org.jetbrains.kotlin.testFederation.AffectedByNative
-import org.jetbrains.kotlin.testFederation.AffectedByWasm
+import org.jetbrains.kotlin.testFederation.*
 
 @RequiresOptIn("Consider using predefined inheritors of this class with properly configured test domains. " +
             "If they don't suite please specify domains yourself")
@@ -42,7 +39,7 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest @UnspecifiedTargetBac
 
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCompiler
+@AffectedByJvm
 abstract class AbstractKotlinCompilerJvmTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
 
 @OptIn(UnspecifiedTargetBackend::class)
@@ -66,5 +63,5 @@ abstract class AbstractKotlinCompilerWasmTest(targetBackend: TargetBackend) : Ab
 abstract class AbstractKotlinCompilerNativeTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCompiler
+@AffectedByCommonBackend
 abstract class AbstractKotlinCompilerJKlibTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JKLIB)

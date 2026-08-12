@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
+import org.jetbrains.kotlin.testFederation.AffectedByFrontend
 
-@AffectedByCompiler
+@AffectedByFrontend
+@AffectedByCommonBackend
 abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
