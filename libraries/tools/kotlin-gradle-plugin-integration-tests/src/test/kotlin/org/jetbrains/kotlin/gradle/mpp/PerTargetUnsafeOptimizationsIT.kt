@@ -31,7 +31,7 @@ class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,
-            languageVersion = "2.0",
+            languageVersion = "2.5",
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
