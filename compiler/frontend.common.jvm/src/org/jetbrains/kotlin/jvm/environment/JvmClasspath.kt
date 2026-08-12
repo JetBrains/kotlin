@@ -12,12 +12,13 @@ import java.nio.file.Path
  * restricted to: [JvmCompilationEnvironment.getKotlinClassFinder], [JvmCompilationEnvironment.getPackagePartProvider]
  * and the binary Java view all take one.
  *
- * The set of shapes is closed on purpose. A compilation never needs arbitrary set algebra over files: every
+ * The set of shapes is closed on purpose — it is sealed, so a caller cannot describe a part of the classpath
+ * in some other currency. A compilation never needs arbitrary set algebra over files: every
  * value it uses is either an explicit list of roots ([Roots]) or its whole classpath, possibly without a few
  * roots ([ProjectLibraries]). There is no complement and no ambient universe of "all files", both of which only
  * mean something inside an IDE project model.
  */
-interface JvmClasspath {
+sealed interface JvmClasspath {
     /**
      * The given roots and nothing else. A root is a directory or a `.jar`/`.jmod` file, exactly as it is spelled
      * on the compiler's classpath; a path which is neither is ignored.

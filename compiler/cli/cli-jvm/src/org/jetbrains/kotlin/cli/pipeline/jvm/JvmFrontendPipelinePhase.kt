@@ -48,26 +48,19 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
-import org.jetbrains.kotlin.java.direct.createJavaDirectJavaInterop
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
@@ -325,24 +318,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return libraryList
     }
 
-    private fun CompilerConfiguration.javaSourceRootEntries(): List<JavaSourceRootEntry> =
-        getList(CLIConfigurationKeys.CONTENT_ROOTS)
-            .filterIsInstance<JavaSourceRoot>()
-            .map { root ->
-                val prefix = root.packagePrefix?.takeIf { it.isNotEmpty() }?.let(::FqName) ?: FqName.ROOT
-                JavaSourceRootEntry(root.file, prefix)
-            }
-
-    private fun VfsBasedProjectEnvironment.binaryClassFileIndex(): BinaryClassFileIndex {
-        val finderFactory = VirtualFileFinderFactory.getInstance(project) as CliVirtualFileFinderFactory
-        return finderFactory.binaryClassFileIndex()
-    }
-
-    private fun VfsBasedProjectEnvironment.javaModuleFinder(): JavaModuleFinder {
-        val fileManager = project.getService(CoreJavaFileManager::class.java) as? KotlinCliJavaFileManagerImpl
-        return fileManager?.javaModuleFinder ?: JavaModuleFinder { null }
-    }
-
     fun <F> prepareJvmSessions(
         files: List<F>,
         rootModuleName: Name,
@@ -370,15 +345,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             configuration,
             projectEnvironment,
             librariesClasspath,
-            javaInterop = runIf(configuration.useJavaDirect) {
-                createJavaDirectJavaInterop(
-                    configuration.javaSourceRootEntries(),
-                    // The binary Java classes live as long as the factory, i.e. as long as the context: this compilation.
-                    BinaryJavaClassCache(projectEnvironment.binaryClassFileIndex()),
-                    projectEnvironment::binaryClassFileScope,
-                    projectEnvironment.javaModuleFinder(),
-                )
-            } ?: projectEnvironment.psiJavaInterop(),
+            javaInterop = projectEnvironment.javaInterop(configuration),
         )
 
         return SessionConstructionUtils.prepareSessions(

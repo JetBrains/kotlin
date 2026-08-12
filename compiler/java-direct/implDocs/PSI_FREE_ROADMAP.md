@@ -45,17 +45,18 @@ compiled output, so anything else is a test failure rather than a silent regress
 | Seam | Where | Purpose |
 |------|-------|---------|
 | `BinaryClassFileIndex`, `BinaryClassFileScope`, `BinaryClassFileHandle` | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation and the part of it one session sees, with no scope object and no `JvmDependenciesIndex` |
-| `JvmClasspath` (`Roots` / `ProjectLibraries(excludedRoots)`) | `frontend.common.jvm/.../jvm/environment/JvmClasspath.kt` | *replaces* `AbstractProjectFileSearchScope`: a part of the classpath named by its roots, not an opaque file set with set algebra. No complement, no ambient universe, one shape per real use |
+| `JvmClasspath` (sealed: `Roots` / `ProjectLibraries(excludedRoots)`) | `frontend.common.jvm/.../jvm/environment/JvmClasspath.kt` | *replaces* `AbstractProjectFileSearchScope`: a part of the classpath named by its roots, not an opaque file set with set algebra. No complement, no ambient universe, one shape per real use. Sealed since 2026-08-12: the `PsiScopeJvmClasspath` escape hatch is gone, so a scope cannot re-enter the description |
 | `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` + `VfsBasedProjectEnvironment.binaryClassFileScope()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the `ct.sym` `.sig` extension choice, and the per-file scope predicate built from `psiSearchScope(classpath)` |
 | `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by the compilation's java-direct `FirJavaInterop` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
 | `FirJavaInterop` | `fir/fir-jvm/.../session/FirJavaInterop.kt`, held by `FirJvmSessionFactory.Context` (required, no default) | which Java implementation serves the compilation, as one per-compilation decision instead of a `createJavaFacade` lambda per construction site; `createJavaDirectJavaInterop` (java-direct) and `VfsBasedProjectEnvironment.psiJavaInterop()` (`compiler/cli/`) are peers. Split by *role*: `createBinaryJavaFacade(classpath)` and `createJavaSourcesFacade()` |
 | `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectJavaInterop.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
 | `javaSourceRoots: List<JavaSourceRootEntry>` parameter | `JavaDirectJavaInterop.kt` | replaces reading `CLIConfigurationKeys.CONTENT_ROOTS` inside the module |
+| `VfsBasedProjectEnvironment.javaInterop(configuration, withJavaSources)` | `compiler/cli/cli-jvm/.../cli/jvm/compiler/JavaInterop.kt` | the one place which knows how each peer is built, so a JVM-hosted pipeline follows `-Xjava-direct` instead of deciding on its own. `:compiler:cli-jvm` is the lowest module seeing both `:compiler:cli` and `:compiler:java-direct` |
 | `readBinaryJavaClass(topLevelClassFile: BinaryClassFileHandle, …)` | `frontend.common.jvm/.../BinaryJavaClassReader.kt` | lets the reader be driven from a handle instead of a `VirtualFile` |
 | `JavaModuleInfo.read(file, classesByClassId)` | `frontend.common.jvm/.../JavaModuleInfo.kt` | takes a `ClassIdToJavaClass` resolver instead of a `KotlinCliJavaFileManager` + scope |
 
-All CLI and VFS construction happens in `JvmFrontendPipelinePhase`; java-direct receives only
-abstract inputs.
+All CLI and VFS construction happens in `JvmFrontendPipelinePhase` and in the `javaInterop` helper
+next to it; java-direct receives only abstract inputs.
 
 ## 4. Still platform-bound
 
@@ -72,8 +73,10 @@ The platform-free axis needs, in rough dependency order:
 - `JvmDependenciesIndexImpl`, `JvmDependenciesDynamicCompoundIndex`, `JavaRoot` — the classpath
   index behind `CliBinaryClassFileIndex`;
 - `VfsBasedProjectEnvironment.psiSearchScope(JvmClasspath)` (`compiler/cli/`) — the single
-  classpath → `GlobalSearchScope` adapter. A root-list classpath can be honoured directly by a
-  future NIO index, which is what makes `BinaryClassFileHandle.virtualFile` removable.
+  classpath → `GlobalSearchScope` adapter, and now the *only* direction of travel: since
+  `JvmClasspath` is sealed and `PsiScopeJvmClasspath` is deleted, there is no way back from a scope
+  to a classpath. A root-list classpath can be honoured directly by a future NIO index, which is
+  what makes `BinaryClassFileHandle.virtualFile` removable.
 
 That switch has LL-API, incremental-compilation and scripting consumers, so it is a separate
 effort; `implDocs/archive/EXTERNAL_DEPENDENCIES_RESOLUTION_ANALYSIS.md` §5.2/§6.2 is the only
@@ -126,6 +129,27 @@ the CLI, empty for scripting and the REPL, the module's own files in the test in
 is what removed java-direct's `fileSearchScope === javaSourcesScope` identity check and the
 `IdentityHashMap` that made it work.
 
+The choice itself is *derived from the compiler configuration*, in one shared helper:
+`VfsBasedProjectEnvironment.javaInterop(configuration, withJavaSources)`
+(`compiler/cli/cli-jvm/.../cli/jvm/compiler/JavaInterop.kt`). Every JVM-hosted pipeline calls it —
+the JVM CLI pipeline, `prepareJKlibSessions`, the scripting compiler, the REPL and the script
+additional-sources extension — so `-Xjava-direct` is effective everywhere rather than in one
+pipeline. `withJavaSources` is a single switch on purpose: java-direct describes its `.java` sources
+as source roots and the PSI peer as a search scope, and a caller must not be able to state the two
+inconsistently. A caller needing a narrower answer than "all or none" (the multi-module test
+infrastructure, which gives each module its own files) is PSI-only and calls `psiJavaInterop`
+directly.
+
+One consumer states that it makes **no** choice: `FirSessionConstructionUtils.prepareMetadataSessions`
+(metadata compilation) passes `NoJavaInterop` (`fir/fir-jvm/.../session/FirJavaInterop.kt`). It builds
+a `FirJvmSessionFactory.Context` only to register the JVM session components —
+`FirMetadataSessionFactory` never calls `FirJvmSessionFactory.createLibrarySession`/`createSourceSession`,
+so no facade is ever created, and `-Xjava-direct` cannot reach that configuration anyway
+(`USE_JAVA_DIRECT` is written only from the JVM arguments). Naming one of the two peers there would have
+implied that metadata compilation resolves Java through it; `NoJavaInterop` fails loudly instead, at the
+place where the decision was skipped. (It also could not call the helper: `:compiler:cli` is *below*
+`:compiler:cli-jvm`.)
+
 There is **no default**, and no way to obtain a Java view without stating a choice:
 
 - `JvmCompilationEnvironment` has neither `getFirJavaFacade` nor `registerAsJavaElementFinder`. An
@@ -138,11 +162,49 @@ There is **no default**, and no way to obtain a Java view without stating a choi
   the PSI path by omission — which is exactly how the incremental-compilation consumer had drifted.
 
 `FirJKlibSessionFactory` (`compiler/cli/cli-jklib/`) is a sibling of `FirJvmSessionFactory` with its
-own `Context`; `createLibrarySession`/`createSourceSession` now take a `FirJavaInterop` instead
-of reaching for the environment, and `prepareJKlibSessions` passes `psiJavaInterop()`. It is
-therefore *explicitly* on PSI, for the JVM classpath and for the module's own `.java` files alike,
-and it therefore also registers `FirJavaElementFinder`, since that now follows from the same object.
-Wiring java-direct into it means deriving the interop there as `prepareJvmSessions` does — one
-argument, nothing else; untested for java-direct today, so it needs the JKlib suites as a gate.
+own `Context`; `createLibrarySession`/`createSourceSession` take a `FirJavaInterop` instead of
+reaching for the environment, and `prepareJKlibSessions` now derives it from the configuration like
+every other pipeline. `FirJavaElementFinder` registration follows from the same object, so the
+former unconditional `needRegisterJavaElementFinder = true` cannot come back.
 
 The LL-API/IDE and K1 sides are out of scope entirely (see above).
+
+## 8. The PSI that is left in the API, and how it goes
+
+With `AbstractProjectFileSearchScope` deleted and `PsiScopeJvmClasspath` gone, `GlobalSearchScope`
+appears in exactly one cross-module signature, and in one internal adapter:
+
+1. **`psiJavaInterop(javaSources: (FirModuleData) -> GlobalSearchScope)`**
+   (`compiler/cli/.../VfsBasedProjectEnvironment.kt`) — the last `GlobalSearchScope` in a signature
+   called from outside `:compiler:cli`. Callers: `FirFrontendFacade`, `FirReplFrontendFacade`,
+   `FirTestSessionFactoryHelper` (×2), `FirSessionFactoryHelper`, `K2CompilerFacade`; the CLI,
+   JKlib, scripting and REPL sites no longer pass it. It is the mirror of the problem `JvmClasspath`
+   solved for the binary side: the *Java sources* side never got its own description.
+
+   *Plan.* Give it one, in the same shape and in `frontend.common.jvm` next to `JvmClasspath`:
+   `sealed interface JavaSources { object None; object OfThisCompilation; class Roots(List<JavaSourceRootEntry>) }`.
+   java-direct already speaks the third form (`javaSourceRoots`), the PSI peer converts it exactly
+   as `psiSearchScope` converts a `JvmClasspath` (`EMPTY_SCOPE` / `AllJavaSourcesInProjectScope` /
+   a files scope). Then `withJavaSources: Boolean` in the helper becomes `javaSources: JavaSources`,
+   the parameter stops being PSI-shaped, and the remaining fixture cases ("this test module's own
+   `.java` files", which is a `filesScope` over `KtSourceFile`s) need one more shape —
+   `Files(List<File>)` — or stay behind a cli-internal `psiJavaInterop` overload marked as test-only.
+   Blocker: none technical; the only open question is whether the per-module fixture scopes are
+   expressible as file lists (they are built from `TestModule` java files, so almost certainly yes).
+
+2. **`VfsBasedProjectEnvironment.psiSearchScope(JvmClasspath)`** — CLI-internal, and the intended
+   end state until the platform-free axis (§4) replaces the index itself. It is not API and needs no
+   plan of its own: it disappears together with `JvmDependenciesIndex`.
+
+3. **`VfsBasedProjectEnvironment(project, fileSystems, getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider)`**
+   — a constructor parameter, so PSI-shaped state on a PSI-based implementation. It is honest where
+   it is; it becomes removable when `JvmPackagePartProvider` stops being scope-driven (§6 lists it
+   as out of scope).
+
+Removed on the way here: `PsiScopeJvmClasspath` / `GlobalSearchScope.asJvmClasspath()` had two
+users, both of which turned out to be expressible as a classpath rather than needing an escape
+hatch — `JKlibIrCompilationPhase` asked for a package-part provider over
+`notScope(AllJavaSourcesInProjectScope)`, which only excludes `.java` files from a lookup that
+reads `.class` files, and `FirTestSessionFactoryHelper` was handed
+`ProjectScope.getLibrariesScope(project)`, which is literally what `JvmClasspath.ProjectLibraries()`
+produces.

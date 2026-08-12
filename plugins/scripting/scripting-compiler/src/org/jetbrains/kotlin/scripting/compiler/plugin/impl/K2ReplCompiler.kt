@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -163,7 +162,7 @@ class K2ReplCompiler(
                 projectEnvironment = projectEnvironment,
                 librariesClasspath = librariesClasspath,
                 // A REPL compilation has no `.java` sources of its own.
-                javaInterop = projectEnvironment.psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE }),
+                javaInterop = projectEnvironment.javaInterop(compilerContext.environment.configuration, withJavaSources = false),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = moduleName,

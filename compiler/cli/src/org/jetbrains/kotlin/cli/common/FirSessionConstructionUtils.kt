@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.common
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
@@ -209,7 +208,9 @@ fun <F> prepareMetadataSessions(
                 configuration,
                 projectEnvironment,
                 librariesClasspath,
-                projectEnvironment.psiJavaInterop(),
+                // A metadata compilation builds no Java facade: this context only registers the JVM session
+                // components, `FirMetadataSessionFactory` never calls `FirJvmSessionFactory.create*Session`.
+                NoJavaInterop,
                 registerJvmDeserializationExtension = false,
             )
         },

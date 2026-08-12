@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.asJvmClasspath
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
@@ -55,6 +54,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJklibStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -224,7 +224,9 @@ object JKlibIrCompilationPhase :
 
         val configureJavaClassFinder = null
         val implicitsResolutionFilter = null
-        val packagePartProvider = projectEnvironment.getPackagePartProvider(dependencyScope.asJvmClasspath())
+        // The package parts of the dependencies live in the classpath roots; `dependencyScope` only additionally
+        // excludes `.java` files, which are never package parts.
+        val packagePartProvider = projectEnvironment.getPackagePartProvider(JvmClasspath.ProjectLibraries())
         val trace = NoScopeRecordCliBindingTrace(projectContext.project)
         val dependenciesContainer = createContainerForLazyResolveWithJava(
             platform,

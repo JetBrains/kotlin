@@ -12,7 +12,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.asJvmClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -58,7 +57,6 @@ object FirTestSessionFactoryHelper {
     fun createSessionForTests(
         project: Project,
         sourceScope: GlobalSearchScope,
-        librariesScope: GlobalSearchScope,
         configuration: CompilerConfiguration,
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
@@ -75,7 +73,7 @@ object FirTestSessionFactoryHelper {
             projectEnvironment,
             configuration,
             projectEnvironment.psiJavaInterop(javaSources = { sourceScope }),
-            librariesScope.asJvmClasspath(),
+            JvmClasspath.ProjectLibraries(),
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
             dependenciesConfigurator = {

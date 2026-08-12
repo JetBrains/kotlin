@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.jklib
 import org.jetbrains.kotlin.cli.common.SessionConstructionUtils
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
@@ -277,9 +277,7 @@ internal fun <F> prepareJKlibSessions(
 ): List<SessionWithSources<F>> {
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
     val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesClasspath)
-    // JKlib reads Java through PSI, for the classpath and for its own `.java` sources alike: java-direct is not
-    // wired here yet, see `compiler/java-direct/implDocs/PSI_FREE_ROADMAP.md`.
-    val javaInterop = projectEnvironment.psiJavaInterop()
+    val javaInterop = projectEnvironment.javaInterop(configuration)
 
     return SessionConstructionUtils.prepareSessions(
         files,

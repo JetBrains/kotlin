@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -218,7 +217,7 @@ fun createCompilerState(
     val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
     val librariesClasspath = JvmClasspath.ProjectLibraries()
     // A script compilation has no `.java` sources of its own.
-    val javaInterop = projectEnvironment.psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE })
+    val javaInterop = projectEnvironment.javaInterop(compilerConfiguration, withJavaSources = false)
     val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath)
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
 

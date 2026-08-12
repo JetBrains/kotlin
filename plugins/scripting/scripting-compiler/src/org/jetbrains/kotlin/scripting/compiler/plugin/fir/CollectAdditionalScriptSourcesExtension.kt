@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.fir
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.psiJavaInterop
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -203,7 +202,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 projectEnvironment = projectEnvironment,
                 librariesClasspath = JvmClasspath.ProjectLibraries(),
                 // A script compilation has no `.java` sources of its own.
-                javaInterop = projectEnvironment.psiJavaInterop(javaSources = { GlobalSearchScope.EMPTY_SCOPE }),
+                javaInterop = projectEnvironment.javaInterop(configuration, withJavaSources = false),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = Name.special("<dummy>"),

@@ -36,6 +36,42 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-12 — metadata compilation states that it reads no Java; Compose follows the flag
+- **Change**: `prepareMetadataSessions` passed `psiJavaInterop()`, implying metadata compilation
+  resolves Java through PSI. It creates a `FirJvmSessionFactory.Context` only to register the JVM
+  session components and never calls `create*Session` on that factory, so no facade is ever built —
+  it now passes the new `NoJavaInterop`, which fails loudly if that ever changes. The Compose test
+  facade switched to the shared `javaInterop(configuration)` helper (its module already depends on
+  `:compiler:cli-jvm`), so it is no longer the last self-deciding consumer.
+- **Files**: `fir/fir-jvm/.../session/FirJavaInterop.kt` (+21), `cli/.../FirSessionConstructionUtils.kt`,
+  `plugins/compose/.../facade/K2CompilerFacade.kt` (+2 unused imports removed),
+  `implDocs/PSI_FREE_ROADMAP.md` §7.
+- **Tests**: `MetadataDiagnosticTestGenerated` 11/0, `JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated`
+  269/0 (both run `prepareMetadataSessions`); `fir-jvm`/`cli`/`cli-metadata`/`cli-jvm` compile.
+- **Result**: green, no behaviour change. Compose integration-tests still cannot be compiled offline.
+
+### 2026-08-12 — `-Xjava-direct` is honoured by every JVM pipeline; the PSI-scope escape hatch is gone
+- **Change**: new `VfsBasedProjectEnvironment.javaInterop(configuration, withJavaSources)` in
+  `:compiler:cli-jvm` (the lowest module seeing both `:compiler:cli` and `:compiler:java-direct`)
+  derives the Java view from `useJavaDirect`. `JvmFrontendPipelinePhase`, `prepareJKlibSessions`,
+  `K2ScriptingCompilerEnvironment`, `K2ReplCompiler` and `CollectAdditionalScriptSourcesExtension`
+  all call it, so JKlib and scripting stop hardcoding PSI. `withJavaSources` is one switch because
+  the peers describe `.java` sources in different currencies. Then `PsiScopeJvmClasspath` /
+  `GlobalSearchScope.asJvmClasspath()` were **deleted** and `JvmClasspath` sealed: its two users
+  were expressible as classpaths — `JKlibIrCompilationPhase` used
+  `notScope(AllJavaSourcesInProjectScope)` for a package-part provider (`.java` files are never
+  package parts) and `FirTestSessionFactoryHelper` was passed exactly
+  `ProjectScope.getLibrariesScope(project)`.
+- **Files**: new `cli/cli-jvm/.../cli/jvm/compiler/JavaInterop.kt`; `JvmFrontendPipelinePhase.kt`
+  (−3 private helpers), `FirJKlibSessionFactory.kt`, `JKlibIrCompilationPhase.kt`,
+  `VfsBasedProjectEnvironment.kt`, `JvmClasspath.kt`, 3 scripting sites, 2 fixtures;
+  `PSI_FREE_ROADMAP.md` §3/§4/§7 + new §8 (remaining PSI in the API and how it goes).
+- **Tests**: java-direct 21771/0; JKlib 843/0; scripting-tests; both gates
+  (`PhasedJvmDiagnosticLightTree`, `*CompileKotlinAgainstKotlin*`);
+  `IncrementalK2FirICJvmCompilerRunnerTest` — all green.
+- **Result**: green. Remaining PSI in a cross-module signature: only
+  `psiJavaInterop(javaSources: (FirModuleData) -> GlobalSearchScope)` — plan in `PSI_FREE_ROADMAP.md` §8.
+
 ### 2026-08-12 — PSI search scopes leave the API: `JvmClasspath` and a Java view split by role
 - **Change**: `AbstractProjectFileSearchScope` is **deleted**. It was never an abstraction over PSI —
   one implementation (`PsiBasedProjectFileSearchScope`), a downcast (`asPsiSearchScope()`) at every
@@ -57,7 +93,8 @@ This log is read into the agent's context every session, so **entries must stay 
   and its one caller disappeared with it, so the Kotlin PSI file set no longer crosses any module
   boundary. The only remaining classpath → `GlobalSearchScope` conversion is
   `VfsBasedProjectEnvironment.psiSearchScope`, private to `:compiler:cli` apart from the documented
-  `PsiScopeJvmClasspath` escape hatch (legacy JKlib IR phase, two test fixtures).
+  `PsiScopeJvmClasspath` escape hatch (legacy JKlib IR phase, two test fixtures) — removed by the
+  2026-08-12 entry above.
 - **Files**: `JvmClasspath.kt` (new), `JvmCompilationEnvironment.kt`, `FirJavaInterop.kt`,
   `VfsBasedProjectEnvironment.kt`, `CliBinaryClassFileIndex.kt`, `IncrementalCompilationContext*.kt`,
   `FirJvmSessionFactory.kt`, `FirJvmIncrementalCompilationSymbolProviders.kt`,

@@ -75,8 +75,6 @@ open class VfsBasedProjectEnvironment(
                 else -> libraries.intersectWith(GlobalSearchScope.notScope(classPathScope(classpath.excludedRoots)))
             }
         }
-        is PsiScopeJvmClasspath -> classpath.psiSearchScope
-        else -> error("Unexpected ${JvmClasspath::class.simpleName}: $classpath")
     }
 
     private fun classPathScope(roots: List<Path>): GlobalSearchScope =
@@ -184,14 +182,6 @@ fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnviron
         ),
     ) { createPackagePartProvider(it) }
 
-/**
- * An escape hatch for code which still describes a part of the classpath as an IntelliJ scope instead of as
- * roots: the legacy JKlib IR pipeline and some test fixtures. It is understood by
- * [VfsBasedProjectEnvironment.psiSearchScope] and by nothing else, so it must not leave `:compiler:cli`.
- */
-class PsiScopeJvmClasspath(val psiSearchScope: GlobalSearchScope) : JvmClasspath
-
-fun GlobalSearchScope.asJvmClasspath(): JvmClasspath = PsiScopeJvmClasspath(this)
 
 inline fun <reified T : PsiElementFinder> ExtensionPoint<PsiElementFinder>.unregisterFinders() {
     if (extensionList.any { it is T }) {

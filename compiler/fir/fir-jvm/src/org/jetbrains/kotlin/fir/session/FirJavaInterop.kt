@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * Which Java implementation serves a compilation, in both directions: the two `create*JavaFacade` methods give
@@ -44,4 +45,26 @@ interface FirJavaInterop {
      * resolves Java through PSI and therefore needs them as PSI stubs. A no-op otherwise.
      */
     fun registerKotlinDeclarationsForJava(session: FirSession) {}
+}
+
+/**
+ * A compilation which reads no Java at all: no session created by it ever builds a [FirJavaFacade]. Metadata
+ * compilation is such a case — it constructs a [FirJvmSessionFactory.Context] to register the JVM session
+ * components, but never calls `createLibrarySession`/`createSourceSession` on that factory.
+ *
+ * It states that no choice is being made, instead of naming one implementation and implying that Java is
+ * resolved through it. If such a compilation does start reading Java, it fails at the place where the decision
+ * was skipped.
+ */
+object NoJavaInterop : FirJavaInterop {
+    override fun createBinaryJavaFacade(
+        session: FirSession,
+        moduleData: FirModuleData,
+        classpath: JvmClasspath,
+    ): FirJavaFacade = shouldNotBeCalled("This compilation reads no Java")
+
+    override fun createJavaSourcesFacade(
+        session: FirSession,
+        moduleData: FirModuleData,
+    ): FirJavaFacade = shouldNotBeCalled("This compilation reads no Java")
 }

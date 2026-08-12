@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -70,9 +69,8 @@ object GenerationUtils {
 
         val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
             .uniteWith(AllJavaSourcesInProjectScope(project))
-        val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = FirTestSessionFactoryHelper.createSessionForTests(
-            project, scope, librariesScope, configuration, "main", getPackagePartProvider = packagePartProvider,
+            project, scope, configuration, "main", getPackagePartProvider = packagePartProvider,
         )
 
         // TODO: add running checkers and check that it's safe to compile
