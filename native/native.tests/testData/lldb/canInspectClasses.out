@@ -22,7 +22,7 @@ Process <process id> stopped
 (ObjHeader *) point = Point(x=1, y=2)
 (ObjHeader *) person = John Doe
 (lldb) v point->x
-(int32_t) point->x = 1
+(int) point->x = 1
 (lldb) v point->y
-(int32_t) point->y = 2
+(int) point->y = 2
 (lldb) q
