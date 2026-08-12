@@ -115,7 +115,7 @@ private fun createDouble(s: String, e: Int): Double {
                 result = Double.POSITIVE_INFINITY
             }
         } else {
-            result = Double.NaN
+            result = Double.fromBits(-1)
         }
     } else {
         if (index > -1) {
@@ -124,7 +124,7 @@ private fun createDouble(s: String, e: Int): Double {
             else
                 result = createDouble1(f, index, e)
         } else {
-            result = Double.NaN
+            result = Double.fromBits(-1)
         }
     }
 
