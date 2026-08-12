@@ -25,8 +25,13 @@ import java.util.List;
  * val name: String? = null
  * //        ^_____^
  * }</pre>
+ *
+ * <p>A nullable type owns a modifier list when the type it wraps is parenthesized, as the parentheses are not a PSI
+ * element of their own. {@code (@A Int)?} and {@code @A Int?} denote the same type, but in the former the modifier
+ * list belongs to this element rather than to the enclosing {@link KtTypeReference}.
  */
-public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNullableType>> implements KtTypeElement, KtResolvable {
+public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStub<KtNullableType>>
+        implements KtTypeElement, KtResolvable {
     public KtNullableType(@NotNull ASTNode node) {
         super(node);
     }
@@ -56,17 +61,5 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
     @IfNotParsed
     public KtTypeElement getInnerType() {
         return KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY);
-    }
-
-    @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
-    public KtModifierList getModifierList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
-    }
-
-    @NotNull
-    public List<KtAnnotationEntry> getAnnotationEntries() {
-        KtModifierList modifierList = getModifierList();
-        return modifierList != null ? modifierList.getAnnotationEntries() : Collections.emptyList();
     }
 }
