@@ -16,6 +16,10 @@ private fun testOnNativeAndJvm(action: () -> Unit) {
     testOn({ p -> p == TestPlatform.Jvm || p == TestPlatform.Native }, action)
 }
 
+private fun testOnlyOnNativeAndWasm(action: () -> Unit) {
+    testOn({ it in listOf(TestPlatform.Native, TestPlatform.WasmJs, TestPlatform.WasmWasi) }, action)
+}
+
 private fun testExceptOnNativeAndWasm(action: () -> Unit) {
     testOn({ it !in listOf(TestPlatform.Native, TestPlatform.WasmJs, TestPlatform.WasmWasi) }, action)
 }
@@ -834,6 +838,12 @@ class FpNumberToStringTest {
         assertEquals(Double.NaN.toString(), "NaN")
         assertEquals(Double.POSITIVE_INFINITY.toString(), "Infinity")
         assertEquals(Double.NEGATIVE_INFINITY.toString(), "-Infinity")
+
+        testOnlyOnNativeAndWasm {
+            assertEquals("1.234123412431233E107", identity(1.234123412431233E107).toString())
+            assertEquals("1.2341234124312331E107", identity(1.2341234124312331E107).toString())
+            assertEquals("1.2341234124312331E107", identity(1.2341234124312332E107).toString())
+        }
     }
 
     @Test fun floatTest() {
