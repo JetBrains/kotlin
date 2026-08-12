@@ -355,6 +355,21 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xpurge-user-libs",
+        deprecatedName = "--purge_user_libs",
+        description = "Don't link unused libraries even if explicitly specified.",
+        removedVersion = "2.5.0",
+    )
+    var purgeUserLibs: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xworker-exception-handling",
         valueDescription = "<mode>",
         description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",

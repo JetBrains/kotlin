@@ -606,17 +606,6 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xpurge-user-libs"
-        deprecatedName = "-purge_user_libs"
-        description = "Don't link unused libraries even if explicitly specified.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xwrite-dependencies-of-produced-klib-to"
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path".asReleaseDependent()
         valueType = StringType.defaultNull

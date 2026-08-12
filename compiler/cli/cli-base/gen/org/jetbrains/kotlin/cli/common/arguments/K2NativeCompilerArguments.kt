@@ -479,17 +479,6 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
-        value = "-Xpurge-user-libs",
-        deprecatedName = "--purge_user_libs",
-        description = "Don't link unused libraries even if explicitly specified.",
-    )
-    var purgeUserLibs: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xread-dependencies-from",
         valueDescription = "<path>",
         description = "Serialized dependencies to use for linking.",

@@ -51,24 +51,12 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             )
         }
 
-        // TODO (KT-60874): Need to clarify why used-specified libraries are forced to stay in the list of "used libraries"
-        //  even when they are not used. Note that the default value for `konanPurgeUserLibs` is always `false`.
         newSourceModules {
             addRegularModule("test")
         }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because it was passed explicitly via CLI, even if "test" doesn't use any API from "additional" */ "additional",
-            )
-        }
-
-        // TODO (KT-60874): Need to clarify why used-specified libraries are forced to stay in the list of "used libraries"
-        //  even when they are not used. Note that the default value for `konanPurgeUserLibs` is always `false`.
-        newSourceModules {
-            addRegularModule("test")
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath, "-Xpurge-user-libs")) { _, successKlib ->
-            successKlib.assertDependencyNames(
-                /* implicit unavoidable dependency */ "stdlib",
             )
         }
 

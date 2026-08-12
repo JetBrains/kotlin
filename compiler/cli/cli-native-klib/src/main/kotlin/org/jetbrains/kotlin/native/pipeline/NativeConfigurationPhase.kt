@@ -158,7 +158,6 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         konanNoDefaultLibs = arguments.nodefaultlibs || !konanLibraryToAddToCache.isNullOrEmpty()
         konanNoStdlib = arguments.nostdlib || !konanLibraryToAddToCache.isNullOrEmpty()
-        konanPurgeUserLibs = arguments.purgeUserLibs
 
         konanDontCompressKlib = arguments.nopack
         arguments.manifestFile?.let { konanManifestAddend = it }

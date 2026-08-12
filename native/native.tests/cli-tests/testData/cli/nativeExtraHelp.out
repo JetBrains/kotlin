@@ -60,7 +60,6 @@ where advanced options include:
   -Xprint-bitcode            Print LLVM bitcode.
   -Xprint-files              Print files.
   -Xprint-ir                 Print IR.
-  -Xpurge-user-libs          Don't link unused libraries even if explicitly specified.
   -Xread-dependencies-from=<path>
                              Serialized dependencies to use for linking.
   -Xrefines-paths=<path>     Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).
