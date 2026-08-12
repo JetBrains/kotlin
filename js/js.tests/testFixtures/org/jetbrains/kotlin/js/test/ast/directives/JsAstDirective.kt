@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.js.test.ast.directives
 
 import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 interface JsAstDirective {
+    fun shouldRunWithBackend(backend: TargetBackend): Boolean
     fun evaluate(ast: JsNode, sourceFile: File)
 }
