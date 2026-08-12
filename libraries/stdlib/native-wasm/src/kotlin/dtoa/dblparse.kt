@@ -441,6 +441,14 @@ internal fun bigIntDigitGeneratorInstImpl(
         if (fULong != (2UL shl (p - 1))) {
             simpleShiftLeftHighPrecision(R, RM_SIZE, e + 1)
             S[0] = 2UL
+            /*
+             * m+ = m+ << e results in 1.0e23 to be printed as
+             * 0.9999999999999999E23
+             * m+ = m+ << e+1 results in 1.0e23 to be printed as
+             * 1.0e23 (caused too much rounding)
+             *      470fffffffffffff = 2.0769187434139308E34
+             *      4710000000000000 = 2.076918743413931E34
+             */
             simpleShiftLeftHighPrecision(mplus, RM_SIZE, e)
         } else {
             simpleShiftLeftHighPrecision(R, RM_SIZE, e + 2)
