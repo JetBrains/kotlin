@@ -48,8 +48,10 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
 
         fun read(file: File, messageCollector: MessageCollector): BuildInfo? {
             return try {
-                ObjectInputStream(FileInputStream(file)).use {
-                    it.readBuildInfo()
+                FileInputStream(file).use { fileStream ->
+                    ObjectInputStream(fileStream).use {
+                        it.readBuildInfo()
+                    }
                 }
             } catch (e: Exception) {
                 messageCollector.reportException(e, ExceptionLocation.INCREMENTAL_COMPILATION)
@@ -59,8 +61,10 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
 
         fun write(icContext: IncrementalCompilationContext, buildInfo: BuildInfo, file: File) {
             icContext.transaction.write(file.toPath()) {
-                ObjectOutputStream(FileOutputStream(file)).use {
-                    it.writeBuildInfo(buildInfo)
+                FileOutputStream(file).use { fileStream ->
+                    ObjectOutputStream(fileStream).use {
+                        it.writeBuildInfo(buildInfo)
+                    }
                 }
             }
         }
