@@ -670,12 +670,11 @@ class ScriptingHostTest {
     @Test
     fun testCompileOptionsLanguageVersion() {
         val script = """
-            fun test() {
-                while (true) {
-                    run {
-                        break
-                    }
-                }
+            context(contextual: Any)
+            fun foo() {}
+            
+            fun main() {
+                foo(contextual = "")
             }
         """.trimIndent()
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
@@ -683,12 +682,11 @@ class ScriptingHostTest {
                 CommonCompilerArguments::languageVersion.cliArgument,
                 LanguageVersion.FIRST_SUPPORTED.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
-                CommonCompilerArguments::whenGuards.cliArgument,
             )
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") }
+        res.reports.find { it.message.startsWith("The feature \"explicit context arguments\" is only available since language version 2.5") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
