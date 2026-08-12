@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives;
-import org.jetbrains.kotlin.js.test.ast.directives.CountNodesDirective;
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives;
@@ -31,33 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
-
-    private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>(JsLabel.class) {
-        @Override
-        protected int getActualCountFor(@NotNull JsLabel node, @NotNull ArgumentsHelper arguments) {
-            String labelName = arguments.findNamedArgument("name");
-            if (labelName == null) {
-                return 1;
-            }
-            return node.getName().getIdent().equals(labelName) ? 1 : 0;
-        }
-    };
-
-    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<>(JsVars.JsVar.class);
-
-    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<>(JsBreak.class);
-
-    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<>(JsNullLiteral.class);
-
-    private static final DirectiveHandler COUNT_NEW = new CountNodesDirective<>(JsNew.class);
-
-    private static final DirectiveHandler COUNT_CASES = new CountNodesDirective<>(JsCase.class);
-
-    private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>(JsIf.class);
-
-    private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>(JsSuperRef.class);
-
-    private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>(JsStringLiteral.class);
 
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler() {
         @Override
@@ -112,15 +84,15 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED_IN_SCOPE(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_COMMENT_EXISTS(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_LABELS_COUNT(), COUNT_LABELS),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_VARS_COUNT(), COUNT_VARS),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_BREAKS_COUNT(), COUNT_BREAKS),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NULLS_COUNT(), COUNT_NULLS),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NEW_COUNT(), COUNT_NEW),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CASES_COUNT(), COUNT_CASES),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_IF_COUNT(), COUNT_IF),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_SUPER_COUNT(), COUNT_SUPER),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_STRING_LITERAL_COUNT(), COUNT_STRING_LITERALS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_LABELS_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_VARS_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_BREAKS_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NULLS_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NEW_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CASES_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_IF_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_SUPER_COUNT(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_STRING_LITERAL_COUNT(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_REFERENCED(), NOT_REFERENCED),
             new Pair<>(JsAstDirectives.INSTANCE.getHAS_NO_CAPTURED_VARS(), HAS_NO_CAPTURED_VARS)
     );

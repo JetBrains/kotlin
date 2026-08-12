@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.js.test.ast
 
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.test.ast.directives.*
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -101,23 +102,50 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         ::CheckCommentExistsDirective,
     )
 
-    val CHECK_LABELS_COUNT by directiveWithArguments("Checks that there is the specified number of labels with this name")
+    val CHECK_LABELS_COUNT by directiveWithArguments(
+        "Checks that there is the specified number of labels with this name",
+        CountNodesDirective.counting<JsLabel>(),
+    )
 
-    val CHECK_VARS_COUNT by directiveWithArguments("Checks that the specified number of variables with this name exist")
+    val CHECK_VARS_COUNT by directiveWithArguments(
+        "Checks that the specified number of variables with this name exist",
+        CountNodesDirective.counting<JsVars.JsVar>(),
+    )
 
-    val CHECK_BREAKS_COUNT by directiveWithArguments("Checks that the specified number of 'break' statements exist")
+    val CHECK_BREAKS_COUNT by directiveWithArguments(
+        "Checks that the specified number of 'break' statements exist",
+        CountNodesDirective.counting<JsBreak>(),
+    )
 
-    val CHECK_NULLS_COUNT by directiveWithArguments("Checks that the specified number of 'null' literals exist")
+    val CHECK_NULLS_COUNT by directiveWithArguments(
+        "Checks that the specified number of 'null' literals exist",
+        CountNodesDirective.counting<JsNullLiteral>(),
+    )
 
-    val CHECK_NEW_COUNT by directiveWithArguments("Checks that the specified number of 'new' expressions exist")
+    val CHECK_NEW_COUNT by directiveWithArguments(
+        "Checks that the specified number of 'new' expressions exist",
+        CountNodesDirective.counting<JsNew>(),
+    )
 
-    val CHECK_CASES_COUNT by directiveWithArguments("Checks that the specified number of 'case' branches exist in 'switch'")
+    val CHECK_CASES_COUNT by directiveWithArguments(
+        "Checks that the specified number of 'case' branches exist in 'switch'",
+        CountNodesDirective.counting<JsCase>(),
+    )
 
-    val CHECK_IF_COUNT by directiveWithArguments("Checks that the specified number of 'if' statements exist")
+    val CHECK_IF_COUNT by directiveWithArguments(
+        "Checks that the specified number of 'if' statements exist",
+        CountNodesDirective.counting<JsIf>(),
+    )
 
-    val CHECK_SUPER_COUNT by directiveWithArguments("Checks that the specified number of 'super' qualifiers exist")
+    val CHECK_SUPER_COUNT by directiveWithArguments(
+        "Checks that the specified number of 'super' qualifiers exist",
+        CountNodesDirective.counting<JsSuperRef>(),
+    )
 
-    val CHECK_STRING_LITERAL_COUNT by directiveWithArguments("Checks that the specified string literal occurs the specified number of times")
+    val CHECK_STRING_LITERAL_COUNT by directiveWithArguments(
+        "Checks that the specified string literal occurs the specified number of times",
+        CountNodesDirective.counting<JsStringLiteral>(),
+    )
 
     val CHECK_NOT_REFERENCED by directiveWithArguments("Checks that the specified function is never referenced")
 
