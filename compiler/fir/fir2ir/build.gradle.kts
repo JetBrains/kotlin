@@ -100,19 +100,26 @@ projectTests {
     testData(project(":compiler").isolated, "testData/writeFlags")
     testData(project(":compiler:tests-spec").isolated, "testData/codegen")
 
-    testTask(
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
-    ) {
+    val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
+    testTask(defineJDKEnvVariables = environment) {
         configure()
     }
 
-    testTask("aggregateTests", skipInLocalBuild = true) {
+    testTask(
+        "aggregateTests",
+        defineJDKEnvVariables = environment,
+        skipInLocalBuild = true,
+    ) {
         configure {
             excludeTags("FirPsiCodegenTest")
         }
     }
 
-    testTask("nightlyTests", skipInLocalBuild = true) {
+    testTask(
+        "nightlyTests",
+        defineJDKEnvVariables = environment,
+        skipInLocalBuild = true,
+    ) {
         configure {
             includeTags("FirPsiCodegenTest")
         }
