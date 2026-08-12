@@ -18,7 +18,7 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("RETURN_VALUE_NOT_USED", "NOTHING_TO_INLINE")
 
-package kotlin.dtoa
+package kotlin.internal.dtoa
 
 private const val MANTISSA_MASK = 0x000FFFFFFFFFFFFFUL
 private const val EXPONENT_MASK = 0x7FF0000000000000UL

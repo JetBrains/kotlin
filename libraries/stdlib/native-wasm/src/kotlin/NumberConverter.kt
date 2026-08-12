@@ -199,7 +199,7 @@ internal class NumberConverter {
         isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int,
     ) {
         val results = IntArray(3)
-        kotlin.dtoa.bigIntDigitGeneratorInstImpl(results, uArray, f, e, isDenormalized, mantissaIsZero, p)
+        kotlin.internal.dtoa.bigIntDigitGeneratorInstImpl(results, uArray, f, e, isDenormalized, mantissaIsZero, p)
         setCount = results[0]
         getCount = results[1]
         firstK = results[2]

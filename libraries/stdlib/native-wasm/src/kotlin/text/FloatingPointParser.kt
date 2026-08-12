@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin
+package kotlin.text
 
 import kotlin.comparisons.*
 
@@ -32,7 +32,7 @@ import kotlin.comparisons.*
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 private fun parseDoubleImpl(s: String, e: Int): Double =
-    kotlin.dtoa.parseDoubleImpl(s, e)
+    kotlin.internal.dtoa.parseDoubleImpl(s, e)
 
 /**
  * Takes a String and an integer exponent. The String should hold a positive
@@ -47,7 +47,7 @@ private fun parseDoubleImpl(s: String, e: Int): Double =
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 private fun parseFloatImpl(s: String, e: Int): Float =
-    kotlin.dtoa.parseFloatImpl(s, e)
+    kotlin.internal.dtoa.parseFloatImpl(s, e)
 
 /**
  * Used to parse a string and return either a single or double precision

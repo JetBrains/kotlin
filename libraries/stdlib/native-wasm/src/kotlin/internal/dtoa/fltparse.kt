@@ -18,7 +18,7 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("RETURN_VALUE_NOT_USED")
 
-package kotlin.dtoa
+package kotlin.internal.dtoa
 
 import kotlin.math.pow
 
