@@ -2875,6 +2875,15 @@ private fun KaDiagnosticConverterBuilder.addConversions63() {
             token,
         )
     }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS) { firDiagnostic ->
+        ExpectActualIncompatibleEqualityBoundsImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.IMPOSSIBLE_IS_CHECK_DEPRECATION.warningFactory) { firDiagnostic ->
         ImpossibleIsCheckDeprecationWarningImpl(
             firDiagnostic.a,

@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // IGNORE_FIR_DIAGNOSTICS
 // LANGUAGE: +ContextParameters
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 // WITH_STDLIB
 // LL_FIR_DIVERGENCE
 // Extra diagnostic in metadata compilation

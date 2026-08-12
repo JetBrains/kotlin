@@ -2,6 +2,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: -FullValueClasses, +MultiPlatformProjects
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
+
 // ALLOW_KOTLIN_PACKAGE
 
 // MODULE: m1-common
