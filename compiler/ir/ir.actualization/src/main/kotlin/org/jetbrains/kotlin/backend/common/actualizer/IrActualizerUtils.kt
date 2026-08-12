@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
@@ -87,7 +88,7 @@ internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclarati
     at(irDeclaration).report(
         IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
-        irDeclaration.moduleFragment.descriptor
+        irDeclaration.moduleFragment.toModuleInfoForDiagnostic()
     )
 }
 
@@ -95,7 +96,14 @@ internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclara
     at(expectSymbol).report(
         IrActualizationErrors.AMBIGUOUS_ACTUALS,
         (expectSymbol as? IrDeclarationWithName)?.name?.asString().orEmpty(),
-        expectSymbol.moduleFragment.descriptor
+        expectSymbol.moduleFragment.toModuleInfoForDiagnostic()
+    )
+}
+
+private fun IrModuleFragment.toModuleInfoForDiagnostic(): ModuleInfoForDiagnostic {
+    return ModuleInfoForDiagnostic(
+        name = descriptor.getCapability(ModuleInfo.Capability)?.displayedName ?: name.asString(),
+        platform = descriptor.platform,
     )
 }
 
