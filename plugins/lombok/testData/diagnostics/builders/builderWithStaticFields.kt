@@ -14,6 +14,6 @@ public class JavaEntity {
 fun box(): String {
     // Resolves and compiles, but `staticField` is not a real builder method.
     // It should be a compile error (unresolved reference).
-    JavaEntity.builder().staticField(2)
+    JavaEntity.builder().<!UNRESOLVED_REFERENCE!>staticField<!>(2)
     return "OK"
 }

@@ -343,7 +343,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     } else {
                         entityClass.declarations.mapNotNull { declaration ->
                             if (isJavaClass) {
-                                declaration as? FirJavaField
+                                (declaration as? FirJavaField)?.takeIf { !it.isStatic }
                             } else {
                                 (declaration as? FirProperty)?.takeIf { it.hasBackingField }
                             }
