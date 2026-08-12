@@ -55,31 +55,33 @@ fun Path.unzipTo(destinationDirectory: Path, fromSubdirectory: Path = Paths.get(
         val subdirectoryPathInZip = zipFileSystem.getPath(fromSubdirectory.pathString)
         val normalizedDestinationPath = destinationDirectory.normalize()
 
-        Files.walk(subdirectoryPathInZip).forEach next@{ oldPath ->
-            val relativePath = subdirectoryPathInZip.relativize(oldPath)
+        Files.walk(subdirectoryPathInZip).use { paths ->
+            paths.forEach next@{ oldPath ->
+                val relativePath = subdirectoryPathInZip.relativize(oldPath)
 
-            // We are copying files between file systems,
-            // so pass the relative path through the String.
-            val newPath = destinationFileSystem.getPath(destinationDirectory.pathString, relativePath.pathString)
+                // We are copying files between file systems,
+                // so pass the relative path through the String.
+                val newPath = destinationFileSystem.getPath(destinationDirectory.pathString, relativePath.pathString)
 
-            // NOTE: this check is important, it prevents a potential ZipSlip vulnerability
-            if (!newPath.normalize().startsWith(normalizedDestinationPath)) {
-                throw ZipException("$relativePath attempted to escape the destination directory $destinationDirectory")
-            }
+                // NOTE: this check is important, it prevents a potential ZipSlip vulnerability
+                if (!newPath.normalize().startsWith(normalizedDestinationPath)) {
+                    throw ZipException("$relativePath attempted to escape the destination directory $destinationDirectory")
+                }
 
-            // File systems don't allow replacing an existing root.
-            if (newPath == newPath.root) return@next
-            if (newPath.isDirectory()) {
-                newPath.createDirectories()
-            } else {
-                oldPath.copyTo(newPath, overwrite = true)
-            }
-            if (resetTimeAttributes) {
-                newPath.fileAttributesView<BasicFileAttributeView>().setTimes(
-                    /* lastModifiedTime = */ DEFAULT_ZERO_FILE_TIMESTAMP,
-                    /* lastAccessTime = */ DEFAULT_ZERO_FILE_TIMESTAMP,
-                    /* createTime = */ DEFAULT_ZERO_FILE_TIMESTAMP,
-                )
+                // File systems don't allow replacing an existing root.
+                if (newPath == newPath.root) return@next
+                if (newPath.isDirectory()) {
+                    newPath.createDirectories()
+                } else {
+                    oldPath.copyTo(newPath, overwrite = true)
+                }
+                if (resetTimeAttributes) {
+                    newPath.fileAttributesView<BasicFileAttributeView>().setTimes(
+                        /* lastModifiedTime = */ DEFAULT_ZERO_FILE_TIMESTAMP,
+                        /* lastAccessTime = */ DEFAULT_ZERO_FILE_TIMESTAMP,
+                        /* createTime = */ DEFAULT_ZERO_FILE_TIMESTAMP,
+                    )
+                }
             }
         }
     }
@@ -92,7 +94,7 @@ internal inline fun zipDirAsInternal(dirPath: Path, zipFilePath: Path, shuffle: 
         ZipOutputStream(outputStream).use { zipOutputStream ->
             zipOutputStream.setLevel(5) // Set the medium compression level.
 
-            val paths: MutableList<Path> = Files.walk(dirPathWithExpandedSymlinks).collect(Collectors.toList())
+            val paths: MutableList<Path> = Files.walk(dirPathWithExpandedSymlinks).use { it.collect(Collectors.toList()) }
             shuffle(paths)
             paths.sort()
 
