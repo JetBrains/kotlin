@@ -13,7 +13,7 @@ class C<T> {
 }
 
 class D<T> {
-    override fun equals(@EqualityBound(<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<*>::class<!>) other: Any?): Boolean = true
+    override fun equals(@EqualityBound(<!CLASS_LITERAL_LHS_NOT_A_CLASS!><!EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS!>Array<*><!>::class<!>) other: Any?): Boolean = true
 }
 
 class E<T> {

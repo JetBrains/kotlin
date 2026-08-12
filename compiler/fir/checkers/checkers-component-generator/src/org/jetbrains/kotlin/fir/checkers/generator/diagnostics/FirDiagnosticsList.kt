@@ -555,6 +555,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("declaration")
             parameter<ConeKotlinType>("candidates")
         }
+        val EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS by error<KtExpression> {
+            parameter<ConeKotlinType>("equalityBoundType")
+            parameter<ConeKotlinType>("receiverType")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

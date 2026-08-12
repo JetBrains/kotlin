@@ -1532,6 +1532,13 @@ internal class InheritedIntersectionEqualityBoundImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InheritedIntersectionEqualityBound
 
+internal class EqualityBoundNotSupertypeOfContainingClassImpl(
+    override val equalityBoundType: KaType,
+    override val receiverType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundNotSupertypeOfContainingClass
+
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
     override val message: String,

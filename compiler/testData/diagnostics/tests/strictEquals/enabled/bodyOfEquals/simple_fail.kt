@@ -24,7 +24,7 @@ fun <T> local() {
 
     class ImplicitGeneric {
         val t: T get() = null!!
-        override fun equals(@EqualityBound(Generic::class) other: Any?): Boolean {
+        override fun equals(@EqualityBound(ImplicitGeneric::class) other: Any?): Boolean {
             return other.t.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>doSomething<!>()
         }
     }

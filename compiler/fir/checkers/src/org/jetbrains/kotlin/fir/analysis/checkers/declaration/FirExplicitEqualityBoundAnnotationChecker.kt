@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.constructStarProjectedType
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -93,6 +95,19 @@ object FirExplicitEqualityBoundAnnotationChecker : FirValueParameterChecker(MppC
                         argumentOfGetClass.source,
                         FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED,
                         typeFromTypesPhase,
+                    )
+                    return
+                }
+
+                val starProjectedTypeForEnclosingClass =
+                    declaration.containingDeclarationSymbol.getContainingClassSymbol()?.constructStarProjectedType() ?: return
+
+                if (!starProjectedTypeForEnclosingClass.isSubtypeOf(typeFromTypesPhase, session = context.session)) {
+                    reporter.reportOn(
+                        argumentOfGetClass.source,
+                        FirErrors.EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS,
+                        typeFromTypesPhase,
+                        starProjectedTypeForEnclosingClass,
                     )
                 }
             }
