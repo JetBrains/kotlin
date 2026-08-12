@@ -9,7 +9,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.JsFunction;
+import org.jetbrains.kotlin.js.backend.ast.JsName;
+import org.jetbrains.kotlin.js.backend.ast.JsNode;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives;
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective;
@@ -25,27 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 import static kotlin.test.AssertionsKt.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
-
-    private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler() {
-        @Override
-        public void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            String reference = arguments.getPositionalArgument(0);
-
-            JsVisitor visitor = new RecursiveJsVisitor() {
-                @Override
-                public void visitNameRef(@NotNull JsNameRef nameRef) {
-                    assertNotEquals(reference, nameRef.toString());
-                }
-            };
-
-            visitor.accept(ast);
-        }
-    };
 
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler() {
         @Override
@@ -93,7 +78,6 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_IF_COUNT(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_SUPER_COUNT(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_STRING_LITERAL_COUNT(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_REFERENCED(), NOT_REFERENCED),
             new Pair<>(JsAstDirectives.INSTANCE.getHAS_NO_CAPTURED_VARS(), HAS_NO_CAPTURED_VARS)
     );
 
