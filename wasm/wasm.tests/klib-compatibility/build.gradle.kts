@@ -48,7 +48,6 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
-    enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
@@ -62,7 +61,7 @@ fun Project.customCompilerTest(
         project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-test-wasm-wasi:${version.rawVersion}")
     }
 
-    return projectTests.jsTestTask(taskName, tag, enableGroupingTestEngine = enableGroupingTestEngine) {
+    return projectTests.jsTestTask(taskName, tag) {
         addClasspathProperty(customCompiler, "kotlin.internal.wasm.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.wasm.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.wasm.test.compat.customCompilerVersion", version.rawVersion)
@@ -95,9 +94,6 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
         version = version,
         taskName = "testCustomSecondStage_$version",
         tag = "custom-second-stage",
-        // The custom-second-stage tests are migrated to the two-stage grouping test infrastructure
-        // (`AbstractCustomWasmJsCompilerSecondStageTest`), so the grouping test engine must be enabled.
-        enableGroupingTestEngine = true,
     )
 }
 

@@ -149,7 +149,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("boxInline")
+                model("boxInline", smokeTest = true)
             }
 
             testClass<AbstractFirJsLightTreeHeaderModeCodegenTest> {
@@ -157,12 +157,12 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractJsCodegenSplittingTest> {
                 model("box")
-                model("boxInline")
+                model("boxInline", smokeTest = true)
             }
 
             testClass<AbstractJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
