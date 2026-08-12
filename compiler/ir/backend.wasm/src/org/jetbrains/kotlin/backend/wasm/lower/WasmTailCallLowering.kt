@@ -27,7 +27,7 @@ val WASM_TAIL_CALL by IrStatementOriginImpl
  * continuation machinery, so that the structural tail-position analysis sees
  * the final IR shape. Placed at the very end of the Wasm lowering pipeline.
  */
-internal class WasmTailCallLowering(private val context: WasmBackendContext) : BodyLoweringPass {
+internal class WasmTailCallLowering(context: WasmBackendContext) : BodyLoweringPass {
     private val enabled = context.configuration.wasmEnableTailCalls
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -47,7 +47,6 @@ private fun markTailCalls(irFunction: IrFunction) {
         }
 
         override fun visitFunction(declaration: IrFunction, data: Boolean) {}
-        override fun visitClass(declaration: IrClass, data: Boolean) {}
         override fun visitTry(aTry: IrTry, data: Boolean) {}
 
         override fun visitReturn(expression: IrReturn, data: Boolean) {

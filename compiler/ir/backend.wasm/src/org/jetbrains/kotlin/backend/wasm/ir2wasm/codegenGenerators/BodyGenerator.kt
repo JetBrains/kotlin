@@ -55,19 +55,11 @@ class BodyGenerator(
      * Returns true if [call] should be emitted as a tail call.
      *
      * [WasmTailCallLowering] marks structurally tail-positioned calls with
-     * [WASM_TAIL_CALL] origin. This method applies additional Wasm-level eligibility
-     * filters on top of that structural check:
-     *
-     * - The callee must not be a constructor, because [visitFunctionReturn] pushes
-     *   the implicit dispatch receiver before `return`, which is incompatible with
-     *   a tail-call frame swap.
-     * - The Wasm result type of the caller must match that of the callee, because
-     *   `return_call` requires the callee's result type to equal the caller's.
+     * [WASM_TAIL_CALL] origin. On top of that, the caller's Wasm result type
+     * must match the callee's, because `return_call` requires them to be equal.
      */
     private fun isEligibleForTailCall(call: IrFunctionAccessExpression, callee: IrFunction): Boolean {
-        if (call !is IrCall) return false
         if (call.origin !== WASM_TAIL_CALL) return false
-        if (callee is IrConstructor) return false
         val caller = functionContext.irFunction ?: return false
         val callerResultType = wasmModuleTypeTransformer.transformResultType(caller.returnType)
         val calleeResultType = wasmModuleTypeTransformer.transformResultType(callee.returnType)
