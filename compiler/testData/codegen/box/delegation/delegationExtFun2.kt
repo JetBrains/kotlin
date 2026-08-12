@@ -1,4 +1,8 @@
+// WITH_STDLIB
+
 package foo
+
+import kotlin.test.assertEquals
 
 interface Base {
     abstract fun String.foo(arg: String): String

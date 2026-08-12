@@ -1,6 +1,9 @@
+// WITH_STDLIB
+
 package foo
 
 import kotlin.reflect.KProperty
+import kotlin.test.assertEquals
 
 class State(var value: Int)
 
