@@ -1,3 +1,7 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ uses `external interface`, `@nativeInvoke` and `definedExternally`, which are JS-only
+// SKIP_IR_DESERIALIZATION_CHECKS
+// ^^^ KT-88479: `$$delegate_0` of an external companion gains the `external` flag over a KLIB round-trip
 // KJS_WITH_FULL_RUNTIME
 // KT-40126
 
