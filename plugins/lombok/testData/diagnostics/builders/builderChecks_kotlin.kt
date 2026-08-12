@@ -59,9 +59,9 @@ class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
 @Builder(access = AccessLevel.PROTECTED)
 class BuilderAccessLevelProtected(val id: Int)
 
-// TODO KT-87871: unlike `@Log`/`@ToString`/`@NoArgsConstructor`, these two are not even warned about, because
-//  `@Builder` allows the broad `KotlinTarget.CLASS` (which covers interfaces and annotation classes) rather
-//  than `CLASS_ONLY` - so no `ANNOTATION_HAS_NO_EFFECT` is reported here.
+// TODO KT-87871: nothing is generated for either any more, but unlike `@Log`/`@ToString`/`@NoArgsConstructor`
+//  these two are still not warned about, because `@Builder` allows the broad `KotlinTarget.CLASS` (which covers
+//  interfaces and annotation classes) rather than `CLASS_ONLY`. So `@Builder` here is a silent no-op.
 @Builder
 interface BuilderInterface
 
@@ -85,8 +85,8 @@ class BuilderAccessLevelModule(val id: Int)
 
 fun test() {
     BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
-    BuilderInterface.builder() // TODO: should be unresolved, KT-87871
-    BuilderAnnotationClass.builder() // TODO: should be unresolved, KT-87871
+    BuilderInterface.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
+    BuilderAnnotationClass.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
     BuilderEnum.builder() // TODO: should be unresolved, KT-87871
     BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
 

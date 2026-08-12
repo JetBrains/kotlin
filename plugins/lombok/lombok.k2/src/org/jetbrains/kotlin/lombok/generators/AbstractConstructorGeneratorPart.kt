@@ -152,6 +152,10 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             targetClassSymbol = classSymbol
         }
 
+        // `targetClassSymbol` rather than `classSymbol`: for a static factory the latter is the companion object,
+        // and it is the entity being constructed that cannot hold a constructor.
+        if (targetClassSymbol.isUnsupportedLombokTarget) return
+
         val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val fields = getFieldsForParameters(targetClassSymbol)
         val valuesParameterCount = fields.size
