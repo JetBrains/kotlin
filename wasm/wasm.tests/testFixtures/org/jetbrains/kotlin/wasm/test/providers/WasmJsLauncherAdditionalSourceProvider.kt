@@ -53,12 +53,8 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
          * test infrastructure for tests that are executed in isolation. The relative path is encoded
          * injectively instead of hashed, so distinct paths always produce distinct identifiers.
          *
-         * The same name is referenced in two places that must stay in sync:
-         *   - [generateLauncherContent] generates the launcher class declaration
-         *     `class Launcher_<encoded-relative-path> { @Test fun runTest() = <fqn>.box() }` for the test file;
-         *   - `AbstractWasmGroupingStageBoxRunner.computeExpectedSuiteNames` consumes it
-         *     as one of the expected `##teamcity[testSuiteFinished name='Launcher_<encoded-relative-path>'`
-         *     markers when verifying that an isolated test from a grouped batch actually ran.
+         * This `@Test`-annotated launcher is driven by the compiler-generated `startUnitTests()`; a grouped batch uses
+         * the fresh `ProxyBatchLauncher` and its result-collecting driver instead.
          */
         fun computeLauncherClassName(file: TestFile): String =
             "Launcher_${file.relativePath.encodeToIdentifier()}"
@@ -97,6 +93,9 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
         //   * isolatedWithBox — isolated batches (with or without friend deps): the per-test KLIB ends
         //     up as the included main module;
         //   * isolatedWithoutBox — non-grouped (legacy) execution: no `ProxyBatchLauncher.kt` exists at all.
+        //
+        // A `// RUN_UNIT_TESTS` test never reaches this branch: `WasmGroupingTestIsolator` isolates it, so it keeps its
+        // launcher via the exemption below whatever the size of the batch it ends up in.
         if (testServices.isGroupedNonIsolatedBatch(globalDirectives, testModuleStructure)) return emptyList()
 
         // An isolated single-test batch is executed via the standalone box-export
