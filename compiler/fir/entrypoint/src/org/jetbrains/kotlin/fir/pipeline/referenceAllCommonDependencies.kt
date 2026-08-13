@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingCollectingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  *
  * This function goes over all resolved references to all classes and top-level callables in the non-leaf
  * sources and references them from the leaf (platform) symbol provider, so the
- * [FirCommonDeclarationsMappingSymbolProvider] could record the mapping between the platform and
+ * [FirCommonDeclarationsMappingCollectingSymbolProvider] could record the mapping between the platform and
  * common dependency in case this declaration was not searched from the platform session before.
  */
 fun referenceAllCommonDependencies(outputs: List<SingleModuleFrontendOutput>) {
