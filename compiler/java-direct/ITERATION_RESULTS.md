@@ -36,6 +36,27 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-13 — Kotlin supertypes for Java resolution: on air instead of `lazyResolveToPhase`
+- **Change**: arm 3 of `directSupertypeClassIds` asked a Kotlin source class for its supertypes with
+  `lazyResolveToPhase(SUPER_TYPES)` — a no-op in the compiler and an unsanctioned intra-phase jump — and
+  then read whatever happened to be resolved. It now reads the new shared
+  `supertypeRefsForJavaResolution` (prefer-resolved, else on-air into a throwaway
+  `SupertypeComputationSession`), which is what the PSI peer `FirJavaElementFinder` and this module's own
+  `FirBackedJavaClassAdapter.supertypes` already did — so the two java-direct answers to the same question
+  are now one implementation. `memoizedDirectSupertypeClassIds` takes a nullable result: the cycle guard's
+  default and a *partial* list are no longer cached (before, any non-empty list was, so a half-answer could
+  be pinned for the session).
+- **Files**: `resolution/JavaTypeResolver.kt`, `resolution/JavaModelSessionAccess.kt`,
+  `resolution/FirBackedJavaClassAdapter.kt`; new test data
+  `testData/diagnostics/tests/jvm/javaDirect/inheritedNestedClassThroughKotlinSupertype.kt` and
+  `protectedInheritedNestedClassThroughKotlinSupertype.kt`; `implDocs/TEST_INFRA_JAVA_DIRECT.md`.
+- **Tests**: both new tests fail before the change (`MISSING_DEPENDENCY_SUPERCLASS`, `UNRESOLVED_REFERENCE`
+  on the inherited call) and pass after; the PSI runner passes them with the same expected output.
+  `:compiler:java-direct:test` 21776/0, `fir:analysis-tests` 56676/0. With `javaInterop` forced to
+  java-direct, `fir:analysis-tests` went 109 → **19** failures: all 90
+  `FirLazyResolveContractViolationException` gone, only the known `ForeignAnnotations` golden data left.
+- **Result**: green; the silent order-dependent "Kotlin class has no supertypes" answer is gone.
+
 ### 2026-08-13 — the test-infrastructure source-root gap: confirmed, fixed, and two real blockers found
 - **Change**: `javaInterop` was temporarily forced to the java-direct branch to exercise the latent
   facade-based capability. The `dependsOn`-closure source-root gap is real but unexercised (a temporary

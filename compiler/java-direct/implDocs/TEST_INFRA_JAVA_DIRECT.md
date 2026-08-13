@@ -1,7 +1,8 @@
 # java-direct in the shared test infrastructure
 
-**Status**: the source-root gap is fixed (2026-08-13). Two blockers remain before any
-facade-based suite can be run under `-Xjava-direct`; both are recorded in §3 with evidence.
+**Status**: the source-root gap is fixed (2026-08-13), and so is blocker (a), the `SUPER_TYPES`
+lazy-resolve contract violation. One blocker remains before a facade-based suite can be run under
+`-Xjava-direct` — the `ForeignAnnotations` golden data, §3b.
 
 Since the `FirJavaInterop` rounds, `FirFrontendFacade` (`compiler/tests-common-new`) derives the
 Java view from `projectEnvironment.javaInterop(configuration)`, i.e. the whole non-CLI JVM test
@@ -17,7 +18,7 @@ is caused by java-direct.
 
 | Suite | Forced on | Verdict |
 |---|---|---|
-| `fir:analysis-tests` | 109 failures / 56672 | see §3 |
+| `fir:analysis-tests` | 109 failures / 56672 | see §3; **19** after (a) was fixed |
 | `fir:fir2ir` (codegen + IR text, incl. multi-module) | 3 failures / 73656 | all "test can be unmuted": java-direct is *more* capable than the muted expectation |
 | `JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilation` (HMPP) | 269/0 | green |
 | `jklib.tests` | 843/0 | green |
@@ -60,25 +61,36 @@ file in a non-leaf fragment" is itself a modelling question — left out deliber
 Both are pre-existing java-direct defects that the CLI phased suite does not reach; neither is
 related to §2.
 
-**(a) `FirLazyResolveContractViolationException` at `SUPER_TYPES` — 90 failures**, all in
+**(a) `FirLazyResolveContractViolationException` at `SUPER_TYPES` — 90 failures — FIXED
+(2026-08-13)**, all in
 `FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated` (J+K test data). The site is arm 3
 of `directSupertypeClassIds` (`resolution/JavaTypeResolver.kt:534`),
 `symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)` — i.e. Java-source resolution asking a
 **Kotlin** source class for its supertypes. That runner installs the checked lazy resolver, which is
 why the same data passes in `AbstractJavaUsingAstTest` (CLI phased pipeline): the violation is
-latent everywhere, not specific to the facade. Any fix has to answer "what does a Java source file
-see of a Kotlin class whose supertypes are not resolved yet"; the arm cannot simply drop the call,
-since it needs `superTypeRefs` resolved.
+latent everywhere, not specific to the facade.
+
+The answer to "what does a Java source file see of a Kotlin class whose supertypes are not resolved
+yet" is now the same one the PSI peer `FirJavaElementFinder` gives: resolve them **on air**. Arm 3
+reads `supertypeRefsForJavaResolution` (shared with the model-side `FirBackedJavaClassAdapter`,
+which already did exactly this) and the `lazyResolveToPhase` call — a no-op in the compiler, and an
+unsanctioned intra-phase jump — is gone. Silently answering "no supertypes" was not harmless: it
+turns an inherited nested class reached through a Kotlin link into an unresolved reference, and makes
+a `protected` nested class look inaccessible. Both are pinned by new test data,
+`{,protected}InheritedNestedClassThroughKotlinSupertype.kt` in
+`testData/diagnostics/tests/jvm/javaDirect/`, which failed before the change and pass after it (the
+PSI runner passes them with the same expected output). Re-measured with java-direct forced on:
+`fir:analysis-tests` 19 failures / 56676, i.e. all 90 gone, only (b) left.
 
 **(b) `ForeignAnnotations` golden data — 19 failures** in the PSI-parser suites
 (`*ForeignAnnotationsCompiledJava*`, `*ForeignAnnotationsSourceJava*`): output divergences, not
 crashes. The repo already has the mechanism for this — `ForeignAnnotationAgainstCompiledJavaTestSuppressor`
 and `PsiClassFilesReadingForCompiledJavaTestSuppressor` — so these need a java-direct suppressor or
-per-test suppression, once (a) is fixed.
+per-test suppression. These 19 are the only failures left with java-direct forced on.
 
 ## 4. Remaining work to make it usable
 
-1. Fix (a); decide (b)'s suppressor.
+1. Decide (b)'s suppressor. ((a) is fixed.)
 2. Promote `JavaDirectConfigurator` (today private to `:compiler:java-direct` testFixtures) into
    `tests-common-new` with a directive, so the flag is per suite rather than global; generate
    java-direct variants of the interesting facade-based runners, as `ForeignAnnotations` and the
