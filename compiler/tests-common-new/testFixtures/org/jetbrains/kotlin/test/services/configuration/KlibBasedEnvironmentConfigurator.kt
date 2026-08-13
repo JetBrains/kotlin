@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
@@ -40,20 +38,6 @@ interface KlibBasedEnvironmentConfigurator {
 
     fun getKlibOutputDir(testServices: TestServices): File {
         return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
-    }
-
-    /**
-     * Return the list of [KotlinLibrary] with all transitive dependencies recursively resolved.
-     * Note: This list contains stdlib at the first position if there is any.
-     */
-    fun getDependencyLibrariesFor(module: TestModule, testServices: TestServices): List<KotlinLibrary> = buildList {
-        getDependencyModulesFor(module, testServices).forEach { moduleDescriptor ->
-            val library = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
-            if (library.isAnyPlatformStdlib)
-                add(0, library)
-            else
-                add(library)
-        }
     }
 
     fun getDependencyModulesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
