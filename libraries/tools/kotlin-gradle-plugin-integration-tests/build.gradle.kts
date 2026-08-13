@@ -76,6 +76,10 @@ dependencies {
     testImplementation(project(":kotlin-gradle-plugin-idea"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+    testImplementation(project(":kotlin-import-models"))
+    testImplementation(libs.protobuf.java)
+    testImplementation(libs.protobuf.kotlin)
+    testImplementation(libs.protobuf.java.util)
     testImplementation(project(":gradle:kotlin-gradle-ecosystem-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
 

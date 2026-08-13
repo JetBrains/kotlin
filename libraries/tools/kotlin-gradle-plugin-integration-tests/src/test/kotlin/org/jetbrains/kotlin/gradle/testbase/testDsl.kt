@@ -419,6 +419,50 @@ fun <T> TestProject.buildModel(
     }
 }
 
+fun <T> TestProject.runBuildAction(
+    action: org.gradle.tooling.BuildAction<T>,
+    vararg tasks: String,
+    enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
+    kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
+    enableBuildCacheDebug: Boolean = false,
+    enableBuildScan: Boolean = this.enableBuildScan,
+    enableOfflineMode: Boolean = this.enableOfflineMode,
+    enableGradleDaemonMemoryLimitInMb: Int? = this.enableGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
+    buildOptions: BuildOptions = this.buildOptions,
+    environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    progressListener: ((ProgressEvent) -> Unit)? = null,
+): T {
+    Assumptions.assumeFalse(isWindows, "Running build actions is not working on Windows KT-84353")
+    val buildParams = commonBuildSetup(
+        buildArguments = emptyList(),
+        buildOptions = buildOptions,
+        enableBuildCacheDebug = enableBuildCacheDebug,
+        enableBuildScan = enableBuildScan,
+        enableOfflineMode = enableOfflineMode,
+        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
+        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        connectSubprocessVMToDebugger = enableGradleDebug.toBooleanFlag(),
+        gradleVersion = gradleVersion,
+        kotlinDaemonDebugPort = kotlinDaemonDebugPort,
+    )
+    val connector = GradleConnector.newConnector()
+        .forProjectDirectory(gradleRunner.projectDir)
+        .useDistribution(gradleDistributionUri(gradleVersion))
+
+    try {
+        val connection = connector.connect()
+        return connection.action(action)
+            .applyIf(progressListener != null) { addProgressListener(progressListener) }
+            .forTasks(tasks.toList())
+            .withArguments(buildParams)
+            .setEnvironmentVariables(environmentVariables.environmentalVariables)
+            .run()
+    } finally {
+        connector.disconnect()
+    }
+}
+
 private fun validateDebuggingSocketIsListeningForTestsWithEnv(
     buildResult: Result<BuildResult>,
     overridingEnvironmentVariablesInstantiationBacktrace: Throwable?,
