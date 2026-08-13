@@ -24,9 +24,7 @@ import java.io.File
 abstract class AbstractIncrementalK2JvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
-            if (LanguageVersion.LATEST_STABLE < LanguageVersion.KOTLIN_2_0) {
-                languageVersion = "2.0"
-            }
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString
         }
 
     override val buildLogFinder: BuildLogFinder

@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
 abstract class AbstractIncrementalK2PsiJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
-            languageVersion = "2.0"
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString
             @Suppress("DEPRECATION")
             useFirLT = false
         }

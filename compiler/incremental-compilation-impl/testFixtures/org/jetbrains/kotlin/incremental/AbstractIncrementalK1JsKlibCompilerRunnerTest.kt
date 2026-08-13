@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.incremental.utils.TestICReporter
@@ -43,7 +44,7 @@ abstract class AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest :
 abstract class AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
         return super.createCompilerArguments(destinationDir, testDir).apply {
-            languageVersion = "2.0"
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString
         }
     }
 
