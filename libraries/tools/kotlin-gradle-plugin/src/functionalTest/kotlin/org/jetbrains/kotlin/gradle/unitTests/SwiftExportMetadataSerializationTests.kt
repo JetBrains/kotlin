@@ -11,18 +11,29 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.deserializeSwiftExportMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.serializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.swiftExportMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SerializeSwiftExportMetadata
+import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.swiftExport
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import kotlin.test.Test
@@ -37,6 +48,18 @@ class SwiftExportMetadataSerializationTests {
         val serialized = ByteArrayOutputStream()
         serializeSwiftExportMetadata(serialized)
         return deserializeSwiftExportMetadata(ByteArrayInputStream(serialized.toByteArray()))
+    }
+
+    /**
+     * The configuration Swift Export resolves exported modules and their metadata from, the same one
+     * `registerSwiftExportRun` passes in production.
+     */
+    private fun Project.swiftExportApiConfiguration(): Configuration {
+        val target = multiplatformExtension.targets.withType(KotlinNativeTarget::class.java).single()
+        return target.exportedSwiftExportApiConfiguration(
+            NativeBuildType.DEBUG,
+            target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).internal.configurations.compileDependencyConfiguration
+        )
     }
 
     @Test
@@ -178,9 +201,36 @@ class SwiftExportMetadataSerializationTests {
             evaluate()
 
             assertTrue(
-                swiftExportMetadataProvider().get().isEmpty(),
+                swiftExportMetadataProvider(swiftExportApiConfiguration()).get().isEmpty(),
                 "No Swift Export metadata should be resolved without dependencies that publish it"
             )
+        }
+    }
+
+    @Test
+    fun `KT-85517 - swift export metadata resolution doesn't fail on outgoing variants without Usage`() {
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        val rootProject = buildProject {
+            plugins.apply("java-library")
+            project.configurations.create("consumable") {
+                it.outgoing.artifact(file("foo"))
+                it.attributes.attribute(Attribute.of("foo", String::class.java), "bar")
+            }
+        }.evaluate()
+
+        val consumer = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject) },
+            preApplyCode = { configureRepositoriesForTests() },
+            code = {
+                kotlin {
+                    iosArm64()
+                    sourceSets.commonMain.dependencies { implementation(project(":")) }
+                }
+            }
+        ).evaluate()
+
+        assertDoesNotThrow {
+            consumer.swiftExportMetadataProvider(consumer.swiftExportApiConfiguration()).get()
         }
     }
 }

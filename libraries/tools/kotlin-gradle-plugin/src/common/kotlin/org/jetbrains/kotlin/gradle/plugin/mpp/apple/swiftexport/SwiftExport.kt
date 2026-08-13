@@ -183,7 +183,8 @@ private fun Project.registerSwiftExportRun(
         task.parameters.swiftModules.set(
             collectModules(
                 configurationProvider,
-                exportedModules
+                exportedModules,
+                swiftExportMetadataProvider(exportConfiguration),
             )
         )
 

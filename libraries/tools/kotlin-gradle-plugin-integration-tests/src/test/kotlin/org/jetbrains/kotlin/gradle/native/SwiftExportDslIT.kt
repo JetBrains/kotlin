@@ -19,6 +19,8 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -26,6 +28,43 @@ import kotlin.test.assertNotNull
 @SwiftExportGradlePluginTests
 @OptIn(ExperimentalSwiftExportDsl::class)
 class SwiftExportDslIT : KGPBaseTest() {
+
+    /**
+     * The single top-level `public typealias <name> = ...` declaration in generated Swift, so that assertions compare
+     * the whole declaration and not a substring of the file.
+     */
+    private fun Path.typealiasOf(name: String): String? = readText()
+        .lineSequence()
+        .singleOrNull { it.startsWith("public typealias $name ") }
+        ?.trim()
+
+    /**
+     * Publishes a library that declares its Swift Export module name and package flatten rule.
+     */
+    private fun publishLibraryWithSwiftExportMetadata(
+        gradleVersion: GradleVersion,
+        projectName: String,
+        swiftModuleName: String,
+        packageToFlatten: String,
+        source: String,
+    ): PublishedProject = project("empty", gradleVersion) {
+        plugins {
+            kotlin("multiplatform")
+        }
+        settingsBuildScriptInjection {
+            settings.rootProject.name = projectName
+        }
+        buildScriptInjection {
+            project.applyMultiplatform {
+                iosArm64()
+                sourceSets.commonMain.get().compileSource(source)
+                with(swiftExport) {
+                    moduleName.set(swiftModuleName)
+                    flattenPackage.set(packageToFlatten)
+                }
+            }
+        }
+    }.publish()
 
     @DisplayName("embedSwiftExport executes normally when export module is defined in Swift Export DSL")
     @GradleTest
@@ -311,6 +350,102 @@ class SwiftExportDslIT : KGPBaseTest() {
 
                 val multiplatformLibrarySwiftModule = buildProductsDir.resolve("FooMultiplatformLibrary.swiftmodule")
                 assertDirectoryExists(multiplatformLibrarySwiftModule.toPath(), "FooMultiplatformLibrary.swiftmodule doesn't exist")
+            }
+        }
+    }
+
+    @DisplayName("Swift Export metadata published by a dependency is applied by its consumer")
+    @GradleTest
+    fun testSwiftExportDSLWithPublishedMetadata(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Exported as "Foo", not as "FooMetadataLibrary" derived from the coordinates
+        val metadataLibrary = publishLibraryWithSwiftExportMetadata(
+            gradleVersion = gradleVersion,
+            projectName = "metadataLibrary",
+            swiftModuleName = "Foo",
+            packageToFlatten = "org.bar.foo",
+            source = """
+                package org.bar.foo
+                class LibFoo
+            """.trimIndent(),
+        )
+
+        // The consumer overrides the published module name of this one
+        val overriddenLibrary = publishLibraryWithSwiftExportMetadata(
+            gradleVersion = gradleVersion,
+            projectName = "overriddenLibrary",
+            swiftModuleName = "PublishedName",
+            packageToFlatten = "org.bar.overridden",
+            source = """
+                package org.bar.overridden
+                class LibOverridden
+            """.trimIndent(),
+        )
+
+        project(
+            "empty",
+            gradleVersion,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            addPublishedProjectToRepositories(metadataLibrary)
+            addPublishedProjectToRepositories(overriddenLibrary)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    with(swiftExport) {
+                        export(metadataLibrary.rootCoordinate)
+                        export(overriddenLibrary.rootCoordinate) {
+                            moduleName.set("ConsumerName")
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                assertNotNull(buildProductsDir)
+
+                val exportedModules = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files")
+
+                // The published module name wins over the one derived from the coordinates
+                assertDirectoryExists(buildProductsDir.resolve("Foo.swiftmodule").toPath(), "Foo.swiftmodule doesn't exist")
+                assertFalse(
+                    buildProductsDir.resolve("FooMetadataLibrary.swiftmodule").exists(),
+                    "The dependency should not be exported under the name derived from its coordinates"
+                )
+
+                assertEquals(
+                    "public typealias LibFoo = ExportedKotlinPackages.org.bar.foo.LibFoo",
+                    exportedModules.resolve("Foo/Foo.swift").typealiasOf("LibFoo"),
+                    "The published package flatten rule should be applied to the exported dependency"
+                )
+
+                // Per property, what the consumer configures wins over the published metadata
+                assertDirectoryExists(
+                    buildProductsDir.resolve("ConsumerName.swiftmodule").toPath(),
+                    "ConsumerName.swiftmodule doesn't exist"
+                )
+                assertFalse(
+                    buildProductsDir.resolve("PublishedName.swiftmodule").exists(),
+                    "The module name configured by the consumer should win over the published one"
+                )
+                assertEquals(
+                    "public typealias LibOverridden = ExportedKotlinPackages.org.bar.overridden.LibOverridden",
+                    exportedModules.resolve("ConsumerName/ConsumerName.swift").typealiasOf("LibOverridden"),
+                    "The published package flatten rule should still be applied when only the module name is overridden"
+                )
             }
         }
     }

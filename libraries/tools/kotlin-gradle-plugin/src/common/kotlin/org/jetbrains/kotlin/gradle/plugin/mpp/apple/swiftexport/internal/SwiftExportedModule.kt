@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.provider.Provider
@@ -47,10 +48,11 @@ internal fun createFullyExportedSwiftExportedModule(
 internal fun createTransitiveSwiftExportedModule(
     moduleName: String,
     artifact: File,
+    flattenPackage: String? = null,
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
         moduleName,
-        null,
+        flattenPackage,
         artifact,
         false
     )
@@ -59,11 +61,19 @@ internal fun createTransitiveSwiftExportedModule(
 internal fun Project.collectModules(
     swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider.zip(exportedModulesProvider) { configuration, modules ->
-    configuration.swiftExportedModules(modules, project)
-}
+    publishedMetadataProvider: Provider<Map<ComponentIdentifier, SwiftExportMetadata>>,
+): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider
+    .zip(exportedModulesProvider) { configuration, modules -> configuration to modules }
+    .zip(publishedMetadataProvider) { (configuration, modules), publishedMetadata ->
+        configuration.swiftExportedModules(modules, publishedMetadata, project)
+    }
 
 private class ResolvedArtifactWithVersionIdentifier(
+    /**
+     * The component in the resolution graph, which is what publishes Swift Export metadata. For a multiplatform library
+     * that's the root component, while [artifact] comes from a platform-specific one.
+     */
+    val componentId: ComponentIdentifier,
     val moduleVersion: ModuleVersionIdentifier,
     val artifact: ResolvedArtifactResult
 ) : Serializable {
@@ -84,8 +94,9 @@ private class ResolvedArtifactWithVersionIdentifier(
 
 private fun LazyResolvedConfigurationWithArtifacts.swiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
+    publishedMetadata: Map<ComponentIdentifier, SwiftExportMetadata>,
     project: Project,
-) = project.findAndCreateSwiftExportedModules(exportedModules, filteredArtifacts())
+) = project.findAndCreateSwiftExportedModules(exportedModules, publishedMetadata, filteredArtifacts())
 
 private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(): Set<ResolvedArtifactWithVersionIdentifier> {
     return allResolvedDependencies.mapNotNullTo(mutableSetOf()) { dependency ->
@@ -96,7 +107,7 @@ private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(): Set<Reso
         val moduleVersion = dependency.selected.moduleVersion
 
         if (artifacts.isNotEmpty() && moduleVersion != null) {
-            ResolvedArtifactWithVersionIdentifier(moduleVersion, artifacts.single())
+            ResolvedArtifactWithVersionIdentifier(dependency.selected.id, moduleVersion, artifacts.single())
         } else {
             null
         }
@@ -108,6 +119,7 @@ private val File.isJavaJar get() = extension == "jar"
 
 private fun Project.findAndCreateSwiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
+    publishedMetadata: Map<ComponentIdentifier, SwiftExportMetadata>,
     resolvedArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
 ): List<SwiftExportedModule> {
     val result = mutableListOf<SwiftExportedModule>()
@@ -139,12 +151,17 @@ private fun Project.findAndCreateSwiftExportedModules(
         }
 
         if (matchingArtifact != null) {
+            val publishedModuleMetadata = publishedMetadata[matchingArtifact.componentId]
+            // takeIf, because Property.getOrNull() returns a platform type and elvis on it warns
+            val configuredModuleName = explicitModule.moduleName.takeIf { it.isPresent }?.get()
+            val configuredFlattenPackage = explicitModule.flattenPackage.takeIf { it.isPresent }?.get()
+            // The consumer's own configuration wins over the published metadata, which wins over the coordinates
             result.add(
                 createFullyExportedSwiftExportedModule(
-                    explicitModule.moduleName.orElse(
-                        normalizedAndValidatedModuleName(explicitModule.inheritedName)
-                    ).get(),
-                    explicitModule.flattenPackage.orNull,
+                    configuredModuleName
+                        ?: publishedModuleMetadata?.moduleName
+                        ?: normalizedAndValidatedModuleName(explicitModule.inheritedName),
+                    configuredFlattenPackage ?: publishedModuleMetadata?.flattenPackage,
                     matchingArtifact.artifact.file
                 )
             )
@@ -167,10 +184,13 @@ private fun Project.findAndCreateSwiftExportedModules(
     resolvedArtifacts
         .filterNot { artifact -> artifact in processedComponents }
         .forEach { artifact ->
+            val publishedModuleMetadata = publishedMetadata[artifact.componentId]
             result.add(
                 createTransitiveSwiftExportedModule(
-                    artifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
-                    artifact.artifact.file
+                    publishedModuleMetadata?.moduleName
+                        ?: artifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
+                    artifact.artifact.file,
+                    publishedModuleMetadata?.flattenPackage,
                 )
             )
         }

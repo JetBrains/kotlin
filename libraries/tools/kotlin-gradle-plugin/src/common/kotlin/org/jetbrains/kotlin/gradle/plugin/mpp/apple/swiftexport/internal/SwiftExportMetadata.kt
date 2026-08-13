@@ -11,22 +11,18 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_METADATA
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SerializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
-import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
@@ -71,50 +67,35 @@ internal fun Project.registerSwiftExportMetadataApiElements(
     }.get()
 }
 
-private fun Project.swiftExportMetadataResolvableConfiguration(): Configuration {
-    return project.configurations.maybeCreateResolvable("swiftExportMetadataClasspath") {
-        // 1. Select metadataApiElements graph
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KOTLIN_METADATA))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-    }
-}
-
 /**
- * Reads the Swift Export metadata published by dependencies, keyed by their component identifier.
+ * Reads the Swift Export metadata published by the dependencies of [configuration], keyed by the component that
+ * published it. Metadata is optional, so a dependency that doesn't publish it is absent from the result.
  *
- * Swift Export metadata is optional, so a dependency that doesn't publish it is simply absent from the result.
+ * Resolving from [configuration] itself covers exactly those dependencies whose artifacts it contributes to Swift
+ * Export. Note that a multiplatform library publishes metadata from its root component, while the artifact to export
+ * comes from a platform-specific one.
  */
-internal fun Project.swiftExportMetadataProvider(): Provider<Map<ComponentIdentifier, SwiftExportMetadata>> =
-    deserializeSwiftExportMetadataFromArtifactView(
-        // 1. Select metadataApiElements component graph
-        swiftExportMetadataResolvableConfiguration().incoming.artifactView { view ->
-            // 2. Reselect Swift Export metadata variant
-            view.withVariantReselection()
-            view.attributes { attributes ->
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFT_EXPORT_METADATA_USAGE))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+internal fun Project.swiftExportMetadataProvider(
+    configuration: Configuration,
+): Provider<Map<ComponentIdentifier, SwiftExportMetadata>> =
+    configuration.incoming.artifactView { view ->
+        // The graph resolved platform variants, so reselect the metadata one
+        view.withVariantReselection()
+        view.attributes { attributes ->
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(SWIFT_EXPORT_METADATA_USAGE))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        }
+        // Not every dependency publishes metadata
+        view.lenient(true)
+    }.artifacts.resolvedArtifacts.map { artifacts ->
+        artifacts
+            .filter {
+                // Filter out variants that didn't specify Usage and resolved by accident: KT-85517
+                it.variant.attributes.getAttributeSafely(Usage.USAGE_ATTRIBUTE) == SWIFT_EXPORT_METADATA_USAGE
             }
-            // Swift Export metadata is optional, so select it only if it exists
-            view.lenient(true)
-        }
-    )
-
-private fun deserializeSwiftExportMetadataFromArtifactView(
-    swiftExportMetadataClasspath: ArtifactView,
-): Provider<Map<ComponentIdentifier, SwiftExportMetadata>> {
-    return swiftExportMetadataClasspath
-        .artifacts.resolvedArtifacts
-        .map { artifacts ->
-            artifacts
-                .filter {
-                    // Filter out variants that didn't specify Usage and resolved by accident: KT-85517
-                    it.variant.attributes.getAttributeSafely(Usage.USAGE_ATTRIBUTE) == SWIFT_EXPORT_METADATA_USAGE
+            .associate { resolvedArtifact ->
+                resolvedArtifact.id.componentIdentifier to resolvedArtifact.file.inputStream().use {
+                    deserializeSwiftExportMetadata(it)
                 }
-                .associate { resolvedArtifact ->
-                    resolvedArtifact.id.componentIdentifier to resolvedArtifact.file.inputStream().use {
-                        deserializeSwiftExportMetadata(it)
-                    }
-                }
-        }
-}
+            }
+    }
