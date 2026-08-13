@@ -99,6 +99,9 @@ fun Project.configureJavaCompile() {
         tasks.withType<JavaCompile>().configureEach {
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
+            // `--release 8` makes a modern javac report the target as obsolete on every single compilation,
+            // which `-Werror` below would turn into a build failure.
+            options.compilerArgs.add("-Xlint:-options")
             if (!kotlinBuildProperties.disableWerror) {
                 options.compilerArgs.add("-Werror")
             }

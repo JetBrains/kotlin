@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
 }
 
-kotlin.jvmToolchain(11)
+configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 dependencies {
     embedded(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }

@@ -1,7 +1,6 @@
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("common-configuration")
@@ -16,17 +15,16 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
 }
 
-configureJvmToolchain(JdkMajorVersion.JDK_21_0)
-
-java {
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+// `getJdkClassesClassLoader` calls the JDK 9+ `ClassLoader.getPlatformClassLoader()` behind a runtime
+// version check, so the API must not be restricted to the Java 8 target.
+configureJvmToolchain(
+    JdkMajorVersion.JDK_21_0,
+    target = JdkMajorVersion.JDK_1_8,
+    restrictApiToTarget = false,
+)
 
 kotlin {
     explicitApi()
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
-    }
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     compilerVersion.set(libs.versions.kotlin.`for`.gradle.plugins.compilation)
 }
