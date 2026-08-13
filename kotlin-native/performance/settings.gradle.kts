@@ -16,7 +16,6 @@ pluginManagement {
 plugins {
     id("kotlin-bootstrap")
     id("jvm-toolchain-provisioning")
-    id("kotlin-daemon-config")
     id("cache-redirector")
 }
 
