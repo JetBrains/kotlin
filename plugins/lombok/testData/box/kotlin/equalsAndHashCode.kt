@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: ANY
+
 import lombok.EqualsAndHashCode
 
 @EqualsAndHashCode
@@ -53,6 +55,11 @@ class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 @EqualsAndHashCode
 class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
+}
+
+@EqualsAndHashCode
+enum class Color(val hex: String) {
+    RED("#FF0000")
 }
 
 fun box(): String {
@@ -123,6 +130,8 @@ fun box(): String {
     class LocalClass(val x: Int)
     assertEquals(true, LocalClass(7) == LocalClass(7))
     assertEquals(false, LocalClass(7) == LocalClass(8))
+
+    val a = Color.RED // TODO: @EqualsAndHashCode is no-op for enums (a checker should report ANNOTATION_HAS_NO_EFFECT warning), KT-88507
 
     return "OK"
 }

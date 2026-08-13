@@ -18,6 +18,11 @@ typealias TA = String
 
 val onAnonymous = <!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!> object {}
 
+@EqualsAndHashCode // TODO: it should be ANNOTATION_HAS_NO_EFFECT, KT-88507
+enum class Color(val hex: String) {
+    RED("#FF0000")
+}
+
 // Both equals and hashCode user-defined → warning, no generation.
 <!EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST!>@EqualsAndHashCode<!>
 class WithBothExisting(val x: Int) {
