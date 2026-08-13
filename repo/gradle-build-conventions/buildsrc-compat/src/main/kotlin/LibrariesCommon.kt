@@ -43,6 +43,7 @@ fun Project.configureJava9Compilation(
 
         targetCompatibility = JavaVersion.VERSION_1_9.toString()
         sourceCompatibility = JavaVersion.VERSION_1_9.toString()
+        options.release.set(JdkMajorVersion.JDK_9_0.majorVersion)
         configureTaskToolchain(JdkMajorVersion.JDK_17_0)
 
         // module-info.java should be in java9 source set by convention
@@ -71,8 +72,7 @@ private class Java9AdditionalArgumentsProvider(
 ) : CommandLineArgumentProvider {
     override fun asArguments(): Iterable<String> = listOf(
         "--module-path", modulePath.asPath,
-        "--patch-module", "$moduleName=${moduleFiles.asPath}",
-        "--release", "9"
+        "--patch-module", "$moduleName=${moduleFiles.asPath}"
     )
 }
 
