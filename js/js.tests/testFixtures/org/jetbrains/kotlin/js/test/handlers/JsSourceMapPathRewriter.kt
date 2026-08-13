@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
@@ -37,11 +34,8 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                     File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + ".js.map")
                 if (!sourceMapFile.exists()) continue
 
-                val dependencies = testServices.klibEnvironmentConfigurator.getDependencyModulesFor(module, testServices)
                 SourceMap.replaceSources(sourceMapFile) { path ->
-                    tryToMapTestFile(allTestFiles, path)
-                        ?: tryToMapLibrarySourceFile(dependencies, path)
-                        ?: path
+                    tryToMapTestFile(allTestFiles, path) ?: path
                 }
             }
         }
@@ -52,29 +46,5 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
             ?: allTestFiles.find { "/${it.name}" == sourceMapPath }
             ?: return null
         return testFile.originalFile.absolutePath
-    }
-
-    /**
-     * Some heuristics to find the library source file that this [sourceMapPath] should point to.
-     * May not work in 100% of cases, but should be good enough for our tests.
-     */
-    private fun tryToMapLibrarySourceFile(dependencies: Iterable<ModuleDescriptor>, sourceMapPath: String): String? {
-        for (dependency in dependencies) {
-            val libraryFile = try {
-                File(testServices.libraryProvider.getPathByDescriptor(dependency))
-            } catch (e: NoSuchElementException) {
-                continue
-            }
-
-            // find an embracing `build` folder from either
-            // - libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/main
-            // - libraries/stdlib/build/libs/kotlin-stdlib-js-<version>.klib
-            val buildFolder = generateSequence(libraryFile) { it.parentFile }
-                .firstOrNull { it.name == "build" }
-            val sourceRoot: File = buildFolder?.parentFile ?: continue
-
-            return sourceRoot.absolutePath
-        }
-        return null
     }
 }
