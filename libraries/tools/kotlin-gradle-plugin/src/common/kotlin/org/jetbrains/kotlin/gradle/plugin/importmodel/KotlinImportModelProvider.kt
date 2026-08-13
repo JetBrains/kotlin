@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
@@ -47,6 +48,15 @@ internal class KotlinImportModelProvider(
             isTest = compilation.name == KotlinCompilation.TEST_COMPILATION_NAME
             sourceRoots += sourceRoots(compilation)
             outputs += output(compileTask, compileAction)
+        }
+    }
+
+    fun compilerArguments(id: CompilationUnitId): CompilerArgumentsModel {
+        val compilation = compilation(id)
+        return compilerArgumentsModel {
+            this.id = KotlinImportModelIds.COMPILER_ARGUMENTS
+            parameters = CompilerArgumentsModelKt.parameters { compilationUnitId = id }
+            arguments += IdeCompilerArgumentsResolver.instance(project).resolveCompilerArguments(compilation).orEmpty()
         }
     }
 

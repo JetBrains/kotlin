@@ -35,6 +35,21 @@ class KotlinModelBuilderTest {
     }
 
     @Test
+    fun `returns compiler arguments for the requested compilation`() {
+        val project = projectWithJvm()
+        val compilationId = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList.first()
+        val result = builder.buildResult(
+            KotlinImportModelIds.COMPILER_ARGUMENTS,
+            project,
+            CompilerArgumentsModelKt.parameters { compilationUnitId = compilationId }.toByteArray(),
+        )
+        val model = result.model.unpack(CompilerArgumentsModel::class.java)
+
+        assertEquals(KotlinImportModelIds.COMPILER_ARGUMENTS, model.id)
+        assertEquals(compilationId, model.parameters.compilationUnitId)
+    }
+
+    @Test
     fun `reports invalid import model requests`() {
         val project = projectWithJvm()
         assertEquals(
@@ -44,6 +59,10 @@ class KotlinModelBuilderTest {
         assertEquals(
             Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
             builder.buildResult(KotlinImportModelIds.COMPILATION_UNIT, project).error.errorType,
+        )
+        assertEquals(
+            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
+            builder.buildResult(KotlinImportModelIds.COMPILER_ARGUMENTS, project).error.errorType,
         )
     }
 

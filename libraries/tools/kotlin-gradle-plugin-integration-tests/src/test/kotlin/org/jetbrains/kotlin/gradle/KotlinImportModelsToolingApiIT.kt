@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.importmodels.proto.action as actionModel
 import org.jetbrains.kotlin.importmodels.proto.ActionKt.gradleTask as gradleTaskModel
 import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
+import java.io.Serializable
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -35,20 +36,29 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             ),
         ) {
             buildScriptInjection {
+                kotlinJvm.compilerOptions {
+                    optIn.add("my.custom.OptInAnnotation")
+                    freeCompilerArgs.add("-Xdebug")
+                }
                 val generateImportModelSources = project.tasks.register("generateImportModelSources") {
                     it.outputs.dir(project.layout.buildDirectory.dir("generated/import-models"))
                 }
                 kotlinJvm.sourceSets.getByName("main").generatedKotlin.srcDir(generateImportModelSources)
             }
-            val first = runBuildAction(KotlinImportModelsBuildAction()).map(Result::parseFrom)
-            val second = runBuildAction(KotlinImportModelsBuildAction()).map(Result::parseFrom)
-            val base = first[0].model.unpack(BaseModel::class.java)
-            val project = first[1].model.unpack(ProjectModel::class.java)
-            val units = first.drop(2).map { it.model.unpack(CompilationUnitModel::class.java) }
+            val first = runBuildAction(KotlinImportModelsBuildAction()).toModels()
+            val second = runBuildAction(KotlinImportModelsBuildAction()).toModels()
+            val base = first.base.model.unpack(BaseModel::class.java)
+            val project = first.project.model.unpack(ProjectModel::class.java)
+            val units = first.compilationUnits.map { it.model.unpack(CompilationUnitModel::class.java) }
+            val compilerArguments = first.compilerArguments.map { it.model.unpack(CompilerArgumentsModel::class.java) }
 
             assertEquals(KotlinImportModelIds.BASE, base.id)
             assertEquals(listOf("main", "test"), units.map { it.name })
             assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
+            assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
+            assertTrue(compilerArguments.all { it.id == KotlinImportModelIds.COMPILER_ARGUMENTS })
+            assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
+            assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
             assertEquals(CompilationUnitModel.Platform.PLATFORM_JVM, units.first().platform)
             assertFalse(units.first().isTest)
             assertEquals(
@@ -76,7 +86,7 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 sourceRoots(sourceRoot("src/test/java"), sourceRoot("src/test/kotlin")),
                 units.last().sourceRootsList,
             )
-            assertEquals(project.compilationUnitIdsList, second[1].model.unpack(ProjectModel::class.java).compilationUnitIdsList)
+            assertEquals(project.compilationUnitIdsList, second.project.model.unpack(ProjectModel::class.java).compilationUnitIdsList)
         }
     }
 }
@@ -102,8 +112,8 @@ private fun output(path: String, vararg producingTaskPaths: String): Compilation
     producingActions += producingTaskPaths.map(::gradleAction)
 }
 
-private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<List<ByteArray>> {
-    override fun execute(controller: BuildController): List<ByteArray> {
+private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<KotlinImportModelsBuildActionResult> {
+    override fun execute(controller: BuildController): KotlinImportModelsBuildActionResult {
         fun request(modelId: String, parameters: ByteArray? = null): ByteArray = controller.getModel(
             KotlinGradleModel::class.java,
             ModelRequest::class.java,
@@ -115,11 +125,39 @@ private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<Lis
         val base = request(KotlinImportModelIds.BASE)
         val projectInformation = request(KotlinImportModelIds.PROJECT_INFORMATION)
         val project = Result.parseFrom(projectInformation).model.unpack(ProjectModel::class.java)
-        return listOf(base, projectInformation) + project.compilationUnitIdsList.map { compilationUnitId ->
+        val compilationUnits = project.compilationUnitIdsList.map { compilationUnitId ->
             request(
                 KotlinImportModelIds.COMPILATION_UNIT,
                 CompilationUnitModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
             )
         }
+        val compilerArguments = project.compilationUnitIdsList.map { compilationUnitId ->
+            request(
+                KotlinImportModelIds.COMPILER_ARGUMENTS,
+                CompilerArgumentsModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
+            )
+        }
+        return KotlinImportModelsBuildActionResult(base, projectInformation, compilationUnits, compilerArguments)
     }
 }
+
+private data class KotlinImportModelsBuildActionResult(
+    val base: ByteArray,
+    val project: ByteArray,
+    val compilationUnits: List<ByteArray>,
+    val compilerArguments: List<ByteArray>,
+) : Serializable
+
+private data class KotlinImportModelsModels(
+    val base: Result,
+    val project: Result,
+    val compilationUnits: List<Result>,
+    val compilerArguments: List<Result>,
+)
+
+private fun KotlinImportModelsBuildActionResult.toModels(): KotlinImportModelsModels = KotlinImportModelsModels(
+    base = Result.parseFrom(base),
+    project = Result.parseFrom(project),
+    compilationUnits = compilationUnits.map(Result::parseFrom),
+    compilerArguments = compilerArguments.map(Result::parseFrom),
+)

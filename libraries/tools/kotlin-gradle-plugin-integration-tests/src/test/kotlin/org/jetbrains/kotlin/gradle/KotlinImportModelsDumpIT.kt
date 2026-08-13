@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.importmodels.proto.BaseModel
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt
+import org.jetbrains.kotlin.importmodels.proto.CompilerArgumentsModel
 import org.jetbrains.kotlin.importmodels.proto.ProjectModel
 import org.jetbrains.kotlin.importmodels.proto.SourceRoot
 import org.jetbrains.kotlin.importmodels.proto.Action
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @JvmGradlePluginTests
 class KotlinImportModelsDumpIT : KGPBaseTest() {
@@ -38,6 +40,10 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
             ),
         ) {
             buildScriptInjection {
+                kotlinJvm.compilerOptions {
+                    optIn.add("my.custom.OptInAnnotation")
+                    freeCompilerArgs.add("-Xdebug")
+                }
                 val generateImportModelSources = project.tasks.register("generateImportModelSources") {
                     it.outputs.dir(project.layout.buildDirectory.dir("generated/import-models"))
                 }
@@ -60,9 +66,16 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         assertEquals(KotlinImportModelIds.BASE, parseBase(root.resolve("base.json")).id)
         val project = parseProject(root.resolve("project.json"))
         val units = listOf("main", "test").map { name -> parseCompilation(root.resolve("compilation-units/$name.json")) }
+        val compilerArguments = listOf("main", "test").map { name ->
+            parseCompilerArguments(root.resolve("compiler-arguments/$name.json"))
+        }
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
         assertEquals(listOf("main", "test"), units.map { it.name })
         assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
+        assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
+        assertEquals(listOf(KotlinImportModelIds.COMPILER_ARGUMENTS, KotlinImportModelIds.COMPILER_ARGUMENTS), compilerArguments.map { it.id })
+        assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
+        assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
         assertEquals(
             listOf(
                 sourceRoot(
@@ -116,3 +129,6 @@ private fun parseProject(file: File): ProjectModel = ProjectModel.newBuilder().a
 
 private fun parseCompilation(file: File): CompilationUnitModel =
     CompilationUnitModel.newBuilder().also { JsonFormat.parser().merge(file.readText(), it) }.build()
+
+private fun parseCompilerArguments(file: File): CompilerArgumentsModel =
+    CompilerArgumentsModel.newBuilder().also { JsonFormat.parser().merge(file.readText(), it) }.build()

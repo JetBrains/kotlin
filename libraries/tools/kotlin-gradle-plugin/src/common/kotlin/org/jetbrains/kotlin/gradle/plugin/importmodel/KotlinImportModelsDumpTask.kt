@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.importmodels.internal.KotlinImportModelSerialization
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
+import org.jetbrains.kotlin.importmodels.proto.CompilerArgumentsModel
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
@@ -43,6 +44,11 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
     @get:Inject
     abstract val fileSystem: FileSystemOperations
 
+    private data class CompilationModels(
+        val compilationUnit: CompilationUnitModel,
+        val compilerArguments: CompilerArgumentsModel,
+    )
+
     @TaskAction
     fun dumpModels() {
         val outputRoot = outputDirectory.get().asFile.toPath()
@@ -50,17 +56,24 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
 
         val base = produce("base") { modelProvider.baseInformation() }
         val projectModel = produce("projectInformation") { modelProvider.projectInformation() }
-        val compilationUnits = projectModel.compilationUnitIdsList.map { id ->
-            produce("compilationUnit[${id.value}]") { modelProvider.compilationUnit(id) }
+        val compilationModels = projectModel.compilationUnitIdsList.map { id ->
+            val compilationUnit = produce("compilationUnit[${id.value}]") { modelProvider.compilationUnit(id) }
+            val compilerArguments = produce("compilerArguments[${id.value}]") { modelProvider.compilerArguments(id) }
+            CompilationModels(compilationUnit, compilerArguments)
         }
 
         write("base", outputRoot.resolve("base.json"), KotlinImportModelSerialization.toJson(base))
         write("projectInformation", outputRoot.resolve("project.json"), KotlinImportModelSerialization.toJson(projectModel))
-        compilationUnits.forEach { model ->
+        compilationModels.forEach { (compilationUnit, compilerArguments) ->
             write(
-                "compilationUnit[${model.parameters.compilationUnitId.value}]",
-                outputRoot.resolve("compilation-units/${model.name}.json"),
-                KotlinImportModelSerialization.toJson(model),
+                "compilationUnit[${compilationUnit.parameters.compilationUnitId.value}]",
+                outputRoot.resolve("compilation-units/${compilationUnit.name}.json"),
+                KotlinImportModelSerialization.toJson(compilationUnit),
+            )
+            write(
+                "compilerArguments[${compilerArguments.parameters.compilationUnitId.value}]",
+                outputRoot.resolve("compiler-arguments/${compilationUnit.name}.json"),
+                KotlinImportModelSerialization.toJson(compilerArguments),
             )
         }
     }

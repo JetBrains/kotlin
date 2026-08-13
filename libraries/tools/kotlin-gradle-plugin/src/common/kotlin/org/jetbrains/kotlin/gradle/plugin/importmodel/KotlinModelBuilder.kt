@@ -48,6 +48,7 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
                 KotlinImportModelSerialization.modelResult(provider.projectInformation())
             }
             KotlinImportModelIds.COMPILATION_UNIT -> compilationUnitModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
+            KotlinImportModelIds.COMPILER_ARGUMENTS -> compilerArgumentsModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
             else -> result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_ID, "Unknown Kotlin import model '${parameter.kotlinModelId}'")
         }
     } catch (failure: Exception) {
@@ -61,6 +62,11 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
     private fun compilationUnitModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel =
         compilationScopedModel(parameters, provider, KotlinImportModelSerialization::parseCompilationUnitId) { compilationUnitId ->
             KotlinImportModelSerialization.modelResult(provider.compilationUnit(compilationUnitId))
+        }
+
+    private fun compilerArgumentsModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel =
+        compilationScopedModel(parameters, provider, KotlinImportModelSerialization::parseCompilerArgumentsCompilationUnitId) { compilationUnitId ->
+            KotlinImportModelSerialization.modelResult(provider.compilerArguments(compilationUnitId))
         }
 
     private fun compilationScopedModel(

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class KotlinImportModelProviderTest {
     @Test
@@ -59,6 +60,27 @@ class KotlinImportModelProviderTest {
             true,
             listOf(output("build/classes/kotlin/test", ":compileTestKotlin")),
         )
+    }
+
+    @Test
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun `produces effective compiler arguments for a JVM compilation`() {
+        val project = buildProjectWithJvm {
+            kotlinJvmExtension.compilerOptions {
+                optIn.add("my.custom.OptInAnnotation")
+                freeCompilerArgs.add("-Xdebug")
+            }
+        }
+        project.evaluate()
+        val provider = KotlinImportModelProvider(project)
+        val mainId = provider.projectInformation().compilationUnitIdsList.first()
+
+        val model = provider.compilerArguments(mainId)
+
+        assertEquals(KotlinImportModelIds.COMPILER_ARGUMENTS, model.id)
+        assertEquals(mainId, model.parameters.compilationUnitId)
+        assertTrue("-Xdebug" in model.argumentsList)
+        assertTrue("-opt-in my.custom.OptInAnnotation" in model.argumentsList.joinToString(" "))
     }
 
     private fun assertCompilationUnit(
