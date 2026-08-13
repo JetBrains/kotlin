@@ -9,19 +9,38 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.EmptySequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.ProducerStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceOfStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class SequenceData(
     val sequenceSource: SequenceSource,
-)
+    val transformers: List<SequenceTransformer> = emptyList(),
+    val isMovable: Boolean = true,
+    // avoid exponential blowup by detecting copies of sequence variables
+    val containsVariableCopies: Boolean = sequenceSource.containsVariableCopies(),
+    val isVariableCopy: Boolean = false,
+) {
+    fun asVariableCopy(): SequenceData =
+        SequenceData(sequenceSource, transformers, isMovable, containsVariableCopies, isVariableCopy = true)
+}
 
 // sequenceSource is what the sequence was created from, to be substituted if the loop is to be fused
 internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
 
     object Empty : SequenceSource()
+
+    internal fun containsVariableCopies(): Boolean = when (this) {
+        is SequenceOf -> elements.any { it.containsFusedVariableCopy() }
+        Empty -> false
+    }
 
     internal fun createProducerStrategy(
         builder: IrBuilderWithScope,
@@ -30,4 +49,19 @@ internal sealed class SequenceSource {
         is SequenceOf -> SequenceOfStrategy(this, context)
         is Empty -> EmptySequenceStrategy
     }
+}
+
+// marks the fused code of a sequence copied from a sequence variable; copied along with the code
+internal var IrElement.isFusedVariableCopy: Boolean by irFlag(copyByDefault = true)
+
+// the consumers are fused bottom-up, so the reads of sequence variables in an expression are already replaced with their fused copies
+internal fun IrElement.containsFusedVariableCopy(): Boolean {
+    var result = false
+    acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            if (element.isFusedVariableCopy) result = true
+            if (!result) element.acceptChildrenVoid(this)
+        }
+    })
+    return result
 }

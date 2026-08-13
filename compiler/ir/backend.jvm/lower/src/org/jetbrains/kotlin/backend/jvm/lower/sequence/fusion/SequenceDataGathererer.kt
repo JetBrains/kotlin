@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -35,6 +36,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal const val KOTLIN_SEQUENCES_PREFIX = "kotlin.sequences.SequencesKt."
 private const val SEQUENCE_OF = KOTLIN_SEQUENCES_PREFIX + "sequenceOf"
+internal const val MAP = KOTLIN_SEQUENCES_PREFIX + "map"
+internal const val MAP_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexed"
+internal const val MAP_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "mapNotNull"
+internal const val MAP_NOT_NULL_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexedNotNull"
 
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
 
@@ -134,7 +139,17 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (declaration.isVar) return
         if (!isSequenceType(context, declaration)) return
         val expressionSequenceData = declaration.initializer?.sequenceDataOfExpression
-        declaration.symbol.owner.sequenceDataOfVariable = expressionSequenceData
+        val readCounter = declaration.readCounter ?: 0
+        declaration.symbol.owner.sequenceDataOfVariable = if (expressionSequenceData?.isMovable == false ||
+            // the elements and the lambdas are copied to every place of use, which grows exponentially when they contain copies
+            // e.g. `val b = sequence { yieldAll(a); yieldAll(a) }; val c = sequence { yieldAll(b); yieldAll(b) }; ...`;
+            // we cut the chain at copying variables which already contain copies
+            readCounter > 1 && expressionSequenceData?.containsVariableCopies == true
+        ) {
+            null
+        } else {
+            expressionSequenceData
+        }
     }
 
     // assigns sequence data of the variable to the corresponding expression
@@ -144,7 +159,40 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isSequenceType(context, expression)) return
         val variableDeclaration = expression.symbol.owner
         variableDeclaration.accept(this, null)
-        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable
+        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable?.asVariableCopy()
+    }
+
+    private fun IrCall.receiverSequenceData(): SequenceData? =
+        arguments.firstOrNull()?.sequenceDataOfExpression
+
+    private fun IrCall.appendTransformer(
+        receiverData: SequenceData,
+        transformer: SequenceTransformer,
+        copiedExpression: IrExpression?,
+        isMovable: Boolean = true,
+    ) {
+        sequenceDataOfExpression = SequenceData(
+            receiverData.sequenceSource,
+            receiverData.transformers + transformer,
+            receiverData.isMovable && isMovable,
+            receiverData.containsVariableCopies || copiedExpression?.containsFusedVariableCopy() == true,
+            receiverData.isVariableCopy,
+        )
+    }
+
+    private fun matchWithMap(
+        expression: IrCall,
+        isIndexed: Boolean,
+        isNotNull: Boolean,
+    ) {
+        val receiverData = expression.receiverSequenceData() ?: return
+        val fnArg = getPredicateArgument(expression, 1, isEvaluatedOnce = true) ?: return
+        expression.appendTransformer(
+            receiverData,
+            SequenceTransformer.Map(fnArg, isIndexed, isNotNull),
+            copiedExpression = fnArg,
+            isMovable = fnArg.isFunctionExpressionSafeToReevaluate(),
+        )
     }
 
 
@@ -175,6 +223,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isSequenceType(context, expression)) return
         val functionName = expression.symbol.owner.fqNameWhenAvailable?.asString()
         when (functionName) {
+            MAP -> matchWithMap(expression, isIndexed = false, isNotNull = false)
+            MAP_INDEXED -> matchWithMap(expression, isIndexed = true, isNotNull = false)
+            MAP_NOT_NULL -> matchWithMap(expression, isIndexed = false, isNotNull = true)
+            MAP_NOT_NULL_INDEXED -> matchWithMap(expression, isIndexed = true, isNotNull = true)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
         }
     }

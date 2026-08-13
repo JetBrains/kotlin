@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.consumers.*
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.TransformerStrategy
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -31,15 +32,26 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -86,12 +98,50 @@ internal data class SequenceReplacement(
 
 class SequenceFusionLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
+        val reuseMarker = ReusedSequenceMarker(context)
+        irFile.acceptChildrenVoid(reuseMarker)
         val transformer = SequenceFusionTransformer(context)
         irFile.transformChildrenVoid(transformer)
     }
 }
 
 internal typealias IrBuilderWithParent = Pair<IrBuilderWithScope, IrDeclarationParent>
+
+internal fun IrBuilderWithScope.callRichFunctionReference(
+    ref: IrRichFunctionReference,
+    parent: IrDeclarationParent,
+    vararg args: IrExpression,
+): IrExpression {
+    val freshRef = ref.deepCopyWithSymbols(parent)
+    val functionType = freshRef.type as? IrSimpleType
+    val returnType = functionType?.arguments?.lastOrNull()?.typeOrNull ?: freshRef.overriddenFunctionSymbol.owner.returnType
+    return irCall(freshRef.overriddenFunctionSymbol, returnType).apply {
+        arguments.assignFrom(listOf(freshRef) + args)
+    }
+}
+
+internal fun IrBuilderWithScope.callPredicate(
+    predicate: IrExpression,
+    parent: IrDeclarationParent,
+    vararg args: IrExpression,
+): IrExpression {
+    return when (predicate) {
+        is IrRichFunctionReference -> callRichFunctionReference(predicate, parent, *args)
+        else -> {
+            val invokeFunction = predicate.type.classOrNull?.owner?.declarations
+                ?.filterIsInstance<IrSimpleFunction>()
+                ?.firstOrNull { it.name.asString() == "invoke" && it.parameters.size == args.size + 1 }
+                ?: error("Didn't find invoke for the predicate: ${predicate.dump()}")
+            val returnType = (predicate.type as? IrSimpleType)?.arguments?.lastOrNull()?.typeOrNull ?: invokeFunction.returnType
+            irCall(invokeFunction.symbol, returnType).apply {
+                dispatchReceiver = predicate.deepCopyWithSymbols(parent)
+                args.forEachIndexed { index, arg ->
+                    arguments[index + 1] = arg.deepCopyWithSymbols(parent)
+                }
+            }
+        }
+    }
+}
 
 internal fun IrBuilderWithScope.increment(incrementVariable: IrVariable, context: JvmBackendContext): IrExpression {
     val exception = irCallConstructor(context.symbols.arithmeticExceptionCtorString, emptyList()).apply {
@@ -147,6 +197,36 @@ internal fun IrExpression.replaceForLoopNextCall(replacement: IrExpression): IrE
 private fun lookupForLoopVariable(loopBody: IrBlock): IrVariable? = loopBody.statements.filterIsInstance<IrVariable>()
     .singleOrNull { it.initializer?.findForLoopNextCall() != null }
 
+internal fun getPredicateArgument(expression: IrCall, argument: Int, isEvaluatedOnce: Boolean = false): IrExpression? {
+    val predicate = expression.arguments.getOrNull(argument) ?: return null
+    // unless it is evaluated once before the iteration (see `evaluateFunctionArgumentOnce`), the predicate is copied to every place
+    if (!isEvaluatedOnce && !predicate.isFunctionExpressionSafeToReevaluate()) return null
+    if (predicate !is IrRichFunctionReference && !predicate.type.isFunctionOrKFunction()) return null
+    return predicate
+}
+
+internal fun IrExpression.isFunctionExpressionSafeToReevaluate(): Boolean = when (this) {
+    is IrRichFunctionReference -> boundValues.all { it.isStableRead() }
+    is IrGetValue -> (symbol.owner as? IrVariable)?.isVar != true
+    is IrTypeOperatorCall -> operator == IrTypeOperator.IMPLICIT_CAST && argument.isFunctionExpressionSafeToReevaluate()
+    else -> false
+}
+
+internal fun IrBuilderWithParent.evaluateFunctionArgumentOnce(function: IrExpression): Pair<IrVariable?, IrExpression> {
+    if (function.isFunctionExpressionSafeToReevaluate()) return null to function
+    val [builder, parent] = this
+    val variable = builder.scope.createTemporaryVariable(function.deepCopyWithSymbols(parent), nameHint = "functionArgument")
+    return variable to builder.irGet(variable)
+}
+
+private fun IrExpression.isStableRead(): Boolean = when (this) {
+    is IrConst -> true
+    is IrGetValue -> (symbol.owner as? IrVariable)?.isVar != true
+    is IrGetField -> symbol.owner.isFinal && receiver?.isStableRead() != false
+    is IrTypeOperatorCall -> operator == IrTypeOperator.IMPLICIT_CAST && argument.isStableRead()
+    else -> false
+}
+
 internal data class LoopData(
     val loop: IrLoop?,
     val loopVariable: IrVariable,
@@ -191,8 +271,27 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         builderWithParent: IrBuilderWithParent,
     ): IrExpression? {
         // null if the consumer cannot be fused with its arguments
-        val sequenceReplacement = consumerStrategy.createSequenceReplacement() ?: return null
+        val consumerReplacement = consumerStrategy.createSequenceReplacement() ?: return null
+        val sequenceReplacement = addTransformers(consumerReplacement, sequenceData, builderWithParent, context)
         val producerStrategy = sequenceData.sequenceSource.createProducerStrategy(builderWithParent.first, context)
         return producerStrategy.fuseConsumer(builderWithParent, sequenceData, sequenceReplacement)
+            ?.apply { if (sequenceData.isVariableCopy) isFusedVariableCopy = true }
     }
+}
+
+internal fun addTransformers(
+    consumerReplacement: SequenceReplacement,
+    sequenceData: SequenceData,
+    builderWithParent: IrBuilderWithParent,
+    context: JvmBackendContext
+): SequenceReplacement {
+    var sequenceReplacement = consumerReplacement
+    // each transformer wraps the body built for the transformers and the consumer after it,
+    // so they are applied from the consumer back to the source
+    for (transformer in sequenceData.transformers.reversed()) {
+        val transformerStrategy = TransformerStrategy.create(transformer, builderWithParent, context)
+        sequenceReplacement =
+            transformerStrategy.addTransformerToBodyBuilder(sequenceReplacement)
+    }
+    return sequenceReplacement
 }
