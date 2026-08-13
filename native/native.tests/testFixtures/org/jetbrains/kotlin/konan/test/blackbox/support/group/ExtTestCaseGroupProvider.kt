@@ -447,7 +447,7 @@ private class ExtTestDataFile(
         // LLDB changes whitespace formatting across versions.
         // Let's squash tab and space sequences to a single space while leaving newlines.
         val outputDataSanitizer: (String) -> String = when (testKind) {
-            TestKind.STANDALONE_LLDB -> ::normalizeLldbWhitespacegs
+            TestKind.STANDALONE_LLDB -> ::normalizeLldbWhitespace
             else -> { s -> s }
         }
 
