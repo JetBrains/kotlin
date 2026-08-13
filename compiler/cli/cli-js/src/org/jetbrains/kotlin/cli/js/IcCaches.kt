@@ -111,7 +111,7 @@ internal fun prepareIcCaches(
         }
     }
 
-    return IcCachesArtifacts(artifacts)
+    return artifacts
 }
 
-class IcCachesArtifacts(val artifacts: List<ModuleArtifact>)
+typealias IcCachesArtifacts = List<ModuleArtifact>
