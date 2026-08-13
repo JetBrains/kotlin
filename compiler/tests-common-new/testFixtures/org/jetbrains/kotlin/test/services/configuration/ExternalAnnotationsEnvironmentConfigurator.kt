@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.useJavaDirect
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -30,6 +31,15 @@ import org.jetbrains.kotlin.test.services.sourceFileProvider
  * @see org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
  */
 class ExternalAnnotationsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    /**
+     * External annotations reach the Java model only through [ExternalAnnotationsManager] over PSI; java-direct
+     * has no counterpart, so a module with `annotations.xml` needs the PSI Java view.
+     */
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (module.files.none { it.name == ExternalAnnotationsManager.ANNOTATIONS_XML }) return
+        configuration.useJavaDirect = false
+    }
+
     override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         var hasAnnotationFile = false
         for (file in module.files) {
