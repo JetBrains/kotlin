@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.WasmCompilationSet
@@ -23,15 +24,18 @@ import org.jetbrains.kotlin.wasm.test.tools.WASI_UNIT_TESTS_ENTRY_EXPORT
 import java.io.File
 
 /**
- * The `test.mjs` launcher script for running the WASI unit-test runner (`startUnitTests()`):
- * imports the compiled module and starts unit tests, exiting with code 1 on any uncaught exception.
- * WasmEdge and Wasmtime bypass this script and invoke one export of the artifact directly, chosen by
- * [wasiStandaloneEntryExport] (see [WasmVM.WasmEdge] and [WasmVM.Wasmtime]).
+ * The `test.mjs` launcher script for running WASI tests under Node.js, exiting with code 1 on any uncaught
+ * exception (e.g. a hard VM trap). WasmEdge and Wasmtime bypass this script and invoke one export of the artifact
+ * directly, chosen by [wasiStandaloneEntryExport] (see [WasmVM.WasmEdge] and [WasmVM.Wasmtime]).
+ *
+ * [callGroupedTestsDriver] must come from what the stage-2 facade generated, not from probing the exports:
+ * `wasiBoxTestRun.kt` exports a `startTest()` of its own that merely runs `box()`, so a probe would run `box()` in
+ * place of `startUnitTests()` for an isolated `// RUN_UNIT_TESTS` test that also has a `box()`.
  */
-internal fun startUnitTestsWasiScript(): String = """
+internal fun startUnitTestsWasiScript(callGroupedTestsDriver: Boolean): String = """
     try {
         let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-        jsModule.startUnitTests();
+        ${if (callGroupedTestsDriver) "jsModule.startTest();" else "jsModule.startUnitTests();"}
     } catch(e) {
         console.log('Failed with exception!');
         console.log(e);
@@ -40,14 +44,17 @@ internal fun startUnitTestsWasiScript(): String = """
     """.trimIndent()
 
 /**
- * The export the standalone WASI VMs invoke. A `// RUN_UNIT_TESTS` test is always isolated, so its binary carries no
- * grouped `ProxyBatchLauncher`, and its `startTest` export is `wasiBoxTestRun.kt`'s glue that runs `box()` alone.
- * Such a test runs `startUnitTests` instead: the compiler exports it from every binary with `@kotlin.test.Test`
- * functions, and the `@Test` launcher of `WasmJsLauncherAdditionalSourceProvider` calls `box()` inside the suite, so
- * that one export covers the unit tests and the box verdict alike.
+ * The export the standalone WASI VMs invoke. In a driver-linked batch, `startTest` is the result-collecting driver.
+ * Otherwise a `// RUN_UNIT_TESTS` test is isolated, and its `startTest` export is `wasiBoxTestRun.kt`'s glue that runs
+ * `box()` alone. Such a test runs `startUnitTests` instead: the compiler exports it from every binary with
+ * `@kotlin.test.Test` functions, and the `@Test` launcher of `WasmJsLauncherAdditionalSourceProvider` calls `box()`
+ * inside the suite, so that one export covers the unit tests and the box verdict alike.
  */
-internal fun wasiStandaloneEntryExport(runUnitTests: Boolean): String =
-    if (runUnitTests) WASI_UNIT_TESTS_ENTRY_EXPORT else WASI_BOX_ENTRY_EXPORT
+internal fun wasiStandaloneEntryExport(hasGroupedTestsDriver: Boolean, runUnitTests: Boolean): String = when {
+    hasGroupedTestsDriver -> WASI_BOX_ENTRY_EXPORT
+    runUnitTests -> WASI_UNIT_TESTS_ENTRY_EXPORT
+    else -> WASI_BOX_ENTRY_EXPORT
+}
 
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
 class WasiBoxRunner(
@@ -77,8 +84,9 @@ class WasiBoxRunner(
     fun runWasmCode(
         artifacts: WasmCompilationSetsBinaryArtifact,
         useUnitTestRunnerOnly: Boolean = false,
-        outputCollector: MutableList<String>? = null,
+        outputCollector: MutableList<WasmVMOutput>? = null,
         throwOnExceptions: Boolean = !useUnitTestRunnerOnly,
+        callGroupedTestsDriver: Boolean = false,
     ): List<Throwable> {
         val outputDirBase = testServices.getWasmTestOutputDirectory()
 
@@ -87,9 +95,9 @@ class WasiBoxRunner(
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val runUnitTestsDirective = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
         val startUnitTests = useUnitTestRunnerOnly || runUnitTestsDirective
-        val standaloneEntryExport = wasiStandaloneEntryExport(runUnitTests = runUnitTestsDirective)
+        val standaloneEntryExport = wasiStandaloneEntryExport(callGroupedTestsDriver, runUnitTests = runUnitTestsDirective)
 
-        val testWasiQuiet = if (useUnitTestRunnerOnly) startUnitTestsWasiScript()
+        val testWasiQuiet = if (useUnitTestRunnerOnly) startUnitTestsWasiScript(callGroupedTestsDriver)
         else """
             let boxTestPassed = false;
             try {
@@ -138,7 +146,7 @@ class WasiBoxRunner(
                     workingDirectory = dir,
                     outputCollector = outputCollector,
                     wasiEntryExport = standaloneEntryExport,
-                    expectUnitTestReport = runUnitTestsDirective && !vm.entryPointIsJsFile,
+                    expectUnitTestReport = runUnitTestsDirective && !callGroupedTestsDriver && !vm.entryPointIsJsFile,
                 )
             }
 
@@ -184,14 +192,15 @@ open class WasmWasiFolderGroupingStageBoxRunner(
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
         val folder = (artifact as WasmFolderBinaryArtifact).folder
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+        val callGroupedTestsDriver = testServices.hasGroupedTestsDriver
         val runUnitTestsDirective = RUN_UNIT_TESTS in firstNonGroupingTestServices.moduleStructure.allDirectives
-        val standaloneEntryExport = wasiStandaloneEntryExport(runUnitTests = runUnitTestsDirective)
+        val standaloneEntryExport = wasiStandaloneEntryExport(callGroupedTestsDriver, runUnitTests = runUnitTestsDirective)
 
-        val testWasi = startUnitTestsWasiScript()
+        val testWasi = startUnitTestsWasiScript(callGroupedTestsDriver)
         File(folder, "test.mjs").writeText(testWasi)
 
         val collectedOutputs = outputCollector ?: mutableListOf()
@@ -205,7 +214,7 @@ open class WasmWasiFolderGroupingStageBoxRunner(
                 workingDirectory = folder,
                 outputCollector = collectedOutputs,
                 wasiEntryExport = standaloneEntryExport,
-                expectUnitTestReport = runUnitTestsDirective && !vm.entryPointIsJsFile,
+                expectUnitTestReport = runUnitTestsDirective && !callGroupedTestsDriver && !vm.entryPointIsJsFile,
             )
         }
     }
