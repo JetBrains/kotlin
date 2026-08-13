@@ -303,6 +303,8 @@ object StandardClassIds {
         val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
         val atomicArrayCompareAndSetAt = "compareAndSetAt".callableId(AtomicArray)
         val atomicArrayCompareAndExchangeAt = "compareAndExchangeAt".callableId(AtomicArray)
+
+        val throwNoWhenBranchMatchedException = "throwNoWhenBranchMatchedException".callableId(BASE_INTERNAL_PACKAGE)
     }
 
     object Collections {

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -88,7 +89,8 @@ class Fir2IrVisitor(
     private val generateNoWhenBranchMatchedExceptionWithMessage: Boolean = LanguageFeature.NoWhenBranchMatchedExceptionWithMessage.isEnabled()
 
     private val throwNoWhenBranchMatchedExceptionSymbol by lazy {
-        session.symbolProvider.getTopLevelFunctionSymbols(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("throwNoWhenBranchMatchedException"))
+        val id = StandardClassIds.Callables.throwNoWhenBranchMatchedException
+        session.symbolProvider.getTopLevelFunctionSymbols(id.packageName, id.callableName)
             .singleOrNull()
             ?.toIrSymbolForCall(null, null) as? IrSimpleFunctionSymbol
     }
