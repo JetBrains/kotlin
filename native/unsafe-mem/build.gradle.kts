@@ -85,7 +85,10 @@ tasks.check {
 }
 
 projectTests {
-    testTask {
+    // The point of this task is the pre-JDK-25 path, where the multi-release JAR resolves
+    // `UnsafeMemoryAccessProvider` to the `sun.misc.Unsafe` implementation. It has to name its JDK, because the
+    // default test launcher is JDK 25.
+    testTask(javaLauncher = JdkMajorVersion.JDK_21_0) {
         systemProperty("kotlin.unsafe.mem.test.mode", "default")
     }
 

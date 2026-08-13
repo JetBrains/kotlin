@@ -94,7 +94,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
 
     val lexerFile = lexerGrammarsDirRelativeToRoot.file("$lexerName.flex")
     val skeletonFile = lexerGrammarsDirRelativeToRoot.file("idea-flex-kotlin.skeleton")
-    generatedSourcesTask(
+    val lexerTask = generatedSourcesTask(
         taskName = taskName,
         generatorClasspath = flexGeneratorClasspath,
         generatorMainClass = "jflex.Main",
@@ -116,4 +116,11 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
             fileCollection.from(skeletonFile)
         }
     )
+
+    lexerTask.configure {
+        // JFlex expands `[:jletter:]` by calling `Character.isJavaIdentifierStart` on the JVM that runs it, so the
+        // generated character classes follow the Unicode version of that JVM. The generated sources are checked in and
+        // have to match the lexers of `:compiler:psi:parser`, hence the fixed JDK.
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
+    }
 }

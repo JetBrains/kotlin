@@ -25,4 +25,10 @@ val intellijVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get(
 dependencies {
     api(project(":dependencies:intellij-java-psi-api"))
     api(project(":dependencies:intellij-core-implementation"))
+
+    // `com.intellij.lang.Language` and `com.intellij.util.containers.CollectionFactory` mention these in type
+    // annotations. `javac` resolves the annotated types eagerly and fails the compilation when it cannot, even
+    // though no Kotlin code touches them.
+    compileOnlyApi(libs.intellij.fastutil)
+    compileOnlyApi(kotlinxCollectionsImmutable())
 }

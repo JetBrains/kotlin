@@ -48,7 +48,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     @NotNull
     @Override
     public Iterator<Diagnostic> iterator() {
-        return new FilteringIterator<>(diagnostics.iterator(), suppressCache.getFilter()::invoke);
+        return FilteringIterator.create(diagnostics.iterator(), suppressCache.getFilter()::invoke);
     }
 
     @NotNull
