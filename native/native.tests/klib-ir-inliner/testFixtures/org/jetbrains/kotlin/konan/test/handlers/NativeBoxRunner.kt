@@ -241,12 +241,14 @@ class PrettyResultsHandler(
         // The test report is only available when the output is parsed by the TC test output filter.
         // For other filters there is no reliable way to enumerate the executed testcases, so skip the check.
         val testReport = runResult.processOutput.stdOut.testReport ?: return
-        val executedTests = testReport.passedTests + testReport.failedTests + testReport.ignoredTests
+        // Every name the run reported an outcome for, whatever the status. A set, so the counts below are distinct
+        // testcases rather than the TC messages that reported them.
+        val executedTests = testReport.reportedIds
         val phaseInputs = testServices.groupingStageInputs
 
         if (phaseInputs.size == 1) {
             // A single (isolated) testcase is not moved into a dedicated package, so it can't be matched by package name.
-            // Just verify that exactly one testcase was executed.
+            // Just verify that exactly one distinct testcase was executed.
             check(executedTests.size == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
                 "Expected exactly one executed testcase in the batch mode, but ${executedTests.size} were executed: $executedTests"
             }
