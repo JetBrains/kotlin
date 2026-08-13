@@ -36,6 +36,23 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-13 — the custom IC precompiled binaries hook, in classpath currency
+- **Change**: the rebase on master brought back `IncrementalCompilationComponentsWithCustomScope.createSearchScope(
+  projectEnvironment)` (KT-88475, the IntelliJ build system's custom IC components) into
+  `IncrementalCompilationContextUtils.kt`, where it no longer compiled: the type it returns
+  (`AbstractProjectFileSearchScope`) is deleted, and the helper no longer takes a project environment at all.
+  The hook is restored as `IncrementalCompilationComponentsWithCustomPrecompiledBinaries.precompiledBinariesRoots():
+  List<Path>` — the same statement ("where is the previous build's output") in root currency, hence no environment
+  and no PSI. `precompiledBinariesClasspath()` prefers it over `configuration.outputDirectory`, and the roots then
+  serve both uses uniformly, as the scope did in master: the precompiled-binaries classpath and the `excludedRoots`
+  of `ProjectLibraries`.
+- **Files**: new `compiler/cli/.../IncrementalCompilationComponentsWithCustomPrecompiledBinaries.kt`,
+  `compiler/cli/.../IncrementalCompilationContextUtils.kt`; `implDocs/PSI_FREE_ROADMAP.md` §8.
+- **Tests**: `IncrementalK2FirICJvmCompilerRunnerTestGenerated` 371/0; `:compiler:cli`, `:compiler:cli-jvm`,
+  `:compiler:cli-metadata` compile.
+- **Result**: green. Requires a matching IntelliJ-side change (unavoidable — the old return type is gone); no
+  in-repo implementor exists, so nothing else moves.
+
 ### 2026-08-13 — Kotlin supertypes for Java resolution: on air instead of `lazyResolveToPhase`
 - **Change**: arm 3 of `directSupertypeClassIds` asked a Kotlin source class for its supertypes with
   `lazyResolveToPhase(SUPER_TYPES)` — a no-op in the compiler and an unsanctioned intra-phase jump — and
