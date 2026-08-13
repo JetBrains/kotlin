@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
-import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -47,13 +46,11 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
             firstNonGroupingTestServices.targetPlatformProvider.getTargetPlatform(it).isWasmWasi()
         }
 
-    override fun shouldUseBoxExportMode(): Boolean {
+    override fun shouldUseBoxExportModeWhenDriverless(): Boolean {
         val inputs = testServices.groupingStageInputs
-        // Global invariant: a batch of a single test is always run as a standalone box-export test,
-        // regardless of why it ended up alone in the batch (isolated, or merely a unique batch token).
-        // Single-test box tests without RUN_UNIT_TESTS are compiled without the `@Test` launcher
-        // (see `WasmJsLauncherAdditionalSourceProvider`), so they must be executed by calling
-        // `jsModule.box()` and asserting "OK", rather than driving the unit-test runner.
+        // A single-test batch is compiled without the `@Test` launcher (see `WasmJsLauncherAdditionalSourceProvider`),
+        // whether it ended up alone through isolation or merely through a unique batch token, so without a driver
+        // the only way to get its verdict is to call `box()` and assert "OK".
         val isSingleTestBatch = testServices.isSingleTestBatch()
         return isSingleTestBatch &&
                 RUN_UNIT_TESTS !in firstNonGroupingTestServices.moduleStructure.allDirectives &&
@@ -74,7 +71,6 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
                 useUnitTestRunnerOnly,
                 outputCollector,
                 throwOnExceptions = false,
-                callGroupedTestsDriver = testServices.hasGroupedTestsDriver,
             )
         } else {
             wasmBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
