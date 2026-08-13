@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import com.intellij.openapi.util.text.Strings
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -51,7 +52,7 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
         if (CHECK_JVM_FLAGS !in module.directives) return
         val classFileFactory = info.classFileFactory
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val fileText = testDataFile.readText()
+        val fileText = Strings.convertLineSeparators(testDataFile.readText())
         val testedObjects: MutableList<TestedObject> = parseExpectedTestedObject(fileText, assertions)
         for (testedObject in testedObjects) {
             var className: String? = null
