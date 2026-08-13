@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.renderAsSwiftSourceLine
@@ -43,7 +44,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         if (kotlinFqName != null && session.isFqNameSupported(kotlinFqName)) return null
 
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
-        val kotlinFqName = kotlinFqName?.asString() ?: ""
+        val kotlinFqName = kotlinFqName?.render() ?: ""
         return SirTypeBindingBridge(
             name = swiftFqName,
             kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")",

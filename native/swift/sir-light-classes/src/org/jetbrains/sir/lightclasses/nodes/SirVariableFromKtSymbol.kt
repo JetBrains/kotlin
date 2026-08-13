@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetterCopy
 import org.jetbrains.kotlin.sir.builder.buildSetterCopy
@@ -417,7 +418,7 @@ context(_: KaSession, _: SirSession)
 private fun SirVariable.reverseBridgeTargetClassFqName(): String =
     kaSymbolOrNull<KaVariableSymbol>()
         ?.containingSymbol
-        ?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
+        ?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.render() }
         ?: ""
 
 context(_: KaSession, sirSession: SirSession)

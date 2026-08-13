@@ -546,7 +546,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         @_spi(kotlinx$serialization$InternalSerializationApi)
         func typeParametersSerializers() -> ExportedKotlinPackages.kotlin.Array
     }
-    @objc(_ExportedKotlinPackages_kotlinx_serialization_`internal`_GeneratedSerializer)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_internal_GeneratedSerializer)
     public protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)

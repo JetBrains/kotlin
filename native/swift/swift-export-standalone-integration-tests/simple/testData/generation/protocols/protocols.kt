@@ -224,3 +224,11 @@ interface SomeInterface {
     context(_: Baz, _: Foo)
     var String.somethingWithContext: Int
 }
+
+// FILE: invalid_chars.kt
+
+package org.jetbrains.kotlin.internal
+
+interface Foo
+
+interface `❤️s Kotlin`
