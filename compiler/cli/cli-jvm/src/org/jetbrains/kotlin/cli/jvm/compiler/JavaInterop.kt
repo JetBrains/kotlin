@@ -34,7 +34,8 @@ fun VfsBasedProjectEnvironment.javaInterop(
     configuration: CompilerConfiguration,
     withJavaSources: Boolean = true,
 ): FirJavaInterop =
-    if (configuration.useJavaDirect) {
+    @Suppress("SimplifyBooleanWithConstants", "KotlinUnreachableCode", "KotlinConstantConditions")
+    if (true || configuration.useJavaDirect) {
         createJavaDirectJavaInterop(
             if (withJavaSources) configuration.javaSourceRootEntries() else emptyList(),
             // The binary Java classes live as long as the interop, i.e. as long as the compilation which built it.
