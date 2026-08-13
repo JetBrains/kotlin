@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsExportedEntryPointGenerato
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
 import org.jetbrains.kotlin.wasm.test.handlers.WasmWasiFolderGroupingStageBoxRunner
 
-/**
- * wasm-js: the driver is reached through a `@JsExport`ed `runGroupedTests()`, which the `test.mjs` glue written by
- * [WasmBoxRunnerBase.saveAdditionalFilesAndRun] calls as `jsModule.runGroupedTests()`.
- */
+/** wasm-js: the `test.mjs` glue written by [WasmBoxRunnerBase.saveAdditionalFilesAndRun] calls this export. */
 object WasmJsGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntryPointGenerator() {
     override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
         """
@@ -24,23 +21,15 @@ object WasmJsGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntry
 }
 
 /**
- * wasm-wasi: the driver is reached through a `@kotlin.wasm.WasmExport`ed `startTest()`. The standalone WASI VMs
- * (WasmEdge/Wasmtime) invoke that export directly; under Node.js the `test.mjs` written by
- * [WasmWasiFolderGroupingStageBoxRunner] calls `jsModule.startTest()`.
+ * wasm-wasi: the standalone VMs invoke this export directly, being able to invoke nothing but a bare name; under
+ * Node.js the `test.mjs` written by [WasmWasiFolderGroupingStageBoxRunner] calls it.
  *
- * `wasiBoxTestRun.kt` gives every test with a `box()` a `startTest()` of its own, and sharing the name with this one is
- * safe because the two never end up in the same binary. Not because exports are filtered — codegen exports any
- * `@WasmExport` declaration it visits, from any module — but because the helper never enters the link at all: it
- * travels in the per-test KLIBs, which a grouped batch links as ordinary `-libraries`, whose declarations are only
- * deserialized when something references them, and nothing references the helper (the launcher calls each `box()` by
- * its FQN). Verified on a linked dev binary: the grouped module contains no `runBoxTest` anywhere in its bytes and
- * exports a single `startTest` — the driver's — while an isolated binary (the helper's KLIB being its `-Xinclude` main
- * module, deserialized eagerly) exports `startTest` and `runBoxTest`. That is what lets the standalone VMs, which can
- * invoke nothing but a bare export name, still reach the driver for a grouped batch; a misresolved entry cannot pass
- * silently either way, since a batch whose output carries no result block fails every test via the missing-block
- * guard. The name is *not* a safe signal on the JVM side, though — see
- * [org.jetbrains.kotlin.wasm.test.handlers.startUnitTestsWasiScript] for why Node dispatch keys off the driver marker
- * instead of probing the exports.
+ * `wasiBoxTestRun.kt` gives every test with a `box()` a `startTest()` of its own, and sharing the name is safe — not
+ * because exports are filtered, but because the helper never enters a grouped link: it travels in the per-test KLIBs,
+ * which the batch links as ordinary `-libraries`, whose declarations are deserialized only when referenced, and
+ * nothing references the helper (the launcher calls each `box()` by its FQN). Verified on a linked binary and enforced
+ * per run by `assertDriverOwnsStartTestExport`. On the JVM side the name is not a usable signal, though — see
+ * [org.jetbrains.kotlin.wasm.test.handlers.startUnitTestsWasiScript].
  */
 object WasmWasiGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntryPointGenerator() {
     override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
