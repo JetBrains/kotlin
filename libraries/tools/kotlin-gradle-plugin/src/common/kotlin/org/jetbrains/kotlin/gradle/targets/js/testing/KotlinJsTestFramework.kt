@@ -40,18 +40,18 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
     companion object
 }
 
-internal abstract class KotlinJsBrowserDebugOptions {
+internal interface KotlinJsBrowserDebugOptions {
     @get:Input
     @get:Optional
-    abstract val debugPort: Property<Int>
+    val debugPort: Property<Int>
 
     @get:Input
     @get:Optional
-    abstract val debuggerReadyPort: Property<Int>
+    val debuggerReadyPort: Property<Int>
 
     @get:Input
     @get:Optional
-    abstract val debuggerReadyTimeoutMillis: Property<Int>
+    val debuggerReadyTimeoutMillis: Property<Int>
 }
 
 internal interface KotlinJsBrowserDebuggableFramework {
