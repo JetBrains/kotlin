@@ -177,6 +177,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
             gradleVersion = gradleVersion,
             enableKotlinDaemonMemoryLimitInMb = null,
             enableGradleDaemonMemoryLimitInMb = null,
+            addHeapDumpOptions = false
         ) {
             gradleProperties.append(
                 """
