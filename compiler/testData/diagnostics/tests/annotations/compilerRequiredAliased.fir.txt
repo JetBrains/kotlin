@@ -1,0 +1,43 @@
+FILE: target.kt
+    package q
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class MyAnno : R|kotlin/Annotation| {
+        public constructor(): R|q/MyAnno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(): R|q/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|q/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|q/MyAnno|() public final val myField: R|kotlin/Int| = R|p/method|()
+            public get(): R|kotlin/Int|
+
+        field:@R|q/Anno|() public final val field: R|kotlin/Int| = R|p/method|()
+            public get(): R|kotlin/Int|
+
+    }
+FILE: deprecation.kt
+    package p
+
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public final fun method(): R|kotlin/Int| {
+        ^method Int(42)
+    }
+    public final fun localClass(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) local final class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        R|<local>/Local.Local|()
+    }
