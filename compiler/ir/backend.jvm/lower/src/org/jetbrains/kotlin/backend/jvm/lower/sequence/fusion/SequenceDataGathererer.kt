@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion
 
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.BinaryPredicate
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.UnaryPredicate
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.MapPredicateCall
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -41,6 +44,9 @@ internal const val MAP = KOTLIN_SEQUENCES_PREFIX + "map"
 internal const val MAP_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexed"
 internal const val MAP_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "mapNotNull"
 internal const val MAP_NOT_NULL_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexedNotNull"
+internal const val FILTER = KOTLIN_SEQUENCES_PREFIX + "filter"
+internal const val FILTER_NOT = KOTLIN_SEQUENCES_PREFIX + "filterNot"
+internal const val FILTER_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "filterNotNull"
 
 // this is stored for expressions, intended to be passed either to value declarations or to for loops iterated over the expression result
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
@@ -49,6 +55,12 @@ internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute
 internal var IrValueDeclaration.sequenceDataOfVariable: SequenceData? by irAttribute(true)
 // In general, sequence data is gathered from `sequenceOf` or existing sequence variables, modified `by` map calls,
 // and consumed by for loops and variable declarations
+
+internal sealed class FilterVersion {
+    object Filter : FilterVersion()
+    object FilterNot : FilterVersion()
+    object FilterNotNull : FilterVersion()
+}
 
 private fun isSafeToLowerFromSequenceOf(expression: IrExpression): Boolean {
     if (containsMutable(expression)) return false
@@ -188,6 +200,31 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
         (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.let { return it.typeOrNull }
 
+    private fun matchWithFilter(call: IrCall, version: FilterVersion) {
+        val receiver = call.arguments.getOrNull(0) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        val filterFunction: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression = { builderWithParent: IrBuilderWithParent ->
+            val parent = builderWithParent.second
+            with(builderWithParent.first) {
+                when (version) {
+                    FilterVersion.Filter -> {
+                        { sequenceElement ->
+                            val predicate = call.arguments.getOrNull(1) ?: error("Filter didn't have a predicate argument: ${call.dump()}")
+                            callPredicate(predicate, parent, irGet(sequenceElement))
+                        }
+                    }
+                    FilterVersion.FilterNot -> { sequenceElement ->
+                        val predicate = call.arguments.getOrNull(1) ?: error("FilterNot didn't have a predicate argument: ${call.dump()}")
+                        irNot(callPredicate(predicate, parent, irGet(sequenceElement)))
+                    }
+                    FilterVersion.FilterNotNull -> { sequenceElement -> irNot(irEquals(irGet(sequenceElement), irNull())) }
+                }
+            }
+        }
+        val transformers = listOf(SequenceTransformer.Filter(filterFunction)) + receiverData.transformers
+        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
     private fun matchWithSequenceOf(expression: IrCall) {
         // store the sequence of arguments inside the sequence source
         if (expression.arguments.size > 1) return
@@ -215,6 +252,9 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             MAP_INDEXED -> matchWithMap(expression, isIndexed = true, isNotNull = false)
             MAP_NOT_NULL -> matchWithMap(expression, isIndexed = false, isNotNull = true)
             MAP_NOT_NULL_INDEXED -> matchWithMap(expression, isIndexed = true, isNotNull = true)
+            FILTER -> matchWithFilter(expression, FilterVersion.Filter)
+            FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
+            FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
         }
     }
