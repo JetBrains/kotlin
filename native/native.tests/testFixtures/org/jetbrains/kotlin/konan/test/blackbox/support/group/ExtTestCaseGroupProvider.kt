@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -445,6 +444,13 @@ private class ExtTestDataFile(
             OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
         } ?: parseOutputRegex(structure.directives)
 
+        // LLDB changes whitespace formatting across versions.
+        // Let's squash tab and space sequences to a single space while leaving newlines.
+        val outputDataSanitizer: (String) -> String = when (testKind) {
+            TestKind.STANDALONE_LLDB -> ::normalizeLldbWhitespacegs
+            else -> { s -> s }
+        }
+
         val expectedExitCode = if (testKind == TestKind.STANDALONE_NO_TR) parseExpectedExitCode(structure.directives)
         else ExitCode.Expected(0)
 
@@ -453,6 +459,7 @@ private class ExtTestDataFile(
         else ExecutionTimeout.ShouldNotExceed(settings.get<Timeouts>().executionTimeout)
 
         val fileCheckStage = retrieveFileCheckStage()
+
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = testKind,
@@ -465,7 +472,11 @@ private class ExtTestDataFile(
                 testFiltering = testFiltering,
                 exitCodeCheck = expectedExitCode,
                 outputMatcher = outputMatcher,
-                outputDataFile = parseOutputDataFile(testDataFile.parentFile, structure.directives),
+                outputDataFile = parseOutputDataFile(
+                    testDataFile.parentFile,
+                    structure.directives,
+                    sanitizer = outputDataSanitizer,
+                ),
                 fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
             ),
             fileCheckStage = fileCheckStage,
@@ -899,3 +910,11 @@ fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
         disposeRootInWriteAction(disposable)
     }
 }
+
+internal fun normalizeLldbWhitespace(text: String): String =
+    text.lineSequence()
+        .map { line ->
+            if (line.isBlank()) ""
+            else line.replace(Regex("""[\t ]+"""), " ").trim()
+        }
+        .joinToString("\n")
