@@ -88,7 +88,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     context(context: CheckerContext)
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo): Applicability {
         val oneIsBuiltin = l.isBuiltin || r.isBuiltin
-        val oneIsIdentityLess = l.isIdentityLess(context.session) || r.isIdentityLess(context.session)
+        val oneIsIdentityLess = l.isIdentityLessWithTrustedEquals() || r.isIdentityLessWithTrustedEquals()
 
         // The compiler should only check comparisons
         // when builtins are involved.
