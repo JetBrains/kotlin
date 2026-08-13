@@ -16,7 +16,7 @@
  */
 
 @file:OptIn(ExperimentalUnsignedTypes::class)
-@file:Suppress("RETURN_VALUE_NOT_USED")
+@file:Suppress("RETURN_VALUE_NOT_USED", "NOTHING_TO_INLINE")
 
 package kotlin.internal.dtoa
 
@@ -39,10 +39,10 @@ private val TENS = doubleArrayOf(
 )
 
 // Macro replacements as functions
-internal fun sizeOfTenToTheE(e: Int): Int = (e / 19) + 1
-private fun tenToTheE(e: Int): Double = TENS[e]
-private fun errorOccured(x: Double): Boolean = (x.toRawBits() shr 32).toInt() < 0
-private fun longBitsToDouble(bits: ULong): Double = Double.fromBits(bits.toLong())
+internal inline fun sizeOfTenToTheE(e: Int): Int = (e / 19) + 1
+private inline fun tenToTheE(e: Int): Double = TENS[e]
+private inline fun errorOccured(x: Double): Boolean = (x.toRawBits() shr 32).toInt() < 0
+private inline fun longBitsToDouble(bits: ULong): Double = Double.fromBits(bits.toLong())
 
 private fun createDouble(s: String, e: Int): Double {
     var e = e
