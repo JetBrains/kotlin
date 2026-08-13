@@ -7,11 +7,25 @@ package org.jetbrains.kotlin.test.grouping
 
 import org.jetbrains.kotlin.test.report.TestReport
 
+/**
+ * Wire protocol carrying the per-test results of a grouped test batch from the VM to the JVM side: it generates the
+ * driver that emits them ([generateResultCollectingRunnerSource]) and parses what it prints ([parseMerged]).
+ *
+ * Line format (`KGTI` = Kotlin Grouping Test Infra):
+ * ```
+ * ##KGTI_BEGIN##
+ * ##KGTI##|<id>|<STARTED|PASSED|FAILED>|<escaped-message>|<escaped-details>
+ * ##KGTI_END##
+ * ```
+ * `id` is the test's synthetic `ProxyLauncher_<encoded-package>` class name. [STARTED] is printed before a test runs, so a start with no
+ * terminal line localizes the test that took the VM down, while neither line means the test never ran.
+ */
 object GroupedTestsResultProtocol {
     const val BEGIN: String = "##KGTI_BEGIN##"
     const val END: String = "##KGTI_END##"
     const val LINE_PREFIX: String = "##KGTI##"
     const val SEP: String = "|"
+    const val STARTED: String = "STARTED"
     const val PASSED: String = "PASSED"
     const val FAILED: String = "FAILED"
 
@@ -29,7 +43,10 @@ object GroupedTestsResultProtocol {
     data class ParsedBatchResult(
         val outcomes: Map<String, Outcome>,
         val sawStructuredBlock: Boolean,
+        val crashedIds: Set<String>,
     ) {
+        fun crashedInProgress(id: String): Boolean = id in crashedIds
+
         fun toTestReport(): TestReport<String> {
             val passedTests = LinkedHashSet<String>()
             val failedTests = LinkedHashSet<String>()
@@ -43,14 +60,16 @@ object GroupedTestsResultProtocol {
     fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
         var sawStructuredBlock = false
         val merged = LinkedHashMap<String, Outcome>()
+        val crashedIds = LinkedHashSet<String>()
         for (output in outputs) {
             val parsed = parseSingleOutput(output)
             sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
+            crashedIds += parsed.crashedIds
             for (outcome in parsed.outcomes.values) {
                 putFailureWins(merged, outcome)
             }
         }
-        return ParsedBatchResult(outcomes = merged, sawStructuredBlock = sawStructuredBlock)
+        return ParsedBatchResult(outcomes = merged, sawStructuredBlock = sawStructuredBlock, crashedIds = crashedIds)
     }
 
     fun hasCompleteStructuredBlock(output: String): Boolean {
@@ -60,12 +79,20 @@ object GroupedTestsResultProtocol {
 
     private class SingleOutputParse(
         val outcomes: LinkedHashMap<String, Outcome>,
+        val startedIds: LinkedHashSet<String>,
         val sawStructuredBlock: Boolean,
         val blockLeftOpen: Boolean,
-    )
+    ) {
+        val crashedIds: Set<String>
+            get() {
+                if (!blockLeftOpen) return emptySet()
+                return setOfNotNull(startedIds.lastOrNull()?.takeIf { it !in outcomes })
+            }
+    }
 
     private fun parseSingleOutput(output: String): SingleOutputParse {
         val outcomes = LinkedHashMap<String, Outcome>()
+        val startedIds = LinkedHashSet<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
@@ -86,19 +113,21 @@ object GroupedTestsResultProtocol {
             if (!insideBlock || !rawLine.startsWith(linePrefix)) continue
             val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 4)
             if (parts.size < 4) continue
-            val status = parts[1]
-            if (status != PASSED && status != FAILED) continue
-            putFailureWins(
-                outcomes,
-                Outcome(
-                    id = parts[0],
-                    passed = status == PASSED,
-                    message = unescape(parts[2]).ifEmpty { null },
-                    details = unescape(parts[3]).ifEmpty { null },
+            val id = parts[0]
+            when (val status = parts[1]) {
+                STARTED -> startedIds += id
+                PASSED, FAILED -> putFailureWins(
+                    outcomes,
+                    Outcome(
+                        id = id,
+                        passed = status == PASSED,
+                        message = unescape(parts[2]).ifEmpty { null },
+                        details = unescape(parts[3]).ifEmpty { null },
+                    )
                 )
-            )
+            }
         }
-        return SingleOutputParse(outcomes, sawStructuredBlock, blockLeftOpen = insideBlock)
+        return SingleOutputParse(outcomes, startedIds, sawStructuredBlock, blockLeftOpen = insideBlock)
     }
 
     private fun String.isSentinelLine(sentinel: String): Boolean = trimEnd('\r') == sentinel
@@ -181,6 +210,7 @@ object GroupedTestsResultProtocol {
         appendLine(
             """
             private fun __kgtiReport(id: String, body: () -> Unit) {
+                println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$STARTED$SEP$SEP")
                 try {
                     body()
                     println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$PASSED$SEP$SEP")
