@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.linkIr
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
@@ -58,7 +54,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             WasmCompilationMode.SINGLE_MODULE -> ::compileIncrementallySingleModule
             WasmCompilationMode.REGULAR -> ::compileIncrementallyWholeWorld
         }
-        return fragmentCompiler(icCaches.artifacts, configuration)
+        return fragmentCompiler(icCaches, configuration)
     }
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): List<WasmIrModuleConfiguration> {
