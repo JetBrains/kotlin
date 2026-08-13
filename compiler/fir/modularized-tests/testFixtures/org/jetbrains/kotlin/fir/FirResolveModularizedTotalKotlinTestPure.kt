@@ -76,6 +76,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         val session =
             FirTestSessionFactoryHelper.createSessionForTests(
                 projectEnvironment,
+                environment.configuration,
                 JvmClasspath.ProjectLibraries(),
                 moduleData.qualifiedName,
                 moduleData.friendDirs.map { it.toPath() },
