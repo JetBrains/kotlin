@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.cli.CliDiagnostics.JS_IC_ERROR
-import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -97,7 +96,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         outputDir: File,
         targetConfiguration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
-    ): IcCachesArtifacts {
+    ): List<ModuleArtifact> {
 
         targetConfiguration.reportLog("")
         targetConfiguration.reportLog("Building cache:")
@@ -151,7 +150,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
     protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
     abstract fun compileIncrementally(
-        icCaches: IcCachesArtifacts,
+        icCaches: List<ModuleArtifact>,
         configuration: CompilerConfiguration,
     ): IntermediateOutput?
 
