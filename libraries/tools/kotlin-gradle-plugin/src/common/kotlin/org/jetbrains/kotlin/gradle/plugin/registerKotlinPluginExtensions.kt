@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
+import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinModelBuilderSetupAction
 import org.jetbrains.kotlin.gradle.plugin.internal.buildNeededDependentTasksWiringProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXcodeSetupAction
@@ -75,6 +76,11 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, FinalizeConfigurationFusMetricAction)
 
         register(project, AbiValidationSetupAction)
+
+        // TODO: Support Kotlin import models for targets beyond the JVM POC
+        if (isJvm) {
+            register(project, KotlinModelBuilderSetupAction)
+        }
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)

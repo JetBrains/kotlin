@@ -150,6 +150,8 @@ dependencies {
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
+    commonCompileOnly(libs.protobuf.java)
+    commonCompileOnly(libs.protobuf.kotlin)
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
         overrideTargetJvmVersion(11)
         isTransitive = false
@@ -190,6 +192,7 @@ dependencies {
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+    commonImplementation(project(":kotlin-import-models"))
     commonImplementation(project(":native:kotlin-klib-commonizer-api")) // TODO: consider removing in KT-70247
 
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
@@ -621,6 +624,7 @@ testing {
                 runtimeOnly(libs.android.gradle.plugin.gradle.latest)
                 runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
                 compileOnly(libs.android.tools.common)
+                compileOnly(libs.protobuf.java)
 
                 implementation(gradleKotlinDsl())
                 implementation(project(":kotlin-gradle-plugin-tcs-android"))
