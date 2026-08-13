@@ -241,8 +241,6 @@ class PrettyResultsHandler(
         // The test report is only available when the output is parsed by the TC test output filter.
         // For other filters there is no reliable way to enumerate the executed testcases, so skip the check.
         val testReport = runResult.processOutput.stdOut.testReport ?: return
-        // Every name the run reported an outcome for, whatever the status. A set, so the counts below are distinct
-        // testcases rather than the TC messages that reported them.
         val executedTests = testReport.reportedIds
         val phaseInputs = testServices.groupingStageInputs
 

@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.test.report
 
 /**
- * Verifications over a [TestReport] against the set of test ids that were expected to run.
+ * Verifications over a [TestReport] against the test ids that were expected to run. The backend-independent ones only:
+ * the Native-bound checks stay in `:native:native.tests`.
  *
- * These are the checks that do not depend on a backend-specific run model, so both the grouped Wasm runner and
- * Kotlin/Native can share them. The Native-bound ones — `FileCheckMatcher`, exit-code-over-`RunResult` and the
- * package/kind-based `TestFiltering` — deliberately stay in `:native:native.tests`.
- *
- * Each check is pure and returns its verdict instead of throwing, so every runner keeps reporting failures through its
- * own sink: the grouped Wasm runner rethrows per test via `catchingExecutor`, Kotlin/Native reports against the run.
+ * Each check returns its verdict instead of throwing, so every runner keeps reporting failures through its own sink.
  */
 object TestRunChecks {
     sealed interface Result {
@@ -24,23 +20,17 @@ object TestRunChecks {
         }
     }
 
-    /**
-     * Ids that were expected to run but carry no outcome at all: their `ProxyLauncher_<hash>` line never appeared
-     * (a stripped launcher class, or a VM that died before reaching it), which must fail that specific test rather
-     * than let it pass silently.
-     */
+    /** Ids expected to run that carry no outcome at all — a test that must be failed instead of passing silently. */
     fun <ID> findMissingResults(expectedTestIds: Collection<ID>, testReport: TestReport<ID>): List<ID> {
         val reported = testReport.reportedIds
         return expectedTestIds.filter { it !in reported }
     }
 
-    /** Ids the report carries an outcome for that were not expected — tests that ran but were not part of the batch. */
     fun <ID> findExcessiveResults(expectedTestIds: Collection<ID>, testReport: TestReport<ID>): List<ID> {
         val expected = expectedTestIds.toSet()
         return testReport.reportedIds.filter { it !in expected }
     }
 
-    /** Fails when the report is empty, i.e. no test produced any outcome. */
     fun <ID> checkNonEmpty(testReport: TestReport<ID>): Result =
         if (testReport.isEmpty()) {
             Result.Failed("No tests have been found. Test report is empty.")

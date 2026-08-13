@@ -26,18 +26,9 @@ import java.io.File
  * The `test.mjs` launcher script for running WASI tests under Node.js, exiting with code 1 on any uncaught
  * exception (e.g. a hard VM trap).
  *
- * [callGroupedTestsDriver] selects what to call, and has to be derived from whether the stage-2 facade actually
- * generated the driver rather than from probing the exports. A grouped batch exports `startTest()` — the
- * result-collecting driver, whose per-test results are attributed on the JVM side (see `GroupedTestsResultProtocol`),
- * so a test failure is reported through stdout instead of by throwing — but the `wasiBoxTestRun.kt` additional file
- * that every test with a `box()` gets exports a `startTest()` of its own, which merely runs `box()`. Probing for the
- * name would therefore run `box()` in place of the compiler-generated `startUnitTests()` for an isolated
- * `// RUN_UNIT_TESTS` test that also has a `box()`, silently skipping the unit tests such a test exists to run.
- *
- * Only Node.js runs this script, and hence only it can make that choice: the standalone WASI VMs (WasmEdge/Wasmtime)
- * invoke the `startTest` export directly (see [WasmVM.WasmEdge]/[WasmVM.Wasmtime]) and therefore both require it and
- * always run whichever `startTest` the binary exports. It is always exported — by the driver for a grouped batch, by
- * `wasiBoxTestRun.kt` for a box run.
+ * [callGroupedTestsDriver] must come from what the stage-2 facade generated, not from probing the exports:
+ * `wasiBoxTestRun.kt` exports a `startTest()` of its own that merely runs `box()`, so a probe would run `box()` in
+ * place of `startUnitTests()` for an isolated `// RUN_UNIT_TESTS` test that also has a `box()`.
  */
 fun startUnitTestsWasiScript(callGroupedTestsDriver: Boolean): String = """
     try {
@@ -51,18 +42,9 @@ fun startUnitTestsWasiScript(callGroupedTestsDriver: Boolean): String = """
     """.trimIndent()
 
 /**
- * Asserts that a driver-linked batch's binary exports the driver's `startTest` and nothing of the per-test
- * `wasiBoxTestRun.kt` helpers, by inspecting the export list of the generated JS glue.
- *
- * The bare `startTest` name is all the standalone VMs (WasmEdge/Wasmtime) can invoke, and it is unambiguous only
- * because the helpers — each exporting a `startTest`/`runBoxTest` of its own — never enter a grouped link: they live
- * in `-libraries` KLIBs, whose declarations are deserialized only when referenced, and nothing references them there
- * (the launcher reaches each `box()` by its FQN). This check turns that linker-level invariant into a loud failure:
- * should `runBoxTest` ever appear in a grouped binary's export surface — the helper got referenced, or the linker
- * started exporting library `@WasmExport`s — a bare `startTest` may no longer resolve to the driver, and the batch
- * would be executed through a single `box()` instead of the result-collecting driver.
- *
- * See `WasmWasiGroupedTestsExportedEntryPointGenerator` for the full account of why the shared name is safe.
+ * Turns the linker-level invariant the bare `startTest` export relies on into a loud failure: should a
+ * `wasiBoxTestRun.kt` helper ever reach a grouped binary, `startTest` may no longer resolve to the driver and the
+ * batch would run a single `box()` instead. See `WasmWasiGroupedTestsExportedEntryPointGenerator`.
  */
 internal fun assertDriverOwnsStartTestExport(dir: File) {
     val glue = dir.resolve("$WASM_BASE_FILE_NAME.mjs").takeIf(File::exists) ?: return
@@ -114,7 +96,6 @@ class WasiBoxRunner(
         useUnitTestRunnerOnly: Boolean = false,
         outputCollector: MutableList<String>? = null,
         throwOnExceptions: Boolean = !useUnitTestRunnerOnly,
-        /** Whether this batch carries the generated result-collecting driver; see [startUnitTestsWasiScript]. */
         callGroupedTestsDriver: Boolean = false,
     ): List<Throwable> {
         val outputDirBase = testServices.getWasmTestOutputDirectory()
@@ -124,12 +105,9 @@ class WasiBoxRunner(
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = useUnitTestRunnerOnly || RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
 
-        // A driverless unit-test run has to report through `startUnitTests()`, and only the Node launcher can call it:
-        // the standalone WASI VMs invoke a bare export name, which for a test with a `box()` resolves to
-        // `wasiBoxTestRun.kt`'s `startTest` — that runs `box()` and says nothing about the unit tests, so the run would
-        // pass on the box result while the unit tests never executed. There is no test data in this shape today; fail
-        // loudly rather than silently the first time there is. Grouped batches are unaffected: their `startTest` is the
-        // driver itself.
+        // Only the Node launcher can reach `startUnitTests()`, so without a driver such a run would pass on whatever
+        // `box()` returned. No test data is in this shape today; fail loudly rather than silently the first time there
+        // is one.
         if (useUnitTestRunnerOnly && !callGroupedTestsDriver && RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives) {
             val standaloneVms = vmsToCheck.filter { !it.entryPointIsJsFile }
             if (standaloneVms.isNotEmpty()) {
@@ -246,10 +224,7 @@ open class WasmWasiFolderGroupingStageBoxRunner(
         val folder = (artifact as WasmFolderBinaryArtifact).folder
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
-        // Same trap as in [WasiBoxRunner.runWasmCode], mirrored here since this runner drives the same standalone VMs:
-        // without a driver, only the Node launcher can reach `startUnitTests()` — WasmEdge/Wasmtime invoke the bare
-        // `startTest` export, which for a test with a `box()` is `wasiBoxTestRun.kt`'s helper, so the unit tests such a
-        // test exists for would silently not run there.
+        // Same trap as in [WasiBoxRunner.runWasmCode], mirrored here since this runner drives the same standalone VMs.
         if (!testServices.hasGroupedTestsDriver &&
             RUN_UNIT_TESTS in firstNonGroupingTestServices.moduleStructure.allDirectives
         ) {

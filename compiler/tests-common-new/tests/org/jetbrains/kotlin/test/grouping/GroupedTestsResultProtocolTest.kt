@@ -70,7 +70,6 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given an id reported by several VMs when parseMerged then a failure wins over a pass`() {
-        // The batch runs on several engines, and a partial block is all that a VM which died mid-batch leaves behind.
         val passedOnOneVm = block(resultLine("id", PASSED), resultLine("other", PASSED))
         val failedOnAnotherVm = buildString {
             appendLine("noise before the block")
@@ -112,8 +111,6 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given values with protocol-significant characters when escaped and parsed back then they survive verbatim`() {
-        // The round trip that matters: escape as the generated driver does, put the result on a wire line, and let the
-        // parser split and unescape it — the whole path a failure message travels.
         for (value in PROTOCOL_HOSTILE_VALUES) {
             val escaped = GroupedTestsResultProtocol.escape(value)
             assertFalse(SEP in escaped, "Escaped value still holds a raw separator: <$value>")
@@ -124,7 +121,7 @@ class GroupedTestsResultProtocolTest {
             val output = block(resultLine("id", FAILED, escaped, GroupedTestsResultProtocol.escape(details)))
             val parsed = parse(output)
 
-            // Exactly one outcome: a fake result line inside a message cannot spoof another test's status.
+            // A fake result line inside a message must not spoof another test's status.
             assertEquals(setOf("id"), parsed.keys, "Escaped fields leaked out of their line: <$value>")
             assertEquals(value, parsed.getValue("id").message, "Message did not survive the round trip: <$value>")
             assertEquals(details, parsed.getValue("id").details, "Details did not survive the round trip: <$value>")
@@ -133,8 +130,7 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given the generated driver source when inspected then its escaping matches the parsing side`() {
-        // Spelled out rather than derived from the protocol, so that changing the escaping has to be acknowledged here.
-        // `escape` and `unescape` are covered by the round trip above; this pins the third copy, the generated one.
+        // Spelled out rather than derived, so that changing the escaping has to be acknowledged here.
         assertTrue(
             """return s.replace("\\", "\\\\").replace("|", "\\p").replace("\n", "\\n").replace("\r", "\\r")""" in driverSource,
             driverSource,
@@ -145,7 +141,7 @@ class GroupedTestsResultProtocolTest {
     fun `given the generated driver source when inspected then every protocol line is printed with a leading newline`() {
         val protocolPrints = driverSource.lines().filter { "println(" in it && "##KGTI" in it }
 
-        // The BEGIN/END sentinels plus the STARTED/PASSED/FAILED lines of `__kgtiReport`.
+        // BEGIN/END plus the STARTED/PASSED/FAILED lines of `__kgtiReport`.
         assertEquals(5, protocolPrints.size, driverSource)
         for (line in protocolPrints) {
             assertTrue("""println("\n##KGTI""" in line, "Protocol line is printed without a leading newline: $line")
@@ -154,8 +150,8 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given output left mid-line when parse then only a newline-prefixed result line is recognized`() {
-        // Why the driver prefixes every line with `\n`: line matching is exact, so a line glued onto the leftover of a
-        // test body ending with `print(...)` is dropped, and the test would be misreported as having produced no result.
+        // Line matching is exact, so a result line glued onto a `print(...)` leftover is dropped — which is why the
+        // driver prefixes every line with `\n`.
         val prefixedByNewline = buildString {
             appendLine(BEGIN)
             append("leftover output with no trailing newline")
@@ -170,17 +166,15 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given an id started on a VM that never reported its result when parseMerged then it is crashed in progress`() {
-        // The test passes on the first engine and takes the second one down mid-execution. Deriving "crashed" globally
-        // would miss it, since the first VM's PASSED already fills the merged outcomes.
+        // Deriving "crashed" from the merged outcomes would miss it: the first VM's PASSED is already there.
         val passingVm = block(resultLine("crasher", STARTED), resultLine("crasher", PASSED))
         val crashingVm = "$BEGIN\n${resultLine("crasher", STARTED)}\n"
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, crashingVm))
 
         assertTrue(result.crashedInProgress("crasher"))
-        // The surviving VM's outcome is kept, so the runner can also show what that engine saw...
         assertTrue(result.outcomes.getValue("crasher").passed)
-        // ...which means the crash has to be reported through crashedInProgress, not through the missing-id path.
+        // The surviving VM's outcome is kept, so the crash cannot be reported through the missing-id path.
         assertTrue(TestRunChecks.findMissingResults(listOf("crasher"), result.toTestReport()).isEmpty())
 
         assertFalse(GroupedTestsResultProtocol.parseMerged(listOf(passingVm, passingVm)).crashedInProgress("crasher"))
@@ -199,10 +193,8 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given several unterminated starts in one output when parseMerged then only the last one crashed`() {
-        // The driver runs the batch sequentially, so only one test can be executing when the VM dies. Two starts with
-        // no result mean this output lost its tail; blaming `earlier` would fail a test that in fact completed.
+        // Only one test can be executing when the VM dies, so blaming `earlier` would fail a test that completed.
         val truncatedVm = "$BEGIN\n${resultLine("earlier", STARTED)}\n${resultLine("crasher", STARTED)}\n"
-        // ...and the tail it lost is exactly what another engine did report.
         val completeVm = block(
             resultLine("earlier", STARTED), resultLine("earlier", PASSED),
             resultLine("crasher", STARTED), resultLine("crasher", PASSED),
@@ -216,8 +208,7 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given a start whose result line is lost but a later test reported when parseMerged then no crash is inferred`() {
-        // `garbled` lost its terminal line, but `later` ran after it, which proves the VM survived `garbled`. It is still
-        // failed by the runner — as a test that reported no result — just not blamed for taking an engine down.
+        // `later` ran after `garbled`, which proves the VM survived it. `garbled` is still failed, as a missing result.
         val output = block(
             resultLine("garbled", STARTED),
             "$LINE_PREFIX${SEP}garbled${SEP}tooFewFields",
@@ -237,14 +228,13 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given a closed block whose last start lost its result when parseMerged then no crash is inferred`() {
-        // The END sentinel proves the driver ran the batch to its end, so `last` cannot have taken the VM down: its
-        // terminal line went missing while the VM kept going.
+        // The END proves the driver reached the end of the batch, so `last` merely lost its terminal line.
         val closedBlock = block(
             resultLine("first", STARTED),
             resultLine("first", PASSED),
             resultLine("last", STARTED),
         )
-        // The same output without the END sentinel is the actual crash, and stays reported as one.
+        // Without the END sentinel the same output is the actual crash.
         val unterminatedBlock = closedBlock.substringBefore(END)
 
         assertFalse(
@@ -256,8 +246,7 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given an open block whose last start reported its result when parseMerged then no crash is inferred`() {
-        // The VM died between tests, or after the last one — every start has a terminal line, so nothing was executing
-        // when it went down and no test may be blamed. The batch-level VM exception is what surfaces in that case.
+        // Every start has a terminal line, so nothing was executing when the VM went down and no test may be blamed.
         val output = "$BEGIN\n${resultLine("only", STARTED)}\n${resultLine("only", PASSED)}\n"
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
@@ -275,11 +264,7 @@ class GroupedTestsResultProtocolTest {
             },
         )
 
-        /**
-         * Values a failing test can realistically put into its message or stack trace, each hostile to the line format
-         * in its own way: the separator, the escape character, text that already looks escaped, line breaks, and a whole
-         * fake result line that must not be able to spoof another test's status.
-         */
+        /** Values a failing test can put into its message or stack trace, each hostile to the line format. */
         val PROTOCOL_HOSTILE_VALUES: List<String> = listOf(
             "Test failed with: FAIL. Expected <OK>, actual <FAIL>.",
             "a $SEP separator",
@@ -294,7 +279,6 @@ class GroupedTestsResultProtocolTest {
             "\$dollar and {braces}",
         )
 
-        /** [GroupedTestsResultProtocol.parseMerged] over a single output — what most cases here need. */
         fun parse(output: String): Map<String, GroupedTestsResultProtocol.Outcome> =
             GroupedTestsResultProtocol.parseMerged(listOf(output)).outcomes
 

@@ -62,12 +62,9 @@ abstract class WasmBoxRunnerBase(
                     }
                     try {
                         if (typeof jsModule.runGroupedTests === 'function') {
-                            // Grouped batch: the driver prints one structured result line per test and pass/fail is
-                            // attributed on the JVM side, so a test failure must NOT throw here.
-                            // `await` is a no-op for the synchronous driver, and keeps working if it ever becomes async.
+                            // Grouped batch: pass/fail is attributed on the JVM side, so a failure must NOT throw here.
                             await jsModule.runGroupedTests();
                         } else {
-                            // Single-test batch: no driver was generated, so the unit-test runner reports the failure.
                             await jsModule.startUnitTests();
                             const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
                                                 (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
@@ -228,9 +225,8 @@ internal fun WasmVM.runWithCaughtExceptions(
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName is completed")
         }
-        // Only the single-test batches still go through `startUnitTests()` and hence through `kotlin.test`'s TeamCity
-        // reporter. A grouped batch reports through GroupedTestsResultProtocol instead, and its launcher classes carry
-        // no `@Test`, so this marker cannot come from them.
+        // Only single-test batches still go through `startUnitTests()`, and hence through `kotlin.test`'s TeamCity
+        // reporter; a grouped batch's launchers carry no `@Test`, so this marker cannot come from them.
         if (str.contains("##teamcity[testFailed")) {
             return AssertionError("Unit test failed in $vmName. Output:\n$str")
         }

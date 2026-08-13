@@ -31,10 +31,6 @@ import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
  *   - attributing the per-test results the launcher's driver printed (see [GroupedTestsResultProtocol]) back to the
  *     individual grouping inputs via their [NonGroupingStageOutput.catchingExecutor], so that the test engine reports
  *     each failure against the specific test rather than against the whole batch.
- *
- * A test whose `ProxyLauncher_<hash>` id is missing from the reported results is failed with a sanity error, which
- * keeps a silently skipped test from being reported as passing, and a test that crashed a VM is failed even if another
- * VM ran it to completion.
  */
 abstract class AbstractWasmGroupingStageBoxRunner(
     testServices: TestServices
@@ -83,7 +79,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 input.failWith(exceptions.first())
             }
         } else {
-            // Unit test mode: run the batch and parse the structured GroupedTestsResultProtocol block from stdout.
+            // Unit test mode: run the batch and parse the structured result block from stdout.
             val collectedOutputs = mutableListOf<String>()
             val exceptions = runTestCode(
                 artifact,
@@ -94,14 +90,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
     }
 
-    /**
-     * @param collectedOutputs the stdout captured from every VM that finished normally
-     * @param exceptions whatever the VM wrappers threw (a failed run, or a failure detected in the output)
-     */
     private fun handleRunResult(collectedOutputs: List<String>, exceptions: List<Throwable>) {
-        // Every text that may carry the structured block: the stdout of VMs that finished normally, plus the messages
-        // of VM-failure exceptions, which embed the captured stdout — so a partial block of a VM that died mid-batch
-        // is recovered too.
+        // A VM-failure message embeds the stdout captured before the crash, so a partial block is recovered too.
         val texts = buildList {
             addAll(collectedOutputs)
             exceptions.forEach { throwable -> addAll(collectExceptionTexts(throwable)) }
@@ -113,14 +103,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             return
         }
 
-        // A batch linked with the driver reports every verdict through it, so no block at all means the driver was never
-        // invoked: `test.mjs` did not find its exported entry point and fell back to `startUnitTests()`, which now
-        // finds nothing to run since the launcher classes carry no `@kotlin.test.Test`. That exits cleanly, so the
-        // whole batch would be reported green without a single test having run — fail every test of it instead.
-        //
-        // Keyed on what the stage-2 facade actually generated, not on the batch size: a test that ended up alone in its
-        // batch without being isolated is still driver-driven and has no `box()` export to fall back on, so trusting the
-        // launcher glue for it would let exactly this silent-green case through.
+        // A driver-linked batch reports every verdict through the driver, so no block at all means it was never
+        // invoked: `test.mjs` fell back to `startUnitTests()`, which finds nothing to run (the launcher classes carry
+        // no `@kotlin.test.Test`) and exits cleanly — the batch would be green with no test having run.
         if (testServices.hasGroupedTestsDriver) {
             testServices.groupingStageInputs.forEach { input ->
                 input.failWithCollectedOutputs(
@@ -135,19 +120,13 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             return
         }
 
-        // A batch linked without the driver is a single isolated test, so a missing block is expected here and there is
-        // nothing to demux: any VM failure is unambiguously that test's own, and its pass verdict comes from the
-        // `box()`/`hasTestFailures` checks of the launcher glue, which make the VM exit non-zero on failure.
+        // A driverless batch is a single isolated test: nothing to demux, and any VM failure is that test's own.
         if (exceptions.isNotEmpty()) {
             testServices.groupingStageInputs.forEach { it.failWith(exceptions.firstWithOthersSuppressed()) }
         }
     }
 
-    /**
-     * Attributes each per-test result to the grouping input it belongs to, by the test's stable `ProxyLauncher_<hash>`
-     * id. A test the batch reported no result for is failed with a sanity error, so that a silently skipped test
-     * cannot masquerade as passing, and one that crashed a VM is failed whatever the surviving VMs reported for it.
-     */
+    /** Attributes each per-test result to its grouping input, by the test's stable `ProxyLauncher_<hash>` id. */
     private fun attributeStructuredResults(
         parsedBatchResult: GroupedTestsResultProtocol.ParsedBatchResult,
         exceptions: List<Throwable>,
@@ -158,9 +137,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             computeProxyLauncherClassName(input.testServices.testInfo)
         }
 
-        // Every grouped test is run through its launcher's `runTest()`, which asserts `box() == "OK"`, so it must have a
-        // `box()`. A test without one is driven by a custom JS entry point and cannot report a result line, so it has to
-        // be isolated. Checked before anything is attributed, since it invalidates the whole batch rather than one test.
+        // Checked before anything is attributed, since a test that cannot report a result invalidates the whole batch.
         testServices.groupingStageInputs.firstOrNull { !hasBoxMethod(it) }?.let { input ->
             testInfraError(
                 "Test ${input.testInfo} does not have a box() method, so its execution status cannot be reported " +
@@ -170,18 +147,14 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
 
         val excessiveIds = TestRunChecks.findExcessiveResults(expectedIds, testReport)
-        // The driver is generated from this batch's own launcher class names, so an unexpected id means the launcher
-        // and the report went out of sync. No individual test is to blame for that, hence a test infrastructure error.
+        // The driver is generated from this batch's own launcher names, so an unexpected id is nobody's test failure.
         checkTestInfrastructure(excessiveIds.isEmpty()) {
             "Grouped batch reported results for tests that are not part of it: $excessiveIds. Expected: $expectedIds"
         }
 
-        // With not a single reported result the batch as a whole is broken, rather than one test being skipped. There
-        // is no batch-level failure sink, so that reason is prepended to the report of every missing test below.
+        // There is no batch-level failure sink, so an empty report is prepended to every missing test below.
         val emptyReportReason = (TestRunChecks.checkNonEmpty(testReport) as? TestRunChecks.Result.Failed)?.reason
         val missingIds = TestRunChecks.findMissingResults(expectedIds, testReport).toSet()
-        // The ids a crash was blamed on below. A VM-level exception is accounted for once the test that was executing
-        // when that VM died has been named; anything else it reports is nobody's per-test failure.
         val crashAttributedIds = mutableSetOf<String>()
 
         for (input in testServices.groupingStageInputs) {
@@ -208,19 +181,16 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                     val outcome = parsedBatchResult.outcomes.getValue(id)
                     val reportedFailure = listOfNotNull(outcome.message, outcome.details).joinToString("\n")
                     if (parsedBatchResult.crashedInProgress(id)) {
-                        // The test reported a failure on one VM and took another one down. Report both: the assertion
-                        // alone would hide that it crashes an engine, the crash alone what it actually asserted. And
-                        // the crash can only be diagnosed with the VM output.
+                        // Failed on one VM and took another down: the assertion alone would hide that it crashes an
+                        // engine, the crash alone what it asserted.
                         input.failWithCollectedOutputs(texts, reportedFailure, crashDiagnosis(id, "another VM"))
                         crashAttributedIds += id
                     } else {
-                        // Message and stack trace say everything, so the collected outputs are not repeated.
                         input.failWith(AssertionError(reportedFailure))
                     }
                 }
-                // Ran to completion on at least one VM, but took another one down. Without this branch the surviving
-                // VM's result would report it as passing, and the crash would surface only as the unattributed
-                // batch-level VM exception below.
+                // Ran to completion on one VM but took another down: without this the surviving VM's result would
+                // report it as passing.
                 parsedBatchResult.crashedInProgress(id) -> {
                     input.failWithCollectedOutputs(texts, crashDiagnosis(id, "another VM"))
                     crashAttributedIds += id
@@ -228,10 +198,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             }
         }
 
-        // Whatever a VM threw is only accounted for once the test it died in has been named above. An exception that no
-        // attributed crash explains — a VM that produced no parsable output at all, or one that died for a reason no
-        // test's start localizes — is surfaced as is, even when other tests of the batch already failed: keying this on
-        // "some test failed" instead would let an engine-specific crash disappear behind an unrelated assertion.
+        // An exception no attributed crash explains is surfaced even when other tests of the batch already failed:
+        // keying this on "some test failed" would let an engine-specific crash hide behind an unrelated assertion.
         val unexplainedExceptions = exceptions.filter { exception ->
             val crashedThere = GroupedTestsResultProtocol.parseMerged(collectExceptionTexts(exception)).crashedIds
             crashedThere.none { it in crashAttributedIds }
@@ -241,31 +209,24 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
     }
 
-    /** Explains that [id] printed no terminal result on [vm] after starting there, so it most likely took it down. */
     private fun crashDiagnosis(id: String, vm: String): String =
         "Test '$id' printed a '${GroupedTestsResultProtocol.STARTED}' line on $vm with no terminal " +
                 "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — it most " +
                 "likely crashed that VM (a hard trap, OOM, or process exit) while executing."
 
-    /**
-     * Fails this specific test with [lines] (`null` ones are dropped) followed by every text the batch collected, so
-     * that the test engine reports it against this test instead of against the whole batch.
-     */
+    /** Fails this specific test with [lines] (`null` ones are dropped) and every text the batch collected. */
     private fun NonGroupingStageOutput.failWithCollectedOutputs(texts: List<String>, vararg lines: String?) {
         failWith(AssertionError((lines.filterNotNull() + "Collected outputs:" + texts).joinToString("\n")))
     }
 
-    /** Routes [error] into this test's own failure sink, so that the test engine attributes it to this test. */
+    /** Routes [error] into this test's own failure sink, so the test engine attributes it to this test. */
     private fun NonGroupingStageOutput.failWith(error: Throwable) {
         catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this@AbstractWasmGroupingStageBoxRunner) }) {
             throw error
         }
     }
 
-    /**
-     * The first exception of this list, carrying the remaining ones as suppressed. Several VMs run the same batch, so
-     * reporting only the first would drop what the others saw.
-     */
+    /** Several VMs run the same batch, so reporting only the first exception would drop what the others saw. */
     private fun List<Throwable>.firstWithOthersSuppressed(): Throwable = first().also { first ->
         // `addSuppressed` rejects the throwable itself, and the same instance may well be reported by two VMs.
         drop(1).forEach { other -> if (other !== first) first.addSuppressed(other) }
@@ -287,10 +248,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
     }
 
     /**
-     * Returns `true` if any module of [input] contains a file with a top-level `box()` function.
-     *
-     * Tests without a `box()` (e.g. `// FILE: entry.mjs` driven Wasm/JS size tests) are executed via a custom JS entry
-     * point, not via the synthetic `ProxyLauncher_<hash>` classes, so they cannot report a per-test result line.
+     * A test without a `box()` (e.g. a `// FILE: entry.mjs` driven size test) runs through a custom JS entry point
+     * rather than through its `ProxyLauncher_<hash>`, so it cannot report a per-test result line.
      */
     protected fun hasBoxMethod(input: NonGroupingStageOutput): Boolean {
         val moduleStructure = input.testServices.moduleStructure

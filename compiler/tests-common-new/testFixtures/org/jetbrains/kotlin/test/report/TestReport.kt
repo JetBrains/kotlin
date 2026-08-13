@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.test.report
 
 /**
- * Per-test outcomes of a single (possibly batched) test run, keyed by an opaque test id of type [ID].
- *
- * Extracted from the Kotlin/Native `TestReport` (keyed by `TestName`) so that the grouped Wasm runners,
- * which key by their own synthetic launcher class name, can reuse the same holder and the checks over it.
+ * Per-test outcomes of a single (possibly batched) test run. [ID] is opaque: Kotlin/Native keys by test name, the
+ * grouped Wasm runners by their synthetic launcher class name.
  */
 data class TestReport<ID>(
     val passedTests: Set<ID>,
@@ -18,7 +16,6 @@ data class TestReport<ID>(
 ) {
     fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
 
-    /** All ids the run reported an outcome for, regardless of status. */
     val reportedIds: Set<ID> get() = passedTests + failedTests + ignoredTests
 
     override fun toString(): String = """

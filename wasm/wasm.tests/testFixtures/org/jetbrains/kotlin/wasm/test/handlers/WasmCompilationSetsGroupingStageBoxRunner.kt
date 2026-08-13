@@ -69,8 +69,7 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
             "Unexpected artifact type: ${artifact::class}"
         }
         return if (isWasiTarget) {
-            // `wasiBoxRunner` is built on the per-test services, so the driver-presence marker — recorded by the
-            // stage-2 facade on the batch-level services — has to be handed to it explicitly.
+            // `wasiBoxRunner` is built on the per-test services, so the flag has to be handed to it explicitly.
             wasiBoxRunner.runWasmCode(
                 artifact,
                 useUnitTestRunnerOnly,
