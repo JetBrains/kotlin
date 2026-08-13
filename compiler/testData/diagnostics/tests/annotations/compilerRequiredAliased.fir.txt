@@ -18,7 +18,7 @@ FILE: target.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|q/MyAnno|() public final val myField: R|kotlin/Int| = R|p/method|()
+        field:@R|q/MyAnno|() public final val myField: R|kotlin/Int| = R|p/method|()
             public get(): R|kotlin/Int|
 
         field:@R|q/Anno|() public final val field: R|kotlin/Int| = R|p/method|()
