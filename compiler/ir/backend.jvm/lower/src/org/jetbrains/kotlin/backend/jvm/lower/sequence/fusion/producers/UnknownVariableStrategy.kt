@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers
 
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacement
@@ -22,7 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.typeWith
 
 internal class UnknownVariableStrategy(
-    val newIteratorTarget: IrExpression
+    val newIteratorTarget: IrExpression,
+    val context: JvmBackendContext
 ) : ProducerStrategy() {
 
     override fun fuseConsumer(
@@ -33,7 +35,7 @@ internal class UnknownVariableStrategy(
         val builder = builderWithParent.first
         val parent = builderWithParent.second
 
-        val baseType = getGenericTypeFromExpression(newIteratorTarget) ?: return null
+        val baseType = getGenericTypeFromExpression(newIteratorTarget, context) ?: return null
         val iteratorType = builder.context.irBuiltIns.iteratorClass.typeWith(baseType)
 
         return builder.irBlock {
