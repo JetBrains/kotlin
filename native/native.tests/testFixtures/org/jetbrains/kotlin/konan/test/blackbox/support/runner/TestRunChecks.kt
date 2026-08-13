@@ -112,7 +112,7 @@ sealed interface TestRunCheck {
             val actualFilteredOutput = runResult.processOutputAsString(output)
             val match = JUnit5Assertions.doesEqualToFile(file, actualFilteredOutput, sanitizer)
             return if (!match) {
-                // Show the diff without the sanitizer applied to see the real diff in the failure
+                // Pass in both the output and the file unsanitized to see the real diff in the failure
                 Result.Failed("Tested process output mismatch.", expectedFile = file, actual = actualFilteredOutput)
             } else {
                 Result.Passed
