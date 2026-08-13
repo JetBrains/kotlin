@@ -1826,7 +1826,7 @@ object ECMA426BasedSourceMapParser {
     /**
      * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodeScopesInfo">Section 9.3.4.3: DecodeScopesInfo(scopes, names)</a>
      */
-    private fun decodeScopesInfo(
+    internal fun decodeScopesInfo(
         scopes: String?,
         names: List<String>,
     ): ParsingResult<ScopeInfoRecord> {
