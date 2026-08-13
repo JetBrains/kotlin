@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.extensions.FirExtension
@@ -181,18 +181,25 @@ val FirClassSymbol<*>.isUnsupportedLombokTarget: Boolean
     get() = isInterface || isAnnotationClass
 
 /**
- * Whether `@Builder` and `@EqualsAndHashCode` generate nothing at all into [this] class: everything
- * [isUnsupportedLombokTarget] covers, plus an enum class. Lombok's own handlers draw the line in the same place -
- * they accept a class only, while `@Log` and `@ToString` accept an enum too.
+ * Whether [this] is a plain class, that is, neither an interface, nor an annotation class, nor an enum class, nor
+ * an object. It is the only kind `@Builder` and `@EqualsAndHashCode` generate anything into, and it mirrors
+ * `isClass` in Lombok's own `JavacHandlerUtil`, which both of its handlers consult before generating - unlike
+ * `@Log` and `@ToString`, which accept an enum class and an object as well.
  *
- * An enum can neither be built nor compared by a generated member:
- *  - its constructors take the synthetic name and ordinal parameters, so a generated `build()` calls a signature
- *    that doesn't exist and fails with `NoSuchMethodError` (KT-87871);
- *  - `equals` and `hashCode` are final in `java.lang.Enum`, so generated ones don't even load - the whole class
- *    fails to verify with "class Color overrides final method java.lang.Enum.equals" (KT-88507).
+ * Neither annotation has anything to generate for the other kinds, and generating anyway used to produce code
+ * that doesn't even run:
+ *  - an enum constructor takes the synthetic name and ordinal parameters, so a generated `build()` calls a
+ *    signature that doesn't exist and fails with `NoSuchMethodError` (KT-87871);
+ *  - `equals` and `hashCode` are final in `java.lang.Enum`, so generated ones make the whole class fail
+ *    verification with "class Color overrides final method java.lang.Enum.equals" (KT-88507);
+ *  - an object is a single instance compared by identity and has no constructor to build it with, so both
+ *    annotations only ever generated members that repeat what the object already does (KT-88507).
+ *
+ * A local class is a plain class: `@EqualsAndHashCode` supports one, and `@Builder` is stopped for it by
+ * `isCompanionNeeded` instead, since a local class can't hold the companion object a `builder()` needs.
  */
-val FirClassSymbol<*>.isUnsupportedLombokTargetOrEnumClass: Boolean
-    get() = isUnsupportedLombokTarget || isEnumClass
+val FirClassSymbol<*>.isPlainClass: Boolean
+    get() = classKind == ClassKind.CLASS
 
 /**
  * Whether [this] has an extension receiver or context parameters.

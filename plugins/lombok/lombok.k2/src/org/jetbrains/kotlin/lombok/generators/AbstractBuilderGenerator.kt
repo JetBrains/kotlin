@@ -678,9 +678,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         return buildList {
-            // Only the class-level `@Builder` is dropped: a `@Builder`-annotated member function of an interface
-            // or an enum class still builds whatever that function returns, and is a legitimate case.
-            if (allowedTargets.contains(KotlinTarget.CLASS) && !classSymbol.isUnsupportedLombokTargetOrEnumClass) {
+            // Only the class-level `@Builder` is dropped: a `@Builder`-annotated member function of an interface,
+            // an enum class or an object still builds whatever that function returns, and is a legitimate case.
+            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass) {
                 getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
             }
 

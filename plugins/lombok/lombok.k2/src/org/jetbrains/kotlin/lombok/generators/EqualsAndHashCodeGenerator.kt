@@ -115,10 +115,10 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         classSymbol: FirClassSymbol<*>,
         context: MemberGenerationContext,
     ): EqualsAndHashCodeMembers? {
-        // An annotation class can hold no member at all, generating one makes the platform report
-        // `ANNOTATION_CLASS_MEMBER` on it, and an enum's `equals`/`hashCode` are final. All of these kinds are
-        // already reported as `ANNOTATION_HAS_NO_EFFECT`.
-        if (classSymbol !is FirRegularClassSymbol || classSymbol.isUnsupportedLombokTargetOrEnumClass) return null
+        // Only a plain class gets `equals`/`hashCode`: an annotation class can hold no member at all, an enum's
+        // `equals`/`hashCode` are final, and an object is compared by identity. Every other kind is already
+        // reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isPlainClass) return null
 
         val annotation = session.lombokService.getEqualsAndHashCode(classSymbol) ?: return null
         val declaredScope = context.declaredScope
