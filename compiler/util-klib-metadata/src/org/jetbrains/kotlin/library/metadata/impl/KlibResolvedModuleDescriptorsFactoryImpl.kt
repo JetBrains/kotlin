@@ -126,7 +126,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         )
     }
 
-    fun createForwardDeclarationsModule(
+    private fun createForwardDeclarationsModule(
         builtIns: KotlinBuiltIns?,
         storageManager: StorageManager,
         isExpect: Boolean
@@ -231,8 +231,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
             findCinteropClassOrNull(NativeStandardInteropNames.ExperimentalForeignApi)?.defaultType
         }
 
-        private fun findCinteropClass(name: Name): ClassDescriptor = findCinteropClassOrNull(name) ?:
-          error("Class $name is not found")
+        private fun findCinteropClass(name: Name): ClassDescriptor = findCinteropClassOrNull(name) ?: error("Class $name is not found")
 
         private fun findCinteropClassOrNull(name: Name): ClassDescriptor? {
             return builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
