@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
@@ -86,7 +87,6 @@ internal data class SequenceReplacement(
 
 class SequenceFusionLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (!sequenceFusionEnabled) return
         val reuseMarker = ReusedSequenceMarker(context)
         irFile.acceptChildrenVoid(reuseMarker)
         val transformer = SequenceFusionTransformer(context)
@@ -115,11 +115,22 @@ internal fun IrBuilderWithScope.callRichFunctionReference(
     }
 }
 
-internal fun getGenericTypeFromExpression(sequence: IrExpression): IrType? =
-    (sequence.type as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
+internal fun getGenericTypeFromExpression(sequence: IrExpression, context: JvmBackendContext): IrType? {
+    return (sequence.type as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull ?: run {
+        val fqName = sequence.type.classOrNull?.fqNameWhenAvailable?.asString() ?: return null
 
-internal fun getBaseTypeFromSequenceScopeFunction(sequenceScope: IrExpression): IrType? =
-    ((sequenceScope.type as? IrSimpleType)?.arguments?.getOrNull(0) as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
+        val b = context.irBuiltIns
+
+        when (fqName) {
+            "kotlin.ranges.IntRange" -> b.intType
+            "kotlin.ranges.LongRange" -> b.longType
+            "kotlin.ranges.CharRange" -> b.charType
+            "kotlin.ranges.UIntRange" -> b.uintType
+            "kotlin.ranges.ULongRange" -> b.ulongType
+            else -> null
+        }
+    }
+}
 
 internal fun IrBuilderWithScope.callPredicate(
     predicate: IrExpression,

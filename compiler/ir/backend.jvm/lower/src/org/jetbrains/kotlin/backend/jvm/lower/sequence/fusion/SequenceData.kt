@@ -27,6 +27,7 @@ internal class SequenceData(
 internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
     class Variable(val variable: IrValueSymbol) : SequenceSource()
+    class AsSequence(val iterable: IrExpression) : SequenceSource()
     class GenerateSequence(
         val initialValue: GenerateSequenceInitialValue,
         val generatingFunction: IrExpression,
@@ -39,9 +40,10 @@ internal sealed class SequenceSource {
         builder: IrBuilderWithScope,
         context: JvmBackendContext,
     ): ProducerStrategy = when (this) {
+        is AsSequence -> UnknownVariableStrategy(this.iterable, context)
         is GenerateSequence -> GenerateSequenceStrategy(this)
         is SequenceOf -> SequenceOfStrategy(this)
         is Empty -> EmptySequenceStrategy
-        is Variable -> UnknownVariableStrategy(builder.irGet(this.variable.owner))
+        is Variable -> UnknownVariableStrategy(builder.irGet(this.variable.owner), context)
     }
 }
