@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
-import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
@@ -34,7 +34,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         get() = JsIrLoadingPipelinePhase
 
     override fun compileIncrementally(
-        icCaches: IcCachesArtifacts,
+        icCaches: List<ModuleArtifact>,
         configuration: CompilerConfiguration,
     ): JsBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
         val outputs = configuration
@@ -44,7 +44,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     }
 
     private fun compileIncrementally(
-        icCaches: IcCachesArtifacts,
+        icCaches: List<ModuleArtifact>,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs {

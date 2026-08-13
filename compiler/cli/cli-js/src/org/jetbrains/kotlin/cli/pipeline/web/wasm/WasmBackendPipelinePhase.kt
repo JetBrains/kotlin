@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
-import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.sourceMap
@@ -55,7 +55,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     }
 
     override fun compileIncrementally(
-        icCaches: IcCachesArtifacts,
+        icCaches: List<ModuleArtifact>,
         configuration: CompilerConfiguration,
     ): List<WasmIrModuleConfiguration> {
         val fragmentCompiler = when (configuration.wasmCompilationMode()) {
