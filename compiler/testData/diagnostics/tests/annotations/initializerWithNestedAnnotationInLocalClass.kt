@@ -5,7 +5,7 @@ fun foo() {
     class MyClass {
         val prop = 0
 
-        <!WRONG_ANNOTATION_TARGET!>@Anno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"init $prop"<!>)<!>  init {
+        <!WRONG_ANNOTATION_TARGET!>@Anno("init $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>prop<!>")<!>  init {
 
         }
     }

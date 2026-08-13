@@ -11,10 +11,10 @@ annotation class Ann(
 val i = 1
 
 @Ann(
-    s1 = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"a$i"<!>,
-    s2 = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"a$i b"<!>,
-    s3 = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"$i"<!>,
-    s4 = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"a${i}a$i"<!>
+    s1 = "a$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>i<!>",
+    s2 = "a$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>i<!> b",
+    s3 = "$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>i<!>",
+    s4 = "a${<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>i<!>}a$i"
 ) class MyClass
 
 // EXPECTED: @Ann(s1 = "a1", s2 = "a1 b", s3 = "1", s4 = "a1a1")

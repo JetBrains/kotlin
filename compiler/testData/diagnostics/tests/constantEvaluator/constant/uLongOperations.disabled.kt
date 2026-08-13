@@ -124,10 +124,10 @@ const val convert14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>longVal.toULong()<
 const val convert15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>floatVal.toULong()<!>
 const val convert16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>doubleVal.toULong()<!>
 
-const val equals1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal == twoVal<!>
-const val equals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>twoVal == twoVal<!>
-const val equals3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>threeVal == twoVal<!>
-const val equals4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>fourVal == twoVal<!>
+const val equals1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal<!> == twoVal
+const val equals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>twoVal<!> == twoVal
+const val equals3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>threeVal<!> == twoVal
+const val equals4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>fourVal<!> == twoVal
 
 const val toString1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.toString()<!>
 const val toString2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>twoVal.toString()<!>
