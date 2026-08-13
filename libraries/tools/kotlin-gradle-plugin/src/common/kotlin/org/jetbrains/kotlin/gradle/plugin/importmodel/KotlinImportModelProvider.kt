@@ -6,15 +6,22 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
+import org.jetbrains.kotlin.gradle.utils.lenientArtifactsView
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -60,6 +67,20 @@ internal class KotlinImportModelProvider(
         }
     }
 
+    fun dependencies(parameters: DependenciesModel.Parameters): DependenciesModel {
+        val compilation = compilation(parameters.compilationUnitId)
+        val artifacts = compilation.internal.configurations.compileDependencyConfiguration.lenientArtifactsView
+
+        return dependenciesModel {
+            id = KotlinImportModelIds.DEPENDENCIES
+            this.parameters = parameters
+            val artifactsByFile = artifacts.artifacts.associateBy { it.file }
+            binaryDependencies += artifacts.artifactFiles.files.mapNotNull { artifactsByFile[it]?.toBinaryDependency() }
+            unresolvedDependencies += artifacts.failures.mapNotNull(::toUnresolvedDependency)
+            sourceDependencies += sourceDependencies(compilation)
+        }
+    }
+
     private fun compilation(id: CompilationUnitId): KotlinCompilation<*> =
         supportedCompilations().singleOrNull { compilationUnitId(it.name) == id }
             ?: error("Unknown Kotlin import compilation unit '${id.value}' for project '${project.path}'")
@@ -68,6 +89,50 @@ internal class KotlinImportModelProvider(
         KotlinCompilation.MAIN_COMPILATION_NAME,
         KotlinCompilation.TEST_COMPILATION_NAME,
     ).map { name -> project.kotlinJvmExtension.target.compilations.getByName(name) }
+
+    private fun sourceDependencies(compilation: KotlinCompilation<*>): List<DependenciesModel.SourceDependency> {
+        val supportedCompilations = supportedCompilations()
+        return compilation.associatedCompilations
+            .filter { it in supportedCompilations }
+            .sortedBy { compilationUnitId(it.name).value }
+            .map { associatedCompilation ->
+                DependenciesModelKt.sourceDependency {
+                    kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                    targetCompilationUnitId = compilationUnitId(associatedCompilation.name)
+                }
+            }
+    }
+
+    private fun ResolvedArtifactResult.toBinaryDependency(): BinaryDependency? = when (val component = id.componentIdentifier) {
+        is ModuleComponentIdentifier -> binaryDependency {
+            coordinates = mavenCoordinates {
+                group = component.group
+                module = component.module
+                version = component.version
+            }
+            artifactPath = file.absolutePath
+        }
+        is ProjectComponentIdentifier -> {
+            // TODO: Support project-to-project dependencies
+            null
+        }
+        else -> binaryDependency {
+            artifactPath = file.absolutePath
+        }
+    }
+
+    private fun toUnresolvedDependency(failure: Throwable): DependenciesModel.Unresolved? {
+        val selector = (failure as? ModuleVersionResolveException)?.selector as? ModuleComponentSelector ?: return null
+        return DependenciesModelKt.unresolved {
+            coordinates = mavenCoordinates {
+                group = selector.group
+                module = selector.module
+                version = selector.version
+            }
+            failureMessage = runCatching { failure.message }.getOrNull()
+                ?: "Failed to resolve dependency"
+        }
+    }
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     private fun sourceRoots(compilation: KotlinCompilation<*>): List<SourceRoot> {

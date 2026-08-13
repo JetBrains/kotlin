@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt
 import org.jetbrains.kotlin.importmodels.proto.CompilerArgumentsModel
+import org.jetbrains.kotlin.importmodels.proto.DependenciesModel
+import org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt
 import org.jetbrains.kotlin.importmodels.proto.ProjectModel
 import org.jetbrains.kotlin.importmodels.proto.SourceRoot
 import org.jetbrains.kotlin.importmodels.proto.Action
@@ -69,13 +71,27 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         val compilerArguments = listOf("main", "test").map { name ->
             parseCompilerArguments(root.resolve("compiler-arguments/$name.json"))
         }
+        val dependencies = listOf("main", "test").map { name -> parseDependencies(root.resolve("dependencies/$name.json")) }
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
         assertEquals(listOf("main", "test"), units.map { it.name })
         assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
         assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
+        assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
         assertEquals(listOf(KotlinImportModelIds.COMPILER_ARGUMENTS, KotlinImportModelIds.COMPILER_ARGUMENTS), compilerArguments.map { it.id })
+        assertEquals(listOf(KotlinImportModelIds.DEPENDENCIES, KotlinImportModelIds.DEPENDENCIES), dependencies.map { it.id })
         assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
         assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
+        assertTrue(dependencies.all { it.binaryDependenciesList.isNotEmpty() })
+        assertEquals(emptyList(), dependencies.first().sourceDependenciesList)
+        assertEquals(
+            listOf(
+                DependenciesModelKt.sourceDependency {
+                    kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                    targetCompilationUnitId = units.first().parameters.compilationUnitId
+                }
+            ),
+            dependencies.last().sourceDependenciesList,
+        )
         assertEquals(
             listOf(
                 sourceRoot(
@@ -132,3 +148,6 @@ private fun parseCompilation(file: File): CompilationUnitModel =
 
 private fun parseCompilerArguments(file: File): CompilerArgumentsModel =
     CompilerArgumentsModel.newBuilder().also { JsonFormat.parser().merge(file.readText(), it) }.build()
+
+private fun parseDependencies(file: File): DependenciesModel =
+    DependenciesModel.newBuilder().also { JsonFormat.parser().merge(file.readText(), it) }.build()

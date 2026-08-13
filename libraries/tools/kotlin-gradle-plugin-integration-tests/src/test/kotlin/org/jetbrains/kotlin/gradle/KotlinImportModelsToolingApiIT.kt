@@ -51,12 +51,32 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             val project = first.project.model.unpack(ProjectModel::class.java)
             val units = first.compilationUnits.map { it.model.unpack(CompilationUnitModel::class.java) }
             val compilerArguments = first.compilerArguments.map { it.model.unpack(CompilerArgumentsModel::class.java) }
+            val dependencies = first.dependencies.map { it.model.unpack(DependenciesModel::class.java) }
+            val main = units.single { it.name == "main" }
+            val test = units.single { it.name == "test" }
+            val mainDependencies = dependencies.single { it.parameters.compilationUnitId == main.parameters.compilationUnitId }
+            val testDependencies = dependencies.single { it.parameters.compilationUnitId == test.parameters.compilationUnitId }
 
             assertEquals(KotlinImportModelIds.BASE, base.id)
             assertEquals(listOf("main", "test"), units.map { it.name })
             assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
+            assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
             assertTrue(compilerArguments.all { it.id == KotlinImportModelIds.COMPILER_ARGUMENTS })
+            assertTrue(dependencies.all { it.id == KotlinImportModelIds.DEPENDENCIES })
+            assertTrue(dependencies.all { it.parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE })
+            assertTrue(dependencies.all { it.parameters.coverage == DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL })
+            assertTrue(dependencies.all { it.binaryDependenciesList.isNotEmpty() })
+            assertEquals(emptyList(), mainDependencies.sourceDependenciesList)
+            assertEquals(
+                listOf(
+                    DependenciesModelKt.sourceDependency {
+                        kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                        targetCompilationUnitId = main.parameters.compilationUnitId
+                    }
+                ),
+                testDependencies.sourceDependenciesList,
+            )
             assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
             assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
             assertEquals(CompilationUnitModel.Platform.PLATFORM_JVM, units.first().platform)
@@ -87,6 +107,7 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 units.last().sourceRootsList,
             )
             assertEquals(project.compilationUnitIdsList, second.project.model.unpack(ProjectModel::class.java).compilationUnitIdsList)
+            assertEquals(first.dependencies, second.dependencies)
         }
     }
 }
@@ -137,7 +158,17 @@ private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<Kot
                 CompilerArgumentsModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
             )
         }
-        return KotlinImportModelsBuildActionResult(base, projectInformation, compilationUnits, compilerArguments)
+        val dependencies = project.compilationUnitIdsList.map { compilationUnitId ->
+            request(
+                KotlinImportModelIds.DEPENDENCIES,
+                DependenciesModelKt.parameters {
+                    this.compilationUnitId = compilationUnitId
+                    scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
+                    coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+                }.toByteArray(),
+            )
+        }
+        return KotlinImportModelsBuildActionResult(base, projectInformation, compilationUnits, compilerArguments, dependencies)
     }
 }
 
@@ -146,6 +177,7 @@ private data class KotlinImportModelsBuildActionResult(
     val project: ByteArray,
     val compilationUnits: List<ByteArray>,
     val compilerArguments: List<ByteArray>,
+    val dependencies: List<ByteArray>,
 ) : Serializable
 
 private data class KotlinImportModelsModels(
@@ -153,6 +185,7 @@ private data class KotlinImportModelsModels(
     val project: Result,
     val compilationUnits: List<Result>,
     val compilerArguments: List<Result>,
+    val dependencies: List<Result>,
 )
 
 private fun KotlinImportModelsBuildActionResult.toModels(): KotlinImportModelsModels = KotlinImportModelsModels(
@@ -160,4 +193,5 @@ private fun KotlinImportModelsBuildActionResult.toModels(): KotlinImportModelsMo
     project = Result.parseFrom(project),
     compilationUnits = compilationUnits.map(Result::parseFrom),
     compilerArguments = compilerArguments.map(Result::parseFrom),
+    dependencies = dependencies.map(Result::parseFrom),
 )

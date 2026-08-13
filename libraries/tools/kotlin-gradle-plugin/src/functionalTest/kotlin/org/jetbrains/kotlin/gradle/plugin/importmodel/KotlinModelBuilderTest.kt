@@ -50,6 +50,32 @@ class KotlinModelBuilderTest {
     }
 
     @Test
+    fun `serializes source dependencies for the requested compilation`() {
+        val project = projectWithJvm()
+        val (mainId, testId) = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList
+        val parameters = DependenciesModelKt.parameters {
+            compilationUnitId = testId
+            scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
+            coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+        }
+
+        val result = builder.buildResult(KotlinImportModelIds.DEPENDENCIES, project, parameters.toByteArray())
+        val model = result.model.unpack(DependenciesModel::class.java)
+
+        assertEquals(KotlinImportModelIds.DEPENDENCIES, model.id)
+        assertEquals(parameters, model.parameters)
+        assertEquals(
+            listOf(
+                DependenciesModelKt.sourceDependency {
+                    kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                    targetCompilationUnitId = mainId
+                }
+            ),
+            model.sourceDependenciesList,
+        )
+    }
+
+    @Test
     fun `reports invalid import model requests`() {
         val project = projectWithJvm()
         assertEquals(
@@ -63,6 +89,10 @@ class KotlinModelBuilderTest {
         assertEquals(
             Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
             builder.buildResult(KotlinImportModelIds.COMPILER_ARGUMENTS, project).error.errorType,
+        )
+        assertEquals(
+            Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
+            builder.buildResult(KotlinImportModelIds.DEPENDENCIES, project).error.errorType,
         )
     }
 

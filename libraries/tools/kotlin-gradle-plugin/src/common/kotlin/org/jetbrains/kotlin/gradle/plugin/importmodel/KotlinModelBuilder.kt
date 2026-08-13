@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
 import org.jetbrains.kotlin.importmodels.internal.KotlinImportModelSerialization
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
+import org.jetbrains.kotlin.importmodels.proto.DependenciesModel
 import org.jetbrains.kotlin.importmodels.proto.Error
 import javax.inject.Inject
 
@@ -49,6 +50,7 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
             }
             KotlinImportModelIds.COMPILATION_UNIT -> compilationUnitModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
             KotlinImportModelIds.COMPILER_ARGUMENTS -> compilerArgumentsModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
+            KotlinImportModelIds.DEPENDENCIES -> dependenciesModel(parameter.kotlinModelParameters ?: byteArrayOf(), provider)
             else -> result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_ID, "Unknown Kotlin import model '${parameter.kotlinModelId}'")
         }
     } catch (failure: Exception) {
@@ -68,6 +70,22 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
         compilationScopedModel(parameters, provider, KotlinImportModelSerialization::parseCompilerArgumentsCompilationUnitId) { compilationUnitId ->
             KotlinImportModelSerialization.modelResult(provider.compilerArguments(compilationUnitId))
         }
+
+    private fun dependenciesModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel {
+        val request = KotlinImportModelSerialization.parseDependenciesParameters(parameters)
+            ?: return result(Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Dependencies model parameters are required")
+        if (request.compilationUnitId !in provider.projectInformation().compilationUnitIdsList) {
+            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
+        }
+        if (request.scope != DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE) {
+            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported dependency scope")
+        }
+        if (request.coverage != DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL) {
+            // TODO: Support LOCAL dependency coverage without triggering Gradle resolution
+            return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported dependency coverage")
+        }
+        return KotlinGradleModelResult(KotlinImportModelSerialization.modelResult(provider.dependencies(request)))
+    }
 
     private fun compilationScopedModel(
         parameters: ByteArray,
