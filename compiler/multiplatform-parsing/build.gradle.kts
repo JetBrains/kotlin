@@ -98,6 +98,7 @@ val skeletonDownloadTask = tasks.register("downloadSkeleton") {
 
     inputs.property("skeletonVersion", skeletonVersion)
     outputs.file(skeletonFile)
+    outputs.cacheIf { true }
 
     doFirst {
         val skeletonFileOutput = skeletonFile.get().asFile
