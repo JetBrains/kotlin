@@ -1,24 +1,13 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.js
 
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
-import org.jetbrains.kotlin.cli.reportLog
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.JsICContext
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
-import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
-import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
-import org.jetbrains.kotlin.js.config.libraries
-import java.io.File
 
 sealed class IcCachesConfigurationData {
     data class Js(
@@ -31,87 +20,6 @@ sealed class IcCachesConfigurationData {
         val generateDebugInformation: Boolean,
         val mode: WasmCompilationMode,
     ) : IcCachesConfigurationData()
-}
-
-internal fun prepareIcCaches(
-    cacheDirectory: String,
-    icConfigurationData: IcCachesConfigurationData,
-    outputDir: File,
-    targetConfiguration: CompilerConfiguration,
-    artifactConfiguration: WebArtifactConfiguration,
-): IcCachesArtifacts {
-
-    targetConfiguration.reportLog("")
-    targetConfiguration.reportLog("Building cache:")
-    targetConfiguration.reportLog("to: $outputDir")
-    targetConfiguration.reportLog("cache directory: $cacheDirectory")
-    targetConfiguration.reportLog(targetConfiguration.libraries.toString())
-
-    val start = System.currentTimeMillis()
-
-    val loadBodiesOnlyForMainModule: Boolean
-    val icContext = when (icConfigurationData) {
-        is IcCachesConfigurationData.Js -> {
-            loadBodiesOnlyForMainModule = false
-            JsICContext(
-                icConfigurationData.granularity,
-            )
-        }
-        is IcCachesConfigurationData.Wasm -> {
-            loadBodiesOnlyForMainModule = icConfigurationData.mode == WasmCompilationMode.SINGLE_MODULE
-            val contextConstructor = when (icConfigurationData.mode) {
-                WasmCompilationMode.REGULAR -> ::WasmICContextWholeWorld
-                WasmCompilationMode.MULTI_MODULE -> ::WasmICContextMultimodule
-                WasmCompilationMode.SINGLE_MODULE -> ::WasmICContextSingleModule
-            }
-            contextConstructor(
-                false,
-                !icConfigurationData.wasmDebug,
-                !icConfigurationData.generateWat,
-                !icConfigurationData.generateDebugInformation,
-            )
-        }
-    }
-    val cacheUpdater = CacheUpdater(
-        cacheDir = cacheDirectory,
-        compilerConfiguration = targetConfiguration,
-        artifactConfiguration = artifactConfiguration,
-        icContext = icContext,
-        checkForClassStructuralChanges = icConfigurationData is IcCachesConfigurationData.Wasm,
-        loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,
-    )
-
-    val artifacts = cacheUpdater.actualizeCaches()
-
-    targetConfiguration.reportLog("IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-    for ([event, duration] in cacheUpdater.getStopwatchLastLaps()) {
-        targetConfiguration.reportLog("  $event: ${(duration / 1e6).toInt()}ms")
-    }
-
-    var libIndex = 0
-    for ([libFile, srcFiles] in cacheUpdater.getDirtyFileLastStats()) {
-        val singleState = srcFiles.values.firstOrNull()?.singleOrNull()?.let { singleState ->
-            singleState.takeIf { srcFiles.values.all { it.singleOrNull() == singleState } }
-        }
-
-        val [msg, showFiles] = when {
-            singleState == DirtyFileState.NON_MODIFIED_IR -> continue
-            singleState == DirtyFileState.REMOVED_FILE -> "removed" to emptyMap()
-            singleState == DirtyFileState.ADDED_FILE -> "built clean" to emptyMap()
-            srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
-            else -> "fully rebuilt" to srcFiles
-        }
-        targetConfiguration.reportLog("${++libIndex}) module [${File(libFile.path).name}] was $msg")
-        var fileIndex = 0
-        for ([srcFile, stat] in showFiles) {
-            val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
-            val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
-            // Use index, because MessageCollector ignores already reported messages
-            targetConfiguration.reportLog("  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
-        }
-    }
-
-    return artifacts
 }
 
 typealias IcCachesArtifacts = List<ModuleArtifact>
