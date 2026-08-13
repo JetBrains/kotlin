@@ -40,6 +40,8 @@ import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Create a new test project.
@@ -49,6 +51,8 @@ import kotlin.test.fail
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
  * @param [enableKotlinDaemonMemoryLimitInMb] limit max heap size for Kotlin Daemon.
  * `null` enables the default limit inherited from the Gradle process.
+ * @param [kotlinDaemonIdleTimeout] idle timeout after which the Kotlin Daemon shuts down.
+ * `null` leaves the timeout unconfigured.
  */
 @OptIn(EnvironmentalVariablesOverride::class)
 fun KGPBaseTest.project(
@@ -59,8 +63,9 @@ fun KGPBaseTest.project(
     enableOfflineMode: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 1024,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
+    enableGradleDaemonMemoryLimitInMb: Int? = 512,
+    enableKotlinDaemonMemoryLimitInMb: Int? = 256,
+    kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = defaultLocalRepo(gradleVersion),
@@ -103,6 +108,8 @@ fun KGPBaseTest.project(
         enableGradleDebug = enableGradleDebug,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        kotlinDaemonIdleTimeout = kotlinDaemonIdleTimeout,
+        addHeapDumpOptions = addHeapDumpOptions,
         environmentVariables = environmentVariables,
         counter = KGPBaseTest.counter.get(),
     )
@@ -140,8 +147,9 @@ fun KGPBaseTest.nativeProject(
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 1024,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
+    enableGradleDaemonMemoryLimitInMb: Int? = 512,
+    enableKotlinDaemonMemoryLimitInMb: Int? = 256,
+    kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
@@ -160,6 +168,7 @@ fun KGPBaseTest.nativeProject(
         enableGradleDebug = enableGradleDebug,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        kotlinDaemonIdleTimeout = kotlinDaemonIdleTimeout,
         projectPathAdditionalSuffix = projectPathAdditionalSuffix,
         buildJdk = buildJdk,
         localRepoDir = localRepoDir,
@@ -283,6 +292,8 @@ private fun TestProject.buildWithAction(
             enableOfflineMode = enableOfflineMode,
             enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
             enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+            kotlinDaemonIdleTimeout = kotlinDaemonIdleTimeout,
+            addHeapDumpOptions = addHeapDumpOptions,
             connectSubprocessVMToDebugger = connectSubprocessVMToDebugger,
             gradleVersion = gradleVersion,
             kotlinDaemonDebugPort = kotlinDaemonDebugPort
@@ -376,6 +387,8 @@ fun <T> TestProject.buildModel(
         enableOfflineMode = enableOfflineMode,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        kotlinDaemonIdleTimeout = kotlinDaemonIdleTimeout,
+        addHeapDumpOptions = addHeapDumpOptions,
         connectSubprocessVMToDebugger = enableGradleDebug.toBooleanFlag(),
         gradleVersion = gradleVersion,
         kotlinDaemonDebugPort = kotlinDaemonDebugPort
@@ -575,6 +588,8 @@ class TestProject(
     val enableOfflineMode: Boolean,
     val enableGradleDaemonMemoryLimitInMb: Int?,
     val enableKotlinDaemonMemoryLimitInMb: Int?,
+    val kotlinDaemonIdleTimeout: Duration?,
+    val addHeapDumpOptions: Boolean,
     val enableGradleDebug: EnableGradleDebug,
     /**
      * A port to debug the Kotlin daemon at.
@@ -674,12 +689,18 @@ private fun commonBuildSetup(
     enableOfflineMode: Boolean,
     enableGradleDaemonMemoryLimitInMb: Int?,
     enableKotlinDaemonMemoryLimitInMb: Int?,
+    kotlinDaemonIdleTimeout: Duration?,
+    addHeapDumpOptions: Boolean,
     connectSubprocessVMToDebugger: Boolean,
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
-    val gradleJvmOptions =
-        collectGradleJvmOptions(enableGradleDaemonMemoryLimitInMb, buildOptions.fileLeaksReportFile, connectSubprocessVMToDebugger)
+    val gradleJvmOptions = collectGradleJvmOptions(
+        enableGradleDaemonMemoryLimitInMb,
+        buildOptions.fileLeaksReportFile,
+        connectSubprocessVMToDebugger,
+        addHeapDumpOptions,
+    )
     val kotlinDaemonJvmArgs = collectKotlinJvmArgs(enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort)
 
     /**
@@ -701,6 +722,11 @@ private fun commonBuildSetup(
                 // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
                 // This should help with OOM on CI when agents do not have enough free memory available.
                 "-Dorg.gradle.daemon.idletimeout=60000",
+
+                // Decrease lifetime of Kotlin daemon
+                kotlinDaemonIdleTimeout?.let {
+                    "-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=${it.inWholeSeconds}\""
+                },
                 if (gradleJvmOptions.isNotEmpty()) {
                     "-Dorg.gradle.jvmargs=${gradleJvmOptions.joinToJvmArgsString()}"
                 } else null,
@@ -739,6 +765,7 @@ private fun collectGradleJvmOptions(
     enableGradleDaemonMemoryLimitInMb: Int?,
     useFileLeakDetectorToFile: Path?,
     connectSubprocessVMToDebugger: Boolean,
+    addHeapDumpOptions: Boolean,
 ): List<String> = buildList {
     if (useFileLeakDetectorToFile != null) {
         val fileLeakDetector = System.getProperty("fileLeakDetectorJar")
@@ -747,6 +774,7 @@ private fun collectGradleJvmOptions(
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
     if (enableGradleDaemonMemoryLimitInMb != null) {
         add("-Xmx${enableGradleDaemonMemoryLimitInMb}m")
+        addAll(heapShrinkingJvmOptions)
     }
     /**
      * This mode is used to debug the target project when the target project has environment variables. There should be someone listening
@@ -755,6 +783,10 @@ private fun collectGradleJvmOptions(
      */
     if (connectSubprocessVMToDebugger) {
         add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=n,address=${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}")
+    }
+
+    if (addHeapDumpOptions) {
+        addAll(heapDumpJvmOptions())
     }
 }
 
@@ -765,6 +797,7 @@ private fun collectKotlinJvmArgs(
     if (enableKotlinDaemonMemoryLimitInMb != null) {
         // Limiting Kotlin daemon heap size to reduce memory pressure on CI agents
         add("-Xmx${enableKotlinDaemonMemoryLimitInMb}m")
+        addAll(heapShrinkingJvmOptions)
     }
     if (kotlinDaemonDebugPort != null) {
         // Note that we pass "server=n", meaning that we'll need to let the debugger start listening at this port first *before* the
@@ -773,6 +806,12 @@ private fun collectKotlinJvmArgs(
         add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=$kotlinDaemonDebugPort")
     }
 }
+
+private val heapShrinkingJvmOptions = listOf(
+    "-Xms64m",
+    "-XX:MinHeapFreeRatio=10",
+    "-XX:MaxHeapFreeRatio=30",
+)
 
 
 private fun TestProject.withBuildSummary(
@@ -1224,13 +1263,18 @@ internal fun Path.enableCacheRedirector() {
 }
 
 private fun GradleProject.addHeapDumpOptions() {
-    val heapDumpPath = Path(System.getProperty("user.dir")).resolve("build").absolute().normalize().invariantSeparatorsPathString
     addPropertyToGradleProperties(
         propertyName = "org.gradle.jvmargs",
-        mapOf(
-            "-XX:+HeapDumpOnOutOfMemoryError" to "-XX:+HeapDumpOnOutOfMemoryError",
-            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"$heapDumpPath\""
-        ),
+        heapDumpJvmOptions(quotePath = true).associateBy { it.substringBefore('=') },
+    )
+}
+
+private fun heapDumpJvmOptions(quotePath: Boolean = false): List<String> {
+    val heapDumpPath = Path(System.getProperty("user.dir")).resolve("build").absolute().normalize().invariantSeparatorsPathString
+    val formattedHeapDumpPath = if (quotePath) "\"$heapDumpPath\"" else heapDumpPath
+    return listOf(
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=$formattedHeapDumpPath",
     )
 }
 
