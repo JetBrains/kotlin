@@ -48,7 +48,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     ): CompilationOutputs {
         val beforeIc2Js = System.currentTimeMillis()
 
-        val jsArtifacts = icCaches.artifacts.filterIsInstance<JsModuleArtifact>()
+        val jsArtifacts = icCaches.filterIsInstance<JsModuleArtifact>()
         val jsExecutableProducer = JsExecutableProducer(
             artifactConfiguration,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
