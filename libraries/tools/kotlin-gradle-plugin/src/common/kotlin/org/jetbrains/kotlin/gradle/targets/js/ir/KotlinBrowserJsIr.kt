@@ -85,7 +85,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
     }
 
-    override val test: KotlinJsBrowserTestDsl = project.objects
+    override val test: KotlinJsBrowserTestDsl = project
         .createKotlinJsBrowserTestImpl(target.compilations.getByName(TEST_COMPILATION_NAME))
 
     override fun test(body: Action<KotlinJsBrowserTestDsl>) = body.execute(test)

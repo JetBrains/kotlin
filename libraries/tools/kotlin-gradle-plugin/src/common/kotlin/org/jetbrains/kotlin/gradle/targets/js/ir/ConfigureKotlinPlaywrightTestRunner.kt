@@ -34,10 +34,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browser = target.subTargets.filterIsInstance<KotlinBrowserJsIr>().singleOrNull() ?: return@launchInStage
 
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
-        if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
-            project.logger.debug("No browser runners configured. Skipping kotlin js test task configuration")
-            return@launchInStage
-        }
 
         if (target.isWasm) {
             project.reportDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError())

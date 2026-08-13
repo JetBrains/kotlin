@@ -2422,6 +2422,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NonBrowserSpecifiedForJsBrowserTestFramework : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke() = build {
+            title { "No browser is specified for JS browser test framework configuration" }
+                .description {
+                    "JS browser test framework has been configured using both the new test {} DSL, but without any browsers." +
+                            "A default browser will be used."
+                }
+                .solution { "Please add at least one browser to the test {} DSL" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

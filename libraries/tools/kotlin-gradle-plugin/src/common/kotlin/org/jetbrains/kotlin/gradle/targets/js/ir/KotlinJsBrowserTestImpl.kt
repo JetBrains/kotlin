@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -54,19 +54,30 @@ internal class KotlinWebkitTestRunner(
     objects: ObjectFactory
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.WebkitTestRunnerDsl
 
-internal fun ObjectFactory.createKotlinJsBrowserTestImpl(
+internal fun Project.createKotlinJsBrowserTestImpl(
     testCompilation: KotlinJsIrCompilation
-) = newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation)
+) = objects.newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation, this::reportDiagnostic)
 
 internal abstract class KotlinJsBrowserTestImpl
 @Inject constructor(
     testCompilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
     providers: ProviderFactory,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ) : KotlinJsBrowserTestDsl {
 
+    private val defaultBrowserRunner = providers.provider {
+        reportDiagnostic(
+            KotlinToolingDiagnostics.NonBrowserSpecifiedForJsBrowserTestFramework()
+        )
+        KotlinChromiumTestRunner("default_chromium", objects).also {
+            connectTopLevelConfigDslWithBrowserTestDsl(it)
+        }
+    }
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
-        chromiumRunners + firefoxRunners + webkitRunners
+        (chromiumRunners + firefoxRunners + webkitRunners).ifEmpty {
+            mapOf(defaultBrowserRunner.get().name to defaultBrowserRunner.get())
+        }
     }
 
     override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> = testCompilation
