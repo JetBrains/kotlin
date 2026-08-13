@@ -22,7 +22,7 @@ public enum class SwiftModuleExportMode {
  */
 public data class SwiftModuleConfig(
     val bridgeModuleName: String = DEFAULT_BRIDGE_MODULE_NAME,
-    val rootPackage: String? = null,
+    val rootPackages: Set<String>? = emptySet(),
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val experimentalFeatures: Map<String, String> = emptyMap(),
     val exportMode: SwiftModuleExportMode,
@@ -30,23 +30,23 @@ public data class SwiftModuleConfig(
     // TODO: remove me when OSIP-1138 is done
     public constructor(
         bridgeModuleName: String = DEFAULT_BRIDGE_MODULE_NAME,
-        rootPackage: String? = null,
+        rootPackages: Set<String>? = emptySet(),
         unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
         experimentalFeatures: Map<String, String> = emptyMap(),
         shouldBeFullyExported: Boolean,
     ) : this(
         bridgeModuleName = bridgeModuleName,
-        rootPackage = rootPackage,
+        rootPackages = rootPackages,
         unsupportedDeclarationReporterKind = unsupportedDeclarationReporterKind,
         experimentalFeatures = experimentalFeatures,
         exportMode = if (shouldBeFullyExported) SwiftModuleExportMode.Full else SwiftModuleExportMode.Transitive,
     )
 
-    val targetPackageFqName: FqName? = rootPackage?.rootPackageToFqn()
+    val rootPackageFqNames: Set<FqName>? = rootPackages?.mapNotNullTo(mutableSetOf()) { it.rootPackageToFqn() }
     val unsupportedDeclarationReporter: UnsupportedDeclarationReporter = unsupportedDeclarationReporterKind.toReporter()
 
     public companion object {
-        public const val ROOT_PACKAGE: String = "packageRoot"
+        public const val ROOT_PACKAGES: String = "rootPackages"
         public const val DEFAULT_BRIDGE_MODULE_NAME: String = "KotlinBridges"
         public const val UNSUPPORTED_DECLARATIONS_REPORTER_KIND: String = "unsupportedDeclarationsReporterKind"
     }

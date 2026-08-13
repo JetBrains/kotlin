@@ -21,12 +21,6 @@ internal fun patchConfigAndLogIssues(modules: Set<InputModule>, config: SwiftExp
                 "Bridging header is not set. Using `${SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME}` instead"
             )
         }
-        if (config.targetPackageFqName == null) {
-            logger.report(
-                SwiftExportLogger.Severity.Warning,
-                "No name for `${SwiftModuleConfig.ROOT_PACKAGE}` and will be ignored"
-            )
-        }
     }
 
     return config.copy(

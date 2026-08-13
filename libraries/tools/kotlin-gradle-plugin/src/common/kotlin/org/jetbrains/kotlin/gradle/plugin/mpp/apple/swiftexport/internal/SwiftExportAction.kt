@@ -43,7 +43,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             modules.map { module ->
                 module.toInputModule(
                     createModuleConfig(
-                        module.flattenPackage,
+                        module.rootPackages,
                         module.shouldBeFullyExported,
                         settings
                     )
@@ -61,13 +61,13 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
     }
 
     private fun createModuleConfig(
-        flattenPackage: String?,
+        rootPackages: Set<String>?,
         shouldBeFullyExported: Boolean,
         settings: Map<String, String>,
     ): SwiftModuleConfig {
         return SwiftModuleConfig(
             bridgeModuleName = parameters.bridgeModuleName.getOrElse(SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME),
-            rootPackage = flattenPackage,
+            rootPackages = rootPackages,
             experimentalFeatures = settings,
             shouldBeFullyExported = shouldBeFullyExported,
         )

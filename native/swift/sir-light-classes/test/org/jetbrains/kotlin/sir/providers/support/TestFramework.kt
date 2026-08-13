@@ -61,7 +61,7 @@ class TestSirSession(
     )
 
     override val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider =
-        SirTrampolineDeclarationsProviderImpl(sirSession, null)
+        SirTrampolineDeclarationsProviderImpl(enumGenerator, emptySet())
 
     override val bridgeProvider: SirBridgeProvider
         get() = SirBridgeProviderImpl(this, SirTypeNamer())

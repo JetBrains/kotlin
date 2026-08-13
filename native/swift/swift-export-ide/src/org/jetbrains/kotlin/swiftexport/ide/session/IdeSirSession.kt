@@ -23,7 +23,7 @@ public class IdeSirSession(
     moduleForPackageEnums: SirModule,
     platformLibs: Collection<KaLibraryModule>,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
-    targetPackageFqName: FqName?,
+    rootPackageFqNames: Set<FqName>?,
 ) : SirSession {
     override val useSiteModule: KaModule = kaModule
 
@@ -42,7 +42,7 @@ public class IdeSirSession(
     override val enumGenerator: SirEnumGenerator = SirEnumGeneratorImpl(moduleForPackageEnums)
     override val parentProvider: SirParentProvider = SirParentProviderImpl(
         sirSession = sirSession,
-        packageEnumGenerator = enumGenerator,
+        packageEnumGenerator = enumGenerator.takeIf { rootPackageFqNames != null },
     )
     override val typeProvider: SirTypeProvider = SirTypeProviderImpl(
         errorTypeStrategy = SirTypeProvider.ErrorTypeStrategy.ErrorType,
@@ -61,7 +61,7 @@ public class IdeSirSession(
     )
 
     override val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider =
-        SirTrampolineDeclarationsProviderImpl(sirSession, targetPackageFqName)
+        SirTrampolineDeclarationsProviderImpl(enumGenerator, rootPackageFqNames.orEmpty())
 
     override val bridgeProvider: SirBridgeProvider = SirBridgeProviderImpl(this, SirTypeNamer())
 }

@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+public typealias Bar = ExportedKotlinPackages.org.kotlin.bar.Bar
 public typealias Clazz = ExportedKotlinPackages.org.kotlin.foo.Clazz
 public typealias Typealias = ExportedKotlinPackages.org.kotlin.foo.Typealias
 public typealias bar = ExportedKotlinPackages.org.kotlin.foo.bar
@@ -43,6 +44,21 @@ public func y(
     _ receiver: Swift.String
 ) -> Swift.Int32 {
     ExportedKotlinPackages.org.kotlin.foo.y(receiver)
+}
+extension ExportedKotlinPackages.org.kotlin.bar {
+    public final class Bar: KotlinRuntime.KotlinBase {
+        public init() {
+            let __kt = org_kotlin_bar_Bar_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { org_kotlin_bar_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
 }
 extension ExportedKotlinPackages.org.kotlin.foo.bar {
     public typealias Integer = Swift.Int32

@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromGroupNameAndVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 internal sealed class SwiftExportedDependency(objectFactory: ObjectFactory) : SwiftExportedModuleMetadata, Named {
 
     override var moduleName: Property<String> = objectFactory.property(String::class.java)
-    override var flattenPackage: Property<String> = objectFactory.property(String::class.java)
+    override var rootPackages: SetProperty<String> = objectFactory.setProperty(String::class.java)
 
     internal class External(
         objectFactory: ObjectFactory,

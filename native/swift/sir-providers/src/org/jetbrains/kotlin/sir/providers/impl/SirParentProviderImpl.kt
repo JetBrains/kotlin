@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.sir.util.addChild
 
 public class SirParentProviderImpl(
     private val sirSession: SirSession,
-    private val packageEnumGenerator: SirEnumGenerator
+    private val packageEnumGenerator: SirEnumGenerator?,
 ) : SirParentProvider {
 
     private val createdExtensionsForModule: MutableMap<SirModule, MutableMap<SirEnum, SirExtension>> = mutableMapOf()
@@ -30,47 +30,43 @@ public class SirParentProviderImpl(
         val symbol = this@getSirParent
         val parentSymbol = symbol.containingDeclaration
 
-        return@withSessions if (parentSymbol == null) {
-            // top level function. -> parent is either extension for package, of plain module in case of <root> package
+        if (parentSymbol == null) {
+            val ktModule = symbol.containingModule
+            val sirModule = with(sirSession) { ktModule.sirModule() }
+            if (packageEnumGenerator == null || sirModule is SirPlatformLikeModule) return@withSessions sirModule
+
+            // top level declaration -> parent is either extension for package, or plain module in case of <root> package
             val packageFqName = when (symbol) {
                 is KaNamedClassSymbol -> symbol.classId?.packageFqName
                 is KaCallableSymbol -> symbol.callableId?.packageName
                 is KaTypeAliasSymbol -> symbol.classId?.packageFqName
                 else -> null
             } ?: error("encountered unknown origin: $symbol. This exception should be reworked during KT-65980")
+            if (packageFqName.isRoot) return@withSessions sirModule
 
-            val ktModule = symbol.containingModule
-            val sirModule = with(sirSession) { ktModule.sirModule() }
-            return@withSessions if (packageFqName.isRoot || sirModule is SirPlatformLikeModule) {
-                sirModule
-            } else {
-                val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }
-                val extensionsInModule = createdExtensionsForModule.getOrPut(sirModule) { mutableMapOf() }
-                val extensionForPackage = extensionsInModule.getOrPut(enumAsPackage) {
-                    sirModule.updateImport(
-                        SirImport(
-                            moduleName = enumAsPackage.containingModule().name,
-                            // so the user will have access to the Fully Qualified Name for declaration without importing additional modules
-                            mode = SirImport.Mode.Exported,
-                        )
+            val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }
+            val extensionsInModule = createdExtensionsForModule.getOrPut(sirModule) { mutableMapOf() }
+            return@withSessions extensionsInModule.getOrPut(enumAsPackage) {
+                sirModule.updateImport(
+                    SirImport(
+                        moduleName = enumAsPackage.containingModule().name,
+                        // so the user will have access to the Fully Qualified Name for declaration without importing additional modules
+                        mode = SirImport.Mode.Exported,
                     )
-                    sirModule.addChild {
-                        buildExtension {
-                            origin = enumAsPackage.origin
-                            extendedType = SirNominalType(enumAsPackage)
-                            visibility = SirVisibility.PUBLIC
-                        }
+                )
+                sirModule.addChild {
+                    buildExtension {
+                        origin = enumAsPackage.origin
+                        extendedType = SirNominalType(enumAsPackage)
+                        visibility = SirVisibility.PUBLIC
                     }
                 }
-                extensionForPackage
-            }
-        } else {
-            if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol && parentSymbol.classKind == KaClassKind.INTERFACE) {
-                parentSymbol.containingModule.sirModule()
-            } else {
-                parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
-                    ?: error("parent declaration does not produce suitable SIR")
             }
         }
+        if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol && parentSymbol.classKind == KaClassKind.INTERFACE) {
+            return@withSessions parentSymbol.containingModule.sirModule()
+        }
+        parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
+            ?: error("parent declaration does not produce suitable SIR")
     }
 }

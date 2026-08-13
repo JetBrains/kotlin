@@ -20,25 +20,25 @@ import java.io.Serializable
  * Represents a module that will be exported to Swift.
  *
  * @property moduleName The name of the module in Swift
- * @property flattenPackage Optional package flattening configuration
+ * @property rootPackages Optional package flattening configuration, `null` to disable package generation
  * @property artifact The artifact file containing the module
  * @property shouldBeFullyExported Whether this module was explicitly requested for export through the swiftExport { export("foo:bar") } DSL
  */
 internal interface SwiftExportedModule : Serializable {
     val moduleName: String
-    val flattenPackage: String?
+    val rootPackages: Set<String>?
     val artifact: File
     val shouldBeFullyExported: Boolean
 }
 
 internal fun createFullyExportedSwiftExportedModule(
     moduleName: String,
-    flattenPackage: String?,
+    rootPackages: Set<String>?,
     artifact: File,
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
         moduleName,
-        flattenPackage,
+        rootPackages,
         artifact,
         true
     )
@@ -50,7 +50,7 @@ internal fun createTransitiveSwiftExportedModule(
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
         moduleName,
-        null,
+        emptySet(),
         artifact,
         false
     )
@@ -144,7 +144,7 @@ private fun Project.findAndCreateSwiftExportedModules(
                     explicitModule.moduleName.orElse(
                         normalizedAndValidatedModuleName(explicitModule.inheritedName)
                     ).get(),
-                    explicitModule.flattenPackage.orNull,
+                    explicitModule.rootPackages.orNull,
                     matchingArtifact.artifact.file
                 )
             )
@@ -180,7 +180,7 @@ private fun Project.findAndCreateSwiftExportedModules(
 
 private data class SwiftExportedModuleImp(
     override val moduleName: String,
-    override val flattenPackage: String?,
+    override val rootPackages: Set<String>?,
     override val artifact: File,
     override val shouldBeFullyExported: Boolean,
 ) : SwiftExportedModule

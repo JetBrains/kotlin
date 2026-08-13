@@ -10,6 +10,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
@@ -37,7 +38,7 @@ internal abstract class SwiftExportTask @Inject constructor(
 
         @get:Input
         @get:Optional
-        abstract val flattenPackage: Property<String>
+        abstract val rootPackages: SetProperty<String>
 
         @get:InputFiles
         @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -90,7 +91,7 @@ internal abstract class SwiftExportTask @Inject constructor(
                 add(
                     createFullyExportedSwiftExportedModule(
                         mainModuleInput.moduleName.get(),
-                        mainModuleInput.flattenPackage.orNull,
+                        mainModuleInput.rootPackages.orNull,
                         mainModuleInput.artifact.getFile()
                     )
                 )
