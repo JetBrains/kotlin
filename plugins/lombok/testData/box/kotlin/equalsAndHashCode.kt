@@ -29,6 +29,8 @@ data class DataClassWithExclude(
 @EqualsAndHashCode
 data class PlainDataClass(val a: String, val b: Int)
 
+// Nothing is generated for an object either: it is a single instance, so the identity comparison it already has
+// is exactly what a generated `equals` would amount to, KT-88507.
 @EqualsAndHashCode
 object SingletonObject
 
