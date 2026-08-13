@@ -75,8 +75,10 @@ Stripped of PSI, the role is:
 - **a place for the header parse result**, since `KotlinClassHeader` is what decides which of the two
   models is built at all;
 - **an explicit lifetime and disposal**, replacing `Disposable` + the thread-local removal, because
-  whatever holds bytes or models keeps memory alive (and, until `BinaryClassFileHandle` stops
-  exposing `virtualFile`, keeps the VFS alive too).
+  whatever holds bytes or models keeps memory alive (and, until `BinaryJavaClass` stops being
+  `VirtualFile`-bound, keeps the VFS alive too — the `virtualFile` accessor is private to
+  `BinaryJavaClassReader.kt` since 2026-08-12, when restricting a lookup to part of the classpath
+  became a root test on the handle, `isUnder`);
 
 ## 5. Approaches
 

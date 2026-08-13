@@ -18,8 +18,10 @@ held by `FirJvmSessionFactory.Context.javaInterop`) and shared by the
 | `classes` | `BinaryClassFileHandle` + `ClassId` | the loaded `BinaryJavaClass` (or `null`) |
 | `classFileNamesInPackage` | package `FqName` | class-file names in the package directory |
 
-The session's own visibility is applied *after* the lookup, through the `BinaryClassFileScope`
-handed to each finder. This is the shape of the incumbent `KotlinCliJavaFileManagerImpl`
+The session's own visibility is applied *after* the lookup, by the finder itself: a test on the
+*roots* of the session's `JvmClasspath` (`JvmClasspath.contains(BinaryClassFileHandle)`, private to
+java-direct since 2026-08-13), so a cached class file can be offered to any session without asking
+the platform anything. This is the shape of the incumbent `KotlinCliJavaFileManagerImpl`
 (project-level `topLevelClassesCache` / `binaryCache`, scope filter applied after the cache), so
 java-direct is now at parity with PSI on cache width. Nothing survives a compilation.
 

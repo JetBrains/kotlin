@@ -36,6 +36,45 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-13 — `BinaryClassFileScope` removed: the finder takes the session's classpath
+- **Change**: the seam had one production use site — `JavaDirectJavaInterop` built
+  `classpath.asBinaryClassFileScope()` only to hand it to `JavaClassFinderOverBinaryIndex` — so it was a
+  type between two parties that both know the classpath. The finder now takes the `JvmClasspath` itself
+  and answers the restriction with `internal operator fun JvmClasspath.contains(BinaryClassFileHandle)`
+  next to it; `BinaryClassFileScope` and `JvmClasspath.asBinaryClassFileScope()` are deleted, so the
+  shared seam keeps only `BinaryClassFileIndex`, `BinaryClassFileHandle` and its `isUnder(Path)` check.
+  `applyScopeFilter` → `restrictToClasspath`, `findClassWithoutScopeFilter` →
+  `findClassAnywhereOnClasspath`; no behaviour change.
+- **Files**: `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt`, `.../BinaryJavaClassCache.kt`,
+  `java-direct/.../JavaClassFinderOverBinaryIndex.kt`, `.../JavaDirectJavaInterop.kt`,
+  `java-direct/test/.../ClasspathRestrictionTest.kt` (was `BinaryClassFileScopeTest.kt`),
+  `implDocs/PSI_FREE_ROADMAP.md` §3/§4, `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` §1.
+- **Tests**: java-direct 21774/0; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` 10993/0
+  (mandatory: the PSI file manager shares `readBinaryJavaClass`); `IncrementalK2FirICJvmCompilerRunnerTest`
+  371/0 — the one path with a non-empty exclusion list.
+- **Result**: green; one fewer type on the seam, and the scope policy sits where the classpath is used.
+
+### 2026-08-12 — the binary lookup is restricted by classpath *root*, not by a PSI scope
+- **Change**: `binaryClassFileScope(classpath)` built `classFile.virtualFile in psiSearchScope(classpath)`
+  — a per-candidate IntelliJ query, written when a scope was an opaque file set. `JvmClasspath` is
+  root-shaped and sealed now, so the restriction is `JvmClasspath.asBinaryClassFileScope()` over a new
+  `BinaryClassFileHandle.isUnder(Path)`: `Roots` tests its roots, `ProjectLibraries` only its
+  exclusions (an index *is* the compilation's classpath). `isUnder` reproduces `ClassPathScope.contains`
+  — an archive entry belongs to the archive itself, a loose class file to any enclosing directory. The
+  CLI helper and `createJavaDirectJavaInterop`'s scope-factory parameter are gone, and
+  `BinaryClassFileHandle.virtualFile` is now private to `BinaryJavaClassReader.kt` (only `BinaryJavaClass`
+  reads it) — one step towards removing it (`PSI_FREE_ROADMAP.md` §4).
+- **Files**: `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt`, `.../BinaryJavaClassReader.kt`,
+  `cli/.../CliBinaryClassFileIndex.kt`, `cli-jvm/.../JavaInterop.kt`, `java-direct/.../JavaDirectJavaInterop.kt`,
+  new `java-direct/test/.../BinaryClassFileScopeTest.kt`, `implDocs/PSI_FREE_ROADMAP.md` §3/§4,
+  `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` §1, `implDocs/CLASS_FILE_READ_LAYER.md` §4.
+- **Tests**: java-direct 21771/0; `BinaryClassFileScopeTest` 3/0 (needed: java-direct sessions pass
+  `ProjectLibraries()` with no exclusions, so no suite exercises a non-empty root list — that is the
+  incremental output directories and an HMPP fragment's classpath); `IncrementalK2FirICJvmCompilerRunnerTest`
+  371/0; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` 10993/0 (mandatory: the PSI file manager
+  shares `readBinaryJavaClass`).
+- **Result**: green; removes a PSI query from the hot binary lookup path.
+
 ### 2026-08-12 — the Java-sources scope leaves the API; test fixtures follow the flag
 - **Change**: `psiJavaInterop` took a `(FirModuleData) -> GlobalSearchScope`, but all four non-CLI
   callers passed the same K1-era expression (`filesScope(<module's Kotlin files>)` ∪

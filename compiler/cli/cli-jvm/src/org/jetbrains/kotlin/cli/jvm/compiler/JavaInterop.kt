@@ -39,7 +39,6 @@ fun VfsBasedProjectEnvironment.javaInterop(
             if (withJavaSources) configuration.javaSourceRootEntries() else emptyList(),
             // The binary Java classes live as long as the interop, i.e. as long as the compilation which built it.
             BinaryJavaClassCache(binaryClassFileIndex()),
-            this::binaryClassFileScope,
             javaModuleFinder(),
         )
     } else {

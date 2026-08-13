@@ -44,9 +44,9 @@ compiled output, so anything else is a test failure rather than a silent regress
 
 | Seam | Where | Purpose |
 |------|-------|---------|
-| `BinaryClassFileIndex`, `BinaryClassFileScope`, `BinaryClassFileHandle` | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation and the part of it one session sees, with no scope object and no `JvmDependenciesIndex` |
+| `BinaryClassFileIndex`, `BinaryClassFileHandle` (`isUnder(Path)`) | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation, with no scope object and no `JvmDependenciesIndex`. A session's part of it is *not* a seam type: `JavaClassFinderOverBinaryIndex` takes the session's `JvmClasspath` and tests root membership itself (`internal operator fun JvmClasspath.contains(BinaryClassFileHandle)`), so the only thing shared is the root check on the handle |
 | `JvmClasspath` (sealed: `Roots` / `ProjectLibraries(excludedRoots)`) | `frontend.common.jvm/.../jvm/environment/JvmClasspath.kt` | *replaces* `AbstractProjectFileSearchScope`: a part of the classpath named by its roots, not an opaque file set with set algebra. No complement, no ambient universe, one shape per real use. Sealed since 2026-08-12: the `PsiScopeJvmClasspath` escape hatch is gone, so a scope cannot re-enter the description |
-| `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` + `VfsBasedProjectEnvironment.binaryClassFileScope()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the `ct.sym` `.sig` extension choice, and the per-file scope predicate built from `psiSearchScope(classpath)` |
+| `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the `ct.sym` `.sig` extension choice. It no longer builds the session's scope: that was `classFile.virtualFile in psiSearchScope(classpath)`, a per-file IntelliJ query, and is now root membership on the handle |
 | `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by the compilation's java-direct `FirJavaInterop` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
 | `FirJavaInterop` | `fir/fir-jvm/.../session/FirJavaInterop.kt`, held by `FirJvmSessionFactory.Context` (required, no default) | which Java implementation serves the compilation, as one per-compilation decision instead of a `createJavaFacade` lambda per construction site; `createJavaDirectJavaInterop` (java-direct) and `VfsBasedProjectEnvironment.psiJavaInterop()` (`compiler/cli/`) are peers. Split by *role*: `createBinaryJavaFacade(classpath)` and `createJavaSourcesFacade()` |
 | `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectJavaInterop.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
@@ -60,9 +60,10 @@ next to it; java-direct receives only abstract inputs.
 
 ## 4. Still platform-bound
 
-`BinaryClassFileHandle.virtualFile` is the one remaining transitional accessor. It cannot be
-removed while `BinaryJavaClass` is `VirtualFile`-bound: the class implements
-`VirtualFileBoundJavaClass` and resolves its nested classes through
+`BinaryClassFileHandle.virtualFile` is the one remaining transitional accessor, and since 2026-08-12
+it is *private* to `BinaryJavaClassReader.kt`: restricting a lookup to a part of the classpath was its
+last other reader. It cannot be removed while `BinaryJavaClass` is `VirtualFile`-bound: the class
+implements `VirtualFileBoundJavaClass` and resolves its nested classes through
 `virtualFile.parent.findChild(...)`. Nothing in java-direct reads the accessor.
 
 The platform-free axis needs, in rough dependency order:
@@ -75,8 +76,16 @@ The platform-free axis needs, in rough dependency order:
 - `VfsBasedProjectEnvironment.psiSearchScope(JvmClasspath)` (`compiler/cli/`) — the single
   classpath → `GlobalSearchScope` adapter, and now the *only* direction of travel: since
   `JvmClasspath` is sealed and `PsiScopeJvmClasspath` is deleted, there is no way back from a scope
-  to a classpath. A root-list classpath can be honoured directly by a future NIO index, which is
-  what makes `BinaryClassFileHandle.virtualFile` removable.
+  to a classpath. It serves the Kotlin class finder and the package-part provider only; the binary
+  Java lookup left it in 2026-08-12, when the classpath restriction became root membership
+  (`JvmClasspath.contains(BinaryClassFileHandle)`, private to java-direct). The remaining
+  implementation of `isUnder` is the
+  `VirtualFile`-path form of what `ClassPathScope.contains` did — an archive entry belongs to the
+  archive, a loose class file to any enclosing directory — and a future NIO index answers it
+  directly, which is what makes `BinaryClassFileHandle.virtualFile` removable.
+  `ClasspathRestrictionTest` (`compiler/java-direct/test/`) pins both cases, because the
+  compilations that pass a non-empty root list (the incremental output directories, an HMPP
+  fragment's classpath) have no java-direct suite coverage.
 
 That switch has LL-API, incremental-compilation and scripting consumers, so it is a separate
 effort; `implDocs/archive/EXTERNAL_DEPENDENCIES_RESOLUTION_ANALYSIS.md` §5.2/§6.2 is the only

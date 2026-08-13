@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.session.FirJavaInterop
 import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackagesOverModuleGraph
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileScope
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 fun createJavaDirectJavaInterop(
     javaSourceRoots: List<JavaSourceRootEntry>,
     binaryClasses: BinaryJavaClassCache,
-    binaryClassFileScopeFor: (JvmClasspath) -> BinaryClassFileScope,
     javaModuleFinder: JavaModuleFinder,
 ): FirJavaInterop {
     val moduleImportedPackages = JavaModuleImportedPackagesOverModuleGraph(javaModuleFinder)
@@ -40,7 +38,7 @@ fun createJavaDirectJavaInterop(
             classpath: JvmClasspath,
         ): FirJavaFacade {
             val finder = binaryFinders.getOrPut(classpath) {
-                JavaClassFinderOverBinaryIndex(binaryClasses, binaryClassFileScopeFor(classpath))
+                JavaClassFinderOverBinaryIndex(binaryClasses, classpath)
             }
             return FirJavaFacadeForModule(session, moduleData, finder)
         }

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
+import java.nio.file.Path
 
 /**
  * Loads the [BinaryJavaClass] for [classId] from a `.class`/`.sig` file, caching it in [binaryCache];
@@ -79,6 +82,18 @@ private class VirtualFileBinaryClassFileHandle(val virtualFile: VirtualFile) : B
     override val nameWithoutExtension: String
         get() = virtualFile.nameWithoutExtension
 
+    override fun isUnder(classpathRoot: Path): Boolean {
+        val root = FileUtil.toSystemIndependentName(classpathRoot.toAbsolutePath().normalize().toString())
+        val path = virtualFile.path
+        val archiveSeparator = path.indexOf(JAR_SEPARATOR)
+        return when {
+            // An entry of an archive: the root is the archive itself, never a directory inside it. This is also
+            // how the CLI reads a classpath entry, see `VfsBasedProjectEnvironment.psiSearchScope`.
+            archiveSeparator >= 0 -> archiveSeparator == root.length && path.startsWith(root)
+            else -> path.length > root.length && path[root.length] == '/' && path.startsWith(root)
+        }
+    }
+
     override fun readBytes(): ByteArray = virtualFile.contentsToByteArray()
 
     override fun equals(other: Any?): Boolean =
@@ -92,5 +107,6 @@ private class VirtualFileBinaryClassFileHandle(val virtualFile: VirtualFile) : B
     override fun toString(): String = virtualFile.toString()
 }
 
-val BinaryClassFileHandle.virtualFile: VirtualFile
+/** Only [BinaryJavaClass] still needs the file itself, to find the class files of nested classes next to it. */
+private val BinaryClassFileHandle.virtualFile: VirtualFile
     get() = (this as VirtualFileBinaryClassFileHandle).virtualFile
