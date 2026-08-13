@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.EmptySequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.ProducerStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceOfStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 
+
 internal class SequenceData(
     val sequenceSource: SequenceSource,
+    val transformers: List<SequenceTransformer> = emptyList()
 )
 
 // sequenceSource is what the sequence was created from, to be substituted if the loop is to be fused
