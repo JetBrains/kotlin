@@ -46,7 +46,7 @@ open class WasmBoxRunner(
     fun runWasmCode(
         artifacts: WasmCompilationSetsBinaryArtifact,
         useUnitTestRunnerOnly: Boolean = false,
-        outputCollector: MutableList<String>? = null,
+        outputCollector: MutableList<WasmVMOutput>? = null,
         // Whether the collected exceptions should be thrown inline here. The grouping handlers set this
         // to `false` so they can re-attribute failures to the specific per-test grouping input. By default
         // it follows `useUnitTestRunnerOnly` (the unit-test grouping path collects and re-attributes; the
@@ -141,7 +141,7 @@ open class WasmFolderGroupingStageBoxRunner(
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
         val folder = (artifact as WasmFolderBinaryArtifact).folder
         return wasmFolderBoxRunner.saveAdditionalFilesAndRun(
