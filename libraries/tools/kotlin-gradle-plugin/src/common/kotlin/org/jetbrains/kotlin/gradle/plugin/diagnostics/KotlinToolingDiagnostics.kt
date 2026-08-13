@@ -2422,6 +2422,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object BrowserDebugOptionsNotSupportedByTestFramework : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(taskPath: String) = build {
+            title { "Browser debug options are not supported by this test framework" }
+                .description {
+                    "Browser debug options were passed to '$taskPath', but its test framework is only debuggable when the " +
+                            "IDE sets the debug session up. The tests run without a debugger."
+                }
+                .solution {
+                    "Use the Playwright browser test DSL to enable it"
+                }
+        }
+    }
+
     internal object NoChromiumRunnerForBrowserDebug : ToolingDiagnosticFactory(
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

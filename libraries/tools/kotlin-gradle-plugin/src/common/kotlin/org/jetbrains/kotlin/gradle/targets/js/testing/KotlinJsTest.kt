@@ -13,13 +13,13 @@ import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -82,7 +82,7 @@ internal constructor(
     @Input
     var debug: Boolean = false
 
-    // Frameworks that can't debug just warn that these were ignored. Karma is set up by the IDE init script.
+    // Frameworks these options can't drive report a diagnostic instead. Karma is set up by the IDE init script.
     @get:Input
     @get:Option(
         option = "browser-debug",
@@ -91,11 +91,13 @@ internal constructor(
     internal val browserDebug: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(false)
 
+    // The options below only refine a debug run: --browser-debug is what turns one on. The IDE passes it on the
+    // task it debugs and sends the ports it picked through the environment, which reaches every task of the build.
     @get:Input
     @get:Optional
     @get:Option(
         option = "browser-debug-port",
-        description = "The port a CDP-compatible debugger can attach to. Implies --browser-debug.",
+        description = "The port a CDP-compatible debugger can attach to. Only used with --browser-debug.",
     )
     internal val browserDebugPort: Property<String> = objects.property(String::class.java)
         .convention(providers.environmentVariable(BROWSER_DEBUG_PORT_ENV))
@@ -105,7 +107,7 @@ internal constructor(
     @get:Option(
         option = "browser-debug-ready-port",
         description = "The loopback port to connect to before running the tests, to wait for a debugger to attach. " +
-                "Implies --browser-debug.",
+                "Only used with --browser-debug.",
     )
     internal val browserDebugReadyPort: Property<String> = objects.property(String::class.java)
         .convention(providers.environmentVariable(BROWSER_DEBUG_READY_PORT_ENV))
@@ -114,18 +116,10 @@ internal constructor(
     @get:Optional
     @get:Option(
         option = "browser-debug-ready-timeout",
-        description = "How long to wait for a debugger to attach, in milliseconds. Implies --browser-debug.",
+        description = "How long to wait for a debugger to attach, in milliseconds. Only used with --browser-debug.",
     )
     internal val browserDebugReadyTimeout: Property<String> = objects.property(String::class.java)
         .convention(providers.environmentVariable(BROWSER_DEBUG_READY_TIMEOUT_ENV))
-
-    // True if any browser debug option was passed.
-    @get:Internal
-    internal val browserDebugRequested: Provider<Boolean>
-        get() = browserDebugPort.map { true }
-            .orElse(browserDebugReadyPort.map { true })
-            .orElse(browserDebugReadyTimeout.map { true })
-            .orElse(browserDebug)
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
@@ -237,14 +231,12 @@ internal constructor(
     }
 
     internal fun configureBrowserDebug() {
-        if (!browserDebugRequested.get()) return
+        if (!browserDebug.get()) return
 
         val debuggableFramework = testFramework as? KotlinJsBrowserDebuggableFramework
         if (debuggableFramework == null) {
-            logger.warn(
-                "Browser debug options were passed to '$path', but its test framework does not support browser " +
-                        "debugging. The options are ignored."
-            )
+            // Karma is debugged through the IDE init script, which turns `debug` on before this runs.
+            if (!debug) reportDiagnostic(KotlinToolingDiagnostics.BrowserDebugOptionsNotSupportedByTestFramework(path))
             return
         }
 

@@ -34,7 +34,10 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwRunnerSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.assertLogContains
+import org.jetbrains.kotlin.gradle.util.assertLogDoesNotContain
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.withGradleLogCapture
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.net.ServerSocket
 import org.junit.jupiter.api.io.TempDir
@@ -100,9 +103,24 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         // Karma debugging comes from the IDE init script, so these options must not switch it on.
         // Building a real Karma spec would write karma.conf.js, which is not what we test here.
-        setup.jsBrowserTestTask.configureBrowserDebug()
+        val logs = withGradleLogCapture { setup.jsBrowserTestTask.configureBrowserDebug() }
 
         assertFalse(setup.jsBrowserTestTask.debug)
+        logs.assertLogContains("Browser debug options are not supported by this test framework")
+    }
+
+    @Test
+    fun `a Karma task debugged by the IDE is not reported as unsupported`() {
+        val setup = buildBrowserTestProject {}
+        assertIs<KotlinKarma>(setup.jsBrowserTestTask.testFramework)
+
+        setup.jsBrowserTestTask.browserDebug.set(true)
+        // The IDE init script turns this on for a Karma debug session before the task runs.
+        setup.jsBrowserTestTask.debug = true
+
+        val logs = withGradleLogCapture { setup.jsBrowserTestTask.configureBrowserDebug() }
+
+        logs.assertLogDoesNotContain("Browser debug options are not supported by the test framework")
     }
 
     @Test
@@ -332,6 +350,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         )
 
         val debuggerReadyPort = ServerSocket(0).use { it.localPort }
+        testTask.browserDebug.set(true)
         testTask.browserDebugPort.set("32123")
         testTask.browserDebugReadyPort.set(debuggerReadyPort.toString())
         testTask.browserDebugReadyTimeout.set("45000")
@@ -399,6 +418,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             writeText("")
         }
         framework.npmToolingEnvDir.set(npmToolingEnv)
+        setup.jsBrowserTestTask.browserDebug.set(true)
         setup.jsBrowserTestTask.browserDebugReadyPort.set("54321")
 
         val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
@@ -467,24 +487,25 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `browser debug port implies browser debug`() {
+    fun `the debug ports alone do not enable browser debug`() {
         val setup = buildBrowserTestProject { chromium() }
-
+        setup.prepareExecutableFramework()
+        // The IDE also sends these through the environment, where they reach every task of the build,
+        // so only --browser-debug may switch a task to debugging.
         setup.jsBrowserTestTask.browserDebugPort.set("32123")
+        setup.jsBrowserTestTask.browserDebugReadyPort.set("54321")
+        setup.jsBrowserTestTask.browserDebugReadyTimeout.set("45000")
 
-        assertTrue(setup.jsBrowserTestTask.browserDebugRequested.get())
-    }
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
 
-    @Test
-    fun `browser debug is off when no option is passed`() {
-        val setup = buildBrowserTestProject { chromium() }
-
-        assertFalse(setup.jsBrowserTestTask.browserDebugRequested.get())
+        assertFalse(setup.jsBrowserTestTask.debug)
+        assertNull(spec.runners.single().debugOptions)
     }
 
     @Test
     fun `invalid browser debug port is rejected`() {
         val setup = buildBrowserTestProject { chromium() }
+        setup.jsBrowserTestTask.browserDebug.set(true)
         setup.jsBrowserTestTask.browserDebugPort.set("70000")
 
         val failure = assertFailsWith<GradleException> {
@@ -500,6 +521,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     @Test
     fun `invalid browser debug readiness timeout is rejected`() {
         val setup = buildBrowserTestProject { chromium() }
+        setup.jsBrowserTestTask.browserDebug.set(true)
         setup.jsBrowserTestTask.browserDebugReadyTimeout.set("0")
 
         val failure = assertFailsWith<GradleException> {

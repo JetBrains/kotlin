@@ -75,7 +75,7 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             // KT-87599: Design host-wide toolchain management
             browserInstallTasks.forEach { installTask -> testTask.dependsOn(installTask) }
             testTask.dependsOn(
-                testTask.browserDebugRequested.map { if (it) listOf(chromiumInstallTask) else emptyList() }
+                testTask.browserDebug.map { if (it) listOf(chromiumInstallTask) else emptyList() }
             )
 
             // All install tasks write to the same global browsers directory; any one is sufficient to derive the path.
