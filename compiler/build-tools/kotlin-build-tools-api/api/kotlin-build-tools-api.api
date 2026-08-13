@@ -1122,6 +1122,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Wa
 	public static final field X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_ENABLE_ARRAY_RANGE_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_ENABLE_ASSERTS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
+	public static final field X_WASM_ENABLE_TAIL_CALLS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_DWARF Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_WAT Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;

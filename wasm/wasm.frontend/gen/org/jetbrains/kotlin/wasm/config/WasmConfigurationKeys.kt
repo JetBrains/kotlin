@@ -88,6 +88,10 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_TEST_BOX_FUNCTION_TO_EXPORT = CompilerConfigurationKey.create<FqName>("WASM_TEST_BOX_FUNCTION_TO_EXPORT")
 
+    // Emit native Wasm tail-call instructions (return_call / return_call_ref) for non-tailrec tail calls.
+    @JvmField
+    val WASM_ENABLE_TAIL_CALLS = CompilerConfigurationKey.create<Boolean>("WASM_ENABLE_TAIL_CALLS")
+
 }
 
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
@@ -173,4 +177,8 @@ var CompilerConfiguration.wasmGenerateClosedWorldMultimodule: Boolean
 var CompilerConfiguration.wasmTestBoxFunctionToExport: FqName?
     get() = get(WasmConfigurationKeys.WASM_TEST_BOX_FUNCTION_TO_EXPORT)
     set(value) { put(WasmConfigurationKeys.WASM_TEST_BOX_FUNCTION_TO_EXPORT, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.wasmEnableTailCalls: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS)
+    set(value) { put(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS, value) }
 

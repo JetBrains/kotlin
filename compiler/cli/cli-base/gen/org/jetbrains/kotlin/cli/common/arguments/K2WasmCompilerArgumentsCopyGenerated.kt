@@ -24,6 +24,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.wasmDisableArrayRangeChecksSafeElimination = from.wasmDisableArrayRangeChecksSafeElimination
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts
+    to.wasmEnableTailCalls = from.wasmEnableTailCalls
     to.wasmGenerateClosedWorldMultimodule = from.wasmGenerateClosedWorldMultimodule
     to.wasmGenerateWat = from.wasmGenerateWat
     to.wasmIncludedModuleOnly = from.wasmIncludedModuleOnly

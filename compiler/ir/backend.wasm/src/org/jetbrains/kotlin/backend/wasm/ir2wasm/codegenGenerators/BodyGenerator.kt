@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.backend.wasm.lower.WASM_TAIL_CALL
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -50,6 +51,21 @@ class BodyGenerator(
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
+
+    /**
+     * Returns true if [call] should be emitted as a tail call.
+     *
+     * [WasmTailCallLowering] marks structurally tail-positioned calls with
+     * [WASM_TAIL_CALL] origin. On top of that, the caller's Wasm result type
+     * must match the callee's, because `return_call` requires them to be equal.
+     */
+    private fun isEligibleForTailCall(call: IrFunctionAccessExpression, callee: IrFunction): Boolean {
+        if (call.origin !== WASM_TAIL_CALL) return false
+        val caller = functionContext.irFunction ?: return false
+        val callerResultType = wasmModuleTypeTransformer.transformResultType(caller.returnType)
+        val calleeResultType = wasmModuleTypeTransformer.transformResultType(callee.returnType)
+        return callerResultType == calleeResultType
+    }
 
     fun WasmExpressionBuilder.buildGetUnit() {
         buildInstr(
@@ -866,6 +882,7 @@ class BodyGenerator(
 
         val function: IrFunction = callFunction.realOverrideTarget
         val isSuperCall = call is IrCall && call.superQualifierSymbol != null
+        val isTail = isEligibleForTailCall(call, function)
         if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
             val originalClass = callFunction.parentAsClass
             val realOverrideTargetClass = function.parentAsClass
@@ -893,22 +910,29 @@ class BodyGenerator(
                 body.buildStructGet(typeCodegenContext.referenceGcType(klassSymbol), ANY_VTABLE_FIELD_ID, location)
                 val vTableSlotId = vfSlot + 1 //First element is always contains Special ITable
                 body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
-                body.buildInstr(WasmOp.CALL_REF, location, functionTypeReference)
+                body.buildInstr(if (isTail) WasmOp.RETURN_CALL_REF else WasmOp.CALL_REF, location, functionTypeReference)
             } else {
                 generateExpression(call.dispatchReceiver!!)
                 generateInterfaceVTableLookup(function, klassSymbol, location)
                 body.buildInstr(
-                    WasmOp.CALL_REF,
+                    if (isTail) WasmOp.RETURN_CALL_REF else WasmOp.CALL_REF,
                     location,
                     functionTypeReference
                 )
             }
         } else {
             // Static function call
-            body.buildCall(declarationCodegenContext.referenceFunction(function.symbol), location)
+            val functionReference = declarationCodegenContext.referenceFunction(function.symbol)
+            if (isTail) {
+                body.buildReturnCall(functionReference, location)
+            } else {
+                body.buildCall(functionReference, location)
+            }
         }
 
-        // Unit types don't cross function boundaries
+        // Unit types don't cross function boundaries. The trailing get_unit is unreachable after a
+        // tail call but Kotlin/Wasm's generateAsStatement still expects the value on the IR stack
+        // to drop, so we keep emitting it on both paths.
         if (function.returnType.isUnit() && function !is IrConstructor) {
             body.buildGetUnit()
         }

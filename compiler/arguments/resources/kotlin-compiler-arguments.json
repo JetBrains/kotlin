@@ -13035,6 +13035,51 @@
                                                 "deprecatedMessage": null
                                             },
                                             {
+                                                "name": "Xwasm-enable-tail-calls",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
                                                 "name": "Xwasm-generate-closed-world-multimodule",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -15204,6 +15249,51 @@
                                                 },
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
+                                                "name": "Xwasm-enable-tail-calls",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
                                                     "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null

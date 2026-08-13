@@ -32,4 +32,5 @@ object WasmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.wasm
     val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX by key<String>("Prefix for the name of internal/synthetic local variables.")
     val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE by key<Boolean>("Enables multi-module closed-world mode.")
     val WASM_TEST_BOX_FUNCTION_TO_EXPORT by key<FqName>("FQ Name of the test `box` function to be exported and called by the compiler test infrastructure.")
+    val WASM_ENABLE_TAIL_CALLS by key<Boolean>("Emit native Wasm tail-call instructions (return_call / return_call_ref) for non-tailrec tail calls.")
 }
