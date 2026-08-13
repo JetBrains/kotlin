@@ -38,7 +38,6 @@ plugins {
     id("kotlin-bootstrap")
     id("develocity")
     id("jvm-toolchain-provisioning")
-    id("kotlin-daemon-config")
     id("cache-redirector")
 }
 
