@@ -9,7 +9,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.java.direct.model.firBackedJavaType
@@ -505,14 +503,19 @@ private fun substituteTypeArgs(
  *  1. **Source Java** — walk `JavaClass.supertypes` from the AST (no FIR phase involved).
  *  2. **Binary Java** — read the pre-resolved [FirJavaClass.directSupertypeClassIds] cache
  *     (never triggers the lazy enhancement).
- *  3. **Kotlin / built-in / deserialized** — `lazyResolveToPhase(SUPER_TYPES)`; cycles here are
- *     bounded by FIR's own `SupertypeComputationStatus.Computing` sentinel.
+ *  3. **Kotlin / built-in / deserialized** — [supertypeRefsForJavaResolution]: the already-resolved
+ *     refs, or an on-air resolution for a Kotlin source class that has not reached `SUPER_TYPES`
+ *     yet; cycles here are bounded by FIR's own `SupertypeComputationStatus.Computing` sentinel.
+ *
+ * Returning `null` from any arm means "do not cache this answer" — see
+ * [memoizedDirectSupertypeClassIds]. Both the cycle guard's default and a partially resolved
+ * supertype list are such answers.
  */
 @OptIn(SymbolInternals::class)
 context(c: JavaResolutionContext)
 internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
     c.fileContext.session.memoizedDirectSupertypeClassIds(classId) {
-        c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = emptyList()) {
+        c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = null) {
             // 1. Source Java arm.
             val finder = c.fileContext.classFinder
             if (finder != null && finder.isClassInIndex(classId)) {
@@ -531,10 +534,12 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
             }
 
             // 3. Kotlin / built-in / deserialized arm.
-            symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-            firClass.superTypeRefs.mapNotNull { ref ->
+            val refs = firClass.supertypeRefsForJavaResolution(c.fileContext.session)
+            val supertypeClassIds = refs.mapNotNull { ref ->
                 ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
             }
+            // A ref that stayed unresolved makes this a partial answer, which must not be cached.
+            supertypeClassIds.takeIf { it.size == refs.size }
         }
     }
 
