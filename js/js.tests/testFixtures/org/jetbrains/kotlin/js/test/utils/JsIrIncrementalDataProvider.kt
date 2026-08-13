@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -86,39 +85,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             val realFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
             return FileUtilRt.toSystemIndependentName(realFile.canonicalPath)
         }
-
-    context(_: IrBackendFacade<*>)
-    private fun recordIncrementalDataForRuntimeKlib(module: TestModule) {
-        val runtimeKlibPath = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
-        val libs = runtimeKlibPath.map {
-            val descriptor = testServices.libraryProvider.getDescriptorByPath(it)
-            testServices.libraryProvider.getCompiledLibraryByDescriptor(descriptor)
-        }
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        runtimeKlibPath.forEach {
-            recordIncrementalData(it, null, libs, configuration)
-        }
-    }
-
-    context(_: IrBackendFacade<*>)
-    fun recordIncrementalData(module: TestModule, library: KotlinLibrary) {
-        recordIncrementalDataForRuntimeKlib(module)
-
-        val dirtyFiles = module.files.map { "/${it.relativePath}" }
-        val path = klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).path
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        val allDependencies = klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices)
-            .filterNot { it.path == library.path } // Avoid including the library twice.
-
-        recordIncrementalData(
-            path,
-            dirtyFiles,
-            allDependencies + library,
-            configuration,
-        )
-    }
 
     fun recordIncrementalData(module: TestModule, artifact: WebSerializedKlibPipelineArtifact) {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
