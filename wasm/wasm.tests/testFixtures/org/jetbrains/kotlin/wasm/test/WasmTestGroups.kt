@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Tag
  *   [WasmJsMultiModuleTest] and [WasmFirCompilerExtraTest];
  * - passing the annotation to the corresponding `testClass` call in `GenerateWasmTests.kt`, so it is put only on the
  *   generated suite itself. It is used for the groups which consist of a single test runner: [WasmJsBoxTest],
- *   [WasmJsBoxInlinedTest], [WasmJsSplittingTest], [WasmWasiBoxTest] and [WasmWasiBoxInlinedTest]. Their base classes
+ *   [WasmJsSplittingTest], [WasmWasiBoxTest]. Their base classes
  *   are supertypes of tests from other groups, so the tag can not be put on them.
  *
  * The groups are disjoint: [WasmFirCompilerExtraTest] wins over [WasmIcTest], and everything which is left

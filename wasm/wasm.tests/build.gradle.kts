@@ -396,16 +396,14 @@ projectTests {
     // The tags are declared in testFixtures/org/jetbrains/kotlin/wasm/test/WasmTestGroups.kt
     val icTag = "wasmIc"
     val jsBoxTag = "wasmJsBox"
-    val jsBoxInlinedTag = "wasmJsBoxInlined"
     val jsSplittingTag = "wasmJsSplitting"
     val jsMultiModuleTag = "wasmJsMultiModule"
     val wasiBoxTag = "wasmWasiBox"
-    val wasiBoxInlinedTag = "wasmWasiBoxInlined"
     val extraTag = "wasmFirCompilerExtra"
 
     val allTags = listOf(
-        icTag, jsBoxTag, jsBoxInlinedTag, jsSplittingTag,
-        jsMultiModuleTag, wasiBoxTag, wasiBoxInlinedTag, extraTag
+        icTag, jsBoxTag, jsSplittingTag,
+        jsMultiModuleTag, wasiBoxTag, extraTag
     )
 
     // Test everything, intended to use locally
@@ -418,11 +416,9 @@ projectTests {
     // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
     wasmProjectTest("wasmFirCompilerExtraTest", tags = extraTag)
     wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag)
-    wasmProjectTest("wasmJsBoxInlinedTest", tags = jsBoxInlinedTag)
     wasmProjectTest("wasmJsSplittingTest", tags = jsSplittingTag)
     wasmProjectTest("wasmJsMultiModuleTest", tags = jsMultiModuleTag)
     wasmProjectTest("wasmWasiBoxTest", tags = wasiBoxTag)
-    wasmProjectTest("wasmWasiBoxInlinedTest", tags = wasiBoxInlinedTag)
     wasmProjectTest("wasmIcTest", tags = "$icTag & !$extraTag")
     wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" })
 
