@@ -808,7 +808,7 @@ private fun collectKotlinJvmArgs(
 }
 
 private val heapShrinkingJvmOptions = listOf(
-    "-Xms256m",
+    "-Xms64m",
     "-XX:MinHeapFreeRatio=10",
     "-XX:MaxHeapFreeRatio=30",
 )
