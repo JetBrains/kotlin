@@ -389,8 +389,14 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives): 
     }
 }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): OutputDataFile? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
+internal fun parseOutputDataFile(
+    baseDir: File,
+    registeredDirectives: RegisteredDirectives,
+    sanitizer: (String) -> String = { it },
+): OutputDataFile? =
+    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let {
+        OutputDataFile(file = it, sanitizer = sanitizer)
+    }
 
 internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): File? =
     parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives)

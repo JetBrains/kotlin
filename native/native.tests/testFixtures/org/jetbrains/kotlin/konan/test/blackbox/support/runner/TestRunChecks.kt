@@ -103,13 +103,20 @@ sealed interface TestRunCheck {
         Output.ALL -> processOutput.stdOut.filteredOutput + processOutput.stdErr
     }
 
-    class OutputDataFile(val output: Output = Output.ALL, val file: File) : TestRunCheck {
+    class OutputDataFile(
+        val output: Output = Output.ALL,
+        val file: File,
+        val sanitizer: (String) -> String = { it },
+    ) : TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             val actualFilteredOutput = runResult.processOutputAsString(output)
-            val match = JUnit5Assertions.doesEqualToFile(file, actualFilteredOutput)
-            return if (!match)
+            val match = JUnit5Assertions.doesEqualToFile(file, actualFilteredOutput, sanitizer)
+            return if (!match) {
+                // Pass in both the output and the file unsanitized to see the real diff in the failure
                 Result.Failed("Tested process output mismatch.", expectedFile = file, actual = actualFilteredOutput)
-            else Result.Passed
+            } else {
+                Result.Passed
+            }
         }
     }
 
