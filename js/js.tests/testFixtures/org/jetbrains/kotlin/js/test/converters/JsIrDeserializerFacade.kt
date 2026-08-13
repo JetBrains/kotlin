@@ -7,47 +7,16 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsIrLoadingPipelinePhase
-import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
-import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDeserializerCliFacade
-import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
-import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.service
 
-class JsIrDeserializerFacade(
-    testServices: TestServices,
-) : IrDeserializerCliFacade<JsIrLoadingPipelinePhase, WebLoadedIrPipelineArtifact>(testServices, JsIrLoadingPipelinePhase) {
+class JsIrDeserializerFacade(testServices: TestServices) :
+    IrDeserializerCliFacade<JsIrLoadingPipelinePhase, WebLoadedIrPipelineArtifact>(testServices, JsIrLoadingPipelinePhase) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(
-            service(::ModuleDescriptorProvider),
             service(::JsIrIncrementalDataProvider),
-            service(::LibraryProvider)
         )
-
-    override fun transform(
-        module: TestModule,
-        inputArtifact: BinaryArtifacts.KLib,
-    ): DeserializedFromKlibBackendInput<WebLoadedIrPipelineArtifact>? =
-        super.transform(module, inputArtifact)?.also { output ->
-            val modulesStructure = output.cliArtifact.moduleStructure
-            val klibs = modulesStructure.klibs
-            val mainModuleLib = klibs.included ?: testInfraError("No module with ${modulesStructure.mainModulePath} found")
-
-            // Some test downstream handlers like JsSourceMapPathRewriter expect a module descriptor to be present.
-            testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(
-                module,
-                modulesStructure.getModuleDescriptor(mainModuleLib)
-            )
-            for (library in klibs.all) {
-                testServices.libraryProvider.setDescriptorAndLibraryByName(
-                    library.path.canonicalPathString(),
-                    modulesStructure.getModuleDescriptor(library),
-                    library
-                )
-            }
-        }
 }
