@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.markGroupedTestsDriverGenerated
 import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -150,7 +149,6 @@ abstract class AbstractWasmSecondStageGroupingFacade(
             appendLine()
             append(GroupedTestsResultProtocol.generateResultCollectingRunnerSource(proxyClassNames, exportedEntryPointGenerator))
         }
-        testServices.markGroupedTestsDriverGenerated()
         val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
         tempFile.writeText(proxyLauncherContent)
         return TestFile(

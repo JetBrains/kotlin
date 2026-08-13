@@ -176,7 +176,7 @@ class CustomWasmSecondStageFacade internal constructor(
             )
             // Copy additional non-Kotlin files (e.g. *.mjs, *.js) from per-test modules to the executable folder.
             copyJsFilesToOutputDir(filteredOutputs.map { it.testServices to it.testModule }, executableFolder)
-            return WasmFolderBinaryArtifact(executableFolder)
+            return WasmFolderBinaryArtifact(executableFolder, hasGroupedTestsDriver = true)
         }
 
         private fun doIsolated(

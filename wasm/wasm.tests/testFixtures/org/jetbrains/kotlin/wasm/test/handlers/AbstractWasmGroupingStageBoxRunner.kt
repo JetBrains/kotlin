@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -66,8 +65,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
 
     override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
         val inputs = testServices.groupingStageInputs
+        // The artifact contract is authoritative: a result-collecting driver must be invoked even when a
+        // driver-linked singleton happens to satisfy a subclass's historical box-export heuristic.
+        val useBoxExportMode = !artifact.hasGroupedTestsDriver && shouldUseBoxExportMode()
 
-        if (shouldUseBoxExportMode()) {
+        if (useBoxExportMode) {
             // Box export mode: call box() directly and expect "OK"
             val input = inputs.first()
             val exceptions = runTestCode(
@@ -86,11 +88,12 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 useUnitTestRunnerOnly = true,
                 outputCollector = collectedOutputs,
             )
-            handleRunResult(collectedOutputs = collectedOutputs, exceptions = exceptions)
+            handleRunResult(artifact, collectedOutputs = collectedOutputs, exceptions = exceptions)
         }
     }
 
     private fun handleRunResult(
+        artifact: BinaryArtifacts.Wasm,
         collectedOutputs: List<WasmVMOutput>,
         exceptions: List<Throwable>,
     ) {
@@ -100,7 +103,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             exceptions.forEach { throwable -> addAll(collectExceptionTexts(throwable)) }
         }
 
-        if (testServices.hasGroupedTestsDriver) {
+        if (artifact.hasGroupedTestsDriver) {
             // Successful VM invocations retain their own output boundary. A VM that failed to start or crashed is
             // represented by an exception and remains covered by the crash/unexplained-exception handling below.
             val outputsWithoutStructuredBlock = collectedOutputs.filter { output ->
@@ -155,7 +158,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // A driver-linked batch reports every verdict through the driver, so no block at all means it was never
         // invoked: `test.mjs` fell back to `startUnitTests()`, which finds nothing to run (the launcher classes carry
         // no `@kotlin.test.Test`) and exits cleanly — the batch would be green with no test having run.
-        if (testServices.hasGroupedTestsDriver) {
+        if (artifact.hasGroupedTestsDriver) {
             testServices.groupingStageInputs.forEach { input ->
                 input.failWithCollectedOutputs(
                     texts,

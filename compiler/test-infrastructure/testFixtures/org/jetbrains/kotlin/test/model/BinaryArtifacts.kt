@@ -31,6 +31,9 @@ object BinaryArtifacts {
     abstract class Wasm: ResultingArtifact.Binary<Wasm>() {
         override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm
+
+        open val hasGroupedTestsDriver: Boolean
+            get() = false
     }
 
     class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {
