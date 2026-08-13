@@ -111,9 +111,11 @@ sealed interface TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             val actualFilteredOutput = runResult.processOutputAsString(output)
             val match = JUnit5Assertions.doesEqualToFile(file, actualFilteredOutput, sanitizer)
-            return if (!match)
+            return if (!match) {
                 Result.Failed("Tested process output mismatch.", expectedFile = file, actual = actualFilteredOutput)
-            else Result.Passed
+            } else {
+                Result.Passed
+            }
         }
     }
 
