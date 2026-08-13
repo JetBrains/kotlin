@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSo
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.builtinTypes
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.providers.*
@@ -176,7 +177,7 @@ internal open class SirFunctionFromKtSymbol(
             }
             bridgeProxy?.createReverseSirBridges(
                 targetClassFqName = (ktSymbol as? KaNamedFunctionSymbol)
-                    ?.containingSymbol?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
+                    ?.containingSymbol?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.render() }
                     ?: "",
                 targetMethodName = ktSymbol.name?.asString() ?: "",
                 swiftDynamicCall = { selfExpr, paramExprs ->

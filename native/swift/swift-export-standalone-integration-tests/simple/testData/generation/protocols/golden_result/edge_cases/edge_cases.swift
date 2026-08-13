@@ -124,6 +124,11 @@ extension ExportedKotlinPackages.conflictingTypealiases.Foo {
     public typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict
 }
 @_documentation(visibility: internal)
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo where Self : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo {
+}
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo {
+}
+@_documentation(visibility: internal)
 extension edge_cases.InterfaceA where Self : edge_cases.__InterfaceA {
     public func foo() -> Swift.Void {
         return { InterfaceA_foo(self.__externalRCRef()); return () }()
@@ -203,6 +208,12 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.confli
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar, ExportedKotlinPackages.conflictingTypealiases.__Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
 }
 @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.___u2764_️s_u20_Kotlin where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
+}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._SomeInterface {
 }
 @_documentation(visibility: internal)
@@ -220,6 +231,12 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Bar {
 }
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
+}
 extension ExportedKotlinPackages.conflictingTypealiases {
     public protocol Bar: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases._Bar {
     }
@@ -235,6 +252,27 @@ extension ExportedKotlinPackages.conflictingTypealiases {
     }
     public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
     }
+}
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal` {
+    public protocol Foo: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
+    }
+    @objc(_ExportedKotlinPackages_org_jetbrains_kotlin_internal_Foo)
+    public protocol _Foo {
+    }
+    public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol ___u2764_️s_u20_Kotlin: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    @objc(_ExportedKotlinPackages_org_jetbrains_kotlin_internal_u2764_️s_u20_Kotlin)
+    public protocol __u2764_️s_u20_Kotlin {
+    }
+    public protocol u2764_️s_u20_Kotlin: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin where Self : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.___u2764_️s_u20_Kotlin {
+}
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin {
 }
 @_cdecl("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift")
 package func Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ result: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
