@@ -94,7 +94,8 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.OBJECT,
-            KotlinTarget.ENUM_CLASS,
+            //KotlinTarget.ENUM_CLASS, `equals`/`hashCode` are final in `java.lang.Enum`, so generated ones
+            // wouldn't even load, KT-88507. Lombok supports the annotation on a class only, unlike `@ToString`.
             KotlinTarget.LOCAL_CLASS,
         ),
         unsupportedArguments = setOf(

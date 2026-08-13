@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
-
 import lombok.EqualsAndHashCode
 
 @EqualsAndHashCode
@@ -57,9 +55,12 @@ class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
 }
 
+// Nothing is generated: `java.lang.Enum` declares `equals`/`hashCode` final, so a generated one used to fail
+// verification and the class didn't even load, KT-88507. `ANNOTATION_HAS_NO_EFFECT` is reported instead.
 @EqualsAndHashCode
 enum class Color(val hex: String) {
-    RED("#FF0000")
+    RED("#FF0000"),
+    GREEN("#00FF00")
 }
 
 fun box(): String {
@@ -131,7 +132,10 @@ fun box(): String {
     assertEquals(true, LocalClass(7) == LocalClass(7))
     assertEquals(false, LocalClass(7) == LocalClass(8))
 
-    val a = Color.RED // TODO: @EqualsAndHashCode is no-op for enums (a checker should report ANNOTATION_HAS_NO_EFFECT warning), KT-88507
+    // The enum keeps the identity comparison it inherits from `java.lang.Enum`, KT-88507.
+    assertEquals(true, Color.RED == Color.RED)
+    assertEquals(false, Color.RED == Color.GREEN)
+    assertEquals(true, Color.RED.hashCode() == Color.RED.hashCode())
 
     return "OK"
 }
