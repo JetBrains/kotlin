@@ -16,11 +16,9 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 
 tasks.withType<Test>().configureEach {
     val currentDomain = testFederationDomains
-    val affectedDomains = project.testFederationAffectedDomains
     val changedDomains = project.testFederationChangedDomains
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
-    val formattedAffectedDomains = affectedDomains.map { domains -> domains.toArgumentString() }
     val formattedChangedDomains = changedDomains.map { domains -> domains.toArgumentString() }
     val smokeTestConfig = smokeTestConfig
 
@@ -34,11 +32,7 @@ tasks.withType<Test>().configureEach {
     /*
     We only use the exact set of domains as input to the test task if we're actually running in smoke test mode.
     This will allow for safely re-using build caches of any 'full mode' run.
-     */
-    inputs.property(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, testFederationMode.zip(affectedDomains) { mode, domains ->
-        if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
-    })
-
+    */
     inputs.property(TEST_FEDERATION_CHANGED_DOMAINS_KEY, testFederationMode.zip(changedDomains) { mode, domains ->
         if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
     })
@@ -51,14 +45,14 @@ tasks.withType<Test>().configureEach {
         this as Test
 
         scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
-        scan.value("$projectPath:${this.name} affected domains", formattedAffectedDomains.get())
+        scan.value("$projectPath:${this.name} changed domains", formattedChangedDomains.get())
         scan.value("$projectPath:${this.name} test mode", testFederationMode.get().toString())
 
         val testFramework = testFramework
         val smokeTestConfig = smokeTestConfig.get()
 
         logger.quiet("Current Domain: '${currentDomain.get()}'")
-        logger.quiet("Affected Domains: '${formattedAffectedDomains.get()}'")
+        logger.quiet("Changed Domains: '${formattedChangedDomains.get()}'")
         logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
 
         /*
@@ -106,9 +100,6 @@ tasks.withType<Test>().configureEach {
         This will allow for safely re-using build caches of any 'full mode' run.
         */
         if (testFederationMode.get() == TestFederationMode.Smoke) {
-            systemProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains.get())
-            environment(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY, formattedAffectedDomains.get())
-
             systemProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY, formattedChangedDomains.get())
             environment(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY, formattedChangedDomains.get())
         }
@@ -121,8 +112,8 @@ tasks.withType<Test>().configureEach {
         /* Set TeamCity tags */
         if (testFederationMode.get() == TestFederationMode.Smoke) {
             println("##teamcity[addBuildTag 'Mode: Smoke']")
-            affectedDomains.get().forEach { domain ->
-                println("##teamcity[addBuildTag 'Affected: $domain']")
+            changedDomains.get().forEach { domain ->
+                println("##teamcity[addBuildTag 'Changed: $domain']")
             }
         } else {
             println("##teamcity[addBuildTag 'Mode: Full']")

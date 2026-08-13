@@ -16,8 +16,8 @@ class AffectsCommandTest {
 
         assertEquals(emptySet(), changedDomains)
         assertEquals(
-            setOf(Domain.Compiler),
-            inferAffectedDomains(changedDomains, listOf("^affects: Compiler")),
+            setOf(Domain.CommonBackend),
+            inferAffectedDomains(changedDomains, listOf("^affects: CommonBackend")),
         )
     }
 

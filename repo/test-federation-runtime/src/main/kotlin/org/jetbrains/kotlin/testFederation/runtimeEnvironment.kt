@@ -9,8 +9,6 @@ internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
 internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
 internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
-internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
-internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
 internal const val TEST_FEDERATION_CHANGED_DOMAINS_KEY = "test.federation.changed.domains"
 internal const val TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY = "TEST_FEDERATION_CHANGED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
@@ -31,15 +29,6 @@ val testFederationEnabled: Boolean =
 val testFederationMode: TestFederationMode? = run {
     val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
     TestFederationMode.valueOf(raw)
-}
-
-/**
- * @return All affected [Domain]s. Only relevant if the [testFederationEnabled] returns true
- */
-val testFederationAffectedDomains: Set<Domain>? = run {
-    val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return@run null
-    if (raw.isBlank()) return@run null
-    domainsFromString(raw)
 }
 
 /**
