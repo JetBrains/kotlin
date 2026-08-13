@@ -13,16 +13,14 @@ public final class MyClass /* MyClass*/ {
 }
 
 public static final class Companion /* MyClass.Companion*/ {
-  @<error>()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getProp2();//  getProp2()
-
-  @<error>()
-  public final void setProp(int);//  setProp(int)
 
   private  Companion();//  .ctor()
 
   public final int getProp();//  getProp()
+
+  public final void setProp(int);//  setProp(int)
 
   public final void setProp2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setProp2(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

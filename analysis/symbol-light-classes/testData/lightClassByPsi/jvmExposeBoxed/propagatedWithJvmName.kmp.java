@@ -1,9 +1,7 @@
-@<error>()
 public final class Implicit /* Implicit*/ {
   public  Implicit();//  .ctor()
 }
 
-@<error>()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;

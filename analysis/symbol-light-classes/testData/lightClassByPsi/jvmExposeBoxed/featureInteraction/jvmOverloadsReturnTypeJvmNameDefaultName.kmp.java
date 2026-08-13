@@ -2,7 +2,6 @@ public final class Baz /* Baz*/ {
   public  Baz();//  .ctor()
 }
 
-@<error>()
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 

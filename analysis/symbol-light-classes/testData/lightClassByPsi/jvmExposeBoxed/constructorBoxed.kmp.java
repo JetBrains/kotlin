@@ -1,4 +1,3 @@
-@<error>()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() java.lang.String s;
@@ -14,7 +13,6 @@ public final class StringWrapper /* StringWrapper*/ {
   public int hashCode();//  hashCode()
 }
 
-@<error>()
 public final class Test /* Test*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() StringWrapper s;

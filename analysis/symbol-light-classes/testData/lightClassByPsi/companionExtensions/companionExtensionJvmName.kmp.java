@@ -1,8 +1,6 @@
 public final class CompanionExtensionJvmNameKt /* one.CompanionExtensionJvmNameKt*/ {
-  @<error>()
   public static final int getProperty();//  getProperty()
 
-  @<error>()
   public static final int original();//  original()
 }
 
