@@ -7,6 +7,10 @@ plugins {
     id("project-tests-convention")
 }
 
+// `moduleManipulationUtils.kt` uses `sun.misc.Unsafe`, which is not visible when cross-compiling
+// with `--release`.
+configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+
 dependencies {
     api(kotlinStdlib())
     compileOnly(toolsJarApi())
