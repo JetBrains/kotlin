@@ -115,11 +115,15 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
         return@property provider { Domain.entries.toSet() }
     }
 
+    /* Handle the case where only -Ptest.federation.changed.domains is provided, but affected domains are not */
+    val fromProvidedChangedDomains = (providers.gradleProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY))
+        .orElse(providers.environmentVariable(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY))
+        .map { raw -> Domain.fromArgumentStringOrThrow(raw).withAffectedDependencies() }
+
     (providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY)
-        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY))
-        .orElse(providers.gradleProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY))
-        .orElse(providers.environmentVariable(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY)))
+        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
         .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
+        .orElse(fromProvidedChangedDomains)
         .orElse(project.affectedDomainsService.map { it.affectedDomains })
 }
 
