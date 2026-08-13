@@ -36,9 +36,10 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browser = target.subTargets.filterIsInstance<KotlinBrowserJsIr>().singleOrNull() ?: return@launchInStage
 
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
+
         if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
-            project.logger.debug("No browser runners configured. Skipping kotlin js test task configuration")
-            return@launchInStage
+            project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework())
+            browserTestDsl.setUpDefaultBrowserRunner()
         }
 
         // TODO: KT-86706 Implement different browser runners as independent test runs
