@@ -43,6 +43,7 @@ internal class SequenceData(
 internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
     class Variable(val variable: IrValueSymbol) : SequenceSource()
+    class AsSequence(val iterable: IrExpression) : SequenceSource()
     class GenerateSequence(
         val initialValue: GenerateSequenceInitialValue,
         val generatingFunction: IrExpression,
@@ -53,6 +54,7 @@ internal sealed class SequenceSource {
 
     internal fun containsVariableCopies(): Boolean = when (this) {
         is SequenceOf -> elements.any { it.containsFusedVariableCopy() }
+        is AsSequence -> iterable.containsFusedVariableCopy()
         is GenerateSequence -> generatingFunction.containsFusedVariableCopy() || when (initialValue) {
             is GenerateSequenceInitialValue.Seed -> initialValue.expression.containsFusedVariableCopy()
             is GenerateSequenceInitialValue.SeedFunction -> initialValue.function.containsFusedVariableCopy()
@@ -65,6 +67,7 @@ internal sealed class SequenceSource {
         builder: IrBuilderWithScope,
         context: JvmBackendContext,
     ): ProducerStrategy = when (this) {
+        is AsSequence -> UnknownVariableStrategy(this.iterable, context)
         is GenerateSequence -> GenerateSequenceStrategy(this)
         is SequenceOf -> SequenceOfStrategy(this, context)
         is Empty -> EmptySequenceStrategy
