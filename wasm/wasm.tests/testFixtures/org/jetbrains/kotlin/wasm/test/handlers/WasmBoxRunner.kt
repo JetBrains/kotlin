@@ -130,7 +130,7 @@ open class WasmFolderGroupingStageBoxRunner(
     private val wasmFolderBoxRunner: WasmFolderBoxRunner
         get() = WasmFolderBoxRunner(firstNonGroupingTestServices, executeWithV8Only = executeWithV8Only)
 
-    override fun shouldUseBoxExportMode(): Boolean =
+    override fun shouldUseBoxExportModeWhenDriverless(): Boolean =
         firstNonGroupingTestServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true) &&
                 RUN_UNIT_TESTS !in firstNonGroupingTestServices.moduleStructure.allDirectives &&
                 testServices.groupingStageInputs.first().hasBoxMethod()
