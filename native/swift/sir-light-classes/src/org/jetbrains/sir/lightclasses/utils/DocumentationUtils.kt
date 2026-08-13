@@ -171,7 +171,7 @@ internal class KDocElements private constructor(
                         val content = tag.getContent()
                         throws += name to content
                     }
-                    KDocKnownTag.SEE -> tag.getSubjectName()?.let { extensions += "See" to it }
+                    KDocKnownTag.SEE -> extensions += "See" to ((tag.getSubjectName()?.let { "`$it` " } ?: "") + tag.getContent())
                     KDocKnownTag.AUTHOR -> extensions += "Author" to tag.getContent()
                     KDocKnownTag.SINCE -> extensions += "Since" to tag.getContent()
                     KDocKnownTag.SUPPRESS -> suppress = true
