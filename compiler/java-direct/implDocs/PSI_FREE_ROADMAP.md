@@ -178,6 +178,11 @@ former unconditional `needRegisterJavaElementFinder = true` cannot come back.
 
 The LL-API/IDE and K1 sides are out of scope entirely (see above).
 
+The shared (non-CLI) test infrastructure follows the same helper through `FirFrontendFacade`, so it
+*can* run java-direct, but no suite enables it and two defects block doing so — measured, with the
+per-suite results, in `TEST_INFRA_JAVA_DIRECT.md`. Only JKlib, incremental compilation, the HMPP
+common fragment and scripting were verified to work under a forced-on java-direct.
+
 ## 8. The PSI that is left in the API, and how it goes
 
 With `AbstractProjectFileSearchScope` deleted, `PsiScopeJvmClasspath` gone and the Java-sources

@@ -36,6 +36,23 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-13 — the test-infrastructure source-root gap: confirmed, fixed, and two real blockers found
+- **Change**: `javaInterop` was temporarily forced to the java-direct branch to exercise the latent
+  facade-based capability. The `dependsOn`-closure source-root gap is real but unexercised (a temporary
+  assertion over 130k tests found no `dependsOn` module with `.java` files); fixed in
+  `JvmEnvironmentConfigurator`, which now registers the Java source roots of the whole closure, as
+  `addSourcesForDependsOnClosure` already does for Kotlin sources. Behaviour-neutral today (closure is
+  `[module]` without MPP). JKlib, incremental, HMPP and scripting are all **green** with java-direct on;
+  the 109 `analysis-tests` failures are two unrelated defects — see `implDocs/TEST_INFRA_JAVA_DIRECT.md`.
+- **Files**: `tests-common-new/.../configuration/JvmEnvironmentConfigurator.kt` (+14/−4),
+  new `implDocs/TEST_INFRA_JAVA_DIRECT.md`.
+- **Tests**: with the flag off (shipping config): `analysis-tests` 56672/0, `fir2ir` 73656/0,
+  java-direct 21774/0. Forced on: `jklib.tests` 843/0, `IncrementalK2FirICJvmCompilerRunnerTest` 371/0,
+  HMPP separate-KMP 269/0, scripting green.
+- **Result**: green; gap closed. Blockers before any facade suite can run java-direct: the
+  `SUPER_TYPES` lazy-resolve contract violation at `JavaTypeResolver.kt:534` (90 tests) and the
+  `ForeignAnnotations` golden-data divergences (19 tests).
+
 ### 2026-08-13 — `BinaryClassFileScope` removed: the finder takes the session's classpath
 - **Change**: the seam had one production use site — `JavaDirectJavaInterop` built
   `classpath.asBinaryClassFileScope()` only to hand it to `JavaClassFinderOverBinaryIndex` — so it was a
