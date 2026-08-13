@@ -5,28 +5,20 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
 import org.jetbrains.kotlin.cli.CliDiagnostics.JS_IC_ERROR
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
-import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
 abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
@@ -82,20 +74,6 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             }
             prepareIcCaches(
                 cacheDirectory = cacheDirectory,
-                icConfigurationData = when {
-                    configuration.wasmCompilation -> {
-                        IcCachesConfigurationData.Wasm(
-                            wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-                            generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
-                            generateDebugInformation =
-                                configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
-                            mode = configuration.wasmCompilationMode()
-                        )
-                    }
-                    else -> IcCachesConfigurationData.Js(
-                        granularity = artifactConfiguration.granularity
-                    )
-                },
                 outputDir = configuration.outputDir!!,
                 targetConfiguration = configuration,
                 artifactConfiguration = artifactConfiguration,
@@ -116,7 +94,6 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
 
     private fun prepareIcCaches(
         cacheDirectory: String,
-        icConfigurationData: IcCachesConfigurationData,
         outputDir: File,
         targetConfiguration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
@@ -130,37 +107,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
 
         val start = System.currentTimeMillis()
 
-        val loadBodiesOnlyForMainModule: Boolean
-        val icContext = when (icConfigurationData) {
-            is IcCachesConfigurationData.Js -> {
-                loadBodiesOnlyForMainModule = false
-                JsICContext(
-                    icConfigurationData.granularity,
-                )
-            }
-            is IcCachesConfigurationData.Wasm -> {
-                loadBodiesOnlyForMainModule = icConfigurationData.mode == WasmCompilationMode.SINGLE_MODULE
-                val contextConstructor = when (icConfigurationData.mode) {
-                    WasmCompilationMode.REGULAR -> ::WasmICContextWholeWorld
-                    WasmCompilationMode.MULTI_MODULE -> ::WasmICContextMultimodule
-                    WasmCompilationMode.SINGLE_MODULE -> ::WasmICContextSingleModule
-                }
-                contextConstructor(
-                    false,
-                    !icConfigurationData.wasmDebug,
-                    !icConfigurationData.generateWat,
-                    !icConfigurationData.generateDebugInformation,
-                )
-            }
-        }
-        val cacheUpdater = CacheUpdater(
-            cacheDir = cacheDirectory,
-            compilerConfiguration = targetConfiguration,
-            artifactConfiguration = artifactConfiguration,
-            icContext = icContext,
-            checkForClassStructuralChanges = icConfigurationData is IcCachesConfigurationData.Wasm,
-            loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,
-        )
+        val cacheUpdater = createCacheUpdater(cacheDirectory, targetConfiguration, artifactConfiguration)
 
         val artifacts = cacheUpdater.actualizeCaches()
 
@@ -194,6 +141,12 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
 
         return artifacts
     }
+
+    protected abstract fun createCacheUpdater(
+        cacheDirectory: String,
+        configuration: CompilerConfiguration,
+        artifactConfiguration: WebArtifactConfiguration,
+    ): CacheUpdater
 
     protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
