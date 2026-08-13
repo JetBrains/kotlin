@@ -1,0 +1,302 @@
+companion object {
+  /** This character denotes the end of file */
+  private const val YYEOF = -1
+
+  /** initial size of the lookahead buffer */
+--- private static final int ZZ_BUFFERSIZE = ...; L1
+
+  /** lexical states */
+---  lexical states, charmap L2
+
+  /* error codes */
+  private const val ZZ_UNKNOWN_ERROR = 0
+  private const val ZZ_NO_MATCH = 1
+  private const val ZZ_PUSHBACK_2BIG = 2
+
+  /* error messages for the codes above */
+  @JvmStatic
+  val ZZ_ERROR_MSG = arrayOf(
+    "Unknown internal scanner error",
+    "Error: could not match input",
+    "Error: pushback value was too large"
+  )
+
+--- isFinal list L3
+}
+  /** the current state of the DFA */
+  private var zzState = 0
+
+  /** the current lexical state */
+  private var zzLexicalState = YYINITIAL
+
+  /** this buffer contains the current text to be matched and is
+      the source of the yytext() string */
+  private var zzBuffer: CharSequence = ""
+
+  /** the textposition at the last accepting state */
+  private var zzMarkedPos = 0
+
+  /** the current text position in the buffer */
+  private var zzCurrentPos = 0
+
+  /** startRead marks the beginning of the yytext() string in the buffer */
+  private var zzStartRead = 0
+
+  /** endRead marks the last character in the buffer, that has been read
+      from input */
+  private var zzEndRead = 0
+
+  /**
+   * Whether the scanner is at the end of file.
+   * @see #yyatEOF
+   */
+  private var zzAtEOF = false
+
+--- user class code L4
+
+--- constructor declaration L5
+
+  override fun getTokenStart(): Int {
+    return zzStartRead
+  }
+
+  override fun getTokenEnd(): Int {
+    return getTokenStart() + yylength()
+  }
+
+  override fun reset(buffer: CharSequence, start: Int, end: Int, initialState: Int) {
+    zzBuffer = buffer
+    zzCurrentPos = start
+    zzMarkedPos = start
+    zzStartRead = start
+    zzAtEOF  = false
+    zzAtBOL = true
+    zzEndRead = end
+    yybegin(initialState)
+  }
+
+  /**
+   * Refills the input buffer.
+   *
+   * @return      {@code false}, iff there was new input.
+   */
+  private fun zzRefill(): Boolean {
+    return true
+  }
+
+
+  /**
+   * Returns the current lexical state.
+   */
+  override fun yystate(): Int {
+    return zzLexicalState
+  }
+
+
+  /**
+   * Enters a new lexical state
+   *
+   * @param newState the new lexical state
+   */
+  override fun yybegin(newState: Int) {
+    zzLexicalState = newState
+  }
+
+
+  /**
+   * Returns the text matched by the current regular expression.
+   */
+  fun yytext(): CharSequence {
+    return zzBuffer.subSequence(zzStartRead, zzMarkedPos)
+  }
+
+
+  /**
+   * Returns the character at position {@code pos} from the
+   * matched text.
+   *
+   * It is equivalent to yytext().charAt(pos), but faster
+   *
+   * @param pos the position of the character to fetch.
+   *            A value from 0 to yylength()-1.
+   *
+   * @return the character at position pos
+   */
+  fun yycharat(position: Int): Char {
+    return zzBuffer[zzStartRead + position]
+  }
+
+
+  /**
+   * Returns the length of the matched text region.
+   */
+  fun yylength(): Int {
+    return zzMarkedPos - zzStartRead
+  }
+
+  /**
+   * Implementation of the `codePointAt` method of `java.lang.Character` for CharSequences
+   *
+   * @param index the index of the character for which to retrieve the code point.
+   * @return the Unicode code point at the specified index.
+   * @throws IndexOutOfBoundsException if the index is outside the bounds of the character sequence.
+   */
+  fun CharSequence.codePoint(index: Int): Int {
+      val high = this[index]
+      if (high.isHighSurrogate() && index + 1 < length) {
+          val low = this[index + 1]
+          if (low.isLowSurrogate()) {
+              val codePoint: String = "$high$low"
+              return codePoint.codePointAt(0)
+          }
+      }
+      return high.code
+  }
+
+  /** Returns the character (Unicode code point) at the specified index. */
+  internal fun String.codePointAt(index: Int): Int {
+      val high = this[index]
+      if (high.isHighSurrogate() && index + 1 < this.length) {
+          val low = this[index + 1]
+          if (low.isLowSurrogate()) {
+              return Char.toCodePoint(high, low)
+          }
+      }
+      return high.code
+  }
+
+  internal fun CharSequence.offsetByCodePoints(index: Int, codePointOffset: Int): Int {
+    val length = this.length
+    if (index < 0 || index > length) throw IndexOutOfBoundsException()
+
+    var x = index
+    if (codePointOffset >= 0) {
+      var i: Int = 0
+
+      while (x < length && i < codePointOffset) {
+        if (this[x++].isHighSurrogate() && x < length && this[x].isLowSurrogate()) x++
+        i++
+      }
+
+      if (i < codePointOffset) throw IndexOutOfBoundsException()
+
+    } else {
+      var i: Int = codePointOffset
+
+      while (x > 0 && i < 0) {
+        if (this[--x].isLowSurrogate() && x > 0 && this[x - 1].isHighSurrogate()) x--
+        i++
+      }
+
+      if (i < 0) {
+        throw IndexOutOfBoundsException()
+      }
+    }
+
+    return x
+  }
+
+  internal fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
+      (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
+
+  private fun charCount(codePoint: Int): Int = if (codePoint < 0x10000) 1 else 2
+
+
+  /**
+   * Reports an error that occurred while scanning.
+   *
+   * In a wellformed scanner (no or only correct usage of
+   * yypushback(int) and a match-all fallback rule) this method
+   * will only be called with things that "Can't Possibly Happen".
+   * If this method is called, something is seriously wrong
+   * (e.g. a JFlex bug producing a faulty scanner etc.).
+   *
+   * Usual syntax/scanner level error handling should be done
+   * in error fallback rules.
+   *
+   * @param   errorCode  the code of the errormessage to display
+   */
+--- zzScanError declaration L6
+
+
+  /**
+   * Pushes the specified amount of characters back into the input stream.
+   *
+   * They will be read again by then next call of the scanning method
+   *
+   * @param number  the number of characters to be read again.
+   *                This number must not be greater than yylength()!
+   */
+--- yypushback decl (contains zzScanError exception) L8
+    if ( number > yylength() )
+      zzScanError(ZZ_PUSHBACK_2BIG)
+
+    zzMarkedPos -= number
+  }
+
+
+--- zzDoEOF L9
+    val message = try {
+      ZZ_ERROR_MSG[errorCode]
+    } catch (e: IndexOutOfBoundsException) {
+      ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR]
+    }
+
+--- throws clause L7
+  /**
+   * Resumes scanning until the next regular expression is matched,
+   * the end of input is encountered or an I/O-Error occurs.
+   *
+   * @return      the next token
+   */
+--- yylex declaration L10
+    var zzInput: Int = 0
+    var zzAction: Int = 0
+
+--- local declarations L11
+
+    while (true) {
+      // cached fields:
+      var zzCurrentPosL = 0
+      var zzMarkedPosL: Int = zzMarkedPos
+      var zzEndReadL: Int = zzEndRead
+      var zzBufferL: CharSequence = zzBuffer
+
+--- start admin (line, char, col count) L12
+      zzAction = -1
+
+      zzCurrentPosL = zzMarkedPosL
+      zzCurrentPos = zzMarkedPosL
+      zzStartRead = zzMarkedPosL
+
+--- start admin (lexstate etc) L13
+
+      zzForAction@ while (true) {
+--- next input, line, col, char count, next transition, isFinal action L14
+            zzAction = zzState
+            zzMarkedPosL = zzCurrentPosL
+--- line count update L15
+          }
+      }
+
+      // store back cached position
+      zzMarkedPos = zzMarkedPosL
+--- char count update L16
+
+      if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
+        zzAtEOF = true
+--- eofvalue L17
+      }
+      else {
+--- actions L18
+          else ->
+--- no match L19
+        }
+      }
+    }
+    return null
+  }
+
+--- main L20
+
+}

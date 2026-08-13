@@ -16,7 +16,7 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
 class KDocFlexLexer : FlexLexer {
 companion object {
   /** This character denotes the end of file */
-  private const val YYEOF = -1 
+  private const val YYEOF = -1
 
   /** initial size of the lookahead buffer */
   private const val ZZ_BUFFERSIZE: Int = 16384
@@ -465,7 +465,7 @@ companion object {
 
   /** this buffer contains the current text to be matched and is
       the source of the yytext() string */
-  private var zzBuffer: CharSequence = "" 
+  private var zzBuffer: CharSequence = ""
 
   /** the textposition at the last accepting state */
   private var zzMarkedPos = 0
@@ -667,7 +667,7 @@ companion object {
    * @return the character at position pos
    */
   fun yycharat(position: Int): Char {
-    return zzBuffer[zzStartRead + position] 
+    return zzBuffer[zzStartRead + position]
   }
 
 
@@ -675,7 +675,7 @@ companion object {
    * Returns the length of the matched text region.
    */
   fun yylength(): Int {
-    return zzMarkedPos - zzStartRead 
+    return zzMarkedPos - zzStartRead
   }
 
   /**
@@ -708,7 +708,7 @@ companion object {
       }
       return high.code
   }
-  
+
   internal fun CharSequence.offsetByCodePoints(index: Int, codePointOffset: Int): Int {
     val length = this.length
     if (index < 0 || index > length) throw IndexOutOfBoundsException()
@@ -716,27 +716,27 @@ companion object {
     var x = index
     if (codePointOffset >= 0) {
       var i: Int = 0
-      
+
       while (x < length && i < codePointOffset) {
         if (this[x++].isHighSurrogate() && x < length && this[x].isLowSurrogate()) x++
         i++
       }
-      
+
       if (i < codePointOffset) throw IndexOutOfBoundsException()
-      
+
     } else {
       var i: Int = codePointOffset
-      
+
       while (x > 0 && i < 0) {
         if (this[--x].isLowSurrogate() && x > 0 && this[x - 1].isHighSurrogate()) x--
         i++
       }
-      
+
       if (i < 0) {
         throw IndexOutOfBoundsException()
       }
     }
-    
+
     return x
   }
 
@@ -803,8 +803,8 @@ companion object {
    */
   override fun advance(): SyntaxElementType?
   {
-    var zzInput: Int = 0 
-    var zzAction: Int = 0 
+    var zzInput: Int = 0
+    var zzAction: Int = 0
 
     val zzTransL: IntArray = ZZ_TRANS
     val zzRowMapL: IntArray = ZZ_ROWMAP
@@ -813,9 +813,9 @@ companion object {
     while (true) {
       // cached fields:
       var zzCurrentPosL = 0
-      var zzMarkedPosL: Int = zzMarkedPos 
-      var zzEndReadL: Int = zzEndRead 
-      var zzBufferL: CharSequence = zzBuffer 
+      var zzMarkedPosL: Int = zzMarkedPos
+      var zzEndReadL: Int = zzEndRead
+      var zzBufferL: CharSequence = zzBuffer
 
       zzAction = -1
 
