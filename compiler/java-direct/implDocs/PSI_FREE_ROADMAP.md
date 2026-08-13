@@ -233,3 +233,18 @@ hatch — `JKlibIrCompilationPhase` asked for a package-part provider over
 reads `.class` files, and `FirTestSessionFactoryHelper` was handed
 `ProjectScope.getLibrariesScope(project)`, which is literally what `JvmClasspath.ProjectLibraries()`
 produces.
+
+The one *external* client of the same description is the custom incremental-compilation components of
+the IntelliJ build system (KT-88475): it used to hand the compiler a scope of its own for the
+previous build's output, through `IncrementalCompilationComponentsWithCustomScope.createSearchScope(
+VfsBasedProjectEnvironment)`. That hook is now
+`IncrementalCompilationComponentsWithCustomPrecompiledBinaries.precompiledBinariesRoots(): List<Path>`
+(`compiler/cli/.../IncrementalCompilationComponentsWithCustomPrecompiledBinaries.kt`) — the same
+statement in root currency, so it needs neither the environment nor PSI, and the roots serve both
+uses at once: the classpath of the precompiled-binaries symbol providers and the `excludedRoots` of
+`ProjectLibraries`. Nothing is lost by the change of currency: a `Roots` classpath becomes
+`ClassPathScope`, which is `allScope(project)` filtered by root prefix — the same containment as the
+`getSearchScopeByDirectories` the default branch used, and it does not require the roots to be on the
+indexed classpath. It is only *narrower* in that a client can no longer name individual files without
+naming a root above them; if such a client appears, the answer is a `Roots`-shaped root for it, not a
+scope back in the description.
