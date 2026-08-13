@@ -346,6 +346,14 @@ class KotlinCoreEnvironment private constructor(
             StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
         }
 
+    /**
+     * The classpath roots this compilation indexed, in classpath order. A root is named by its identity
+     * (`JvmClasspathRootId`) rather than by a location, so a classpath can be described without asking a file
+     * system anything; see `VfsBasedProjectEnvironment.registerIndexedClasspathRoots`.
+     */
+    val indexedClasspathRoots: List<VirtualFile>
+        get() = rootsIndex.indexedRoots.map { it.file }.toList()
+
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
             projectEnvironment.addSourcesToClasspath(it.file)

@@ -5,26 +5,28 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import org.jetbrains.kotlin.cli.jvm.config.precompiledOutputRoots
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 
 /**
  * The output of the previous build, which incremental compilation reads as a separate classpath.
  *
- * By default that is this build's own output directory. Components implementing
- * [IncrementalCompilationComponentsWithCustomPrecompiledBinaries] name the roots themselves instead — the
- * IntelliJ build system does, because its output is not `outputDirectory`.
+ * By default that is this build's own output directory: a compilation driven by command line arguments gets
+ * the previous output prepended to its classpath, see `IncrementalJvmCompilerRunnerBase.performWorkBeforeCompilation`.
+ * A build system which registers its content roots itself marks them instead ([precompiledOutputRoots]) — the
+ * IntelliJ build system does, because its output is not a directory on disk at all.
  */
 private fun CompilerConfiguration.precompiledBinariesClasspath(): JvmClasspath.Roots? {
     if (modules.isEmpty()) return null
+    if (incrementalCompilationComponents == null) return null
 
-    val roots = when (val components = incrementalCompilationComponents ?: return null) {
-        is IncrementalCompilationComponentsWithCustomPrecompiledBinaries -> components.precompiledBinariesRoots()
-        else -> listOf((outputDirectory ?: return null).toPath())
-    }
+    val roots = precompiledOutputRoots().takeIf { it.isNotEmpty() }
+        ?: listOf(JvmClasspathRootId.of((outputDirectory ?: return null).toPath()))
     return JvmClasspath.Roots(roots)
 }
 

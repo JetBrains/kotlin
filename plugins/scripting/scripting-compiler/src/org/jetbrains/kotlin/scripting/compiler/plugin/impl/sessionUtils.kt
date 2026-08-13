@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.flattenAndFilterOwnProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySessionComponents
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import java.io.File
 
@@ -102,7 +103,7 @@ internal fun configureLibrarySessionIfNeeded(
     if (libModuleData != null) {
         val projectEnvironment = state.sessionFactoryContext.projectEnvironment
         val libraryClasspath = state.moduleDataProvider.getModuleDataPaths(libModuleData)
-            ?.let { JvmClasspath.Roots(it.toList()) }
+            ?.let { paths -> JvmClasspath.Roots(paths.map(JvmClasspathRootId::of)) }
             ?: state.sessionFactoryContext.librariesClasspath
 
         return createScriptingAdditionalLibrariesSession(

@@ -44,7 +44,7 @@ compiled output, so anything else is a test failure rather than a silent regress
 
 | Seam | Where | Purpose |
 |------|-------|---------|
-| `BinaryClassFileIndex`, `BinaryClassFileHandle` (`isUnder(Path)`) | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation, with no scope object and no `JvmDependenciesIndex`. A session's part of it is *not* a seam type: `JavaClassFinderOverBinaryIndex` takes the session's `JvmClasspath` and tests root membership itself (`internal operator fun JvmClasspath.contains(BinaryClassFileHandle)`), so the only thing shared is the root check on the handle |
+| `BinaryClassFileIndex`, `BinaryClassFileHandle` (`isUnder(JvmClasspathRootId)`) | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation, with no scope object and no `JvmDependenciesIndex`. A session's part of it is *not* a seam type: `JavaClassFinderOverBinaryIndex` takes the session's `JvmClasspath` and tests root membership itself (`internal operator fun JvmClasspath.contains(BinaryClassFileHandle)`), so the only thing shared is the root check on the handle |
 | `JvmClasspath` (sealed: `Roots` / `ProjectLibraries(excludedRoots)`) | `frontend.common.jvm/.../jvm/environment/JvmClasspath.kt` | *replaces* `AbstractProjectFileSearchScope`: a part of the classpath named by its roots, not an opaque file set with set algebra. No complement, no ambient universe, one shape per real use. Sealed since 2026-08-12: the `PsiScopeJvmClasspath` escape hatch is gone, so a scope cannot re-enter the description |
 | `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the `ct.sym` `.sig` extension choice. It no longer builds the session's scope: that was `classFile.virtualFile in psiSearchScope(classpath)`, a per-file IntelliJ query, and is now root membership on the handle |
 | `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by the compilation's java-direct `FirJavaInterop` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
@@ -237,14 +237,46 @@ produces.
 The one *external* client of the same description is the custom incremental-compilation components of
 the IntelliJ build system (KT-88475): it used to hand the compiler a scope of its own for the
 previous build's output, through `IncrementalCompilationComponentsWithCustomScope.createSearchScope(
-VfsBasedProjectEnvironment)`. That hook is now
-`IncrementalCompilationComponentsWithCustomPrecompiledBinaries.precompiledBinariesRoots(): List<Path>`
-(`compiler/cli/.../IncrementalCompilationComponentsWithCustomPrecompiledBinaries.kt`) — the same
-statement in root currency, so it needs neither the environment nor PSI, and the roots serve both
-uses at once: the classpath of the precompiled-binaries symbol providers and the `excludedRoots` of
-`ProjectLibraries`. Nothing is lost by the change of currency: a `Roots` classpath becomes
-`ClassPathScope`, which is `allScope(project)` filtered by root prefix — the same containment as the
-`getSearchScopeByDirectories` the default branch used, and it does not require the roots to be on the
-indexed classpath. It is only *narrower* in that a client can no longer name individual files without
-naming a root above them; if such a client appears, the answer is a `Roots`-shaped root for it, not a
-scope back in the description.
+VfsBasedProjectEnvironment)`. **There is no hook any more.** The output is the build system's own
+content root, so it says so where it registers it —
+`VirtualJvmClasspathRoot(file, isSdkRoot, isFriend, isPrecompiledOutput = true)` — and
+`CompilerConfiguration.precompiledOutputRoots()` (`cli-base/.../JvmContentRoots.kt`) reads it. A
+compilation driven by command line arguments states the same thing as its output directory (the IC
+runner prepends it to the classpath), which is why the flag is on the virtual-file root only and not
+on `JvmClasspathRoot`. The roots then serve both uses at once, as the scope did: the classpath of the
+precompiled-binaries symbol providers and the `excludedRoots` of `ProjectLibraries`.
+
+What made this possible is that a root is no longer a `Path`. `JvmClasspath.Roots` and
+`ProjectLibraries.excludedRoots` are lists of `JvmClasspathRootId`
+(`frontend.common.jvm/.../jvm/environment/JvmClasspathRootId.kt`) — the path of the root as a virtual
+file system spells it, i.e. the prefix of the path of every file under it. That is all a root is used
+for (comparing roots, recognising files under them: `BinaryClassFileHandle.isUnder`,
+`ClassPathScope.contains`), and it is expressible for a root which is not a location in any file
+system. The IntelliJ build system's output is exactly such a root: `OutputVirtualFile.getPath()` is
+`__module_in-memory__output__!/` over a private `VirtualFileSystem`, and its `toNioPath()` returns an
+adapter whose structural methods are `TODO`.
+
+Correspondingly, `VfsBasedProjectEnvironment` resolves a root by **identity among the roots this
+compilation indexed** (`registerIndexedClasspathRoots`, filled from the same loops that already call
+`addSourcesToClasspath`), and only falls back to probing a file system for a root nobody registered —
+a test fixture naming a root directly. The old code could only probe (`Files.isDirectory`,
+`knownFileSystems.findFileByPath`), which no synthetic root could survive; that, not the currency,
+was the actual reason the hook had to exist.
+
+The matching IntelliJ-side change is
+`intellij-build-system-precompiled-output-root.diff` in this directory: their
+`KotlinIncrementalCompilationComponents` stops being a `ProjectFileSearchScopeProvider` altogether,
+and `KotlinCompilerRunner` passes the new flag where it already registers the root. A change there
+was unavoidable in any case — `ProjectFileSearchScopeProvider`, `PsiBasedProjectFileSearchScope`,
+`AbstractProjectFileSearchScope` and `VfsBasedProjectEnvironment.DirectoriesScope` are all gone from
+this repo.
+
+One pre-existing defect on their side, unrelated to this change but of exactly the same kind:
+`createLibraryListForJvm` records a `VirtualJvmClasspathRoot` as `it.file.toNioPath().toString()`
+(`JvmFrontendPipelinePhase.kt:302,311`), and their `PathAdapter`
+(`kotlinVirtualFileSystemUtil.kt:50`, returned by `OutputVirtualFile.toNioPath()` at `:158`) does not
+override `toString()`, so `DependencyListForCliModule` receives `PathAdapter@1f2e3d` and
+`LibraryPathFilter.LibraryList` resolves it against the working directory. Their output root is
+registered with `isFriend = true`, so this is a friend entry which can never match — mitigated only
+by `KotlinCompilerRunner:488` also passing real friend paths as an argument. It is the same currency
+mismatch `JvmClasspathRootId` removes for the classpath, one level up, in the *dependency list*.

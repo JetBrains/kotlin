@@ -10,8 +10,11 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -64,11 +67,11 @@ class ClasspathRestrictionTest {
         val libDir = tempDir.resolve("lib")
         val inLibDir = handleFor(libDir.resolve("pkg/B.class").createParentsAndWrite().asLocalVirtualFile())
 
-        JvmClasspath.Roots(listOf(outDir)).let { classpath ->
+        JvmClasspath.Roots(rootIds(outDir)).let { classpath ->
             assertTrue(inOutDir in classpath)
             assertFalse(inLibDir in classpath)
         }
-        JvmClasspath.Roots(listOf(libDir, outDir)).let { classpath ->
+        JvmClasspath.Roots(rootIds(libDir, outDir)).let { classpath ->
             assertTrue(inOutDir in classpath, "any of the roots is enough")
             assertTrue(inLibDir in classpath)
         }
@@ -80,13 +83,46 @@ class ClasspathRestrictionTest {
             assertTrue(inOutDir in classpath)
             assertTrue(inLibDir in classpath)
         }
-        JvmClasspath.ProjectLibraries(excludedRoots = listOf(outDir)).let { classpath ->
+        JvmClasspath.ProjectLibraries(excludedRoots = rootIds(outDir)).let { classpath ->
             assertFalse(inOutDir in classpath, "an excluded root is the incremental-compilation output directory")
             assertTrue(inLibDir in classpath)
         }
     }
 
+    /**
+     * A root has two spellings — a path on the compiler's classpath and a virtual file — and
+     * [JvmClasspathRootId] has to be the same for both, or a classpath named by the caller would not match the
+     * roots the compilation indexed.
+     */
+    @Test
+    fun testRootIdentityIsTheSameForAPathAndAVirtualFile(@TempDir tempDir: Path) {
+        val dir = tempDir.resolve("out").apply { createDirectories() }
+        assertEquals(JvmClasspathRootId.of(dir), dir.asLocalVirtualFile().asJvmClasspathRootId())
+
+        val jar = tempDir.resolve("lib/lib.jar").createParentsAndWriteJar("pkg/A.class")
+        val jarRoot = checkNotNull(CoreJarFileSystem().findFileByPath(jar.pathForVfs() + JAR_SEPARATOR))
+        assertEquals(JvmClasspathRootId.of(jar), jarRoot.asJvmClasspathRootId())
+    }
+
+    /**
+     * A root does not have to be a location in a file system: a build system may compile against an output of
+     * its own which was never written to disk (the IntelliJ one does). Such a root takes part in the
+     * restriction like any other, and nothing tries to resolve it.
+     */
+    @Test
+    fun testRootOutsideAnyFileSystem(@TempDir tempDir: Path) {
+        val onDisk = handleFor(tempDir.resolve("pkg/A.class").createParentsAndWrite().asLocalVirtualFile())
+        val synthetic = JvmClasspathRootId("__module_in-memory__output__")
+
+        assertFalse(onDisk in JvmClasspath.Roots(listOf(synthetic)))
+        assertTrue(onDisk in JvmClasspath.ProjectLibraries(excludedRoots = listOf(synthetic)))
+    }
+
     private fun handleFor(classFile: VirtualFile): BinaryClassFileHandle = classFile.asBinaryClassFileHandle()
+
+    private fun BinaryClassFileHandle.isUnder(classpathRoot: Path): Boolean = isUnder(JvmClasspathRootId.of(classpathRoot))
+
+    private fun rootIds(vararg roots: Path): List<JvmClasspathRootId> = roots.map(JvmClasspathRootId::of)
 
     private fun Path.createParentsAndWrite(): Path = apply {
         parent.createDirectories()

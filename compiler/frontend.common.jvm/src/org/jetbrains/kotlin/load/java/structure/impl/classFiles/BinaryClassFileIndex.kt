@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import java.nio.file.Path
 
 /**
  * The binary classpath of one compilation.
@@ -36,12 +36,11 @@ interface BinaryClassFileHandle {
     val nameWithoutExtension: String
 
     /**
-     * Whether this class file lies in [classpathRoot] — a directory or a `.jar`/`.jmod` file, spelled as it is on the
-     * compiler's classpath and resolved against the working directory if relative. This is all a lookup needs in
-     * order to be restricted to a part of the classpath, an index being the classpath of the whole compilation; how
-     * a class file is located stays with the implementation.
+     * Whether this class file lies in [classpathRoot]. This is all a lookup needs in order to be restricted to a
+     * part of the classpath, an index being the classpath of the whole compilation; how a class file is located
+     * stays with the implementation.
      */
-    fun isUnder(classpathRoot: Path): Boolean
+    fun isUnder(classpathRoot: JvmClasspathRootId): Boolean
 
     fun readBytes(): ByteArray
 }
