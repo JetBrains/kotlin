@@ -34,13 +34,16 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 private const val KOTLIN_SEQUENCES_PREFIX = "kotlin.sequences.SequencesKt."
+private const val KOTLIN_COLLECTIONS_PREFIX = "kotlin.collections.CollectionsKt."
 private const val SEQUENCE_OF = KOTLIN_SEQUENCES_PREFIX + "sequenceOf"
+private const val AS_SEQUENCE = KOTLIN_COLLECTIONS_PREFIX + "asSequence"
 private const val GENERATE_SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "generateSequence"
 internal const val MAP = KOTLIN_SEQUENCES_PREFIX + "map"
 internal const val MAP_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexed"
@@ -305,6 +308,18 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         )
     }
 
+
+    private fun matchWithAsSequence(expression: IrCall) {
+        val receiver = expression.arguments.getOrNull(0) ?: return
+        if (receiver is IrGetValue) {
+            if (!isSafeToLower(receiver)) return
+            if (!receiver.type.isSubtypeOfClass(context.irBuiltIns.iterableClass)) return
+        }
+        expression.sequenceDataOfExpression = SequenceData(
+            SequenceSource.AsSequence(receiver),
+        )
+    }
+
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
         if (!isSequenceType(context, expression)) return
@@ -319,6 +334,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
+            AS_SEQUENCE -> matchWithAsSequence(expression)
         }
     }
 }
