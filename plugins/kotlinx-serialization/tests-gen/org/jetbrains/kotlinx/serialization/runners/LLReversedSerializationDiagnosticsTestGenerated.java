@@ -211,6 +211,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("SerialInfoTargets.kt")
+    public void testSerialInfoTargets() {
+      run("SerialInfoTargets.kt");
+    }
+
+    @Test
     @TestMetadata("serializableCompanionOfSerializable.kt")
     public void testSerializableCompanionOfSerializable() {
       run("serializableCompanionOfSerializable.kt");
