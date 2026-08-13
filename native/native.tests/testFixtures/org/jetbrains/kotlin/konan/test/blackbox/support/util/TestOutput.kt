@@ -72,10 +72,6 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
 
-    // Sets, since the shared TestReport holds `Set`s: what a run reported is a set of test names, not a tally of the TC
-    // messages that carried them. A name the output reports twice therefore collapses. The one consumer that counts
-    // these — `NativeBoxRunner`, checking that a single-test batch executed exactly one testcase — reads them through
-    // `TestReport.reportedIds` and asks how many *distinct* testcases ran, which is exactly this semantics.
     val passedTests = mutableSetOf<TestName>()
     val failedTests = mutableSetOf<TestName>()
     val ignoredTests = mutableSetOf<TestName>()

@@ -15,9 +15,8 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 /**
- * Pins what the WASI `test.mjs` launcher calls, since the two candidates are not interchangeable and the export names
- * cannot tell them apart: `startTest()` is both the grouped result-collecting driver and — via the `wasiBoxTestRun.kt`
- * additional file — the `box()` helper of every box test.
+ * Pins what the WASI `test.mjs` launcher calls: `startTest()` is both the grouped driver and — via
+ * `wasiBoxTestRun.kt` — the `box()` helper of every box test, so the export names cannot tell the two apart.
  */
 class WasiLauncherScriptTest {
     @Test
@@ -25,14 +24,13 @@ class WasiLauncherScriptTest {
         val script = startUnitTestsWasiScript(callGroupedTestsDriver = true)
 
         assertTrue("jsModule.startTest();" in script, script)
-        // The driver reports each result through stdout, so the unit-test runner must not be driven on top of it.
+        // The driver reports through stdout, so the unit-test runner must not be driven on top of it.
         assertFalse("startUnitTests" in script, script)
     }
 
     @Test
     fun `given a batch without the driver then the launcher calls the unit-test runner`() {
-        // The case an export-name probe got wrong: an isolated `// RUN_UNIT_TESTS` test that also has a `box()` exports
-        // `startTest` from `wasiBoxTestRun.kt`, and calling that would run `box()` and skip the unit tests entirely.
+        // The case an export-name probe got wrong: calling `startTest` here would run `box()` instead of the unit tests.
         val script = startUnitTestsWasiScript(callGroupedTestsDriver = false)
 
         assertTrue("jsModule.startUnitTests();" in script, script)
@@ -41,19 +39,16 @@ class WasiLauncherScriptTest {
 
     @Test
     fun `given a grouped binary exporting only the driver then the export-surface check passes`(@TempDir dir: File) {
-        // The export list a grouped link actually produces: the driver's `startTest`, no helper exports.
         dir.resolve("index.mjs").writeText("export const {\n    startTest,\n    startUnitTests\n} = exports\n")
 
         assertDoesNotThrow { assertDriverOwnsStartTestExport(dir) }
 
-        // No glue at all is not this check's business (e.g. a mode that produced no JS glue).
+        // No glue at all is not this check's business (e.g. a mode that produced none).
         assertDoesNotThrow { assertDriverOwnsStartTestExport(dir.resolve("no-such-subdir")) }
     }
 
     @Test
     fun `given a helper export leaking into a grouped binary then the export-surface check fails`(@TempDir dir: File) {
-        // What a broken link would produce: `wasiBoxTestRun.kt`'s exports reached the linked module, so the bare
-        // `startTest` the standalone VMs invoke is no longer unambiguously the driver.
         dir.resolve("index.mjs").writeText("export const {\n    runBoxTest,\n    startTest\n} = exports\n")
 
         val error = assertThrows(TestInfrastructureException::class.java) { assertDriverOwnsStartTestExport(dir) }

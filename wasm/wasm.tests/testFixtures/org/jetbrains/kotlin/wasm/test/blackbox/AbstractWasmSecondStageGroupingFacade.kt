@@ -101,11 +101,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
      * `ProxyLauncher_*.runTest()` and prints one structured result line per test.
      *
      * The launcher classes are deliberately not annotated with `@kotlin.test.Test`: the driver calls each `runTest()`
-     * directly and observes its outcome itself, so the batch no longer needs the compiler-generated `startUnitTests()`
-     * and the `kotlin.test` TeamCity reporter to detect pass/fail.
-     *
-     * Records [markGroupedTestsDriverGenerated] for the batch, since this is the single place either facade generates
-     * the driver: the runner needs to know that a result block is expected to be able to fail a batch that printed none.
+     * and observes its outcome itself, so the batch needs neither `startUnitTests()` nor the `kotlin.test` reporter.
      *
      * Writes the result to `tempDir/ProxyBatchLauncher.kt` and returns the corresponding
      * [TestFile] marked as an additional source so it can be passed to the compiler.

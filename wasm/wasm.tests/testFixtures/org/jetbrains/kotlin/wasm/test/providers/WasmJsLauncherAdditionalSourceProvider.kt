@@ -51,9 +51,8 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
          * Computes the synthetic per-test `Launcher` class name used by the WASM (non-grouped)
          * test infrastructure for tests that are executed in isolation.
          *
-         * This `@Test`-annotated launcher is driven by the compiler-generated `startUnitTests()`, and its pass/fail is
-         * attributed to the sole test of the batch without any demux. A multi-test grouped batch instead uses the fresh
-         * `ProxyBatchLauncher` and its result-collecting driver (see `GroupedTestsResultProtocol`).
+         * This `@Test`-annotated launcher is driven by the compiler-generated `startUnitTests()`; a grouped batch uses
+         * the fresh `ProxyBatchLauncher` and its result-collecting driver instead.
          *  Should hash collisions ever happen here, please improve the logic
          */
         fun computeLauncherClassName(file: TestFile): String =
@@ -94,9 +93,8 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
         //     up as the included main module;
         //   * isolatedWithoutBox — non-grouped (legacy) execution: no `ProxyBatchLauncher.kt` exists at all.
         //
-        // A `// RUN_UNIT_TESTS` test never reaches this branch: `WasmGroupingTestIsolator` isolates it and takes part in
-        // the file-generation phase, so it is never a "grouped non-isolated" batch and keeps its launcher via the
-        // exemption below — whatever the size of the batch it ends up in.
+        // A `// RUN_UNIT_TESTS` test never reaches this branch: `WasmGroupingTestIsolator` isolates it, so it keeps its
+        // launcher via the exemption below whatever the size of the batch it ends up in.
         if (testServices.isGroupedNonIsolatedBatch(globalDirectives, testModuleStructure)) return emptyList()
 
         // An isolated single-test batch is executed via the standalone box-export
