@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
 internal class KotlinImportModelProvider(
     private val project: Project,
@@ -31,12 +37,16 @@ internal class KotlinImportModelProvider(
 
     fun compilationUnit(id: CompilationUnitId): CompilationUnitModel {
         val compilation = compilation(id)
+        val compileTask = compilation.compileTaskProvider.get() as KotlinCompile
+        val compileAction = gradleAction(compileTask.path)
         return compilationUnitModel {
             this.id = KotlinImportModelIds.COMPILATION_UNIT
             parameters = CompilationUnitModelKt.parameters { compilationUnitId = id }
             name = compilation.name
             platform = CompilationUnitModel.Platform.PLATFORM_JVM
             isTest = compilation.name == KotlinCompilation.TEST_COMPILATION_NAME
+            sourceRoots += sourceRoots(compilation)
+            outputs += output(compileTask, compileAction)
         }
     }
 
@@ -48,6 +58,49 @@ internal class KotlinImportModelProvider(
         KotlinCompilation.MAIN_COMPILATION_NAME,
         KotlinCompilation.TEST_COMPILATION_NAME,
     ).map { name -> project.kotlinJvmExtension.target.compilations.getByName(name) }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    private fun sourceRoots(compilation: KotlinCompilation<*>): List<SourceRoot> {
+        fun roots(
+            kind: SourceRoot.Kind,
+            paths: Iterable<Path>,
+            producingActions: (Path) -> List<Action> = { emptyList() },
+        ) = paths.map { path ->
+            sourceRoot {
+                this.path = project.relativeProjectPath(path)
+                this.kind = kind
+                this.producingActions += producingActions(path)
+            }
+        }
+
+        val generatedKotlin = compilation.defaultSourceSet.generatedKotlin
+        val tasks = project.tasks
+        return (
+            roots(SourceRoot.Kind.SOURCE_ROOT_KIND_SOURCE, compilation.defaultSourceSet.kotlin.srcDirs.map(File::toPath)) +
+                roots(SourceRoot.Kind.SOURCE_ROOT_KIND_GENERATED, generatedKotlin.srcDirs.map(File::toPath)) { sourceRoot ->
+                    tasks
+                        .filter { sourceRoot in it.outputs.files.files.map(File::toPath) }
+                        .sortedBy { it.path }
+                        .map { producer -> gradleAction(producer.path) }
+                }
+            )
+            .sortedWith(compareBy(SourceRoot::getPath).thenBy(SourceRoot::getKindValue))
+            .distinctBy(SourceRoot::getPath)
+    }
+
+    private fun output(compileTask: KotlinCompile, producingAction: Action): CompilationUnitModel.Output = CompilationUnitModelKt.output {
+        path = project.projectDir.toPath()
+            .relativize(compileTask.destinationDirectory.get().asFile.toPath())
+            .invariantSeparatorsPathString
+        producingActions += producingAction
+    }
+
+    private fun gradleAction(taskPath: String): Action = action {
+        gradleAction = ActionKt.gradleTask { this.taskPath = taskPath }
+    }
+
+    private fun Project.relativeProjectPath(path: Path): String =
+        Paths.get(relativePath(path.toFile())).invariantSeparatorsPathString
 
     private fun compilationUnitId(compilationName: String): CompilationUnitId {
         val buildPath = project.currentBuildId().compatAccessor(project).buildPath

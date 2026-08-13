@@ -6,13 +6,20 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.util.JsonFormat
 import org.jetbrains.kotlin.importmodels.proto.BaseModel
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
+import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt
 import org.jetbrains.kotlin.importmodels.proto.ProjectModel
+import org.jetbrains.kotlin.importmodels.proto.SourceRoot
+import org.jetbrains.kotlin.importmodels.proto.Action
+import org.jetbrains.kotlin.importmodels.proto.action as actionModel
+import org.jetbrains.kotlin.importmodels.proto.ActionKt.gradleTask as gradleTaskModel
+import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -20,6 +27,7 @@ import kotlin.test.assertFalse
 @JvmGradlePluginTests
 class KotlinImportModelsDumpIT : KGPBaseTest() {
     @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     fun `dump task writes JSON JVM models without compilation`(gradleVersion: GradleVersion) {
         project(
             projectName = "simpleProject",
@@ -29,6 +37,12 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
             ),
         ) {
+            buildScriptInjection {
+                val generateImportModelSources = project.tasks.register("generateImportModelSources") {
+                    it.outputs.dir(project.layout.buildDirectory.dir("generated/import-models"))
+                }
+                kotlinJvm.sourceSets.getByName("main").generatedKotlin.srcDir(generateImportModelSources)
+            }
             build("dumpKotlinImportModels") {
                 assertTasksExecuted(":dumpKotlinImportModels")
                 assertTasksAreNotInTaskGraph(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
@@ -49,8 +63,51 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
         assertEquals(listOf("main", "test"), units.map { it.name })
         assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
+        assertEquals(
+            listOf(
+                sourceRoot(
+                    "build/generated/import-models",
+                    SourceRoot.Kind.SOURCE_ROOT_KIND_GENERATED,
+                    ":generateImportModelSources",
+                ),
+                sourceRoot("src/main/java"),
+                sourceRoot("src/main/kotlin"),
+            ),
+            units.first().sourceRootsList,
+        )
+        assertEquals(
+            listOf(output("build/classes/kotlin/main", ":compileKotlin")),
+            units.first().outputsList,
+        )
+        assertEquals(
+            listOf(sourceRoot("src/test/java"), sourceRoot("src/test/kotlin")),
+            units.last().sourceRootsList,
+        )
+        assertEquals(
+            listOf(output("build/classes/kotlin/test", ":compileTestKotlin")),
+            units.last().outputsList,
+        )
         return project.compilationUnitIdsList
     }
+}
+
+private fun sourceRoot(
+    path: String,
+    kind: SourceRoot.Kind = SourceRoot.Kind.SOURCE_ROOT_KIND_SOURCE,
+    vararg producingTaskPaths: String,
+): SourceRoot = sourceRootModel {
+    this.path = path
+    this.kind = kind
+    producingActions += producingTaskPaths.map(::gradleAction)
+}
+
+private fun gradleAction(taskPath: String): Action = actionModel {
+    gradleAction = gradleTaskModel { this.taskPath = taskPath }
+}
+
+private fun output(path: String, vararg producingTaskPaths: String): CompilationUnitModel.Output = CompilationUnitModelKt.output {
+    this.path = path
+    producingActions += producingTaskPaths.map(::gradleAction)
 }
 
 private fun parseBase(file: File): BaseModel = BaseModel.newBuilder().also { JsonFormat.parser().merge(file.readText(), it) }.build()
