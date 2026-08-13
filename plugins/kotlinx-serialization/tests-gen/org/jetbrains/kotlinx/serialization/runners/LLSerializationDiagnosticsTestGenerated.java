@@ -211,6 +211,12 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
     }
 
     @Test
+    @TestMetadata("SerialInfoTargets.kt")
+    public void testSerialInfoTargets() {
+      run("SerialInfoTargets.kt");
+    }
+
+    @Test
     @TestMetadata("serializableCompanionOfSerializable.kt")
     public void testSerializableCompanionOfSerializable() {
       run("serializableCompanionOfSerializable.kt");
