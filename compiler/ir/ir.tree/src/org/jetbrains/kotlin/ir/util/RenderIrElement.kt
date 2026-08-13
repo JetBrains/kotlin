@@ -872,7 +872,9 @@ private fun IrSimpleFunction.renderSimpleFunctionFlags(renderer: FlagsRenderer):
         "fake_override".takeIf { isFakeOverride },
         "operator".takeIf { isOperator },
         "infix".takeIf { isInfix },
-        "companion".takeIf { isStatic },
+        // `_parent` check is required to avoid StackOverflowError if `IrDeclarationBase` report an error.
+        // This happens in case when `parent` was accessed, but not yet set. See KT-87456 for details.
+        "companion".takeIf { _parent != null && isStatic },
     )
 
 private fun IrConstructor.renderConstructorFlags(renderer: FlagsRenderer) =
