@@ -10,6 +10,10 @@ plugins {
     id("test-inputs-check")
 }
 
+// `UnsafeBasedMemoryAccess.kt` uses `sun.misc.Unsafe`, which is not visible when cross-compiling
+// with `--release`. The `jdk25` source set below overrides this per task.
+configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+
 dependencies {
     api(kotlinStdlib())
 

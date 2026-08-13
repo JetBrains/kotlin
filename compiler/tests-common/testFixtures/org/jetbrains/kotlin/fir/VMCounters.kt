@@ -2,13 +2,13 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
 
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.daemon.common.threadCpuTime
 import org.jetbrains.kotlin.daemon.common.threadUserTime
-import sun.management.ManagementFactoryHelper
+import java.lang.management.ManagementFactory
+import javax.management.ObjectName
 
 data class GCInfo(val name: String, val gcTime: Long, val collections: Long) {
     operator fun minus(other: GCInfo): GCInfo {
@@ -72,20 +72,43 @@ private fun <K, V : Any> merge(first: Map<K, V>, second: Map<K, V>, valueOp: (V,
 
 object Init {
     init {
-        ManagementFactoryHelper.getThreadMXBean().isThreadCpuTimeEnabled = true
+        ManagementFactory.getThreadMXBean().isThreadCpuTimeEnabled = true
     }
+}
+
+/**
+ * Safepoint statistics are only published by HotSpot's own `HotspotRuntime` MBean, which is registered on
+ * demand and whose interface is not exported from `java.management`. It is therefore reached through JMX by
+ * name, and reported as zeroes whenever that fails — for example on a JDK 9+ runtime that does not pass
+ * `--add-exports java.management/sun.management=ALL-UNNAMED`.
+ */
+private val hotspotRuntimeMBeanName: ObjectName? by lazy {
+    runCatching {
+        val server = ManagementFactory.getPlatformMBeanServer()
+        val name = ObjectName("sun.management:type=HotspotRuntime")
+        if (!server.isRegistered(name)) {
+            server.createMBean("sun.management.HotspotInternal", null)
+        }
+        name.takeIf { server.isRegistered(it) }
+    }.getOrNull()
+}
+
+private fun safepointCounter(attribute: String): Long {
+    val name = hotspotRuntimeMBeanName ?: return 0
+    return runCatching {
+        ManagementFactory.getPlatformMBeanServer().getAttribute(name, attribute) as Long
+    }.getOrDefault(0)
 }
 
 fun vmStateSnapshot(): VMCounters {
     @Suppress("UNUSED_EXPRESSION") Init
-    val threadMXBean = ManagementFactoryHelper.getThreadMXBean()
-    val hotspotRuntimeMBean = ManagementFactoryHelper.getHotspotRuntimeMBean()
+    val threadMXBean = ManagementFactory.getThreadMXBean()
 
     return VMCounters(
         threadMXBean.threadUserTime(), threadMXBean.threadCpuTime(),
-        ManagementFactoryHelper.getGarbageCollectorMXBeans().associate { it.name to GCInfo(it.name, it.collectionTime, it.collectionCount) },
-        hotspotRuntimeMBean.totalSafepointTime,
-        hotspotRuntimeMBean.safepointSyncTime,
-        hotspotRuntimeMBean.safepointCount
+        ManagementFactory.getGarbageCollectorMXBeans().associate { it.name to GCInfo(it.name, it.collectionTime, it.collectionCount) },
+        safepointCounter("TotalSafepointTime"),
+        safepointCounter("SafepointSyncTime"),
+        safepointCounter("SafepointCount")
     )
 }

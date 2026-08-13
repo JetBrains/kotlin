@@ -9,6 +9,9 @@ plugins {
     id("test-inputs-check")
 }
 
+// `LLFlightRecorder.kt` uses `jdk.jfr`, which is not visible when cross-compiling with `--release`.
+configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+
 val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
     isTransitive = false
 }

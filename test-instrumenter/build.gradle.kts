@@ -82,11 +82,9 @@ configurations {
     }
 }
 
-kotlin {
-    // JDK 25 is only for executing tests and benchmarks
-    // The instrumentation code itself is compiled with JDK 8
-    jvmToolchain(25)
-}
+// The test fixtures use `jdk.jfr`, so they are compiled for and run on JDK 25.
+// The instrumentation code itself is compiled with JDK 8, see the task overrides below.
+configureJvmToolchain(JdkMajorVersion.JDK_25_0)
 
 testing {
     suites.withType<JvmTestSuite>().configureEach {
