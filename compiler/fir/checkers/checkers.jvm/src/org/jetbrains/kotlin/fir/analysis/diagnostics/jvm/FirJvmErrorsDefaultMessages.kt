@@ -112,6 +112,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.STRICTFP_ON_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC
@@ -512,6 +513,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ANNOTATION_TARGETS_ONLY_IN_JAVA,
             "No Kotlin '@Target' annotation specified (implicitly targeting everything), but one exists for Java."
+        )
+        map.put(
+            RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED,
+            "Annotation ''{0}'' is not retained on the lambda instance at runtime, because the lambda is compiled to ''invokedynamic''. " +
+                    "Annotate the lambda with ''@JvmSerializableLambda'' to generate a class for it and retain the annotation.",
+            SYMBOL
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,

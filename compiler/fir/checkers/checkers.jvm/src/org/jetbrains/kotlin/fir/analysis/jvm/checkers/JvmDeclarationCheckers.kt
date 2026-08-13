@@ -82,4 +82,9 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirValueParameterJavaNullabilityWarningChecker
         )
+
+    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
+        get() = setOf(
+            FirJvmIndyAnnotatedLambdaChecker,
+        )
 }

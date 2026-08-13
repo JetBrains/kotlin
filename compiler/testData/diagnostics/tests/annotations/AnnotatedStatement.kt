@@ -46,7 +46,7 @@ fun foo(list: MutableList<Int>, arr: Array<String>) {
     @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     arr[1] += "*"
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    <!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@JavaAnnWithTarget<!> <!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@JavaAnn<!> <!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@KotlinAnn<!>
     { bar() }
 }
 
