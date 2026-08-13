@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.js.config.friendLibraries
@@ -71,9 +70,8 @@ class WasmInProcessSecondStageFacade {
             tempDir: File,
         ): BinaryArtifacts.Wasm {
             val someModule = inputArtifact.nonGroupingStageOutputs.first().testServices.moduleStructure.modules.last()
-            val isWasiTarget = someModule.targetPlatform(testServices).isWasmWasi()
 
-            val batchLauncherFile = generateGroupedBatchLauncherSource(context.filteredOutputs, someModule, tempDir, isWasiTarget)
+            val batchLauncherFile = generateGroupedBatchLauncherSource(context.filteredOutputs, someModule, tempDir)
             val settings = context.settings
             val perTestKlibPaths = context.perTestKlibPaths
             val cleanedRegularDependencies = context.cleanedRegularDependencies
