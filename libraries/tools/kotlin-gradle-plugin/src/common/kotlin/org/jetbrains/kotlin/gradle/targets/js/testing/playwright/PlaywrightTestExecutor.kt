@@ -68,9 +68,6 @@ internal class PwRunnerSpec(
     val isDebugEnabled: Boolean = debugOptions != null,
 )
 
-internal const val DEFAULT_DEBUG_PORT = 9222
-internal const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
-
 private const val NO_TIMEOUT = 0.0
 
 internal class PwDebugOptions(

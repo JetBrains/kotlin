@@ -108,13 +108,8 @@ internal class KotlinPlaywrightJsTestFramework(
 
     @get:Nested
     @get:Optional
-    override val debugOptions: Property<KotlinJsBrowserDebugOptions> = objects.property<KotlinJsBrowserDebugOptions>()
+    override val kotlinJsBrowserDebugOptions: Property<KotlinJsBrowserDebugOptions> = objects.property<KotlinJsBrowserDebugOptions>()
 
-    private fun KotlinJsBrowserDebugOptions.toPwDebugOptions() = PwDebugOptions(
-        remoteDebuggingPort = debugPort.getOrElse(DEFAULT_DEBUG_PORT),
-        debuggerReadyPort = debuggerReadyPort.orNull,
-        debuggerReadyTimeoutMillis = debuggerReadyTimeoutMillis.getOrElse(DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS),
-    )
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
@@ -177,17 +172,17 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
-        val pwDebugOptions = debugOptions.orNull?.toPwDebugOptions()
+        val debugOptions = kotlinJsBrowserDebugOptions.orNull
 
         val pwRunners = buildList {
-            if (pwDebugOptions != null) {
+            if (debugOptions != null) {
                 val runner = pickDebugRunner(task)
                 add(
                     runner.createPwRunnerSpec(
                         PwBrowserKind.CHROMIUM,
                         browsersDirectory,
                         cliArgs,
-                        pwDebugOptions,
+                        debugOptions,
                     )
                 )
             } else {
@@ -218,7 +213,7 @@ internal class KotlinPlaywrightJsTestFramework(
         kind: PwBrowserKind,
         browsersDirectory: Path,
         cliArgs: List<String>,
-        debugOptions: PwDebugOptions? = null,
+        debugOptions: KotlinJsBrowserDebugOptions? = null,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
@@ -231,7 +226,13 @@ internal class KotlinPlaywrightJsTestFramework(
         launchArgs = launchArgs.get(),
         launchEnvironmentVariables = launchEnvironmentVariables.get(),
         customBrowserExecutable = customBrowserExecutable.asPathOrNull,
-        debugOptions = debugOptions,
+        debugOptions = debugOptions?.let {
+            PwDebugOptions(
+                it.debugPort.get(),
+                it.debuggerReadyPort.orNull,
+                it.debuggerReadyTimeoutMillis.get()
+            )
+        }
     )
 
     private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>, isDebugEnabled: Boolean): URI {

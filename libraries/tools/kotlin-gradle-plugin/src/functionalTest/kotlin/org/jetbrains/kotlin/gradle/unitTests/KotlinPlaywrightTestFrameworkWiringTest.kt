@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.getPwInstallBrowserTaskName
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
+import org.jetbrains.kotlin.gradle.targets.js.testing.DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
+import org.jetbrains.kotlin.gradle.targets.js.testing.DEFAULT_DEBUG_PORT
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
-import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.DEFAULT_DEBUG_PORT
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwRunnerSpec

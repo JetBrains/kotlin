@@ -40,17 +40,19 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
     companion object
 }
 
+internal const val DEFAULT_DEBUG_PORT = 9222
+internal const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
+
 internal interface KotlinJsBrowserDebugOptions {
     @get:Input
-    @get:Optional
     val debugPort: Property<Int>
 
+    /** Set only when the run should wait until a debugger is attached. */
     @get:Input
     @get:Optional
     val debuggerReadyPort: Property<Int>
 
     @get:Input
-    @get:Optional
     val debuggerReadyTimeoutMillis: Property<Int>
 }
 
@@ -58,5 +60,5 @@ internal interface KotlinJsBrowserDebuggableFramework {
     /** Set only for a run that is being debugged, so an unset value means no browser debugging. */
     @get:Nested
     @get:Optional
-    val debugOptions: Property<KotlinJsBrowserDebugOptions>
+    val kotlinJsBrowserDebugOptions: Property<KotlinJsBrowserDebugOptions>
 }

@@ -94,14 +94,15 @@ internal constructor(
     // The options below only refine a debug run: --browser-debug is what turns one on. The IDE passes it on the
     // task it debugs and sends the ports it picked through the environment, which reaches every task of the build.
     @get:Input
-    @get:Optional
     @get:Option(
         option = "browser-debug-port",
-        description = "The port a CDP-compatible debugger can attach to. Only used with --browser-debug.",
+        description = "The port a CDP-compatible debugger can attach to. Defaults to $DEFAULT_DEBUG_PORT. " +
+                "Only used with --browser-debug.",
     )
     internal val browserDebugPort: Property<String> = objects.property(String::class.java)
-        .convention(providers.environmentVariable(BROWSER_DEBUG_PORT_ENV))
+        .convention(providers.environmentVariable(BROWSER_DEBUG_PORT_ENV).orElse(DEFAULT_DEBUG_PORT.toString()))
 
+    // Unset means the run doesn't wait: the port is one the debugger listens on, so there is nothing to default to.
     @get:Input
     @get:Optional
     @get:Option(
@@ -113,13 +114,16 @@ internal constructor(
         .convention(providers.environmentVariable(BROWSER_DEBUG_READY_PORT_ENV))
 
     @get:Input
-    @get:Optional
     @get:Option(
         option = "browser-debug-ready-timeout",
-        description = "How long to wait for a debugger to attach, in milliseconds. Only used with --browser-debug.",
+        description = "How long to wait for a debugger to attach, in milliseconds. " +
+                "Defaults to $DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS. Only used with --browser-debug.",
     )
     internal val browserDebugReadyTimeout: Property<String> = objects.property(String::class.java)
-        .convention(providers.environmentVariable(BROWSER_DEBUG_READY_TIMEOUT_ENV))
+        .convention(
+            providers.environmentVariable(BROWSER_DEBUG_READY_TIMEOUT_ENV)
+                .orElse(DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS.toString())
+        )
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
@@ -241,7 +245,7 @@ internal constructor(
         }
 
         debug = true
-        debuggableFramework.debugOptions.set(
+        debuggableFramework.kotlinJsBrowserDebugOptions.set(
             objects.newInstance(KotlinJsBrowserDebugOptions::class.java).apply {
                 debugPort.set(browserDebugPort.map { parsePort(it, "--browser-debug-port") })
                 debuggerReadyPort.set(browserDebugReadyPort.map { parsePort(it, "--browser-debug-ready-port") })
