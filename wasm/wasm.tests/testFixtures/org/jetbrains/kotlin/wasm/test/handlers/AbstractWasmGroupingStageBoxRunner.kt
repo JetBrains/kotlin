@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -43,12 +42,10 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         get() = ArtifactKinds.Wasm
 
     /**
-     * Determines whether to use
-     * - box-export mode: call `box()` directly and expect "OK" return value or
-     * - unit-test mode: run the batch via the result-collecting driver and parse the structured
-     *   [GroupedTestsResultProtocol] block from VM stdout.
+     * Whether a *driverless* artifact is run in box-export mode, calling `box()` directly and expecting "OK",
+     * rather than through the unit-test runner.
      */
-    protected abstract fun shouldUseBoxExportMode(): Boolean
+    protected abstract fun shouldUseBoxExportModeWhenDriverless(): Boolean
 
     /**
      * Runs the test code for the given artifact and returns any exceptions that occurred.
@@ -66,8 +63,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
 
     override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
         val inputs = testServices.groupingStageInputs
+        // Run mode must be perfectly matched to the way the batch was compiled,
+        // otherwise the per-test results printed by the driver are never parsed and the batch passes for free.
+        val useBoxExportMode = !artifact.hasGroupedTestsDriver && shouldUseBoxExportModeWhenDriverless()
 
-        if (shouldUseBoxExportMode()) {
+        if (useBoxExportMode) {
             // Box export mode: call box() directly and expect "OK"
             val input = inputs.first()
             val exceptions = runTestCode(
@@ -86,18 +86,19 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 useUnitTestRunnerOnly = true,
                 outputCollector = collectedOutputs,
             )
-            handleRunResult(collectedOutputs = collectedOutputs, exceptions = exceptions)
+            handleRunResult(artifact, collectedOutputs = collectedOutputs, exceptions = exceptions)
         }
     }
 
     private fun handleRunResult(
+        artifact: BinaryArtifacts.Wasm,
         collectedOutputs: List<WasmVMOutput>,
         exceptions: List<Throwable>,
     ) {
         // A VM failure carries the stdout captured before the crash, so a partial block is recovered too.
         val texts = collectedOutputs.map { it.output } + exceptions.mapNotNull { it.capturedVmOutput() }
 
-        if (testServices.hasGroupedTestsDriver) {
+        if (artifact.hasGroupedTestsDriver) {
             val vmsWithoutBlock = collectedOutputs.filter { output ->
                 !GroupedTestsResultProtocol.parseMerged(listOf(output.output)).sawStructuredBlock
             }.map { it.vmName }.distinct()
@@ -140,7 +141,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // A driver-linked batch reports every verdict through the driver, so no block at all means it was never
         // invoked: `test.mjs` fell back to `startUnitTests()`, which finds nothing to run (the launcher classes carry
         // no `@kotlin.test.Test`) and exits cleanly — the batch would be green with no test having run.
-        if (testServices.hasGroupedTestsDriver) {
+        if (artifact.hasGroupedTestsDriver) {
             failWholeBatch(
                 GroupedTestVerdict.NO_RESULT_BLOCK,
                 texts,
