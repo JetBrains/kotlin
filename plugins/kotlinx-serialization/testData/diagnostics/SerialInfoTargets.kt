@@ -14,21 +14,21 @@ annotation class SerialInfoOnClassAndProperty(val value: Int)
 annotation class SerialInfoOnProperty(val value: Int)
 
 // @SerialInfo without explicit @Target: default targets include inapplicable ones (field, parameter, ...) -> reported
-@SerialInfo
+<!SERIALINFO_INAPPLICABLE_TARGET!>@SerialInfo<!>
 annotation class SerialInfoNoTarget(val value: Int)
 
 // @SerialInfo applicable to a TYPE target is reported
-@SerialInfo
+<!SERIALINFO_INAPPLICABLE_TARGET!>@SerialInfo<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class SerialInfoOnType(val value: Int)
 
 // @SerialInfo applicable to a value-parameter target is reported
-@SerialInfo
+<!SERIALINFO_INAPPLICABLE_TARGET!>@SerialInfo<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
 annotation class SerialInfoOnParameter(val value: Int)
 
 // @SerialInfo applicable to an annotation-class target is reported
-@SerialInfo
+<!SERIALINFO_INAPPLICABLE_TARGET!>@SerialInfo<!>
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class SerialInfoOnAnnotationClass(val value: Int)
 
@@ -38,10 +38,10 @@ annotation class SerialInfoOnAnnotationClass(val value: Int)
 annotation class InheritableOnClass(val value: Int)
 
 // @InheritableSerialInfo without explicit @Target: default targets include property etc. -> reported
-@InheritableSerialInfo
+<!INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET!>@InheritableSerialInfo<!>
 annotation class InheritableNoTarget(val value: Int)
 
 // @InheritableSerialInfo applicable to a property target is reported
-@InheritableSerialInfo
+<!INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET!>@InheritableSerialInfo<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 annotation class InheritableOnProperty(val value: Int)
