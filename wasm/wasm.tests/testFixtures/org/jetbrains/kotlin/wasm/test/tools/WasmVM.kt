@@ -97,6 +97,8 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
+                // The one export a WASI test binary carries under this name: the grouped result-collecting driver, or
+                // `wasiBoxTestRun.kt`'s box glue for an isolated run — never both, see `assertDriverOwnsStartTestExport`.
                 "startTest",
                 workingDirectory = workingDirectory,
             )
@@ -116,6 +118,7 @@ internal sealed class WasmVM(
                 "-W",
                 "gc,function-references,exceptions",
                 "--invoke",
+                // See the comment on WasmEdge's "startTest" above.
                 "startTest",
                 entryFile,
                 workingDirectory = workingDirectory,
