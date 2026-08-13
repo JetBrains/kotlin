@@ -122,7 +122,7 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
     )
     this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
-            KotlinTarget.CLASS,
+            KotlinTarget.CLASS_ONLY,
             KotlinTarget.CONSTRUCTOR,
             KotlinTarget.FUNCTION,
         )
