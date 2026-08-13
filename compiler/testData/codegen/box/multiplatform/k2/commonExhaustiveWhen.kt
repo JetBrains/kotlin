@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_HMPP: ANY
 // ISSUE: KT-88191
 
 // MODULE: common
