@@ -52,7 +52,6 @@ dependencyResolutionManagement {
 
 include(":develocity")
 include(":jvm-toolchain-provisioning")
-include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
 include(":cache-redirector")
 include(":kotlin-bootstrap")
