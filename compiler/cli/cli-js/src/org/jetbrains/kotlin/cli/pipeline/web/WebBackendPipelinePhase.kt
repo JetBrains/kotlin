@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
 
-abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
+abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput, ICArtifact : ModuleArtifact>(
     name: String
 ) : PipelinePhase<ConfigurationPipelineArtifact, Output>(
     name = name,
@@ -96,7 +96,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         outputDir: File,
         targetConfiguration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
-    ): List<ModuleArtifact> {
+    ): List<ICArtifact> {
 
         targetConfiguration.reportLog("")
         targetConfiguration.reportLog("Building cache:")
@@ -145,12 +145,12 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         cacheDirectory: String,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
-    ): CacheUpdater
+    ): CacheUpdater<ICArtifact>
 
     protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
     abstract fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
+        icCaches: List<ICArtifact>,
         configuration: CompilerConfiguration,
     ): IntermediateOutput?
 

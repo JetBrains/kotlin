@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>(
+object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>, ModuleArtifact>(
     name = "WasmBackendPipelinePhase",
 ) {
     override val klibLoadingPhase: WebIrLoadingPipelinePhase
@@ -70,7 +70,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         cacheDirectory: String,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration
-    ): CacheUpdater {
+    ): CacheUpdater<ModuleArtifact> {
         val compilationMode = configuration.wasmCompilationMode()
         val contextConstructor = when (compilationMode) {
             WasmCompilationMode.REGULAR -> ::WasmICContextWholeWorld

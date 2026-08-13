@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,11 +64,11 @@ internal class IncrementalCacheArtifact(
         }
     }
 
-    fun buildModuleArtifact(
+    fun <A : ModuleArtifact> buildModuleArtifact(
         moduleName: String,
         rebuiltFileFragments: Map<KotlinSourceFile, IrICProgramFragments>,
-        icContext: PlatformDependentICContext,
-    ): ModuleArtifact {
+        icContext: PlatformDependentICContext<A>,
+    ): A {
         val fileArtifacts = srcCacheActions.map { srcFileAction ->
             val rebuiltFileFragment = rebuiltFileFragments[srcFileAction.srcFile]
             icContext.createSrcFileArtifact(srcFileAction.srcFile.path, rebuiltFileFragment, srcFileAction.binaryAstFile)

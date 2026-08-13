@@ -67,7 +67,7 @@ enum class DirtyFileState(val str: String) {
     REMOVED_FILE("removed file")
 }
 
-interface PlatformDependentICContext {
+interface PlatformDependentICContext<out A : ModuleArtifact> {
     fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>>
 
     fun createIrFactory(): IrFactory
@@ -97,7 +97,7 @@ interface PlatformDependentICContext {
         artifactsDir: File? = null,
         forceRebuild: Boolean = false,
         externalModuleName: String? = null
-    ): ModuleArtifact
+    ): A
 }
 
 /**
@@ -114,11 +114,11 @@ interface PlatformDependentICContext {
  *  For a better understanding of what happens here, pay attention to [stopwatch] usages.
  *  In every place, it has a short description about the code it measures.
  */
-class CacheUpdater(
+class CacheUpdater<A : ModuleArtifact>(
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     artifactConfiguration: WebArtifactConfiguration,
-    private val icContext: PlatformDependentICContext,
+    private val icContext: PlatformDependentICContext<A>,
     checkForClassStructuralChanges: Boolean = false,
     private val loadBodiesOnlyForMainModule: Boolean = false,
 ) {
@@ -673,7 +673,7 @@ class CacheUpdater(
         incrementalCacheArtifacts: Map<KotlinLibraryFile, IncrementalCacheArtifact>,
         moduleNames: Map<KotlinLibraryFile, String>,
         rebuiltFileFragments: KotlinSourceFileMap<IrICProgramFragments>
-    ): List<ModuleArtifact> = stopwatch.measure("Incremental cache - committing artifacts") {
+    ): List<A> = stopwatch.measure("Incremental cache - committing artifacts") {
         incrementalCacheArtifacts.map { [libFile, incrementalCacheArtifact] ->
             val rebuildFileFragments = rebuiltFileFragments[libFile] ?: emptyMap()
             incrementalCacheArtifact.commitCache(
@@ -842,7 +842,7 @@ class CacheUpdater(
      *   It contains either paths to files with serialized JS AST or the deserialized [IrICProgramFragments] objects themselves
      *   for every file in the generating JS module. The list should be used for building the final JS module in [JsExecutableProducer]
      */
-    fun actualizeCaches(): List<ModuleArtifact> {
+    fun actualizeCaches(): List<A> {
         stopwatch.clear()
         dirtyFileStats.clear()
 

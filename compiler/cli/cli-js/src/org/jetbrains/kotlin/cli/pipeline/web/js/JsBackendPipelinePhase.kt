@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
@@ -27,14 +26,14 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
-object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>(
+object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact, JsModuleArtifact>(
     name = "JsBackendPipelinePhase",
 ) {
     override val klibLoadingPhase: WebIrLoadingPipelinePhase
         get() = JsIrLoadingPipelinePhase
 
     override fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
+        icCaches: List<JsModuleArtifact>,
         configuration: CompilerConfiguration,
     ): JsBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
         val outputs = configuration
@@ -44,17 +43,16 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     }
 
     private fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
+        icCaches: List<JsModuleArtifact>,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs {
         val beforeIc2Js = System.currentTimeMillis()
 
-        val jsArtifacts = icCaches.filterIsInstance<JsModuleArtifact>()
         val jsExecutableProducer = JsExecutableProducer(
             artifactConfiguration,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
-            caches = jsArtifacts,
+            caches = icCaches,
         )
         (val outputs = compilationOut, val rebuiltModules = buildModules) = jsExecutableProducer.buildExecutable(outJsProgram = false)
         outputs.writeAll()
@@ -74,7 +72,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         cacheDirectory: String,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration
-    ): CacheUpdater = CacheUpdater(
+    ): CacheUpdater<JsModuleArtifact> = CacheUpdater(
         cacheDir = cacheDirectory,
         compilerConfiguration = configuration,
         artifactConfiguration = artifactConfiguration,

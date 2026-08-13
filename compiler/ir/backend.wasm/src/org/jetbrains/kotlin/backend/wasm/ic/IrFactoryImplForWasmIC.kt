@@ -1,17 +1,10 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.wasm.ic
 
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICMultimodule
@@ -26,17 +19,23 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.tryGetAsso
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.unitGetInstanceBuiltIn
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.HeapTypes.anyBuiltInType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.HeapTypes.throwableBuiltInType
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
-abstract class WasmICContextBase : PlatformDependentICContext {
+abstract class WasmICContextBase<A : ModuleArtifact> : PlatformDependentICContext<A> {
     override fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>> =
         setOf(
             JSConfigurationKeys.LIBRARIES,
@@ -45,7 +44,6 @@ abstract class WasmICContextBase : PlatformDependentICContext {
             WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES
         )
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun createBackendContext(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
@@ -80,7 +78,7 @@ open class WasmICContextMultimodule(
     protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
-) : WasmICContextBase() {
+) : WasmICContextBase<WasmModuleArtifactMultimodule>() {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
@@ -107,7 +105,7 @@ open class WasmICContextMultimodule(
         artifactsDir: File?,
         forceRebuild: Boolean,
         externalModuleName: String?,
-    ): ModuleArtifact =
+    ): WasmModuleArtifactMultimodule =
         WasmModuleArtifactMultimodule(
             fileArtifacts = fileArtifacts.map { it as WasmSrcFileArtifactMultimodule },
             moduleName = moduleName,
@@ -122,7 +120,7 @@ open class WasmICContextSingleModule(
     protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
-) : WasmICContextBase() {
+) : WasmICContextBase<WasmModuleArtifactSingleModule>() {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
@@ -149,7 +147,7 @@ open class WasmICContextSingleModule(
         artifactsDir: File?,
         forceRebuild: Boolean,
         externalModuleName: String?,
-    ): ModuleArtifact =
+    ): WasmModuleArtifactSingleModule =
         WasmModuleArtifactSingleModule(fileArtifacts.map { it as WasmSrcFileArtifactSingleModule }, moduleName, externalModuleName)
 }
 
@@ -158,7 +156,7 @@ open class WasmICContextWholeWorld(
     protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
-) : WasmICContextBase() {
+) : WasmICContextBase<WasmModuleArtifact>() {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
@@ -185,7 +183,7 @@ open class WasmICContextWholeWorld(
         artifactsDir: File?,
         forceRebuild: Boolean,
         externalModuleName: String?,
-    ): ModuleArtifact =
+    ): WasmModuleArtifact =
         WasmModuleArtifact(fileArtifacts.map { it as WasmSrcFileArtifact })
 }
 

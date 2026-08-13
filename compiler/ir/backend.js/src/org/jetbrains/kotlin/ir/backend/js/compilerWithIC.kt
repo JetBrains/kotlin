@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import java.io.File
 
-class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDependentICContext {
+class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDependentICContext<JsModuleArtifact> {
     override fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>> =
         setOf(
             JSConfigurationKeys.LIBRARIES,
@@ -36,7 +35,6 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForJsIC(WholeWorldStageController())
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun createBackendContext(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
@@ -69,11 +67,10 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
         artifactsDir: File?,
         forceRebuild: Boolean,
         externalModuleName: String?,
-    ): ModuleArtifact =
+    ): JsModuleArtifact =
         JsModuleArtifact(moduleName, fileArtifacts.map { it as JsSrcFileArtifact }, artifactsDir, forceRebuild, externalModuleName)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrCompilerWithIC(
     private val mainModule: IrModuleFragment,
     private val context: JsIrBackendContext,
