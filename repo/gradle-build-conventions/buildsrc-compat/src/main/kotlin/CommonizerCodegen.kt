@@ -60,6 +60,8 @@ abstract class GenerateSupportSources : DefaultTask() {
         val classesThatNeedIterator = mutableSetOf<String>()
         val classesThatNeedVar = mutableSetOf<String>()
 
+        val kotlinxCinteropFilesMapByDestination = mutableMapOf<File, File>()
+
         traverseRawSources(rawSourceDir.get().asFile) { file, destination, destinationRoot ->
             var contents = file.readText().replace("package support.raw", "package support")
             val kotlinxXCinteropFileContents = mutableListOf<String>()
@@ -90,17 +92,11 @@ abstract class GenerateSupportSources : DefaultTask() {
                     }
                     .let {
                         val varOfVariant = "expect class ${name}VarOf<T : $name> : kotlinx.cinterop.CVariable"
-//                        val valueAccessor = """
-//                            @Suppress("WRONG_MODIFIER_TARGET")
-//                            expect inline var <T : $name> ${name}VarOf<T>.${name}Value: T
-//
-//                            @Suppress("WRONG_MODIFIER_TARGET")
-//                            inline var <T : $name> ${name}VarOf<T>.value: T
-//                                get() = ${name}Value
-//                                set(value) { ${name}Value = value }
-//                        """.trimIndent()
                         val valueAccessor = """
-                            @Suppress("WRONG_MODIFIER_TARGET", "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT", "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT")
+                            @Suppress(
+                                "WRONG_MODIFIER_TARGET", "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
+                                "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "REDECLARATION",
+                            )
                             @OptIn(ExperimentalMultiplatform::class)
                             @kotlin.experimental.ExpectRefinement
                             expect inline var <T : support.$name> support.${name}VarOf<T>.value: T
@@ -135,8 +131,12 @@ abstract class GenerateSupportSources : DefaultTask() {
             destination.writeText(contents)
 
             if (kotlinxXCinteropFileContents.isNotEmpty()) {
-                val cinteropFolder = destinationRoot.resolve("kotlinx").resolve("cinterop").also { it.mkdirs() }
-                cinteropFolder.resolve("Bridges.kt").appendText(kotlinxXCinteropFileContents.joinToString("\n") + "\n")
+                val cinteropFile = kotlinxCinteropFilesMapByDestination.getOrPut(destinationRoot) {
+                    val cinteropFolder = destinationRoot.resolve("kotlinx").resolve("cinterop").also { it.mkdirs() }
+                    cinteropFolder.resolve("Bridges.kt").also { it.writeText("package kotlinx.cinterop\n") }
+                }
+
+                cinteropFile.appendText("\n" + kotlinxXCinteropFileContents.joinToString("\n") + "\n")
             }
         }
 
