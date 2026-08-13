@@ -2443,10 +2443,11 @@ internal object KotlinToolingDiagnostics {
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(runnerName: String) = build {
-            title { "No Chromium runner is configured for browser test debugging" }
+            title { "Browser test debugging requires a Chromium runner" }
                 .description {
-                    "Browser test debugging attaches a debugger to Chromium, but no Chromium runner is configured. " +
-                            "Kotlin launches Chromium with the test settings of the '$runnerName' runner."
+                    "The debugger attaches over the Chrome DevTools Protocol, which is only supported by Chromium-based " +
+                            "browsers, so Firefox and WebKit runners cannot be debugged. No Chromium runner is configured, " +
+                            "so Kotlin launches Chromium with the test settings of the '$runnerName' runner."
                 }
                 .solution {
                     "Declare a chromium() runner in the browser test DSL to configure the debug browser"
