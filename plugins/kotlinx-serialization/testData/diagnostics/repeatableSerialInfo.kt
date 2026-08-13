@@ -4,12 +4,12 @@
 
 import kotlinx.serialization.*
 
-<!INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE!>@InheritableSerialInfo<!>
+<!INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE, INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET!>@InheritableSerialInfo<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @Repeatable
 annotation class RepeatableSerialInfo(val value: Int)
 
-<!INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE!>@InheritableSerialInfo<!>
+<!INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE, INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET!>@InheritableSerialInfo<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @java.lang.annotation.Repeatable(JavaRepeatableContainer::class)
 annotation class JavaRepeatable(val value2: Int)
