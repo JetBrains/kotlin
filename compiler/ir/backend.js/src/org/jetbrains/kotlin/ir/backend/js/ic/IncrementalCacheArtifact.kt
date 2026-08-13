@@ -12,7 +12,7 @@ import java.io.File
 internal sealed class SourceFileCacheArtifact(val srcFile: KotlinSourceFile, val binaryAstFile: File) {
     abstract fun commitMetadata()
 
-    fun commitBinaryAst(fragments: IrICProgramFragments, icContext: PlatformDependentICContext) {
+    fun commitBinaryAst(fragments: IrICProgramFragments) {
         binaryAstFile.parentFile?.mkdirs()
         BufferedOutputStream(binaryAstFile.outputStream()).use {
             fragments.serialize(it)
@@ -54,14 +54,11 @@ internal class IncrementalCacheArtifact(
 ) {
     fun getSourceFiles() = srcCacheActions.mapTo(newHashSetWithExpectedSize(srcCacheActions.size)) { it.srcFile }
 
-    fun commitCache(
-        rebuiltFileFragments: Map<KotlinSourceFile, IrICProgramFragments>,
-        icContext: PlatformDependentICContext,
-    ) {
+    fun commitCache(rebuiltFileFragments: Map<KotlinSourceFile, IrICProgramFragments>) {
         srcCacheActions.forEach { srcFileAction ->
             val rebuiltFileFragment = rebuiltFileFragments[srcFileAction.srcFile]
             if (rebuiltFileFragment != null) {
-                srcFileAction.commitBinaryAst(rebuiltFileFragment, icContext)
+                srcFileAction.commitBinaryAst(rebuiltFileFragment)
             }
             srcFileAction.commitMetadata()
         }

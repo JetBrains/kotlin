@@ -677,8 +677,7 @@ class CacheUpdater(
         incrementalCacheArtifacts.map { [libFile, incrementalCacheArtifact] ->
             val rebuildFileFragments = rebuiltFileFragments[libFile] ?: emptyMap()
             incrementalCacheArtifact.commitCache(
-                rebuiltFileFragments = rebuildFileFragments,
-                icContext = icContext
+                rebuiltFileFragments = rebuildFileFragments
             )
             incrementalCacheArtifact.buildModuleArtifact(
                 moduleName = moduleNames[libFile] ?: notFoundIcError("module name", libFile),
