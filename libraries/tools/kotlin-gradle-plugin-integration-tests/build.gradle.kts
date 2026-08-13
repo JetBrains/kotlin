@@ -18,8 +18,11 @@ plugins {
 
 testsJar()
 
+// `restrictApiToTarget = false` because `configureJvmTarget8()` below lowers the target of the test compilations
+// while their sources keep using the Java API of the toolchain.
+configureJvmToolchain(JdkMajorVersion.JDK_17_0, restrictApiToTarget = false)
+
 kotlin {
-    jvmToolchain(17)
     compilerOptions {
         optIn.addAll(
             "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",

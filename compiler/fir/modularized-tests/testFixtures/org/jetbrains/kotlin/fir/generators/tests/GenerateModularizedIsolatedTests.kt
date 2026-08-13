@@ -47,7 +47,8 @@ object GenerateModularizedIsolatedTests {
             val testDataProjectName = args[i++]
             require(i < args.size) { "invalid arguments format, expecting pairs of project name and path" }
             val testDataModelPath = args[i++]
-            if (!testDataModelPath.let { File(it).exists() }) {
+            // The empty path has to be rejected on its own: since JDK 21 it resolves to the working directory.
+            if (testDataModelPath.isEmpty() || !File(testDataModelPath).exists()) {
                 println("Skipping ${testDataProjectName} project: path is empty or incorrect ($testDataModelPath)")
                 continue
             }

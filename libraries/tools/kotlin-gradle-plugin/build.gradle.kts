@@ -778,7 +778,7 @@ functionalTestCompilation.compileJavaTaskProvider.configure {
 }
 functionalTestCompilation.compileTaskProvider.configure {
     with(this as KotlinCompile) {
-        kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+        configureTaskToolchain(JdkMajorVersion.JDK_17_0)
     }
 }
 

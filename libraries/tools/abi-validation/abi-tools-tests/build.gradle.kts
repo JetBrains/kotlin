@@ -58,6 +58,14 @@ tasks.named<KotlinCompile>("compileCompilingKotlin") {
     compilerOptions.freeCompilerArgs.add("-jvm-default=enable")
 }
 
+tasks.named<JavaCompile>("compileCompilingJava") {
+    // These sources are ABI test cases, not production code: `cases/packageAnnotations` deliberately marks a package
+    // as `@Deprecated`, which newer `javac` reports as having no effect.
+    // `-Xlint:-deprecation` would not help: `javac` only lets it cancel `-Xlint:all`, not an explicit
+    // `-Xlint:deprecation`, so the flag has to go away instead.
+    options.compilerArgs.remove("-Xlint:deprecation")
+}
+
 // don't use `test` task
 tasks.test {
     enabled = false
