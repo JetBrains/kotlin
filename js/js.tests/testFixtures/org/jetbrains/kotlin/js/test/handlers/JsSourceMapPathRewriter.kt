@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
+import java.io.FileNotFoundException
 
 /**
  * The sourcemaps generated for test files contain relative paths that don't resolve anywhere.
@@ -32,10 +33,12 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
             for (mode in supportedTranslationModes) {
                 val sourceMapFile =
                     File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + ".js.map")
-                if (!sourceMapFile.exists()) continue
-
-                SourceMap.replaceSources(sourceMapFile) { path ->
-                    tryToMapTestFile(allTestFiles, path) ?: path
+                try {
+                    SourceMap.replaceSources(sourceMapFile) { path ->
+                        tryToMapTestFile(allTestFiles, path) ?: path
+                    }
+                } catch (_: FileNotFoundException) {
+                    continue
                 }
             }
         }
