@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -112,7 +113,9 @@ class WasmInProcessSecondStageFacade {
             outputDir.mkdirs()
             copyJsFilesToOutputDir(context.filteredOutputs.map { it.testServices to it.testModule }, outputDir)
 
-            return result ?: testInfraError("WasmInProcessSecondStageFacade: groupedBatch produced no Wasm artifact")
+            val artifact = result as? WasmCompilationSetsBinaryArtifact
+                ?: testInfraError("WasmInProcessSecondStageFacade: groupedBatch produced no Wasm compilation sets, but $result")
+            return artifact.withGroupedTestsDriver()
         }
 
         private inline fun <T> withTemporarySingleModuleStructure(
