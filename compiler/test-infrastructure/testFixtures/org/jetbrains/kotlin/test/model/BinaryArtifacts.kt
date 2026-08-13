@@ -31,6 +31,15 @@ object BinaryArtifacts {
     abstract class Wasm: ResultingArtifact.Binary<Wasm>() {
         override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm
+
+        /**
+         * `true` when this executable was linked together with the grouped tests' result-collecting driver, so its VM
+         * output has to carry a structured result block. Whether a batch gets the driver is decided per pipeline by the
+         * grouping-stage facade that produced this artifact, so the batch size alone does not answer it: a single-test
+         * batch may be driver-backed or may use a standalone entry point such as `box()`, depending on that facade.
+         */
+        open val hasGroupedTestsDriver: Boolean
+            get() = false
     }
 
     class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {
