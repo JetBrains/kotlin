@@ -29,10 +29,6 @@ class LibraryProvider(private val testServices: TestServices) : TestService {
         }
     }
 
-    fun getPathByDescriptor(descriptor: ModuleDescriptor): String {
-        return stdlibPathToDescriptor.entries.single { it.value == descriptor }.key
-    }
-
     fun getDescriptorByCompiledLibrary(library: KotlinLibrary): ModuleDescriptor {
         return descriptorToLibrary.filterValues { it == library }.keys.singleOrNull() ?: testServices.assertions.fail {
             "There is no descriptor for library ${library.path}"
