@@ -36,21 +36,21 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
+import java.nio.file.Path
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
     override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 ) : KlibResolvedModuleDescriptorsFactory {
 
-    @Suppress("DEPRECATION_ERROR")
-    override fun createResolved(
+    override fun createResolved2(
         resolvedLibraries: KotlinLibraryResolveResult,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        friendModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
-        refinesModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
-        includedLibraryFiles: Set<org.jetbrains.kotlin.konan.file.File>,
+        friendModuleFiles: Set<Path>,
+        refinesModuleFiles: Set<Path>,
+        includedLibraryFiles: Set<Path>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
@@ -75,13 +75,11 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
-                val libraryFile = org.jetbrains.kotlin.konan.file.File(library.path)
-
-                if (refinesModuleFiles.contains(libraryFile))
+                if (refinesModuleFiles.contains(library.path))
                     refinesModuleDescriptors.add(moduleDescriptor)
-                if (friendModuleFiles.contains(libraryFile))
+                if (friendModuleFiles.contains(library.path))
                     friendModuleDescriptors.add(moduleDescriptor)
-                if (includedLibraryFiles.contains(libraryFile))
+                if (includedLibraryFiles.contains(library.path))
                     includedLibraryDescriptors.add(moduleDescriptor)
             }
         }
