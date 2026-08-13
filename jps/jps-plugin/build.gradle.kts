@@ -105,11 +105,7 @@ idea {
     this.module.generatedSourceDirs.add(projectDir.resolve("jps-tests").resolve("tests-gen"))
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
+configureJvmToolchain(JdkMajorVersion.JDK_21_0)
 
 tasks.compileJava {
     sourceCompatibility = "11"

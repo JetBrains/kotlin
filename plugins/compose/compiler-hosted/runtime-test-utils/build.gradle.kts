@@ -14,10 +14,10 @@ repositories {
     }
 }
 
+configureJvmToolchain(JdkMajorVersion.JDK_11_0)
+
 kotlin {
     jvm()
-
-    jvmToolchain(11)
 
     compilerOptions {
         freeCompilerArgs.addAll(

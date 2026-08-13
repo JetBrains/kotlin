@@ -66,9 +66,7 @@ configurations["jdk9CompileClasspath"].extendsFrom(configurations.compileClasspa
 
 tasks.named<JavaCompile>("compileJdk9Java") {
     // Use a JDK that can emit release 9 (JDK 9 is not used on CI).
-    configureTaskToolchain(JdkMajorVersion.JDK_17_0)
-    sourceCompatibility = JavaVersion.VERSION_1_9.toString()
-    targetCompatibility = JavaVersion.VERSION_1_9.toString()
+    configureTaskToolchain(JdkMajorVersion.JDK_17_0, target = JdkMajorVersion.JDK_9_0)
 }
 
 kotlin {

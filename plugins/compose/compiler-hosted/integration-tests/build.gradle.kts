@@ -20,9 +20,7 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 
 optInToObsoleteDescriptorBasedAPI()
 
-kotlin {
-    jvmToolchain(11)
-}
+configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 sourceSets {
     "main" { none() }

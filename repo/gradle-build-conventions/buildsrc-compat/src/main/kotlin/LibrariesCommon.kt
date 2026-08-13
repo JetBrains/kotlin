@@ -5,7 +5,6 @@
 
 @file:JvmName("LibrariesCommon")
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
@@ -14,7 +13,6 @@ import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 @JvmOverloads
@@ -32,8 +30,8 @@ fun Project.configureJava9Compilation(
 
     tasks.withType<KotlinJvmCompile>().configureEach {
         if (name in kotlinCompileTaskNames) {
-            configureTaskToolchain(JdkMajorVersion.JDK_17_0)
-            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(JdkMajorVersion.JDK_9_0.targetName))
+            configureTaskToolchain(JdkMajorVersion.JDK_17_0, target = JdkMajorVersion.JDK_9_0)
+            // TODO(KT-88173): `-Xjdk-release` could be moved into `configureTaskToolchain` after bumping the minimal JDK version to JDK 11
             compilerOptions.freeCompilerArgs.add("-Xjdk-release=${JdkMajorVersion.JDK_9_0.targetName}")
         }
     }
@@ -41,10 +39,8 @@ fun Project.configureJava9Compilation(
     tasks.named("compile${sourceSetNameC}Java", JavaCompile::class.java) {
         dependsOn(moduleOutputs)
 
-        targetCompatibility = JavaVersion.VERSION_1_9.toString()
-        sourceCompatibility = JavaVersion.VERSION_1_9.toString()
+        configureTaskToolchain(JdkMajorVersion.JDK_17_0, target = JdkMajorVersion.JDK_9_0)
         options.release.set(JdkMajorVersion.JDK_9_0.majorVersion)
-        configureTaskToolchain(JdkMajorVersion.JDK_17_0)
 
         // module-info.java should be in java9 source set by convention
         val java9SourceSet = sourceSets[sourceSetName].java
