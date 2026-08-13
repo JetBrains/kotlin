@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.extensions.FirExtension
@@ -178,6 +179,20 @@ val FirBasedSymbol<*>.hasJavaOrigin get() = origin is FirDeclarationOrigin.Java
  */
 val FirClassSymbol<*>.isUnsupportedLombokTarget: Boolean
     get() = isInterface || isAnnotationClass
+
+/**
+ * Whether `@Builder` and `@EqualsAndHashCode` generate nothing at all into [this] class: everything
+ * [isUnsupportedLombokTarget] covers, plus an enum class. Lombok's own handlers draw the line in the same place -
+ * they accept a class only, while `@Log` and `@ToString` accept an enum too.
+ *
+ * An enum can neither be built nor compared by a generated member:
+ *  - its constructors take the synthetic name and ordinal parameters, so a generated `build()` calls a signature
+ *    that doesn't exist and fails with `NoSuchMethodError` (KT-87871);
+ *  - `equals` and `hashCode` are final in `java.lang.Enum`, so generated ones don't even load - the whole class
+ *    fails to verify with "class Color overrides final method java.lang.Enum.equals" (KT-88507).
+ */
+val FirClassSymbol<*>.isUnsupportedLombokTargetOrEnumClass: Boolean
+    get() = isUnsupportedLombokTarget || isEnumClass
 
 /**
  * Whether [this] has an extension receiver or context parameters.
