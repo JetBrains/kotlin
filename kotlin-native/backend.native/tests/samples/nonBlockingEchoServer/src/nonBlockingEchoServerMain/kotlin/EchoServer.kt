@@ -26,13 +26,13 @@ fun main(args: Array<String>) {
                 .ensureUnixCallResult { !it.isMinusOne() }
 
         with(serverAddr) {
-            memset(this.ptr, 0, sockaddr_in.size.convert())
+            memset(this.ptr, 0, sizeOf<sockaddr_in>().convert())
             sin_family = AF_INET.convert()
             sin_addr.s_addr = posix_htons(0).convert()
             sin_port = posix_htons(port).convert()
         }
 
-        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toUInt())
+        bind(listenFd, serverAddr.ptr.reinterpret(), sizeOf<sockaddr_in>().toUInt())
                 .ensureUnixCallResult { it == 0 }
 
         fcntl(listenFd, F_SETFL, O_NONBLOCK)
