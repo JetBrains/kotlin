@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.api.GradleException
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
@@ -505,32 +504,35 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     @Test
     fun `invalid browser debug port is rejected`() {
         val setup = buildBrowserTestProject { chromium() }
+        setup.prepareExecutableFramework()
         setup.jsBrowserTestTask.browserDebug.set(true)
         setup.jsBrowserTestTask.browserDebugPort.set("70000")
 
-        val failure = assertFailsWith<GradleException> {
-            setup.jsBrowserTestTask.configureBrowserDebug()
+        // The options are parsed lazily, so the value has to be read for the check to run.
+        val failure = assertFailsWith<Exception> {
+            setup.jsBrowserTestTask.buildExecutionSpec(setup.project)
         }
 
         assertEquals(
             "--browser-debug-port must be an integer between 1 and 65535, but was '70000'",
-            failure.message,
+            failure.cause?.message,
         )
     }
 
     @Test
     fun `invalid browser debug readiness timeout is rejected`() {
         val setup = buildBrowserTestProject { chromium() }
+        setup.prepareExecutableFramework()
         setup.jsBrowserTestTask.browserDebug.set(true)
         setup.jsBrowserTestTask.browserDebugReadyTimeout.set("0")
 
-        val failure = assertFailsWith<GradleException> {
-            setup.jsBrowserTestTask.configureBrowserDebug()
+        val failure = assertFailsWith<Exception> {
+            setup.jsBrowserTestTask.buildExecutionSpec(setup.project)
         }
 
         assertEquals(
             "--browser-debug-ready-timeout must be a positive number of milliseconds, but was '0'",
-            failure.message,
+            failure.cause?.message,
         )
     }
 }

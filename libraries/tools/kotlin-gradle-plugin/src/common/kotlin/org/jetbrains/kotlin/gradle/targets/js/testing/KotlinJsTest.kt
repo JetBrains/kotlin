@@ -243,9 +243,9 @@ internal constructor(
         debug = true
         debuggableFramework.debugOptions.set(
             objects.newInstance(KotlinJsBrowserDebugOptions::class.java).apply {
-                debugPort.set(browserDebugPort.orNull?.let { parsePort(it, "--browser-debug-port") })
-                debuggerReadyPort.set(browserDebugReadyPort.orNull?.let { parsePort(it, "--browser-debug-ready-port") })
-                debuggerReadyTimeoutMillis.set(browserDebugReadyTimeout.orNull?.let { parseTimeoutMillis(it) })
+                debugPort.set(browserDebugPort.map { parsePort(it, "--browser-debug-port") })
+                debuggerReadyPort.set(browserDebugReadyPort.map { parsePort(it, "--browser-debug-ready-port") })
+                debuggerReadyTimeoutMillis.set(browserDebugReadyTimeout.map { parseTimeoutMillis(it) })
             }
         )
     }
