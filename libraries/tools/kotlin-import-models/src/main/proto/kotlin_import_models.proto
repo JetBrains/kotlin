@@ -1,0 +1,170 @@
+edition = "2023";
+
+package org.jetbrains.kotlin.importmodels.proto;
+option java_multiple_files = true;
+
+import "google/protobuf/any.proto";
+
+message Error {
+  enum Type {
+    ERROR_TYPE_UNSPECIFIED = 0;
+    ERROR_TYPE_UNKNOWN_MODEL_ID = 1;
+    ERROR_TYPE_UNKNOWN_MODEL_PARAMS = 2;
+    ERROR_TYPE_UNSUPPORTED_MODEL_ID = 3;
+    ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS = 4;
+    ERROR_TYPE_INTERNAL_ERROR = 5;
+    ERROR_TYPE_GENERIC_ERROR = 6;
+  }
+
+  Type error_type = 1;
+  string error_message = 2;
+}
+
+message Result {
+  oneof result {
+    google.protobuf.Any model = 1;
+    Error error = 2;
+  }
+}
+
+message Version {
+  uint32 major = 1;
+  uint32 minor = 2;
+  uint32 patch = 3;
+  string classifier = 4;
+}
+
+message SourceRoot {
+  enum Kind {
+    SOURCE_ROOT_KIND_UNSPECIFIED = 0;
+    SOURCE_ROOT_KIND_SOURCE = 1;
+    SOURCE_ROOT_KIND_GENERATED = 2;
+  }
+
+  string path = 1;
+  Kind kind = 2;
+  repeated Action producing_actions = 3;
+}
+
+message CompilationUnitId {
+  string value = 1;
+}
+
+message BaseModel {
+  enum Capability {
+    CAPABILITY_UNSPECIFIED = 0;
+    CAPABILITY_JVM = 1;
+    CAPABILITY_KAPT = 2;
+  }
+
+  string id = 1;
+  Version plugin_version = 2;
+  repeated Capability capabilities = 3;
+}
+
+message ProjectModel {
+  string id = 1;
+  repeated CompilationUnitId compilation_unit_ids = 3;
+}
+
+message Action {
+  message GradleTask {
+    string task_path = 1;
+  }
+
+  oneof build_tool_action {
+    GradleTask gradle_action = 1;
+  }
+}
+
+message CompilationUnitModel {
+  enum Platform {
+    PLATFORM_UNSPECIFIED = 0;
+    PLATFORM_JVM = 1;
+  }
+
+  message Parameters {
+    CompilationUnitId compilation_unit_id = 1;
+  }
+
+  message Output {
+    string path = 1;
+    repeated Action producing_actions = 2;
+  }
+
+  string id = 1;
+  Parameters parameters = 2;
+  string name = 3;
+  Platform platform = 4;
+  bool is_test = 5;
+  repeated Output outputs = 6;
+  repeated SourceRoot source_roots = 7;
+}
+
+message CompilerArgumentsModel {
+  message Parameters {
+    CompilationUnitId compilation_unit_id = 1;
+  }
+
+  string id = 1;
+  Parameters parameters = 2;
+  repeated string arguments = 3;
+}
+
+message MavenCoordinates {
+  string group = 1;
+  string module = 2;
+  string version = 3;
+}
+
+message BinaryDependency {
+  MavenCoordinates coordinates = 1;
+  string artifact_path = 2;
+}
+
+message DependenciesModel {
+  // TODO: Add project_artifact_dependencies
+  enum Scope {
+    DEPENDENCY_SCOPE_UNSPECIFIED = 0;
+    DEPENDENCY_SCOPE_COMPILE = 1;
+    // TODO: Support RUNTIME dependency scope
+    DEPENDENCY_SCOPE_RUNTIME = 2;
+  }
+
+  enum Coverage {
+    DEPENDENCY_COVERAGE_UNSPECIFIED = 0;
+    // TODO: Support LOCAL dependency coverage without triggering Gradle resolution
+    DEPENDENCY_COVERAGE_LOCAL = 1;
+    DEPENDENCY_COVERAGE_ALL = 2;
+  }
+
+  message Unresolved {
+    MavenCoordinates coordinates = 1;
+    string failure_message = 2;
+  }
+
+  enum SourceDependencyKind {
+    SOURCE_DEPENDENCY_KIND_UNSPECIFIED = 0;
+    SOURCE_DEPENDENCY_KIND_REGULAR = 1;
+    SOURCE_DEPENDENCY_KIND_FRIEND = 2;
+    SOURCE_DEPENDENCY_KIND_DEPENDS_ON = 3;
+    SOURCE_DEPENDENCY_KIND_VISIBLE = 4;
+  }
+
+  message SourceDependency {
+    SourceDependencyKind kind = 1;
+    CompilationUnitId target_compilation_unit_id = 2;
+  }
+
+  message Parameters {
+    CompilationUnitId compilation_unit_id = 1;
+    Scope scope = 2;
+    Coverage coverage = 3;
+  }
+
+  string id = 1;
+  Parameters parameters = 2;
+  repeated BinaryDependency binary_dependencies = 3;
+  repeated Unresolved unresolved_dependencies = 4;
+  repeated SourceDependency source_dependencies = 5;
+}

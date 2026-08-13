@@ -384,6 +384,7 @@ include(
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
+    ":kotlin-import-models",
     ":kotlin-gradle-plugin-idea-for-compatibility-tests",
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generator",
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
@@ -913,6 +914,7 @@ project(":kotlin-gradle-plugin-api").projectDir = File("$rootDir/libraries/tools
 project(":kotlin-gradle-plugin-annotations").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-annotations")
 project(":kotlin-gradle-plugin-idea").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea")
 project(":kotlin-gradle-plugin-idea-proto").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-proto")
+project(":kotlin-import-models").projectDir = File("$rootDir/libraries/tools/kotlin-import-models")
 project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
 project(":kotlin-gradle-plugin-dsl-codegen").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen")

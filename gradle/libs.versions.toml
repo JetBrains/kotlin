@@ -175,6 +175,7 @@ opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" 
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+protobuf-java-util = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobuf" }
 protobuf-java-compose-test = { module = "com.google.protobuf:protobuf-java", version.ref = "protobufComposeTest" }
 protobuf-java-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }

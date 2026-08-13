@@ -1,0 +1,20 @@
+public abstract interface class org/jetbrains/kotlin/importmodels/KotlinGradleModel : java/io/Serializable {
+	public abstract fun getKotlinModelResult ()[B
+}
+
+public final class org/jetbrains/kotlin/importmodels/KotlinImportModelIds {
+	public static final field BASE Ljava/lang/String;
+	public static final field COMPILATION_UNIT Ljava/lang/String;
+	public static final field COMPILER_ARGUMENTS Ljava/lang/String;
+	public static final field DEPENDENCIES Ljava/lang/String;
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/KotlinImportModelIds;
+	public static final field PROJECT_INFORMATION Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/ModelRequest {
+	public abstract fun getKotlinModelId ()Ljava/lang/String;
+	public abstract fun getKotlinModelParameters ()[B
+	public abstract fun setKotlinModelId (Ljava/lang/String;)V
+	public abstract fun setKotlinModelParameters ([B)V
+}
+
