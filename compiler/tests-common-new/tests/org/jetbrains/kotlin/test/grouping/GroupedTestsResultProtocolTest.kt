@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.FAILED
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.LINE_PREFIX
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.PASSED
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.SEP
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.STARTED
 import org.jetbrains.kotlin.test.report.TestRunChecks
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -147,8 +148,8 @@ class GroupedTestsResultProtocolTest {
     fun `given the generated driver source when inspected then every protocol line is printed with a leading newline`() {
         val protocolPrints = driverSource.lines().filter { "println(" in it && "##KGTI" in it }
 
-        // The BEGIN/END sentinels plus the PASSED/FAILED lines of `__kgtiReport`.
-        assertEquals(4, protocolPrints.size, driverSource)
+        // BEGIN/END plus the STARTED/PASSED/FAILED lines of `__kgtiReport`.
+        assertEquals(5, protocolPrints.size, driverSource)
         for (line in protocolPrints) {
             assertTrue("""println("\n##KGTI""" in line, "Protocol line is printed without a leading newline: $line")
         }
@@ -168,6 +169,97 @@ class GroupedTestsResultProtocolTest {
 
         assertTrue(parse(prefixedByNewline).getValue("id").passed)
         assertTrue(parse(glued).isEmpty())
+    }
+
+    @Test
+    fun `given an id started on a VM that never reported its result when parseMerged then it is crashed in progress`() {
+        // Deriving "crashed" from the merged outcomes would miss it: the first VM's PASSED is already there.
+        val passingVm = block(resultLine("crasher", STARTED), resultLine("crasher", PASSED))
+        val crashingVm = "$BEGIN\n${resultLine("crasher", STARTED)}\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, crashingVm))
+
+        assertTrue(result.crashedInProgress("crasher"))
+        assertTrue(result.outcomes.getValue("crasher").passed)
+        // The surviving VM's outcome is kept, so the crash cannot be reported through the missing-id path.
+        assertTrue(TestRunChecks.findMissingResults(listOf("crasher"), result.toTestReport()).isEmpty())
+
+        assertFalse(GroupedTestsResultProtocol.parseMerged(listOf(passingVm, passingVm)).crashedInProgress("crasher"))
+    }
+
+    @Test
+    fun `given a failure on one VM and a crash on another when parseMerged then both signals are kept`() {
+        val failingVm = block(resultLine("id", STARTED), resultLine("id", FAILED, "msg", "details"))
+        val crashingVm = "$BEGIN\n${resultLine("id", STARTED)}\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(failingVm, crashingVm))
+
+        assertFalse(result.outcomes.getValue("id").passed)
+        assertTrue(result.crashedInProgress("id"))
+    }
+
+    @Test
+    fun `given several unterminated starts in one output when parseMerged then only the last one crashed`() {
+        // Only one test can be executing when the VM dies, so blaming `earlier` would fail a test that completed.
+        val truncatedVm = "$BEGIN\n${resultLine("earlier", STARTED)}\n${resultLine("crasher", STARTED)}\n"
+        val completeVm = block(
+            resultLine("earlier", STARTED), resultLine("earlier", PASSED),
+            resultLine("crasher", STARTED), resultLine("crasher", PASSED),
+        )
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(completeVm, truncatedVm))
+
+        assertTrue(result.crashedInProgress("crasher"))
+        assertFalse(result.crashedInProgress("earlier"), "A test whose result was merely lost was blamed for the crash")
+    }
+
+    @Test
+    fun `given a start whose result line is lost but a later test reported when parseMerged then no crash is inferred`() {
+        // `later` ran after `garbled`, which proves the VM survived it. `garbled` is still failed, as a missing result.
+        val output = block(
+            resultLine("garbled", STARTED),
+            "$LINE_PREFIX${SEP}garbled${SEP}tooFewFields",
+            resultLine("later", STARTED),
+            resultLine("later", PASSED),
+        )
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertFalse(result.crashedInProgress("garbled"), "A test a later test ran after was blamed for the crash")
+        assertFalse(result.crashedInProgress("later"))
+        assertEquals(
+            listOf("garbled"),
+            TestRunChecks.findMissingResults(listOf("garbled", "later"), result.toTestReport()),
+        )
+    }
+
+    @Test
+    fun `given a closed block whose last start lost its result when parseMerged then no crash is inferred`() {
+        // The END proves the driver reached the end of the batch, so `last` merely lost its terminal line.
+        val closedBlock = block(
+            resultLine("first", STARTED),
+            resultLine("first", PASSED),
+            resultLine("last", STARTED),
+        )
+        // Without the END sentinel the same output is the actual crash.
+        val unterminatedBlock = closedBlock.substringBefore(END)
+
+        assertFalse(
+            GroupedTestsResultProtocol.parseMerged(listOf(closedBlock)).crashedInProgress("last"),
+            "A batch the driver ran to its END was reported as crashed",
+        )
+        assertTrue(GroupedTestsResultProtocol.parseMerged(listOf(unterminatedBlock)).crashedInProgress("last"))
+    }
+
+    @Test
+    fun `given an open block whose last start reported its result when parseMerged then no crash is inferred`() {
+        // Every start has a terminal line, so nothing was executing when the VM went down and no test may be blamed.
+        val output = "$BEGIN\n${resultLine("only", STARTED)}\n${resultLine("only", PASSED)}\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertTrue(result.sawStructuredBlock)
+        assertFalse(result.crashedInProgress("only"), "A test that reported its result was blamed for the crash")
     }
 
     private companion object {
