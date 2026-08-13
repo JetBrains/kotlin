@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.FilterVersion
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -16,6 +17,12 @@ internal sealed class SequenceTransformer {
         val function: IrExpression,
         val isIndexed: Boolean,
         val isNotNull: Boolean,
+    ) : SequenceTransformer()
+
+    class Filter(
+        // null for `filterNotNull`
+        val function: IrExpression?,
+        val version: FilterVersion,
     ) : SequenceTransformer()
 }
 
@@ -32,6 +39,7 @@ internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWith
         ): TransformerStrategy =
             when (sequenceTransformer) {
                 is SequenceTransformer.Map -> MapStrategy(sequenceTransformer, builderWithParent, context)
+                is SequenceTransformer.Filter -> FilterStrategy(sequenceTransformer, builderWithParent)
             }
     }
 }
