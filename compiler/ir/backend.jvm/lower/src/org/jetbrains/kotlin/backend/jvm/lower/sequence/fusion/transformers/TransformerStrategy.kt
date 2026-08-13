@@ -23,8 +23,11 @@ internal sealed class SequenceTransformer {
         val predicateCall: MapPredicateCall,
         val isIndexed: Boolean,
         val isNotNull: Boolean,
-    ) :
-        SequenceTransformer()
+    ) : SequenceTransformer()
+
+    class Filter(
+        val predicateCall: UnaryPredicate
+    ) : SequenceTransformer()
 }
 
 internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWithParent) {
@@ -36,6 +39,7 @@ internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWith
         fun create(sequenceTransformer: SequenceTransformer, builderWithParent: IrBuilderWithParent): TransformerStrategy =
             when (sequenceTransformer) {
                 is SequenceTransformer.Map -> MapStrategy(sequenceTransformer, builderWithParent)
+                is SequenceTransformer.Filter -> FilterStrategy(sequenceTransformer, builderWithParent)
             }
     }
 }

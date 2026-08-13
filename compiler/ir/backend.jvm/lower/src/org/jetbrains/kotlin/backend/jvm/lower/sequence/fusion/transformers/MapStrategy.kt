@@ -24,7 +24,7 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
     ): SequenceReplacement {
         val builder = builderWithParent.first
         val mapIndexedVariable = builder.scope.createTemporaryVariable(
-            builder.irInt(0),
+            builder.irInt(-1),
             isMutable = true,
             nameHint = "mapIndexedVariable",
         )
