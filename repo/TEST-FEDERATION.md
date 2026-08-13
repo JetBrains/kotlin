@@ -20,6 +20,10 @@ All tests, however, will be executed on master builds.
 - [Contracts between Domains](#contracts-between-domains--single-tests--test-suites-affected-by-other-domains)
   - [Contracts require approval from the target team](#contracts-require-approval-from-the-target-team)
 - [Nightly Tests](#nightly-tests)
+- [TeamCity setup](#teamcity-setup)
+    - [`Aggregate (master)` and `Aggregate (smoke)`](#aggregate-master-and-aggregate-smoke)
+    - [`Domain (X)` configurations](#domain-x-configurations)
+    - [`requiresAffectedDomain`: skipping entire build configurations](#requiresaffecteddomain-skipping-entire-build-configurations)
 
 ### What is a Domain? (Quick intuition)
 
@@ -257,3 +261,50 @@ class MyTests {
 ```
 
 The above example will only execute 'my regular test' during safe-merge, while the `my looong nightly test` is only executed nightly.
+
+## TeamCity setup
+
+> [!WARNING]
+> This section describes the current TeamCity setup, which is not ideal. It's going to be simplified in the near future.
+
+The Gradle-side properties described above (`test.federation.mode`, `test.federation.affected.domains`,
+`test.federation.changed.domains`) are set by the CI. The TeamCity configurations that do this live in a separate repository,
+[kotlin-infrastructure](https://jetbrains.team/p/kti/repositories/kotlin-infrastructure), under the `.teamcity` directory.
+
+The mode a build was executed in is visible on the TeamCity build overview page (for example, `Mode: Full`), which is the quickest way to
+check whether Test Federation skipped anything for a given run.
+
+### `Aggregate (master)` and `Aggregate (smoke)`
+
+There are two aggregate build configurations, and they behave differently depending on where they run:
+
+| Aggregate            | On `master`                                              | On a branch (safe merge)                                                   |
+|----------------------|----------------------------------------------------------|----------------------------------------------------------------------------|
+| `Aggregate (master)` | everything runs in `Full` (affected domains = `*`)       | some builds run in `Full`, some in `Smoke`, depending on the changed files |
+| `Aggregate (smoke)`  | everything runs in `Smoke` (affected domains = `<none>`) | does not run at all                                                        |
+
+The only reason `Aggregate (smoke)` exists is to quickly see whether the smoke tests are green or red on `master`. It matters because
+when smoke tests are red, **nobody can merge any change**.
+
+Note: the two aggregates do **not** contain exactly the same set of build configurations. `Aggregate (smoke)` deliberately omits some
+configurations and, for some expensive builds, includes dedicated 'smoke' variants instead of the full set of buckets (running all buckets in
+smoke mode would mostly measure per-build overhead). This means the set of builds skipped in `Aggregate (master)` through
+[`requiresAffectedDomain`](#requiresaffecteddomain-skipping-entire-build-configurations) and the set of builds filtered out of
+`Aggregate (smoke)` are maintained separately and have to be kept in sync manually.
+
+### `Domain (X)` configurations
+
+The `Domain (X)` build configurations visible at the top level of the TeamCity project tree are **not** part of the quality gate. They only
+run on `master` and exist to give an overview of which Domains are currently green and which are red.
+
+### `requiresAffectedDomain`: skipping entire build configurations
+
+Normally, no TeamCity-side configuration is needed for Test Federation: a build of an unaffected Domain is not skipped, it runs in `Smoke`
+mode instead.
+
+For builds where even the smoke run is not worth its cost, the TeamCity DSL offers `requiresAffectedDomain(Domain.X)`. During the safe merge
+quality gate, if the requirement is not satisfied by the changed files, all steps of that build configuration are skipped and the build
+effectively becomes a NOOP.
+
+Note: `requiresAffectedDomain` is a stopgap. It is expected to be replaced by more dynamic build chains (a TeamCity feature) or a smart
+trigger.
