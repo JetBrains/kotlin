@@ -59,22 +59,22 @@ class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
 @Builder(access = AccessLevel.PROTECTED)
 class BuilderAccessLevelProtected(val id: Int)
 
-// TODO KT-87871: nothing is generated for either any more, but unlike `@Log`/`@ToString`/`@NoArgsConstructor`
-//  these two are still not warned about, because `@Builder` allows the broad `KotlinTarget.CLASS` (which covers
-//  interfaces and annotation classes) rather than `CLASS_ONLY`. So `@Builder` here is a silent no-op.
-@Builder
+// `@Builder` needs a constructor to call and a companion object to host the `builder()` factory, so it supports
+// nothing but a non-local class. Lombok narrows the annotation the same way and reports "@Builder is only
+// supported on classes, records, constructors, and methods." for the first three.
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
 interface BuilderInterface
 
-@Builder
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
 annotation class BuilderAnnotationClass
 
 // An enum constructor takes the synthetic name and ordinal parameters, so a generated `build()` wouldn't find the
 // one it calls: it used to fail with `NoSuchMethodError` at run time, KT-87871.
-@Builder
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
 enum class BuilderEnum(val id: Int) { A(1) }
 
 // An object has no constructor to call.
-@Builder
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
 object BuilderObject
 
 @Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
@@ -91,7 +91,7 @@ fun test() {
     BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
 
    // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
-    @Builder
+    <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
     class BuilderLocal(val id: Int)
 
     BuilderLocal.<!UNRESOLVED_REFERENCE!>builder<!>()
