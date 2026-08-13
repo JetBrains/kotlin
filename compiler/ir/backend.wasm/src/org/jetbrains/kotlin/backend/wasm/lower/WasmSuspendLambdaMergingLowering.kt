@@ -60,6 +60,8 @@ import org.jetbrains.kotlin.name.Name
  *
  * We maintain a file local class cache in this pass and rely on the linker to deduplicate
  * cross-file classes and types.
+ *
+ * The replaced classes are removed from the IR.
  * 
  */
 internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -106,6 +108,9 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
         if (classReplacements.isEmpty()) return
 
         irFile.transform(ConstructorCallReplacer(classReplacements), null)
+
+        val replacedClasses = classReplacements.values.mapTo(HashSet()) { it.originalClass }
+        irFile.declarations.removeAll(replacedClasses)
     }
 
     private fun isSuspendLambdaCoroutineClass(irClass: IrClass, coroutineImplClass: IrClass): Boolean {
