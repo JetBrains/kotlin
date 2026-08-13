@@ -91,6 +91,7 @@ class Foo(
     * A function with a receiver parameter
     * @receiver A string receiver parameter
     * @return An int value
+    * @see bar for another function
     */
     fun String.baz(): Int = TODO()
 }

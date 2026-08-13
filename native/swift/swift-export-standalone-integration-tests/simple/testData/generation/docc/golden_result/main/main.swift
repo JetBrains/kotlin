@@ -139,7 +139,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ///
     /// - Returns: A boolean
     ///
-    /// - See: foo
+    /// - See: `foo`
     public func bar(
         _ context: (a: Swift.String, b: Swift.Int32)
     ) -> Swift.Bool {
@@ -152,6 +152,8 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ///   - receiver: A string receiver parameter
     ///
     /// - Returns: An int value
+    ///
+    /// - See: `bar` for another function
     public func baz(
         _ receiver: Swift.String
     ) -> Swift.Int32 {
