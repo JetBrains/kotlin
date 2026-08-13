@@ -112,15 +112,17 @@ object FirBreaksUsingRunChecker : FirReturnExpressionChecker(MppCheckerKind.Comm
             val function = call.calleeReference.toResolvedNamedFunctionSymbol(discardErrorReference = true) ?: continue
             return when {
                 function.hasForEachLikeSignature -> when {
-                    // Partial information can only be valid
+                    // Partial information is always valid as the lambda is definitely declared at a `run` call
                     call.hasMarkedBreak(lambda) -> BreakPathInfo.Partial(capturedForEachLikeCalls.filter { it.markBreak(lambda) })
+                    // Need to break if we find the function the lambda belongs to BUT it's not the `run` function,
+                    // otherwise we are traversing the entire call/assignment stack
+                    call.arguments.any { it is FirAnonymousFunctionExpression && it.anonymousFunction == lambda } -> break
                     else -> {
                         capturedForEachLikeCalls += call
                         continue
                     }
                 }
-                // Need to break if we find the function the lambda belongs to BUT it's not the `run` function,
-                // otherwise we are traversing the entire call/assignment stack
+                // Same case as before but the function does not need to have a forEach-like signature
                 call.arguments.any { it is FirAnonymousFunctionExpression && it.anonymousFunction == lambda } -> when {
                     function in runFunctions -> when {
                         // Complete information can only be valid iff there is at least one captured forEach-like call, otherwise we emit diagnostics

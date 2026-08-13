@@ -20,6 +20,15 @@ fun test() {
             }<!>
         }<!>
     }<!>
+
+    <!RUN_CALL_USED_TO_BREAK!>run outer@{
+        run inner@{
+            <!RUN_BROKEN_FOR_EACH_LIKE_CALL!>listOf("a", "b").forEach {
+                if (it == "a") <!RUN_RETURN_USED_AS_BREAK!>return@outer<!>
+                if (it == "b") return@forEach
+            }<!>
+        }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral */
