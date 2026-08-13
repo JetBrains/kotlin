@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.GroupingStageInputsHolder
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.markGroupedTestsDriverGenerated
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -55,7 +54,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         }
 
         runner(listOf(passing, failing, neverRan), vmStdout = listOf(vmStdout), vmFailures = emptyList())
-            .processArtifact(FakeWasmArtifact)
+            .processArtifact(DriverLinkedBatchArtifact)
 
         assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
 
@@ -88,7 +87,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         val vmFailure = vmCrash(crashedVmStdout, vmName = "SpiderMonkey")
         val thrown = assertThrows(Throwable::class.java) {
             runner(listOf(passing, failing), vmStdout = emptyList(), vmFailures = listOf(vmFailure))
-                .processArtifact(FakeWasmArtifact)
+                .processArtifact(DriverLinkedBatchArtifact)
         }
         assertEquals(vmFailure, thrown)
 
@@ -115,7 +114,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             listOf(passing, crasher),
             vmStdout = emptyList(),
             vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "V8")),
-        ).processArtifact(FakeWasmArtifact)
+        ).processArtifact(DriverLinkedBatchArtifact)
 
         assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
 
@@ -148,7 +147,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         // reported, which is the point: gating this on "some test failed" dropped it behind the failure below.
         val thrown = assertThrows(Throwable::class.java) {
             runner(listOf(failing), vmStdout = listOf(finishedVmStdout), vmFailures = listOf(vmCrash))
-                .processArtifact(FakeWasmArtifact)
+                .processArtifact(DriverLinkedBatchArtifact)
         }
         assertEquals(vmCrash, thrown)
 
@@ -165,7 +164,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         val stdoutWithoutBlock = "unrelated VM output\nwith no structured result block in it\n"
 
         runner(listOf(first, second), vmStdout = listOf(stdoutWithoutBlock), vmFailures = emptyList())
-            .processArtifact(FakeWasmArtifact)
+            .processArtifact(DriverLinkedBatchArtifact)
 
         for (test in listOf(first, second)) {
             val message = test.reportedFailure?.message.orEmpty()
@@ -182,14 +181,13 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             listOf(passing),
             vmStdout = listOf("output of the single-test runner\n"),
             vmFailures = emptyList(),
-            driverGenerated = false,
-        ).processArtifact(FakeWasmArtifact)
+        ).processArtifact(DriverlessBatchArtifact)
         assertNull(passing.reportedFailure, "An isolated passing test was failed: ${passing.reportedFailure?.message}")
 
         val failing = GroupedTest("testOnlyOne")
         val vmFailure = WasmVMException(AssertionError("Wrong box result 'FAIL'; Expected \"OK\""), vmName = "V8")
-        runner(listOf(failing), vmStdout = emptyList(), vmFailures = listOf(vmFailure), driverGenerated = false)
-            .processArtifact(FakeWasmArtifact)
+        runner(listOf(failing), vmStdout = emptyList(), vmFailures = listOf(vmFailure))
+            .processArtifact(DriverlessBatchArtifact)
         assertEquals(vmFailure, failing.reportedFailure)
     }
 
@@ -200,7 +198,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         val alone = GroupedTest("testAlone")
 
         runner(listOf(alone), vmStdout = listOf("VM output with no structured result block\n"), vmFailures = emptyList())
-            .processArtifact(FakeWasmArtifact)
+            .processArtifact(DriverLinkedBatchArtifact)
 
         val message = alone.reportedFailure?.message.orEmpty()
         assertTrue("not a single test reported a result" in message, message)
@@ -230,7 +228,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             listOf(other, crasher),
             vmStdout = listOf(finishedVmStdout),
             vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "SpiderMonkey")),
-        ).processArtifact(FakeWasmArtifact)
+        ).processArtifact(DriverLinkedBatchArtifact)
 
         assertNull(other.reportedFailure, "A passing test was failed: ${other.reportedFailure?.message}")
 
@@ -263,7 +261,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             listOf(failingCrasher),
             vmStdout = listOf(finishedVmStdout),
             vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "WasmEdge")),
-        ).processArtifact(FakeWasmArtifact)
+        ).processArtifact(DriverLinkedBatchArtifact)
 
         val message = failingCrasher.reportedFailure?.message.orEmpty()
         assertTrue(FAILURE_MESSAGE in message, message)
@@ -310,11 +308,9 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         batch: List<GroupedTest>,
         vmStdout: List<String>,
         vmFailures: List<Throwable>,
-        driverGenerated: Boolean = true,
     ): AbstractWasmGroupingStageBoxRunner {
         val testServices = TestServices().apply {
             register(GroupingStageInputsHolder::class, GroupingStageInputsHolder(batch.map { it.input }))
-            if (driverGenerated) markGroupedTestsDriverGenerated()
         }
         return object : AbstractWasmGroupingStageBoxRunner(testServices) {
             override fun shouldUseBoxExportMode(): Boolean = false
@@ -385,6 +381,11 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             override val originalTestDataFiles: List<File> get() = emptyList()
         }
 
-        val FakeWasmArtifact = object : BinaryArtifacts.Wasm() {}
+        /** What a stage-2 facade returns for a batch it linked with the generated driver. */
+        val DriverLinkedBatchArtifact = object : BinaryArtifacts.Wasm() {
+            override val hasGroupedTestsDriver: Boolean get() = true
+        }
+
+        val DriverlessBatchArtifact = object : BinaryArtifacts.Wasm() {}
     }
 }

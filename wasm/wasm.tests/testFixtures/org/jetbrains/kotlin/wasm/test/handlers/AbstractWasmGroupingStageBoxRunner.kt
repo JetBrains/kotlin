@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -86,11 +85,15 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 useUnitTestRunnerOnly = true,
                 outputCollector = collectedOutputs,
             )
-            handleRunResult(collectedOutputs = collectedOutputs, exceptions = exceptions)
+            handleRunResult(artifact, collectedOutputs = collectedOutputs, exceptions = exceptions)
         }
     }
 
-    private fun handleRunResult(collectedOutputs: List<String>, exceptions: List<Throwable>) {
+    private fun handleRunResult(
+        artifact: BinaryArtifacts.Wasm,
+        collectedOutputs: List<String>,
+        exceptions: List<Throwable>,
+    ) {
         // A VM-failure message embeds the stdout captured before the crash, so a partial block is recovered too.
         val texts = buildList {
             addAll(collectedOutputs)
@@ -106,7 +109,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // A driver-linked batch reports every verdict through the driver, so no block at all means it was never
         // invoked: `test.mjs` fell back to `startUnitTests()`, which finds nothing to run (the launcher classes carry
         // no `@kotlin.test.Test`) and exits cleanly — the batch would be green with no test having run.
-        if (testServices.hasGroupedTestsDriver) {
+        if (artifact.hasGroupedTestsDriver) {
             testServices.groupingStageInputs.forEach { input ->
                 input.failWithCollectedOutputs(
                     texts,

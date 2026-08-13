@@ -43,6 +43,13 @@ class WasmCompilationSetsBinaryArtifact(
     val compilation: WasmCompilationSet,
     val dceCompilation: WasmCompilationSet? = null,
     val optimisedCompilation: WasmCompilationSet? = null,
-) : BinaryArtifacts.Wasm()
+    override val hasGroupedTestsDriver: Boolean = false,
+) : BinaryArtifacts.Wasm() {
+    fun withGroupedTestsDriver(): WasmCompilationSetsBinaryArtifact =
+        WasmCompilationSetsBinaryArtifact(compilation, dceCompilation, optimisedCompilation, hasGroupedTestsDriver = true)
+}
 
-class WasmFolderBinaryArtifact(val folder: File) : BinaryArtifacts.Wasm()
+class WasmFolderBinaryArtifact(
+    val folder: File,
+    override val hasGroupedTestsDriver: Boolean = false,
+) : BinaryArtifacts.Wasm()
