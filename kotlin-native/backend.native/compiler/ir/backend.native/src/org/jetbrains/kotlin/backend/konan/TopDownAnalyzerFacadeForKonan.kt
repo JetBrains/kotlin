@@ -54,10 +54,16 @@ internal object TopDownAnalyzerFacadeForKonan {
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
-                config.resolvedLibraries.getFullList(), projectContext.storageManager, module.builtIns, config.languageVersionSettings,
-                config.friendModuleFiles, config.refinesModuleFiles,
-                config.loadedKlibs.included.map { it.path }.toSet(), listOf(module),
-                isForMetadataCompilation = config.metadataKlib)
+                libraries = config.resolvedLibraries.getFullList(),
+                storageManager = projectContext.storageManager,
+                builtIns = module.builtIns,
+                languageVersionSettings = config.languageVersionSettings,
+                friendModuleFiles = config.friendModuleFiles,
+                refinesModuleFiles = config.refinesModuleFiles,
+                includedLibraryFiles = config.loadedKlibs.included.map { it.path }.toSet(),
+                additionalDependencyModules = listOf(module),
+                isForMetadataCompilation = config.metadataKlib
+        )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
         if (!module.isNativeStdlib()) {
