@@ -36,6 +36,35 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-13 — a classpath root has an identity, is resolved by it, and the IC hook is gone
+- **Change**: three steps in one. (1) `VfsBasedProjectEnvironment` resolves a root by *identity among the roots
+  this compilation indexed* (`registerIndexedClasspathRoots`, filled from the same loops that already call
+  `addSourcesToClasspath`, plus the new `KotlinCoreEnvironment.indexedClasspathRoots`), falling back to the old
+  file-system probing only for a root nobody registered. That probing (`Files.isDirectory`, `toFile()`,
+  `knownFileSystems.findFileByPath`) was the actual reason the IC hook had to exist: no root of a build system's
+  own file system could survive it. (2) `JvmClasspath.Roots`/`ProjectLibraries.excludedRoots` are lists of the new
+  `JvmClasspathRootId` instead of `Path` — the VFS-style path of the root, which is the prefix of the path of every
+  file under it, i.e. exactly what both users of a root need (`BinaryClassFileHandle.isUnder`,
+  `ClassPathScope.contains`) and what a `Path` could only pretend to be for a root with no location. (3) The
+  previous build's output is marked where the build system registers it
+  (`VirtualJvmClasspathRoot.isPrecompiledOutput`, read by `CompilerConfiguration.precompiledOutputRoots()`), so
+  `IncrementalCompilationComponentsWithCustomPrecompiledBinaries` is **deleted** rather than reshaped. The flag is
+  on the virtual-file root only: an argument-driven compilation states the same thing as its output directory,
+  which the IC runner prepends to the classpath, so `JvmClasspathRoot` has nothing to mark.
+- **Files**: new `frontend.common.jvm/.../jvm/environment/JvmClasspathRootId.kt`; `JvmClasspath.kt`,
+  `BinaryClassFileIndex.kt`, `BinaryJavaClassReader.kt`, `VfsBasedProjectEnvironment.kt`, `KotlinCoreEnvironment.kt`,
+  `JvmContentRoots.kt`, `IncrementalCompilationContextUtils.kt` (hook file removed), `JvmFrontendPipelinePhase.kt`,
+  `FirJvmSessionFactory.kt`, scripting `K2ReplCompiler.kt`/`sessionUtils.kt`, `ClasspathRestrictionTest.kt` (+2 tests);
+  `implDocs/PSI_FREE_ROADMAP.md` §3/§8 and the applicable IntelliJ-side patch
+  `implDocs/intellij-build-system-precompiled-output-root.diff`.
+- **Tests**: `:compiler:java-direct:test` 21829/0; `IncrementalK2FirICJvmCompilerRunnerTestGenerated` 371/0 (the
+  only path with a non-empty exclusion list); PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` 11026/0;
+  `*CompileKotlinAgainstKotlin*` 153/0; `jklib.tests` 844/0; scripting green.
+- **Result**: green. The IntelliJ change is unavoidable either way (the types their file names no longer exist);
+  it now *removes* their `createSearchScope` instead of migrating it. Noted in the roadmap: their `PathAdapter`
+  has no `toString()`, so the friend root they register already reaches `DependencyListForCliModule` as
+  `PathAdapter@…` — a pre-existing defect of the same kind, one level up.
+
 ### 2026-08-13 — the custom IC precompiled binaries hook, in classpath currency
 - **Change**: the rebase on master brought back `IncrementalCompilationComponentsWithCustomScope.createSearchScope(
   projectEnvironment)` (KT-88475, the IntelliJ build system's custom IC components) into

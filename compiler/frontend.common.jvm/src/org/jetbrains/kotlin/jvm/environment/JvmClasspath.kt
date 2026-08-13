@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.jvm.environment
 
-import java.nio.file.Path
-
 /**
  * A part of the JVM classpath of one compilation, named by its roots. This is what a lookup over binaries is
  * restricted to: [JvmCompilationEnvironment.getKotlinClassFinder], [JvmCompilationEnvironment.getPackagePartProvider]
@@ -20,10 +18,9 @@ import java.nio.file.Path
  */
 sealed interface JvmClasspath {
     /**
-     * The given roots and nothing else. A root is a directory or a `.jar`/`.jmod` file, exactly as it is spelled
-     * on the compiler's classpath; a path which is neither is ignored.
+     * The given roots and nothing else. A root which this compilation has not indexed is ignored.
      */
-    data class Roots(val roots: List<Path>) : JvmClasspath
+    data class Roots(val roots: List<JvmClasspathRootId>) : JvmClasspath
 
     /**
      * Every classpath root of this compilation as the environment knows them, except those under [excludedRoots].
@@ -31,7 +28,7 @@ sealed interface JvmClasspath {
      * The exclusion serves incremental compilation, which reads the output directory of the previous build as a
      * separate classpath ([Roots]) and must not see it a second time as a part of the regular one.
      */
-    data class ProjectLibraries(val excludedRoots: List<Path> = emptyList()) : JvmClasspath
+    data class ProjectLibraries(val excludedRoots: List<JvmClasspathRootId> = emptyList()) : JvmClasspath
 
     companion object {
         val EMPTY: JvmClasspath = Roots(emptyList())

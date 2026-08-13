@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.nio.file.Path
@@ -357,7 +358,7 @@ private fun compileImpl(
     if (libModuleData != null) {
         val projectEnvironment = state.sessionFactoryContext.projectEnvironment
         val libraryClasspath = state.moduleDataProvider.getModuleDataPaths(libModuleData)
-            ?.let { JvmClasspath.Roots(it.toList()) }
+            ?.let { paths -> JvmClasspath.Roots(paths.map(JvmClasspathRootId::of)) }
             ?: state.sessionFactoryContext.librariesClasspath
 
         createScriptingAdditionalLibrariesSession(

@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
-import java.nio.file.Path
 
 /**
  * Loads the [BinaryJavaClass] for [classId] from a `.class`/`.sig` file, caching it in [binaryCache];
@@ -82,8 +81,8 @@ private class VirtualFileBinaryClassFileHandle(val virtualFile: VirtualFile) : B
     override val nameWithoutExtension: String
         get() = virtualFile.nameWithoutExtension
 
-    override fun isUnder(classpathRoot: Path): Boolean {
-        val root = FileUtil.toSystemIndependentName(classpathRoot.toAbsolutePath().normalize().toString())
+    override fun isUnder(classpathRoot: JvmClasspathRootId): Boolean {
+        val root = classpathRoot.id
         val path = virtualFile.path
         val archiveSeparator = path.indexOf(JAR_SEPARATOR)
         return when {

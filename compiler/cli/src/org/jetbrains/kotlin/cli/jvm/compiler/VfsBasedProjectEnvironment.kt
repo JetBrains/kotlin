@@ -25,14 +25,17 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacadeForModule
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.session.FirJavaInterop
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
-import java.nio.file.Path
+import java.nio.file.InvalidPathException
+import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 
@@ -47,6 +50,21 @@ open class VfsBasedProjectEnvironment(
         fileSystem: VirtualFileSystem,
         getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
     ) : this(project, listOf(fileSystem), getPackagePartProviderFn)
+
+    private val indexedClasspathRoots = HashMap<JvmClasspathRootId, VirtualFile>()
+
+    /**
+     * Records the classpath roots of this compilation, so that a [JvmClasspathRootId] can be resolved among them
+     * instead of being looked for in a file system. Every root is already handed to the project by the same loops
+     * (`KotlinCoreEnvironment.updateClasspathFromRootsIndex` and its counterpart in `JvmFrontendPipelinePhase`),
+     * so this costs nothing — and it is what lets a build system name a root of its own file system, which no
+     * amount of probing could find.
+     */
+    fun registerIndexedClasspathRoots(roots: Iterable<VirtualFile>) {
+        for (root in roots) {
+            indexedClasspathRoots[root.asJvmClasspathRootId()] = root
+        }
+    }
 
     override fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder =
         VirtualFileFinderFactory.getInstance(project).create(psiSearchScope(classpath))
@@ -77,20 +95,31 @@ open class VfsBasedProjectEnvironment(
         }
     }
 
-    private fun classPathScope(roots: List<Path>): GlobalSearchScope =
+    private fun classPathScope(roots: List<JvmClasspathRootId>): GlobalSearchScope =
         roots
-            .mapNotNull {
-                // this code is somewhat ad hoc, but currently it is exactly the logic of classpath processing that we're using in
-                // the cli compiler
-                when {
-                    it.isDirectory() -> knownFileSystems.findFileByPath(it.toFile().absolutePath, StandardFileSystems.FILE_PROTOCOL)
-                    !it.isRegularFile() -> null
-                    else -> knownFileSystems.findFileByPath(it.toFile().absolutePath + JAR_SEPARATOR, StandardFileSystems.JAR_PROTOCOL)
-                }
-            }
+            .mapNotNull { indexedClasspathRoots[it] ?: findRootInFileSystems(it) }
             .takeIf { it.isNotEmpty() }
             ?.let { ClassPathScope(project, it) }
             ?: GlobalSearchScope.EMPTY_SCOPE
+
+    /**
+     * The fallback for a root which was not registered as indexed — a test fixture naming a root directly, or a
+     * classpath computed after the index was built. It is somewhat ad hoc, but currently it is exactly the logic
+     * of classpath processing that we're using in the cli compiler.
+     */
+    private fun findRootInFileSystems(root: JvmClasspathRootId): VirtualFile? {
+        val path = try {
+            Path(root.id)
+        } catch (_: InvalidPathException) {
+            // The root is not a location in any file system, so it can only be one of the registered ones.
+            return null
+        }
+        return when {
+            path.isDirectory() -> knownFileSystems.findFileByPath(root.id, StandardFileSystems.FILE_PROTOCOL)
+            !path.isRegularFile() -> null
+            else -> knownFileSystems.findFileByPath(root.id + JAR_SEPARATOR, StandardFileSystems.JAR_PROTOCOL)
+        }
+    }
 
     private class ClassPathScope(
         project: Project,
@@ -185,7 +214,9 @@ fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnviron
             projectEnvironment.environment.jrtFileSystem,
             projectEnvironment.environment.localFileSystem,
         ),
-    ) { createPackagePartProvider(it) }
+    ) { createPackagePartProvider(it) }.also {
+        it.registerIndexedClasspathRoots(indexedClasspathRoots)
+    }
 
 
 inline fun <reified T : PsiElementFinder> ExtensionPoint<PsiElementFinder>.unregisterFinders() {

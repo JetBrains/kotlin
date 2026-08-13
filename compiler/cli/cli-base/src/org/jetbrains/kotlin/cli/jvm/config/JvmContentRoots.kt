@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -53,14 +55,34 @@ data class JvmClasspathRoot(override val file: File, override val isSdkRoot: Boo
  * @property isSdkRoot Indicates whether the classpath root is an SDK root.
  * @property isFriend Indicates whether the classpath root should be considered as a "friend" dependency,
  * meaning it has access to internal declarations.
+ * @property isPrecompiledOutput Indicates whether this root is the output of the previous build, which
+ * incremental compilation reads as a separate classpath, see [precompiledOutputRoots]. Only a build system
+ * which registers its content roots itself can say so; a compilation driven by command line arguments states
+ * the same thing as its output directory, so the flag is on this root and not on [JvmClasspathRoot].
  */
 data class VirtualJvmClasspathRoot(
     val file: VirtualFile,
     override val isSdkRoot: Boolean,
     val isFriend: Boolean = false,
+    val isPrecompiledOutput: Boolean = false,
 ) : JvmClasspathRootBase {
     constructor(file: VirtualFile) : this(file, false)
 }
+
+/**
+ * The roots the previous build wrote to, as named by the build system itself. Empty unless some content root
+ * is marked with [VirtualJvmClasspathRoot.isPrecompiledOutput], in which case incremental compilation falls
+ * back to the output directory of this build.
+ *
+ * The successor of the former `IncrementalCompilationComponentsWithCustomScope.createSearchScope(
+ * VfsBasedProjectEnvironment)` (KT-88475): the same statement, made where the root itself is registered, in
+ * the currency of a root instead of an IntelliJ file set — hence needing neither the environment nor PSI.
+ */
+fun CompilerConfiguration.precompiledOutputRoots(): List<JvmClasspathRootId> =
+    getList(CLIConfigurationKeys.CONTENT_ROOTS)
+        .filterIsInstance<VirtualJvmClasspathRoot>()
+        .filter { it.isPrecompiledOutput }
+        .map { it.file.asJvmClasspathRootId() }
 
 data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 

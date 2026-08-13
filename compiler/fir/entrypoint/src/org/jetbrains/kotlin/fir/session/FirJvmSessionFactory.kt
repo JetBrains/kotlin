@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -95,7 +96,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                 val moduleData = moduleDataProvider.allModuleData.last()
                 val classpath = moduleDataProvider.getModuleDataPaths(moduleData)
                     ?.takeIf { it.isNotEmpty() }
-                    ?.let { JvmClasspath.Roots(it.toList()) }
+                    ?.let { paths -> JvmClasspath.Roots(paths.map(JvmClasspathRootId::of)) }
                     ?: context.librariesClasspath
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
                 val javaFacade = context.javaInterop.createBinaryJavaFacade(session, moduleData, context.librariesClasspath)

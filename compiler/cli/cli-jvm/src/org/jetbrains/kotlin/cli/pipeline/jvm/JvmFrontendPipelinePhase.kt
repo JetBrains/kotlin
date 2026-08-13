@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
@@ -367,7 +368,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 if (libraries.isNotEmpty()) return@l emptyList()
                 val dependencies = (rawRegularDependencies + rawFriendDependencies).map { Path(it) }
                 if (dependencies.isEmpty()) return@l emptyList()
-                val classpath = JvmClasspath.Roots(dependencies)
+                val classpath = JvmClasspath.Roots(dependencies.map(JvmClasspathRootId::of))
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
                 val moduleData = moduleDataProvider.allModuleData.first { it.session == session }
                 val provider = JvmClassFileBasedSymbolProvider(
@@ -647,6 +648,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             classpathRootsResolver,
             rootsIndex
         ).also {
+            it.registerIndexedClasspathRoots(rootsIndex.indexedRoots.map { it.file }.asIterable())
             javaFileManager.initialize(
                 rootsIndex,
                 it.packagePartProviders,
@@ -693,6 +695,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             newIndex.indexedRoots.forEach {
                 projectEnvironment.addSourcesToClasspath(it.file)
             }
+            registerIndexedClasspathRoots(newIndex.indexedRoots.map { it.file }.asIterable())
 
             currentRoots.addAll(newRoots)
             for (packagePartProvider in packagePartProviders) {
