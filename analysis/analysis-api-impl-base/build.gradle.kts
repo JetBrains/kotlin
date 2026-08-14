@@ -15,6 +15,7 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-platform-interface"))
     api(project(":compiler:resolution.common.jvm"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:backend"))

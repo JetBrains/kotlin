@@ -29,6 +29,7 @@ dependencies {
     api(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(intellijCore())
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-fir-diagnostics"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:symbol-light-classes"))

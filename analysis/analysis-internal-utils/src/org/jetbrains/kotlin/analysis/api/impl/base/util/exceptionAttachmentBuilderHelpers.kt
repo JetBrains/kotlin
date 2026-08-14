@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,19 +15,19 @@ import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry as withPsiEntryWithoutKaModule
 
 @KaImplementationDetail
-fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, moduleFactory: (PsiElement) -> KaModule) {
+public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, moduleFactory: (PsiElement) -> KaModule) {
     withPsiEntry(name, psi, psi?.let(moduleFactory))
 }
 
 @KaImplementationDetail
-fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, module: KaModule?) {
+public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, module: KaModule?) {
     withPsiEntryWithoutKaModule(name, psi)
     withKaModuleEntry("${name}Module", module)
 }
 
 @OptIn(KaExperimentalApi::class, KaPlatformInterface::class)
 @KaImplementationDetail
-fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: KaModule?) {
+public fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: KaModule?) {
     withEntry(name, module) { module -> module.moduleDescription }
     if (module is KaDanglingFileModule) {
         withKaModuleEntry("${name}contextModule", module.contextModule)
@@ -35,6 +35,6 @@ fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: KaModule?
 }
 
 @KaImplementationDetail
-fun ExceptionAttachmentBuilder.withClassEntry(name: String, element: Any?) {
+public fun ExceptionAttachmentBuilder.withClassEntry(name: String, element: Any?) {
     withEntry(name, element) { it::class.java.name }
 }
