@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -625,4 +626,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
         return this is ConeTypeVariableType
     }
+
+
+    override val morePreciseCapturedTypeHandling: Boolean
+        get() = session.languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)
 }

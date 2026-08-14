@@ -332,6 +332,22 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         )
     }
 
+    override fun substituteTypeVariableIntoCapturedTypeSupertypes(resultType: KotlinTypeMarker, typeVariable: TypeConstructorMarker) {
+        require(resultType is ConeKotlinType)
+        resultType.contains { part ->
+            if (part is ConeCapturedType) {
+                val supertypes = part.constructor.supertypes
+                if (supertypes != null &&
+                    supertypes.any { supertype -> supertype.contains { (it as? ConeTypeVariableType)?.typeConstructor == typeVariable } }
+                ) {
+                    val substitutor = typeSubstitutorByTypeConstructor(mapOf(typeVariable to part))
+                    part.constructor.supertypes = supertypes.map { substitutor.substituteOrSelf(it) }
+                }
+            }
+            false
+        }
+    }
+
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         shouldNotBeCalled("PCLA does not use stub types for builder inference")
     }
