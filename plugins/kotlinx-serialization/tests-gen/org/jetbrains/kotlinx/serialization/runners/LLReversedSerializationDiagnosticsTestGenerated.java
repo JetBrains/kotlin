@@ -211,6 +211,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("PrivateCompanion.kt")
+    public void testPrivateCompanion() {
+      run("PrivateCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("privateSerializer.kt")
     public void testPrivateSerializer() {
       run("privateSerializer.kt");
