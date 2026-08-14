@@ -120,7 +120,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_11_0, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
 
         val prefix = "org.jetbrains.kotlin.test"
         addClasspathProperty(guavaClasspathForTests, "$prefix.guava")
