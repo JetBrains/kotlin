@@ -46,7 +46,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(maxHeapSizeMb = 3072, defineJDKEnvVariables = listOf(JDK_1_8, JDK_21_0))
+    testTask(maxHeapSize = 3.GiB, defineJDKEnvVariables = listOf(JDK_1_8, JDK_21_0))
 
     testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt", generateTestsInBuildDirectory = true)
 
