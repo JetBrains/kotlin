@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.structure
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -71,8 +72,11 @@ fun JavaAnnotationOwner.buildLazyValueForMap() = lazy {
 
 interface JavaPackage : JavaElement, JavaAnnotationOwner {
     val fqName: FqName
+
+    @K1Deprecation
     val subPackages: Collection<JavaPackage>
 
+    @K1Deprecation
     fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass>
 }
 

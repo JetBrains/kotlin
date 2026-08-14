@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -26,9 +27,11 @@ class JavaPackageOverAst(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
         annotations.find { it.classId?.asSingleFqName() == fqName }
 
+    @K1Deprecation
     override val subPackages: Collection<JavaPackage>
         get() = finder.subPackagesOf(fqName).map { JavaPackageOverAst(it, finder) }
 
+    @K1Deprecation
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> =
         finder.classesInPackage(fqName, nameFilter)
 }
