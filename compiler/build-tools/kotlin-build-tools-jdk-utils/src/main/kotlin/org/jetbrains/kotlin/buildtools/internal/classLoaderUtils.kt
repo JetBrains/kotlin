@@ -20,19 +20,29 @@ private const val MINIMAL_SUPPORTED_JDK_VERSION: Int = 8
  * the value of the "minor" version part as the major version number.
  * For newer version strings (e.g., "17.0.11"), the method returns the value of the "major" version part.
  *
+ * For unstable version strings (e.g., "28-ea"), the method returns the value before '-'.
+ *
  * If any error occurs during the retrieval of the version string or its parsing, the method returns the
  * default value of [MINIMAL_SUPPORTED_JDK_VERSION] as the major version number.
  */
 private fun getJavaMajorVersion(): Int = try {
+    val isEap = System.getProperty("java.version").contains("-")
     val versionParts = System.getProperty("java.version").split(".")
-    if (isLegacyJavaVersion(versionParts)) {
-        // e.g. 1.8.0_412
-        versionParts[1].toInt()
-    } else {
-        // e.g. 17.0.11
-        versionParts[0].toInt()
+    when {
+        isEap -> {
+            // e.g. 28-ea, 28-beta
+            versionParts[0].split("-")[0].toInt()
+        }
+        isLegacyJavaVersion(versionParts) -> {
+            // e.g. 1.8.0_412
+            versionParts[1].toInt()
+        }
+        else -> {
+            // e.g. 17.0.11
+            versionParts[0].toInt()
+        }
     }
-} catch (e: Exception) {
+} catch (_: Exception) {
     MINIMAL_SUPPORTED_JDK_VERSION
 }
 
