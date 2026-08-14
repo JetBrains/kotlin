@@ -22,6 +22,7 @@ internal class CompositeMetadataArtifactImpl(
     private val kotlinProjectStructureMetadata: KotlinProjectStructureMetadata,
     private val primaryArtifactFile: File,
     private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>,
+    private val archiveRelativePath: String? = null,
     private val computeChecksum: Boolean = true,
 ) : CompositeMetadataArtifact {
 
@@ -60,6 +61,10 @@ internal class CompositeMetadataArtifactImpl(
         }
     }
 
+    private fun relativePathInArchive(path: String): String {
+        return if (archiveRelativePath != null) "$archiveRelativePath/$path" else path
+    }
+
     private inner class SourceSetContentImpl(
         override val containingArtifactContent: CompositeMetadataArtifactContent,
         override val sourceSetName: String,
@@ -74,14 +79,18 @@ internal class CompositeMetadataArtifactImpl(
 
             In this case, return null
              */
-            if (artifactFile.containsKlibDirectory(sourceSetName)) MetadataBinaryImpl(this, artifactFile) else null
+            if (artifactFile.containsKlibDirectory(relativePathInArchive(sourceSetName))) {
+                MetadataBinaryImpl(this, artifactFile)
+            } else {
+                null
+            }
         }
 
         override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary> by lazy {
             val cinteropMetadataDirectory = kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
                 ?: return@lazy emptyList()
 
-            val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
+            val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(relativePathInArchive(cinteropMetadataDirectory))
             val cinteropEntries = artifactFile.zip.listDescendants(cinteropMetadataDirectoryPath)
 
             val cinteropLibraryNames = cinteropEntries.map { entry ->
@@ -131,7 +140,7 @@ internal class CompositeMetadataArtifactImpl(
                 "Expected file.extension == '$archiveExtension'. Found ${file.extension}"
             }
 
-            val libraryPath = "${containingSourceSetContent.sourceSetName}/"
+            val libraryPath = relativePathInArchive("${containingSourceSetContent.sourceSetName}/")
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
             artifactFile.zip.copyPartially(file, libraryPath)
@@ -174,12 +183,12 @@ internal class CompositeMetadataArtifactImpl(
             val sourceSetName = containingSourceSetContent.sourceSetName
             val cinteropMetadataDirectory = kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
                 ?: error("Missing CInteropMetadataDirectory for SourceSet $sourceSetName")
-            val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
+            val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(relativePathInArchive(cinteropMetadataDirectory))
 
             val libraryPath = "$cinteropMetadataDirectoryPath$cinteropLibraryName/"
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
-            artifactFile.zip.copyPartially(file, "$cinteropMetadataDirectoryPath$cinteropLibraryName/")
+            artifactFile.zip.copyPartially(file, libraryPath)
 
             return true
         }

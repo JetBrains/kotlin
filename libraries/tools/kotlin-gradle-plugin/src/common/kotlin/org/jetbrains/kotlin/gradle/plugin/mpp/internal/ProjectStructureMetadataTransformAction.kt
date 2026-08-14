@@ -12,7 +12,9 @@ import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
@@ -21,7 +23,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSO
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Trivial transformation: does only I/O operations.")
-abstract class ProjectStructureMetadataTransformAction : TransformAction<TransformParameters.None> {
+abstract class ProjectStructureMetadataTransformAction : TransformAction<ProjectStructureMetadataTransformAction.Params> {
+
+    interface Params : TransformParameters {
+        @get:Input
+        val psmPath: Property<String>
+    }
 
     @get:Inject
     abstract val archiveOperations: ArchiveOperations
@@ -35,7 +42,7 @@ abstract class ProjectStructureMetadataTransformAction : TransformAction<Transfo
 
     override fun transform(outputs: TransformOutputs) {
         val input = inputArtifact.get().asFile
-        val psm = archiveOperations.zipTree(input).matching { it.include("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME") }
+        val psm = archiveOperations.zipTree(input).matching { it.include(parameters.psmPath.get()) }
             .singleOrNull()
         if (psm != null) {
             val outputFile = outputs.file(MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME)
