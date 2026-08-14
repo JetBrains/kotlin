@@ -300,15 +300,12 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                 .sortedBy { it.name }
                                 .map {
                                     val initializer = it.initializerExpression?.expression
-                                    val entryConstructorCall = when {
-                                        initializer is IrConstructorCall -> initializer
-
+                                    val entryClass = when {
+                                        initializer is IrConstructorCall -> initializer.symbol.owner.constructedClass
                                         initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL ->
-                                            initializer.statements.last() as IrConstructorCall
-
-                                        else -> error("Unexpected initializer: $initializer")
+                                            (initializer.statements.last() as IrConstructorCall).symbol.owner.constructedClass
+                                        else -> irClass
                                     }
-                                    val entryClass = entryConstructorCall.symbol.owner.constructedClass
 
                                     irCallWithSubstitutedType(createUninitializedInstance, listOf(entryClass.defaultType))
                                 }
@@ -364,7 +361,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                         +initializer
                     }
 
-                    else -> error("Unexpected initializer: $initializer")
+                    else -> {}
                 }
             }
         }

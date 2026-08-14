@@ -696,7 +696,7 @@ internal class CodeGeneratorVisitor(
 
     private fun shouldEmitFinalFunctionTrampolineAlias(declaration: IrSimpleFunction) =
             // The alias only matters for caches consumed by a later recompile.
-            context.config.produce.isCache // In a monolithic build no caller cache can reference a stale trampoline symbol.
+            context.config.produce.isFullCache // In a monolithic build no caller cache can reference a stale trampoline symbol.
                     && declaration.parent is IrClass
                     && !declaration.isOverridable // No trampoline would be generated.
                     && declaration.isReal

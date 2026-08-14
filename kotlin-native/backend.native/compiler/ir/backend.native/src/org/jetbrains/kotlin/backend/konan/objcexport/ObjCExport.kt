@@ -40,7 +40,7 @@ internal fun produceObjCExportInterface(
 ): ObjCExportedInterface {
     val config = context.config
     require(config.target.family.isAppleFamily)
-    require(config.produce == CompilerOutputKind.FRAMEWORK)
+    require(config.produce == CompilerOutputKind.FRAMEWORK || config.produce == CompilerOutputKind.OBJC_CACHE)
 
     val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
 
@@ -189,7 +189,7 @@ internal class ObjCExport(
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
-        if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
+        if (!config.isFinalBinary && config.produce != CompilerOutputKind.OBJC_CACHE) return // TODO: emit RTTI to the same modules as classes belong to.
 
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(

@@ -40,6 +40,10 @@ enum class CompilerOutputKind {
     },
     HEADER_CACHE {
         override fun suffix(target: KonanTarget?) = ".header"
+    },
+    OBJC_CACHE {
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.staticSuffix}"
+        override fun prefix(target: KonanTarget?) = target!!.family.staticPrefix
     };
 
     abstract fun suffix(target: KonanTarget? = null): String

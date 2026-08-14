@@ -30,9 +30,13 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
      * Compiler's main output file.
      */
     val mainFileName =
-            if (produce.isCache)
-                outputName
-            else
+            if (produce.isCache) {
+                if (produce == CompilerOutputKind.OBJC_CACHE) {
+                    if (outputName.endsWith(".objc_cache")) outputName else "$outputName.objc_cache"
+                } else {
+                    outputName
+                }
+            } else
                 outputName.fullOutputName()
 
     val mainFile = File(mainFileName)

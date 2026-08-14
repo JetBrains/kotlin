@@ -49,7 +49,7 @@ class CachedLibraries(
         autoCacheableFrom: List<File>,
         private val libraryToCache: KotlinLibrary?,
 ) {
-    enum class Kind { DYNAMIC, STATIC, HEADER }
+    enum class Kind { DYNAMIC, STATIC, HEADER, OBJC }
 
     sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String, val rootDirectory: String) {
         val bitcodeDependencies by lazy { computeBitcodeDependencies() }
@@ -70,6 +70,7 @@ class CachedLibraries(
             Kind.DYNAMIC -> CompilerOutputKind.DYNAMIC_CACHE
             Kind.STATIC -> CompilerOutputKind.STATIC_CACHE
             Kind.HEADER -> CompilerOutputKind.HEADER_CACHE
+            Kind.OBJC -> CompilerOutputKind.OBJC_CACHE
         }
 
         class Monolithic(target: KonanTarget, kind: Kind, path: String)
@@ -82,6 +83,13 @@ class CachedLibraries(
             }
 
             override fun computeBinariesPaths() = listOf(path)
+
+            fun getObjCCacheMetadata(): ObjCCacheMetadata? {
+                val directory = File(path).absoluteFile.parentFile
+                val metadataFile = directory.child(OBJC_CACHE_METADATA_FILE_NAME)
+                if (!metadataFile.exists) return null
+                return metadataFile.bufferedReader().use { ObjCCacheMetadata.deserialize(it) }
+            }
 
             override fun computeSerializedInlineFunctionBodies() = mutableListOf<SerializedInlineFunctionReference>().also {
                 val directory = File(path).absoluteFile.parentFile.parentFile
@@ -180,6 +188,10 @@ class CachedLibraries(
         val staticFile = cacheBinaryPartDir.child(getArtifactName(target, baseName, CompilerOutputKind.STATIC_CACHE))
         val headerFile = cacheBinaryPartDir.child(getArtifactName(target, baseName, CompilerOutputKind.HEADER_CACHE))
 
+        val objcFile = cacheBinaryPartDir.listFilesOrEmpty.firstOrNull {
+            it.name.startsWith(CompilerOutputKind.OBJC_CACHE.prefix(target)) && it.name.endsWith(CompilerOutputKind.OBJC_CACHE.suffix(target))
+        }
+
         if (dynamicFile.absolutePath in cacheBinaryPartDirContents && staticFile.absolutePath in cacheBinaryPartDirContents)
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.location}, path to cache: $absolutePath")
@@ -187,6 +199,7 @@ class CachedLibraries(
             dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePath)
             staticFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
             headerFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.HEADER, headerFile.absolutePath)
+            objcFile != null && this.name.endsWith(".objc_cache") -> Cache.Monolithic(target, Kind.OBJC, objcFile.absolutePath)
             else -> {
                 // When the per-file cache of a library is being rebuilt in parallel (one fragment per dirty file),
                 // FinalizeCachePhase renames each file dir atomically over the old one, producing a brief window
@@ -210,14 +223,32 @@ class CachedLibraries(
     private val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
-    private val cacheNameToImplicitDirMapping: Map<String, File> =
-            implicitCacheDirectories.flatMap { dir -> dir.listFilesOrEmpty.map { it.name to it } }
-                    .toMap()
+    private val cacheNameToImplicitDirsMapping: Map<String, List<File>> =
+            implicitCacheDirectories.flatMap { dir -> dir.listFilesOrEmpty }
+                    .groupBy { it.name }
 
-    private fun KotlinLibrary.trySelectCacheAt(dirBuilder: (String) -> File?) =
+    fun getObjCCache(library: KotlinLibrary, moduleName: String): Cache? {
+        val candidateNames = sequenceOf(
+            getObjCCachedLibraryName(library, moduleName),
+            "${library.uniqueName}-$moduleName.objc_cache",
+            "${getCachedLibraryName(library)}-$moduleName.objc_cache",
+            "${library.uniqueName}.objc_cache"
+        )
+        for (name in candidateNames) {
+            val dirs = cacheNameToImplicitDirsMapping[name].orEmpty()
+            for (dir in dirs) {
+                val cache = dir.trySelectCacheFor(library)
+                if (cache != null) return cache
+            }
+        }
+        return null
+    }
+
+    private fun KotlinLibrary.trySelectCacheAt(dirBuilder: (String) -> List<File>) =
             sequenceOf(getPerFileCachedLibraryName(this), getCachedLibraryName(this))
-                    .map(dirBuilder)
-                    .mapNotNull { it?.trySelectCacheFor(this) }
+                    .flatMap(dirBuilder)
+                    .mapNotNull { it.trySelectCacheFor(this) }
+                    .sortedBy { if (it.kind == Kind.STATIC || it.kind == Kind.DYNAMIC) 0 else 1 }
                     .firstOrNull()
 
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
@@ -228,11 +259,11 @@ class CachedLibraries(
                     ?: error("No cache found for library ${library.location} at $explicitPath")
         } else {
             val libraryPath = library.libraryFile.canonicalPath
-            library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
+            library.trySelectCacheAt { cacheNameToImplicitDirsMapping[it].orEmpty() }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
                             ?.let {
                                 val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
-                                library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
+                                library.trySelectCacheAt { cacheName -> listOfNotNull(dir.child(cacheName)) }
                             }
         }
 
@@ -275,6 +306,9 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
+        fun getObjCCachedLibraryName(libraryName: String, moduleName: String): String = "$libraryName-$moduleName.objc_cache"
+        fun getObjCCachedLibraryName(library: KotlinLibrary, moduleName: String): String = getObjCCachedLibraryName(library.uniqueName, moduleName)
+
         private fun computeLibraryHash(library: KotlinLibrary, librariesHashes: MutableMap<String, FingerprintHash>) =
                 librariesHashes.getOrPut(library.uniqueName) {
                     val hashComputer = LibraryHashComputer()
@@ -303,10 +337,43 @@ class CachedLibraries(
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
         const val METADATA_FILE_NAME = "metadata.properties"
+        const val OBJC_CACHE_METADATA_FILE_NAME = "objc_cache_metadata.properties"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"
         const val TRIVIAL_GETTERS_FILE_NAME = "trivial_getters"
+    }
+}
+
+data class ObjCCacheAdapterEntry(val objcName: String, val isInterface: Boolean, val symbolName: String)
+
+class ObjCCacheMetadata(
+    val classAdapters: List<ObjCCacheAdapterEntry>,
+    val protocolAdapters: List<ObjCCacheAdapterEntry>,
+) {
+    fun serialize(writer: java.io.Writer) {
+        val properties = java.util.Properties()
+        properties.setProperty("classAdapters", classAdapters.joinToString(";") { "${it.objcName},${it.symbolName}" })
+        properties.setProperty("protocolAdapters", protocolAdapters.joinToString(";") { "${it.objcName},${it.symbolName}" })
+        properties.store(writer, null)
+    }
+
+    companion object {
+        fun deserialize(reader: java.io.Reader): ObjCCacheMetadata {
+            val properties = java.util.Properties()
+            properties.load(reader)
+            fun parseEntries(value: String?, isInterface: Boolean): List<ObjCCacheAdapterEntry> {
+                if (value.isNullOrEmpty()) return emptyList()
+                return value.split(";").filter { it.isNotEmpty() }.map {
+                    val parts = it.split(",")
+                    ObjCCacheAdapterEntry(parts[0], isInterface, parts[1])
+                }
+            }
+            return ObjCCacheMetadata(
+                classAdapters = parseEntries(properties.getProperty("classAdapters"), isInterface = false),
+                protocolAdapters = parseEntries(properties.getProperty("protocolAdapters"), isInterface = true),
+            )
+        }
     }
 }

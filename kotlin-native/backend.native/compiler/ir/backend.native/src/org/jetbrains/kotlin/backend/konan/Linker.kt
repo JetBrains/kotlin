@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
@@ -24,6 +25,7 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
             CompilerOutputKind.TEST_BUNDLE,
             CompilerOutputKind.DYNAMIC_CACHE,
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
+            CompilerOutputKind.OBJC_CACHE,
             CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
             CompilerOutputKind.PROGRAM -> run {
@@ -117,7 +119,12 @@ internal class Linker(
                     Family.OSX -> "Versions/A/$dylibName"
                     else -> error(target)
                 }
-                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                val moduleName = config.fullExportedNamePrefix
+                val objcCacheForceLoads = config.resolvedLibraries.getFullList().mapNotNull { library: KotlinLibrary ->
+                    config.cachedLibraries.getObjCCache(library, moduleName)?.binariesPaths
+                }.flatten().flatMap { listOf("-force_load", it) }
+
+                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath") + objcCacheForceLoads
                 val dylibPath = framework.child(dylibRelativePath)
                 dylibPath.parentFile.mkdirs()
                 executable = dylibPath.absolutePath

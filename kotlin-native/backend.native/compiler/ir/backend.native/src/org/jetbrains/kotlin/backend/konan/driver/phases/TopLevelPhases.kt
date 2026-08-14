@@ -141,6 +141,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
             val generationStates = this.map { fragment -> createGenerationState(fragment) }
+            if (context.config.produce.isHeaderCache) {
+                return generationStates
+            }
             val fragmentWithState = this.zip(generationStates)
 
             // In Kotlin/Native, lowerings are run not over modules, but over individual files.
@@ -404,9 +407,22 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val [linkerInput, cacheBinaries] = run {
-        val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
+        val resolvedCacheBinaries by lazy {
+            val baseResolved = resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult)
+            val moduleName = context.config.fullExportedNamePrefix
+            if (context.config.produce == CompilerOutputKind.FRAMEWORK) {
+                val additionalObjCCaches = moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.mapNotNull {
+                    context.config.cachedLibraries.getObjCCache(it.library, moduleName)?.binariesPaths
+                }.flatten()
+                if (additionalObjCCaches.isNotEmpty()) {
+                    ResolvedCacheBinaries(baseResolved.static + additionalObjCCaches, baseResolved.dynamic)
+                } else baseResolved
+            } else {
+                baseResolved
+            }
+        }
         when {
-            context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
+            context.config.produce == CompilerOutputKind.STATIC_CACHE || context.config.produce == CompilerOutputKind.OBJC_CACHE -> {
                 compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {

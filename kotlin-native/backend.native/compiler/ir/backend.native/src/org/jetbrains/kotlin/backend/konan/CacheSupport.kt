@@ -94,7 +94,9 @@ class CacheSupport(
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
         val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
         val baseLibraryCacheDirectory = cacheDirectory.child(
-                if (singleFileStrategy == null)
+                if (produce == CompilerOutputKind.OBJC_CACHE)
+                    CachedLibraries.getObjCCachedLibraryName(libraryToCache.klib, configuration.get(NativeConfigurationKeys.FULL_EXPORTED_NAME_PREFIX) ?: "")
+                else if (singleFileStrategy == null)
                     CachedLibraries.getCachedLibraryName(libraryToCache.klib)
                 else
                     CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
@@ -144,8 +146,13 @@ class CacheSupport(
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = File(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
-        val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
-        if (libraryCache is CachedLibraries.Cache.Monolithic)
+        val libraryCache = if (produce == CompilerOutputKind.OBJC_CACHE) {
+            val moduleName = configuration.get(NativeConfigurationKeys.FULL_EXPORTED_NAME_PREFIX) ?: ""
+            cachedLibraries.getObjCCache(libraryToAddToCache, moduleName)
+        } else {
+            cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
+        }
+        if (libraryCache is CachedLibraries.Cache.Monolithic && (produce.isHeaderCache || libraryCache.kind != CachedLibraries.Kind.HEADER))
             null
         else {
             val filesToCache = configuration.filesToCache
@@ -186,10 +193,19 @@ class CacheSupport(
 
         // Ensure not making cache for libraries that are already cached:
         libraryToCache?.klib?.let {
-            val cache = cachedLibraries.getLibraryCache(it)
-            if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationErrorAndThrow("can't cache library '${it.location}' " +
-                        "that is already cached in '${cache.path}'")
+            if (produce == CompilerOutputKind.OBJC_CACHE) {
+                val moduleName = configuration.get(NativeConfigurationKeys.FULL_EXPORTED_NAME_PREFIX) ?: ""
+                val cache = cachedLibraries.getObjCCache(it, moduleName)
+                if (cache is CachedLibraries.Cache.Monolithic) {
+                    configuration.reportCompilationErrorAndThrow("can't cache library '${it.location}' " +
+                            "that is already cached in '${cache.path}'")
+                }
+            } else {
+                val cache = cachedLibraries.getLibraryCache(it)
+                if (cache is CachedLibraries.Cache.Monolithic && (produce.isHeaderCache || cache.kind != CachedLibraries.Kind.HEADER)) {
+                    configuration.reportCompilationErrorAndThrow("can't cache library '${it.location}' " +
+                            "that is already cached in '${cache.path}'")
+                }
             }
         }
 

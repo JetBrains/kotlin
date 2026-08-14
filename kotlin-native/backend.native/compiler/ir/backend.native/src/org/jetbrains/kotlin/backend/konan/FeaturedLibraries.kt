@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
 internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())
+        getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries + listOfNotNull(config.libraryToCache?.klib)).toSet())
 
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(config.includedLibraries.toSet())

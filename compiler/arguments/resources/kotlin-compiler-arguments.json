@@ -18510,7 +18510,7 @@
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": "{program|static|dynamic|framework|library|bitcode}",
+                                            "current": "{program|static|dynamic|framework|library|bitcode|objc_cache}",
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {

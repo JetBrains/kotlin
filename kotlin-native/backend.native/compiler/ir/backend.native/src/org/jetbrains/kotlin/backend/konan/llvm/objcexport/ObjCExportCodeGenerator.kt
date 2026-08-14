@@ -37,9 +37,14 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
 
 internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
@@ -390,7 +395,30 @@ internal class ObjCExportCodeGenerator(
 
         val allReverseAdapters = createReverseAdapters(types)
 
-        return types.map {
+        val isObjCCache = generationState.config.produce == CompilerOutputKind.OBJC_CACHE
+        val libraryToCache = generationState.config.libraryToCache?.klib
+        val moduleName = generationState.config.fullExportedNamePrefix
+
+        val typesToGenerate = types.filter { type ->
+            if (type == objCClassForAny) {
+                !isObjCCache && (generationState.shouldDefineFunctionClasses || generationState.config.produce == CompilerOutputKind.FRAMEWORK)
+            } else {
+                val irClass = (type as? ObjCClassForKotlinClass)?.irClassSymbol?.owner
+                        ?: (type as? ObjCProtocolForKotlinInterface)?.irClassSymbol?.owner
+                val klib = irClass?.konanLibrary
+                if (isObjCCache) {
+                    klib != null && klib.uniqueName == libraryToCache?.uniqueName
+                } else {
+                    if (klib != null && generationState.config.cachedLibraries.getObjCCache(klib, moduleName) != null) {
+                        false
+                    } else {
+                        true
+                    }
+                }
+            }
+        }
+
+        return typesToGenerate.map {
             val reverseAdapters = allReverseAdapters.getValue(it).adapters
             when (it) {
                 objCClassForAny -> {
@@ -417,7 +445,25 @@ internal class ObjCExportCodeGenerator(
 
         objCTypeAdapters += generateTypeAdaptersForKotlinTypes(spec)
 
-        spec?.files?.forEach {
+        val isObjCCache = generationState.config.produce == CompilerOutputKind.OBJC_CACHE
+        val libraryToCache = generationState.config.libraryToCache?.klib
+        val moduleName = generationState.config.fullExportedNamePrefix
+
+        val filesToGenerate = spec?.files.orEmpty().filter { file ->
+            val firstMethod = file.methods.firstOrNull()?.baseMethod?.symbol?.owner
+            val klib = firstMethod?.konanLibrary
+            if (isObjCCache) {
+                klib != null && klib.uniqueName == libraryToCache?.uniqueName
+            } else {
+                if (klib != null && generationState.config.cachedLibraries.getObjCCache(klib, moduleName) != null) {
+                    false
+                } else {
+                    true
+                }
+            }
+        }
+
+        filesToGenerate.forEach {
             objCTypeAdapters += createTypeAdapterForFileClass(it)
             dataGenerator.emitEmptyClass(it.binaryName, namer.kotlinAnyName.binaryName)
         }
@@ -428,35 +474,51 @@ internal class ObjCExportCodeGenerator(
     internal fun generate(spec: ObjCExportCodeSpec?) {
         generateTypeAdapters(spec)
 
-        NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-            dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
+        val isObjCCache = generationState.config.produce == CompilerOutputKind.OBJC_CACHE
+        val shouldDefineStdlibFoundation = generationState.shouldDefineFunctionClasses
+
+        if (!isObjCCache || shouldDefineStdlibFoundation) {
+            NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
+                dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
+            }
+            dataGenerator.exportClass(namer.mutableSetName.binaryName)
+            dataGenerator.exportClass(namer.mutableMapName.binaryName)
+            dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
+
+            emitSpecialClassesConvertions()
         }
-        dataGenerator.exportClass(namer.mutableSetName.binaryName)
-        dataGenerator.exportClass(namer.mutableMapName.binaryName)
-        dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
 
-        emitSpecialClassesConvertions()
+        if (!isObjCCache) {
+            // Replace runtime global with weak linkage:
+            codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
+                    "Kotlin_ObjCInterop_uniquePrefix",
+                    codegen.staticData.cStringLiteral(namer.topLevelNamePrefix)
+            )
 
-        // Replace runtime global with weak linkage:
-        codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
-                "Kotlin_ObjCInterop_uniquePrefix",
-                codegen.staticData.cStringLiteral(namer.topLevelNamePrefix)
-        )
+            emitSelectorsHolder()
 
-        emitSelectorsHolder()
-
-        emitKt42254Hint()
+            emitKt42254Hint()
+        }
     }
 
     private fun emitTypeAdapters(objCTypeAdapters: List<ObjCTypeAdapter>) {
+        val isObjCCache = generationState.config.produce == CompilerOutputKind.OBJC_CACHE
         val placedClassAdapters = mutableMapOf<String, ConstPointer>()
         val placedInterfaceAdapters = mutableMapOf<String, ConstPointer>()
+        val exportedAdapterMetadata = mutableListOf<ObjCCacheAdapterEntry>()
 
         objCTypeAdapters.forEach { adapter ->
-            val typeAdapter = staticData.placeGlobal("", adapter).pointer
             val irClass = adapter.irClass
+            val isInterface = irClass?.isInterface == true
+            val typeAdapter = if (isObjCCache) {
+                val symbolName = "_Kotlin_ObjCExport_TypeAdapter_${adapter.objCName}"
+                exportedAdapterMetadata.add(ObjCCacheAdapterEntry(adapter.objCName, isInterface, symbolName))
+                staticData.placeGlobal(symbolName, adapter, isExported = true).pointer
+            } else {
+                staticData.placeGlobal("", adapter).pointer
+            }
 
-            val descriptorToAdapter = if (irClass?.isInterface == true) {
+            val descriptorToAdapter = if (isInterface) {
                 placedInterfaceAdapters
             } else {
                 // Objective-C class for Kotlin class or top-level declarations.
@@ -477,6 +539,40 @@ internal class ObjCExportCodeGenerator(
                 }
             }
         }
+
+        if (isObjCCache) {
+            val classAdapters = exportedAdapterMetadata.filter { !it.isInterface }
+            val protocolAdapters = exportedAdapterMetadata.filter { it.isInterface }
+            val metadata = ObjCCacheMetadata(classAdapters, protocolAdapters)
+            generationState.outputFiles.tempCacheDirectory?.child(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)?.child(CachedLibraries.OBJC_CACHE_METADATA_FILE_NAME)?.let { file ->
+                file.parentFile.mkdirs()
+                file.javaFile().bufferedWriter().use { metadata.serialize(it) }
+            }
+            return
+        }
+
+        val config = generationState.config
+        val moduleName = config.fullExportedNamePrefix
+        config.resolvedLibraries.getFullList().forEach { library: KotlinLibrary ->
+                val objcCache = config.cachedLibraries.getObjCCache(library, moduleName)
+                val metadata = (objcCache as? CachedLibraries.Cache.Monolithic)?.getObjCCacheMetadata()
+                if (metadata != null) {
+                    metadata.classAdapters.forEach { entry ->
+                        if (!placedClassAdapters.containsKey(entry.objcName)) {
+                            val global = LLVMAddGlobal(llvm.module, llvm.runtime.objCTypeAdapter, entry.symbolName)!!
+                            LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
+                            placedClassAdapters[entry.objcName] = constPointer(global)
+                        }
+                    }
+                    metadata.protocolAdapters.forEach { entry ->
+                        if (!placedInterfaceAdapters.containsKey(entry.objcName)) {
+                            val global = LLVMAddGlobal(llvm.module, llvm.runtime.objCTypeAdapter, entry.symbolName)!!
+                            LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
+                            placedInterfaceAdapters[entry.objcName] = constPointer(global)
+                        }
+                    }
+                }
+            }
 
         fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, prefix: String) {
             val sortedAdapters = nameToAdapter.toList().sortedBy { it.first }.map {

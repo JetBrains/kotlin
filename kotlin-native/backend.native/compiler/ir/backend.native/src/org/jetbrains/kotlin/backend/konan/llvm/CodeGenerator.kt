@@ -367,6 +367,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
  */
 internal fun CodeGenerator.emitFinalFunctionTrampolineAlias(irFunction: IrSimpleFunction) {
     val aliasee = llvmFunctionOrNull(irFunction) ?: return
+    if (LLVMIsDeclaration(aliasee.asCallback()) != 0) return
     val targetName = if (irFunction.isExported())
         irFunction.computeSymbolName()
     else
