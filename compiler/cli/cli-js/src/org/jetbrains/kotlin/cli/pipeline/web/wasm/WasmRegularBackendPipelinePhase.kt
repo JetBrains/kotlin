@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
-import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
+import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 
-object WasmRegularBackendPipelinePhase : WasmBackendPipelinePhase() {
+object WasmRegularBackendPipelinePhase : WasmBackendPipelinePhase<
+        WasmModuleArtifact,
+        WasmSrcFileArtifact,
+        WasmIrProgramFragments,
+        WasmICContextWholeWorld,
+        >() {
     override fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
+        icCaches: List<WasmModuleArtifact>,
         configuration: CompilerConfiguration
     ): List<WasmIrModuleConfiguration> = compileIncrementallyWholeWorld(icCaches, configuration)
 
