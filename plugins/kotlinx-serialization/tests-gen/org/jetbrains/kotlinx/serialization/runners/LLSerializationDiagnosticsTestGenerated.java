@@ -265,6 +265,12 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
     }
 
     @Test
+    @TestMetadata("SerializableWithOnTypeUsage.kt")
+    public void testSerializableWithOnTypeUsage() {
+      run("SerializableWithOnTypeUsage.kt");
+    }
+
+    @Test
     @TestMetadata("serializerFromOtherModule.kt")
     public void testSerializerFromOtherModule() {
       run("serializerFromOtherModule.kt");

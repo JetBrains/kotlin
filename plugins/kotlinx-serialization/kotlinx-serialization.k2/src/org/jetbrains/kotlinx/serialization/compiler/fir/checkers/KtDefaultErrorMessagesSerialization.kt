@@ -157,6 +157,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(
+            FirSerializationErrors.SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT,
+            "@Serializable(with = ...) on a type is only taken into account for types of serializable class properties. " +
+                    "Here it has no effect: 'serializer<T>()' and the reflective serializer lookup ignore type annotations, " +
+                    "so the default serializer is used instead. Pass the serializer explicitly."
+        )
+        map.put(
             FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER,
             "This property is marked as @Transient and therefore must have an initializing expression."
         )
