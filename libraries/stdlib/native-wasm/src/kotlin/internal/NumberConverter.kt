@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin
+package kotlin.internal
 
 import kotlin.math.ceil
 

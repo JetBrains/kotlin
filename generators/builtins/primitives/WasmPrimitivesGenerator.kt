@@ -249,7 +249,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         when (thisKind) {
-            in PrimitiveType.floatingPoint -> "NumberConverter.convert(this)"
+            in PrimitiveType.floatingPoint -> "kotlin.internal.NumberConverter.convert(this)"
             PrimitiveType.INT, PrimitiveType.LONG -> "itoa${thisKind.bitSize}(this)"
             else -> "this.toInt().toString()"
         }.setAsExpressionBody()
