@@ -148,17 +148,15 @@ internal fun Project.createGeneralTestTask(
         }
 
         val junit5ParallelTestWorkers =
-            project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
+            project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution
+                ?: minOf(Runtime.getRuntime().availableProcessors(), defaultMaxJunit5ParallelThreads)
 
         val memoryPerTestProcess = totalMaxMemoryForTestsMb
             .coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
             .MiB
 
         this.maxHeapSize = (maxHeapSize ?: memoryPerTestProcess - maxMetaspaceSize - reservedCodeCacheSize).toJvmMiB()
-
-        if (minHeapSize != null) {
-            this.minHeapSize = minHeapSize.toJvmMiB()
-        }
+        this.minHeapSize = (minHeapSize ?: 64.MiB).toJvmMiB()
 
         systemProperty("idea.is.unit.test", "true")
         systemProperty("idea.use.native.fs.for.win", false)
@@ -216,6 +214,7 @@ internal fun Project.createGeneralTestTask(
 }
 
 private val defaultMaxMemoryPerTestWorkerMb = 1600
+private val defaultMaxJunit5ParallelThreads = 16
 
 private fun Size.toJvmMiB(): String {
     require(bytes % 1.MiB.bytes == 0L) { "JVM memory size must be a whole number of MiB: $bytes bytes" }
