@@ -154,8 +154,16 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return result
     }
 
+    /**
+     * Finds the single member named [callableId] in the supertypes of [owner], to be used as the prototype for
+     * the member the plugin generates.
+     *
+     * Returns `null` when the lookup is ambiguous or empty instead of failing: a supertype may already provide a
+     * concrete implementation of a `KSerializer` member, in which case there is nothing for us to generate and the
+     * inherited one is used. This used to be an `error()` and surfaced as an internal compiler error (KT-74077).
+     */
     @OptIn(SymbolInternals::class)
-    private fun <T> getFromSupertype(callableId: CallableId, owner: FirClassSymbol<*>, extractor: (FirTypeScope) -> List<T>): T {
+    private fun <T> getFromSupertype(callableId: CallableId, owner: FirClassSymbol<*>, extractor: (FirTypeScope) -> List<T>): T? {
         val scopeSession = ScopeSession()
         val scopes = lookupSuperTypes(
             owner, lookupInterfaces = true, deep = false, useSiteSession = session
@@ -173,7 +181,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         }
 
         val targets = scopes.flatMap { extractor(it) }
-        return targets.singleOrNull() ?: error("Zero or multiple overrides found for ${callableId.callableName} in $owner")
+        return targets.singleOrNull()
     }
 
     @OptIn(SymbolInternals::class)
@@ -199,8 +207,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             )
             val serializableGetterFromFactory =
                 runIf(serializableClass.companionNeedsSerializerFactory(session) && callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
-                    val original = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }.fir
-                    generateSerializerFactoryVararg(owner, callableId, original)
+                    val original = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }?.fir
+                    original?.let { generateSerializerFactoryVararg(owner, callableId, it) }
                 }
             return listOfNotNull(serializableGetterInCompanion, serializableGetterFromFactory)
         }
@@ -213,7 +221,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER
             )
         ) return emptyList()
-        val target = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }
+        val target = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) } ?: return emptyList()
         val original = target.fir
 
         // TODO(KT-73060): To avoid an exception caused by the lazy resolution on the generated function with `FirResolvePhase.STATUS`
@@ -280,7 +288,9 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         if (!owner.isSerializer) return emptyList()
         if (callableId.callableName != SerialEntityNames.SERIAL_DESC_FIELD_NAME) return emptyList()
 
-        val target = getFromSupertype(callableId, owner) { it.getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() }
+        val target = getFromSupertype(callableId, owner) {
+            it.getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>()
+        } ?: return emptyList()
         val property = createMemberProperty(
             owner,
             SerializationPluginKey,
