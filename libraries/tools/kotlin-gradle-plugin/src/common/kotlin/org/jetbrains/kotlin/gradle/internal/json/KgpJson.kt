@@ -15,6 +15,9 @@ import kotlinx.serialization.json.Json
  * `org.jetbrains.kotlin.gradle.internal.kotlinx.serialization` in the fat jar.
  * All KGP code should use these instances rather than creating its own [Json] objects,
  * so that serialization configuration is centralized.
+ * The exception is a published format whose exact bytes older Kotlin versions depend on, such as
+ * `kotlin-project-structure-metadata.json`: its instance sits next to its DTOs and sets every option itself,
+ * so a change here can't alter it.
  */
 @OptIn(ExperimentalSerializationApi::class)
 internal object KgpJson {
