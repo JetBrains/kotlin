@@ -148,7 +148,7 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
 
     // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
     val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPathString() }
-    val friendModules = config.resolvedLibraries.getFullList()
+    val friendModules = config.resolvedLibraries.getFullList() // TODO(KT-61096): rewrite this code to make it simpler
             .filter { it.path.canonicalPathString() in canonicalFriendPaths }
             .map { it.uniqueName }
 

@@ -392,6 +392,10 @@ class NativeSecondStageCompilationConfig(
     /**
      * Returns the list of libraries in reverse topological order.
      */
+    // TODO(KT-61096): This is a form of DCE to avoid loading ALL platform libraries from the Kotlin/Native distribution.
+    //  We should not use it. Instead, we should load all libraries, then run the IR linkage cycle and figure out which
+    //  platform libraries were actually not "touched" and filter them out. There should not be relevant `IrModuleFragment`s
+    //  down the pipeline after the IR linkage phase.
     fun librariesWithDependencies(): List<KotlinLibrary> {
         return resolvedLibraries.filterRoots {
             // Let's leave only those dependencies (roots) that have been explicitly specified by the used in compiler's CLI.
@@ -410,6 +414,7 @@ class NativeSecondStageCompilationConfig(
     override val loadedKlibs = loadNativeKlibs(configuration, target).let { original ->
         // Avoid having duplicates of the same `KotlinLibrary` loaded by the KLIB resolver and `KlibLoader`.
         // TODO(KT-61096): Drop this `let { ... }` block when completely switching to `KlibLoader`.
+        // Note: The order of libraries is not important.
         val canonicalPathToLibraryLoadedByKlibResolver: Map<Path, KotlinLibrary> = resolvedLibraries.getFullList().associateBy { it.canonicalPath }
 
         val substituted = LoadedNativeKlibs(
@@ -629,7 +634,7 @@ class NativeSecondStageCompilationConfig(
 
     private fun createCacheSupport() = CacheSupport(
             configuration = configuration,
-            allLibraries = resolvedLibraries.getFullList(),
+            allLibraries = resolvedLibraries.getFullList(), // Note: There is the need to have RTO of libs in certain cases inside CacheSupport.
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,
