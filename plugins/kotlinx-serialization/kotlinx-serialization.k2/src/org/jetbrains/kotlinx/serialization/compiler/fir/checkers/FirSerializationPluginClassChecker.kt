@@ -473,15 +473,39 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
     context(reporter: DiagnosticReporter)
     private fun CheckerContext.checkVisibility(classSymbol: FirClassSymbol<*>, customSerializer: ConeKotlinType) {
-        val serializerClass = customSerializer.toRegularClassSymbol() ?: return
-        if (serializerClass.visibility == Visibilities.Private && classSymbol.visibility != Visibilities.Private) {
-            reporter.reportOn(
-                classSymbol.serializableOrMetaAnnotationSource(session),
-                FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
-                serializerClass,
-                classSymbol
-            )
+        if (classSymbol.visibility == Visibilities.Private) return
+        val privateDeclaration = findPrivateDeclarationInAliasChain(classSymbol, customSerializer) ?: return
+        reporter.reportOn(
+            classSymbol.serializableOrMetaAnnotationSource(session),
+            FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
+            privateDeclaration,
+            classSymbol
+        )
+    }
+
+    /**
+     * `@Serializable(with = ...)` may name a typealias, and then the alias itself has to be reachable from the use
+     * site just as much as the class it expands to. The `ConeKotlinType` of the annotation argument is already
+     * expanded, which is why a `private typealias` of a public serializer used to go unnoticed. Start from the
+     * unexpanded qualifier instead and return the first private link in the chain — that is the one the user has to
+     * widen. See KT-71680.
+     */
+    private fun CheckerContext.findPrivateDeclarationInAliasChain(
+        classSymbol: FirClassSymbol<*>,
+        customSerializer: ConeKotlinType,
+    ): FirClassLikeSymbol<*>? {
+        val unexpandedReference = classSymbol.serializableAnnotation(needArguments = true, session)
+            ?.getGetKClassArgument(AnnotationParameterNames.WITH)
+            ?.let { (it.argument as? FirResolvedQualifier)?.qualifierSymbol }
+
+        var symbol = unexpandedReference ?: customSerializer.classLikeLookupTagIfAny?.toSymbol()
+        val visited = mutableSetOf<FirClassLikeSymbol<*>>()
+        while (symbol != null && visited.add(symbol)) {
+            if (symbol.visibility == Visibilities.Private) return symbol
+            val alias = symbol as? FirTypeAliasSymbol ?: break
+            symbol = alias.resolvedExpandedTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol()
         }
+        return null
     }
 
     private fun FirClassSymbol<*>.isAnonymousObjectOrInsideIt(c: CheckerContext): Boolean {
