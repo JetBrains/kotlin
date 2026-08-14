@@ -40,10 +40,14 @@ fun box() = abiTest {
     expectFailure(linkage("Constructor 'RemovedClass.<init>' can not be called: No constructor found for symbol '/RemovedClass.<init>'")) { removedClassParameterCall() }
     expectFailure(linkage("Function 'removedClassTypeParameter' can not be called: No function found for symbol '/A.removedClassTypeParameter'")) { removedClassTypeParameterCall() }
 
-    expectFailure(linkage("Can not get instance of singleton 'Companion': No class found for symbol '/B.Companion'")) { removedCompanionValCall() }
-    expectFailure(linkage("Can not get instance of singleton 'Companion': No class found for symbol '/B.Companion'")) { removedCompanionVarCall() }
-    expectFailure(linkage("Can not get instance of singleton 'Companion': No class found for symbol '/B.Companion'")) { removedCompanionVarSet() }
-    expectFailure(linkage("Can not get instance of singleton 'Companion': No class found for symbol '/B.Companion'")) { removedCompanionFunCall() }
+    expectFailure(linkage("Property accessor 'removedCompanionVal.<get-removedCompanionVal>' can not be called: No property accessor found for symbol '/B.removedCompanionVal.<get-removedCompanionVal>'")) { removedCompanionValCall() }
+    expectFailure(linkage("Property accessor 'removedCompanionVar.<get-removedCompanionVar>' can not be called: No property accessor found for symbol '/B.removedCompanionVar.<get-removedCompanionVar>'")) { removedCompanionVarCall() }
+    expectFailure(linkage("Property accessor 'removedCompanionVar.<set-removedCompanionVar>' can not be called: No property accessor found for symbol '/B.removedCompanionVar.<set-removedCompanionVar>'")) { removedCompanionVarSet() }
+    expectFailure(linkage("Function 'removedCompanionFun' can not be called: No function found for symbol '/B.removedCompanionFun'")) { removedCompanionFunCall() }
+    expectFailure(linkage("Property accessor 'removedCompanionVal.<get-removedCompanionVal>' can not be called: No property accessor found for symbol '/B.removedCompanionVal.<get-removedCompanionVal>'")) { removedCompanionValRef.invoke() }
+    expectFailure(linkage("Property accessor 'removedCompanionVar.<get-removedCompanionVar>' can not be called: No property accessor found for symbol '/B.removedCompanionVar.<get-removedCompanionVar>'")) { removedCompanionVarRef.invoke() }
+    expectFailure(linkage("Function 'removedCompanionFun' can not be called: No function found for symbol '/B.removedCompanionFun'")) { removedCompanionFunRef.invoke() }
+
 
     expectFailure(linkage("Function 'blockToObject' can not be called: No function found for symbol '/A.blockToObject'")) { blockToObjectCall() }
     expectFailure(linkage("Function 'objectToBlock' can not be called: No function found for symbol '/A.Companion.objectToBlock'")) { objectToBlockCall() }

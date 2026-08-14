@@ -47,6 +47,9 @@ fun removedCompanionVarSet() {
     B.removedCompanionVar = 0
 }
 fun removedCompanionFunCall() = B.removedCompanionFun()
+val removedCompanionFunRef = B::removedCompanionFun
+val removedCompanionValRef = B::removedCompanionVal
+val removedCompanionVarRef = B::removedCompanionVar
 
 fun blockToObjectCall() = A.blockToObject()
 fun objectToBlockCall() = A.objectToBlock()

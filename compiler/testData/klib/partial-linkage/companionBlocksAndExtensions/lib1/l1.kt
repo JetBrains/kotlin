@@ -57,7 +57,7 @@ class NewBlock {
 class RemovedClass(val value: Int)
 
 class B {
-    companion object {
+    companion {
         val removedCompanionVal = 42
         var removedCompanionVar = 42
         fun removedCompanionFun() = "removedCompanionFun"
