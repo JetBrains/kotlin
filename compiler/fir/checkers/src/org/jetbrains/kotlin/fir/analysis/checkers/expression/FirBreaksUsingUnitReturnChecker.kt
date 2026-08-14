@@ -39,6 +39,7 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
                         reporter.reportOn(expression.source, FirErrors.UNIT_RETURN_AS_BREAK, calledFunction)
                     else -> break
                 }
+                expression.target.labeledElement == call.lambdaArgument -> break
                 else -> continue
             }
         }

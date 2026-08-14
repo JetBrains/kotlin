@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
 fun test() {
     listOf("a", "b").forEach {
@@ -11,6 +11,13 @@ fun test() {
             if (it < 3) <!UNIT_RETURN_AS_BREAK("takeWhile")!>return@run<!>
             true
         }
+    }
+
+    mapOf("a" to 1, "b" to 2).filter {
+        run {
+            return@run
+        }
+        true
     }
 }
 
