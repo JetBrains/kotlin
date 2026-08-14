@@ -416,11 +416,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
             typesForRecursiveTypeParameters.map { type ->
                 type.replaceArgumentsDeeply {
                     when (val typeConstructor = it.getType()?.typeConstructor()) {
-                        // With the precise captured-type handling, the variable is kept in the supertypes and
-                        // replaced with the captured type itself when the variable is fixed to it, so the
-                        // supertypes properly refer to the captured type instead of a star projection
-                        // (see substituteTypeVariableIntoCapturedTypeSupertypes)
-                        typeVariable -> if (morePreciseCapturedTypeHandling) it else starProjection
+                        typeVariable -> starProjection
                         is TypeVariableTypeConstructorMarker -> createTypeArgument(createUninferredType(typeConstructor), it.getVariance())
                         else -> it
                     }
@@ -430,16 +426,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
         return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
     }
-
-    /**
-     * For captured types created by [createCapturedStarProjectionForSelfType] under
-     * [morePreciseCapturedTypeHandling]: once [typeVariable] is fixed to [resultType], replaces the
-     * occurrences of the variable inside the supertypes of the captured types contained in [resultType]
-     * with those captured types themselves, closing the self-reference.
-     *
-     * Only implemented in K2, where the supertypes of a captured type are mutable.
-     */
-    fun substituteTypeVariableIntoCapturedTypeSupertypes(resultType: KotlinTypeMarker, typeVariable: TypeConstructorMarker) {}
 
     fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?
 
@@ -711,7 +697,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     /** See [CustomSubtypingCallback] */
     val customSubtypingCallback: CustomSubtypingCallback? get() = null
-    val morePreciseCapturedTypeHandling: Boolean get() = false
 }
 
 /**

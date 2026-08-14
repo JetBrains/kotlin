@@ -125,9 +125,6 @@ R|<local>/shape|.removeTraitIfPresent#()
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 7. `TypeVariable(B) == CapturedType(*)` _from Fix variable B_
-8. Combine `TypeVariable(B) == CapturedType(*)` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), OperationShape>`
-    1. `CapturedType(*) <: TypeVariable(B)`
-    2. `TypeVariable(B) <: CapturedType(*)`
 
 ### Call 6
 
@@ -327,10 +324,6 @@ R|<local>/shape|.removeTraitIfPresent#<R|OperationShape|, R|AbstractShapeBuilder
     1. `OperationShape <: TypeVariable(T)`
     2. `TypeVariable(T) <: OperationShape`
 9. `TypeVariable(B) == AbstractShapeBuilder<*, OperationShape>` _from TypeParameter R|AbstractShapeBuilder<*, OperationShape>|_
-10. Combine `TypeVariable(B) == AbstractShapeBuilder<*, OperationShape>` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(T)>`
-    1. `AbstractShapeBuilder<*, OperationShape> <: TypeVariable(B)`
-    2. `TypeVariable(B) <: kotlin/Nothing`
-11. __NewConstraintError: `AbstractShapeBuilder<*, OperationShape> <: kotlin/Nothing`__
 
 ##### Resolution Stages > CheckExtensionReceiver:
 
@@ -393,10 +386,6 @@ R|<local>/shape|.removeTraitIfPresent#<R|OperationShape|, R|AbstractShapeBuilder
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 7. `TypeVariable(B) == AbstractShapeBuilder<*, OperationShape>` _from Fix variable B_
-8. __NewConstraintError: `AbstractShapeBuilder<*, OperationShape> <: kotlin/Nothing`__
-9. Combine `TypeVariable(B) == AbstractShapeBuilder<*, OperationShape>` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), OperationShape>`
-    1. `AbstractShapeBuilder<*, OperationShape> <: TypeVariable(B)`
-    2. `TypeVariable(B) <: kotlin/Nothing`
 
 ### Call 9
 
@@ -473,9 +462,6 @@ shapeToBuilder#(R|<local>/target|)
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 5. `TypeVariable(B) == CapturedType(*)` _from Fix variable B_
-6. Combine `TypeVariable(B) == CapturedType(*)` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>`
-    1. `CapturedType(*) <: TypeVariable(B)`
-    2. `TypeVariable(B) <: CapturedType(*)`
 
 ### Call 10
 
@@ -596,13 +582,18 @@ shapeToBuilder#<R|AbstractShapeBuilder<*, SimpleShape>|, R|SimpleShape|>(R|<loca
 4. `TypeVariable(S) <: Shape` _from DeclaredUpperBound_
 5. `TypeVariable(B) == AbstractShapeBuilder<*, SimpleShape>` _from TypeParameter R|AbstractShapeBuilder<*, SimpleShape>|_
 6. Combine `TypeVariable(B) == AbstractShapeBuilder<*, SimpleShape>` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(S)>`
-    1. `AbstractShapeBuilder<*, SimpleShape> <: TypeVariable(B)`
-    2. `TypeVariable(B) <: kotlin/Nothing`
-    3. `SimpleShape <: TypeVariable(S)`
-    4. `TypeVariable(S) <: SimpleShape`
-7. __NewConstraintError: `AbstractShapeBuilder<*, SimpleShape> <: kotlin/Nothing`__
-8. Combine `SimpleShape <: TypeVariable(S)` with `TypeVariable(S) <: SimpleShape`
+    1. `SimpleShape <: TypeVariable(S)`
+    2. `TypeVariable(S) <: SimpleShape`
+7. Combine `SimpleShape <: TypeVariable(S)` with `TypeVariable(S) <: SimpleShape`
     1. `TypeVariable(S) == SimpleShape`
+
+##### Resolution Stages > CheckArguments:
+
+1. `SimpleShape <: TypeVariable(S)` _from Argument R|<local>/target|_
+
+##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
+
+1. `TypeVariable(B) <: AbstractShapeBuilder<*, *>` _from ExpectedType for some call_
 
 ##### Call Completion:
 
@@ -657,7 +648,3 @@ shapeToBuilder#<R|AbstractShapeBuilder<*, SimpleShape>|, R|SimpleShape|>(R|<loca
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 5. `TypeVariable(B) == AbstractShapeBuilder<*, SimpleShape>` _from Fix variable B_
-6. __NewConstraintError: `AbstractShapeBuilder<*, SimpleShape> <: kotlin/Nothing`__
-7. Combine `TypeVariable(B) == AbstractShapeBuilder<*, SimpleShape>` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>`
-    1. `AbstractShapeBuilder<*, SimpleShape> <: TypeVariable(B)`
-    2. `TypeVariable(B) <: kotlin/Nothing`

@@ -1,11 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 class Foo<T : Enum<T>>(val values: Array<T>)
 
 fun foo(x: Array<out Enum<*>>) {
-    val y = Foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    val y = Foo(x)
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, localProperty, outProjection,
