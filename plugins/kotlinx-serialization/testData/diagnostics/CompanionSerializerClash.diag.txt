@@ -1,13 +1,13 @@
-/CompanionSerializerClash.kt:11:9: error: Function 'serializer' clashes with the one that the serialization plugin generates in the companion object of this class, which makes the generated function unreachable. Rename this function, change its signature, or specify the serializer explicitly with @Serializable(with = ...) on the class.
+/CompanionSerializerClash.kt:11:9: error: Function 'serializer' clashes with the one that the serialization plugin generates here, which makes the generated function unreachable. Rename this function or change its signature.
 
-/CompanionSerializerClash.kt:18:9: error: Function 'serializer' clashes with the one that the serialization plugin generates in the companion object of this class, which makes the generated function unreachable. Rename this function, change its signature, or specify the serializer explicitly with @Serializable(with = ...) on the class.
+/CompanionSerializerClash.kt:18:9: error: Function 'serializer' clashes with the one that the serialization plugin generates here, which makes the generated function unreachable. Rename this function or change its signature.
 
 /CompanionSerializerClash.kt:44:2: warning: This declaration needs opt-in. Its usage should be marked with '@kotlinx.serialization.ExperimentalSerializationApi' or '@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)'
 
-/CompanionSerializerClash.kt:47:9: error: Function 'generatedSerializer' clashes with the one that the serialization plugin generates in the companion object of this class, which makes the generated function unreachable. Rename this function, change its signature, or specify the serializer explicitly with @Serializable(with = ...) on the class.
+/CompanionSerializerClash.kt:47:9: error: Function 'generatedSerializer' clashes with the one that the serialization plugin generates here, which makes the generated function unreachable. Rename this function or change its signature.
 
-/CompanionSerializerClash.kt:62:5: error: Function 'serializer' clashes with the one that the serialization plugin generates in the companion object of this class, which makes the generated function unreachable. Rename this function, change its signature, or specify the serializer explicitly with @Serializable(with = ...) on the class.
+/CompanionSerializerClash.kt:62:5: error: Function 'serializer' clashes with the one that the serialization plugin generates here, which makes the generated function unreachable. Rename this function or change its signature.
 
-/CompanionSerializerClash.kt:87:9: error: Function 'serializer' clashes with the one that the serialization plugin generates in the companion object of this class, which makes the generated function unreachable. Rename this function, change its signature, or specify the serializer explicitly with @Serializable(with = ...) on the class.
+/CompanionSerializerClash.kt:87:9: error: Function 'serializer' clashes with the one that the serialization plugin generates here, which makes the generated function unreachable. Rename this function or change its signature.
 
-/CompanionSerializerClash.kt:94:9: error: Function 'serializer' clashes with the one that the serialization plugin generates in the companion object of this class, which makes the generated function unreachable. Rename this function, change its signature, or specify the serializer explicitly with @Serializable(with = ...) on the class.
+/CompanionSerializerClash.kt:94:9: error: Function 'serializer' clashes with the one that the serialization plugin generates here, which makes the generated function unreachable. Rename this function or change its signature.
