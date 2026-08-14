@@ -3,13 +3,16 @@
 // MODULE: Main
 // FILE: suspend_super_and_inherited.kt
 
+// `notOpen` is final, so it has no vtable slot at all
 open class AsyncBase {
     open suspend fun greet(name: String): String = "Kotlin: $name"
     open suspend fun count(): Int = 42
+    suspend fun notOpen(): String = "kotlin-final"
 }
 
 suspend fun callGreet(base: AsyncBase, name: String): String = base.greet(name)
 suspend fun callCount(base: AsyncBase): Int = base.count()
+suspend fun callNotOpen(base: AsyncBase): String = base.notOpen()
 
 interface AsyncSpeaker {
     suspend fun speak(): String

@@ -28,8 +28,12 @@ func swiftSubclassInheritsNonOverriddenSuspendMethod() async throws {
 
     let derived = PartialDerived()
     #expect(try await callGreet(base: derived, name: "X") == "Swift: X")
-    // Inherited Kotlin `count` reached via the direct-dispatch bridge (no recursion).
+    // Inherited Kotlin `count` reached via the direct-dispatch bridge (no recursion): the slot exists but is
+    // left unpatched.
     #expect(try await callCount(base: derived) == 42)
+    // `notOpen` is final, so there is no slot to patch in the first place; the Swift subclass must still
+    // reach the Kotlin body.
+    #expect(try await callNotOpen(base: derived) == "kotlin-final")
 }
 
 // A Swift class that inherits a Kotlin class and first-adopts a Kotlin `suspend`-interface, inheriting
