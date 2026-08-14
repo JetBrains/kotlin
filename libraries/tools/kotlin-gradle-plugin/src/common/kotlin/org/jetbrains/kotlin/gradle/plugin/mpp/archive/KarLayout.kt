@@ -39,7 +39,9 @@ internal object KarLayout {
         val state = Attribute.of("org.jetbrains.kotlin.kar.state", State::class.java)
 
         enum class CompressionMethod {
-            NONE, XZ;
+            UNKNOWN,
+            NONE,
+            XZ;
         }
 
         val compressionMethod = Attribute.of("org.jetbrains.kotlin.kar.compression.method", CompressionMethod::class.java)
