@@ -284,10 +284,8 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
     ) {
         printDeprecationOnUselessFieldIfNeeded(field, builder, fieldIsUseless)
         printModifiers(builder, field, fieldIsUseless)
-        val isLeafBuilder = builder is LeafBuilder<*, *, *>
-        val useVar = isLeafBuilder && field.name in builder.listFieldsWithVar
-        print(if (useVar) "var " else "val ", field.name, ": ", actualTypeOfField(field).render())
-        if (isLeafBuilder) {
+        print("val ", field.name, ": ", actualTypeOfField(field).render())
+        if (builder is LeafBuilder<*, *, *>) {
             print(" = []")
         }
         println()
