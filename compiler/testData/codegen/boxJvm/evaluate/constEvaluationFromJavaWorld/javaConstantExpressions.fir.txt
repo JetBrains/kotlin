@@ -1,0 +1,237 @@
+FILE: usages.kt
+    public final const [EvaluatedValue=Byte(44)] val BYTE_CAST: R|kotlin/Byte| = Q|test/Bar|.R|test/Bar.BYTE_CAST*s|
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(4464)] val SHORT_CAST: R|kotlin/Short| = Q|test/Bar|.R|test/Bar.SHORT_CAST*s|
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Char(A)] val CHAR_CAST: R|kotlin/Char| = Q|test/Bar|.R|test/Bar.CHAR_CAST*s|
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Byte(44)] val BYTE_CAST_OF_EXPRESSION: R|kotlin/Byte| = Q|test/Bar|.R|test/Bar.BYTE_CAST_OF_EXPRESSION*s|
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Int(2)] val INT_CAST_OF_DOUBLE: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.INT_CAST_OF_DOUBLE*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(1500)] val LONG_CAST_OF_DOUBLE: R|kotlin/Long| = Q|test/Bar|.R|test/Bar.LONG_CAST_OF_DOUBLE*s|
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Char(B)] val CHAR_CAST_OF_CHAR_ARITHMETIC: R|kotlin/Char| = Q|test/Bar|.R|test/Bar.CHAR_CAST_OF_CHAR_ARITHMETIC*s|
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Byte(7)] val BYTE_WITHOUT_CAST: R|kotlin/Byte| = Q|test/Bar|.R|test/Bar.BYTE_WITHOUT_CAST*s|
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(8)] val SHORT_WITHOUT_CAST: R|kotlin/Short| = Q|test/Bar|.R|test/Bar.SHORT_WITHOUT_CAST*s|
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(5)] val SHIFTED: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.SHIFTED*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(1099511627776)] val LONG_SHIFTED: R|kotlin/Long| = Q|test/Bar|.R|test/Bar.LONG_SHIFTED*s|
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Int(48)] val MASKED: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.MASKED*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(9)] val PARENTHESIZED: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.PARENTHESIZED*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-3)] val NEGATED: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.NEGATED*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-4)] val INVERTED: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.INVERTED*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Boolean(true)] val COMPARED: R|kotlin/Boolean| = Q|test/Bar|.R|test/Bar.COMPARED*s|
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val CONJUNCTION: R|kotlin/Boolean| = Q|test/Bar|.R|test/Bar.CONJUNCTION*s|
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Double(0.5)] val HALF: R|kotlin/Double| = Q|test/Bar|.R|test/Bar.HALF*s|
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Float(0.25)] val QUARTER: R|kotlin/Float| = Q|test/Bar|.R|test/Bar.QUARTER*s|
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Int(13)] val SUM_WITH_STATIC_IMPORT: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.SUM_WITH_STATIC_IMPORT*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(20)] val FROM_OTHER_CLASS: R|kotlin/Int| = Q|test/Bar|.R|test/Bar.FROM_OTHER_CLASS*s|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=String(hello)] val CONCATENATED: R|kotlin/String| = Q|test/Bar|.R|test/Bar.CONCATENATED*s|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(n=4)] val CONCATENATED_WITH_NUMBER: R|kotlin/String| = Q|test/Bar|.R|test/Bar.CONCATENATED_WITH_NUMBER*s|
+        public get(): R|kotlin/String|
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class ConstArgument : R|kotlin/Annotation| {
+        public constructor(intValue: R|kotlin/Int|, byteValue: R|kotlin/Byte|, charValue: R|kotlin/Char|, stringValue: R|kotlin/String|): R|ConstArgument| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val intValue: R|kotlin/Int| = R|<local>/intValue|
+            public get(): R|kotlin/Int|
+
+        public final val byteValue: R|kotlin/Byte| = R|<local>/byteValue|
+            public get(): R|kotlin/Byte|
+
+        public final val charValue: R|kotlin/Char| = R|<local>/charValue|
+            public get(): R|kotlin/Char|
+
+        public final val stringValue: R|kotlin/String| = R|<local>/stringValue|
+            public get(): R|kotlin/String|
+
+    }
+    @R|ConstArgument|(intValue = Q|test/Bar|.R|test/Bar.SUM_WITH_STATIC_IMPORT*s| [evaluated = Int(13)], byteValue = Q|test/Bar|.R|test/Bar.BYTE_CAST*s| [evaluated = Byte(44)], charValue = Q|test/Bar|.R|test/Bar.CHAR_CAST*s| [evaluated = Char(A)], stringValue = Q|test/Bar|.R|test/Bar.CONCATENATED*s| [evaluated = String(hello)]) public final class Annotated : R|kotlin/Any| {
+        public constructor(): R|Annotated| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/BYTE_CAST|, Int(44).R|kotlin/Int.toByte|()) ->  {
+                ^box <strcat>(String(Fail BYTE_CAST: ), R|/BYTE_CAST|)
+            }
+        }
+
+        when () {
+            !=(R|/SHORT_CAST|, Int(4464).R|kotlin/Int.toShort|()) ->  {
+                ^box <strcat>(String(Fail SHORT_CAST: ), R|/SHORT_CAST|)
+            }
+        }
+
+        when () {
+            !=(R|/CHAR_CAST|, Char(A)) ->  {
+                ^box <strcat>(String(Fail CHAR_CAST: ), R|/CHAR_CAST|)
+            }
+        }
+
+        when () {
+            !=(R|/BYTE_CAST_OF_EXPRESSION|, Int(44).R|kotlin/Int.toByte|()) ->  {
+                ^box <strcat>(String(Fail BYTE_CAST_OF_EXPRESSION: ), R|/BYTE_CAST_OF_EXPRESSION|)
+            }
+        }
+
+        when () {
+            !=(R|/INT_CAST_OF_DOUBLE|, Int(2)) ->  {
+                ^box <strcat>(String(Fail INT_CAST_OF_DOUBLE: ), R|/INT_CAST_OF_DOUBLE|)
+            }
+        }
+
+        when () {
+            !=(R|/LONG_CAST_OF_DOUBLE|, Long(1500)) ->  {
+                ^box <strcat>(String(Fail LONG_CAST_OF_DOUBLE: ), R|/LONG_CAST_OF_DOUBLE|)
+            }
+        }
+
+        when () {
+            !=(R|/CHAR_CAST_OF_CHAR_ARITHMETIC|, Char(B)) ->  {
+                ^box <strcat>(String(Fail CHAR_CAST_OF_CHAR_ARITHMETIC: ), R|/CHAR_CAST_OF_CHAR_ARITHMETIC|)
+            }
+        }
+
+        when () {
+            !=(R|/BYTE_WITHOUT_CAST|, Int(7).R|kotlin/Int.toByte|()) ->  {
+                ^box <strcat>(String(Fail BYTE_WITHOUT_CAST: ), R|/BYTE_WITHOUT_CAST|)
+            }
+        }
+
+        when () {
+            !=(R|/SHORT_WITHOUT_CAST|, Int(8).R|kotlin/Int.toShort|()) ->  {
+                ^box <strcat>(String(Fail SHORT_WITHOUT_CAST: ), R|/SHORT_WITHOUT_CAST|)
+            }
+        }
+
+        when () {
+            !=(R|/SHIFTED|, Int(5)) ->  {
+                ^box <strcat>(String(Fail SHIFTED: ), R|/SHIFTED|)
+            }
+        }
+
+        when () {
+            !=(R|/LONG_SHIFTED|, Long(1099511627776)) ->  {
+                ^box <strcat>(String(Fail LONG_SHIFTED: ), R|/LONG_SHIFTED|)
+            }
+        }
+
+        when () {
+            !=(R|/MASKED|, Int(48)) ->  {
+                ^box <strcat>(String(Fail MASKED: ), R|/MASKED|)
+            }
+        }
+
+        when () {
+            !=(R|/PARENTHESIZED|, Int(9)) ->  {
+                ^box <strcat>(String(Fail PARENTHESIZED: ), R|/PARENTHESIZED|)
+            }
+        }
+
+        when () {
+            !=(R|/NEGATED|, Int(-3)) ->  {
+                ^box <strcat>(String(Fail NEGATED: ), R|/NEGATED|)
+            }
+        }
+
+        when () {
+            !=(R|/INVERTED|, Int(-4)) ->  {
+                ^box <strcat>(String(Fail INVERTED: ), R|/INVERTED|)
+            }
+        }
+
+        when () {
+            R|/COMPARED|.R|kotlin/Boolean.not|() ->  {
+                ^box <strcat>(String(Fail COMPARED: ), R|/COMPARED|)
+            }
+        }
+
+        when () {
+            R|/CONJUNCTION|.R|kotlin/Boolean.not|() ->  {
+                ^box <strcat>(String(Fail CONJUNCTION: ), R|/CONJUNCTION|)
+            }
+        }
+
+        when () {
+            !=(R|/HALF|, Double(0.5)) ->  {
+                ^box <strcat>(String(Fail HALF: ), R|/HALF|)
+            }
+        }
+
+        when () {
+            !=(R|/QUARTER|, Float(0.25)) ->  {
+                ^box <strcat>(String(Fail QUARTER: ), R|/QUARTER|)
+            }
+        }
+
+        when () {
+            !=(R|/SUM_WITH_STATIC_IMPORT|, Int(13)) ->  {
+                ^box <strcat>(String(Fail SUM_WITH_STATIC_IMPORT: ), R|/SUM_WITH_STATIC_IMPORT|)
+            }
+        }
+
+        when () {
+            !=(R|/FROM_OTHER_CLASS|, Int(20)) ->  {
+                ^box <strcat>(String(Fail FROM_OTHER_CLASS: ), R|/FROM_OTHER_CLASS|)
+            }
+        }
+
+        when () {
+            !=(R|/CONCATENATED|, String(hello)) ->  {
+                ^box <strcat>(String(Fail CONCATENATED: ), R|/CONCATENATED|)
+            }
+        }
+
+        when () {
+            !=(R|/CONCATENATED_WITH_NUMBER|, String(n=4)) ->  {
+                ^box <strcat>(String(Fail CONCATENATED_WITH_NUMBER: ), R|/CONCATENATED_WITH_NUMBER|)
+            }
+        }
+
+        lval annotation: R|ConstArgument!| = <getClass>(Q|Annotated|).R|kotlin/jvm/java|<R|Annotated|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|ConstArgument!|>(<getClass>(Q|ConstArgument|).R|kotlin/jvm/java|<R|ConstArgument|>)
+        when () {
+            !=(R|<local>/annotation|.R|/ConstArgument.intValue|, Int(13)) ->  {
+                ^box <strcat>(String(Fail annotation intValue: ), R|<local>/annotation|.R|/ConstArgument.intValue|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/ConstArgument.byteValue|, Int(44).R|kotlin/Int.toByte|()) ->  {
+                ^box <strcat>(String(Fail annotation byteValue: ), R|<local>/annotation|.R|/ConstArgument.byteValue|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/ConstArgument.charValue|, Char(A)) ->  {
+                ^box <strcat>(String(Fail annotation charValue: ), R|<local>/annotation|.R|/ConstArgument.charValue|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/ConstArgument.stringValue|, String(hello)) ->  {
+                ^box <strcat>(String(Fail annotation stringValue: ), R|<local>/annotation|.R|/ConstArgument.stringValue|)
+            }
+        }
+
+        ^box String(OK)
+    }

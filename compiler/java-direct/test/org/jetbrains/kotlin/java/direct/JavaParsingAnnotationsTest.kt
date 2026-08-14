@@ -9,8 +9,10 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
+import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -426,6 +428,54 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         assertNull(arg.enumClassId) { "Without any import hint, enumClassId must be null" }
         assertEquals("RUNTIME", arg.entryName?.asString())
+    }
+
+    @Test
+    fun testConstantExpressionAnnotationArguments() {
+        // An annotation argument is a constant expression (JLS 9.7.1), not necessarily a literal:
+        // concatenation, arithmetic, parentheses and references to `static final` constants are all
+        // allowed there and all have a value. Anything the model fails to evaluate reaches FIR as an
+        // unknown argument, i.e. as `null` or an error expression, and the argument is silently lost.
+        val source = """
+            class Holder {
+                static final String HEL = "hel";
+                static final int TEN = 10;
+
+                @Anno(text = HEL + "l" + "o", number = 2 * 8 + 13 * (TEN - 8), truncated = (byte) 300)
+                void annotated() {}
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val annotation = javaClass.methods.first { it.name.asString() == "annotated" }.annotations.single()
+        val arguments = annotation.arguments.associate { it.name?.asString() to (it as JavaLiteralAnnotationArgument).value }
+
+        assertEquals("hello", arguments["text"])
+        assertEquals(42, arguments["number"])
+        assertEquals(44.toByte(), arguments["truncated"])
+    }
+
+    @Test
+    fun testConstantExpressionAnnotationMethodDefault() {
+        // The default value of an annotation method is a constant expression too, and FIR turns it
+        // into the default value of the corresponding value parameter.
+        val source = """
+            @interface Anno {
+                String text() default "he" + "llo";
+                int number() default (1 + 2) * 3;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        fun defaultOf(name: String): Any? {
+            val method = javaClass.methods.first { it.name.asString() == name }
+            val default = method.annotationParameterDefaultValue
+            assertNotNull(default) { "$name must have a default value" }
+            return (default as JavaLiteralAnnotationArgument).value
+        }
+
+        assertEquals("hello", defaultOf("text"))
+        assertEquals(9, defaultOf("number"))
     }
 
     @Test
