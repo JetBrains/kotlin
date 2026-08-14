@@ -2494,6 +2494,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
+
+    val BREAKS_USING_UNIT_RETURN by object : DiagnosticGroup("Breaks using Unit return") {
+        val UNIT_RETURN_AS_BREAK by warning<PsiElement> {
+            parameter<FirNamedFunctionSymbol>("returnedInside")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

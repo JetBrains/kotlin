@@ -1685,6 +1685,13 @@ private fun KaDiagnosticConverterBuilder.addConversions33() {
             token,
         )
     }
+    add(FirErrors.UNIT_RETURN_AS_BREAK) { firDiagnostic ->
+        UnitReturnAsBreakImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions34() {
