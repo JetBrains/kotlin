@@ -202,6 +202,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             "@MetaSerializable annotation can be used only on top-level annotation classes."
         )
         map.put(
+            FirSerializationErrors.SERIALIZABLE_ANNOTATION_TYPEALIAS_UNSUPPORTED,
+            "Classes annotated through a typealias of @Serializable are not processed by the serialization plugin, " +
+                    "because annotation typealiases are not expanded when the plugin runs. " +
+                    "Use the @Serializable annotation directly, or declare your own annotation marked with @MetaSerializable."
+        )
+        map.put(
             FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE,
             "Repeatable serial info annotations cannot be inheritable. Either remove @Repeatable or use a regular @SerialInfo annotation."
         )
