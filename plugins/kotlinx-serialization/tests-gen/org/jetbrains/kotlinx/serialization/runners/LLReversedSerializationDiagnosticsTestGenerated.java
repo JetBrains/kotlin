@@ -85,6 +85,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("ExternalSerializerInheritedMembers.kt")
+    public void testExternalSerializerInheritedMembers() {
+      run("ExternalSerializerInheritedMembers.kt");
+    }
+
+    @Test
     @TestMetadata("ExternalSerializers.kt")
     public void testExternalSerializers() {
       run("ExternalSerializers.kt");
