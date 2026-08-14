@@ -18,8 +18,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWi
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
  * For the K1's DI to properly instantiate it with [LegacyVariableReadinessCalculator], this class must be `abstract`.
@@ -77,6 +81,8 @@ abstract class VariableFixationFinder(
          * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
          */
         val typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>?
+
+        val approximatorCaches: TypeApproximatorCachesPerConfiguration
 
         fun isReified(variable: TypeVariableMarker): Boolean
     }
@@ -141,6 +147,7 @@ abstract class VariableFixationFinder(
 abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readiness>>(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val typeApproximator: AbstractTypeApproximator,
     inferenceLoggerParameter: InferenceLogger? = null,
 ) {
     /**
@@ -244,7 +251,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                 type.contains { it.typeConstructor() != ownerTypeVariable && c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
     }
 
-    protected val restrictSecondKindIncorporationToFixation: Boolean
+    protected val eliminateSecondKindIncorporation: Boolean
         get() = languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)
 
     /**
@@ -259,16 +266,11 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
      * (`X <: S` and `S <: C<R>` produce `X <: C<R>` via [ConstraintIncorporator.directWithVariable] because `X <: S`
      * is also registered as a LOWER constraint of `S`).
      *
-     * A dependency is counted only if the substituted occurrence would actually retain the other variable after approximation
-     * (see [hasAlignedNestedSelfOccurrence] for how the approximation direction propagates through the occurrence path):
-     * - an occurrence reached in the supertype direction survives an UPPER shallow constraint (`T <: S`),
-     *   one reached in the subtype direction survives a LOWER one (`S <: T`); a misaligned pair degrades to
-     *   `Nothing`/`Any?` arguments, losing the variable;
-     * - an occurrence directly at an invariant position in the supertype direction survives either as a projection
-     *   (`T <: Inv<T>` and `T <: S` give `T <: Inv<out S>`), while in the subtype direction it survives nothing;
-     * - an EQUALITY shallow constraint (`T == S`, improper, so not skipped by
-     *   [LanguageFeature.EnhancementsOfSecondIncorporationKind25]) is substituted without approximation and survives
-     *   at any position reachable by approximation.
+     * The check emulates the substitution the eager mode used to perform: the variable is replaced in its
+     * self-referring constraints with the same `FOR_INCORPORATION` captured type the incorporator would build
+     * for a shallow bound (with a probe stub type standing for the neighbor), the result is approximated with
+     * the incorporation configuration in the direction dictated by the constraint kind, and a dependency is
+     * reported when the probe survives.
      *
      * Note that the eager incorporation used to drop the projected results of invariant positions
      * (`containsConstrainingTypeWithoutProjection` requires an unprojected occurrence for non-EQUALITY causes)
@@ -276,165 +278,128 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
      * an implementation quirk and is deliberately not reproduced here.
      */
     context(c: Context)
-    protected fun TypeConstructorMarker.hasDependencyToOtherTypeVariablesViaSecondKindIncorporation(): Boolean {
-        if (!restrictSecondKindIncorporationToFixation) return false
-        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
+    protected fun TypeConstructorMarker.hasDependencyToOtherTypeVariablesViaSelfTypeAndShallowConstraint(): Boolean {
+        if (!eliminateSecondKindIncorporation) return false
+        val variableWithConstraints = c.notFixedTypeVariables[this] ?: return false
+        // Only nested self-occurrences (inside a type argument) matter: for a top-level one (`T?`, `T & Any`, …)
+        // the second kind used to produce either a trivial constraint or one covered by the direct incorporation
+        val selfReferredConstraints = variableWithConstraints.getConstraintsContainedSpecifiedTypeVariable(this)
+            .filter { it.type.lowerBoundIfFlexible().argumentsCount() != 0 }
+            .ifEmpty { return false }
 
         var hasUpperShallowNeighbor = false
         var hasLowerShallowNeighbor = false
-        var hasEqualityShallowNeighbor = false
 
-        for (constraint in constraints) {
+        for (constraint in variableWithConstraints.constraints) {
             val rigidType = constraint.type.lowerBoundIfFlexible()
-            val neighbor = rigidType.originalIfDefinitelyNotNullable().typeConstructor().unwrapStubTypeVariableConstructor()
-            if (neighbor == this || !c.notFixedTypeVariables.containsKey(neighbor)) continue
-            when (constraint.kind) {
-                ConstraintKind.EQUALITY -> hasEqualityShallowNeighbor = true
-                ConstraintKind.UPPER -> hasUpperShallowNeighbor = true
-                ConstraintKind.LOWER -> hasLowerShallowNeighbor = true
-            }
-        }
+            val neighbor = rigidType.originalIfDefinitelyNotNullable().typeConstructor()
 
-        if (!hasUpperShallowNeighbor && !hasLowerShallowNeighbor && !hasEqualityShallowNeighbor) return false
+            // Likely impossible, but not sure about red code
+            if (neighbor == this) continue
 
-        if (hasEqualityShallowNeighbor) {
-            // An EQUALITY bound is substituted without approximation, so any nested self-occurrence retains it
-            return constraints.any { constraint ->
-                constraint.type.lowerBoundIfFlexible().argumentsCount() != 0 && constraint.type.containsTypeVariable(this)
-            }
-        }
-
-        fun isAligned(variance: TypeVariance): Boolean = when (variance) {
-            TypeVariance.OUT -> hasUpperShallowNeighbor
-            TypeVariance.IN -> hasLowerShallowNeighbor
-            // Either neighbor survives as a projection: `T <: Inv<T>` and `T <: S` give `T <: Inv<out S>`, `S <: T` — `T <: Inv<in S>`;
-            // one of the two neighbor kinds is guaranteed to exist here
-            TypeVariance.INV -> true
-        }
-
-        return constraints.any { constraint ->
-            when (constraint.kind) {
-                ConstraintKind.UPPER -> hasAlignedNestedSelfOccurrence(
-                    constraint.type,
-                    toSuper = true,
-                    ::isAligned,
-                    isInsideTypeArgument = false
-                )
-                ConstraintKind.LOWER -> hasAlignedNestedSelfOccurrence(
-                    constraint.type,
-                    toSuper = false,
-                    ::isAligned,
-                    isInsideTypeArgument = false
-                )
-                // For an EQUALITY constraint, both the toSuper and the toSub substitutions are generated
-                ConstraintKind.EQUALITY ->
-                    hasAlignedNestedSelfOccurrence(
-                        constraint.type,
-                        toSuper = true,
-                        ::isAligned,
-                        isInsideTypeArgument = false
-                    ) || hasAlignedNestedSelfOccurrence(
-                        constraint.type,
-                        toSuper = false,
-                        ::isAligned,
-                        isInsideTypeArgument = false
-                    )
-            }
-        }
-    }
-
-    /**
-     * Checks whether [type] contains a nested (inside some type argument) occurrence of the receiver type variable
-     * that would survive the substitution of a shallow bound and the following approximation, per [isAligned].
-     *
-     * [toSuper] is the direction the approximation runs at this level: `true` for an UPPER containing constraint
-     * (`T <: C<…>` is approximated to a supertype), `false` for a LOWER one. It mirrors how
-     * `AbstractTypeApproximator.approximateParametrizedType` treats argument positions:
-     * - covariant positions keep the direction, contravariant ones flip it; an occurrence reached in the `toSuper`
-     *   direction survives an UPPER shallow bound (`Cap(out S)` approximates up to `S`), one reached in the `toSub`
-     *   direction survives a LOWER bound (`Cap(in S)` approximates down to `S`);
-     * - an occurrence directly at an invariant position under `toSuper` survives either bound as a projection
-     *   (`T <: Inv<T>` with `T <: S` gives `T <: Inv<out S>`, with `S <: T` — `T <: Inv<in S>`), reported as [TypeVariance.INV];
-     *   deeper content below such a position primarily continues in the supertype direction (`Inv<Arg>` approximates
-     *   to `Inv<out superType(Arg)>`);
-     * - an invariant position under `toSub` loses everything: `Inv<Foo>` cannot be approximated to a subtype,
-     *   the whole type defaults to `Nothing`.
-     */
-    context(c: Context)
-    private fun TypeConstructorMarker.hasAlignedNestedSelfOccurrence(
-        type: KotlinTypeMarker,
-        toSuper: Boolean,
-        isAligned: (TypeVariance) -> Boolean,
-        isInsideTypeArgument: Boolean,
-    ): Boolean {
-        if (type.isFlexible()) {
-            val flexibleType = type.asFlexibleType()!!
-            return hasAlignedNestedSelfOccurrence(flexibleType.lowerBound(), toSuper, isAligned, isInsideTypeArgument) ||
-                    !c.isTriviallyFlexible(flexibleType) &&
-                    hasAlignedNestedSelfOccurrence(flexibleType.upperBound(), toSuper, isAligned, isInsideTypeArgument)
-        }
-
-        val unwrappedType = type.asRigidType()?.originalIfDefinitelyNotNullable() ?: return false
-        val typeConstructor = unwrappedType.typeConstructor()
-
-        if (typeConstructor.isIntersection()) {
-            return typeConstructor.supertypes().any { hasAlignedNestedSelfOccurrence(it, toSuper, isAligned, isInsideTypeArgument) }
-        }
-
-        val capturedType = unwrappedType.asCapturedType()
-        if (capturedType != null) {
-            return when {
-                !isInsideTypeArgument -> false
-                toSuper -> typeConstructor.supertypes().any {
-                    hasAlignedNestedSelfOccurrence(it, toSuper = true, isAligned, isInsideTypeArgument = true)
-                }
-                else -> when (val lowerType = capturedType.lowerType()) {
-                    null -> false
-                    else -> hasAlignedNestedSelfOccurrence(lowerType, toSuper = false, isAligned, isInsideTypeArgument = true)
+            if (c.notFixedTypeVariables.containsKey(neighbor)) {
+                when (constraint.kind) {
+                    // An EQUALITY bound is substituted without approximation, so any self-referring constraint retains it
+                    ConstraintKind.EQUALITY -> return true
+                    ConstraintKind.UPPER -> hasUpperShallowNeighbor = true
+                    ConstraintKind.LOWER -> hasLowerShallowNeighbor = true
                 }
             }
         }
 
-        for (index in 0 until unwrappedType.argumentsCount()) {
-            val argument = unwrappedType.getArgument(index)
-            val argumentType = argument.getType() ?: continue
-            val declaredVariance =
-                if (index < typeConstructor.parametersCount()) typeConstructor.getParameter(index).getVariance() else TypeVariance.INV
-            val useSiteVariance = argument.getVariance()
-            val effectiveVariance = if (useSiteVariance == TypeVariance.INV) declaredVariance else useSiteVariance
+        if (!hasUpperShallowNeighbor && !hasLowerShallowNeighbor) return false
 
-            when (effectiveVariance) {
-                TypeVariance.INV -> {
-                    // `Inv<Foo>` cannot be approximated to a subtype: the whole type degrades to `Nothing`, losing the content
-                    if (!toSuper) continue
-                    if (isSelfTypeVariable(argumentType)) {
-                        if (isAligned(TypeVariance.INV)) return true
-                    } else if (hasAlignedNestedSelfOccurrence(argumentType, toSuper = true, isAligned, isInsideTypeArgument = true)) {
-                        return true
-                    }
-                }
-                TypeVariance.OUT, TypeVariance.IN -> {
-                    val childToSuper = if (effectiveVariance == TypeVariance.OUT) toSuper else !toSuper
-                    if (isSelfTypeVariable(argumentType)) {
-                        if (isAligned(if (childToSuper) TypeVariance.OUT else TypeVariance.IN)) return true
-                    } else if (hasAlignedNestedSelfOccurrence(argumentType, childToSuper, isAligned, isInsideTypeArgument)) {
-                        return true
-                    }
-                }
-            }
+        // A probe standing for the shallow neighbor: if it survives the substitution and approximation below,
+        // the constraint the second kind would have materialized retains the neighbor
+        val stub = c.createStubTypeForTypeVariablesInSubtyping(variableWithConstraints.typeVariable)
+
+        // The captured types match what ConstraintIncorporator.computeConstraintTypeForSecondIncorporationKind
+        // used to create for an UPPER (`T <: S` substitutes `Cap(out S)`) and a LOWER (`S <: T` — `Cap(in S)`) shallow bound
+        if (hasUpperShallowNeighbor) {
+            val capturedNeighbor = c.createCapturedType(
+                c.createTypeArgument(stub, TypeVariance.OUT),
+                listOf(stub),
+                null,
+                CaptureStatus.FOR_INCORPORATION,
+            )
+
+            anySelfReferredConstraintRetainsSubstitutedNeighbor(
+                variableWithConstraints,
+                selfReferredConstraints,
+                capturedNeighbor,
+                stub
+            ).ifTrue { return true }
+        }
+
+        if (hasLowerShallowNeighbor) {
+            val capturedNeighbor = c.createCapturedType(
+                c.createTypeArgument(stub, TypeVariance.IN),
+                emptyList(),
+                stub,
+                CaptureStatus.FOR_INCORPORATION,
+            )
+
+            anySelfReferredConstraintRetainsSubstitutedNeighbor(
+                variableWithConstraints,
+                selfReferredConstraints,
+                capturedNeighbor,
+                stub
+            ).ifTrue { return true }
         }
 
         return false
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.isSelfTypeVariable(type: KotlinTypeMarker): Boolean {
-        val typeConstructor = type.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().typeConstructor()
-        return when {
-            typeConstructor.unwrapStubTypeVariableConstructor() == this -> true
-            typeConstructor.isIntersection() -> typeConstructor.supertypes().any { isSelfTypeVariable(it) }
-            else -> false
+    private fun anySelfReferredConstraintRetainsSubstitutedNeighbor(
+        variableWithConstraints: VariableWithConstraints,
+        selfReferredConstraints: Collection<Constraint>,
+        capturedNeighbor: CapturedTypeMarker,
+        stub: StubTypeMarker,
+    ): Boolean {
+        // The probe is recognized by the identity of its constructor, so nothing else can be confused with it
+        val stubConstructor = stub.typeConstructor()
+        for (constraint in selfReferredConstraints) {
+            val substitutedType = constraint.type.substitute(variableWithConstraints.typeVariable, capturedNeighbor)
+            // The approximation direction mirrors the second-kind incorporation: an UPPER containing constraint
+            // (`T <: C<…>`) was approximated to a supertype, a LOWER one — to a subtype, an EQUALITY one — both ways
+            if (constraint.kind.impliesUpper() &&
+                probeSurvivesCapturedTypeApproximation(substitutedType, toSuper = true, stubConstructor)
+            ) {
+                return true
+            }
+            if (constraint.kind.impliesLower() &&
+                probeSurvivesCapturedTypeApproximation(substitutedType, toSuper = false, stubConstructor)
+            ) {
+                return true
+            }
         }
+        return false
+    }
+
+    context(c: Context)
+    private fun KotlinTypeMarker.substitute(typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
+        val substitutor = c.typeSubstitutorByTypeConstructor(mapOf(typeVariable.freshTypeConstructor(c) to value))
+        return substitutor.safeSubstitute(c, this)
+    }
+
+    context(c: Context)
+    private fun probeSurvivesCapturedTypeApproximation(
+        type: KotlinTypeMarker,
+        toSuper: Boolean,
+        probeConstructor: TypeConstructorMarker,
+    ): Boolean {
+        val approximatedType = when {
+            toSuper -> typeApproximator.approximateToSuperType(
+                type, TypeApproximatorConfiguration.IncorporationConfiguration,
+                c.approximatorCaches,
+            )
+            else -> typeApproximator.approximateToSubType(
+                type, TypeApproximatorConfiguration.IncorporationConfiguration,
+                c.approximatorCaches,
+            )
+        } ?: type
+        return approximatedType.contains { it.typeConstructor() === probeConstructor }
     }
 
     // IltRelatedFlags can't be a combination of 1/0, as any non-ILT equality proper constraint is also a non-ILT proper constraint

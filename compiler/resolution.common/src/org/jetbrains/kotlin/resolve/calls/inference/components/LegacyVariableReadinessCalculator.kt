@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.isNothingConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -15,10 +16,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationF
 class LegacyVariableReadinessCalculator(
     trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     languageVersionSettings: LanguageVersionSettings,
+    typeApproximator: AbstractTypeApproximator,
     inferenceLoggerParameter: InferenceLogger? = null,
 ) : AbstractVariableReadinessCalculator<LegacyVariableReadinessCalculator.TypeVariableFixationReadiness>(
     trivialConstraintTypeInferenceOracle,
     languageVersionSettings,
+    typeApproximator,
     inferenceLoggerParameter,
 ) {
     enum class TypeVariableFixationReadiness {

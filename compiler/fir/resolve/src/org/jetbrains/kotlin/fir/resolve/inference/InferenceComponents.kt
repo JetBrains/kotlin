@@ -47,6 +47,7 @@ class InferenceComponents(override val session: FirSession) : FirSessionComponen
             variableReadinessCalculatorBuilder(
                 trivialConstraintTypeInferenceOracle,
                 session.languageVersionSettings,
+                approximator,
                 session.inferenceLogger,
             ),
         )

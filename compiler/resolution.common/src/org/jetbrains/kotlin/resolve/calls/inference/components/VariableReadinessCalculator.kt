@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.isFlexible
@@ -17,10 +18,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadiness
 class VariableReadinessCalculator(
     trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     languageVersionSettings: LanguageVersionSettings,
+    typeApproximator: AbstractTypeApproximator,
     inferenceLoggerParameter: InferenceLogger? = null,
 ) : AbstractVariableReadinessCalculator<VariableReadinessCalculator.TypeVariableFixationReadiness>(
     trivialConstraintTypeInferenceOracle,
     languageVersionSettings,
+    typeApproximator,
     inferenceLoggerParameter,
 ) {
     /**
@@ -148,7 +151,7 @@ class VariableReadinessCalculator(
         readiness[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] =
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables() &&
-                !hasDependencyToOtherTypeVariablesViaSecondKindIncorporation()
+                !hasDependencyToOtherTypeVariablesViaSelfTypeAndShallowConstraint()
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
