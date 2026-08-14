@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.archive
 
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 
 internal object KarLayout {
@@ -24,4 +25,22 @@ internal object KarLayout {
 
     const val PACK_TASK_NAME = "packKotlinArchive"
     const val ASSEMBLE_TASK_NAME = "assembleKotlinArchive"
+
+    object Attributes {
+        enum class State {
+            COMPRESSED,
+            DECOMPRESSED,
+            PLATFORM_ARTIFACTS_EXTRACTED,
+            PSM_EXTRACTED,
+            RESOURCES_EXTRACTED,
+        }
+
+        val state = Attribute.of("org.jetbrains.kotlin.kar.state", State::class.java)
+
+        enum class CompressionMethod {
+            NONE, XZ;
+        }
+
+        val compressionMethod = Attribute.of("org.jetbrains.kotlin.kar.compression.method", CompressionMethod::class.java)
+    }
 }
