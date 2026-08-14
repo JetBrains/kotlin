@@ -36,6 +36,35 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-14 — the binary lookup cache outlived the classpath it was made against
+- **Change**: `BinaryJavaClassCache` memoizes the two lookups which answer "what is on the classpath"
+  (`findTopLevelClassFiles`, `classFileNamesInPackage`) for the lifetime of the compilation. Scripting extends
+  its own classpath while running — `@file:DependsOn` is resolved against the script being compiled — so those
+  answers were stale for every root added afterwards, and `FirJavaFacade.hasTopLevelClassOf` (the filter of
+  `JvmClassFileBasedSymbolProvider.computePackagePartInfo`) then dropped every Kotlin package part of the new jar.
+  Only java-direct was affected: the PSI peer caches that lookup per session (`FirJavaFacade`), and the session
+  created for the new jar is a fresh one, so its answer is asked of a live index.
+  `BinaryClassFileIndex` now reports a `classpathVersion` (from `JvmDependenciesIndex.version`,
+  overridden by `JvmDependenciesDynamicCompoundIndex`), and the cache drops the two lookup maps when it changes.
+  The parsed classes stay — they are keyed by the file handle, which identifies the file with its content version.
+- **Files**: `BinaryClassFileIndex.kt`, `BinaryJavaClassCache.kt`, `CliBinaryClassFileIndex.kt`,
+  `JvmDependenciesIndex.kt`, `JvmDependenciesDynamicCompoundIndex.kt`.
+- **Tests**: `MainKtsIT` 16/16 (`testWithDifferrentJvmTarget` and `testWithCustomLocalRepository` failed before);
+  `:compiler:java-direct:test` box + phased 0 failures.
+- **Result**: regression fixed.
+- **The REPL is the same case, and it was untested.** A REPL session grows its classpath per snippet
+  (`K2ReplCompiler.compileImpl` → `environment.updateClasspath`), so it hits the stale lookups exactly like a
+  script does. It is not a plumbing gap: `ReplViaApiDiagnosticsTestGenerated` drives the production
+  `K2ReplCompiler` through `FirReplCompilerFacade`, and `K2ReplCompiler` builds its session with
+  `projectEnvironment.javaInterop(...)`, which is java-direct unless `USE_JAVA_DIRECT` is put to `false` —
+  and nothing in scripting puts it. What was missing is a test that *poisons* the lookup: the existing
+  `CustomK2ReplTest.testWithUpdatingDependeciesAndImportKotlinDeclarations` adds a jar mid-session but never asks
+  about its packages beforehand, so it passes with or without the fix. Added
+  `CustomK2ReplTest.testWithUpdatingDependeciesAfterUnresolvedImport`: snippet 1 leaves
+  `import org.jetbrains.kotlinx.dataframe.jupyter.KotlinNotebookPluginUtils` unresolved, snippet 2 adds the jar
+  and imports it. Without the fix it fails with the very `[UNRESOLVED_IMPORT]/[UNRESOLVED_REFERENCE]` of the
+  `MainKtsIT` regression; with it, `:plugins:scripting:scripting-tests:test` is 403/403.
+
 ### 2026-08-13 — a classpath root has an identity, is resolved by it, and the IC hook is gone
 - **Change**: three steps in one. (1) `VfsBasedProjectEnvironment` resolves a root by *identity among the roots
   this compilation indexed* (`registerIndexedClasspathRoots`, filled from the same loops that already call

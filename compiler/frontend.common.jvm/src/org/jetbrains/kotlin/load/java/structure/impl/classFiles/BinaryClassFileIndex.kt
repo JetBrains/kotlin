@@ -13,6 +13,13 @@ import org.jetbrains.kotlin.name.FqName
  * The binary classpath of one compilation.
  */
 interface BinaryClassFileIndex {
+    /**
+     * Changes whenever roots are added to the classpath behind the index. A compilation may extend its own classpath
+     * while running — scripting resolves `@DependsOn` against the sources it is compiling — and everything looked up
+     * before that point may be missing the new roots, so a lookup cache over the index must be dropped when this changes.
+     */
+    val classpathVersion: Int get() = 0
+
     /** The class files declaring [topLevelClassId], in classpath order. */
     fun findTopLevelClassFiles(topLevelClassId: ClassId): Collection<BinaryClassFileHandle>
 

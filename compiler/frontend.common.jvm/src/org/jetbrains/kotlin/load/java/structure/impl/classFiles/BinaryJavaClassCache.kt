@@ -28,13 +28,32 @@ class BinaryJavaClassCache(private val index: BinaryClassFileIndex) {
 
     private val classFileNamesInPackage: MutableMap<FqName, Set<String>> = HashMap()
 
-    fun findTopLevelClassFiles(packageFqName: FqName, topLevelName: Name): Collection<BinaryClassFileHandle> =
-        topLevelClassFiles.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
+    private var cachedClasspathVersion: Int = index.classpathVersion
+
+    fun findTopLevelClassFiles(packageFqName: FqName, topLevelName: Name): Collection<BinaryClassFileHandle> {
+        dropLookupsOfPreviousClasspath()
+        return topLevelClassFiles.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
             index.findTopLevelClassFiles(ClassId(packageFqName, topLevelName))
         }
+    }
 
-    fun classFileNamesInPackage(packageFqName: FqName): Set<String> =
-        classFileNamesInPackage.getOrPut(packageFqName) { index.classFileNamesInPackage(packageFqName) }
+    fun classFileNamesInPackage(packageFqName: FqName): Set<String> {
+        dropLookupsOfPreviousClasspath()
+        return classFileNamesInPackage.getOrPut(packageFqName) { index.classFileNamesInPackage(packageFqName) }
+    }
 
     fun containsPackageDirectory(packageFqName: FqName): Boolean = index.containsPackageDirectory(packageFqName)
+
+    /**
+     * The lookups above answer "what is on the classpath", so they are only valid for the classpath they were made
+     * against. The classes read from a class file stay valid: they are keyed by the file handle, which identifies the
+     * file together with its content version.
+     */
+    private fun dropLookupsOfPreviousClasspath() {
+        val currentVersion = index.classpathVersion
+        if (currentVersion == cachedClasspathVersion) return
+        cachedClasspathVersion = currentVersion
+        topLevelClassFiles.clear()
+        classFileNamesInPackage.clear()
+    }
 }
