@@ -457,7 +457,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         checkCustomSerializerMatch(classSymbol, source = null, classSymbol.defaultType(), serializerType, serializerForType, reporter)
         checkCustomSerializerIsNotLocal(source = null, classSymbol, serializerType, reporter)
-        checkCustomSerializerParameters(classSymbol, null, serializerType, serializerForType, useSiteType = null, reporter)
+        checkCustomSerializerParameters(
+            classSymbol, null, classSymbol.defaultType(), serializerType, serializerForType, useSiteType = null, reporter
+        )
         checkCustomSerializerNotAbstract(classSymbol, source = null, serializerType, reporter)
         checkVisibility(classSymbol, serializerType)
     }
@@ -588,7 +590,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 val annotationElement = propertySymbol.serializableAnnotation(needArguments = false, session)?.source
                 checkCustomSerializerNotAbstract(classSymbol, source = annotationElement, customSerializerType, reporter)
                 checkCustomSerializerIsNotLocal(source = annotationElement, classSymbol, customSerializerType, reporter)
-                checkCustomSerializerParameters(classSymbol, annotationElement, customSerializerType, serializerForType, typeRef, reporter)
+                checkCustomSerializerParameters(
+                    classSymbol, annotationElement, propertyType, customSerializerType, serializerForType, typeRef, reporter
+                )
                 checkSerializerNullability(propertyType, customSerializerType, source, reporter)
             } else {
                 checkType(typeRef, source, reporter)
@@ -670,7 +674,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 checkCustomSerializerIsNotLocal(typeSource, classSymbol, customSerializerType, reporter)
 
                 val annotationElement = type.customAnnotations.serializableAnnotation(session)?.source ?: typeSource
-                checkCustomSerializerParameters(classSymbol, annotationElement, customSerializerType, serializerForType, typeRef, reporter)
+                checkCustomSerializerParameters(
+                    classSymbol, annotationElement, type, customSerializerType, serializerForType, typeRef, reporter
+                )
                 checkCustomSerializerNotAbstract(classSymbol, annotationElement, customSerializerType, reporter)
                 checkSerializerNullability(type, customSerializerType, typeSource, reporter)
             } else {
@@ -728,6 +734,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     private fun CheckerContext.checkCustomSerializerParameters(
         containingClassSymbol: FirClassSymbol<*>,
         source: KtSourceElement?,
+        declarationType: ConeKotlinType,
         serializerType: ConeKotlinType,
         serializerForType: ConeKotlinType?,
         useSiteType: FirTypeRef?,
@@ -751,13 +758,20 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         // it is allowed that parameters are not passed in regular serializers at all
         if (!needArguments) return
 
+        // The backend instantiates the custom serializer with one child serializer per type argument of the
+        // *annotated declaration*, not of the type the serializer claims to serialize. These two differ whenever
+        // the serializer is applied to a subtype — the case SERIALIZER_TYPE_INCOMPATIBLE merely warns about —
+        // and looking at the wrong one used to let arity mismatches through to the backend, where the missing
+        // argument crashed codegen. See KT-73207.
+        val expectedParametersCount = declarationType.typeArguments.size
+
         if ( // for external serializer, the verification will be carried out at the definition
             !isExternalSerializer
             // if the parameters are still specified, then their number must match in the serializable class and constructor
-            && serializerForType.typeArguments.size != primaryConstructor.valueParameterSymbols.size
+            && expectedParametersCount != primaryConstructor.valueParameterSymbols.size
         ) {
-            val message = if (serializerForType.typeArguments.isNotEmpty()) {
-                "expected no parameters or ${serializerForType.typeArguments.size}, but has ${primaryConstructor.valueParameterSymbols.size} parameters"
+            val message = if (expectedParametersCount > 0) {
+                "expected no parameters or $expectedParametersCount, but has ${primaryConstructor.valueParameterSymbols.size} parameters"
             } else {
                 "expected no parameters but has ${primaryConstructor.valueParameterSymbols.size} parameters"
             }
