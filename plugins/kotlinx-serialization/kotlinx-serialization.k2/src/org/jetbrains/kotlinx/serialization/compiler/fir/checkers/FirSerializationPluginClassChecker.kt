@@ -429,6 +429,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         checkCompanionOfSerializableClass(classSymbol, reporter)
         checkCompanionSerializerClash(classSymbol, reporter)
+        checkPrivateCompanion(classSymbol, reporter)
 
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
             reporter.reportOn(
