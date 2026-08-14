@@ -76,6 +76,7 @@ internal fun Project.createGeneralTestTask(
     minHeapSize: Size? = null,
     maxMetaspaceSize: Size = 512.MiB,
     reservedCodeCacheSize: Size = 256.MiB,
+    garbageCollector: GarbageCollector? = null,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
@@ -131,6 +132,15 @@ internal fun Project.createGeneralTestTask(
             "-XX:CICompilerCount=2",
             "-Djna.nosys=true"
         )
+
+        garbageCollector?.let {
+            jvmArgs(
+                when (it) {
+                    GarbageCollector.G1 -> "-XX:+UseG1GC"
+                    GarbageCollector.Parallel -> "-XX:+UseParallelGC"
+                }
+            )
+        }
 
         val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
         if (nativeMemoryTracking.isPresent) {
