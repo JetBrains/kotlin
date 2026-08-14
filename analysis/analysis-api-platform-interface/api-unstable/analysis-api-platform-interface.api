@@ -668,6 +668,16 @@ public final class org/jetbrains/kotlin/analysis/api/platform/permissions/Kotlin
 	public fun getDefaultIsAnalysisAllowedOnEdt ()Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaBuiltinsModuleImpl : org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleBase, org/jetbrains/kotlin/analysis/api/projectStructure/KaBuiltinsModule {
+	public fun <init> (Lorg/jetbrains/kotlin/platform/TargetPlatform;Lcom/intellij/openapi/project/Project;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getBaseContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public fun getProject ()Lcom/intellij/openapi/project/Project;
+	public fun getTargetPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public fun getTransitiveDependsOnDependencies ()Ljava/util/List;
+	public fun hashCode ()I
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaContentScopeProvider : org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaContentScopeProvider$Companion;
 	public abstract fun getRefinedContentScope (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lcom/intellij/psi/search/GlobalSearchScope;
