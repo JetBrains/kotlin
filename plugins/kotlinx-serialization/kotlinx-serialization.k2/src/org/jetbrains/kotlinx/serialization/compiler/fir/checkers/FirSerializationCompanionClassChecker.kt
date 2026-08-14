@@ -8,6 +8,8 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.declaredFunctions
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -15,6 +17,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 // Extracted from FirSerializationPluginClassChecker to keep it reasonably small
 internal fun CheckerContext.checkCompanionOfSerializableClass(
@@ -38,6 +42,51 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
         classSymbol
     )
 }
+
+/**
+ * The plugin generates `Companion.serializer()` — and `Companion.generatedSerializer()` under
+ * `@KeepGeneratedSerializer` — for every class that [shouldHaveGeneratedMethodsInCompanion].
+ * A user-written function with the same signature shadows the generated one, so the backend cannot
+ * find the declaration it is supposed to fill in and used to fail with an internal error (KT-55738).
+ *
+ * The signature predicate here must stay in sync with
+ * `SerializableCompanionIrGenerator.getSerializerGetterFunction`, which is what actually picks the
+ * function to generate a body for in the backend.
+ */
+internal fun CheckerContext.checkCompanionSerializerClash(
+    classSymbol: FirClassSymbol<*>,
+    reporter: DiagnosticReporter,
+) {
+    if (classSymbol !is FirRegularClassSymbol) return
+    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
+    val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
+
+    val generatedNames = buildSet {
+        add(SerialEntityNames.SERIALIZER_PROVIDER_NAME)
+        if (classSymbol.keepGeneratedSerializer(session)) add(SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME)
+    }
+
+    for (functionSymbol in companionObjectSymbol.declaredFunctions(session)) {
+        if (functionSymbol.name !in generatedNames) continue
+        if (functionSymbol.origin != FirDeclarationOrigin.Source) continue
+        // The backend matches one serializer parameter per type parameter of the serializable class.
+        if (functionSymbol.valueParameterSymbols.size != classSymbol.typeParameterSymbols.size) continue
+        if (!functionSymbol.valueParameterSymbols.all { it.resolvedReturnType.isAnyKSerializer }) continue
+        if (!functionSymbol.resolvedReturnType.isAnyKSerializer) continue
+
+        reporter.reportOn(
+            functionSymbol.source,
+            FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
+            functionSymbol.name.asString()
+        )
+    }
+}
+
+/**
+ * Mirrors `IrType.isKSerializer()` from the backend, which accepts `GeneratedSerializer` as well.
+ */
+private val ConeKotlinType.isAnyKSerializer: Boolean
+    get() = isKSerializer || classId == SerializersClassIds.generatedSerializerId
 
 internal fun CheckerContext.checkCompanionSerializerDependency(
     classSymbol: FirClassSymbol<*>,
