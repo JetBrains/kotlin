@@ -172,7 +172,8 @@ private fun FirExpression.shouldUseSamConversion(
     val expressionType = resolvedType
     // Expression type is a subtype of expected type, no need for SAM conversion.
     val substitutedExpectedType = candidate.substitutor.substituteOrSelf(candidateExpectedType)
-    if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, substitutedExpectedType)) {
+    val capturedType = prepareCapturedType(expressionType, context.session)
+    if (candidate.csBuilder.isSubtypeConstraintCompatible(capturedType, substitutedExpectedType)) {
         return false
     }
 

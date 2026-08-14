@@ -584,7 +584,7 @@ object AbstractTypeChecker {
              * Instead this type check we move on self-type level anyway: checking CapturedType(out Enum<*>) against TypeVariable(E).
              * This subtyping can already be successful and not add unwanted constraints in the type inference context.
              */
-            if (isTypeVariableAgainstStarProjectionForSelfType)
+            if (isTypeVariableAgainstStarProjectionForSelfType && !c.morePreciseCapturedTypeHandling)
                 continue
 
             val correctArgument = state.runWithArgumentsSettings(subArgumentType) {

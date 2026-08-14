@@ -729,6 +729,12 @@ class NewConstraintSystemImpl(
 
         checkInferredEmptyIntersection(variable, resultType)
 
+        if (morePreciseCapturedTypeHandling) {
+            // Close the self-reference of captured types created for self-type-based results:
+            // their supertypes may mention the variable being fixed (see createCapturedStarProjectionForSelfType)
+            substituteTypeVariableIntoCapturedTypeSupertypes(resultType, variable.freshTypeConstructor())
+        }
+
         constraintInjector.addInitialEqualityConstraint(variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
