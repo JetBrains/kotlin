@@ -66,9 +66,8 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         )
         map.put(
             FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
-            "Function ''{0}()'' clashes with the one that the serialization plugin generates in the companion object of this class, " +
-                    "which makes the generated function unreachable. Rename this function, change its signature, " +
-                    "or specify the serializer explicitly with @Serializable(with = ...) on the class.",
+            "Function ''{0}()'' clashes with the one that the serialization plugin generates here, " +
+                    "which makes the generated function unreachable. Rename this function or change its signature.",
             CommonRenderers.STRING
         )
         map.put(
@@ -253,6 +252,14 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             "The value specified in the @ProtoNumber annotation on field ''{0}'' duplicates field numbers of fields: {1}",
             CommonRenderers.STRING,
             CommonRenderers.STRING
+        )
+
+        map.put(
+            FirSerializationErrors.PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE,
+            "@{0} has no effect on a property of type ''{2}'': it is only applicable to {1}.",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.RENDER_TYPE
         )
 
         map.put(

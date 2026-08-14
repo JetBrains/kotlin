@@ -223,6 +223,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("ProtobufAnnotationTargets.kt")
+    public void testProtobufAnnotationTargets() {
+      run("ProtobufAnnotationTargets.kt");
+    }
+
+    @Test
     @TestMetadata("ProtobufFieldNumbers.kt")
     public void testProtobufFieldNumbers() {
       run("ProtobufFieldNumbers.kt");
