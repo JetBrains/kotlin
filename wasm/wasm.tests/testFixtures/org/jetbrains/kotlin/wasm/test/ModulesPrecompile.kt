@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoadingPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.handlers.writeTo
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 private val outputDir: File
@@ -107,7 +107,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
         }
 
         val loadedIr = WasmIrLoadingPipelinePhase.executePhase(input)
-        val parametersForCompile = WasmBackendPipelinePhase.compileNonIncrementally(loadedIr).first()
+        val parametersForCompile = WasmSingleModuleBackendPipelinePhase.compileNonIncrementally(loadedIr).first()
 
         val linkedModule = linkWasmIr(parametersForCompile)
         val compileResult = compileWasmIrToBinary(parametersForCompile, linkedModule)
