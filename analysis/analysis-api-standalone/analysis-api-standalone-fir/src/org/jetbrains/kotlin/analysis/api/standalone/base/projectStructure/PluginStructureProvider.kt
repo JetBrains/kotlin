@@ -41,7 +41,7 @@ object PluginStructureProvider {
      * This fake plugin is required to provide it as a required parameter.
      * Effectively, it is only used to group project listeners.
      */
-    private val fakePluginDescriptor = DefaultPluginDescriptor("analysis-api-standalone-base-loader")
+    private val fakePluginDescriptor = DefaultPluginDescriptor("analysis-api-standalone-fir-loader")
 
     private object ReadContext : PluginDescriptorReaderContext {
         override val interner get() = NoOpXmlInterner
