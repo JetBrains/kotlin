@@ -164,6 +164,16 @@ class JavaClassifierTypeOverAst(
     override val isRaw: Boolean
         get() = computeIsRaw()
 
+    /**
+     * Whether the reference is qualified by a class which inherits the classifier. (see the test inheritedInnerQualifiedRawType.kt).
+     */
+    private fun isQualifiedByInheritor(javaClass: JavaClass): Boolean {
+        val declaringOuterName = javaClass.outerClass?.name?.asString() ?: return false
+        if (rawTypeNameParts[rawTypeNameParts.size - 2] == declaringOuterName) return false
+        val classId = javaClass.classId ?: return false
+        return with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) } != null
+    }
+
     private fun computeIsRaw(): Boolean {
         // Raw when (JLS 4.6):
         //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`;
@@ -184,19 +194,16 @@ class JavaClassifierTypeOverAst(
             val outerHasExplicitArgs = allRefs.size > 1 && allRefs.dropLast(1).any { pl ->
                 tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
             }
-            if (!outerHasExplicitArgs) {
-                // Walk the outer chain, one hop per qualifier in the source. NB: don't bound the
-                // walk with `outer.isStatic` — `FirBackedJavaClassAdapter.isStatic` reports `true`
-                // for a top-level outer, which would skip exactly the top-level generic outer
-                // whose type parameters make the qualified form raw.
-                var outer: JavaClass? = javaClass.outerClass
-                var levels = rawTypeNameParts.size - 1
-                while (outer != null && levels > 0) {
+            if (!outerHasExplicitArgs && !isQualifiedByInheritor(javaClass)) {
+                // Walk the *enclosing-instance* chain: only the outers whose type parameters are in scope for
+                // this reference can make it raw. The walk therefore stops at the first `static` (or top-level)
+                // enclosing class.
+                var current: JavaClass = javaClass
+                while (true) {
+                    val outer = current.outerClass ?: break
                     if (outer.typeParameters.isNotEmpty()) return true
-                    val parent = outer.outerClass
-                    if (parent == null) break // Defensive: bound the walk to the top of the chain.
-                    outer = parent
-                    levels--
+                    if (outer.isStatic) break
+                    current = outer
                 }
             }
         }
