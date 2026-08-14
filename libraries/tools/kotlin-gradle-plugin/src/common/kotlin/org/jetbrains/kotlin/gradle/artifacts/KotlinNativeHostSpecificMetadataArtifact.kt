@@ -68,7 +68,7 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
                 }
 
                 if (compilation is KotlinSharedNativeCompilation) {
-                    project.includeCommonizedCInteropMetadata(metadataJar, compilation)
+                    metadataJar.includeCommonizedCInteropMetadata(compilation)
                 }
             }
         }

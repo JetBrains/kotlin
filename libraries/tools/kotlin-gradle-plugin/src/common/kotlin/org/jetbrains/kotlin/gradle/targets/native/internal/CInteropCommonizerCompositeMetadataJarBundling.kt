@@ -6,28 +6,40 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal fun Project.includeCommonizedCInteropMetadata(
     metadataKlib: TaskProvider<out Zip>, compilation: KotlinSharedNativeCompilation
 ) {
     metadataKlib.configure { jar ->
-        launch { includeCommonizedCInteropMetadata(jar, compilation) }
+        launch { jar.includeCommonizedCInteropMetadata(compilation) }
     }
 }
 
-internal suspend fun Project.includeCommonizedCInteropMetadata(metadataKlib: Zip, compilation: KotlinSharedNativeCompilation) {
-    val commonizerTask = commonizeCInteropTask()?.get() ?: return
-    val commonizerDependencyToken = CInteropCommonizerDependent.from(compilation) ?: return
-    val outputDirectory = commonizerTask.commonizedOutputDirectory(commonizerDependencyToken) ?: return
+internal suspend fun KotlinSharedNativeCompilation.commonizedCInteropOutput(): FileCollection? {
+    val commonizerTask = project.commonizeCInteropTask() ?: return null
+    val commonizerDependencyToken = CInteropCommonizerDependent.from(this) ?: return null
+    val outputDirectory = commonizerTask.get().commonizedOutputDirectory(commonizerDependencyToken) ?: return null
+    return project.filesProvider(commonizerTask) { outputDirectory }
 
-    metadataKlib.from(outputDirectory) { spec ->
-        spec.into(cinteropMetadataDirectoryPath(compilation.defaultSourceSet.name))
+}
+
+internal suspend fun Zip.includeCommonizedCInteropMetadata(compilation: KotlinSharedNativeCompilation) {
+    val outputDirectory = compilation.commonizedCInteropOutput() ?: return
+
+    from(outputDirectory) { spec ->
+        spec.into(compilation.cinteropMetadataDirectoryPath())
     }
+}
+
+internal fun KotlinSharedNativeCompilation.cinteropMetadataDirectoryPath(): String {
+    return cinteropMetadataDirectoryPath(defaultSourceSet.name)
 }
 
 internal object CInteropCommonizerCompositeMetadataJarBundling {
