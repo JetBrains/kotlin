@@ -63,11 +63,11 @@ abstract class AbstractNativeLoadCompiledKotlinTest : AbstractKotlinCompilerNati
         }
 
         facadeStep(::KlibSerializerNativeCliFacade)
-        facadeStep(::NativeDeserializerFacade)
-
         klibArtifactsHandlersStep {
             useHandlers(::KlibNativeLoadedMetadataDumpHandler)
         }
+        facadeStep(::NativeDeserializerFacade)
+
         useFailureSuppressors(
             { testServices -> FirMetadataLoadingTestSuppressor(testServices, CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2) }
         )
