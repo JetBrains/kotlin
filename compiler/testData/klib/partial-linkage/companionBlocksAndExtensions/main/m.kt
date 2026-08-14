@@ -18,6 +18,23 @@ fun box() = abiTest {
     expectSuccess("bodyChange.v2") { bodyChangeRef.invoke() }
     expectFailure(linkage("Function 'removedFun' can not be called: No function found for symbol '/A.removedFun'")) { removedFunRef.invoke() }
 
+    expectSuccess("extensionPropertyChange.v2") { extensionValChangeGet() }
+    expectFailure(linkage("Property accessor 'removedExtensionVal.<get-removedExtensionVal>' can not be called: No property accessor found for symbol '/removedExtensionVal.<get-removedExtensionVal>'")) { removedExtensionValGet() }
+    expectSuccess("extensionPropertyChange.v2") { extensionVarChangeGet() }
+    expectFailure(linkage("Property accessor 'removedExtensionVar.<get-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<get-removedExtensionVar>'")) { removedExtensionVarGet() }
+    expectFailure(linkage("Property accessor 'removedExtensionVar.<set-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<set-removedExtensionVar>'")) { removedExtensionVarSet() }
+
+    expectSuccess("extensionPropertyChange.v2") { extensionValChangeRef.invoke() }
+    expectFailure(linkage("Property accessor 'removedExtensionVal.<get-removedExtensionVal>' can not be called: No property accessor found for symbol '/removedExtensionVal.<get-removedExtensionVal>'")) { removedExtensionValRef.invoke() }
+    expectSuccess("extensionPropertyChange.v2") { extensionVarChangeRef.invoke() }
+    expectFailure(linkage("Property accessor 'removedExtensionVar.<get-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<get-removedExtensionVar>'")) { removedExtensionVarRef.invoke() }
+
+    expectSuccess("extensionFunBodyChange.v2") { extensionFunBodyChangeCall() }
+    expectFailure(linkage("Function 'removedExtensionFun' can not be called: No function found for symbol '/removedExtensionFun'")) { removedExtensionFunCall() }
+
+    expectSuccess("extensionFunBodyChange.v2") { extensionFunBodyChangeRef.invoke() }
+    expectFailure(linkage("Function 'removedExtensionFun' can not be called: No function found for symbol '/removedExtensionFun'")) { removedExtensionFunRef.invoke() }
+
     expectSuccess("removedClass") { removedClassCall() }
     expectSuccess(42) { removedClassValueCall() }
     expectFailure(linkage("Constructor 'RemovedClass.<init>' can not be called: No constructor found for symbol '/RemovedClass.<init>'")) { removedClassParameterCall() }
