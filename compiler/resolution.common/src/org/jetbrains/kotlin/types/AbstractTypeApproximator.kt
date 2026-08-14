@@ -407,7 +407,6 @@ abstract class AbstractTypeApproximator(
             } else {
                 intersectTypes(newTypes, upperBoundForApproximation, toSuper, depth)
             }
-            TypeApproximatorConfiguration.IntersectionStrategy.TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
             // commonSupertypeCalculator should handle flexible types correctly
             TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE,
 
