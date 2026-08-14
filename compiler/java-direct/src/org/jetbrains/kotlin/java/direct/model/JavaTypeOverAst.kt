@@ -11,6 +11,7 @@ import com.intellij.java.syntax.element.SyntaxElementTypes
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
@@ -107,27 +108,17 @@ class JavaClassifierTypeOverAst(
 
         with(resolutionContext) {
             if (parts.size == 1) {
-                // 1. OWN type parameters (high priority). Known javac divergence: javac prefers a
-                // same-named nested class over the own type parameter in one narrow JLS-scoping
-                // edge case; this order mirrors PSI, and PSI parity is the target. This priority is
-                // pinned by the compiler-wide test
-                // `diagnostics/tests/javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt`
-                // (and its inherited-nested-class sibling `InheritedInnerAndTypeParameterWithSameNames.kt`),
-                // both of which also run in this module's phased suite and would fail if this step
-                // were reordered after the nested-class lookup below.
+                // Matches PSI implementation's order; javac prefers a same-named nested class over an own type parameter.
+                // Reflected in `diagnostics/tests/javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt` and
+                // `InheritedInnerAndTypeParameterWithSameNames.kt`.
+                // TODO: consider switching to javac behavior (KT-88935)
                 findTypeParameter(parts[0])?.let { return it }
-                // 2. Inner/local class names (shadow INHERITED outer type params)
                 findClassInCurrentScope(parts[0])?.let { return it }
-                // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes).
-                // TODO: (KT-87797) PSI-parity-only; to remove (see `JavaScopeContext.inheritedTypeParametersInScope`)
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 
-            // In-scope (AST/model) navigation, kept as a distinct pass *before* the [resolve]
-            // fallback below:
-            //  - it needs no `FirSession` symbol provider, unlike [resolve]'s class-existence probe
-            //    (so it also serves parser-only tests);
-            //  - even with a session it avoids a symbol-provider round-trip per segment.
+            // Unlike [resolve] below, needs no `FirSession` symbol provider: serves parser-only tests, and saves
+            // a symbol-provider round-trip per segment.
             var current: JavaClassifier? = findClassInCurrentScope(parts[0])
 
             if (current is JavaClass) {
@@ -139,10 +130,6 @@ class JavaClassifierTypeOverAst(
                 return current
             }
 
-            // Cross-file branch: resolve the whole reference to a `ClassId` and materialize it via
-            // [classifierAdapterFor] — the canonical, identity-preserving `JavaClassOverAst` for a
-            // source-backed `ClassId`, a `FirBackedJavaClassAdapter` otherwise; `null` on sessions
-            // without a symbol provider.
             resolve(rawTypeName)?.let { return classifierAdapterFor(it) }
         }
         return null
@@ -161,63 +148,18 @@ class JavaClassifierTypeOverAst(
 
     override val presentableText: String get() = tree.getText(node).toString()
 
+    /** Raw (JLS 4.6) when an expected type argument is neither explicit nor recoverable */
     override val isRaw: Boolean
-        get() = computeIsRaw()
+        get() = typeArguments.any { it == null }
 
-    /**
-     * Whether the reference is qualified by a class which inherits the classifier. (see the test inheritedInnerQualifiedRawType.kt).
-     */
-    private fun isQualifiedByInheritor(javaClass: JavaClass): Boolean {
-        val declaringOuterName = javaClass.outerClass?.name?.asString() ?: return false
-        if (rawTypeNameParts[rawTypeNameParts.size - 2] == declaringOuterName) return false
-        val classId = javaClass.classId ?: return false
-        return with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) } != null
-    }
-
-    private fun computeIsRaw(): Boolean {
-        // Raw when (JLS 4.6):
-        //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`;
-        //  (b) qualified `Outer.Inner` with no explicit `<>` on any non-static generic outer —
-        //      raw semantics propagate down, so FIR must see a `ConeRawType`. `Inner<U>` written
-        //      inside the outer's body (implicit outer args in scope) is NOT raw.
-        val javaClass = classifier as? JavaClass ?: return false
-
-        val parameterList = tree.findChildByType(node, JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
-        val ownExplicit = parameterList?.let { pl ->
-            tree.getChildren(pl).count { tree.getType(it) == JavaSyntaxElementType.TYPE }
-        } ?: 0
-        val ownParams = javaClass.typeParameters.size
-        if (ownParams > 0 && ownExplicit < ownParams) return true
-
-        if (!javaClass.isStatic && rawTypeNameParts.size > 1) {
-            val allRefs = collectAllRefParamLists(node)
-            val outerHasExplicitArgs = allRefs.size > 1 && allRefs.dropLast(1).any { pl ->
-                tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
-            }
-            if (!outerHasExplicitArgs && !isQualifiedByInheritor(javaClass)) {
-                // Walk the *enclosing-instance* chain: only the outers whose type parameters are in scope for
-                // this reference can make it raw. The walk therefore stops at the first `static` (or top-level)
-                // enclosing class.
-                var current: JavaClass = javaClass
-                while (true) {
-                    val outer = current.outerClass ?: break
-                    if (outer.typeParameters.isNotEmpty()) return true
-                    if (outer.isStatic) break
-                    current = outer
-                }
-            }
-        }
-        return false
-    }
-
-    override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val typeArguments: List<JavaType?> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeTypeArguments()
     }
 
-    private fun computeTypeArguments(): List<JavaType> {
-        // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.
-        // This handles both flat ("A<T>.B<U>" → [<T>, <U>] as direct children) and
-        // nested ("A<T>.B<U>" → child JAVA_CODE_REF("A<T>") + sibling REFPARAMLIST(<U>)) structures.
+    /**
+     * The classifier's own first, then the enclosing instances' ones; `static` class stops the traversal.
+     */
+    private fun computeTypeArguments(): List<JavaType?> {
         val allRefParamLists = collectAllRefParamLists(node)
 
         // The innermost class's explicit type arguments come from the LAST REFERENCE_PARAMETER_LIST.
@@ -227,57 +169,83 @@ class JavaClassifierTypeOverAst(
                 .map { typeNode -> createJavaType(typeNode, tree, resolutionContext) }
         } ?: emptyList()
 
-        // For qualified generic types like "BaseOuter<H>.BaseInner<Double, String>", the earlier
-        // REFERENCE_PARAMETER_LISTs contain explicit type arguments for the outer classes.
-        // These are used directly instead of implicit outer type params — for cross-file types
-        // (classifier == null) the source-level outer args are the only information available.
+        val javaClass = classifier as? JavaClass
+
+        val ownParameterCount = javaClass?.typeParameters?.size ?: 0
+        val ownArgs: List<JavaType?> =
+            if (javaClass != null && explicitArgs.size < ownParameterCount) List(ownParameterCount) { null }
+            else explicitArgs
+
         if (allRefParamLists.size > 1) {
             val outerExplicitArgs = allRefParamLists.dropLast(1).reversed().flatMap { paramList ->
                 tree.getChildren(paramList).filter { tree.getType(it) == JavaSyntaxElementType.TYPE }
                     .map { createJavaType(it, tree, resolutionContext) }
             }
             if (outerExplicitArgs.isNotEmpty()) {
-                return explicitArgs + outerExplicitArgs
+                return ownArgs + outerExplicitArgs
             }
         }
 
-        // Simple (non-qualified) type: for non-static inner classes, add implicit outer type params.
-        // This handles references like "Inner<U>" inside Outer<T> where the outer T is implicit.
-        val javaClass = classifier as? JavaClass
-        if (javaClass == null || javaClass.isStatic) {
-            return explicitArgs
-        }
+        if (javaClass == null || javaClass.isStatic) return ownArgs
 
         val outerTypeParams = mutableListOf<JavaTypeParameter>()
+        var anyOutOfScope = false
         var outer = javaClass.outerClass
-        while (outer != null && !outer.isStatic) {
-            outerTypeParams.addAll(outer.typeParameters)
-            outer = outer.outerClass
-        }
-
-        if (outerTypeParams.isEmpty()) {
-            // Inherited case: the inner class is non-static but its outer arguments are neither
-            // written in source nor lexically in scope (the outer class is top-level / cross-file,
-            // so the lexical walk above stops). Recover them from the containing class's supertype
-            // hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
-            // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
-            val classId = javaClass.classId
-            if (classId != null) {
-                val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
-                if (recovered != null) return explicitArgs + recovered
+        while (outer != null) {
+            if (outer.typeParameters.isNotEmpty()) {
+                if (!isInScopeOfDeclaringClass(outer)) anyOutOfScope = true
+                outerTypeParams.addAll(outer.typeParameters)
             }
-            return explicitArgs
+            outer = if (outer.isStatic) null else outer.outerClass
+        }
+        if (outerTypeParams.isEmpty()) return ownArgs
+
+        // Naming the enclosing class opts out of its implicit arguments: `Outer.Inner` is raw even inside
+        // `Outer`'s own body. A qualifier which only inherits the inner class (`Sub.Inner` with
+        // `class Sub extends Outer<String>`) takes them from that subclass's supertypes instead.
+        val isQualified = rawTypeNameParts.size > 1
+        val qualifiedByDeclaringOuter =
+            isQualified && rawTypeNameParts[rawTypeNameParts.size - 2] == javaClass.outerClass?.name?.asString()
+
+        // Out of scope: the reference sits in a class which merely inherits the inner class
+        // (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`), and the declaring
+        // class's parameters denote nothing there.
+        if (anyOutOfScope || isQualified) {
+            val classId = javaClass.classId
+            if (!qualifiedByDeclaringOuter && classId != null) {
+                val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
+                if (recovered != null) return ownArgs + recovered
+            }
+            // Nothing binds the enclosing instance's parameters at this reference.
+            return ownArgs + List(outerTypeParams.size) { null }
         }
 
-        // Resolve each outer type param through the current context so we get the caller's H
-        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
-        val implicitArgs = outerTypeParams.map { typeParam ->
-            val resolved = with(resolutionContext) { findTypeParameter(typeParam.name.asString()) }
-            if (resolved != null) JavaTypeParameterTypeOverAst(resolved)
-            else JavaTypeParameterTypeOverAst(typeParam)
-        }
+        // The declaring class's own instances: FIR matches a `JavaTypeParameter` to its `FirTypeParameterSymbol`
+        // by identity in the per-class `JavaTypeParameterStack`.
+        return ownArgs + outerTypeParams.map { JavaTypeParameterTypeOverAst(it) }
+    }
 
-        return explicitArgs + implicitArgs
+    /**
+     * Whether this type reference is written inside [declaringClass], i.e. whether
+     * [declaringClass]'s own type parameters denote the enclosing instance's ones here.
+     *
+     * By identity, not by name: a same-named parameter of a nested class or of an enclosing generic
+     * method shadows the outer one for name resolution but is not the one the implicit argument denotes
+     * (`class A<T> { class Inner<T> { Inner<String> foo(); } }` means `A<A.T>.Inner<String>`).
+     */
+    private fun isInScopeOfDeclaringClass(declaringClass: JavaClass): Boolean {
+        val declaringClassId = declaringClass.classId
+        var enclosing: JavaClass? = resolutionContext.scopeContext.containingClass
+        while (enclosing != null) {
+            if (enclosing === declaringClass) return true
+            // Defensive: `FirBackedJavaClassAdapter` is built fresh per call, so a class visible both as
+            // source and through the symbol provider — e.g. a previous build's `.class` file on the
+            // classpath of an incremental run — can be seen through two non-identical instances.
+            if (declaringClassId != null && enclosing.classId == declaringClassId) return true
+            if (enclosing.isStatic) return false
+            enclosing = enclosing.outerClass
+        }
+        return false
     }
 
     /**
@@ -645,6 +613,8 @@ class SimpleClassifierType(
 internal class FirBackedJavaClassifierType(
     val coneType: ConeClassLikeType,
     private val session: FirSession,
+    /** Declaration chain for a type parameter among the nested arguments (`List<E>`), see [firBackedJavaType]. */
+    private val declarationChainRoot: JavaClass? = null,
 ) : JavaClassifierType {
     override val classifier: JavaClassifier = FirBackedJavaClassAdapter(coneType.lookupTag.classId, session)
     override val classifierQualifiedName: String get() = coneType.lookupTag.classId.asSingleFqName().asString()
@@ -652,7 +622,7 @@ internal class FirBackedJavaClassifierType(
     override val isRaw: Boolean get() = coneType.isRaw()
 
     override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        coneType.typeArguments.map { firBackedJavaType(it, session) }
+        coneType.typeArguments.map { firBackedJavaType(it, session, declarationChainRoot) }
     }
 
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
@@ -679,21 +649,38 @@ internal class FirBackedJavaWildcardType(
 /**
  * Wraps a cone [ConeTypeProjection] as a [JavaType] so FIR's `JavaTypeConversion` reproduces the
  * original projection when re-converting a [FirBackedJavaClassifierType]'s type arguments.
- * Non-class-like invariant projections (type-parameter / flexible / error) fall back to an
- * unbounded wildcard — the recovery substitutes type parameters to concrete arguments at the
- * cone level before wrapping, so the fallback is only reached for unsubstituted residuals.
+ *
+ * [declarationChainRoot] is the class whose supertype the projection was taken from. `JavaTypeConversion`
+ * resolves a [JavaTypeParameter] by identity in that class's `MutableJavaTypeParameterStack`, so a cone type
+ * parameter has to be handed back as the model's own instance from that chain.
  */
-internal fun firBackedJavaType(projection: ConeTypeProjection, session: FirSession): JavaType {
-    return when (projection) {
+internal fun firBackedJavaType(
+    projection: ConeTypeProjection,
+    session: FirSession,
+    declarationChainRoot: JavaClass? = null,
+): JavaType {
+    // Arguments read from a resolved FIR supertype are flexible; the Java model is nullability-agnostic and
+    // FIR re-derives flexibility when converting back.
+    return when (val type = (projection as? ConeKotlinType)?.lowerBoundIfFlexible() ?: projection) {
         is ConeStarProjection -> FirBackedJavaWildcardType(bound = null, isExtends = true)
         is ConeKotlinTypeProjectionIn ->
-            FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(projection.type, session), isExtends = false)
+            FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(type.type, session, declarationChainRoot), isExtends = false)
         is ConeKotlinTypeProjectionOut ->
-            FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(projection.type, session), isExtends = true)
-        is ConeClassLikeType -> FirBackedJavaClassifierType(projection, session)
+            FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(type.type, session, declarationChainRoot), isExtends = true)
+        is ConeClassLikeType -> FirBackedJavaClassifierType(type, session, declarationChainRoot)
+        is ConeTypeParameterType -> {
+            val lookupTag = type.lookupTag
+            val parameter = if (declarationChainRoot != null && lookupTag is ConeTypeParameterLookupTagImpl) {
+                javaTypeParameterInDeclarationChain(declarationChainRoot, lookupTag.typeParameterSymbol)
+            } else {
+                null
+            }
+            parameter?.let { JavaTypeParameterTypeOverAst(it) } ?: FirBackedJavaWildcardType(bound = null, isExtends = true)
+        }
+        // Error and captured types have no Java-model representation; an unbounded wildcard keeps them resolvable.
         else -> FirBackedJavaWildcardType(bound = null, isExtends = true)
     }
 }
 
-private fun firBackedClassifierOrNull(type: ConeKotlinType, session: FirSession): JavaType? =
-    (type as? ConeClassLikeType)?.let { FirBackedJavaClassifierType(it, session) }
+private fun firBackedClassifierOrNull(type: ConeKotlinType, session: FirSession, declarationChainRoot: JavaClass?): JavaType? =
+    (type.lowerBoundIfFlexible() as? ConeClassLikeType)?.let { FirBackedJavaClassifierType(it, session, declarationChainRoot) }

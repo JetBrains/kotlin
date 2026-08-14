@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.java.direct.model.firBackedJavaType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -417,24 +420,50 @@ internal fun recoverInheritedOuterTypeArguments(innerClassId: ClassId): List<Jav
     val outerClassId = innerClassId.outerClassId ?: return null
     val containingClass = c.scopeContext.containingClass ?: return null
     val session = c.fileContext.session
-    // Walk the containing class's outer classes, whose supertypes are resolved already (FIR
-    // resolves outer before inner). Per JLS a `static` nested class has no enclosing instance and
-    // severs the chain of implicit outer type arguments — mirrors the static break in PSI's
-    // `JavaClassifierTypeImpl.getTypeParameters` and IntelliJ's `PsiUtil.typeParametersIterable`.
-    var child: JavaClass = containingClass
-    var currentOuter: JavaClass? = child.outerClass
-    while (currentOuter != null) {
-        if (child.isStatic) break
-        val currentOuterId = currentOuter.classId
-        if (currentOuterId != null) {
-            for (supertype in FirBackedJavaClassAdapter(currentOuterId, session).supertypes) {
+    // Walk the containing class itself and then its outer classes, innermost first: the innermost
+    // class that inherits the inner class is the one whose instantiation of the outer class the
+    // reference denotes (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` ⇒ `BaseInner`
+    // written in `Outer`'s body has outer arguments `Integer, E1`). Per JLS a `static` nested
+    // class has no enclosing instance and severs the chain of implicit outer type arguments —
+    // mirrors the static break in PSI's `JavaClassifierTypeImpl.getTypeParameters` and IntelliJ's
+    // `PsiUtil.typeParametersIterable`. Reading the containing class's own supertypes cannot loop:
+    // `FirBackedJavaClassAdapter.supertypes` is cycle-guarded, so a reference that is itself part
+    // of that supertype list sees an empty answer and the walk simply moves outward.
+    var current: JavaClass? = containingClass
+    while (current != null) {
+        val inheritingClass = current
+        val currentId = inheritingClass.classId
+        if (currentId != null) {
+            for (supertype in FirBackedJavaClassAdapter(currentId, session).supertypes) {
                 val coneSupertype = (supertype as? FirBackedJavaClassifierType)?.coneType ?: continue
                 val recovered = findTypeArgsForClassInHierarchy(coneSupertype, outerClassId, session, mutableSetOf())
-                if (recovered != null) return recovered.map { firBackedJavaType(it, session) }
+                if (recovered != null) return recovered.map { firBackedJavaType(it, session, declarationChainRoot = inheritingClass) }
             }
         }
-        child = currentOuter
-        currentOuter = currentOuter.outerClass
+        if (inheritingClass.isStatic) break
+        current = inheritingClass.outerClass
+    }
+    return null
+}
+
+/**
+ * Finds the [JavaTypeParameter] denoted by [symbol] among those declared by [startClass] or by one of
+ * its outer classes, innermost first. A `static` class has no enclosing instance and severs the
+ * chain, so its outer classes' parameters are not visible in its declarations.
+ *
+ * The owner class is matched first and only then the parameter by name: a recovered argument may
+ * belong to another class of the hierarchy (`class A<T> { class Sub<U> extends Mid<T> }` recovers
+ * `A`'s `T`), which a plain by-name walk would confuse with a same-named parameter of an inner one.
+ * A parameter of a class outside the chain has no binding at this reference at all, so `null` here
+ * correctly routes it to a wildcard.
+ */
+internal fun javaTypeParameterInDeclarationChain(startClass: JavaClass, symbol: FirTypeParameterSymbol): JavaTypeParameter? {
+    val ownerClassId = (symbol.containingDeclarationSymbol as? FirClassSymbol<*>)?.classId ?: return null
+    var current: JavaClass? = startClass
+    while (current != null) {
+        if (current.classId == ownerClassId) return current.typeParameters.firstOrNull { it.name == symbol.name }
+        if (current.isStatic) return null
+        current = current.outerClass
     }
     return null
 }
