@@ -24,6 +24,12 @@ fun main() {
             testClass<AbstractComposeWithSerializationBoxTest> {
                 model("withSerialization")
             }
+            testClass<AbstractJvmIrTextTestForCompose> {
+                model("common")
+            }
+            testClass<AbstractJsIrTextTestForCompose> {
+                model("common")
+            }
         }
     }
 }

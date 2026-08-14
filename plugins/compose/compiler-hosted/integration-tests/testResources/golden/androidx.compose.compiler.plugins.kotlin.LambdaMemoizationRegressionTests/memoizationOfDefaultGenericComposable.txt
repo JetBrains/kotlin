@@ -72,7 +72,7 @@ fun <S> Effect(vm: S, %composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%773808165: Function3<S, Composer, Int, Unit>?
+  val lambda%773808165: Function3<Any?, Composer, Int, Unit>?
     get() {
       if (field == null) {
         field = composableLambdaInstance(<>, false) { vm: S, %composer: Composer?, %changed: Int ->
