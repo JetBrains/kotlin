@@ -105,6 +105,14 @@ fun Project.configureJavaCompile() {
             if (!kotlinBuildProperties.disableWerror) {
                 options.compilerArgs.add("-Werror")
             }
+
+            // A modern `javac` records nameless synthetic and mandated parameters in a `MethodParameters`
+            // attribute that `javac` 8 never wrote, and two tools this repository still depends on choke on
+            // it: the D8 behind `dexMethodCount`, and `getParameters()` on JDK 8 before 8u4xx. Nothing here
+            // asks for parameter names, so the attribute is pure incidental output — see
+            // `stripMethodParameters`.
+            val destination = destinationDirectory
+            doLast { stripMethodParameters(destination.get().asFile, logger) }
         }
     }
 }
