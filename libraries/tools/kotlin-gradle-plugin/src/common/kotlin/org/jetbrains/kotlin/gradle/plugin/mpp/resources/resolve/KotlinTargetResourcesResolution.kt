@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 
@@ -31,6 +32,7 @@ internal object KotlinTargetResourcesResolution {
             it.withVariantReselection()
             it.attributes { viewAttributes ->
                 viewAttributes.configureResourcesPublicationAttributes(compilation.target)
+                viewAttributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.RESOURCES_EXTRACTED)
             }
             it.isLenient = true
         }.files
