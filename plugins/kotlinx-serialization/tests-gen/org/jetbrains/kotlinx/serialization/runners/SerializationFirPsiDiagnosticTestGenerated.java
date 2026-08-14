@@ -271,6 +271,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("SerializableWithOnTypeUsage.kt")
+    public void testSerializableWithOnTypeUsage() {
+      run("SerializableWithOnTypeUsage.kt");
+    }
+
+    @Test
     @TestMetadata("serializerFromOtherModule.kt")
     public void testSerializerFromOtherModule() {
       run("serializerFromOtherModule.kt");
