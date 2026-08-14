@@ -9,7 +9,7 @@ import com.intellij.core.CoreJavaFileManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.useJavaDirect
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.session.FirJavaInterop
 import org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
 import org.jetbrains.kotlin.java.direct.createJavaDirectJavaInterop
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 
 /**
- * The Java view of this compilation as [configuration] asks for it: the java-direct one under
- * `-Xjava-direct`, the PSI one otherwise. The two peers — [createJavaDirectJavaInterop] and
- * [psiJavaInterop] — stay peers; this is only the one place which knows how each of them is built, so
+ * The Java view of this compilation as [configuration] asks for it: the java-direct one unless
+ * `-Xjava-direct` is switched off, the PSI one otherwise. The two peers — [createJavaDirectJavaInterop]
+ * and [psiJavaInterop] — stay peers; this is only the one place which knows how each of them is built, so
  * that every JVM-hosted pipeline follows the same flag instead of deciding on its own.
  *
  * [withJavaSources] says whether this compilation has `.java` sources of its own at all. It is a single
@@ -34,8 +34,7 @@ fun VfsBasedProjectEnvironment.javaInterop(
     configuration: CompilerConfiguration,
     withJavaSources: Boolean = true,
 ): FirJavaInterop =
-    @Suppress("SimplifyBooleanWithConstants", "KotlinUnreachableCode", "KotlinConstantConditions")
-    if (true || configuration.useJavaDirect) {
+    if (configuration.useJavaDirectOrDefault) {
         createJavaDirectJavaInterop(
             if (withJavaSources) configuration.javaSourceRootEntries() else emptyList(),
             // The binary Java classes live as long as the interop, i.e. as long as the compilation which built it.
@@ -45,6 +44,18 @@ fun VfsBasedProjectEnvironment.javaInterop(
     } else {
         psiJavaInterop(withJavaSources)
     }
+
+/**
+ * java-direct is the default Java view; the PSI peer is only used where a consumer asks for it explicitly —
+ * `-Xjava-direct=false`, or [JVMConfigurationKeys.USE_JAVA_DIRECT] put to `false` by a test configurator whose
+ * subject is the PSI view itself (see `ExternalAnnotationsEnvironmentConfigurator`).
+ *
+ * The key is *unset* in every pipeline which does not build its configuration from CLI arguments — the whole
+ * non-CLI test infrastructure, the Build Tools API, scripting. "Unset" must mean the same as the `-Xjava-direct`
+ * default, i.e. on, otherwise the flag would say one thing on the command line and another everywhere else.
+ */
+private val CompilerConfiguration.useJavaDirectOrDefault: Boolean
+    get() = get(JVMConfigurationKeys.USE_JAVA_DIRECT) ?: true
 
 private fun CompilerConfiguration.javaSourceRootEntries(): List<JavaSourceRootEntry> =
     getList(CLIConfigurationKeys.CONTENT_ROOTS)
