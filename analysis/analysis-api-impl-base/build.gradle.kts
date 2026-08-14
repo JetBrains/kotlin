@@ -34,7 +34,7 @@ dependencies {
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(kotlinTest("junit5"))
     testFixturesImplementation(project(":analysis:analysis-api"))
-    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
