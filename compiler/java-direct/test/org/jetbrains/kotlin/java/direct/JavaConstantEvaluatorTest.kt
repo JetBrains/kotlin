@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class JavaConstantEvaluatorTest : JavaParsingTestBase() {
@@ -90,6 +91,40 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         evaluator.evaluate(refNode)
 
         assertEquals(null to "MISSING", captured)
+    }
+
+    /**
+     * A cast to a primitive type is part of a constant expression (JLS 15.29) and performs the
+     * narrowing conversion of JLS 5.4, so `(byte) 300` is the constant `44` — not "no constant".
+     * `byte` and `short` constants are usually written with such a cast, which is why they were the
+     * two types whose initializers went missing while all the others were read correctly.
+     */
+    @Test
+    fun testCastInConstantInitializer() {
+        val source = """
+            package test;
+            class Consts {
+                static final int LOCAL = 3;
+                static final byte BYTE = (byte) 300;
+                static final short SHORT = (short) 70000;
+                static final char CHAR = (char) 65;
+                static final int TRUNCATED = (int) 2.75;
+                static final byte OF_EXPRESSION = (byte) (LOCAL * 100);
+            }
+        """.trimIndent()
+
+        val javaClass = parseFirstClass(source)
+        fun constantOf(name: String): Any? {
+            val field = javaClass.fields.first { it.name.asString() == name }
+            assertTrue(field.hasConstantNotNullInitializer) { "$name must be a compile-time constant" }
+            return field.initializerValue
+        }
+
+        assertEquals(44.toByte(), constantOf("BYTE"))
+        assertEquals(4464.toShort(), constantOf("SHORT"))
+        assertEquals('A', constantOf("CHAR"))
+        assertEquals(2, constantOf("TRUNCATED"))
+        assertEquals(44.toByte(), constantOf("OF_EXPRESSION"))
     }
 
     private fun findReferenceExpression(tree: JavaLightTree, node: JavaLightNode, text: String): JavaLightNode? {
