@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.backend.wasm.*
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
+import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -26,10 +24,7 @@ import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
-import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
-import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.isBoolean
@@ -79,15 +74,18 @@ private class WasmICContextMultimoduleForTesting : WasmICContextMultimodule(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext
-    ): IrCompilerICInterface = object : WasmCompilerWithICMultimodule(
+        context: WasmBackendContext,
+    ): WasmCompilerWithICMultimodule = object : WasmCompilerWithICMultimodule(
         mainModule = mainModule,
         allowIncompleteImplementations = false,
         skipCommentInstructions = false,
         skipLocations = false,
-        context = context as WasmBackendContext,
+        context = context,
     ) {
-        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        override fun compile(
+            allModules: Collection<IrModuleFragment>,
+            dirtyFiles: Collection<IrFile>,
+        ): List<() -> WasmIrProgramFragmentsMultimodule> {
             markExportedDeclarations(dirtyFiles, super.context)
             return super.compile(allModules, dirtyFiles)
         }
@@ -104,15 +102,18 @@ private class WasmICContextSingleModuleForTesting : WasmICContextSingleModule(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext,
-    ): IrCompilerICInterface = object : WasmCompilerWithICSingleModule(
+        context: WasmBackendContext,
+    ): WasmCompilerWithICSingleModule = object : WasmCompilerWithICSingleModule(
         mainModule = mainModule,
         allowIncompleteImplementations = false,
         skipCommentInstructions = false,
         skipLocations = false,
-        context = context as WasmBackendContext,
+        context = context,
     ) {
-        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        override fun compile(
+            allModules: Collection<IrModuleFragment>,
+            dirtyFiles: Collection<IrFile>,
+        ): List<() -> WasmIrProgramFragmentsSingleModule> {
             markExportedDeclarations(dirtyFiles, super.context)
             return super.compile(allModules, dirtyFiles)
         }
@@ -129,15 +130,15 @@ private class WasmICContextWholeWorldForTesting : WasmICContextWholeWorld(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext,
-    ): IrCompilerICInterface = object : WasmCompilerWithICWholeWorld(
+        context: WasmBackendContext,
+    ): WasmCompilerWithICWholeWorld = object : WasmCompilerWithICWholeWorld(
         mainModule = mainModule,
         allowIncompleteImplementations = false,
         skipCommentInstructions = false,
         skipLocations = false,
-        context = context as WasmBackendContext,
+        context = context,
     ) {
-        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> WasmIrProgramFragments> {
             markExportedDeclarations(dirtyFiles, super.context)
             return super.compile(allModules, dirtyFiles)
         }

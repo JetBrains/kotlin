@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -128,7 +127,7 @@ internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
     private val orderedLibraries: List<KotlinLibrary>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
-    private val icContext: PlatformDependentICContext,
+    private val icContext: PlatformDependentICContext<*, *, *, *>,
     private val stubbedSignatures: Set<IdSignature>,
     private val loadBodiesOnlyForMainModule: Boolean,
     private val mainLibrary: KotlinLibrary,
@@ -243,7 +242,6 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
         val loadedIr = LoadedJsIr(irModules, irBuiltIns, linker)
 
         // This should be done because referenced declaration from the compiler should be loaded as well
