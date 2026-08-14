@@ -26,6 +26,9 @@ class CliBinaryClassFileIndex(
     private val extensions: JavaFileExtensions =
         if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
 
+    override val classpathVersion: Int
+        get() = index.version
+
     override fun findTopLevelClassFiles(topLevelClassId: ClassId): Collection<BinaryClassFileHandle> =
         index.findClassVirtualFiles(topLevelClassId, extensions).map { it.asBinaryClassFileHandle() }
 

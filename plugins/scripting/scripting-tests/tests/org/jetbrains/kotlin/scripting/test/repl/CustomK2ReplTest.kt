@@ -28,6 +28,7 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 val dependenciesResolver = CompoundDependenciesResolver(MavenDependenciesResolver())
@@ -153,6 +154,45 @@ class CustomK2ReplTest {
                     }
                 }
             }
+        )
+    }
+
+    @Test
+    fun testWithUpdatingDependeciesAfterUnresolvedImport() {
+        if (!isK2) return
+        val importLine = "import org.jetbrains.kotlinx.dataframe.jupyter.KotlinNotebookPluginUtils"
+        var addDependency = false
+        val compilationConfiguration = baseCompilationConfiguration.with {
+            refineConfiguration {
+                beforeCompiling { (val _ = script, val config = compilationConfiguration, val _ = collectedData) ->
+                    if (!addDependency) config.asSuccess()
+                    else {
+                        val resolveResults = runBlocking {
+                            dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:0.15.0")
+                        }
+                        if (resolveResults is ResultWithDiagnostics.Failure) resolveResults
+                        else config.with { updateClasspath(resolveResults.valueOrThrow()) }.asSuccess()
+                    }
+                }
+            }
+        }
+        val afterDependency = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration))
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                // The unresolved import makes the compilation look up the package of the not yet added jar
+                val beforeDependency = compiler.compile(importLine.toScriptSource("s1.repl.kts"))
+                assertTrue(
+                    beforeDependency is ResultWithDiagnostics.Failure,
+                    "Expected the import to be unresolved before the jar is added"
+                )
+                addDependency = true
+                compiler.compile("$importLine\nKotlinNotebookPluginUtils".toScriptSource("s2.repl.kts"))
+            }
+        }
+        assertTrue(
+            afterDependency is ResultWithDiagnostics.Success,
+            "Expected the import to be resolved after the jar is added, got: ${afterDependency.reports.joinToString { it.message }}"
         )
     }
 
