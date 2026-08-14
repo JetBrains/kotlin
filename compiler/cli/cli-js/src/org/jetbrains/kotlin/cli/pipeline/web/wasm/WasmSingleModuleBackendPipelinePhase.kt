@@ -8,14 +8,22 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsSingleModule
+import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactSingleModule
+import org.jetbrains.kotlin.backend.wasm.ic.WasmSrcFileArtifactSingleModule
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.library.isWasmStdlib
 
-object WasmSingleModuleBackendPipelinePhase : WasmBackendPipelinePhase() {
+object WasmSingleModuleBackendPipelinePhase : WasmBackendPipelinePhase<
+        WasmModuleArtifactSingleModule,
+        WasmSrcFileArtifactSingleModule,
+        WasmIrProgramFragmentsSingleModule,
+        WasmICContextSingleModule,
+        >() {
+
     override fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
+        icCaches: List<WasmModuleArtifactSingleModule>,
         configuration: CompilerConfiguration
     ): List<WasmIrModuleConfiguration> = compileIncrementallySingleModule(icCaches, configuration)
 

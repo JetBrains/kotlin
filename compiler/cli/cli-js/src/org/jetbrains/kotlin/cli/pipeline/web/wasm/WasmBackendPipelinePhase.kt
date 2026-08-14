@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.sourceMap
@@ -26,9 +29,18 @@ import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 
-abstract class WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>(
-    name = "WasmBackendPipelinePhase",
-) {
+abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragments, TIcContext> : WebBackendPipelinePhase<
+        WasmBackendPipelineArtifact,
+        List<WasmIrModuleConfiguration>,
+        TModuleArtifact,
+        TFileArtifact,
+        TFragments,
+        WasmBackendContext
+        >(name = "WasmBackendPipelinePhase")
+        where TModuleArtifact : ModuleArtifact,
+              TFileArtifact : SrcFileArtifact,
+              TFragments : IrICProgramFragments,
+              TIcContext : WasmICContextBase<TModuleArtifact, TFileArtifact, TFragments> {
     override val klibLoadingPhase: WebIrLoadingPipelinePhase
         get() = WasmIrLoadingPipelinePhase
 
@@ -56,13 +68,13 @@ abstract class WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPip
         skipLocalNames: Boolean,
         skipCommentInstructions: Boolean,
         skipLocations: Boolean,
-    ): WasmICContextBase
+    ): TIcContext
 
     override fun createCacheUpdater(
         cacheDirectory: String,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration
-    ): CacheUpdater {
+    ): CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, WasmBackendContext> {
         val icContext = createIcContext(
             false,
             !configuration.wasmDebug,
