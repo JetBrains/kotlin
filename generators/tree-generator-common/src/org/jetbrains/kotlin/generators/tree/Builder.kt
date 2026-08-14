@@ -61,12 +61,6 @@ class LeafBuilder<Field, Element, Implementation>(
     override val packageName: String = implementation.packageName.replace(".impl", ".builder")
     var isOpen: Boolean = false
     var wantsCopy: Boolean = false
-
-    /**
-     * Names of list fields that should be printed as `var` instead of `val` in this builder,
-     * allowing a custom [MutableList] implementation to be supplied to the builder.
-     */
-    val listFieldsWithVar: MutableSet<String> = mutableSetOf()
 }
 
 class IntermediateBuilder<Field, Element>(
