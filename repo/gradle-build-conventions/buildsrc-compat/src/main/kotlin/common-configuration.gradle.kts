@@ -111,6 +111,12 @@ fun Project.configureJavaCompile() {
             // it: the D8 behind `dexMethodCount`, and `getParameters()` on JDK 8 before 8u4xx. Nothing here
             // asks for parameter names, so the attribute is pure incidental output — see
             // `stripMethodParameters`.
+            //
+            // A `doLast` is not part of the task's identity, so on its own it would leave every output that is
+            // already up to date — or restored from the build cache, local or remote — with the attribute
+            // still in place. This property perturbs the cache key so each task re-runs once; bump it
+            // whenever the stripping itself changes.
+            inputs.property("stripMethodParametersVersion", 1)
             val destination = destinationDirectory
             doLast { stripMethodParameters(destination.get().asFile, logger) }
         }
