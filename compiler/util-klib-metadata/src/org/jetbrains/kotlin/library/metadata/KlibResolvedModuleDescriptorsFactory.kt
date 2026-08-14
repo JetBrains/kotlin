@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.storage.StorageManager
 import java.nio.file.Path
@@ -28,7 +29,7 @@ interface KlibResolvedModuleDescriptorsFactory {
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors = createResolved2(
-        resolvedLibraries = resolvedLibraries,
+        libraries = resolvedLibraries.getFullList(),
         storageManager = storageManager,
         builtIns = builtIns,
         languageVersionSettings = languageVersionSettings,
@@ -40,7 +41,7 @@ interface KlibResolvedModuleDescriptorsFactory {
     )
 
     /**
-     * Given the [resolvedLibraries] creates the list of [ModuleDescriptorImpl]s with properly installed
+     * Given the [libraries] creates the list of [ModuleDescriptorImpl]s with properly installed
      * inter-dependencies. The result of this method is returned in a form of [KotlinResolvedModuleDescriptors] instance.
      *
      * Please use this method with care: Unless this method accepts `null` for [builtIns], it is not recommended to
@@ -54,7 +55,7 @@ interface KlibResolvedModuleDescriptorsFactory {
      * FYI: No much attention to naming of this function, anyway it's going to be removed soon as a part of K1.
      */
     fun createResolved2(
-        resolvedLibraries: KotlinLibraryResolveResult,
+        libraries: List<KotlinLibrary>,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
