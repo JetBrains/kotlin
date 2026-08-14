@@ -17,6 +17,25 @@ fun removedFunCall() = A.removedFun()
 val bodyChangeRef = A::bodyChange
 val removedFunRef = A::removedFun
 
+fun extensionValChangeGet() = A.extensionValChange
+fun removedExtensionValGet() = A.removedExtensionVal
+fun extensionVarChangeGet() = A.extensionVarChange
+fun removedExtensionVarGet() = A.removedExtensionVar
+fun removedExtensionVarSet() {
+    A.removedExtensionVar = 0
+}
+
+val extensionValChangeRef = A::extensionValChange
+val removedExtensionValRef = A::removedExtensionVal
+val extensionVarChangeRef = A::extensionVarChange
+val removedExtensionVarRef = A::removedExtensionVar
+
+fun extensionFunBodyChangeCall() = A.extensionFunBodyChange()
+fun removedExtensionFunCall() = A.removedExtensionFun()
+
+val extensionFunBodyChangeRef = A::extensionFunBodyChange
+val removedExtensionFunRef = A::removedExtensionFun
+
 fun removedClassCall() = A.removedClass()
 fun removedClassValueCall() = A.removedClassValue()
 fun removedClassParameterCall() = A.removedClassParameter(RemovedClass(42))

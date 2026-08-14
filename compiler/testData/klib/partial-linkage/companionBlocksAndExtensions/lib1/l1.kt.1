@@ -30,6 +30,14 @@ fun A.blockToRegularExtension() = "blockToRegularExtension"
 fun A.companionToRegularExtension() = "companionToRegularExtension"
 companion fun A.regularToCompanionExtension() = "regularToCompanionExtension"
 
+companion val A.extensionValChange = "extensionPropertyChange.v2"
+//companion val A.removedExtensionVal = 42
+companion var A.extensionVarChange = A.extensionValChange
+//companion var A.removedExtensionVar = 42
+
+companion fun A.extensionFunBodyChange() = "extensionFunBodyChange.v2"
+//companion fun A.removedExtensionFun() {}
+
 class RemovedBlock {
     //companion {
         //fun sameFun() = "block"
