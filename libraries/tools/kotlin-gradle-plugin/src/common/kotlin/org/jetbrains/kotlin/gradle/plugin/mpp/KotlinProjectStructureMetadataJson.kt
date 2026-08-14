@@ -15,21 +15,13 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 
 /**
- * DTOs mirroring the on-disk shape of `kotlin-project-structure-metadata.json`, kept separate from
- * [KotlinProjectStructureMetadata] so that the internal model can evolve without changing the wire format.
+ * JSON shape of `META-INF/kotlin-project-structure-metadata.json`.
  *
- * The format is published inside metadata jars as `META-INF/kotlin-project-structure-metadata.json` and is read
- * back during dependency resolution and IDE import, so it must stay compatible with what previous Kotlin versions
- * wrote. Two legacy quirks are therefore reproduced verbatim:
- *  - booleans ([ProjectStructureNodeJson.isPublishedAsRoot], [SourceSetNodeJson.hostSpecific]) are quoted strings,
- *    see [QuotedBooleanSerializer];
- *  - [SourceSetNodeJson.hostSpecific] is omitted rather than set to `"false"`.
- *
- * Property declaration order defines the order of keys in the output and must match
- * [org.jetbrains.kotlin.gradle.plugin.mpp.serialize], which the XML representation still uses.
+ * Older Kotlin versions read and write this file, so the shape can't change: booleans are strings,
+ * `hostSpecific` is written only when true, and keys follow property order. Reading stays as lenient as
+ * the old Gson reader, which also took hand-edited files.
  */
 @Serializable
 internal data class KotlinProjectStructureMetadataJson(
@@ -40,7 +32,7 @@ internal data class KotlinProjectStructureMetadataJson(
 internal data class ProjectStructureNodeJson(
     val formatVersion: String,
     @Serializable(with = QuotedBooleanSerializer::class)
-    val isPublishedAsRoot: Boolean,
+    val isPublishedAsRoot: Boolean = false,
     val variants: List<VariantNodeJson> = emptyList(),
     val sourceSets: List<SourceSetNodeJson> = emptyList(),
 )
@@ -64,7 +56,7 @@ internal data class SourceSetNodeJson(
     val hostSpecific: Boolean = false,
 )
 
-/** Booleans in this format are written as the strings `"true"` and `"false"`. */
+/** Written as `"true"`/`"false"`. The lenient reader also takes bare `true`/`false`. */
 internal object QuotedBooleanSerializer : KSerializer<Boolean> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("QuotedBoolean", PrimitiveKind.STRING)
 
@@ -73,7 +65,7 @@ internal object QuotedBooleanSerializer : KSerializer<Boolean> {
     override fun deserialize(decoder: Decoder): Boolean = decoder.decodeString().toBoolean()
 }
 
-/** A module dependency is written as `"$groupId:$moduleId"`, see [parseModuleDependencyIdentifier]. */
+/** Written as `groupId:moduleId`. */
 internal object ModuleDependencyIdentifierSerializer : KSerializer<ModuleDependencyIdentifier> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ModuleDependencyIdentifier", PrimitiveKind.STRING)
 
@@ -83,21 +75,25 @@ internal object ModuleDependencyIdentifierSerializer : KSerializer<ModuleDepende
     override fun deserialize(decoder: Decoder): ModuleDependencyIdentifier = parseModuleDependencyIdentifier(decoder.decodeString())
 }
 
-/**
- * Gson's pretty printer, which used to produce this file, indents with two spaces, while kotlinx-serialization
- * defaults to four. The indentation is part of the contract: `libraries/stdlib` and `libraries/kotlin.test` compare
- * the generated file against checked-in expectations with exact string equality.
- *
- * Gson's HTML escaping is not reproduced: `GsonBuilder` writes `<`, `>`, `&`, `=` and `'` as `\uXXXX` by
- * default. Those do not occur in variant or source set names, so the bytes only differ if one ever shows up.
- */
+// Every setting is spelled out instead of taken from KgpJson, so a change there can't alter the published format.
+// stdlib and kotlin.test compare the output with checked-in files, hence the two-space indent.
 @OptIn(ExperimentalSerializationApi::class)
-private val projectStructureMetadataJson = Json(KgpJson.prettyPrinted) {
+private val projectStructureMetadataJson = Json {
+    prettyPrint = true
     prettyPrintIndent = "  "
+    encodeDefaults = true
+    explicitNulls = false
+    ignoreUnknownKeys = true
+    coerceInputValues = true
+    isLenient = true
+    allowComments = true
 }
+
+/** kotlinx-serialization fails on a leading byte order mark. */
+private const val BOM = "\uFEFF"
 
 internal fun KotlinProjectStructureMetadataJson.encodeToString(): String =
     projectStructureMetadataJson.encodeToString(KotlinProjectStructureMetadataJson.serializer(), this)
 
 internal fun decodeKotlinProjectStructureMetadataJson(string: String): KotlinProjectStructureMetadataJson =
-    projectStructureMetadataJson.decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string)
+    projectStructureMetadataJson.decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string.removePrefix(BOM))
