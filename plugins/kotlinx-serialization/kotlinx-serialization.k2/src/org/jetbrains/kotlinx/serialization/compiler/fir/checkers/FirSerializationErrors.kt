@@ -57,6 +57,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
 
     val INCONSISTENT_INHERITABLE_SERIALINFO by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val META_SERIALIZABLE_NOT_APPLICABLE by error0<KtElement>()
+    val SERIALIZABLE_ANNOTATION_TYPEALIAS_UNSUPPORTED by warning0<KtElement>()
     val INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE by error0<KtElement>()
     val SERIALINFO_INAPPLICABLE_TARGET by warning1<KtElement, String>()
     val INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET by warning1<KtElement, String>()
