@@ -49,6 +49,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("CustomSerializerParamCount.kt")
+    public void testCustomSerializerParamCount() {
+      run("CustomSerializerParamCount.kt");
+    }
+
+    @Test
     @TestMetadata("customSerializers.kt")
     public void testCustomSerializers() {
       run("customSerializers.kt");
