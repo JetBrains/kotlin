@@ -118,7 +118,7 @@ private class SymbolSampleAnalysisEnvironment(
             .map { it.text.removePrefix("import ") }
             .filter { it.isNotBlank() }
             .applyIf(sampleRewriter != null) {
-                mapNotNull { sampleRewriter?.rewriteImportDirective(it) }
+                mapNotNull { sampleRewriter.rewriteImportDirective(it) }
             }
     }
 
