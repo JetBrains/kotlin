@@ -42,11 +42,7 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
     it.allOverriddenFunctions.atMostOne { it.parent == this }
 }
 
-val ModuleDescriptor.konanLibrary: KotlinLibrary?
-    get() {
-        val origin: DeserializedKlibModuleOrigin? = this.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin
-        return origin?.library
-    }
+val ModuleDescriptor.konanLibrary get() = (this.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin)?.library
 
 val IrPackageFragment.konanLibrary: KotlinLibrary?
     get() {
