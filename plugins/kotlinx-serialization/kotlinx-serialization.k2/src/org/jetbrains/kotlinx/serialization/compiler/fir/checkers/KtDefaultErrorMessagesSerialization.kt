@@ -65,6 +65,13 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(
+            FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
+            "Function ''{0}()'' clashes with the one that the serialization plugin generates in the companion object of this class, " +
+                    "which makes the generated function unreachable. Rename this function, change its signature, " +
+                    "or specify the serializer explicitly with @Serializable(with = ...) on the class.",
+            CommonRenderers.STRING
+        )
+        map.put(
             FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
             "Explicit @Serializable annotation on enum class is required when @SerialName or @SerialInfo annotations are used on its members."
         )

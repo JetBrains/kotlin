@@ -43,6 +43,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("CompanionSerializerClash.kt")
+    public void testCompanionSerializerClash() {
+      run("CompanionSerializerClash.kt");
+    }
+
+    @Test
     @TestMetadata("customSerializers.kt")
     public void testCustomSerializers() {
       run("customSerializers.kt");
