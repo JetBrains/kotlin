@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
@@ -77,6 +78,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             checkProtobufProperties(properties.serializableProperties, reporter)
             checkProtobufAnnotationTargets(properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
+            checkNonCompileTimeDefaults(classSymbol, properties.serializableProperties, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
 
@@ -636,6 +638,70 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             } else if (!isInitialized) {
                 reporter.reportOn(propertySymbol.source, FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER)
             }
+        }
+    }
+
+    /**
+     * The generated `write$Self` decides whether to write a property by evaluating its default expression again and
+     * comparing it with the current value. For a default like `DateTime.now()` that means the property is written or
+     * omitted depending on how much time passed since the object was created, which surprises users. Suggest pinning
+     * the behaviour with `@EncodeDefault`. See KT-73994.
+     *
+     * Only plain function calls are reported, and known argument-less factories of empty collections are excluded.
+     * Constructor calls are deliberately left alone: a fresh instance of a data class compares equal to the default,
+     * so those are not re-evaluation problems and reporting them would be mostly noise.
+     */
+    private fun CheckerContext.checkNonCompileTimeDefaults(
+        classSymbol: FirClassSymbol<*>,
+        properties: List<FirSerializableProperty>,
+        reporter: DiagnosticReporter,
+    ) {
+        val classLookupTag = classSymbol.toLookupTag()
+        for (property in properties) {
+            val propertySymbol = property.propertySymbol
+            if (!classLookupTag.isRealOwnerOf(propertySymbol)) continue
+            // @Required and @EncodeDefault already pin whether the property is written.
+            if (propertySymbol.getSerialRequired(session)) continue
+            if (propertySymbol.hasAnnotation(SerializationAnnotations.encodeDefaultClassId, session)) continue
+
+            val defaultValue = when {
+                propertySymbol.fromPrimaryConstructor ->
+                    propertySymbol.correspondingValueParameterFromPrimaryConstructor?.resolvedDefaultValue
+                else -> propertySymbol.resolvedInitializer
+            }
+            if (!isReevaluatedOnEveryEncode(defaultValue)) continue
+            reporter.reportOn(
+                defaultValue?.source ?: propertySymbol.source,
+                FirSerializationErrors.NON_COMPILE_TIME_DEFAULT_VALUE
+            )
+        }
+    }
+
+    private fun isReevaluatedOnEveryEncode(expression: FirExpression?): Boolean {
+        val call = expression as? FirFunctionCall ?: return false
+        val callee = call.toResolvedCallableSymbol()
+        // A fresh instance compares equal to the default as long as the arguments do.
+        if (callee is FirConstructorSymbol) return call.arguments.any { isReevaluatedOnEveryEncode(it) }
+        // Operators produce the same result for the same operands, e.g. `val dependent: Int = other + 1`.
+        if ((callee as? FirNamedFunctionSymbol)?.isOperator == true) {
+            return isReevaluatedOnEveryEncode(call.explicitReceiver) || call.arguments.any { isReevaluatedOnEveryEncode(it) }
+        }
+        if (call.arguments.isEmpty() && callee?.callableId in EMPTY_COLLECTION_FACTORIES) return false
+        return true
+    }
+
+    /**
+     * Factories whose result is always equal to the default, so re-evaluating them changes nothing observable.
+     */
+    private val EMPTY_COLLECTION_FACTORIES: Set<CallableId> = buildSet {
+        for (name in listOf(
+            "emptyList", "emptySet", "emptyMap", "listOf", "setOf", "mapOf",
+            "mutableListOf", "mutableSetOf", "mutableMapOf", "arrayListOf",
+        )) {
+            add(CallableId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier(name)))
+        }
+        for (name in listOf("emptyArray", "arrayOf")) {
+            add(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(name)))
         }
     }
 

@@ -56,6 +56,7 @@ object SerializationAnnotations {
     val serialNameAnnotationClassId = ClassId.topLevel(serialNameAnnotationFqName)
     val requiredAnnotationClassId = ClassId.topLevel(requiredAnnotationFqName)
     val serialTransientClassId = ClassId.topLevel(serialTransientFqName)
+    val encodeDefaultClassId = ClassId.topLevel(encodeDefaultFqName)
     val serialInfoClassId = ClassId.topLevel(serialInfoFqName)
     val inheritableSerialInfoClassId = ClassId.topLevel(inheritableSerialInfoFqName)
     val metaSerializableAnnotationClassId = ClassId.topLevel(metaSerializableAnnotationFqName)

@@ -52,6 +52,8 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val TRANSIENT_IS_REDUNDANT by warning0<KtElement>()
     val INCORRECT_TRANSIENT by warning0<KtElement>()
 
+    val NON_COMPILE_TIME_DEFAULT_VALUE by warning0<KtElement>()
+
     val REQUIRED_KOTLIN_TOO_HIGH by error3<KtAnnotationEntry, String, String, String>()
     val PROVIDED_RUNTIME_TOO_LOW by error3<KtAnnotationEntry, String, String, String>()
 

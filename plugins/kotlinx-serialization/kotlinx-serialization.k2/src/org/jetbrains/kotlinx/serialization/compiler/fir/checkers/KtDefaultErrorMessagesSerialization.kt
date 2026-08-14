@@ -170,6 +170,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             "@kotlin.jvm.Transient does not affect @Serializable classes. Use @kotlinx.serialization.Transient instead."
         )
         map.put(
+            FirSerializationErrors.NON_COMPILE_TIME_DEFAULT_VALUE,
+            "This default value is evaluated again on every serialization and compared with the property's current value, " +
+                    "so whether the property is written depends on when the object was created. " +
+                    "Annotate the property with @EncodeDefault(ALWAYS) to always write it, or with @EncodeDefault(NEVER) to never write it."
+        )
+        map.put(
             FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
             "Serialization of arrays with generic type arguments is impossible because of an unknown compile-time type."
         )

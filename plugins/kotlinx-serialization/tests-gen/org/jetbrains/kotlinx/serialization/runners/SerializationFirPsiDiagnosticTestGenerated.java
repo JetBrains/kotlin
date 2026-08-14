@@ -181,6 +181,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("NonCompileTimeDefault.kt")
+    public void testNonCompileTimeDefault() {
+      run("NonCompileTimeDefault.kt");
+    }
+
+    @Test
     @TestMetadata("NonSerializable.kt")
     public void testNonSerializable() {
       run("NonSerializable.kt");
