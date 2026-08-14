@@ -201,6 +201,7 @@ internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: Lis
     } else null
 
     val extraUserSetupInfo = run {
+        // Note: The order of libraries is not important.
         context.config.resolvedLibraries.getFullList()
                 .filter { it.isCInteropLibrary() }
                 .mapNotNull { library ->

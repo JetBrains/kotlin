@@ -54,6 +54,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
+                // Note: The order of libraries is not important except for stdlib, which should go the first.
                 libraries = config.resolvedLibraries.getFullList(),
                 storageManager = projectContext.storageManager,
                 builtIns = module.builtIns,

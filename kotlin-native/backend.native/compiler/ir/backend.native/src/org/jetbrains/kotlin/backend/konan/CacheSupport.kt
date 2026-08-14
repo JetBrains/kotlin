@@ -72,7 +72,7 @@ class CacheSupport(
         target: KonanTarget,
         val produce: CompilerOutputKind
 ) {
-    // TODO: consider using [FeaturedLibraries.kt].
+    // Note: The order of libraries is not important here.
     private val pathToLibrary = allLibraries.associateBy { it.path }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
@@ -173,6 +173,8 @@ class CacheSupport(
         // Ensure dependencies of every cached library are cached too:
         val dependenciesMap = LegacyKlibDependencies(allLibraries)
 
+        // Note: The libraries should be in the reverse topo-order here.
+        // TODO(KT-61096): Use RTO of libraries here after switching to KlibLoader.
         for (library in allLibraries) {
             val cache = cachedLibraries.getLibraryCache(library)
             if (cache != null || library == libraryToCache?.klib) {
