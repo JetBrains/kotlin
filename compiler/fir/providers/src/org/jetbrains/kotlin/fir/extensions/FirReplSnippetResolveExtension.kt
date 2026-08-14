@@ -34,5 +34,13 @@ abstract class FirReplHistoryProvider : FirSessionComponent {
     abstract fun putSnippet(symbol: FirReplSnippetSymbol)
     abstract fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean
     abstract fun getSnippetCount(): Int
+
+    /**
+     * Returns [symbol]'s imports, or `null` to fall back to
+     * `FirProvider.getFirReplSnippetContainerFile(symbol).imports` (the in-memory provider's
+     * default). An empty list asserts "no imports" rather than "unknown" — needed by providers
+     * (e.g. artifact-backed ones) that reconstruct [FirReplSnippetSymbol] without a backing `FirFile`.
+     */
+    open fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? = null
 }
 
