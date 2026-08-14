@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
@@ -74,6 +75,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
             checkProtobufProperties(properties.serializableProperties, reporter)
+            checkProtobufAnnotationTargets(properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
@@ -385,6 +387,64 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             )
 
         }
+    }
+
+    /**
+     * `kotlinx-serialization-protobuf` annotations that only make sense for particular property types. Applying them
+     * elsewhere silently does nothing, which is easy to get wrong. See KT-81042.
+     */
+    private fun CheckerContext.checkProtobufAnnotationTargets(
+        properties: List<FirSerializableProperty>,
+        reporter: DiagnosticReporter,
+    ) {
+        for (property in properties) {
+            val propertySymbol = property.propertySymbol
+            val type = propertySymbol.resolvedReturnType.fullyExpandedType()
+
+            fun report(annotationClassId: ClassId, requirement: String, isApplicable: Boolean) {
+                if (isApplicable) return
+                val annotation = propertySymbol.getAnnotationByClassId(annotationClassId, session) ?: return
+                reporter.reportOn(
+                    annotation.source ?: propertySymbol.source,
+                    FirSerializationErrors.PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE,
+                    annotationClassId.shortClassName.asString(),
+                    requirement,
+                    type
+                )
+            }
+
+            report(
+                SerializationAnnotations.protoPackedAnnotationClassId,
+                "collections and arrays",
+                isApplicable = isCollectionOrArray(type)
+            )
+            report(
+                SerializationAnnotations.protoTypeAnnotationClassId,
+                "integer properties",
+                isApplicable = type.classId in INTEGER_CLASS_IDS
+            )
+            // The value of a oneof group is one of several message types, so anything that maps onto a scalar
+            // protobuf field cannot hold it.
+            report(
+                SerializationAnnotations.protoOneOfAnnotationClassId,
+                "properties of non-scalar types",
+                isApplicable = !type.isPrimitiveOrNullablePrimitive
+                        && type.classId != StandardClassIds.String
+                        && type.classSymbolOrUpperBound(session)?.isEnumClass != true
+            )
+        }
+    }
+
+    private val INTEGER_CLASS_IDS = setOf(
+        StandardClassIds.Byte, StandardClassIds.Short, StandardClassIds.Int, StandardClassIds.Long,
+        StandardClassIds.UByte, StandardClassIds.UShort, StandardClassIds.UInt, StandardClassIds.ULong,
+    )
+
+    private fun CheckerContext.isCollectionOrArray(type: ConeKotlinType): Boolean {
+        if (type.isNonPrimitiveArray || type.isPrimitiveOrUnsignedArray) return true
+        val classSymbol = type.toRegularClassSymbol() ?: return false
+        if (classSymbol.classId == StandardClassIds.Collection) return true
+        return classSymbol.getAllSubstitutedSupertypes(session).any { it.classId == StandardClassIds.Collection }
     }
 
     context(reporter: DiagnosticReporter)

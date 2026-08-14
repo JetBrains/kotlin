@@ -69,6 +69,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC by error0<KtElement>()
 
     val PROTOBUF_PROTO_NUM_DUPLICATED by warning2<KtAnnotationEntry, String, String>()
+    val PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE by warning3<KtElement, String, String, ConeKotlinType>()
 
     val JSON_FORMAT_REDUNDANT_DEFAULT by warning0<KtElement>()
     val JSON_FORMAT_REDUNDANT by warning0<KtElement>()

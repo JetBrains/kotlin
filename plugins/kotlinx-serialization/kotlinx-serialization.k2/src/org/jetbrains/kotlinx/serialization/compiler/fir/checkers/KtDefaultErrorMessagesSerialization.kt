@@ -256,6 +256,14 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
+            FirSerializationErrors.PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE,
+            "@{0} has no effect on a property of type ''{2}'': it is only applicable to {1}.",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
+
+        map.put(
             FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
             "Redundant creation of Json default format. Creating instances for each use can be slow."
         )
