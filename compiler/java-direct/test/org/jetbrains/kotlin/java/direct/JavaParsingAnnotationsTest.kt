@@ -113,6 +113,67 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testArrayElementAndLevelAnnotations() {
+        // JLS 9.7.4: an annotation written before the type name annotates the *element* type,
+        // one written before a `[]` pair annotates only that array level (leftmost = outermost).
+        val source = """
+            import java.util.List;
+            import org.jetbrains.annotations.NotNull;
+            import org.jetbrains.annotations.Nullable;
+            
+            public class MyClass {
+                public List<@NotNull String @Nullable [] []> items;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val field = javaClass.fields.first { it.name.asString() == "items" }
+        val fieldType = field.type as JavaClassifierType
+
+        val outerArray = fieldType.typeArguments[0] as JavaArrayType
+        assertEquals(1, outerArray.annotations.size) { "Annotations on outer array: ${outerArray.annotations.map { it.classId }}" }
+        assertEquals("Nullable", outerArray.annotations.first().classId?.shortClassName?.asString())
+
+        val innerArray = outerArray.componentType as JavaArrayType
+        assertTrue(innerArray.annotations.isEmpty()) { "Annotations on inner array: ${innerArray.annotations.map { it.classId }}" }
+
+        val element = innerArray.componentType as JavaClassifierType
+        assertEquals("String", element.classifierQualifiedName)
+        assertEquals(1, element.annotations.size) { "Annotations on element type: ${element.annotations.map { it.classId }}" }
+        assertEquals("NotNull", element.annotations.first().classId?.shortClassName?.asString())
+    }
+
+    @Test
+    fun testArrayLevelAnnotationsOnField() {
+        // Same rule for a *field*, where the annotation of the element type is written in front of
+        // the type name and therefore lands in the field's MODIFIER_LIST, and where one declaration
+        // node may carry several fields. Each `[]` pair still keeps only its own annotations.
+        val source = """
+            import org.jetbrains.annotations.NotNull;
+            
+            public class MyClass {
+                public String @NotNull [] @Deprecated [] f1, f2;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        for (name in listOf("f1", "f2")) {
+            val field = javaClass.fields.first { it.name.asString() == name }
+            val outerArray = field.type as JavaArrayType
+            assertEquals(1, outerArray.annotations.size) { "$name outer array: ${outerArray.annotations.map { it.classId }}" }
+            assertEquals("NotNull", outerArray.annotations.first().classId?.shortClassName?.asString())
+
+            val innerArray = outerArray.componentType as JavaArrayType
+            assertEquals(1, innerArray.annotations.size) { "$name inner array: ${innerArray.annotations.map { it.classId }}" }
+            assertEquals("Deprecated", innerArray.annotations.first().classId?.shortClassName?.asString())
+
+            val element = innerArray.componentType as JavaClassifierType
+            assertEquals("String", element.classifierQualifiedName)
+            assertTrue(element.annotations.isEmpty()) { "$name element type: ${element.annotations.map { it.classId }}" }
+        }
+    }
+
+    @Test
     fun testAnnotatedTypeArgumentInMethodReturn() {
         // Test TYPE_USE annotation on method return type argument
         val source = """
