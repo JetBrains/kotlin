@@ -170,6 +170,10 @@ class FirReachabilityAnalyzer(private val session: FirSession) : FirVisitorVoid(
                 // The backend derives the name of anonymous objects from its declaring parent.
                 mark(decl.symbol)
             }
+            if (decl is FirField && decl.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
+                // Synthetic delegate fields are required by backend for interface delegation.
+                mark(decl.symbol)
+            }
         }
 
         if (regularClass.status.isInline || regularClass.status.isValue) {

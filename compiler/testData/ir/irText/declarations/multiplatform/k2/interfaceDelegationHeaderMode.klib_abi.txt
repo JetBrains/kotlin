@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <platform>
+abstract interface /ErrorCatching { // /ErrorCatching|null[0]
+    abstract fun hasError(): kotlin/Boolean // /ErrorCatching.hasError|hasError(){}[0]
+    abstract fun reportError(kotlin/Throwable) // /ErrorCatching.reportError|reportError(kotlin.Throwable){}[0]
+    final class Impl : /ErrorCatching { // /ErrorCatching.Impl|null[0]
+        constructor <init>() // /ErrorCatching.Impl.<init>|<init>(){}[0]
+        final fun hasError(): kotlin/Boolean // /ErrorCatching.Impl.hasError|hasError(){}[0]
+        final fun reportError(kotlin/Throwable) // /ErrorCatching.Impl.reportError|reportError(kotlin.Throwable){}[0]
+    }
+}
+open class /TestBase : /ErrorCatching { // /TestBase|null[0]
+    constructor <init>() // /TestBase.<init>|<init>(){}[0]
+    constructor <init>(/ErrorCatching.Impl) // /TestBase.<init>|<init>(ErrorCatching.Impl){}[0]
+    open fun hasError(): kotlin/Boolean // /TestBase.hasError|hasError(){}[0]
+    open fun reportError(kotlin/Throwable) // /TestBase.reportError|reportError(kotlin.Throwable){}[0]
+}

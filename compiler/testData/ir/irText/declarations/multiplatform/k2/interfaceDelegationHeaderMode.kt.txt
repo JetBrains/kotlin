@@ -1,0 +1,110 @@
+// FILE: common.kt
+
+interface Closeable {
+  class Impl : Closeable {
+    constructor() /* primary */
+
+    override fun close() {
+    }
+
+  }
+
+  abstract fun close()
+
+}
+
+interface ErrorCatching {
+  class Impl : ErrorCatching {
+    override val isEnabled: Boolean
+      override get
+
+    override var retryCount: Int
+      override get
+      override set
+
+    constructor() /* primary */
+
+    override fun hasError(): Boolean {
+    }
+
+    override fun reportError(error: Throwable) {
+    }
+
+  }
+
+  abstract fun hasError(): Boolean
+
+  abstract fun reportError(error: Throwable)
+
+  abstract val isEnabled: Boolean
+    abstract get
+
+  abstract var retryCount: Int
+    abstract get
+    abstract set
+
+}
+
+// FILE: platform.kt
+
+class MultiDelegate : Closeable, ErrorCatching {
+  private /* final field */ val $$delegate_0: Impl = errorCatching
+  private /* final field */ val $$delegate_1: Impl = closeable
+  constructor(errorCatching: Impl, closeable: Impl) /* primary */
+
+  override fun close() {
+    <this>.#$$delegate_1.close()
+  }
+
+  override fun hasError(): Boolean {
+    return <this>.#$$delegate_0.hasError()
+  }
+
+  override fun reportError(error: Throwable) {
+    <this>.#$$delegate_0.reportError(error = error)
+  }
+
+  override val isEnabled: Boolean
+    override get(): Boolean {
+      return <this>.#$$delegate_0.<get-isEnabled>()
+    }
+
+  override var retryCount: Int
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-retryCount>()
+    }
+    override set(<set-?>: Int) {
+      <this>.#$$delegate_0.<set-retryCount>(<set-?> = <set-?>)
+    }
+
+}
+
+open class TestBase : ErrorCatching {
+  private /* final field */ val $$delegate_0: Impl = errorCatching
+  constructor()
+
+  constructor(errorCatching: Impl) /* primary */
+
+  override fun hasError(): Boolean {
+    return <this>.#$$delegate_0.hasError()
+  }
+
+  override fun reportError(error: Throwable) {
+    <this>.#$$delegate_0.reportError(error = error)
+  }
+
+  override val isEnabled: Boolean
+    override get(): Boolean {
+      return <this>.#$$delegate_0.<get-isEnabled>()
+    }
+
+  override var retryCount: Int
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-retryCount>()
+    }
+    override set(<set-?>: Int) {
+      <this>.#$$delegate_0.<set-retryCount>(<set-?> = <set-?>)
+    }
+
+}
+

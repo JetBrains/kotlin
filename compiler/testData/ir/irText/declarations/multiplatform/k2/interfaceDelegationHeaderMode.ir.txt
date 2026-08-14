@@ -1,0 +1,303 @@
+FILE fqName:<root> fileName:/common.kt
+  CLASS INTERFACE name:Closeable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Closeable
+    CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Closeable]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Closeable.Impl
+      CONSTRUCTOR visibility:public returnType:<root>.Closeable.Impl [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Closeable
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in <root>.Closeable
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in <root>.Closeable
+      FUN name:close visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Closeable.Impl
+        overridden:
+          public abstract fun close (): kotlin.Unit declared in <root>.Closeable
+        BLOCK_BODY
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:close visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Closeable
+  CLASS INTERFACE name:ErrorCatching modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ErrorCatching
+    CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.ErrorCatching]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ErrorCatching.Impl
+      PROPERTY name:isEnabled visibility:public modality:OPEN [val]
+        overridden:
+          public abstract isEnabled: kotlin.Boolean declared in <root>.ErrorCatching
+        FIELD PROPERTY_BACKING_FIELD name:isEnabled type:kotlin.Boolean visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isEnabled> visibility:public modality:OPEN returnType:kotlin.Boolean
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching.Impl
+          correspondingProperty: PROPERTY name:isEnabled visibility:public modality:OPEN [val]
+          overridden:
+            public abstract fun <get-isEnabled> (): kotlin.Boolean declared in <root>.ErrorCatching
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public open fun <get-isEnabled> (): kotlin.Boolean declared in <root>.ErrorCatching.Impl'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:isEnabled type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
+                receiver: GET_VAR '<this>: <root>.ErrorCatching.Impl declared in <root>.ErrorCatching.Impl.<get-isEnabled>' type=<root>.ErrorCatching.Impl origin=null
+      PROPERTY name:retryCount visibility:public modality:OPEN [var]
+        overridden:
+          public abstract retryCount: kotlin.Int declared in <root>.ErrorCatching
+        FIELD PROPERTY_BACKING_FIELD name:retryCount type:kotlin.Int visibility:private
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-retryCount> visibility:public modality:OPEN returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching.Impl
+          correspondingProperty: PROPERTY name:retryCount visibility:public modality:OPEN [var]
+          overridden:
+            public abstract fun <get-retryCount> (): kotlin.Int declared in <root>.ErrorCatching
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public open fun <get-retryCount> (): kotlin.Int declared in <root>.ErrorCatching.Impl'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:retryCount type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.ErrorCatching.Impl declared in <root>.ErrorCatching.Impl.<get-retryCount>' type=<root>.ErrorCatching.Impl origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-retryCount> visibility:public modality:OPEN returnType:kotlin.Unit
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching.Impl
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+          correspondingProperty: PROPERTY name:retryCount visibility:public modality:OPEN [var]
+          overridden:
+            public abstract fun <set-retryCount> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ErrorCatching
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:retryCount type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.ErrorCatching.Impl declared in <root>.ErrorCatching.Impl.<set-retryCount>' type=<root>.ErrorCatching.Impl origin=null
+              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.ErrorCatching.Impl.<set-retryCount>' type=kotlin.Int origin=null
+      CONSTRUCTOR visibility:public returnType:<root>.ErrorCatching.Impl [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ErrorCatching
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in <root>.ErrorCatching
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in <root>.ErrorCatching
+      FUN name:hasError visibility:public modality:OPEN returnType:kotlin.Boolean
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching.Impl
+        overridden:
+          public abstract fun hasError (): kotlin.Boolean declared in <root>.ErrorCatching
+        BLOCK_BODY
+      FUN name:reportError visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching.Impl
+        VALUE_PARAMETER kind:Regular name:error index:1 type:kotlin.Throwable
+        overridden:
+          public abstract fun reportError (error: kotlin.Throwable): kotlin.Unit declared in <root>.ErrorCatching
+        BLOCK_BODY
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:hasError visibility:public modality:ABSTRACT returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching
+    FUN name:reportError visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching
+      VALUE_PARAMETER kind:Regular name:error index:1 type:kotlin.Throwable
+    PROPERTY name:isEnabled visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-isEnabled> visibility:public modality:ABSTRACT returnType:kotlin.Boolean
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching
+        correspondingProperty: PROPERTY name:isEnabled visibility:public modality:ABSTRACT [val]
+    PROPERTY name:retryCount visibility:public modality:ABSTRACT [var]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-retryCount> visibility:public modality:ABSTRACT returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching
+        correspondingProperty: PROPERTY name:retryCount visibility:public modality:ABSTRACT [var]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-retryCount> visibility:public modality:ABSTRACT returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ErrorCatching
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:retryCount visibility:public modality:ABSTRACT [var]
+FILE fqName:<root> fileName:/platform.kt
+  CLASS CLASS name:MultiDelegate modality:FINAL visibility:public superTypes:[<root>.ErrorCatching; <root>.Closeable]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MultiDelegate
+    FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'errorCatching: <root>.ErrorCatching.Impl declared in <root>.MultiDelegate.<init>' type=<root>.ErrorCatching.Impl origin=null
+    FIELD DELEGATE name:$$delegate_1 type:<root>.Closeable.Impl visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'closeable: <root>.Closeable.Impl declared in <root>.MultiDelegate.<init>' type=<root>.Closeable.Impl origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.MultiDelegate [primary]
+      VALUE_PARAMETER kind:Regular name:errorCatching index:0 type:<root>.ErrorCatching.Impl
+      VALUE_PARAMETER kind:Regular name:closeable index:1 type:<root>.Closeable.Impl
+    FUN DELEGATED_MEMBER name:close visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiDelegate
+      overridden:
+        public abstract fun close (): kotlin.Unit declared in <root>.Closeable
+      BLOCK_BODY
+        CALL 'public open fun close (): kotlin.Unit declared in <root>.Closeable.Impl' type=kotlin.Unit origin=null
+          ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.Closeable.Impl visibility:private [final] declared in <root>.MultiDelegate' type=<root>.Closeable.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.MultiDelegate declared in <root>.MultiDelegate.close' type=<root>.MultiDelegate origin=null
+    FUN DELEGATED_MEMBER name:hasError visibility:public modality:OPEN returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiDelegate
+      overridden:
+        public abstract fun hasError (): kotlin.Boolean declared in <root>.ErrorCatching
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hasError (): kotlin.Boolean declared in <root>.MultiDelegate'
+          CALL 'public open fun hasError (): kotlin.Boolean declared in <root>.ErrorCatching.Impl' type=kotlin.Boolean origin=null
+            ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.MultiDelegate' type=<root>.ErrorCatching.Impl origin=null
+              receiver: GET_VAR '<this>: <root>.MultiDelegate declared in <root>.MultiDelegate.hasError' type=<root>.MultiDelegate origin=null
+    FUN DELEGATED_MEMBER name:reportError visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiDelegate
+      VALUE_PARAMETER kind:Regular name:error index:1 type:kotlin.Throwable
+      overridden:
+        public abstract fun reportError (error: kotlin.Throwable): kotlin.Unit declared in <root>.ErrorCatching
+      BLOCK_BODY
+        CALL 'public open fun reportError (error: kotlin.Throwable): kotlin.Unit declared in <root>.ErrorCatching.Impl' type=kotlin.Unit origin=null
+          ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.MultiDelegate' type=<root>.ErrorCatching.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.MultiDelegate declared in <root>.MultiDelegate.reportError' type=<root>.MultiDelegate origin=null
+          ARG error: GET_VAR 'error: kotlin.Throwable declared in <root>.MultiDelegate.reportError' type=kotlin.Throwable origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ErrorCatching
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Closeable
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.ErrorCatching
+        public open fun hashCode (): kotlin.Int declared in <root>.Closeable
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.ErrorCatching
+        public open fun toString (): kotlin.String declared in <root>.Closeable
+    PROPERTY DELEGATED_MEMBER name:isEnabled visibility:public modality:OPEN [val]
+      overridden:
+        public abstract isEnabled: kotlin.Boolean declared in <root>.ErrorCatching
+      FUN DELEGATED_MEMBER name:<get-isEnabled> visibility:public modality:OPEN returnType:kotlin.Boolean
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiDelegate
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:isEnabled visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-isEnabled> (): kotlin.Boolean declared in <root>.ErrorCatching
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-isEnabled> (): kotlin.Boolean declared in <root>.MultiDelegate'
+            CALL 'public open fun <get-isEnabled> (): kotlin.Boolean declared in <root>.ErrorCatching.Impl' type=kotlin.Boolean origin=null
+              ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.MultiDelegate' type=<root>.ErrorCatching.Impl origin=null
+                receiver: GET_VAR '<this>: <root>.MultiDelegate declared in <root>.MultiDelegate.<get-isEnabled>' type=<root>.MultiDelegate origin=null
+    PROPERTY DELEGATED_MEMBER name:retryCount visibility:public modality:OPEN [var]
+      overridden:
+        public abstract retryCount: kotlin.Int declared in <root>.ErrorCatching
+      FUN DELEGATED_MEMBER name:<get-retryCount> visibility:public modality:OPEN returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiDelegate
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:retryCount visibility:public modality:OPEN [var]
+        overridden:
+          public abstract fun <get-retryCount> (): kotlin.Int declared in <root>.ErrorCatching
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-retryCount> (): kotlin.Int declared in <root>.MultiDelegate'
+            CALL 'public open fun <get-retryCount> (): kotlin.Int declared in <root>.ErrorCatching.Impl' type=kotlin.Int origin=null
+              ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.MultiDelegate' type=<root>.ErrorCatching.Impl origin=null
+                receiver: GET_VAR '<this>: <root>.MultiDelegate declared in <root>.MultiDelegate.<get-retryCount>' type=<root>.MultiDelegate origin=null
+      FUN DELEGATED_MEMBER name:<set-retryCount> visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiDelegate
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:retryCount visibility:public modality:OPEN [var]
+        overridden:
+          public abstract fun <set-retryCount> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ErrorCatching
+        BLOCK_BODY
+          CALL 'public open fun <set-retryCount> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ErrorCatching.Impl' type=kotlin.Unit origin=null
+            ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.MultiDelegate' type=<root>.ErrorCatching.Impl origin=null
+              receiver: GET_VAR '<this>: <root>.MultiDelegate declared in <root>.MultiDelegate.<set-retryCount>' type=<root>.MultiDelegate origin=null
+            ARG <set-?>: GET_VAR '<set-?>: kotlin.Int declared in <root>.MultiDelegate.<set-retryCount>' type=kotlin.Int origin=null
+  CLASS CLASS name:TestBase modality:OPEN visibility:public superTypes:[<root>.ErrorCatching]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestBase
+    FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'errorCatching: <root>.ErrorCatching.Impl declared in <root>.TestBase.<init>' type=<root>.ErrorCatching.Impl origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.TestBase
+    CONSTRUCTOR visibility:public returnType:<root>.TestBase [primary]
+      VALUE_PARAMETER kind:Regular name:errorCatching index:0 type:<root>.ErrorCatching.Impl
+    FUN DELEGATED_MEMBER name:hasError visibility:public modality:OPEN returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestBase
+      overridden:
+        public abstract fun hasError (): kotlin.Boolean declared in <root>.ErrorCatching
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hasError (): kotlin.Boolean declared in <root>.TestBase'
+          CALL 'public open fun hasError (): kotlin.Boolean declared in <root>.ErrorCatching.Impl' type=kotlin.Boolean origin=null
+            ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.TestBase' type=<root>.ErrorCatching.Impl origin=null
+              receiver: GET_VAR '<this>: <root>.TestBase declared in <root>.TestBase.hasError' type=<root>.TestBase origin=null
+    FUN DELEGATED_MEMBER name:reportError visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestBase
+      VALUE_PARAMETER kind:Regular name:error index:1 type:kotlin.Throwable
+      overridden:
+        public abstract fun reportError (error: kotlin.Throwable): kotlin.Unit declared in <root>.ErrorCatching
+      BLOCK_BODY
+        CALL 'public open fun reportError (error: kotlin.Throwable): kotlin.Unit declared in <root>.ErrorCatching.Impl' type=kotlin.Unit origin=null
+          ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.TestBase' type=<root>.ErrorCatching.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.TestBase declared in <root>.TestBase.reportError' type=<root>.TestBase origin=null
+          ARG error: GET_VAR 'error: kotlin.Throwable declared in <root>.TestBase.reportError' type=kotlin.Throwable origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ErrorCatching
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.ErrorCatching
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.ErrorCatching
+    PROPERTY DELEGATED_MEMBER name:isEnabled visibility:public modality:OPEN [val]
+      overridden:
+        public abstract isEnabled: kotlin.Boolean declared in <root>.ErrorCatching
+      FUN DELEGATED_MEMBER name:<get-isEnabled> visibility:public modality:OPEN returnType:kotlin.Boolean
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestBase
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:isEnabled visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-isEnabled> (): kotlin.Boolean declared in <root>.ErrorCatching
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-isEnabled> (): kotlin.Boolean declared in <root>.TestBase'
+            CALL 'public open fun <get-isEnabled> (): kotlin.Boolean declared in <root>.ErrorCatching.Impl' type=kotlin.Boolean origin=null
+              ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.TestBase' type=<root>.ErrorCatching.Impl origin=null
+                receiver: GET_VAR '<this>: <root>.TestBase declared in <root>.TestBase.<get-isEnabled>' type=<root>.TestBase origin=null
+    PROPERTY DELEGATED_MEMBER name:retryCount visibility:public modality:OPEN [var]
+      overridden:
+        public abstract retryCount: kotlin.Int declared in <root>.ErrorCatching
+      FUN DELEGATED_MEMBER name:<get-retryCount> visibility:public modality:OPEN returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestBase
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:retryCount visibility:public modality:OPEN [var]
+        overridden:
+          public abstract fun <get-retryCount> (): kotlin.Int declared in <root>.ErrorCatching
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-retryCount> (): kotlin.Int declared in <root>.TestBase'
+            CALL 'public open fun <get-retryCount> (): kotlin.Int declared in <root>.ErrorCatching.Impl' type=kotlin.Int origin=null
+              ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.TestBase' type=<root>.ErrorCatching.Impl origin=null
+                receiver: GET_VAR '<this>: <root>.TestBase declared in <root>.TestBase.<get-retryCount>' type=<root>.TestBase origin=null
+      FUN DELEGATED_MEMBER name:<set-retryCount> visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestBase
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:retryCount visibility:public modality:OPEN [var]
+        overridden:
+          public abstract fun <set-retryCount> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ErrorCatching
+        BLOCK_BODY
+          CALL 'public open fun <set-retryCount> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ErrorCatching.Impl' type=kotlin.Unit origin=null
+            ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.ErrorCatching.Impl visibility:private [final] declared in <root>.TestBase' type=<root>.ErrorCatching.Impl origin=null
+              receiver: GET_VAR '<this>: <root>.TestBase declared in <root>.TestBase.<set-retryCount>' type=<root>.TestBase origin=null
+            ARG <set-?>: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestBase.<set-retryCount>' type=kotlin.Int origin=null
