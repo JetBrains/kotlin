@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -29,26 +30,53 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
     override fun check(expression: FirReturnExpression) {
         if (expression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) return
         if (!expression.result.resolvedType.isUnit) return
+        val targetedFunction = expression.target.labeledElement
         val reverseCallStackIterator = context.callsOrAssignments.listIterator(context.callsOrAssignments.size)
         while (reverseCallStackIterator.hasPrevious()) {
             val call = reverseCallStackIterator.previous() as? FirFunctionCall ?: continue
             val calledFunction = call.calleeReference.toResolvedNamedFunctionSymbol(discardErrorReference = true) ?: continue
             return when {
-                call.explicitReceiver != null && calledFunction.isCollectionsFunction -> when {
-                    expression.target.labeledElement != call.lambdaArgument ->
-                        reporter.reportOn(expression.source, FirErrors.UNIT_RETURN_AS_BREAK, calledFunction)
-                    else -> break
-                }
-                expression.target.labeledElement == call.lambdaArgument -> break
+                call.explicitReceiver != null && calledFunction.isCollectionsFunction ->
+                    (calledFunction to call).asCollectionsFunction?.let { lambdaArgument ->
+                        when {
+                            targetedFunction.isLocal && targetedFunction isDeclaredBeforeLambda lambdaArgument -> break
+                            targetedFunction != lambdaArgument ->
+                                reporter.reportOn(expression.source, FirErrors.UNIT_RETURN_AS_BREAK, calledFunction)
+                            else -> break
+                        }
+                    } ?: continue
+                targetedFunction == call.lambdaArgument -> break
                 else -> continue
             }
         }
     }
 
+    context(context: CheckerContext)
+    private infix fun FirFunction.isDeclaredBeforeLambda(lambda: FirAnonymousFunction): Boolean {
+        val reverseContainingDeclarationIterator = context.containingDeclarations.listIterator(context.containingDeclarations.size)
+        while (reverseContainingDeclarationIterator.hasPrevious()) {
+            return when (reverseContainingDeclarationIterator.previous()) {
+                symbol -> true
+                lambda.symbol -> false
+                else -> continue
+            }
+        }
+        return false
+    }
+
     context(sessionHolder: SessionHolder)
-    private val FirNamedFunctionSymbol.isCollectionsFunction: Boolean
-        get() = callableId.packageName.asString() == "kotlin.collections" && valueParameterSymbols.lastOrNull()
-            ?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
+    private val Pair<FirNamedFunctionSymbol, FirFunctionCall>.asCollectionsFunction: FirAnonymousFunction?
+        get() = let { [callableFunction, call] ->
+            when {
+                callableFunction.isCollectionsFunction -> call.lambdaArgument
+                else -> null
+            }
+        }
+
+    context(sessionHolder: SessionHolder)
+    private inline val FirNamedFunctionSymbol.isCollectionsFunction: Boolean
+        get() = callableId.packageName.asString() == "kotlin.collections"
+                && valueParameterSymbols.lastOrNull()?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
 
     private inline val FirFunctionCall.lambdaArgument: FirAnonymousFunction?
         get() = (arguments.lastOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction

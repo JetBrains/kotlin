@@ -19,6 +19,12 @@ fun test() {
         }
         true
     }
+
+    emptyList<Any>().forEach {
+        fun nestedFun() {
+            return
+        }
+    }
 }
 
 /* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
