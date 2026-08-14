@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PARSE_INLINED_LOCAL_CLASSES
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_FORMAT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
@@ -466,6 +467,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val createArchiveTasksForCustomCompilations: Boolean
         get() = booleanProperty(KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS) ?: false
 
+    val publicationFormat: Provider<KotlinPublicationFormat>
+        get() = enumProvider<KotlinPublicationFormat>(KOTLIN_PUBLICATION_FORMAT)
+            .orElse(KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS)
+
     @Suppress("DEPRECATION")
     @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
     val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
@@ -785,10 +790,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private fun booleanProvider(propName: String): Provider<Boolean> =
         getProvider(propName).map { it.toBoolean() }
 
+    private inline fun <reified T: Enum<T>> String.toEnumValue(): T =
+        enumValueOf<T>(this.toUpperCaseAsciiOnly())
+
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
         defaultValue: T,
-    ): T = get(propName)?.let { enumValueOf<T>(it.toUpperCaseAsciiOnly()) } ?: defaultValue
+    ): T = get(propName)?.toEnumValue<T>() ?: defaultValue
+
+    private inline fun <reified T : Enum<T>> enumProvider(
+        propName: String,
+    ): Provider<T> = getProvider(propName).map { it.toEnumValue<T>() }
+
 
     private val localProperties: Map<String, String> by lazy { project.localProperties.get() }
 
@@ -853,6 +866,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
+        val KOTLIN_PUBLICATION_FORMAT = property("kotlin.publicationFormat")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
