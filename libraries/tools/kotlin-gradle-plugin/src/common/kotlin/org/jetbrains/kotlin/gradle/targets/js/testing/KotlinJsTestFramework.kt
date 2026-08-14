@@ -44,6 +44,10 @@ internal const val DEFAULT_DEBUG_PORT = 9222
 internal const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
 
 internal interface KotlinJsBrowserDebugOptions {
+    /** Name of the browser runner to debug. It must be a Chromium one, the framework rejects the rest. */
+    @get:Input
+    val runnerName: Property<String>
+
     @get:Input
     val debugPort: Property<Int>
 

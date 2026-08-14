@@ -121,35 +121,23 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
 
-    private fun pickDebugRunner(task: KotlinJsTest): ChromiumRunnerInput {
+    private fun resolveDebugRunner(task: KotlinJsTest, requestedName: String): ChromiumRunnerInput {
         val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
-        chromiumRunners.firstOrNull()?.let { debugRunner ->
-            if (chromiumRunners.size > 1) {
-                task.reportDiagnostic(
-                    KotlinToolingDiagnostics.SeveralChromiumRunnersForBrowserDebug(
-                        runnerNames = chromiumRunners.map { it.name.get() },
-                        debuggedRunnerName = debugRunner.name.get(),
-                    )
+        chromiumRunners.firstOrNull { it.name.get() == requestedName }?.let { return it }
+
+        val otherRunners = frameworkTaskInputs.firefoxRunners.get() + frameworkTaskInputs.webkitRunners.get()
+        if (otherRunners.any { it.name.get() == requestedName }) {
+            task.reportDiagnostic(KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug(requestedName))
+        } else {
+            task.reportDiagnostic(
+                KotlinToolingDiagnostics.UnknownRunnerForBrowserDebug(
+                    runnerName = requestedName,
+                    declaredRunnerNames = (chromiumRunners + otherRunners).map { it.name.get() },
                 )
-            }
-            return debugRunner
+            )
         }
 
-        val configuredRunner = frameworkTaskInputs.firefoxRunners.get().firstOrNull()
-            ?: frameworkTaskInputs.webkitRunners.get().firstOrNull()
-            ?: error("No Playwright browser runners configured")
-
-        task.reportDiagnostic(KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug(configuredRunner.name.get()))
-
-        return createChromiumInputs(objects).apply {
-            name.convention("chromium")
-            testsLocation.convention(configuredRunner.testsLocation)
-            timeout.convention(configuredRunner.timeout)
-            headless.convention(true)
-            launchArgs.convention(emptyList())
-            launchEnvironmentVariables.convention(emptyMap())
-            finishMarker.convention(configuredRunner.finishMarker)
-        }
+        error("Could not resolve the '$requestedName' browser test runner")
     }
 
     override fun createTestExecutionSpec(
@@ -176,7 +164,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
         val pwRunners = buildList {
             if (debugOptions != null) {
-                val runner = pickDebugRunner(task)
+                val runner = resolveDebugRunner(task, debugOptions.runnerName.get())
                 add(
                     runner.createPwRunnerSpec(
                         PwBrowserKind.CHROMIUM,

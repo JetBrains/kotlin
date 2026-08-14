@@ -2439,35 +2439,39 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object NoChromiumRunnerForBrowserDebug : ToolingDiagnosticFactory(
-        predefinedSeverity = WARNING,
+        predefinedSeverity = FATAL,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(runnerName: String) = build {
             title { "Browser test debugging requires a Chromium runner" }
                 .description {
                     "The debugger attaches over the Chrome DevTools Protocol, which is only supported by Chromium-based " +
-                            "browsers, so Firefox and WebKit runners cannot be debugged. No Chromium runner is configured, " +
-                            "so Kotlin launches Chromium with the test settings of the '$runnerName' runner."
+                            "browsers, so the Firefox and WebKit runners cannot be debugged. " +
+                            "'$runnerName' is not a Chromium runner."
                 }
                 .solution {
-                    "Declare a chromium() runner in the browser test DSL to configure the debug browser"
+                    "Pass --browser-debug-runner with the name of a chromium() runner"
                 }
         }
     }
 
-    internal object SeveralChromiumRunnersForBrowserDebug : ToolingDiagnosticFactory(
-        predefinedSeverity = WARNING,
+    internal object UnknownRunnerForBrowserDebug : ToolingDiagnosticFactory(
+        predefinedSeverity = FATAL,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke(runnerNames: List<String>, debuggedRunnerName: String) = build {
-            title { "Several Chromium runners are configured for browser test debugging" }
+        operator fun invoke(runnerName: String, declaredRunnerNames: List<String>) = build {
+            title { "No browser test runner is declared under the requested name" }
                 .description {
-                    "A debug session attaches a debugger to a single browser, but several Chromium runners are configured: " +
-                            runnerNames.joinToString { "'$it'" } + ". " +
-                            "Kotlin debugs '$debuggedRunnerName', the other Chromium runners are not run in this build."
+                    "Browser test debugging attaches a debugger to the runner named by --browser-debug-runner, but " +
+                            "'$runnerName' is not declared. " +
+                            if (declaredRunnerNames.isEmpty()) {
+                                "No browser test runners are declared."
+                            } else {
+                                "Declared runners: " + declaredRunnerNames.joinToString { "'$it'" } + "."
+                            }
                 }
                 .solution {
-                    "Declare the Chromium runner that should be debugged first, or leave a single Chromium runner declared"
+                    "Declare a chromium(\"$runnerName\") or  a chromium() runner, or pass --browser-debug-runner with a declared runner name"
                 }
         }
     }

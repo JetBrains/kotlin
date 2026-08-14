@@ -73,27 +73,28 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `debugging without a chromium runner reports a diagnostic`(gradleVersion: GradleVersion) {
+    fun `debugging a firefox runner fails`(gradleVersion: GradleVersion) {
         project(
             "empty",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions,
         ) {
             jsProject {
+                chromium()
                 firefox("myFirefox")
             }
 
-            build(":jsBrowserTest", "--browser-debug") {
+            buildAndFail(":jsBrowserTest", "--browser-debug", "--browser-debug-runner=myFirefox") {
                 assertHasDiagnostic(
                     KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug,
-                    withSubstring = "Kotlin launches Chromium with the test settings of the 'myFirefox' runner.",
+                    withSubstring = "'myFirefox' is not a Chromium runner.",
                 )
             }
         }
     }
 
     @GradleTest
-    fun `debugging with several chromium runners reports a diagnostic`(gradleVersion: GradleVersion) {
+    fun `debugging an undeclared runner fails`(gradleVersion: GradleVersion) {
         project(
             "empty",
             gradleVersion = gradleVersion,
@@ -104,10 +105,10 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 chromium("second")
             }
 
-            build(":jsBrowserTest", "--browser-debug") {
+            buildAndFail(":jsBrowserTest", "--browser-debug") {
                 assertHasDiagnostic(
-                    KotlinToolingDiagnostics.SeveralChromiumRunnersForBrowserDebug,
-                    withSubstring = "Kotlin debugs 'first', the other Chromium runners are not run in this build.",
+                    KotlinToolingDiagnostics.UnknownRunnerForBrowserDebug,
+                    withSubstring = "Declared runners: 'first', 'second'.",
                 )
             }
         }

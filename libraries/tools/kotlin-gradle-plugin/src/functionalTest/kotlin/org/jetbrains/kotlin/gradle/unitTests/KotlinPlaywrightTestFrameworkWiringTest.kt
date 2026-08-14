@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.getPwInstallBrowserTaskName
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.createAnExceptionForFatalDiagnostic
 import org.jetbrains.kotlin.gradle.targets.js.testing.DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
 import org.jetbrains.kotlin.gradle.targets.js.testing.DEFAULT_DEBUG_PORT
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
@@ -204,7 +208,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
                 setup.project.tasks.getByName(it.getPwInstallBrowserTaskName())
             )
 
-            assertNotNull(installTask, "Expected ${it.getPwInstallBrowserTaskName()} task to be registered to install ${it.browserName} browsers")
+            assertNotNull(
+                installTask,
+                "Expected ${it.getPwInstallBrowserTaskName()} task to be registered to install ${it.browserName} browsers"
+            )
         }
     }
 
@@ -321,16 +328,19 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
     // Checks the browser debug wiring without starting a real browser.
     @Test
-    fun `playwright debug uses default chromium for firefox runner`() {
+    fun `playwright debug attaches to the chromium runner alongside a firefox one`() {
         val setup = buildBrowserTestProject {
-            firefox("selected") {
-                it.launchArgs.set(listOf("-devtools"))
-                it.launchEnvironmentVariables.set(mapOf("FIREFOX_DEBUG" to "1"))
+            chromium {
+                it.launchArgs.set(listOf("--no-sandbox"))
+                it.launchEnvironmentVariables.set(mapOf("CHROMIUM_DEBUG" to "1"))
             }
+            firefox("selected")
         }
         val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
         val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
-        framework.frameworkTaskInputs.firefoxRunners.get().single().testsLocation.set(location)
+        with(framework.frameworkTaskInputs) {
+            (chromiumRunners.get() + firefoxRunners.get()).forEach { it.testsLocation.set(location) }
+        }
 
         val firefoxInstallTask = assertIs<PlaywrightBrowserInstall>(
             setup.project.tasks.getByName(PwBrowserKind.FIREFOX.getPwInstallBrowserTaskName())
@@ -343,11 +353,6 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(setOf("chromium"), chromiumInstallTask.browsers.get().toSet())
 
         val testTask = setup.jsBrowserTestTask
-        assertFalse(
-            testTask.taskDependencies.getDependencies(testTask).contains(chromiumInstallTask),
-            "Expected no Chromium install dependency without browser debugging"
-        )
-
         val debuggerReadyPort = ServerSocket(0).use { it.localPort }
         testTask.browserDebug.set(true)
         testTask.browserDebugPort.set("32123")
@@ -372,11 +377,25 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         assertEquals("chromium", runner.name)
         assertEquals(PwBrowserKind.CHROMIUM, runner.browserKind)
-        assertEquals(emptyList(), runner.launchArgs)
-        assertEquals(emptyMap(), runner.launchEnvironmentVariables)
+        assertEquals(listOf("--no-sandbox"), runner.launchArgs)
+        assertEquals(mapOf("CHROMIUM_DEBUG" to "1"), runner.launchEnvironmentVariables)
         assertEquals(32123, runner.debugOptions?.remoteDebuggingPort)
         assertEquals(debuggerReadyPort, runner.debugOptions?.debuggerReadyPort)
         assertEquals(45000, runner.debugOptions?.debuggerReadyTimeoutMillis)
+    }
+
+    @Test
+    fun `a debug run does not depend on the chromium install task without browser debug`() {
+        val setup = buildBrowserTestProject { firefox("selected") }
+        val chromiumInstallTask = assertIs<PlaywrightBrowserInstall>(
+            setup.project.tasks.getByName(PwBrowserKind.CHROMIUM.getPwInstallBrowserTaskName())
+        )
+        val testTask = setup.jsBrowserTestTask
+
+        assertFalse(
+            testTask.taskDependencies.getDependencies(testTask).contains(chromiumInstallTask),
+            "Expected no Chromium install dependency without browser debugging"
+        )
     }
 
     @Test
@@ -458,18 +477,19 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `a debug run launches the first of several chromium runners`() {
+    fun `a debug run launches the named chromium runner`() {
         val setup = buildBrowserTestProject {
             chromium("first")
             chromium("second")
         }
         setup.prepareExecutableFramework()
         setup.jsBrowserTestTask.browserDebug.set(true)
+        setup.jsBrowserTestTask.browserDebugRunner.set("second")
 
         val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
 
         // A debug session attaches to a single browser, so the other runners are left out.
-        assertEquals(listOf("first"), spec.runners.map { it.name })
+        assertEquals(listOf("second"), spec.runners.map { it.name })
     }
 
     @Test

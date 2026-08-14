@@ -95,6 +95,15 @@ internal constructor(
     // task it debugs and sends the ports it picked through the environment, which reaches every task of the build.
     @get:Input
     @get:Option(
+        option = "browser-debug-runner",
+        description = "The name of the browser test runner to debug. Defaults to 'chromium'. " +
+                "Only Chromium runners can be debugged. Only used with --browser-debug.",
+    )
+    internal val browserDebugRunner: Property<String> = objects.property(String::class.java)
+        .convention(providers.environmentVariable(BROWSER_DEBUG_RUNNER_ENV).orElse("chromium"))
+
+    @get:Input
+    @get:Option(
         option = "browser-debug-port",
         description = "The port a CDP-compatible debugger can attach to. Defaults to $DEFAULT_DEBUG_PORT. " +
                 "Only used with --browser-debug.",
@@ -247,6 +256,7 @@ internal constructor(
         debug = true
         debuggableFramework.kotlinJsBrowserDebugOptions.set(
             objects.newInstance(KotlinJsBrowserDebugOptions::class.java).apply {
+                runnerName.set(browserDebugRunner)
                 debugPort.set(browserDebugPort.map { parsePort(it, "--browser-debug-port") })
                 debuggerReadyPort.set(browserDebugReadyPort.map { parsePort(it, "--browser-debug-ready-port") })
                 debuggerReadyTimeoutMillis.set(browserDebugReadyTimeout.map { parseTimeoutMillis(it) })
@@ -266,6 +276,7 @@ internal constructor(
 }
 
 // Set by the IDE with the ports it picked. The same names are in the IntelliJ plugin.
+internal const val BROWSER_DEBUG_RUNNER_ENV = "KOTLIN_BROWSER_DEBUG_RUNNER"
 internal const val BROWSER_DEBUG_PORT_ENV = "KOTLIN_BROWSER_DEBUG_PORT"
 internal const val BROWSER_DEBUG_READY_PORT_ENV = "KOTLIN_BROWSER_DEBUG_READY_PORT"
 internal const val BROWSER_DEBUG_READY_TIMEOUT_ENV = "KOTLIN_BROWSER_DEBUG_READY_TIMEOUT"
