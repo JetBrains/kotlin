@@ -470,15 +470,32 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
     context(reporter: DiagnosticReporter)
     private fun CheckerContext.checkVisibility(classSymbol: FirClassSymbol<*>, customSerializer: ConeKotlinType) {
-        val serializerClass = customSerializer.toRegularClassSymbol() ?: return
-        if (serializerClass.visibility == Visibilities.Private && classSymbol.visibility != Visibilities.Private) {
-            reporter.reportOn(
-                classSymbol.serializableOrMetaAnnotationSource(session),
-                FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
-                serializerClass,
-                classSymbol
-            )
+        if (classSymbol.visibility == Visibilities.Private) return
+        val privateDeclaration = findPrivateDeclarationInAliasChain(classSymbol, customSerializer) ?: return
+        reporter.reportOn(
+            classSymbol.serializableOrMetaAnnotationSource(session),
+            FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
+            privateDeclaration,
+            classSymbol
+        )
+    }
+
+    private fun CheckerContext.findPrivateDeclarationInAliasChain(
+        classSymbol: FirClassSymbol<*>,
+        customSerializer: ConeKotlinType,
+    ): FirClassLikeSymbol<*>? {
+        val unexpandedReference = classSymbol.serializableAnnotation(needArguments = true, session)
+            ?.getGetKClassArgument(AnnotationParameterNames.WITH)
+            ?.let { (it.argument as? FirResolvedQualifier)?.qualifierSymbol }
+
+        var symbol = unexpandedReference ?: customSerializer.classLikeLookupTagIfAny?.toSymbol()
+        val visited = mutableSetOf<FirClassLikeSymbol<*>>()
+        while (symbol != null && visited.add(symbol)) {
+            if (symbol.visibility == Visibilities.Private) return symbol
+            val alias = symbol as? FirTypeAliasSymbol ?: break
+            symbol = alias.resolvedExpandedTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol()
         }
+        return null
     }
 
     private fun FirClassSymbol<*>.isAnonymousObjectOrInsideIt(c: CheckerContext): Boolean {
