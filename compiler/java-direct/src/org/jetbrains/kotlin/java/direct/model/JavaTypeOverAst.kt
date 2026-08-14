@@ -185,18 +185,15 @@ class JavaClassifierTypeOverAst(
                 tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
             }
             if (!outerHasExplicitArgs) {
-                // Walk the outer chain, one hop per qualifier in the source. NB: don't bound the
-                // walk with `outer.isStatic` — `FirBackedJavaClassAdapter.isStatic` reports `true`
-                // for a top-level outer, which would skip exactly the top-level generic outer
-                // whose type parameters make the qualified form raw.
-                var outer: JavaClass? = javaClass.outerClass
-                var levels = rawTypeNameParts.size - 1
-                while (outer != null && levels > 0) {
+                // Walk the *enclosing-instance* chain: only the outers whose type parameters are in scope for
+                // this reference can make it raw. The walk therefore stops at the first `static` (or top-level)
+                // enclosing class.
+                var current: JavaClass = javaClass
+                while (true) {
+                    val outer = current.outerClass ?: break
                     if (outer.typeParameters.isNotEmpty()) return true
-                    val parent = outer.outerClass
-                    if (parent == null) break // Defensive: bound the walk to the top of the chain.
-                    outer = parent
-                    levels--
+                    if (outer.isStatic) break
+                    current = outer
                 }
             }
         }
