@@ -6,8 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 
 /**
@@ -20,6 +28,13 @@ import org.jetbrains.kotlin.gradle.internal.json.KgpJson
  *  - booleans ([ProjectStructureNodeJson.isPublishedAsRoot], [SourceSetNodeJson.hostSpecific]) are quoted strings;
  *  - [SourceSetNodeJson.hostSpecific] is omitted rather than set to `"false"`.
  *
+ * Reading stays as permissive as Gson was, because other producers and hand-patched files rely on it: unknown
+ * keys are ignored, a missing `isPublishedAsRoot` defaults to `"false"`, and the quoted booleans also accept the
+ * unquoted form (see [QuotedBooleanAsStringSerializer]). `JsonParser.parseReader` always parsed leniently, so
+ * `isLenient` is on and [decodeKotlinProjectStructureMetadataJson] drops the BOM its reader skipped. Gson went a
+ * little further and took single-quoted strings, which `isLenient` reads as literals with the quotes kept, but
+ * nothing is known to write those.
+ *
  * Property declaration order defines the order of keys in the output and must match
  * [org.jetbrains.kotlin.gradle.plugin.mpp.serialize], which the XML representation still uses.
  */
@@ -31,7 +46,8 @@ internal data class KotlinProjectStructureMetadataJson(
 @Serializable
 internal data class ProjectStructureNodeJson(
     val formatVersion: String,
-    val isPublishedAsRoot: String,
+    @Serializable(with = QuotedBooleanAsStringSerializer::class)
+    val isPublishedAsRoot: String = "false",
     val variants: List<VariantNodeJson> = emptyList(),
     val sourceSets: List<SourceSetNodeJson> = emptyList(),
 )
@@ -50,8 +66,24 @@ internal data class SourceSetNodeJson(
     val moduleDependency: List<String> = emptyList(),
     val sourceSetCInteropMetadataDirectory: String? = null,
     val binaryLayout: String? = null,
+    @Serializable(with = QuotedBooleanAsStringSerializer::class)
     val hostSpecific: String? = null,
 )
+
+/**
+ * Keeps reading of the quoted booleans as lenient as Gson's `asString` was: it accepted both `"true"` and a bare
+ * `true`, while kotlinx-serialization would reject the latter with a type mismatch (`coerceInputValues` does not
+ * help — it only substitutes defaults for an explicit `null`). Decoding goes through [kotlinx.serialization.json.JsonPrimitive.content],
+ * which is indifferent to quoting; encoding always emits the quoted form the on-disk format has always used.
+ */
+internal object QuotedBooleanAsStringSerializer : KSerializer<String> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("QuotedBoolean", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: String) = encoder.encodeString(value)
+
+    override fun deserialize(decoder: Decoder): String =
+        if (decoder is JsonDecoder) decoder.decodeJsonElement().jsonPrimitive.content else decoder.decodeString()
+}
 
 /**
  * Gson's pretty printer, which used to produce this file, indents with two spaces, while kotlinx-serialization
@@ -77,14 +109,18 @@ internal data class SourceSetNodeJson(
 @OptIn(ExperimentalSerializationApi::class)
 private val projectStructureMetadataJson = Json(KgpJson.prettyPrinted) {
     prettyPrintIndent = "  "
+    isLenient = true
 }
 
 /** A JSON string token cannot contain a raw newline, so this matches nothing but an empty array. */
 private val PRETTY_PRINTED_EMPTY_ARRAY = """\[\s*\n\s*]""".toRegex()
+
+/** Gson's reader skipped the UTF-8 byte order mark; kotlinx-serialization chokes on it. */
+private const val BOM = "\uFEFF"
 
 internal fun KotlinProjectStructureMetadataJson.encodeToString(): String =
     projectStructureMetadataJson.encodeToString(KotlinProjectStructureMetadataJson.serializer(), this)
         .replace(PRETTY_PRINTED_EMPTY_ARRAY, "[]")
 
 internal fun decodeKotlinProjectStructureMetadataJson(string: String): KotlinProjectStructureMetadataJson =
-    projectStructureMetadataJson.decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string)
+    projectStructureMetadataJson.decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string.removePrefix(BOM))

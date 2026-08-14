@@ -12,6 +12,7 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -87,6 +88,86 @@ class KotlinProjectStructureMetadataSerializationTest {
             setOf("commonMain", "concurrentMain", "nativeDarwinMain", "nativeMain", "nativeOtherMain"),
             deserialized.sourceSetNames
         )
+    }
+
+    /**
+     * Gson read this key as `valueNamed(...)?.toBoolean() ?: false`, so a file without it parsed fine. Hand-patched
+     * files (this repo ships two) and pre-0.3.1 producers depend on that.
+     */
+    @Test
+    fun `deserialize - missing isPublishedAsRoot defaults to false`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertFalse(deserialized.isPublishedAsRoot)
+    }
+
+    /** KGP writes these booleans quoted, but Gson's `asString` took the unquoted form too, so keep accepting both. */
+    @Test
+    fun `deserialize - unquoted booleans are accepted`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": true,
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": [],
+                    "hostSpecific": true
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.hostSpecificSourceSets)
+    }
+
+    /**
+     * Gson parsed leniently and skipped a leading BOM. Only what `isLenient` covers is asserted here: unquoted
+     * member names and values. Gson also took single-quoted strings, see `KotlinProjectStructureMetadataJson.kt`.
+     */
+    @Test
+    fun `deserialize - lenient input and a leading BOM are accepted`() {
+        val lenient = """
+            {
+              projectStructure: {
+                formatVersion: 0.3.3,
+                isPublishedAsRoot: true,
+                variants: [],
+                sourceSets: [
+                  {
+                    name: commonMain,
+                    dependsOn: [],
+                    moduleDependency: []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson("\uFEFF" + lenient)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.sourceSetNames)
     }
 
     /** An entry without a separator used to fail with an `IndexOutOfBoundsException` naming nothing. */
