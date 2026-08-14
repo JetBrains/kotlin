@@ -64,7 +64,10 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
                     JavaForeignAnnotationType.Java8Annotations.path,
                     "java8-annotations",
                     assertions = testServices.assertions,
-                    extraOptions = listOf("-Xlint:-options")
+                    // This runs the test JVM's own `javac`, so without `--release` the jar would carry that JDK's
+                    // bytecode version — and the sources below are compiled by `javac` 11, which refuses to read
+                    // anything newer than Java 11 off its classpath.
+                    extraJavacOptions = listOf("--release", "8"),
                 )
             }
         } else {
