@@ -188,6 +188,11 @@ projectTests {
     withMockJdkRuntime()
 }
 
+// Disable default test task to not interfere with compiler tests
+tasks.test {
+    enabled = false
+}
+
 val currentOs = OperatingSystem.current()
 
 val generateBundledPluginsInfo = tasks.register("generateBundledPluginsInfo") {
