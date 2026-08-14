@@ -209,8 +209,13 @@ open class JvmClassFileBasedSymbolProvider(
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
         JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
-    override fun hasPackage(fqName: FqName): Boolean =
-        javaFacade.hasPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean {
+        if (javaFacade.hasPackage(fqName)) return true
+        // Packages that exist only via `@file:JvmPackageName` have no on-disk directory and are
+        // therefore invisible to the Java class finder
+        // (see compiler/testData/codegen/boxJvm/compileKotlinAgainstKotlin/jvmPackageName.kt).
+        return packagePartProvider.findPackageParts(fqName.asString()).isNotEmpty()
+    }
 
     private fun String?.toPath(): Path? {
         return this?.let { Paths.get(it).normalize() }

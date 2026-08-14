@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.java.direct.createJavaDirectSourceJavaFacadeBuilder
+import org.jetbrains.kotlin.java.direct.createJavaDirectJavaFacadeBuilder
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -355,10 +355,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
-        val javaDirectFacade =
+        val javaFacadeBuilder =
             if (configuration.useJavaDirect) {
-                createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
+                createJavaDirectJavaFacadeBuilder(configuration, projectEnvironment, javaSourcesScope)
             } else AbstractProjectEnvironment::getFirJavaFacade
+
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -393,7 +394,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     scopeProvider,
                     context.packagePartProviderForLibraries,
                     kotlinClassFinder,
-                    projectEnvironment.getFirJavaFacade(session, moduleData, context.librariesScope)
+                    javaFacadeBuilder(projectEnvironment, session, moduleData, context.librariesScope)
                 )
                 val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
                     session,
@@ -419,7 +420,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration.languageVersionSettings,
                     context,
-                    createJavaFacade = javaDirectFacade,
+                    createJavaFacade = javaFacadeBuilder,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
@@ -460,7 +461,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                     needRegisterJavaElementFinder = true,
                     kmpModuleKind = kmpModuleKind,
-                    createJavaFacade = javaDirectFacade,
+                    createJavaFacade = javaFacadeBuilder,
                     init = sessionConfigurator,
                 )
             }

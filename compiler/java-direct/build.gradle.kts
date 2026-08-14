@@ -13,6 +13,7 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
+    compileOnly(libs.intellij.asm)
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
