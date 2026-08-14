@@ -2435,6 +2435,7 @@ internal object KotlinToolingDiagnostics {
                 .solution {
                     "Use the Playwright browser test DSL to enable it"
                 }
+                .documentationLink(URI("https://kotlinlang.org/docs/whatsnew-eap.html#a-new-dsl-for-browser-testing"))
         }
     }
 
