@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common.repl
 package org.jetbrains.kotlin.cli.js
 package org.jetbrains.kotlin.cli.jvm.compiler
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
-package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 package org.jetbrains.kotlin.cli.jvm.config
 package org.jetbrains.kotlin.cli.jvm.index
 package org.jetbrains.kotlin.cli.jvm.modules
