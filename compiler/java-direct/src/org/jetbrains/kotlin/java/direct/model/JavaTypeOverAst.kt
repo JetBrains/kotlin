@@ -245,26 +245,32 @@ class JavaClassifierTypeOverAst(
             outer = outer.outerClass
         }
 
-        if (outerTypeParams.isEmpty()) {
-            // Inherited case: the inner class is non-static but its outer arguments are neither
-            // written in source nor lexically in scope (the outer class is top-level / cross-file,
-            // so the lexical walk above stops). Recover them from the containing class's supertype
-            // hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
-            // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
+        // Resolve each outer type param through the current context so we get the caller's H
+        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
+        val lexicalArgs = outerTypeParams.map { typeParam ->
+            with(resolutionContext) { findTypeParameter(typeParam.name.asString()) }
+        }
+
+        // Inherited case: the inner class is non-static but its outer arguments are neither written
+        // in source nor lexically in scope — either the outer chain declares no parameters at all
+        // (top-level / cross-file outer, so the lexical walk above stops), or the outer class only
+        // *declares* them while the reference sits in a class that merely *inherits* the inner
+        // class, e.g. `class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`.
+        // In the latter case the declaring class's own parameters are out of scope here and would
+        // render as unresolved names, so the arguments have to come from the containing class's
+        // supertype hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
+        // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
+        if (outerTypeParams.isEmpty() || lexicalArgs.any { it == null }) {
             val classId = javaClass.classId
             if (classId != null) {
                 val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
                 if (recovered != null) return explicitArgs + recovered
             }
-            return explicitArgs
         }
 
-        // Resolve each outer type param through the current context so we get the caller's H
-        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
-        val implicitArgs = outerTypeParams.map { typeParam ->
-            val resolved = with(resolutionContext) { findTypeParameter(typeParam.name.asString()) }
-            if (resolved != null) JavaTypeParameterTypeOverAst(resolved)
-            else JavaTypeParameterTypeOverAst(typeParam)
+        // Nothing recovered: keep the declaration-side parameters as the best available answer.
+        val implicitArgs = outerTypeParams.mapIndexed { index, typeParam ->
+            JavaTypeParameterTypeOverAst(lexicalArgs[index] ?: typeParam)
         }
 
         return explicitArgs + implicitArgs
