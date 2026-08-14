@@ -186,6 +186,11 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             "Serialization of arrays with generic type arguments is impossible because of an unknown compile-time type."
         )
         map.put(
+            FirSerializationErrors.DYNAMIC_TYPE_NOT_SUPPORTED,
+            "Properties of the 'dynamic' type cannot be serialized, because there is no compile-time type to pick a serializer for. " +
+                    "Use a statically typed property, or mark this one with @Transient."
+        )
+        map.put(
             FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
             "Your current Kotlin version is {0}, while the kotlinx.serialization core runtime {1} requires at least Kotlin {2}. " +
                     "Please update your Kotlin compiler and IDE plugin.",

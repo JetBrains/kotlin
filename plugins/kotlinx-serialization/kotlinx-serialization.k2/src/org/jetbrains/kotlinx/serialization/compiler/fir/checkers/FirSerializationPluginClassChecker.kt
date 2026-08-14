@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.scopes.getFunctions
-import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -31,6 +29,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -647,9 +647,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
      * omitted depending on how much time passed since the object was created, which surprises users. Suggest pinning
      * the behaviour with `@EncodeDefault`. See KT-73994.
      *
-     * Only plain function calls are reported, and known argument-less factories of empty collections are excluded.
-     * Constructor calls are deliberately left alone: a fresh instance of a data class compares equal to the default,
-     * so those are not re-evaluation problems and reporting them would be mostly noise.
+     * See [isReevaluatedOnEveryEncode] for what counts as re-evaluated.
      */
     private fun CheckerContext.checkNonCompileTimeDefaults(
         classSymbol: FirClassSymbol<*>,
@@ -677,6 +675,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         }
     }
 
+    /**
+     * Whether re-evaluating [expression] can produce something that no longer compares equal to the original value.
+     * Constructor calls and operators are transparent here — a fresh instance of a data class and `other + 1` are both
+     * stable given stable operands — so only their arguments matter.
+     */
     private fun isReevaluatedOnEveryEncode(expression: FirExpression?): Boolean {
         val call = expression as? FirFunctionCall ?: return false
         val callee = call.toResolvedCallableSymbol()
@@ -729,6 +732,12 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val typeRef = propertySymbol.resolvedReturnTypeRef
             val propertyType = typeRef.coneType.fullyExpandedType()
             val source = typeRef.source ?: propertySymbol.source
+            // There is no compile-time type to look a serializer up for, and @Contextual hides this from
+            // SERIALIZER_NOT_FOUND, leaving the backend to fail on the cast to IrSimpleType. See KT-59088.
+            if (propertyType is ConeDynamicType) {
+                reporter.reportOn(source, FirSerializationErrors.DYNAMIC_TYPE_NOT_SUPPORTED)
+                continue
+            }
             if (customSerializerType != null && serializerSymbol != null) {
                 // Do not account for @Polymorphic and @Contextual, as they are serializers for T: Any
                 // and would not be compatible on direct comparison

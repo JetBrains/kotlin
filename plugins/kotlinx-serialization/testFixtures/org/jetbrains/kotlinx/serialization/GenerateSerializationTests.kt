@@ -34,6 +34,10 @@ fun main(args: Array<String>) {
                 model("firMembers")
             }
 
+            testClass<AbstractSerializationJsDiagnosticTest> {
+                model("diagnosticsJs", excludedPattern = excludedFirTestdataPattern)
+            }
+
             // ------------------------------- asm instructions -------------------------------
 
             testClass<AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest> {
