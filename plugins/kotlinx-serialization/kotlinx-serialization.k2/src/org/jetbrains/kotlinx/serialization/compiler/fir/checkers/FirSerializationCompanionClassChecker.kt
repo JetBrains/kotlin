@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.declaredFunctions
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -44,12 +47,25 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
     )
 }
 
+internal fun CheckerContext.checkPrivateCompanion(
+    classSymbol: FirClassSymbol<*>,
+    reporter: DiagnosticReporter,
+) {
+    if (classSymbol !is FirRegularClassSymbol) return
+    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
+    if (classSymbol.visibility == Visibilities.Private || classSymbol.visibility == Visibilities.Internal) return
+    val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
+    if (companionObjectSymbol.visibility != Visibilities.Private) return
+
+    reporter.reportOn(
+        companionObjectSymbol.source,
+        FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
+        classSymbol,
+        positioningStrategy = SourceElementPositioningStrategies.VISIBILITY_MODIFIER
+    )
+}
+
 /**
- * The plugin generates `Companion.serializer()` — and `Companion.generatedSerializer()` under
- * `@KeepGeneratedSerializer` — for every class that [shouldHaveGeneratedMethodsInCompanion].
- * A user-written function with the same signature shadows the generated one, so the backend cannot
- * find the declaration it is supposed to fill in and used to fail with an internal error (KT-55738).
- *
  * The signature predicate here must stay in sync with
  * `SerializableCompanionIrGenerator.getSerializerGetterFunction`, which is what actually picks the
  * function to generate a body for in the backend.
@@ -94,10 +110,6 @@ internal fun CheckerContext.checkCompanionSerializerClash(
     }
 }
 
-/**
- * Mirrors `IrType.isKSerializer()` from the backend, which accepts `GeneratedSerializer` as well. IR types are always
- * expanded, so the type alias has to be expanded here too for the two sides to agree.
- */
 private fun CheckerContext.isAnyKSerializer(type: ConeKotlinType): Boolean {
     val expanded = type.fullyExpandedType()
     return expanded.isKSerializer || expanded.classId == SerializersClassIds.generatedSerializerId
