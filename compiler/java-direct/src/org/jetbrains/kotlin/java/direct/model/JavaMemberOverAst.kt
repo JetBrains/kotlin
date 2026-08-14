@@ -370,6 +370,13 @@ class JavaConstructorOverAst(
     override val isAbstract: Boolean get() = false
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
+
+    // A constructor of an enum class is private even when written without a modifier: JLS 8.9.2
+    // both forbids `public`/`protected` there and makes the access implicitly private. PSI reports
+    // the same (`PsiModifierListImpl.hasModifierProperty` special-cases enum constructors), as does
+    // the class-file reader, which sees `ACC_PRIVATE`.
+    override val visibility: Visibility
+        get() = if (containingClass.isEnum) Visibilities.Private else super.visibility
 }
 
 class JavaValueParameterOverAst(
