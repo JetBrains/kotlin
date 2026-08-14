@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isBasicFunctionType
@@ -30,9 +33,13 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
         while (reverseCallStackIterator.hasPrevious()) {
             val call = reverseCallStackIterator.previous() as? FirFunctionCall ?: continue
             val calledFunction = call.calleeReference.toResolvedNamedFunctionSymbol(discardErrorReference = true) ?: continue
-            if (call.explicitReceiver != null && calledFunction.isCollectionsFunction) {
-                reporter.reportOn(expression.source, FirErrors.UNIT_RETURN_AS_BREAK, calledFunction)
-                return
+            return when {
+                call.explicitReceiver != null && calledFunction.isCollectionsFunction -> when {
+                    expression.target.labeledElement != call.lambdaArgument ->
+                        reporter.reportOn(expression.source, FirErrors.UNIT_RETURN_AS_BREAK, calledFunction)
+                    else -> break
+                }
+                else -> continue
             }
         }
     }
@@ -41,4 +48,7 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
     private val FirNamedFunctionSymbol.isCollectionsFunction: Boolean
         get() = callableId.packageName.asString() == "kotlin.collections" && valueParameterSymbols.singleOrNull()
             ?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
+
+    private inline val FirFunctionCall.lambdaArgument: FirAnonymousFunction?
+        get() = (arguments.lastOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
 }

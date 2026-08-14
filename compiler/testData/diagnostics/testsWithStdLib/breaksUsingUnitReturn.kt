@@ -2,6 +2,7 @@
 // RENDER_DIAGNOSTIC_ARGUMENTS
 fun test() {
     listOf("a", "b").forEach {
+        return@forEach
         <!UNIT_RETURN_AS_BREAK("forEach")!>return<!>
     }
 
@@ -12,3 +13,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+stringLiteral */
