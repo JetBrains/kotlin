@@ -72,10 +72,10 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
 internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
-    maxHeapSizeMb: Int? = null,
-    minHeapSizeMb: Int? = null,
-    maxMetaspaceSizeMb: Int = 512,
-    reservedCodeCacheSizeMb: Int = 256,
+    maxHeapSize: Size? = null,
+    minHeapSize: Size? = null,
+    maxMetaspaceSize: Size = 512.MiB,
+    reservedCodeCacheSize: Size = 256.MiB,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
@@ -126,8 +126,8 @@ internal fun Project.createGeneralTestTask(
             "-ea",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:+UseCodeCacheFlushing",
-            "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
-            "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
+            "-XX:ReservedCodeCacheSize=${reservedCodeCacheSize.toJvmMiB()}",
+            "-XX:MaxMetaspaceSize=${maxMetaspaceSize.toJvmMiB()}",
             "-XX:CICompilerCount=2",
             "-Djna.nosys=true"
         )
@@ -140,12 +140,14 @@ internal fun Project.createGeneralTestTask(
         val junit5ParallelTestWorkers =
             project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
 
-        val memoryPerTestProcessMb = totalMaxMemoryForTestsMb.coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
+        val memoryPerTestProcess = totalMaxMemoryForTestsMb
+            .coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
+            .MiB
 
-        maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m"
+        this.maxHeapSize = (maxHeapSize ?: memoryPerTestProcess - maxMetaspaceSize - reservedCodeCacheSize).toJvmMiB()
 
-        if (minHeapSizeMb != null) {
-            minHeapSize = "${minHeapSizeMb}m"
+        if (minHeapSize != null) {
+            this.minHeapSize = minHeapSize.toJvmMiB()
         }
 
         systemProperty("idea.is.unit.test", "true")
@@ -204,6 +206,11 @@ internal fun Project.createGeneralTestTask(
 }
 
 private val defaultMaxMemoryPerTestWorkerMb = 1600
+
+private fun Size.toJvmMiB(): String {
+    require(bytes % 1.MiB.bytes == 0L) { "JVM memory size must be a whole number of MiB: $bytes bytes" }
+    return "${inWholeMiB}m"
+}
 
 private val Test.commandLineIncludePatterns: Set<String>
     get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns.orEmpty()
