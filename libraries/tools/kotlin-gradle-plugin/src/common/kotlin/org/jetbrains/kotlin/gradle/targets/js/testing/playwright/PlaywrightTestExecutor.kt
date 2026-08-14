@@ -314,7 +314,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
     override fun stopNow() {
-        // TODO: implement stop now now support
+        // TODO: KT-88516 implement immediate stop support
         log.warn("Playwright executor doesn't support immediate stop")
     }
 
