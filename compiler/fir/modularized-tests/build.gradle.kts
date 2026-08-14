@@ -55,9 +55,9 @@ optInToK1Deprecation()
 
 projectTests {
     testTask(
-        minHeapSizeMb = 8192,
-        maxHeapSizeMb = 8192,
-        reservedCodeCacheSizeMb = 512,
+        minHeapSize = 8.GiB,
+        maxHeapSize = 8.GiB,
+        reservedCodeCacheSize = 512.MiB,
         javaLauncher = JdkMajorVersion.JDK_1_8
     ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
