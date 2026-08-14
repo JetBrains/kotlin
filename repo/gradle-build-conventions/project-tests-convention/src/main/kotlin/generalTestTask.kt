@@ -69,14 +69,20 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     )
 }
 
+internal val testDefaultMaxHeapSize = 2.GiB
+internal val testDefaultMinHeapSize = 64.MiB
+internal val testDefaultMaxMetaspaceSize = 512.MiB
+internal val testDefaultReservedCodeCacheSize = 256.MiB
+internal val testDefaultGC = GC.G1
+
 internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
-    maxHeapSize: Size? = null,
-    minHeapSize: Size? = null,
-    maxMetaspaceSize: Size = 512.MiB,
-    reservedCodeCacheSize: Size = 256.MiB,
-    useGC: GC = GC.G1,
+    maxHeapSize: Size = testDefaultMaxHeapSize,
+    minHeapSize: Size = testDefaultMinHeapSize,
+    maxMetaspaceSize: Size = testDefaultMaxMetaspaceSize,
+    reservedCodeCacheSize: Size = testDefaultReservedCodeCacheSize,
+    useGC: GC = testDefaultGC,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
@@ -92,7 +98,8 @@ internal fun Project.createGeneralTestTask(
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
-        val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
+        val ideaHomeForTests =
+            this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
         jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
             property.set("idea.home.path")
             classpath.from(ideaHomeForTests)
@@ -147,16 +154,8 @@ internal fun Project.createGeneralTestTask(
             jvmArgs("-XX:NativeMemoryTracking=${nativeMemoryTracking.get()}")
         }
 
-        val junit5ParallelTestWorkers =
-            project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution
-                ?: minOf(Runtime.getRuntime().availableProcessors(), defaultMaxJunit5ParallelThreads)
-
-        val memoryPerTestProcess = totalMaxMemoryForTestsMb
-            .coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
-            .MiB
-
-        this.maxHeapSize = (maxHeapSize ?: memoryPerTestProcess - maxMetaspaceSize - reservedCodeCacheSize).toJvmMiB()
-        this.minHeapSize = (minHeapSize ?: 64.MiB).toJvmMiB()
+        this.maxHeapSize = maxHeapSize.toJvmMiB()
+        this.minHeapSize = minHeapSize.toJvmMiB()
 
         systemProperty("idea.is.unit.test", "true")
         systemProperty("idea.use.native.fs.for.win", false)
@@ -212,9 +211,6 @@ internal fun Project.createGeneralTestTask(
         body()
     }
 }
-
-private val defaultMaxMemoryPerTestWorkerMb = 1600
-private val defaultMaxJunit5ParallelThreads = 16
 
 private fun Size.toJvmMiB(): String {
     require(bytes % 1.MiB.bytes == 0L) { "JVM memory size must be a whole number of MiB: $bytes bytes" }

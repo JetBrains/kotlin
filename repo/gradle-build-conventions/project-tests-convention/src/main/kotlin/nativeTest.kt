@@ -339,7 +339,7 @@ fun ProjectTestsExtension.nativeTestTask(
     compilerPluginDependencies: List<FileCollection> = emptyList(),
     allowParallelExecution: Boolean = true,
     customCompilerDist: TaskProvider<Sync>? = null,
-    maxMetaspaceSize: Size = 512.MiB,
+    maxMetaspaceSize: Size = testDefaultMaxMetaspaceSize,
     allowUnsafe: Boolean = false,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     enableGroupingTestEngine: Boolean = false,
