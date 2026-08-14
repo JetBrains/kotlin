@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.usesK2
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
@@ -24,10 +23,9 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
-import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
+import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
-import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputLibraries
-import org.jetbrains.kotlin.gradle.targets.native.internal.from
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.lazyFuture
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 
 internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilationImplFactory.PreConfigure {
@@ -143,18 +140,13 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                         if (mostCommonNativeFragment == fragmentName) {
                             add(project.konanDistribution.stdlib)
                         }
-                        val metadataCompilation = internalSourceSet.compilations.filterIsInstance<KotlinSharedNativeCompilation>()
-                            .find { it.defaultSourceSet.name == sourceSet.name }
 
-                        (metadataCompilation ?: internalSourceSet.compilations.firstIsInstanceOrNull<AbstractKotlinNativeCompilation>())?.let {
-                            add(it.retrievePlatformDependenciesWithNativeDistribution())
+                        sourceSet.commonizerTarget.await()?.let {
+                            add(it.retrievePlatformDependenciesWithNativeDistribution(project))
                         }
 
-                        if (metadataCompilation != null) {
-                            commonizeCInteropTask()?.let { task ->
-                                val cinteropCommonizerDependent = CInteropCommonizerDependent.from(metadataCompilation) ?: return@let
-                                add(task.map { it.commonizedOutputLibraries(cinteropCommonizerDependent) })
-                            }
+                        commonizeCInteropTask()?.let {
+                            add(cinteropCommonizerDependencies(sourceSet, it))
                         }
                     }
                     // We do not need transitive dependencies defined on higher levels of the hierarchy here

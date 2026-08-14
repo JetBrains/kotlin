@@ -64,10 +64,16 @@ internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependencie
 
 internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDistribution(): FileCollection {
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
+    return commonizerTarget.retrievePlatformDependenciesWithNativeDistribution(project)
+}
+
+internal fun CommonizerTarget.retrievePlatformDependenciesWithNativeDistribution(
+    project: Project,
+): FileCollection {
     val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
     val nativeDependency = KotlinNativeBundleBuildService.getNativeDistributionDependencies(
         project,
-        commonizerTarget,
+        this,
         nativeBundleBuildService
     )
     return nativeDependency
