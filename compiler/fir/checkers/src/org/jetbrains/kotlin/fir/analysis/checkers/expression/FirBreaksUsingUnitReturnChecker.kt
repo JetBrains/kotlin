@@ -65,10 +65,10 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
     }
 
     context(sessionHolder: SessionHolder)
-    private val Pair<FirNamedFunctionSymbol, FirFunctionCall>.asCollectionsFunction: FirAnonymousFunction?
+    private inline val Pair<FirNamedFunctionSymbol, FirFunctionCall>.asCollectionsFunction: FirAnonymousFunction?
         get() = let { [callableFunction, call] ->
             when {
-                callableFunction.isCollectionsFunction -> call.lambdaArgument
+                callableFunction.isCollectionsFunction -> (call.arguments.lastOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
                 else -> null
             }
         }
@@ -77,7 +77,4 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
     private inline val FirNamedFunctionSymbol.isCollectionsFunction: Boolean
         get() = callableId.packageName.asString() == "kotlin.collections"
                 && valueParameterSymbols.lastOrNull()?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
-
-    private inline val FirFunctionCall.lambdaArgument: FirAnonymousFunction?
-        get() = (arguments.lastOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
 }
