@@ -58,9 +58,8 @@ internal class GradleNodeModuleBuilder(
         if (files.isEmpty() && srcPackageJsonFile == null) return null
 
         val packageJson = fromSrcPackageJson(srcPackageJsonFile)?.apply {
-            // see the note on PackageJson: Java deserialization can leave a non-null property null
-            @Suppress("USELESS_ELVIS")
-            version = version ?: moduleVersion
+            // "version" is optional in a source package.json, see parsePackageJson
+            version = version.ifEmpty { moduleVersion }
         } ?: PackageJson(moduleName, moduleVersion)
 
         val metaJsExt = ".meta.js"

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import java.io.File
 import java.io.Serializable
 
@@ -20,14 +20,15 @@ data class GradleNodeModule(val name: String, val version: String, val path: Fil
 
     @get:Synchronized
     val dependencies: Set<NpmDependencyDeclaration> by lazy {
-        val pJson = Json.parseToJsonElement(path.resolve("package.json").readText()).jsonObject
+        val pJson = parsePackageJsonObject(path.resolve("package.json"))
         mapOf(
             NpmDependency.Scope.NORMAL to pJson["dependencies"],
             NpmDependency.Scope.PEER to pJson["peerDependencies"],
             NpmDependency.Scope.OPTIONAL to pJson["optionalDependencies"],
             NpmDependency.Scope.DEV to pJson["devDependencies"],
         ).mapValues { (_, depsEl) ->
-            depsEl?.jsonObject?.map { (k, v) -> k to v.jsonPrimitive.content }?.toMap()
+            // skip rather than record a "null" version string: JsonNull is itself a JsonPrimitive
+            (depsEl as? JsonObject)?.mapNotNull { (k, v) -> (v as? JsonPrimitive)?.contentOrNull?.let { k to it } }?.toMap()
         }.mapNotNull { (scope, deps) ->
             deps?.map { (k, v) -> NpmDependencyDeclaration(scope, k, v) }
         }.flatten().toSet()

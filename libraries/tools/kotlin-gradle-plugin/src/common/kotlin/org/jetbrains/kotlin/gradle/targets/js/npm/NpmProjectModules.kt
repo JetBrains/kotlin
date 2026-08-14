@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -64,7 +63,7 @@ open class NpmProjectModules(
         val packageJsonFile = dir.resolve(PACKAGE_JSON)
 
         val main: String? = if (packageJsonFile.isFile) {
-            val packageJson = Json.parseToJsonElement(packageJsonFile.readText()).jsonObject
+            val packageJson = parsePackageJsonObject(packageJsonFile)
             var result: String? = null
             for (key in packageJsonEntries) {
                 result = packageJson.getStringOrNull(key)

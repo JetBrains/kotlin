@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Action
 import org.gradle.api.GradleException
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import java.io.File
 import java.io.Serializable
@@ -86,13 +87,6 @@ class PackageJson(
     }
 
     companion object {
-        /** Gson indented with two spaces where kotlinx-serialization defaults to four; keep the emitted file identical. */
-        @OptIn(ExperimentalSerializationApi::class)
-        internal val prettyJson = Json {
-            prettyPrint = true
-            prettyPrintIndent = "  "
-        }
-
         fun scopedName(name: String): ScopedName = if (name.contains("/")) ScopedName(
             scope = name.substringBeforeLast("/").removePrefix("@"),
             name = name.substringAfterLast("/")
@@ -117,7 +111,7 @@ class PackageJson(
         }
 
         if (jsonTree != previous) {
-            packageJsonFile.writeText(prettyJson.encodeToString(JsonObject.serializer(), jsonTree))
+            packageJsonFile.writeText(KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonObject.serializer(), jsonTree))
         }
     }
 
@@ -155,22 +149,43 @@ class PackageJson(
 
 fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { parsePackageJson(it.readText()) }
 
+/**
+ * A `package.json` this plugin did not write may carry a byte order mark or use the relaxations npm tolerates, both
+ * of which Gson's reader accepted by default. Keep parsing lenient so such files do not start failing the build.
+ */
+private val lenientJson = Json { isLenient = true }
+
+internal fun parsePackageJsonObject(file: File): JsonObject =
+    lenientJson.parseToJsonElement(file.readText().removePrefix("﻿")).jsonObject
+
+/**
+ * `JsonNull` is itself a `JsonPrimitive`, so reading `.content` off it would silently produce the string `"null"`.
+ */
+private val JsonElement.stringOrNull: String?
+    get() = (this as? JsonPrimitive)?.contentOrNull
+
 private fun parsePackageJson(text: String): PackageJson? {
     return try {
-        val obj = Json.parseToJsonElement(text).jsonObject
-        val name = obj["name"]?.jsonPrimitive?.content ?: return null
-        val version = obj["version"]?.jsonPrimitive?.content ?: return null
+        val obj = lenientJson.parseToJsonElement(text.removePrefix("﻿")).jsonObject
+        val name = obj["name"]?.stringOrNull ?: return null
+        // a missing "version" is normal for a directory dependency; callers substitute the Gradle module version
+        val version = obj["version"]?.stringOrNull ?: ""
         PackageJson(name, version).also { pkg ->
-            pkg.private = obj["private"]?.jsonPrimitive?.content?.toBoolean()
-            pkg.main = obj["main"]?.jsonPrimitive?.content
-            pkg.types = obj["types"]?.jsonPrimitive?.content
-            pkg.workspaces = obj["workspaces"]?.let { el ->
-                (el as? JsonArray)?.map { it.jsonPrimitive.content }
+            pkg.private = obj["private"]?.stringOrNull?.toBoolean()
+            pkg.main = obj["main"]?.stringOrNull
+            pkg.types = obj["types"]?.stringOrNull
+            pkg.workspaces = (obj["workspaces"] as? JsonArray)?.mapNotNull { it.stringOrNull }
+            pkg.overrides = (obj["overrides"] as? JsonObject)?.mapNotNull { (k, v) -> v.stringOrNull?.let { k to it } }?.toMap()
+            (obj["bundledDependencies"] as? JsonArray)?.mapNotNullTo(pkg.bundledDependencies) { it.stringOrNull }
+            for (scope in listOf("dependencies", "devDependencies", "peerDependencies", "optionalDependencies")) {
+                val target = when (scope) {
+                    "dependencies" -> pkg.dependencies
+                    "devDependencies" -> pkg.devDependencies
+                    "peerDependencies" -> pkg.peerDependencies
+                    else -> pkg.optionalDependencies
+                }
+                (obj[scope] as? JsonObject)?.forEach { (k, v) -> v.stringOrNull?.let { target[k] = it } }
             }
-            obj["dependencies"]?.jsonObject?.forEach { (k, v) -> pkg.dependencies[k] = v.jsonPrimitive.content }
-            obj["devDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.devDependencies[k] = v.jsonPrimitive.content }
-            obj["peerDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.peerDependencies[k] = v.jsonPrimitive.content }
-            obj["optionalDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.optionalDependencies[k] = v.jsonPrimitive.content }
         }
     } catch (_: Exception) {
         null

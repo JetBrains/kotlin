@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.test.Test
 import java.io.Reader
 import java.io.StringReader
@@ -149,11 +150,10 @@ class RewriteSourceMapFilterReaderTest {
             )
 
         assertEquals("{:)],\"sourcesContent\":[null]}", filter.readText())
-        assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. " +
-                    "Unexpected JSON token at offset 1: Expected end of the object '}', but had ':' instead at path: \$\n" +
-                    "JSON input: {:)]} in `{:)],\"sourcesContent\":[null]}",
-            filter.warning
+        // only the prefix is asserted: the rest is kotlinx-serialization's parser text, which is not part of its contract
+        assertTrue(
+            filter.warning!!.startsWith(RewriteSourceMapFilterReader.UNSUPPORTED_FORMAT_MESSAGE),
+            "unexpected warning: ${filter.warning}"
         )
     }
 

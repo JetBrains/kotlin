@@ -21,6 +21,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -738,14 +739,8 @@ private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change url
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
 
 /** Gson indented with two spaces where kotlinx-serialization defaults to four; keep karma.conf.js identical. */
-@OptIn(ExperimentalSerializationApi::class)
-private val karmaJson = Json {
-    prettyPrint = true
-    prettyPrintIndent = "  "
-}
-
 private fun karmaConfigToJson(config: KarmaConfig): String =
-    karmaJson.encodeToString(JsonElement.serializer(), config.toJsonElement())
+    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), config.toJsonElement())
 
 /**
  * Mirrors what Gson's reflective serializer used to emit for [KarmaConfig]: properties in declaration order,

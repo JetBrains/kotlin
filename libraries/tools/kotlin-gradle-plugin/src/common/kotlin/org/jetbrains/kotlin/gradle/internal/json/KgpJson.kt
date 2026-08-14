@@ -44,14 +44,28 @@ internal object KgpJson {
     val prettyPrinted: Json = Json(default) {
         prettyPrint = true
     }
+
+    /**
+     * As [prettyPrinted], but indented with two spaces to match Gson's pretty printer.
+     *
+     * Used for the files whose exact bytes are part of a contract: `package.json` is consumed by npm and yarn and
+     * compared against the previous run, and the generated webpack and karma configs are executed as JavaScript.
+     */
+    @OptIn(ExperimentalSerializationApi::class)
+    val prettyPrintedTwoSpaceIndent: Json = Json(prettyPrinted) {
+        prettyPrintIndent = "  "
+    }
 }
 
 /**
  * Recursively converts an arbitrary value to a [JsonElement].
  *
  * Intended for the loosely typed `Map`/`List`/`Any?` trees that the JS and webpack DSLs let build authors assemble,
- * where there is no schema to derive a serializer from. Anything not recognised falls back to its `toString()`,
- * which is what the reflective Gson serializers this replaced also did.
+ * where there is no schema to derive a serializer from.
+ *
+ * Note the difference from the reflective Gson serializers this replaced: Gson walked an unrecognised object's
+ * fields, whereas anything that is not a primitive, map or collection here falls back to its `toString()`. Types
+ * that must survive as JSON objects therefore need an explicit branch at the call site.
  */
 internal fun anyToJsonElement(value: Any?): JsonElement = when (value) {
     null -> JsonNull

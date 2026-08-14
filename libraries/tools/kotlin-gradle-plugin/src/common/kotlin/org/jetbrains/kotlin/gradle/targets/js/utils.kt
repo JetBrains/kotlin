@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -109,17 +110,7 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
  * Default JSON emitter — converts arbitrary Map/List/primitive trees to pretty-printed JSON.
  */
 internal fun json(obj: Any): String =
-    prettyJson.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
-
-/**
- * Gson, which used to emit these files, indents with two spaces where kotlinx-serialization defaults to four.
- * Keep the two-space indent so that generated configs stay diff-comparable with the ones previous versions wrote.
- */
-@OptIn(ExperimentalSerializationApi::class)
-private val prettyJson = Json {
-    prettyPrint = true
-    prettyPrintIndent = "  "
-}
+    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
 
 /**
  * A converter from a string `target` option to an [EcmaVersion]

@@ -4011,11 +4011,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonKt {
 	public static final fun fromSrcPackageJson (Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/PackageJson;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonTypeAdapter : com/google/gson/TypeAdapterFactory {
-	public fun <init> ()V
-	public fun create (Lcom/google/gson/Gson;Lcom/google/gson/reflect/TypeToken;)Lcom/google/gson/TypeAdapter;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/PeerNpmDependencyExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmDependencyExtension {
 }
 
