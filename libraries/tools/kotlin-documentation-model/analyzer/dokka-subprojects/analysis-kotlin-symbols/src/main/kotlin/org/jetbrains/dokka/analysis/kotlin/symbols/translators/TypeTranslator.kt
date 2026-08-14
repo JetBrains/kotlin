@@ -7,6 +7,7 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 import com.intellij.psi.PsiElement
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTranslator.Companion.getPresentableName
+import org.jetbrains.dokka.analysis.kotlin.symbols.utils.filterOutAny
 import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
@@ -163,7 +164,7 @@ internal class TypeTranslator(
         type: KaType,
         location: Location
     ): AncestryNode {
-        val (interfaces, superclass) = type.directSupertypes(true).filterNot { it.isAnyType }
+        val (interfaces, superclass) = type.directSupertypes(true).filterOutAny()
             .partition {
                 val typeConstructorWithKind = toTypeConstructorWithKindFrom(it, location)
                 typeConstructorWithKind.kind == KotlinClassKindTypes.INTERFACE ||

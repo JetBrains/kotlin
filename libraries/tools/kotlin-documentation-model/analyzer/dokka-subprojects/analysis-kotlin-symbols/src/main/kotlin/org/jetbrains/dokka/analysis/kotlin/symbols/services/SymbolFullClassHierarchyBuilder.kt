@@ -20,6 +20,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTranslator
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.Location
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.TypeTranslator
+import org.jetbrains.dokka.analysis.kotlin.symbols.utils.filterOutAny
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.analysis.api.types.directSupertypes
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
-import org.jetbrains.kotlin.analysis.api.types.isAnyType
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import java.util.concurrent.ConcurrentHashMap
 
@@ -50,7 +50,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
     ) {
         val (dri, kotlinType) = driWithKType
         if (supersMap[dri] == null) {
-            val supertypes = kotlinType.directSupertypes(shouldApproximate = true).filterNot { it.isAnyType }.toList()
+            val supertypes = kotlinType.directSupertypes(shouldApproximate = true).filterOutAny().toList()
             val supertypesDriWithKType = supertypes.mapNotNull { supertype ->
                 supertype.expandedSymbol?.let {
                     getDRIFromClassLike(it) to supertype
@@ -145,7 +145,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         val (typeConstructorWithKind, kotlinType) = typeConstructorWithKindWithKType
 
         if (supersMap[typeConstructorWithKind.typeConstructor.dri] == null) {
-            val supertypes = kotlinType.directSupertypes(shouldApproximate = true).filterNot { it.isAnyType }.toList()
+            val supertypes = kotlinType.directSupertypes(shouldApproximate = true).filterOutAny().toList()
 
             val supertypesDriWithKType = supertypes.map { supertype ->
                 with(typeTranslator) {
