@@ -281,14 +281,17 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
-    // === Build: JVMCompilerTests ===
+    // === Build: JvmMiscTests ===
     testLifecycleTask("jvmCompilerTest") {
-        dependsOn(
-            ":compiler:tests-common-new:test",
-            ":compiler:container:test",
-            ":compiler:tests-java8:test",
-            ":compiler:tests-spec:test",
-        )
+        dependsOn(":compiler:tests-common-new:test")
+        dependsOn(":compiler:container:test")
+        dependsOn(":compiler:tests-java8:test")
+        dependsOn(":compiler:tests-spec:test")
+    }
+
+    // === Build: JvmCodegenTests ===
+    val jvmCodegenTest = testLifecycleTask("jvmCodegenTest") {
+        dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
     // === could be dropped ===
@@ -380,13 +383,18 @@ tasks {
         dependsOn(":native:native.tests:klib-ir-inliner:check")
     }
 
-    // === Build: FirCompilerTests ===
-    testLifecycleTask("firCompilerTest") {
+    // === Build: CompilerFrontendTests ===
+    val compilerFrontendTest = testLifecycleTask("compilerFrontendTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
-        dependsOn(":compiler:fir:fir2ir:aggregateTests")
+    }
+
+    // === TO BE DELETED === Build: FirCompilerTests ===
+    testLifecycleTask("firCompilerTest") {
+        dependsOn(compilerFrontendTest)
+        dependsOn(jvmCodegenTest)
     }
 
     // === Build: FirCompilerNightlyTests ===
