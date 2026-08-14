@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 @OptIn(KaImplementationDetail::class)
 object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
-    private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-standalone-base.xml"
+    private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-standalone-fir.xml"
 
     @Suppress("UnstableApiUsage")
     override fun registerApplicationServices(application: MockApplication, disposable: Disposable) {
