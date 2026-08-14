@@ -60,6 +60,7 @@ object StubUtils {
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
                     containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
                 } else {
+
                     null
                 }
             }
