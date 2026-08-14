@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -44,7 +43,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 ) : KlibResolvedModuleDescriptorsFactory {
 
     override fun createResolved2(
-        resolvedLibraries: KotlinLibraryResolveResult,
+        libraries: List<KotlinLibrary>,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
@@ -65,7 +64,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
-        resolvedLibraries.forEach { library ->
+        libraries.forEach { library ->
             profile("Loading ${library.path}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
