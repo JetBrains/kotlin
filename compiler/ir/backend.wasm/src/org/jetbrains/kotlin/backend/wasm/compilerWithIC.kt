@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
@@ -19,17 +18,16 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.wasm.config.wasmDisableCrossFileOptimisations
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class WasmCompilerWithIC(
+abstract class WasmCompilerWithIC<F : IrICProgramFragments>(
     val mainModule: IrModuleFragment,
     val context: WasmBackendContext,
-) : IrCompilerICInterface {
+) : IrCompilerICInterface<F> {
     protected val idSignatureRetriever = context.irFactory as IdSignatureRetriever
     protected val wasmModuleMetadataCache: WasmModuleMetadataCache = WasmModuleMetadataCache(context)
 
-    abstract fun compileFile(irFile: IrFile): IrICProgramFragments
+    abstract fun compileFile(irFile: IrFile): F
 
-    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> F> {
         //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 
         context.configuration.wasmDisableCrossFileOptimisations = true
@@ -45,14 +43,13 @@ abstract class WasmCompilerWithIC(
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithICMultimodule(
     mainModule: IrModuleFragment,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
     context: WasmBackendContext,
-) : WasmCompilerWithIC(
+) : WasmCompilerWithIC<WasmIrProgramFragmentsMultimodule>(
     mainModule = mainModule,
     context = context,
 ) {
@@ -124,14 +121,13 @@ open class WasmCompilerWithICMultimodule(
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithICSingleModule(
     mainModule: IrModuleFragment,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
     context: WasmBackendContext,
-) : WasmCompilerWithIC(
+) : WasmCompilerWithIC<WasmIrProgramFragmentsSingleModule>(
     mainModule = mainModule,
     context = context,
 ) {
@@ -237,14 +233,13 @@ open class WasmCompilerWithICSingleModule(
 }
 
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithICWholeWorld(
     mainModule: IrModuleFragment,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
     context: WasmBackendContext,
-) : WasmCompilerWithIC(
+) : WasmCompilerWithIC<WasmIrProgramFragments>(
     mainModule = mainModule,
     context = context,
 ) {
