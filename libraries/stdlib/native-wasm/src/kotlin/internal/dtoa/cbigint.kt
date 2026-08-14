@@ -295,61 +295,11 @@ internal fun simpleShiftLeftHighPrecision(arg1: ULongArray, length: Int, arg2: I
     arg1[0] = arg1[0] shl arg2
 }
 
-private fun highestSetBit(y: ULong): Int {
-    if (y == 0UL) return 0
-    var x: UInt
-    var result: Int
-    if (y and 0xFFFFFFFF00000000UL != 0UL) {
-        x = highU32FromVar(y)
-        result = 32
-    } else {
-        x = lowU32FromVar(y)
-        result = 0
-    }
-    if (x and 0xFFFF0000u != 0u) {
-        x = bitSection(x, 0xFFFF0000u, 16); result += 16
-    }
-    if (x and 0xFF00u != 0u) {
-        x = bitSection(x, 0xFF00u, 8); result += 8
-    }
-    if (x and 0xF0u != 0u) {
-        x = bitSection(x, 0xF0u, 4); result += 4
-    }
-    return when {
-        x > 0x7u -> result + 4
-        x > 0x3u -> result + 3
-        x > 0x1u -> result + 2
-        else -> result + 1
-    }
-}
+private fun highestSetBit(y: ULong): Int =
+    ULong.SIZE_BITS - y.countLeadingZeroBits()
 
-private fun lowestSetBit(y: ULong): Int {
-    if (y == 0UL) return 0
-    var x: UInt
-    var result: Int
-    if (y and 0x00000000FFFFFFFFUL != 0UL) {
-        x = lowU32FromVar(y)
-        result = 0
-    } else {
-        x = highU32FromVar(y)
-        result = 32
-    }
-    if (x and 0xFFFFu == 0u) {
-        x = bitSection(x, 0xFFFF0000u, 16); result += 16
-    }
-    if (x and 0xFFu == 0u) {
-        x = bitSection(x, 0xFF00u, 8); result += 8
-    }
-    if (x and 0xFu == 0u) {
-        x = bitSection(x, 0xF0u, 4); result += 4
-    }
-    return when {
-        x and 0x1u != 0u -> result + 1
-        x and 0x2u != 0u -> result + 2
-        x and 0x4u != 0u -> result + 3
-        else -> result + 4
-    }
-}
+private fun lowestSetBit(y: ULong): Int =
+    if (y != 0UL) y.countTrailingZeroBits() + 1 else 0
 
 internal fun highestSetBitHighPrecision(arg: ULongArray, length: Int): Int {
     var len = length
