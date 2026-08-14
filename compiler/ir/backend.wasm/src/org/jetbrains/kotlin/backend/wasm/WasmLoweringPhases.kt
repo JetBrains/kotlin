@@ -196,6 +196,8 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WasmAddContinuationToNonLocalSuspendFunctionsLowering,
     ::WasmAddContinuationToFunctionCallsLowering,
+
+    ::WasmSuspendLambdaMergingLowering,
     ::WasmAddFunctionSupertypeToSuspendFunctionLowering,
     ::GenerateMainFunctionWrappers,
 
