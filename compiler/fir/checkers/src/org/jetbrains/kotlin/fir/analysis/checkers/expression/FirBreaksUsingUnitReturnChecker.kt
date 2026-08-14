@@ -46,7 +46,7 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
 
     context(sessionHolder: SessionHolder)
     private val FirNamedFunctionSymbol.isCollectionsFunction: Boolean
-        get() = callableId.packageName.asString() == "kotlin.collections" && valueParameterSymbols.singleOrNull()
+        get() = callableId.packageName.asString() == "kotlin.collections" && valueParameterSymbols.lastOrNull()
             ?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
 
     private inline val FirFunctionCall.lambdaArgument: FirAnonymousFunction?
