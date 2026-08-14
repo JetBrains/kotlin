@@ -12,6 +12,7 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -48,11 +49,7 @@ class KotlinProjectStructureMetadataSerializationTest {
         assertEquals(sampleMetadata, deserialized)
     }
 
-    /**
-     * The emitted JSON is published inside metadata jars as `META-INF/kotlin-project-structure-metadata.json`
-     * and is compared with exact string equality against checked-in expectations by the `libraries/stdlib` and
-     * `libraries/kotlin.test` build scripts. Guard the exact bytes, not just the round trip.
-     */
+    /** stdlib and kotlin.test compare this output with checked-in files, so the format must not drift. */
     @Test
     fun `json output format is stable`() {
         val expected = File("src/functionalTest/resources/kotlin-project-structure-metadata.golden.json")
@@ -85,7 +82,79 @@ class KotlinProjectStructureMetadataSerializationTest {
         )
     }
 
-    /** An entry without a separator used to fail with an `IndexOutOfBoundsException` naming nothing. */
+    /** Files older than format 0.3.1 have no `isPublishedAsRoot`. */
+    @Test
+    fun `deserialize - missing isPublishedAsRoot defaults to false`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertFalse(deserialized.isPublishedAsRoot)
+    }
+
+    @Test
+    fun `deserialize - unquoted booleans are accepted`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": true,
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": [],
+                    "hostSpecific": true
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.hostSpecificSourceSets)
+    }
+
+    @Test
+    fun `deserialize - lenient input and a leading BOM are accepted`() {
+        val lenient = """
+            {
+              // comment
+              projectStructure: {
+                formatVersion: 0.3.3,
+                isPublishedAsRoot: true,
+                variants: [],
+                sourceSets: [
+                  {
+                    name: commonMain,
+                    dependsOn: [],
+                    moduleDependency: []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson("\uFEFF" + lenient)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.sourceSetNames)
+    }
+
     @Test
     fun `deserialize - malformed module dependency is reported`() {
         val json = """
@@ -112,4 +181,29 @@ class KotlinProjectStructureMetadataSerializationTest {
         )
     }
 
+    @Test
+    fun `deserialize - unknown keys are ignored`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": "true",
+                "someFutureKey": { "nested": [1, 2] },
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": [],
+                    "someFutureFlag": "true"
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.sourceSetNames)
+    }
 }
