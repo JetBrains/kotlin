@@ -246,7 +246,7 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
         // If the Integer part is a nonzero number.
         if (strIntegerPart.length != 0) {
             val leadingNumber = strIntegerPart.substring(0, 1)
-            return (strIntegerPart.length - 1) * 4 + leadingNumber.toLong(HEX_RADIX).countLeadingZeroBits() - 1
+            return (strIntegerPart.length - 1) * 4 + countBitsLength(leadingNumber.toLong(HEX_RADIX)) - 1
         }
 
         // If the Integer part is a zero number.
