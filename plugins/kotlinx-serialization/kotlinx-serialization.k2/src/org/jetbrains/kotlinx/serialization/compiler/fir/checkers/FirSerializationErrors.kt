@@ -45,6 +45,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT by error3<KtElement, ConeKotlinType, ConeKotlinType, String>()
     val CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE by error3<KtElement, ConeKotlinType, ConeKotlinType, String>()
     val CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE by warning2<KtElement, FirClassLikeSymbol<*>, FirClassLikeSymbol<*>>()
+    val SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT by warning0<KtElement>()
 
     val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<KtElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<KtElement>()
