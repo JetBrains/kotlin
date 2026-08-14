@@ -57,6 +57,7 @@ projectTests {
         testTask(
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
             javaLauncher = jdk,
+            maxHeapSize = 6.GiB,
             maxMetaspaceSize = 1.GiB,
             skipInLocalBuild = false,
             defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)
