@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.declaredFunctions
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -40,6 +43,32 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
         companionObjectSymbol.serializableOrMetaAnnotationSource(session),
         FirSerializationErrors.COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS,
         classSymbol
+    )
+}
+
+/**
+ * `Companion.serializer()` is generated regardless of the companion's visibility, but a private companion makes it
+ * unreachable: neither serializers generated for other classes, nor `serializer<T>()`, nor the reflective lookup can
+ * call it. That defeats the whole point of generating it, so warn. See KT-66462.
+ *
+ * A private or internal serializable class is not reported: its serializer is not part of the module's API anyway,
+ * so a companion that is just as narrow does not take anything away.
+ */
+internal fun CheckerContext.checkPrivateCompanion(
+    classSymbol: FirClassSymbol<*>,
+    reporter: DiagnosticReporter,
+) {
+    if (classSymbol !is FirRegularClassSymbol) return
+    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
+    if (classSymbol.visibility == Visibilities.Private || classSymbol.visibility == Visibilities.Internal) return
+    val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
+    if (companionObjectSymbol.visibility != Visibilities.Private) return
+
+    reporter.reportOn(
+        companionObjectSymbol.source,
+        FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
+        classSymbol,
+        positioningStrategy = SourceElementPositioningStrategies.VISIBILITY_MODIFIER
     )
 }
 
