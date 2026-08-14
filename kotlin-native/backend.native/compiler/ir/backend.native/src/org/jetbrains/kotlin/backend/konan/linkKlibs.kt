@@ -36,9 +36,7 @@ import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
-import org.jetbrains.kotlin.io.canonicalPathString
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
@@ -146,16 +144,11 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
-    // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
-    val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPathString() }
-    val friendModules = config.resolvedLibraries.getFullList() // TODO(KT-61096): rewrite this code to make it simpler
-            .filter { it.path.canonicalPathString() in canonicalFriendPaths }
-            .map { it.uniqueName }
+    val friendModuleUniqueNames = config.loadedKlibs.friends.map { it.uniqueName }
+    val includedModuleUniqueNames = config.loadedKlibs.included.map { it.uniqueName }
 
-    val friendModulesMap = (
-            listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
-                    config.loadedKlibs.included.map { it.uniqueName }
-            ).associateWith { friendModules }
+    val friendModulesMap: Map<String, List<String>> =
+            (listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) + includedModuleUniqueNames).associateWith { friendModuleUniqueNames }
 
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             config.configuration.diagnosticsCollector,
