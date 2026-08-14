@@ -9,5 +9,4 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.utils.SmartList
 
 @KaImplementationDetail
-public inline fun <E> buildSmartList(build: MutableList<E>.() -> Unit): List<E> =
-    SmartList<E>().apply(build)
+public inline fun <E> buildSmartList(build: MutableList<E>.() -> Unit): List<E> = SmartList<E>().apply(build)

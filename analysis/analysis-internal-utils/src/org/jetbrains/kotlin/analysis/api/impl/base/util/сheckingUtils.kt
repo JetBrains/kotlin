@@ -11,20 +11,20 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @KaImplementationDetail
-fun unexpectedElementError(elementName: String, element: Any?): Nothing {
+public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
     errorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
         withEntry(elementName, element) { element.toString() }
     }
 }
 
 @KaImplementationDetail
-inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
+public inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
     unexpectedElementError(ELEMENT::class.simpleName ?: ELEMENT::class.java.name, element)
 }
 
 @KaImplementationDetail
 @OptIn(ExperimentalContracts::class)
-inline fun <reified T> requireIsInstance(obj: Any) {
+public inline fun <reified T> requireIsInstance(obj: Any) {
     contract {
         returns() implies (obj is T)
     }
@@ -33,7 +33,7 @@ inline fun <reified T> requireIsInstance(obj: Any) {
 
 @KaImplementationDetail
 @OptIn(ExperimentalContracts::class)
-inline fun <reified T> checkIsInstance(obj: Any) {
+public inline fun <reified T> checkIsInstance(obj: Any) {
     contract {
         returns() implies (obj is T)
     }
