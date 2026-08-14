@@ -90,7 +90,7 @@ abstract class AbstractSimpleFileBenchmark {
 
     @OptIn(ObsoleteTestInfrastructure::class)
     protected fun analyzeGreenFile(bh: Blackhole) {
-        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment())
+        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), env.configuration)
         val firProvider = session.firProvider as FirProviderImpl
         val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
 

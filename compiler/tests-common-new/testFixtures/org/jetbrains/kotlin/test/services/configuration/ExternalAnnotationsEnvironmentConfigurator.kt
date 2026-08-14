@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.useJavaDirect
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -30,6 +31,19 @@ import org.jetbrains.kotlin.test.services.sourceFileProvider
  * @see org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
  */
 class ExternalAnnotationsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    /**
+     * External annotations are a PSI-only facility: they reach the Java model through
+     * [ExternalAnnotationsManager] over a [PsiModifierListOwner], i.e. through the PSI Java view. The default,
+     * java-direct, Java view is PSI-free by design and has no `annotations.xml` peer — nor does the compiler
+     * itself, which registers a `MockExternalAnnotationsManager` finding nothing. So a module which declares
+     * external annotations is asking for the PSI view, and must say so explicitly now that java-direct is the
+     * default.
+     */
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (module.files.none { it.name == ExternalAnnotationsManager.ANNOTATIONS_XML }) return
+        configuration.useJavaDirect = false
+    }
+
     override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         var hasAnnotationFile = false
         for (file in module.files) {

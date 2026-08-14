@@ -26,15 +26,23 @@ import kotlin.io.path.pathString
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 
 object FirTestSessionFactoryHelper {
+    /**
+     * [compilerConfiguration] must be the configuration of the compilation under test, i.e. the one the
+     * [projectEnvironment] was built from: the Java view is derived from it by [javaInterop], and java-direct
+     * takes the `.java` sources of the compilation from its content roots. A fabricated empty configuration
+     * leaves java-direct with no Java sources at all — the PSI peer does not notice, because it describes the
+     * same sources by a project-wide search scope which ignores the configuration.
+     */
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         projectEnvironment: VfsBasedProjectEnvironment,
+        compilerConfiguration: CompilerConfiguration,
         librariesClasspath: JvmClasspath = JvmClasspath.ProjectLibraries(),
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
     ): FirSession {
-        val configuration = CompilerConfiguration.create().apply {
+        val configuration = compilerConfiguration.copy().apply {
             this.languageVersionSettings = languageVersionSettings
         }
         return FirSessionFactoryHelper.createSessionWithDependencies(

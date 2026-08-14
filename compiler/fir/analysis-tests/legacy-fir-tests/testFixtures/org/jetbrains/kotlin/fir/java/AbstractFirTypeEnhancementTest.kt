@@ -144,7 +144,8 @@ abstract class AbstractFirTypeEnhancementTest {
             val psiFiles = virtualFiles.map { factory.trySetupPsiForFile(it, JavaLanguage.INSTANCE, true, false)!! }
 
             val session = FirTestSessionFactoryHelper.createSessionForTests(
-                environment.toVfsBasedProjectEnvironment()
+                environment.toVfsBasedProjectEnvironment(),
+                environment.configuration,
             )
 
             val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
