@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade.Companion.shouldRunFirFrontendFacade
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -32,6 +33,17 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
 ) where Phase : PipelinePhase<InputPipelineArtifact, OutputPipelineArtifact>,
         InputPipelineArtifact : FrontendPipelineArtifact,
         OutputPipelineArtifact : Fir2IrPipelineArtifact {
+
+    /**
+     * Fir2Ir must run for exactly those modules which were analyzed by the platform FIR frontend, i.e. by [FirCliFacade],
+     * which uses the same predicate.
+     *
+     * Modules compiled to metadata KLIBs by [FirCliMetadataFrontendFacade] are not among them: their [FirOutputArtifact]
+     * wraps a `MetadataFrontendPipelineArtifact`, which [transform] can't handle.
+     */
+    override fun shouldTransform(module: TestModule): Boolean {
+        return super.shouldTransform(module) && shouldRunFirFrontendFacade(module, testServices)
+    }
 
     override fun transform(
         module: TestModule,

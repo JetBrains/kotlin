@@ -13,6 +13,11 @@ sealed class TestStep<InputArtifact, OutputArtifact>
               OutputArtifact : ResultingArtifact<OutputArtifact> {
     abstract val inputArtifactKind: TestArtifactKind<InputArtifact>
 
+    /**
+     * The kind of the artifact produced by this step, or `null` if the step produces nothing (i.e. it's a handlers step).
+     */
+    abstract val outputArtifactKind: TestArtifactKind<*>?
+
     sealed interface FacadeStep<InputArtifact, OutputArtifact>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   OutputArtifact : ResultingArtifact<OutputArtifact> {
@@ -28,10 +33,6 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   OutputArtifact : ResultingArtifact<OutputArtifact> {
 
-        open fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
-            return inputArtifact.kind == inputArtifactKind
-        }
-
         abstract fun processModule(
             module: TestModule,
             inputArtifact: InputArtifact,
@@ -46,9 +47,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             override val inputArtifactKind: TestArtifactKind<InputArtifact>
                 get() = facade.inputKind
 
-            override fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
-                return super.shouldProcessModule(module, inputArtifact) && facade.shouldTransform(module)
-            }
+            override val outputArtifactKind: TestArtifactKind<OutputArtifact>
+                get() = facade.outputKind
 
             override fun processModule(
                 module: TestModule,
@@ -81,6 +81,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     }
                 }
             }
+
+            override val outputArtifactKind: TestArtifactKind<*>? get() = null
 
             override fun processModule(
                 module: TestModule,
@@ -124,6 +126,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             override val inputArtifactKind: TestArtifactKind<InputArtifact>
                 get() = facade.inputKind
 
+            override val outputArtifactKind: TestArtifactKind<OutputArtifact>
+                get() = facade.outputKind
 
             override fun process(
                 inputArtifact: InputArtifact,
@@ -154,6 +158,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     }
                 }
             }
+
+            override val outputArtifactKind: TestArtifactKind<*>? get() = null
 
             override fun process(
                 inputArtifact: InputArtifact,
@@ -196,5 +202,3 @@ sealed class TestStep<InputArtifact, OutputArtifact>
         data object NoArtifactFromFacade : StepResult<Nothing>()
     }
 }
-
-

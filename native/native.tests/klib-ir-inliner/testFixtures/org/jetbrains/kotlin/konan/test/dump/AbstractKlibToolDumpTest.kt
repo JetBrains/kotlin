@@ -60,8 +60,6 @@ abstract class AbstractKlibToolDumpTest : AbstractNativeCoreTest() {
         useMetaTestConfigurators(::CInteropTestSkipper)
         useFailureSuppressors(::NativeTestsSuppressor)
 
-        facadeStep(::ObjCInteropFacade)
-
         configureFirParser(FirParser.LightTree)
         facadeStep(::FirCliNativeFacade)
         firHandlersStep {
@@ -77,6 +75,14 @@ abstract class AbstractKlibToolDumpTest : AbstractNativeCoreTest() {
         }
 
         facadeStep(::KlibSerializerNativeCliFacade)
+
+        /*
+         * Both `KlibSerializerNativeCliFacade` and `ObjCInteropFacade` produce Klib artifact, which means that
+         * the later one rewrites the first one inside the test infra. Modules with objc interop are expected to
+         * have no kotlin files, so it's acceptable to just run the `ObjCInteropFacade` last so its output would
+         * be used for compilation of other modules
+         */
+        facadeStep(::ObjCInteropFacade)
 
         klibArtifactsHandlersStep {
             useHandlers(getDumpHandlers())

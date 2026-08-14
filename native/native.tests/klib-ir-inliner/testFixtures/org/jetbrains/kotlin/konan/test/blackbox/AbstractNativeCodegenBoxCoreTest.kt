@@ -60,7 +60,6 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
             )
 
             useGroupingTestIsolators(::NativeGroupingTestIsolator)
-            facadeStep(::ObjCInteropFacade)
 
             // Because of package escaping various dumps for grouping mode would be different from
             // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
@@ -79,6 +78,14 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
 
             facadeStep(::KlibSerializerNativeCliFacade)
             klibArtifactsHandlersStep()
+
+            /*
+             * Both `KlibSerializerNativeCliFacade` and `ObjCInteropFacade` produce Klib artifact, which means that
+             * the later one rewrites the first one inside the test infra. Modules with objc interop are expected to
+             * have no kotlin files, so it's acceptable to just run the `ObjCInteropFacade` last so its output would
+             * be used for compilation of other modules
+             */
+            facadeStep(::ObjCInteropFacade)
 
             useAdditionalSourceProviders(
                 ::NativeLauncherAdditionalSourceProvider,
