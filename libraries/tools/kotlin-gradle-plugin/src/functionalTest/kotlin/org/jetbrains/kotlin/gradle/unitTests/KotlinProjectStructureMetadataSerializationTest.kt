@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout.METADATA
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -51,6 +52,12 @@ class KotlinProjectStructureMetadataSerializationTest {
      * The emitted JSON is published inside metadata jars as `META-INF/kotlin-project-structure-metadata.json`
      * and is compared with exact string equality against checked-in expectations by the `libraries/stdlib` and
      * `libraries/kotlin.test` build scripts. Guard the exact bytes, not just the round trip.
+     *
+     * Caveat: this classpath resolves `kotlinx-serialization-json-jvm` to a newer version than the one embedded
+     * into the shipped plugin (conflict resolution against `com.jetbrains.intellij.platform:util` wins over the
+     * `strictly` constraint, which only pins the umbrella `-json` module). The two disagree on how empty arrays
+     * are pretty-printed, so the golden file records this classpath's output, not the published bytes — see the
+     * comment on `projectStructureMetadataJson` in `KotlinProjectStructureMetadataJson.kt`.
      */
     @Test
     fun `json output format is stable`() {
@@ -82,6 +89,61 @@ class KotlinProjectStructureMetadataSerializationTest {
             setOf("commonMain", "concurrentMain", "nativeDarwinMain", "nativeMain", "nativeOtherMain"),
             deserialized.sourceSetNames
         )
+    }
+
+    /**
+     * The Gson implementation read this key as `valueNamed(...)?.toBoolean() ?: false`, so a file without it
+     * parsed fine. Hand-patched files (this repo ships two) and pre-0.3.1 producers depend on that.
+     */
+    @Test
+    fun `deserialize - missing isPublishedAsRoot defaults to false`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertFalse(deserialized.isPublishedAsRoot)
+    }
+
+    /**
+     * KGP writes these booleans quoted, but Gson's `asString` also accepted the unquoted JSON form, so other
+     * producers may emit it. Keep accepting both.
+     */
+    @Test
+    fun `deserialize - unquoted booleans are accepted`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": true,
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": [],
+                    "hostSpecific": true
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.hostSpecificSourceSets)
     }
 
 }
