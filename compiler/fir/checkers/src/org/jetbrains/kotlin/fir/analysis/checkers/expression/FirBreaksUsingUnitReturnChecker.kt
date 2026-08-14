@@ -45,7 +45,7 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
                             else -> break
                         }
                     } ?: continue
-                targetedFunction == call.lambdaArgument -> break
+                call.arguments.any { it is FirAnonymousFunctionExpression && it.anonymousFunction == targetedFunction } -> break
                 else -> continue
             }
         }
