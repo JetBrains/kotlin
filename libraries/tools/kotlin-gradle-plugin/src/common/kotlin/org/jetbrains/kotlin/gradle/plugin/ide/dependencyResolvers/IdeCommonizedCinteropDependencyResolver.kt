@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependenciesForIde
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.utils.future
 
@@ -22,7 +22,7 @@ internal class IdeCommonizedCinteropDependencyResolver(
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
 
         val project = sourceSet.project
-        val cinteropFiles = project.cinteropCommonizerDependencies(sourceSet)
+        val cinteropFiles = project.cinteropCommonizerDependenciesForIde(sourceSet)
         return project.resolveCInteropDependencies(errorReporter, cinteropFiles)
     }
 

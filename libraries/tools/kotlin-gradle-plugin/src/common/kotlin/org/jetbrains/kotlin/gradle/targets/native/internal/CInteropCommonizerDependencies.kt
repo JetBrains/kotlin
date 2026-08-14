@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
@@ -35,17 +34,27 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
     }
 }
 
-internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSourceSet): FileCollection {
+internal fun Project.cinteropCommonizerDependenciesForIde(sourceSet: KotlinSourceSet): FileCollection {
     return filesProvider {
         future {
-            val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask() ?: return@future project.files()
-
-            val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
-            val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
-
-            listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
-                cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
-            }
+            val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask()
+            cinteropCommonizerDependencies(sourceSet, cinteropCommonizerTask)
         }.getOrThrow()
     }
+}
+
+internal suspend fun Project.cinteropCommonizerDependencies(
+    sourceSet: KotlinSourceSet,
+    cInteropCommonizerTask: TaskProvider<out AbstractCInteropCommonizerTask>? = null,
+): FileCollection {
+    if (cInteropCommonizerTask == null) return project.files()
+
+    val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
+    val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
+
+    return files(
+        listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
+            cInteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
+        }
+    )
 }
