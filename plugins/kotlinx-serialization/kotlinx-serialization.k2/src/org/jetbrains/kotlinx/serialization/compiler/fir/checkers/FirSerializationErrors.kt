@@ -48,6 +48,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT by warning0<KtElement>()
 
     val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<KtElement>()
+    val DYNAMIC_TYPE_NOT_SUPPORTED by error0<KtElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<KtElement>()
 
     val TRANSIENT_IS_REDUNDANT by warning0<KtElement>()

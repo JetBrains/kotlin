@@ -745,6 +745,12 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val typeRef = propertySymbol.resolvedReturnTypeRef
             val propertyType = typeRef.coneType.fullyExpandedType()
             val source = typeRef.source ?: propertySymbol.source
+            // There is no compile-time type to look a serializer up for, and @Contextual hides this from
+            // SERIALIZER_NOT_FOUND, leaving the backend to fail on the cast to IrSimpleType. See KT-59088.
+            if (propertyType is ConeDynamicType) {
+                reporter.reportOn(source, FirSerializationErrors.DYNAMIC_TYPE_NOT_SUPPORTED)
+                continue
+            }
             if (customSerializerType != null && serializerSymbol != null) {
                 // Do not account for @Polymorphic and @Contextual, as they are serializers for T: Any
                 // and would not be compatible on direct comparison
