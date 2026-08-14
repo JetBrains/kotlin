@@ -629,7 +629,7 @@ class NativeSecondStageCompilationConfig(
 
     private fun createCacheSupport() = CacheSupport(
             configuration = configuration,
-            resolvedLibraries = resolvedLibraries,
+            allLibraries = resolvedLibraries.getFullList(),
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,
