@@ -51,4 +51,45 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
         )
         task.onlyIf { kotlinPublicationFormatProvider.get() == KotlinPublicationFormat.KOTLIN_ARCHIVE }
     }
+
+
+    for (target in extension.awaitTargets()) {
+        target.requestKarPlatformArtifactsForCompilation()
+        target.configureTransformActionFromKarToPlatformArtifacts()
+        target.configureTransformActionFromKarToResources()
+    }
+    for (sourceSet in multiplatformExtension.awaitSourceSets()) {
+        // TODO: check if this is okey to do on non-shared source-sets.
+        sourceSet.requestDecompressedKarForMetadataCompilation()
+    }
+
+    configureTransformActionFromKarXzToKar()
+    configureTransformActionFromKarToPsm()
+}
+
+
+/**
+ * The only consumer of resolvableMetadataConfiguration is [GranularMetadataTransformation],
+ * they work on top of zip archive. We can potentially extract only metadata directory into a separate archive,
+ * but that would just be additional work, so we directly pass DECOMPRESSED to the task.
+ */
+private fun KotlinSourceSet.requestDecompressedKarForMetadataCompilation() {
+    internal.resolvableMetadataConfiguration.apply {
+        attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.DECOMPRESSED)
+    }
+}
+
+private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
+    if (this !is KotlinTargetWithKotlinArchiveSupport) return
+    compilations.configureEach { compilation ->
+        val configurations = compilation.internal.configurations
+
+        configurations.compileDependencyConfiguration.apply {
+            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+        }
+
+        configurations.runtimeDependencyConfiguration?.apply {
+            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+        }
+    }
 }

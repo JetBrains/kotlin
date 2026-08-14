@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvid
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
@@ -499,6 +500,7 @@ internal class GranularMetadataTransformation(
             }
 
             logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
+            val isKotlinArchive = compositeMetadataArtifact.variant.attributes.getAttribute(KarLayout.Attributes.state) == KarLayout.Attributes.State.DECOMPRESSED
             ArtifactMetadataProvider(
                 CompositeMetadataArtifactImpl(
                     moduleDependencyIdentifier = dependency.toModuleDependencyIdentifier(),
@@ -506,7 +508,8 @@ internal class GranularMetadataTransformation(
                     kotlinProjectStructureMetadata = projectStructureMetadata,
                     primaryArtifactFile = compositeMetadataArtifact.file,
                     hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet,
-                    computeChecksum = params.computeTransformedLibraryChecksum
+                    computeChecksum = params.computeTransformedLibraryChecksum,
+                    archiveRelativePath = if (isKotlinArchive) KarLayout.METADATA_DIRECTORY_NAME else null,
                 )
             )
         }
