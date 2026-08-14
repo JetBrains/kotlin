@@ -36,6 +36,13 @@ dependencies {
     embedded(project(":kotlin-scripting-compiler-impl-embeddable")) { isTransitive = false }
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
+    // `kotlin-script-runtime` carries `kotlin.script.experimental.dependencies.DependenciesResolver`
+    // (and the legacy `kotlin.script.*` runtime), which the relocated scripting compiler references
+    // when building a script's default `ScriptCompilationConfiguration`. It is a transitive dep of
+    // `kotlin-scripting-{common,jvm}` and so is dropped by their `isTransitive = false`; without it
+    // the relocated `org.jetbrains.kotlin.buildtools.internal.scripting.dependencies.DependenciesResolver`
+    // is absent and scripting-related BTA operations fail at runtime.
+    embedded(project(":kotlin-script-runtime")) { isTransitive = false }
 
     // dependencies for ABI validation
     compileOnly(project(":libraries:tools:abi-validation:abi-tools-api"))

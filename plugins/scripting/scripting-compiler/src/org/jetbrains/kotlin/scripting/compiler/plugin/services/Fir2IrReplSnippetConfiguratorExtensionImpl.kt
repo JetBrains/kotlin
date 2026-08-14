@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildReplSidecarFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSidecarMetadataAttr
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
 import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -63,6 +66,12 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     session: FirSession,
     private val hostConfiguration: ScriptingHostConfiguration,
 ) : Fir2IrReplSnippetConfiguratorExtension(session) {
+
+    // Cached because this configurator instance is reused for every snippet of the same
+    // FirSession/compile call. A same-batch sibling can reuse this exact IR class instead of
+    // trying (and failing) to resolve it from the classpath, where it does not exist yet.
+    // See getStateObject.
+    private var cachedStateObjectIrClass: IrClass? = null
 
     @OptIn(SymbolInternals::class)
     override fun Fir2IrComponents.prepareSnippet(fir2IrVisitor: Fir2IrVisitor, firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
@@ -134,25 +143,56 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        val stateObject =
-            getStateObject(
-                irSnippet,
-                fir2IrVisitor,
-                createIfNotFound = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName] == null &&
-                        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]!!.isFirstSnippet(firReplSnippet.symbol)
-            )
+        val stateObject = getStateObject(irSnippet, fir2IrVisitor)
 
         irSnippet.stateObject = stateObject.symbol
+
+        stashReplSidecarMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * When the host configuration uses a [ClasspathBackedFirReplHistoryProvider], assembles the
+     * sidecar for [firReplSnippet] and stashes its encoded bytes on [irSnippet].
+     * `ReplSnippetsToClassesLowering.finalizeReplSnippetClass` later embeds those bytes into the
+     * wrapper class's `.kotlin_metadata`.
+     */
+    private fun stashReplSidecarMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]
+        if (historyProvider !is ClasspathBackedFirReplHistoryProvider) return
+
+        val sidecar = buildReplSidecarFromFir(firSnippet = firReplSnippet, session = session)
+        irSnippet.replSidecarMetadataAttr = SnippetArtifactSidecarProtoCodec.encode(sidecar)
     }
 
     private fun Fir2IrComponents.getOrBuildActualParent(
         symbol: FirBasedSymbol<*>, parentClassOrSnippet: IrClass, irSnippet: IrReplSnippet
     ): IrClass =
         symbol.getContainingClassSymbol()?.let {
-            if (it is FirRegularClassSymbol && it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass)
+            if (it is FirRegularClassSymbol &&
+                it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass &&
+                !it.isReconstructedSnippetContainerFor(symbol)
+            )
                 createClassFromOtherSnippet(it, parentClassOrSnippet, irSnippet)
             else null
         } ?: parentClassOrSnippet
+
+    /**
+     * Detects a stateless-reconstructed snippet wrapper acting as a container. The `origin` check
+     * above cannot: a deserialized wrapper's origin is [FirDeclarationOrigin.Library], the same as
+     * any regular class declared inside a previous snippet. Without this check,
+     * `createClassFromOtherSnippet` re-nests the declaration under a never-emitted
+     * `Wrapper$Wrapper` class, which surfaces at eval time as
+     * `NoClassDefFoundError: <Wrapper>$<Wrapper>`.
+     *
+     * Discriminated by identity instead: [accessedSymbol] is a direct member of the wrapper if and
+     * only if its [originalReplSnippetSymbol]'s snippet-class symbol equals `this`. A member of a
+     * user class declared inside a snippet has that class, never the wrapper, as its container.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun FirRegularClassSymbol.isReconstructedSnippetContainerFor(accessedSymbol: FirBasedSymbol<*>): Boolean {
+        val ownerSnippetClassSymbol = accessedSymbol.fir.originalReplSnippetSymbol?.fir?.snippetClass?.symbol
+        return ownerSnippetClassSymbol == this
+    }
 
     @OptIn(SymbolInternals::class, DelicateDeclarationStorageApi::class)
     private fun Fir2IrComponents.createClassFromOtherSnippet(
@@ -162,8 +202,8 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     ): IrClass {
         val actualParent = getOrBuildActualParent(classSymbol, parentClassOrSnippet, irSnippet)
         return classifierStorage.getFir2IrLazyClass(classSymbol.fir).apply {
-            // this may be called on the directly found usages as well as on the used declarations parents, so deduplication is needed
-            // TODO: consider rearranging the code to avoid potentially ineffective check
+            // May be called for both direct usages and parents of used declarations, so deduplicate.
+            // TODO: consider rearranging the code to avoid a potentially ineffective check
             if (!irSnippet.declarationsFromOtherSnippets.contains(this)) {
                 parent = actualParent
                 origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
@@ -172,19 +212,32 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         }
     }
 
+    /**
+     * Returns the shared "ReplState" object that every snippet's `$$eval` reads and writes its
+     * REPL-shared state through. It is created once by the first snippet ever compiled and only
+     * ever referenced afterward.
+     *
+     * A later snippet can find it in two ways. If it was built in an earlier, already-finished
+     * compile call, it is available on the classpath. If a same-batch sibling built it moments ago
+     * in this session, it is available via [cachedStateObjectIrClass]: codegen for the whole module
+     * runs only after every file's body is resolved, so a same-batch sibling's class is not on the
+     * classpath yet and can only be reused through this cache. Only when neither source has it is
+     * the class actually built here and cached for later same-batch snippets.
+     */
     @OptIn(SymbolInternals::class, LookupTagInternals::class, DirectDeclarationsAccess::class)
     private fun Fir2IrComponents.getStateObject(
         irSnippet: IrReplSnippet,
         fir2IrVisitor: Fir2IrVisitor,
-        createIfNotFound: Boolean,
     ): IrClass {
+        cachedStateObjectIrClass?.let { return it }
+
         fun fqn2cid(s: String): ClassId {
             val fqn = FqName(s)
             return ClassId(fqn.parent(), fqn.shortName())
         }
 
-        val classId = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]?.let(::fqn2cid)
-            ?: ClassId(irSnippet.getPackageFragment().packageFqName, replStateDefaultName)
+        val explicitClassId = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]?.let(::fqn2cid)
+        val classId = explicitClassId ?: ClassId(irSnippet.getPackageFragment().packageFqName, replStateDefaultName)
 
         val firReplStateFromDependencies =
             (session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol)?.fir
@@ -247,7 +300,9 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        return if (firReplStateFromDependencies == null && createIfNotFound) {
+        return if (firReplStateFromDependencies == null && explicitClassId == null) {
+            // Neither the classpath nor the cache has it, and no external state object was
+            // configured. This is the very first snippet for this state; build and schedule it.
             classifierStorage.createAndCacheIrClass(firReplStateObject, irSnippet.parent).also { irReplStateObject ->
                 classifiersGenerator.processClassHeader(firReplStateObject, irReplStateObject)
                 declarationStorage.createAndCacheIrConstructor(
@@ -260,7 +315,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val irReplStateParent =
                 declarationStorage.getIrExternalPackageFragment(firReplStateObject.symbol.classId.packageFqName, session.moduleData)
             lazyDeclarationsGenerator.createIrLazyClass(firReplStateObject, irReplStateParent, IrClassSymbolImpl())
-        }
+        }.also { cachedStateObjectIrClass = it }
     }
 
     companion object {

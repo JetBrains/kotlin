@@ -130,7 +130,8 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
     }
 
     /**
-     * [isDummy] should be set to true for the module data that should be excluded from the history, e.g. in the session for annotation resolution
+     * When [isDummy] is true, the module data is excluded from history (for example the session used
+     * for annotation resolution).
      */
     fun addNewScriptModuleData(name: Name, isDummy: Boolean = false): FirModuleData =
         FirSourceModuleData(
@@ -184,6 +185,9 @@ fun createCompilerState(
 
     val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
 
+    // Resolves this session's own script definition via the standard `isScript` extension check:
+    // every source here is named with a `.repl.<fileExtension>` (or plain) suffix matching this
+    // definition's `fileExtension` (e.g. `.repl.main.kts` for `MainKtsScript`).
     compilerConfiguration.add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)

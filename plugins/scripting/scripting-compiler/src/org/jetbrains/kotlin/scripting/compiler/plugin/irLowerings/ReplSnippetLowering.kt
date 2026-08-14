@@ -36,9 +36,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.REPL_SIDECAR_PLUGIN_ID
+import kotlin.script.experimental.jvm.REPL_SNIPPET_EVAL_FUN_NAME_STRING
 
-val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
 val REPL_SNIPPET_RESULT_PROP_NAME = Name.identifier("\$\$result")
+val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier(REPL_SNIPPET_EVAL_FUN_NAME_STRING)
 
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
@@ -58,9 +60,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         // Patch IrExternalPackageFragment parents on external Kotlin top-level callees referenced from
         // each snippet's `$$eval` body. Mirrors the K2 JVM `ExternalPackageParentPatcherLowering`, but
-        // runs eagerly on the snippet's `targetClass` so that the JVM codegen's
+        // runs eagerly on the snippet's `targetClass` so the JVM codegen's
         // `require(callee.parent is IrClass)` check at `ExpressionCodegen.visitCall` does not fail
-        // when a snippet references e.g. a classpath-loaded Kotlin top-level `val`/`fun` or an
+        // when a snippet references a classpath-loaded Kotlin top-level `val`/`fun` or an
         // `@InlineOnly` stdlib operator.
         for (irSnippet in snippets) {
             val irSnippetClass = irSnippet.targetClass?.owner ?: continue
@@ -152,6 +154,22 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         // TODO: find out what problems could arise from copying annotations applicable to file only (KT-74176)
         irSnippetClass.annotations += (irSnippetClass.parent as IrFile).annotations
+
+        embedReplSidecarMetadata(irSnippet, irSnippetClass)
+    }
+
+    /**
+     * Embeds [irSnippet]'s [replSidecarMetadataAttr] bytes, if set, into the snippet wrapper
+     * class's `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel keyed by
+     * [REPL_SIDECAR_PLUGIN_ID]. Using that channel avoids a metadata `.proto` change or version bump.
+     */
+    private fun embedReplSidecarMetadata(irSnippet: IrReplSnippet, irSnippetClass: IrClass) {
+        val sidecarBytes = irSnippet.replSidecarMetadataAttr ?: return
+        context.metadataDeclarationRegistrar.addCustomMetadataExtension(
+            irSnippetClass,
+            REPL_SIDECAR_PLUGIN_ID,
+            sidecarBytes,
+        )
     }
 }
 
@@ -246,6 +264,17 @@ private class ReplSnippetToClassTransformer(
             expression.transformChildren(this, data)
             return expression
         }
+        // A same-batch sibling can tag one of this snippet's own declarations as "from another
+        // snippet" purely so a later sibling can reference it (see
+        // ClasspathBackedFirReplHistoryProvider's "Live, same-batch siblings").
+        // CallAndReferenceGenerator then emits a placeholder IrErrorCallExpression for its dispatch
+        // receiver regardless. Since [declaration] here is still a direct member of this class
+        // (never re-parented), patch the placeholder back into an ordinary self-access instead of
+        // a previous-snippet lookup.
+        if (declaration != null && declaration.parent === irSnippet.targetClass?.owner && expression.dispatchReceiver is IrErrorCallExpression) {
+            expression.dispatchReceiver =
+                accessCallsGenerator.getAccessCallForSelf(data, expression.startOffset, expression.endOffset, null, null)
+        }
         return super.visitMemberAccess(expression, data)
     }
 
@@ -298,7 +327,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
  * `ExpressionCodegen.visitCall` does not fail the `require(callee.parent is IrClass)` check.
  *
  * Mirrors `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` (K2 JVM
- * file-class facade patching), but runs eagerly as part of REPL snippet→class lowering so the
+ * file-class facade patching), but runs eagerly as part of REPL snippet-to-class lowering so the
  * snippet body's IR is rewritten before any later JVM lowering observes the
  * `IrExternalPackageFragment` parent.
  *
@@ -307,7 +336,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
  *  - have a [FacadeClassSource] container; and
  *  - currently have an [IrExternalPackageFragment] parent.
  *
- * The facade name is taken from the deserialised source's `className` / `facadeClassName`, so the
+ * The facade name is taken from the deserialized source's `className` / `facadeClassName`, so the
  * resulting JVM bytecode references the real `*Kt` (or multifile facade) class on the classpath.
  */
 private class ReplSnippetExternalPackageParentPatcher : IrVisitorVoid() {

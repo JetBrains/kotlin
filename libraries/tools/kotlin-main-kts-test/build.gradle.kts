@@ -12,7 +12,9 @@ plugins {
 val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
 
 dependencies {
-    testImplementation(project(":kotlin-main-kts"))
+    testImplementation(project(":kotlin-main-kts")) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-scripting-compiler-embeddable")
+    }
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testImplementation(kotlinStdlib("jdk8"))
@@ -27,6 +29,9 @@ dependencies {
     testRuntimeOnly(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(project(":kotlin-compiler"))
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = false }
+    testImplementation(intellijCore())
+    testRuntimeOnly(project(":kotlin-scripting-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler"))
 }
 
 sourceSets {
