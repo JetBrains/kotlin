@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Action
 import org.gradle.api.GradleException
+import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import java.io.File
 import java.io.Serializable
@@ -86,13 +87,6 @@ class PackageJson(
     }
 
     companion object {
-        /** Gson indented with two spaces where kotlinx-serialization defaults to four; keep the emitted file identical. */
-        @OptIn(ExperimentalSerializationApi::class)
-        internal val prettyJson = Json {
-            prettyPrint = true
-            prettyPrintIndent = "  "
-        }
-
         fun scopedName(name: String): ScopedName = if (name.contains("/")) ScopedName(
             scope = name.substringBeforeLast("/").removePrefix("@"),
             name = name.substringAfterLast("/")
@@ -110,21 +104,22 @@ class PackageJson(
         packageJsonFile.toPath().parent.createDirectories()
 
         val jsonTree = toJsonElement()
+        // an interrupted build can leave an empty or truncated file behind: rewrite whatever cannot be read
+        // instead of failing every build from now on
         val previous = if (packageJsonFile.exists()) {
-            packageJsonFile.reader().use { Json.parseToJsonElement(it.readText()) }
+            runCatching { parsePackageJsonObject(packageJsonFile) }.getOrNull()
         } else {
             null
         }
 
         if (jsonTree != previous) {
-            packageJsonFile.writeText(prettyJson.encodeToString(JsonObject.serializer(), jsonTree))
+            packageJsonFile.writeText(KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonObject.serializer(), jsonTree))
         }
     }
 
     /**
-     * Reproduces what Gson's reflective serializer plus `PackageJsonTypeAdapter` used to emit, so that the file
-     * npm and yarn consume — and which is compared against the previous run to decide whether to rewrite it —
-     * keeps its exact shape:
+     * Reproduces what Gson's reflective serializer plus `PackageJsonTypeAdapter` used to emit. npm and yarn read
+     * this file, and it is compared against the previous run to decide whether to rewrite it, so the shape matters:
      *  - keys follow the property declaration order;
      *  - `null` declared properties are dropped, while the collection ones are always written, even when empty;
      *  - [customFields] is inlined at the end and keeps user-supplied `null` values.
@@ -153,26 +148,51 @@ class PackageJson(
     }
 }
 
-fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { parsePackageJson(it.readText()) }
+fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { parsePackageJson(it) }
 
-private fun parsePackageJson(text: String): PackageJson? {
+/**
+ * A `package.json` this plugin did not write may carry a byte order mark or use the relaxations npm tolerates, both
+ * of which Gson's reader accepted by default. Keep parsing lenient so such files do not start failing the build.
+ */
+internal fun parsePackageJsonObject(file: File): JsonObject =
+    KgpJson.lenient.parseToJsonElement(file.readText().removePrefix("﻿")).jsonObject
+
+/**
+ * `JsonNull` is itself a `JsonPrimitive`, so reading `.content` off it would silently produce the string `"null"`.
+ */
+private val JsonElement.stringOrNull: String?
+    get() = (this as? JsonPrimitive)?.contentOrNull
+
+private val logger = Logging.getLogger(PackageJson::class.java)
+
+private fun parsePackageJson(file: File): PackageJson? {
     return try {
-        val obj = Json.parseToJsonElement(text).jsonObject
-        val name = obj["name"]?.jsonPrimitive?.content ?: return null
-        val version = obj["version"]?.jsonPrimitive?.content ?: return null
-        PackageJson(name, version).also { pkg ->
-            pkg.private = obj["private"]?.jsonPrimitive?.content?.toBoolean()
-            pkg.main = obj["main"]?.jsonPrimitive?.content
-            pkg.types = obj["types"]?.jsonPrimitive?.content
-            pkg.workspaces = obj["workspaces"]?.let { el ->
-                (el as? JsonArray)?.map { it.jsonPrimitive.content }
-            }
-            obj["dependencies"]?.jsonObject?.forEach { (k, v) -> pkg.dependencies[k] = v.jsonPrimitive.content }
-            obj["devDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.devDependencies[k] = v.jsonPrimitive.content }
-            obj["peerDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.peerDependencies[k] = v.jsonPrimitive.content }
-            obj["optionalDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.optionalDependencies[k] = v.jsonPrimitive.content }
+        val obj = parsePackageJsonObject(file)
+        val name = obj["name"]?.stringOrNull ?: run {
+            logger.warn("Cannot read '$file': it declares no \"name\". Ignoring it.")
+            return null
         }
-    } catch (_: Exception) {
+        // a missing "version" is normal for a directory dependency; callers substitute the Gradle module version
+        val version = obj["version"]?.stringOrNull ?: ""
+        PackageJson(name, version).also { pkg ->
+            pkg.private = obj["private"]?.stringOrNull?.toBoolean()
+            pkg.main = obj["main"]?.stringOrNull
+            pkg.types = obj["types"]?.stringOrNull
+            pkg.workspaces = (obj["workspaces"] as? JsonArray)?.mapNotNull { it.stringOrNull }
+            pkg.overrides = (obj["overrides"] as? JsonObject)?.mapNotNull { (k, v) -> v.stringOrNull?.let { k to it } }?.toMap()
+            (obj["bundledDependencies"] as? JsonArray)?.mapNotNullTo(pkg.bundledDependencies) { it.stringOrNull }
+            for (scope in listOf("dependencies", "devDependencies", "peerDependencies", "optionalDependencies")) {
+                val target = when (scope) {
+                    "dependencies" -> pkg.dependencies
+                    "devDependencies" -> pkg.devDependencies
+                    "peerDependencies" -> pkg.peerDependencies
+                    else -> pkg.optionalDependencies
+                }
+                (obj[scope] as? JsonObject)?.forEach { (k, v) -> v.stringOrNull?.let { target[k] = it } }
+            }
+        }
+    } catch (e: Exception) {
+        logger.warn("Cannot parse '$file'. Ignoring it.", e)
         null
     }
 }

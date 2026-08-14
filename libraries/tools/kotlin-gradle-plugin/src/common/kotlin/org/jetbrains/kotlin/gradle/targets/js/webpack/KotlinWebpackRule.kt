@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
@@ -14,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -142,7 +141,7 @@ constructor(
         )
     }
 
-    protected fun json(obj: Any): String = prettyJson.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
+    protected fun json(obj: Any): String = KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
 
     @Internal
     override fun getName(): String = name
@@ -179,9 +178,3 @@ constructor(
     )
 }
 
-/** Gson indented with two spaces where kotlinx-serialization defaults to four; keep the generated rule identical. */
-@OptIn(ExperimentalSerializationApi::class)
-private val prettyJson = Json {
-    prettyPrint = true
-    prettyPrintIndent = "  "
-}

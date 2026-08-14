@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
@@ -21,6 +19,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -739,18 +738,12 @@ private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change url
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
 
 /** Gson indented with two spaces where kotlinx-serialization defaults to four; keep karma.conf.js identical. */
-@OptIn(ExperimentalSerializationApi::class)
-private val karmaJson = Json {
-    prettyPrint = true
-    prettyPrintIndent = "  "
-}
-
 private fun karmaConfigToJson(config: KarmaConfig): String =
-    karmaJson.encodeToString(JsonElement.serializer(), config.toJsonElement())
+    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), config.toJsonElement())
 
 /**
  * Mirrors what Gson's reflective serializer used to emit for [KarmaConfig]: properties in declaration order,
- * `null` ones dropped, and collections always written — karma.conf.js is generated JavaScript, so an absent key
+ * `null` ones dropped, and collections always written. karma.conf.js is generated JavaScript, and an absent key
  * is not interchangeable with an empty one for the plugins reading it.
  */
 private fun KarmaConfig.toJsonElement() = buildJsonObject {

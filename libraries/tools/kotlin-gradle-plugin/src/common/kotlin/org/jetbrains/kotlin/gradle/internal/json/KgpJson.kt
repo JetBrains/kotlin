@@ -18,8 +18,8 @@ import kotlinx.serialization.json.buildJsonObject
  *
  * Note: kotlinx-serialization is relocated to
  * `org.jetbrains.kotlin.gradle.internal.kotlinx.serialization` in the fat jar.
- * All KGP code should use these instances rather than creating its own [Json] objects,
- * so that serialization configuration is centralized.
+ * Code dealing with JS/npm tooling should use these instances rather than creating its own [Json] objects,
+ * so that serialization configuration stays centralized.
  */
 @OptIn(ExperimentalSerializationApi::class)
 internal object KgpJson {
@@ -38,20 +38,45 @@ internal object KgpJson {
     }
 
     /**
+     * As [default], but also accepts unquoted keys and single-quoted strings, like Gson's reader did.
+     *
+     * For JSON this plugin did not write, such as a `package.json` coming from a dependency.
+     */
+    val lenient: Json = Json(default) {
+        isLenient = true
+    }
+
+    /**
      * Pretty-printed instance for human-readable output (config files, diagnostics, etc.).
      * Inherits all leniency settings from [default].
      */
     val prettyPrinted: Json = Json(default) {
         prettyPrint = true
     }
+
+    /**
+     * As [prettyPrinted], but indented with two spaces to match Gson's pretty printer.
+     *
+     * Used where the exact bytes matter: npm and yarn read `package.json`, and the generated webpack and karma
+     * configs are executed as JavaScript.
+     */
+    @OptIn(ExperimentalSerializationApi::class)
+    val prettyPrintedTwoSpaceIndent: Json = Json(prettyPrinted) {
+        prettyPrintIndent = "  "
+    }
 }
 
 /**
  * Recursively converts an arbitrary value to a [JsonElement].
  *
- * Intended for the loosely typed `Map`/`List`/`Any?` trees that the JS and webpack DSLs let build authors assemble,
- * where there is no schema to derive a serializer from. Anything not recognised falls back to its `toString()`,
- * which is what the reflective Gson serializers this replaced also did.
+ * For the `Map`/`List`/`Any?` trees the JS and webpack DSLs let build authors assemble, where there is no schema
+ * to derive a serializer from.
+ *
+ * Gson reflected over the fields of an object it did not recognise. Here such a value is rejected instead of being
+ * mangled into its `toString()`: types that have to survive as JSON objects need an explicit branch at the call
+ * site, and build authors pass a [Map].
+ *
+ * @throws IllegalArgumentException if [value] has no JSON representation.
  */
 internal fun anyToJsonElement(value: Any?): JsonElement = when (value) {
     null -> JsonNull
@@ -68,5 +93,12 @@ internal fun anyToJsonElement(value: Any?): JsonElement = when (value) {
     is Array<*> -> buildJsonArray {
         value.forEach { add(anyToJsonElement(it)) }
     }
-    else -> JsonPrimitive(value.toString())
+    // Gson wrote the constant name
+    is Enum<*> -> JsonPrimitive(value.name)
+    is CharSequence -> JsonPrimitive(value.toString())
+    else -> throw IllegalArgumentException(
+        "Cannot convert a value of type ${value::class.java.name} to JSON: only null, primitives, enums, maps, " +
+                "collections and arrays are supported. Pass a Map to get a JSON object, or build a JsonElement " +
+                "explicitly."
+    )
 }

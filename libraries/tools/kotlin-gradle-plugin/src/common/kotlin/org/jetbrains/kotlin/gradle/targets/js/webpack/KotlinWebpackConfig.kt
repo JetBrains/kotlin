@@ -7,8 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -16,6 +14,7 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -223,7 +222,17 @@ data class KotlinWebpackConfig(
         }
 
         private fun Client.toJsonElement(): JsonObject = buildJsonObject {
-            put("overlay", anyToJsonElement(overlay))
+            // `overlay` is typed Any because webpack accepts either a boolean or an object; Gson reflected the
+            // object case into its fields, so spell it out instead
+            put(
+                "overlay", when (val overlay = overlay) {
+                    is Client.Overlay -> buildJsonObject {
+                        put("errors", JsonPrimitive(overlay.errors))
+                        put("warnings", JsonPrimitive(overlay.warnings))
+                    }
+                    else -> anyToJsonElement(overlay)
+                }
+            )
         }
 
         data class Client(
@@ -540,33 +549,26 @@ data class KotlinWebpackConfig(
         appendLine("// section end")
     }
 
-    private fun json(obj: Any): String = prettyJson.encodeToString(JsonElement.serializer(), webpackValueToJsonElement(obj))
-}
-
-/** Gson indented with two spaces where kotlinx-serialization defaults to four; keep the generated config identical. */
-@OptIn(ExperimentalSerializationApi::class)
-private val prettyJson = Json {
-    prettyPrint = true
-    prettyPrintIndent = "  "
+    private fun json(obj: Any): String = KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), webpackValueToJsonElement(obj))
 }
 
 /**
  * Walks the webpack config tree by hand. [KotlinWebpackConfig.DevServer], [KotlinWebpackConfig.Optimization] and
  * [KotlinWebpackConfig.WatchOptions] carry webpack-specific shapes that used to be produced by dedicated Gson type
- * adapters, so they get explicit branches here rather than being reflected over.
+ * adapters, so they get explicit branches here instead of being reflected over.
  */
-
 private fun webpackValueToJsonElement(value: Any?): JsonElement = when (value) {
     is KotlinWebpackConfig.DevServer -> value.toJsonElement()
     is KotlinWebpackConfig.Optimization -> buildJsonObject {
-        put("runtimeChunk", webpackValueToJsonElement(value.runtimeChunk))
-        put("splitChunks", webpackValueToJsonElement(value.splitChunks))
+        // both are nullable and webpack rejects an explicit null for either, so omit them as Gson did
+        value.runtimeChunk?.let { put("runtimeChunk", webpackValueToJsonElement(it)) }
+        value.splitChunks?.let { put("splitChunks", webpackValueToJsonElement(it)) }
     }
     is KotlinWebpackConfig.WatchOptions -> buildJsonObject {
         value.aggregateTimeout?.let { put("aggregateTimeout", JsonPrimitive(it)) }
         value.ignored?.let { put("ignored", webpackValueToJsonElement(it)) }
     }
-    // recurse through this function rather than the shared one, so that nested webpack types are still recognised
+    // recurse through this function, not the shared one, so that nested webpack types are still recognised
     is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), webpackValueToJsonElement(v)) } }
     is Iterable<*> -> buildJsonArray { value.forEach { add(webpackValueToJsonElement(it)) } }
     is Array<*> -> buildJsonArray { value.forEach { add(webpackValueToJsonElement(it)) } }

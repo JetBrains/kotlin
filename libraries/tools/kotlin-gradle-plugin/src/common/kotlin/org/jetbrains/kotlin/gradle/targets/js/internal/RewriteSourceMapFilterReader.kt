@@ -1,14 +1,16 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.slf4j.LoggerFactory
 import java.io.*
 import kotlin.math.min
@@ -98,29 +100,29 @@ open class RewriteSourceMapFilterReader(
         // The raw tail, which starts with `],"sourcesContent":` or `],"names":`, supplies them again.
         val prologText = jsonString.substring(0, jsonPrologPos) + "]}"
         try {
-            val prolog = Json.parseToJsonElement(prologText).jsonObject
+            val prolog = KgpJson.default.parseToJsonElement(prologText).jsonObject
 
             var sourceRootSpecified = false
             val transformed = buildJsonObject {
                 for ((key, value) in prolog) {
                     when (key) {
                         "sourceRoot" -> {
-                            put(key, JsonPrimitive(transformString(value.jsonPrimitive.content)))
+                            put(key, JsonPrimitive(transformString(value.stringOrFail(key))))
                             sourceRootSpecified = true
                         }
                         "sources" -> put(key, JsonArray(value.jsonArray.map { source ->
-                            val path = source.jsonPrimitive.content
+                            val path = source.stringOrFail(key)
                             // paths are relative to "sourceRoot" when it is present, so only rewrite them otherwise
                             JsonPrimitive(if (sourceRootSpecified) path else transformString(path))
                         }))
                         "version" -> put(key, JsonPrimitive(value.jsonPrimitive.int))
-                        "file" -> put(key, JsonPrimitive(value.jsonPrimitive.content))
+                        "file" -> put(key, JsonPrimitive(value.stringOrFail(key)))
                         else -> throw IllegalStateException("Unknown key \"$key\"")
                     }
                 }
             }
 
-            val encoded = Json.encodeToString(JsonObject.serializer(), transformed)
+            val encoded = KgpJson.default.encodeToString(JsonObject.serializer(), transformed)
             check(encoded.endsWith("]}")) { "\"sources\" is expected to be the last key of the prolog, but got `$encoded`" }
             bufferWriter.append(encoded.dropLast("]}".length))
 
@@ -133,6 +135,14 @@ open class RewriteSourceMapFilterReader(
             writeBackUnsupported(jsonString, e)
         }
     }
+
+    /**
+     * The spec allows `null` in "sources" and for "sourceRoot", and `JsonNull` is itself a `JsonPrimitive`, so
+     * reading `.content` off one would rewrite it into the string `"null"`. Fail instead and let the caller pass the
+     * file through untouched, which is what the Gson reader did when it hit a NULL token.
+     */
+    private fun JsonElement.stringOrFail(key: String): String =
+        (this as? JsonPrimitive)?.contentOrNull ?: throw IllegalStateException("Unexpected null in \"$key\"")
 
     private fun writeBackUnsupported(jsonString: StringBuilder, cause: Exception) =
         writeBackUnsupported(
