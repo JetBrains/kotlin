@@ -348,6 +348,10 @@ fun ProjectTestsExtension.nativeTestTask(
     taskName = taskName,
     maxHeapSize = 3.GiB, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSize = maxMetaspaceSize,
+    // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
+    // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
+    // Switch back to Parallel GC to mitigate the test execution time degradation:
+    useGC = GC.Parallel,
     defineJDKEnvVariables = defineJDKEnvVariables,
     enableGroupingTestEngine = enableGroupingTestEngine,
     skipInLocalBuild = false,
@@ -385,10 +389,6 @@ fun ProjectTestsExtension.nativeTestTask(
             this.allowUnsafe.set(allowUnsafe)
         })
 
-        // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
-        // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
-        // Switch back to Parallel GC to mitigate the test execution time degradation:
-        jvmArgs("-XX:+UseParallelGC")
         // Another reason for switching back to Parallel GC is CLI tests:
         // some of them validate the compiler performance report.
         // The latter contains GC statistics, and the format varies per GC.

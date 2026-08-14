@@ -155,6 +155,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         minHeapSize: Size? = null,
         maxMetaspaceSize: Size = 512.MiB,
         reservedCodeCacheSize: Size = 256.MiB,
+        useGC: GC? = null,
         defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
         enableGroupingTestEngine: Boolean = false,
         body: Test.() -> Unit = {},
@@ -167,6 +168,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             minHeapSize,
             maxMetaspaceSize,
             reservedCodeCacheSize,
+            useGC,
             defineJDKEnvVariables,
             enableGroupingTestEngine,
             skipInLocalBuild = false,
@@ -181,6 +183,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         minHeapSize: Size? = null,
         maxMetaspaceSize: Size = 512.MiB,
         reservedCodeCacheSize: Size = 256.MiB,
+        useGC: GC? = null,
         defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
         enableGroupingTestEngine: Boolean = false,
         skipInLocalBuild: Boolean,
@@ -205,6 +208,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             minHeapSize,
             maxMetaspaceSize,
             reservedCodeCacheSize,
+            useGC,
             defineJDKEnvVariables,
         ) {
             useJUnitPlatform()
