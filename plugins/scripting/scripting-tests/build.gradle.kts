@@ -67,7 +67,10 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 }
 
 projectTests {
-    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)) {
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_11_0,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
+    ) {
         workingDir = rootDir
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")

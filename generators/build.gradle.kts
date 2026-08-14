@@ -92,7 +92,7 @@ dependencies {
 }
 
 projectTests {
-    testTask {
+    testTask(javaLauncher = JdkMajorVersion.JDK_11_0) {
         workingDir = rootDir
     }
 }
@@ -162,7 +162,9 @@ val generateOperationsMap by generator(
     "org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt",
     evaluateSourceSet,
     inputKind = RuntimeClasspath
-)
+) {
+    javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_11_0)
+}
 
 val generateWasmIntrinsics by generator(
     "org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt",
