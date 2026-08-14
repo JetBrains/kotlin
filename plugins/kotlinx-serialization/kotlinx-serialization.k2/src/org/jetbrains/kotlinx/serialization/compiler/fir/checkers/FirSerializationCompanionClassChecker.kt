@@ -8,13 +8,19 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.declaredFunctions
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 // Extracted from FirSerializationPluginClassChecker to keep it reasonably small
 internal fun CheckerContext.checkCompanionOfSerializableClass(
@@ -37,6 +43,70 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
         FirSerializationErrors.COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS,
         classSymbol
     )
+}
+
+/**
+ * The plugin generates `Companion.serializer()` — and `Companion.generatedSerializer()` under
+ * `@KeepGeneratedSerializer` — for every class that [shouldHaveGeneratedMethodsInCompanion].
+ * A user-written function with the same signature shadows the generated one, so the backend cannot
+ * find the declaration it is supposed to fill in and used to fail with an internal error (KT-55738).
+ *
+ * The signature predicate here must stay in sync with
+ * `SerializableCompanionIrGenerator.getSerializerGetterFunction`, which is what actually picks the
+ * function to generate a body for in the backend.
+ */
+internal fun CheckerContext.checkCompanionSerializerClash(
+    classSymbol: FirClassSymbol<*>,
+    reporter: DiagnosticReporter,
+) {
+    if (classSymbol !is FirRegularClassSymbol) return
+    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
+    // For a serializable object the backend looks the getter up in the object itself rather than in a companion,
+    // see SerializableCompanionIrGenerator.getSerializerGetterFunction.
+    val containerSymbol = when {
+        classSymbol.isSerializableObject(session) -> classSymbol
+        else -> classSymbol.resolvedCompanionObjectSymbol ?: return
+    }
+
+    val keepGeneratedSerializer = classSymbol.keepGeneratedSerializer(session)
+    fun FirFunctionSymbol<*>.hasGeneratedName(): Boolean {
+        return name == SerialEntityNames.SERIALIZER_PROVIDER_NAME ||
+                (keepGeneratedSerializer && name == SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME)
+    }
+
+    for (functionSymbol in containerSymbol.declaredFunctions(session)) {
+        if (!functionSymbol.hasGeneratedName()) continue
+
+        if (functionSymbol.origin != FirDeclarationOrigin.Source) continue
+        // The backend matches one serializer parameter per type parameter of the serializable class, counting every
+        // parameter but the dispatch receiver — so an extension or context receiver makes the signature not match.
+        fun allNonDispatchParametersMatch(): Boolean {
+            val ctxParams = functionSymbol.contextParameterSymbols
+            val valueParams = functionSymbol.valueParameterSymbols
+            val receiverParam = functionSymbol.resolvedReceiverType
+            val paramsCount = ctxParams.size + valueParams.size + if (receiverParam != null) 1 else 0
+            return classSymbol.typeParameterSymbols.size == paramsCount
+                    && (ctxParams.all { isAnyKSerializer(it.resolvedReturnType) }
+                    && valueParams.all { isAnyKSerializer(it.resolvedReturnType) }
+                    && receiverParam?.let { isAnyKSerializer(it) } != false)
+        }
+        if (!allNonDispatchParametersMatch()) continue
+
+        reporter.reportOn(
+            functionSymbol.source,
+            FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
+            functionSymbol.name.asString()
+        )
+    }
+}
+
+/**
+ * Mirrors `IrType.isKSerializer()` from the backend, which accepts `GeneratedSerializer` as well. IR types are always
+ * expanded, so the type alias has to be expanded here too for the two sides to agree.
+ */
+private fun CheckerContext.isAnyKSerializer(type: ConeKotlinType): Boolean {
+    val expanded = type.fullyExpandedType()
+    return expanded.isKSerializer || expanded.classId == SerializersClassIds.generatedSerializerId
 }
 
 internal fun CheckerContext.checkCompanionSerializerDependency(

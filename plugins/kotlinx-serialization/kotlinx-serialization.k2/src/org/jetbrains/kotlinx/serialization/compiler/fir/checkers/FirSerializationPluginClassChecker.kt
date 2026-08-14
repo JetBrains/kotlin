@@ -398,6 +398,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         if (!classSymbol.hasSerializableOrMetaAnnotation(session)) return false
 
         checkCompanionOfSerializableClass(classSymbol, reporter)
+        checkCompanionSerializerClash(classSymbol, reporter)
 
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
             reporter.reportOn(
