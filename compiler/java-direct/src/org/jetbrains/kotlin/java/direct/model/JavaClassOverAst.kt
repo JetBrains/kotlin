@@ -306,10 +306,14 @@ class JavaClassOverAst(
             .map { JavaMethodOverAst(it, tree, this) }
     }
 
+    // Declaration order, so that the enum constants — which JLS 8.9.1 requires to be written before
+    // any other member — come first, as they also do for the class-file reader (`BinaryJavaClass`
+    // sees them in constant-pool/field order). FIR keeps this order for its declarations, and enum
+    // entries must precede the rest of them.
     override val fields: Collection<JavaField> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val fieldNodes = tree.getChildrenByType(node, JavaSyntaxElementType.FIELD) +
-                tree.getChildrenByType(node, JavaSyntaxElementType.ENUM_CONSTANT)
-        fieldNodes.map { JavaFieldOverAst(it, tree, this) }
+        tree.getChildren(node)
+            .filter { tree.getType(it) == JavaSyntaxElementType.FIELD || tree.getType(it) == JavaSyntaxElementType.ENUM_CONSTANT }
+            .map { JavaFieldOverAst(it, tree, this) }
     }
 
     // A constructor is a METHOD node with no return TYPE (mirrors PSI's
