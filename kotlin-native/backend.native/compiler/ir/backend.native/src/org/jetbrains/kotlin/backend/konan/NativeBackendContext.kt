@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.isTrivialGetter
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
@@ -135,10 +134,6 @@ internal class NativeBackendContext(
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
-
-    @OptIn(K1Deprecation::class)
-    val stdlibModule
-        get() = this.builtIns.any.module
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 

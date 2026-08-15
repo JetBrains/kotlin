@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries((config.loadedKlibs.exported + config.loadedKlibs.included).toSet())
@@ -18,10 +16,7 @@ internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageC
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(config.loadedKlibs.included.toSet())
 
-private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>) =
-    allDependencyModules.filter {
-        when (val origin = it.klibModuleOrigin) {
-            CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
-            is DeserializedKlibModuleOrigin -> origin.library in libraries
-        }
-    }
+private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>): List<ModuleDescriptor> {
+    val libraryNames = libraries.mapToSetOrEmpty { it.uniqueName }
+    return allDependencyModules.filter { it.name.asStringStripSpecialMarkers() in libraryNames }
+}
