@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,7 +25,7 @@ internal abstract class LlvmModuleSpecificationBase(protected val cachedLibrarie
             cachedLibraries.hasDynamicCaches // A bit conservative but still valid.
 
     override fun containsModule(module: IrModuleFragment): Boolean =
-            containsModule(module.descriptor)
+            module.kotlinLibrary.let { it == null || containsLibrary(it) }
 
     override fun containsModule(module: ModuleDescriptor): Boolean =
             module.konanLibrary.let { it == null || containsLibrary(it) }

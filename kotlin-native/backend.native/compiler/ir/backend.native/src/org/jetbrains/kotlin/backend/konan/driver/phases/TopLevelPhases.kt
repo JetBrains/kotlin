@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.konan.config.nomain
 import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
@@ -322,7 +322,7 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
     val config = context.config
     return if (context.config.producePerFileCache) {
         val files = input.files.toList()
-        val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
+        val containsStdlib = input.kotlinLibrary?.isNativeStdlib == true
 
         files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
             val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.packageFqName.asString())
@@ -356,7 +356,7 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
         }
     } else {
         val llvmModuleSpecification = if (config.produce.isCache) {
-            val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
+            val containsStdlib = input.kotlinLibrary?.isNativeStdlib == true
             CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
         } else {
             DefaultLlvmModuleSpecification(config.cachedLibraries)

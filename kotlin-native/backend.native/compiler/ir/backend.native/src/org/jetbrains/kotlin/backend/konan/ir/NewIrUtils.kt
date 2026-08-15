@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
@@ -45,9 +46,7 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
 
 val IrPackageFragment.konanLibrary: KotlinLibrary?
-    get() {
-        return this.moduleDescriptor.konanLibrary
-    }
+    get() = module.kotlinLibrary
 // Any changes made to konanLibrary here should be ported to the containsDeclaration
 // function in LlvmModuleSpecificationBase in LlvmModuleSpecificationImpl.kt
 val IrDeclaration.konanLibrary: KotlinLibrary?

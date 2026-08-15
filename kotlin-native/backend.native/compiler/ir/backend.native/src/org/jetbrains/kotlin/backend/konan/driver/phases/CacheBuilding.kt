@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.CacheStorage
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.library.metadata.kotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
 /**
  * Builds additional cache info (inline functions bodies and fields of classes).
@@ -28,12 +28,13 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
     // TODO: Use explicit parameter
     val parent = context.context
 
-    val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(module.descriptor.kotlinLibrary)
+    val klib = module.kotlinLibrary ?: error("No library stored for module ${module.name}")
+    val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(klib)
     if (moduleDeserializer == null) {
-        require(module.descriptor.isFromCInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
+        require(klib.isCInteropLibrary()) { "No module deserializer for ${module.name}" }
         // C-interop libraries have no deserialized IR, so CacheInfoBuilder is not run for them. Still record
         // the library fingerprint, so that the cache staleness check can detect a changed library (KT-87273).
-        context.klibHash = SerializedKlibFingerprint(module.descriptor.kotlinLibrary.path.toFile()).klibFingerprint
+        context.klibHash = SerializedKlibFingerprint(klib.path.toFile()).klibFingerprint
     } else {
         CacheInfoBuilder(context, moduleDeserializer, module).build()
     }
