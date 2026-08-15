@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
@@ -26,9 +25,6 @@ internal abstract class LlvmModuleSpecificationBase(protected val cachedLibrarie
 
     override fun containsModule(module: IrModuleFragment): Boolean =
             module.kotlinLibrary.let { it == null || containsLibrary(it) }
-
-    override fun containsModule(module: ModuleDescriptor): Boolean =
-            module.konanLibrary.let { it == null || containsLibrary(it) }
 
     override fun containsPackageFragment(packageFragment: IrPackageFragment): Boolean =
             packageFragment.konanLibrary.let { it == null || containsLibrary(it) }

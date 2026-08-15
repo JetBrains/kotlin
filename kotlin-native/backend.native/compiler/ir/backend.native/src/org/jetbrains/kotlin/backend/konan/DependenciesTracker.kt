@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
-import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.CachedEagerInitializedFiles
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
@@ -90,7 +89,7 @@ internal class DependenciesTrackerImpl(
     private val allLibraries by lazy { context.config.librariesWithDependencies().toSet() }
 
     private fun findStdlibFile(fqName: FqName, fileName: String): LibraryFile {
-        val stdlib = (context.standardLlvmSymbolsOrigin as? DeserializedKlibModuleOrigin)?.library
+        val stdlib = context.irLinker.modules.values.mapNotNull { it.kotlinLibrary }.firstOrNull { it.isNativeStdlib }
                 ?: error("Can't find stdlib")
         val stdlibDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(stdlib)
                 ?: error("No deserializer for stdlib")
@@ -128,10 +127,7 @@ internal class DependenciesTrackerImpl(
         return if (packageFragment.isFunctionInterfaceFile)
             FileOrigin.StdlibKFunctionImpl
         else {
-            val library = when (val origin = packageFragment.llvmSymbolOrigin) {
-                CurrentKlibModuleOrigin -> config.libraryToCache?.klib?.takeIf { config.producePerFileCache }
-                else -> (origin as DeserializedKlibModuleOrigin).library
-            }
+            val library = packageFragment.konanLibrary
             when {
                 library == null -> FileOrigin.CurrentFile
                 library.isCInteropLibrary() -> FileOrigin.EntireModule(library)

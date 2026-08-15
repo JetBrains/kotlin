@@ -86,8 +86,8 @@ class JKlibIrLinker(
     override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
         typeSystemContextFactory(irBuiltIns)
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
-        moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
+    override fun isBuiltInModule(module: IrModuleFragment): Boolean =
+        module.descriptor === module.descriptor.builtIns.builtInsModule
 
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,

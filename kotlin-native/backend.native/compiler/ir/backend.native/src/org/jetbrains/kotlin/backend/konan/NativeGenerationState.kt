@@ -9,6 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunction
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.config.konanHome
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.util.PerformanceManager
 
 internal class FileLowerState {
@@ -76,7 +78,9 @@ internal class NativeGenerationState(
 
     lateinit var fileLowerState: FileLowerState
 
-    val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
+    val producedLlvmModuleContainsStdlib get() = context.irLinker.modules.values.any { module ->
+        module.kotlinLibrary?.isNativeStdlib == true && llvmModuleSpecification.containsModule(module)
+    }
 
     internal val runtimeModulesConfig = RuntimeModulesConfig(config)
 

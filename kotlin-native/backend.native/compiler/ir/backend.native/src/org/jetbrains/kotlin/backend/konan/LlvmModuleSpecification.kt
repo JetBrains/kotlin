@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -19,7 +18,6 @@ interface LlvmModuleSpecification {
     fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean
     fun importsKotlinDeclarationsFromOtherSharedLibraries(): Boolean
     fun containsLibrary(library: KotlinLibrary): Boolean
-    fun containsModule(module: ModuleDescriptor): Boolean
     fun containsModule(module: IrModuleFragment): Boolean
     fun containsPackageFragment(packageFragment: IrPackageFragment): Boolean
     fun containsDeclaration(declaration: IrDeclaration): Boolean
