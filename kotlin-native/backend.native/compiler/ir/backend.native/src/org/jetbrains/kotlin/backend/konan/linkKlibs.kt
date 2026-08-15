@@ -119,6 +119,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
+        mainModule.kotlinLibrary = moduleDescriptor.konanLibrary
         LinkKlibsOutput(modules, mainModule, irBuiltIns, symbols, symbolTable, irLinker)
     } else {
         val libraryPath: Path = libraryToCache.klib.path

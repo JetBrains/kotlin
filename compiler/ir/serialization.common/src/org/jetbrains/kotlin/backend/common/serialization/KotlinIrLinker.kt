@@ -395,6 +395,10 @@ enum class DeserializationStrategy(
     WITH_INLINE_BODIES(false, false, false, false, true)
 }
 
-/** This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment]. */
+/**
+ * This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment].
+ *
+ * It is set by [KotlinIrLinker] for every module going through IR deserialization. Any code that creates
+ * an [IrModuleFragment] representing a Kotlin library by other means must set this attribute itself.
+ */
 var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = false)
-    private set
