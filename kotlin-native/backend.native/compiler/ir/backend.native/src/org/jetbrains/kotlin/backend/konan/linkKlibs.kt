@@ -196,22 +196,15 @@ private fun LinkKlibsContext.deserializeDependencies(
         linker.deserializeIrModuleHeader(it, kotlinLibrary = null, { DeserializationStrategy.EXPLICITLY_EXPORTED }, it.name.asString())
     }
 
-    // config.librariesWithDependencies() could change at each iteration.
-    var librariesCount = 0
-    while (true) {
-        val libraries = config.librariesWithDependencies()
-        for (library in libraries) {
-            val module = moduleByLibrary.getValue(library)
-            val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library != config.libraryToCache?.klib
-            when {
-                isFullyCachedLibrary && library.isHeader -> linker.deserializeHeadersWithInlineBodies(module, library)
-                isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(module, library)
-                library in fullyDeserializedLibraries -> linker.deserializeFullModule(module, library)
-                else -> linker.deserializeIrModuleHeader(module, library, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-            }
+    for (library in config.librariesWithDependencies()) {
+        val module = moduleByLibrary.getValue(library)
+        val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library != config.libraryToCache?.klib
+        when {
+            isFullyCachedLibrary && library.isHeader -> linker.deserializeHeadersWithInlineBodies(module, library)
+            isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(module, library)
+            library in fullyDeserializedLibraries -> linker.deserializeFullModule(module, library)
+            else -> linker.deserializeIrModuleHeader(module, library, { DeserializationStrategy.EXPLICITLY_EXPORTED })
         }
-        if (libraries.size == librariesCount) break
-        librariesCount = libraries.size
     }
 }
 
