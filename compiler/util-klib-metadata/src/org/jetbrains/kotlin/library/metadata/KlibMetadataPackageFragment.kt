@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadataVersion
@@ -71,6 +72,12 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
         get() = false
 }
 
+/**
+ * The [KlibDeserializedContainerSource] of this package fragment, or `null` if it was not deserialized from a klib.
+ */
+val PackageFragmentDescriptor.klibContainerSource: KlibDeserializedContainerSource?
+    get() = (this as? KlibMetadataPackageFragment)?.containerSource
+
 class KlibMetadataCachedPackageFragment(
     byteArray: ByteArray,
     storageManager: StorageManager,
@@ -84,7 +91,7 @@ abstract class KlibMetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    protected val containerSource: KlibDeserializedContainerSource?
+    val containerSource: KlibDeserializedContainerSource?
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents

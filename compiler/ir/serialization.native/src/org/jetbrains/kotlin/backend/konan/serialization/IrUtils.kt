@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.findPackage
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -20,11 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
+import org.jetbrains.kotlin.library.metadata.klibContainerSource
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
  * Determine if the [IrDeclaration] is from a C-interop library.
@@ -49,13 +46,13 @@ fun IrDeclaration.isFromCInteropLibrary(): Boolean {
 
 /**
  * Determine if the [DeclarationDescriptor] is from a C-interop library.
+ *
+ * Note: Like the [IrDeclaration] overload, this checks the per-library [KlibDeserializedContainerSource] of
+ * the containing package fragment, which klib deserialization attaches on both compilation stages.
  */
-fun DeclarationDescriptor.isFromCInteropLibrary(): Boolean {
-    return when (this) {
-        is ModuleDescriptor -> isCInteropLibraryModule()
-        is IrBasedDeclarationDescriptor<*> -> owner.isFromCInteropLibrary()
-        else -> module.isCInteropLibraryModule()
-    }
+fun DeclarationDescriptor.isFromCInteropLibrary(): Boolean = when (this) {
+    is IrBasedDeclarationDescriptor<*> -> owner.isFromCInteropLibrary()
+    else -> findPackage().klibContainerSource?.klib?.isCInteropLibrary() == true
 }
 
 private fun getSourceElementFromFir(topLevelLazyFir2IrDeclaration: AbstractFir2IrLazyDeclaration<*>): SourceElement? =
@@ -81,10 +78,4 @@ private tailrec fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = whe
 private fun IrDeclaration.propertyIfAccessor(): IrDeclaration =
     (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
-private fun ModuleDescriptor.isCInteropLibraryModule(): Boolean {
-    return if (this is ModuleDescriptorImpl) {
-        // cinterop libraries are deserialized by Fir2Ir as ModuleDescriptorImpl, not FirModuleDescriptor
-        val moduleOrigin = klibModuleOrigin
-        moduleOrigin is DeserializedKlibModuleOrigin && moduleOrigin.library.isCInteropLibrary()
-    } else false
-}
+
