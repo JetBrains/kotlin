@@ -43,7 +43,7 @@ class JKlibIrLinker(
     val descriptorMangler: JKlibDescriptorMangler,
     private val typeSystemContextFactory: (IrBuiltIns) -> IrTypeSystemContext,
     private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(module, configuration, symbolTable, emptyList()) {
+) : KotlinIrLinker(module, configuration, symbolTable) {
     lateinit var stubGenerator: DeclarationStubGenerator
     override val returnUnboundSymbolsIfSignatureNotFound
         get() = false
