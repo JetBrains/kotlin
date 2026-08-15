@@ -37,12 +37,11 @@ class KonanIrLinker(
     friendModules: Map<String, Collection<String>>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory,
-    exportedDependencies: List<ModuleDescriptor>,
     partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, configuration, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, configuration, symbolTable) {
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
         val origin: DeserializedKlibModuleOrigin? = moduleDescriptor.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin
         val klib: KotlinLibrary = origin?.library ?: return false
