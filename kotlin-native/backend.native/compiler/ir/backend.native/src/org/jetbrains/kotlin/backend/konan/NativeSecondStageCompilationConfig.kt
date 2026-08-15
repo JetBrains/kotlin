@@ -430,6 +430,8 @@ class NativeSecondStageCompilationConfig(
         substituted
     }
 
+    val exportedAndIncludedLibraries: Set<KotlinLibrary> = (loadedKlibs.exported + loadedKlibs.included).toSet()
+
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
     val fullExportedNamePrefix: String

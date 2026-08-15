@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 
 internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries((config.loadedKlibs.exported + config.loadedKlibs.included).toSet())
+        getDescriptorsFromLibraries(config.exportedAndIncludedLibraries)
 
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(config.loadedKlibs.included.toSet())
