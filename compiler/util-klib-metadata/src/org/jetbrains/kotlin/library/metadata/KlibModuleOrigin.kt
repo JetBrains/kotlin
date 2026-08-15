@@ -30,6 +30,3 @@ fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
 }
 
 val ModuleDescriptor.klibModuleOrigin: KlibModuleOrigin get() = this.getCapability(KlibModuleOrigin.CAPABILITY)!!
-
-val ModuleDescriptor.kotlinLibrary: KotlinLibrary
-    get() = (this.klibModuleOrigin as DeserializedKlibModuleOrigin).library

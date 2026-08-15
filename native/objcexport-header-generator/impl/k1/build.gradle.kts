@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":compiler:ir.serialization.native"))
     implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
     implementation(project(":native:frontend.native"))
     testFixturesImplementation(testFixtures(project(":native:objcexport-header-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

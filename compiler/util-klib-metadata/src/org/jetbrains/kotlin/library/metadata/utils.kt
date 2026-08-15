@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -34,18 +32,6 @@ fun BaseKotlinLibrary.isCommonizedCInteropLibrary(): Boolean =
     DeprecationLevel.ERROR
 )
 fun BaseKotlinLibrary.isInteropLibrary(): Boolean = irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
-
-@Deprecated(
-    "Use isFromCInteropLibrary() instead",
-    ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
-    DeprecationLevel.ERROR
-)
-fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
-    return if (this is ModuleDescriptorImpl) {
-        // cinterop libraries are deserialized by Fir2Ir as ModuleDescriptorImpl, not FirModuleDescriptor
-        klibModuleOrigin.isCInteropLibrary()
-    } else false
-}
 
 fun KotlinLibrary.getIncompatibility(ownMetadataVersion: MetadataVersion): IncompatibleVersionErrorData<MetadataVersion>? {
     val libraryMetadataVersion = this.metadataVersion ?: MetadataVersion.INVALID_VERSION

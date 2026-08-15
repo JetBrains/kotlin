@@ -88,17 +88,3 @@ private fun ModuleDescriptor.isCInteropLibraryModule(): Boolean {
         moduleOrigin is DeserializedKlibModuleOrigin && moduleOrigin.library.isCInteropLibrary()
     } else false
 }
-
-@Deprecated(
-    "Use isFromCInteropLibrary() instead",
-    ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
-    DeprecationLevel.ERROR
-)
-fun IrDeclaration.isFromInteropLibrary(): Boolean = isFromCInteropLibrary()
-
-@Deprecated(
-    "Use isFromCInteropLibrary() instead",
-    ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
-    DeprecationLevel.ERROR
-)
-fun DeclarationDescriptor.isFromInteropLibrary(): Boolean = isFromCInteropLibrary()

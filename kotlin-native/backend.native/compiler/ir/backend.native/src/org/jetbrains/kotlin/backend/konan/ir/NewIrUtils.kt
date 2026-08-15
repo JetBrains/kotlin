@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.ir
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -53,17 +52,3 @@ val IrDeclaration.konanLibrary: KotlinLibrary?
             else -> TODO("Unexpected declaration parent: $parent")
         }
     }
-
-@Deprecated(
-        "Use isFromCInteropLibrary() instead",
-        ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
-        DeprecationLevel.ERROR
-)
-fun IrDeclaration.isFromInteropLibrary() = isFromCInteropLibrary()
-
-@Deprecated(
-        "Use isFromCInteropLibrary() instead",
-        ReplaceWith("moduleDescriptor.isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
-        DeprecationLevel.ERROR
-)
-fun IrPackageFragment.isFromInteropLibrary() = moduleDescriptor.isFromCInteropLibrary()
