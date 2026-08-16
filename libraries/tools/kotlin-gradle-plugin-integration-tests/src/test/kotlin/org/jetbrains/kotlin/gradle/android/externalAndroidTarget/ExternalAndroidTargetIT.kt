@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.org.objectweb.asm.ClassReader
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.moveTo
 import kotlin.io.path.readText
+import kotlin.test.assertContentEquals
 import kotlin.test.fail
 
 // We are using the latest available AGP in this test suite as a max version
@@ -256,6 +258,80 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
 
             build("assemble") {
                 assertTasksExecuted(":compileAndroidMain", ":compileKotlinJvm")
+            }
+        }
+    }
+
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
+    @GradleAndroidTest
+    fun `Parcelize adds Parcelable only when needed on Android`(
+        gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "android-multiplatorm-library-with-parcelize",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            kotlinSourcesDir("commonMain").source("com/example/shared/model/AutomaticParcelable.kt") {
+                """
+                    package com.example.shared.model
+
+                    import com.example.shared.Parcelable
+                    import kotlinx.parcelize.Parcelize
+
+                    @Parcelize
+                    data class CommonParcelable(val value: String)
+
+                    @com.example.shared.Parcelize
+                    data class CommonCustomParcelable(val value: String)
+
+                    @Parcelize
+                    data class CommonParcelableWithExpectedSupertype(val value: String) : Parcelable
+                """.trimIndent()
+            }
+            kotlinSourcesDir("androidMain").source("com/example/shared/model/AutomaticParcelable.android.kt") {
+                """
+                    package com.example.shared.model
+
+                    import kotlinx.parcelize.Parcelize
+
+                    @Parcelize
+                    data class AndroidParcelable(val value: String)
+
+                    @com.example.shared.Parcelize
+                    data class AndroidCustomParcelable(val value: String)
+
+                    @Parcelize
+                    data class ExplicitAndroidParcelable(val value: String) : android.os.Parcelable
+
+                    fun CommonParcelable.asAndroidParcelable(): android.os.Parcelable = this
+                    fun CommonCustomParcelable.asAndroidParcelable(): android.os.Parcelable = this
+                    fun CommonParcelableWithExpectedSupertype.asAndroidParcelable(): android.os.Parcelable = this
+                    fun AndroidParcelable.asAndroidParcelable(): android.os.Parcelable = this
+                    fun AndroidCustomParcelable.asAndroidParcelable(): android.os.Parcelable = this
+                    fun ExplicitAndroidParcelable.asAndroidParcelable(): android.os.Parcelable = this
+                """.trimIndent()
+            }
+            kotlinSourcesDir("jvmMain").source("com/example/shared/model/AutomaticParcelable.jvm.kt") {
+                """
+                    package com.example.shared.model
+
+                    import kotlinx.parcelize.Parcelize
+
+                    @Parcelize
+                    data class JvmParcelable(val value: String)
+                """.trimIndent()
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileAndroidMain", ":compileKotlinJvm")
+
+                val jvmClasses = kotlinClassesDir(targetName = "jvm")
+                for (className in listOf("CommonParcelable", "JvmParcelable")) {
+                    val classFile = jvmClasses.resolve("com/example/shared/model/$className.class")
+                    assertContentEquals(emptyArray<String>(), ClassReader(classFile.toFile().readBytes()).interfaces)
+                }
             }
         }
     }
