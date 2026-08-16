@@ -1,0 +1,27 @@
+FILE: enumWithGeneratedSupertype.kt
+    package foo
+
+    public abstract interface InterfaceWithArgument<T> : R|kotlin/Any| {
+        public open fun generate(): R|T| {
+            ^generate Null(null)!!
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final enum class GeneratedEnum : R|kotlin/Enum<foo/GeneratedEnum>|, R|foo/InterfaceWithArgument<kotlin/String>| {
+        private constructor(): R|foo/GeneratedEnum| {
+            super<R|kotlin/Enum<foo/GeneratedEnum>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<foo/GeneratedEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|foo/GeneratedEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<foo/GeneratedEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<foo/GeneratedEnum>|
+
+    }
+    public final fun test(value: R|foo/GeneratedEnum|): R|kotlin/String| {
+        ^test R|<local>/value|.R|SubstitutionOverride<foo/GeneratedEnum.generate: R|kotlin/String|>|()
+    }
