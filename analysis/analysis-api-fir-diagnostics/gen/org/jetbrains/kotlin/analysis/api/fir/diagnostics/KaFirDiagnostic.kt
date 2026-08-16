@@ -8852,6 +8852,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface RuntimeAnnotationOnLambdaIsNotRetained : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<RuntimeAnnotationOnLambdaIsNotRetained>
+            get() = RuntimeAnnotationOnLambdaIsNotRetained::class
+
+        public val annotationClass: KaClassLikeSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface LocalJvmRecord : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<LocalJvmRecord>
             get() = LocalJvmRecord::class

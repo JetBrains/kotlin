@@ -10,7 +10,7 @@ class A
 val withoutName = fun () {}
 val extensionWithoutName = fun A.() {}
 
-fun withAnnotation() = @ann(ok) fun () {}
+fun withAnnotation() = <!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@ann(ok)<!> fun () {}
 val withReturn = fun (): Int { return 5}
 val withExpression = fun() = 5
 val funfun = fun() = fun() = 5

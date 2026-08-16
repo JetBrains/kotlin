@@ -2603,6 +2603,13 @@ private fun KaDiagnosticConverterBuilder.addConversions56() {
             token,
         )
     }
+    add(FirJvmErrors.RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED) { firDiagnostic ->
+        RuntimeAnnotationOnLambdaIsNotRetainedImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions57() {

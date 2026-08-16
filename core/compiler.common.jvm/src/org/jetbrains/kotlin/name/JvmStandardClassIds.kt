@@ -45,6 +45,9 @@ object JvmStandardClassIds {
     val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSerializableLambda")
 
     @JvmField
+    val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)
+
+    @JvmField
     val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 
     @JvmField

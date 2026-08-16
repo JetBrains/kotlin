@@ -6255,6 +6255,12 @@ internal class AnnotationTargetsOnlyInJavaImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsOnlyInJava
 
+internal class RuntimeAnnotationOnLambdaIsNotRetainedImpl(
+    override val annotationClass: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RuntimeAnnotationOnLambdaIsNotRetained
+
 internal class LocalJvmRecordImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
