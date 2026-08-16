@@ -6,15 +6,15 @@ fun <T : suspend () -> Unit> suspendId(f: T): T = f
 fun <T : @MyInlineable () -> Unit> InlineableId(f: T): T = f
 
 fun test_1() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.Unit>")!>id(@MyInlineable {})<!>
-    val f: () -> Unit = id(@MyInlineable <!ARGUMENT_TYPE_MISMATCH!>{}<!>) // should be an error
+    <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.Unit>")!>id(<!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@MyInlineable<!> {})<!>
+    val f: () -> Unit = id(<!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@MyInlineable<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>) // should be an error
     <!DEBUG_INFO_EXPRESSION_TYPE("@MyInlineable() some.MyInlineableFunction0<kotlin.Unit>")!>InlineableId({})<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("@MyInlineable() some.MyInlineableFunction0<kotlin.Unit>")!>InlineableId(@MyInlineable {})<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("suspend () -> kotlin.Unit")!>suspendId(@MyInlineable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("@MyInlineable() some.MyInlineableFunction0<kotlin.Unit>")!>InlineableId(<!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@MyInlineable<!> {})<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("suspend () -> kotlin.Unit")!>suspendId(<!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@MyInlineable<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
 }
 
 fun test_2() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.String>")!>select(@MyInlineable { "a" }, { "b" })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.String>")!>select(<!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@MyInlineable<!> { "a" }, { "b" })<!>
 }
 
 /* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, functionDeclaration, functionalType, integerLiteral,
