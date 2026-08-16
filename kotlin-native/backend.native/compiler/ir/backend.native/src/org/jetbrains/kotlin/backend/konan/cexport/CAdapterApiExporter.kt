@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.cexport
 
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+//import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.io.PrintWriter
 import java.io.File
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 
 /**
  * Third phase of C export:
@@ -80,12 +81,12 @@ internal class CAdapterApiExporter(
                     element.isClass -> {
                         output("${prefix}_KType* (*_type)(void);", indent)
                         if (element.isSingletonObject) {
-                            output("${typeTranslator.translateType((element.declaration as ClassDescriptor).defaultType)} (*_instance)();", indent)
+                            output("${element.classType} (*_instance)();", indent)
                         }
                     }
                     element.isEnumEntry -> {
-                        val enumClass = element.declaration.containingDeclaration as ClassDescriptor
-                        output("${typeTranslator.translateType(enumClass.defaultType)} (*get)(); /* enum entry for ${element.name}. */", indent)
+                        val enumClassC = element.enumEntryContainingType
+                        output("$enumClassC (*get)(); /* enum entry for ${element.name}. */", indent)
                     }
                     // TODO: handle properties.
                 }
@@ -413,3 +414,145 @@ private operator fun String.times(count: Int): String {
 
 private val KotlinType.shortNameForPredefinedType
     get() = this.toString().split('.').last()
+
+private enum class Direction {
+    KOTLIN_TO_C,
+    C_TO_KOTLIN
+}
+
+private fun ExportedElement.translateArgument(name: String, signatureElement: SignatureElement,
+                                              direction: Direction, builder: StringBuilder): String {
+    return when {
+        typeTranslator.isMappedToString(signatureElement.type) ->
+            if (direction == Direction.C_TO_KOTLIN) {
+                builder.append("  KObjHolder ${name}_holder;\n")
+                "CreateStringFromCString($name, ${name}_holder.slot())"
+            } else {
+                "CreateCStringFromString($name)"
+            }
+        typeTranslator.isMappedToReference(signatureElement.type) ->
+            if (direction == Direction.C_TO_KOTLIN) {
+                builder.append("  KObjHolder ${name}_holder2;\n")
+                "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
+            } else {
+                "((${typeTranslator.translateType(signatureElement.type)}){ .pinned = CreateStablePointer(${name})})"
+            }
+        else -> {
+            assert(!signatureElement.type.binaryTypeIsReference()) {
+                println(signatureElement.toString())
+            }
+            name
+        }
+    }
+}
+
+private fun ExportedElement.translateBody(cfunction: List<SignatureElement>): String {
+    val visibility = if (isTopLevelFunction) "RUNTIME_EXPORT extern \"C\"" else "static"
+    val builder = StringBuilder()
+    builder.append("$visibility ${typeTranslator.translateType(cfunction[0])} ${cnameImpl}(${cfunction.drop(1).
+    mapIndexed { index, it -> "${typeTranslator.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
+    // TODO: do we really need that in every function?
+    builder.append("  Kotlin_initRuntimeIfNeeded();\n")
+    builder.append("  ScopedRunnableState stateGuard;\n")
+    builder.append("  FrameOverlay* frame = getCurrentFrame();")
+    val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
+        translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
+    })
+    val isVoidReturned = typeTranslator.isMappedToVoid(cfunction[0].type)
+    val isConstructor = isConstructor
+    val isObjectReturned = !isConstructor && typeTranslator.isMappedToReference(cfunction[0].type)
+    val isStringReturned = typeTranslator.isMappedToString(cfunction[0].type)
+    builder.append("   try {\n")
+    if (isObjectReturned || isStringReturned) {
+        builder.append("  KObjHolder result_holder;\n")
+        args += "result_holder.slot()"
+    }
+    if (isConstructor) {
+        builder.append("  KObjHolder result_holder;\n")
+        val clazz = scope.elements[0]
+        assert(clazz.kind == ElementKind.TYPE)
+        builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
+        args.add(0, "result")
+    }
+    if (!isVoidReturned && !isConstructor) {
+        builder.append("  auto result = ")
+    }
+    builder.append("  $cname(")
+    builder.append(args.joinToString(", "))
+    builder.append(");\n")
+
+    if (!isVoidReturned) {
+        val result = translateArgument(
+                "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
+        builder.append("  return $result;\n")
+    }
+    builder.append("   } catch (...) {")
+    builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
+    builder.append("       HandleCurrentExceptionWhenLeavingKotlinCode();\n")
+    builder.append("   } \n")
+
+    builder.append("}\n")
+
+    return builder.toString()
+}
+
+internal fun ExportedElement.makeFunctionPointerString(): String {
+    val signature = makeCFunctionSignature(true)
+    return "${typeTranslator.translateType(signature[0])} (*${signature[0].name})(${signature.drop(1).map { "${typeTranslator.translateType(it)} ${it.name}" }.joinToString(", ")});"
+}
+
+internal fun ExportedElement.makeTopLevelFunctionString(): Pair<String, String> {
+    val signature = makeCFunctionSignature(false)
+    val name = signature[0].name
+    return (name to
+            "extern ${typeTranslator.translateType(signature[0])} $name(${signature.drop(1).map { "${typeTranslator.translateType(it)} ${it.name}" }.joinToString(", ")});")
+}
+
+internal fun ExportedElement.makeFunctionDeclaration(): String {
+    assert(isFunction)
+    val bridge = makeBridgeSignature()
+
+    val builder = StringBuilder()
+    builder.append("extern \"C\" ${bridge[0]} $cname")
+    builder.append("(${bridge.drop(1).joinToString(", ")});\n")
+
+    // Now the C function body.
+    builder.append(translateBody(makeCFunctionSignature(false)))
+    return builder.toString()
+}
+
+internal fun ExportedElement.makeClassDeclaration(): String {
+    assert(isClass)
+    val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
+    val instanceGetter = if (isSingletonObject) {
+        val objectClassC = classType
+        """
+            |
+            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
+            |static $objectClassC ${cname}_instance_impl(void) {
+            |  Kotlin_initRuntimeIfNeeded();
+            |  ScopedRunnableState stateGuard;
+            |  KObjHolder result_holder;
+            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
+            |  return $objectClassC { .pinned = CreateStablePointer(result)};
+            |}
+            """.trimMargin()
+    } else ""
+    return "$typeGetter$instanceGetter"
+}
+
+internal fun ExportedElement.makeEnumEntryDeclaration(): String {
+    assert(isEnumEntry)
+    val enumClassC = enumEntryContainingType
+
+    return """
+              |extern "C" KObjHeader* $cname(KObjHeader**);
+              |static $enumClassC ${cname}_impl(void) {
+              |  Kotlin_initRuntimeIfNeeded();
+              |  ScopedRunnableState stateGuard;
+              |  KObjHolder result_holder;
+              |  KObjHeader* result = $cname(result_holder.slot());
+              |  return $enumClassC { .pinned = CreateStablePointer(result)};
+              |}
+              """.trimMargin()
+}
