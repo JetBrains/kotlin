@@ -9,7 +9,7 @@ fun bar(a: Any) = <!NON_MEMBER_FUNCTION_NO_BODY!>fun ()<!>
 fun outer() {
     bar(<!NON_MEMBER_FUNCTION_NO_BODY!>fun ()<!>)
     bar(l@ <!NON_MEMBER_FUNCTION_NO_BODY!>fun ()<!>)
-    bar(@ann <!NON_MEMBER_FUNCTION_NO_BODY!>fun ()<!>)
+    bar(<!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@ann<!> <!NON_MEMBER_FUNCTION_NO_BODY!>fun ()<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, functionDeclaration, propertyDeclaration */

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.Positioning
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.upperBoundViolatedDiagnosticInit
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -175,6 +176,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<Collection<String>>("correspondingKotlinTargets")
         }
         val ANNOTATION_TARGETS_ONLY_IN_JAVA by warning<KtAnnotationEntry>()
+        val RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED by warning<KtAnnotationEntry> {
+            parameter<FirClassLikeSymbol<*>>("annotationClass")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
