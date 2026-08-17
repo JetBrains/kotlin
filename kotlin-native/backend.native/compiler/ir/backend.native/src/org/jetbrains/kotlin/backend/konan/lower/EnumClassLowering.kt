@@ -73,8 +73,7 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
         // so that incremental compilation invalidates this caller when the enum's source file changes.
         generationState.dependenciesTracker.add(entry, weak = false)
 
-        val enumEntriesMap = enumEntriesMap(entry.parentAsClass)
-        return enumEntriesMap[entry.name]!!.ordinal
+        return super.mapConstEnumEntry(entry)
     }
 }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -30,10 +31,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  */
 open class EnumWhenLowering(protected open val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
-    protected open fun mapConstEnumEntry(entry: IrEnumEntry): Int =
-        entry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(entry).also {
-            assert(it >= 0) { "enum entry ${entry.dump()} not in parent class" }
-        }
+    protected open fun mapConstEnumEntry(entry: IrEnumEntry): Int {
+        val enumEntriesMap = enumEntriesMap(entry.parentAsClass)
+        val description = enumEntriesMap[entry.name]
+            ?: compilationException("Could not find enum entry ${entry.name}", entry.parentAsClass)
+        return description.ordinal
+    }
 
     protected open fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
         builder.irCall(subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!).apply { dispatchReceiver = subject }
