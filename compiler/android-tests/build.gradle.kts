@@ -51,6 +51,16 @@ val acceptAndroidSdkLicenses = with(androidSdkProvisioner) {
     project.registerAcceptLicensesTask()
 }
 
+testInputsCheck {
+    // The tests create an AVD inside the provisioned SDK — `PathManager.getAndroidAvdRoot()` — and then read the
+    // generated `config.ini` back to fix up the system image path. The SDK is a declared input of the test task,
+    // but the declared-input snapshot is taken before the run, so a freshly created AVD is not in it. Whether
+    // the check passed therefore depended on whether an earlier build had left an AVD behind.
+    allowedDirectories.from(
+        with(androidSdkProvisioner) { project.provisionedFiles(ProvisioningType.SDK_WITH_EMULATOR) }
+    )
+}
+
 abstract class JdkHomeArgumentProvider : CommandLineArgumentProvider {
     @get:Nested
     abstract val javaLauncher: Property<JavaLauncher>

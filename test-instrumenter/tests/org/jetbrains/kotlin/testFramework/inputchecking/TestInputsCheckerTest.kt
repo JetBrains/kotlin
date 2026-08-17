@@ -124,6 +124,35 @@ class TestInputsCheckerTest {
     }
 
     @Test
+    fun `file inside allowed directory is allowed`() {
+        // given
+        val fixture = TestInputsFixture(tempDir) {
+            createFileInsideAllowedDirectory()
+        }
+
+        // when
+        val detected = fixture.checkAllPaths()
+
+        // then
+        assertEquals(emptySet<String>(), detected)
+    }
+
+    @Test
+    fun `file created inside allowed directory after initialization is allowed`() {
+        // given: nothing to declare, because the file does not exist yet
+        val fixture = TestInputsFixture(tempDir) {}
+
+        // and: it appears only while the tests run, like the AVD that `:compiler:android-tests` creates
+        fixture.createFileInsideAllowedDirectoryAfterInitialization()
+
+        // when
+        val detected = fixture.checkAllPaths()
+
+        // then
+        assertEquals(emptySet<String>(), detected)
+    }
+
+    @Test
     fun `dynamically created klib cache file is allowed`() {
         // given
         val fixture = TestInputsFixture(tempDir) {

@@ -25,6 +25,7 @@ fun configureTestTask(test: Test) {
     test.addAbsoluteDirectoryProperty(layout.settingsDirectory, "test.instrumenter.root.dir")
     test.addAbsoluteDirectoryProperty(layout.buildDirectory, "test.instrumenter.build.dir")
     test.addLazyBooleanSystemProperty(testInputsCheck.failFast, "test.instrumenter.fail.fast")
+    test.addClasspathProperty(provider { testInputsCheck.allowedDirectories }, "test.instrumenter.allowed.dirs")
 
     test.doFirst {
         declaredInputsFile.get().asFile.apply {

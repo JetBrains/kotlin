@@ -1,3 +1,4 @@
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
@@ -19,4 +20,16 @@ abstract class TestInputsCheckExtension @Inject constructor(objects: ObjectFacto
      * It's mostly useful for debugging when the tests take a long time to finish.
      */
     val failFast: Property<Boolean> = objects.property<Boolean>().convention(false)
+
+    /**
+     * Directories whose content is created while the tests run, and may then be read back.
+     *
+     * The list of declared inputs is a snapshot taken before the test task executes, so a file that a test
+     * generates inside one of its own input directories is not in it and would be reported as undeclared.
+     * Listing the directory here allows anything underneath it.
+     *
+     * Use it only for that case. A directory listed here is exempt from the check entirely, so reads of files
+     * that genuinely should have been declared stop being reported.
+     */
+    val allowedDirectories: ConfigurableFileCollection = objects.fileCollection()
 }

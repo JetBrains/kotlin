@@ -20,6 +20,7 @@ public class TestInputsChecker {
     private final String buildDir;
     @Nullable private final String internalKlibCacheDir;
     @Nullable private final String internalKlibStdlibCacheDir;
+    private final List<String> allowedDirectories;
     private final Set<String> declaredInputs;
     private final Set<String> undeclaredInputs;
     private final boolean failFast;
@@ -29,10 +30,19 @@ public class TestInputsChecker {
             String buildDir,
             @Nullable String internalKlibCacheDir,
             @Nullable String internalKlibStdlibCacheDir,
+            Collection<String> allowedDirectories,
             Collection<String> declaredInputs,
             boolean failFast
     ) {
-        INSTANCE = new TestInputsChecker(rootDir, buildDir, internalKlibCacheDir, internalKlibStdlibCacheDir, declaredInputs, failFast);
+        INSTANCE = new TestInputsChecker(
+                rootDir,
+                buildDir,
+                internalKlibCacheDir,
+                internalKlibStdlibCacheDir,
+                allowedDirectories,
+                declaredInputs,
+                failFast
+        );
     }
 
     public static TestInputsChecker getInstance() {
@@ -47,6 +57,7 @@ public class TestInputsChecker {
             String buildDir,
             @Nullable String internalKlibCacheDir,
             @Nullable String internalKlibStdlibCacheDir,
+            Collection<String> allowedDirectories,
             Collection<String> declaredInputs,
             boolean failFast
     ) {
@@ -54,6 +65,7 @@ public class TestInputsChecker {
         this.buildDir = buildDir;
         this.internalKlibCacheDir = internalKlibCacheDir;
         this.internalKlibStdlibCacheDir = internalKlibStdlibCacheDir;
+        this.allowedDirectories = Collections.unmodifiableList(new ArrayList<>(allowedDirectories));
         this.declaredInputs = Collections.unmodifiableSet(new HashSet<>(declaredInputs));
         this.undeclaredInputs = ConcurrentHashMap.newKeySet();
         this.failFast = failFast;
@@ -91,6 +103,7 @@ public class TestInputsChecker {
     private boolean isAllowedInput(File file) {
         return isOutsideRootDir(file) ||
                isInsideBuildDir(file) ||
+               isInsideAllowedDirectory(file) ||
                isDynamicallyCreatedKlibCache(file) ||
                declaredInputs.contains(file.getPath());
     }
@@ -108,6 +121,28 @@ public class TestInputsChecker {
      */
     private boolean isInsideBuildDir(File file) {
         return file.getPath().startsWith(buildDir);
+    }
+
+    /**
+     * <p>Allow reading files inside a directory the build declared as containing dynamically created content.</p>
+     *
+     * <p>The set of declared inputs is a snapshot taken before the test runs, so a file that the test itself
+     * generates inside one of its input directories is invisible to it. The Android SDK is the motivating case:
+     * `:compiler:android-tests` declares the provisioned SDK as an input, then creates an AVD inside it during
+     * the run and reads the generated `config.ini` back.</p>
+     */
+    private boolean isInsideAllowedDirectory(File file) {
+        // This runs on every file access, and only one module sets the option, so keep the empty case free of
+        // even an iterator allocation.
+        if (allowedDirectories.isEmpty()) {
+            return false;
+        }
+        for (String allowedDirectory : allowedDirectories) {
+            if (file.getPath().startsWith(allowedDirectory)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

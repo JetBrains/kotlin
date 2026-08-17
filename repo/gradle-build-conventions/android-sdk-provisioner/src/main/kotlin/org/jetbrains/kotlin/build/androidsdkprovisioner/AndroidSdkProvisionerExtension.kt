@@ -20,6 +20,13 @@ abstract class AndroidSdkProvisionerExtension {
         getSdkPath(provisioningType)
     }
 
+    /**
+     * The provisioned files themselves, for build scripts that need to refer to them outside of a task's inputs —
+     * `configurationName` is internal, so they cannot resolve the configuration on their own.
+     */
+    fun Project.provisionedFiles(provisioningType: ProvisioningType): FileCollection =
+        configurations.getByName(provisioningType.configurationName)
+
     fun Test.provideToThisTaskAsSystemProperty(
         provisioningType: ProvisioningType,
         propertyName: String = provisioningType.defaultSystemPropertyName,

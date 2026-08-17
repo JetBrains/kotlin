@@ -54,6 +54,13 @@ object TestInstrumentationAgent {
             .readLines()
             .filter(String::isNotEmpty)
 
+        // Directories whose content a test generates itself, which therefore cannot appear in the snapshot of
+        // declared inputs taken before the test runs. See `TestInputsCheckExtension.allowedDirectories`.
+        val allowedDirectories = System.getProperty("test.instrumenter.allowed.dirs")
+            ?.split(File.pathSeparatorChar)
+            ?.filter(String::isNotEmpty)
+            .orEmpty()
+
         val nativeHome = System.getProperty("kotlin.internal.native.test.nativeHome")?.let(Paths::get)
         val nativeTestTarget = System.getProperty("kotlin.internal.native.test.target")
         val klibCacheDir = nativeHome?.resolve("klib/cache")
@@ -64,6 +71,7 @@ object TestInstrumentationAgent {
             buildDir,
             klibCacheDir?.pathString,
             klibStdlibCacheDir?.pathString,
+            allowedDirectories,
             declaredInputs,
             failFast
         )
