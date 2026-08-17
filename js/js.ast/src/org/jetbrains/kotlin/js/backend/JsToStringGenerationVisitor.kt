@@ -21,126 +21,123 @@ open class JsToStringGenerationVisitor(
     constructor(p: TextOutput) : this(p, NoOpSourceLocationConsumer)
 
     override fun visitArrayAccess(x: JsArrayAccess) {
+        // Leading comments are printed outside of the source mapping scope, trailing ones inside of it.
+        // This asymmetry is inherited from the Java implementation and is kept to produce identical source maps.
         printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withSourceMapping(x.source) {
+            printPair(x, x.arrayExpression)
+            leftSquare()
+            accept(x.indexExpression)
+            rightSquare()
 
-        printPair(x, x.arrayExpression)
-        leftSquare()
-        accept(x.indexExpression)
-        rightSquare()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+            printCommentsAfterNode(x)
+        }
     }
 
     override fun visitArray(x: JsArrayLiteral) {
         printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withSourceMapping(x.source) {
+            leftSquare()
+            printExpressions(x.expressions)
+            rightSquare()
 
-        leftSquare()
-        printExpressions(x.expressions)
-        rightSquare()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+            printCommentsAfterNode(x)
+        }
     }
 
     override fun visitBinaryExpression(x: JsBinaryOperation) {
         printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withSourceMapping(x.source) {
+            val isExpressionEnclosed = parenPush(x, x.arg1, !x.operator.isLeftAssociative)
 
-        val isExpressionEnclosed = parenPush(x, x.arg1, !x.operator.isLeftAssociative)
+            accept(x.arg1)
 
-        accept(x.arg1)
+            if (x.operator.isKeyword) {
+                parenPopOrSpace(x, x.arg1, !x.operator.isLeftAssociative)
+            } else if (x.operator != JsBinaryOperator.COMMA) {
+                if (isExpressionEnclosed) {
+                    rightParen()
+                }
+                space()
+            }
 
-        if (x.operator.isKeyword) {
-            parenPopOrSpace(x, x.arg1, !x.operator.isLeftAssociative)
-        } else if (x.operator != JsBinaryOperator.COMMA) {
-            if (isExpressionEnclosed) {
+            p.print(x.operator.symbol)
+
+            val arg2 = x.arg2
+            val isParenOpened =
+                if (x.operator == JsBinaryOperator.COMMA) {
+                    space()
+                    false
+                } else if (arg2 is JsBinaryOperation && arg2.operator == JsBinaryOperator.AND) {
+                    space()
+                    leftParen()
+                    true
+                } else {
+                    if (spaceCalc(x.operator, arg2)) {
+                        parenPushOrSpace(x, arg2, x.operator.isLeftAssociative)
+                    } else {
+                        space()
+                        parenPush(x, arg2!!, x.operator.isLeftAssociative)
+                    }
+                }
+
+            accept(arg2)
+
+            if (isParenOpened) {
                 rightParen()
             }
-            space()
+
+            printCommentsAfterNode(x)
         }
-
-        p.print(x.operator.symbol)
-
-        val arg2 = x.arg2
-        val isParenOpened =
-            if (x.operator == JsBinaryOperator.COMMA) {
-                space()
-                false
-            } else if (arg2 is JsBinaryOperation && arg2.operator == JsBinaryOperator.AND) {
-                space()
-                leftParen()
-                true
-            } else {
-                if (spaceCalc(x.operator, arg2)) {
-                    parenPushOrSpace(x, arg2, x.operator.isLeftAssociative)
-                } else {
-                    space()
-                    parenPush(x, arg2!!, x.operator.isLeftAssociative)
-                }
-            }
-
-        accept(arg2)
-
-        if (isParenOpened) {
-            rightParen()
-        }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitSimpleAssignment(x: JsAssignmentOperation.Simple) {
         printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withSourceMapping(x.source) {
+            // Assignment is right-associative, so the left-hand side is parenthesized only when it has
+            // strictly lower precedence (wrongAssoc), matching the former JsBinaryOperator.ASG rendering.
+            val isTargetEnclosed = parenPush(x, x.target, true)
 
-        // Assignment is right-associative, so the left-hand side is parenthesized only when it has
-        // strictly lower precedence (wrongAssoc), matching the former JsBinaryOperator.ASG rendering.
-        val isTargetEnclosed = parenPush(x, x.target, true)
+            accept(x.target)
 
-        accept(x.target)
-
-        if (isTargetEnclosed) {
-            rightParen()
-        }
-        space()
-        assignment()
-
-        val value = x.value
-        val isValueEnclosed: Boolean
-        if (value is JsBinaryOperation && value.operator == JsBinaryOperator.AND) {
+            if (isTargetEnclosed) {
+                rightParen()
+            }
             space()
-            leftParen()
-            isValueEnclosed = true
-        } else {
-            space()
-            isValueEnclosed = parenPush(x, value, false)
+            assignment()
+
+            val value = x.value
+            val isValueEnclosed: Boolean
+            if (value is JsBinaryOperation && value.operator == JsBinaryOperator.AND) {
+                space()
+                leftParen()
+                isValueEnclosed = true
+            } else {
+                space()
+                isValueEnclosed = parenPush(x, value, false)
+            }
+
+            accept(value)
+
+            if (isValueEnclosed) {
+                rightParen()
+            }
+
+            printCommentsAfterNode(x)
         }
-
-        accept(value)
-
-        if (isValueEnclosed) {
-            rightParen()
-        }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitDestructuringAssignment(x: JsAssignmentOperation.Destructuring) {
         printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withSourceMapping(x.source) {
+            x.pattern.accept(this)
+            space()
+            assignment()
+            space()
+            accept(x.value)
 
-        x.pattern.accept(this)
-        space()
-        assignment()
-        space()
-        accept(x.value)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+            printCommentsAfterNode(x)
+        }
     }
 
     override fun visitBlock(x: JsBlock) {
@@ -148,230 +145,207 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitBoolean(x: JsBooleanLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        if (x.value) {
-            p.print(Chars.TRUE)
-        } else {
-            p.print(Chars.FALSE)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                if (x.value) {
+                    p.print(Chars.TRUE)
+                } else {
+                    p.print(Chars.FALSE)
+                }
+            }
         }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitBreak(x: JsBreak) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.BREAK)
-        continueOrBreakLabel(x)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.BREAK)
+                continueOrBreakLabel(x)
+            }
+        }
     }
 
     override fun visitContinue(x: JsContinue) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.CONTINUE)
-        continueOrBreakLabel(x)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.CONTINUE)
+                continueOrBreakLabel(x)
+            }
+        }
     }
 
     override fun visitYield(x: JsYield) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.YIELD)
 
-        p.print(Chars.YIELD)
-
-        if (x.expression != null) {
-            space()
-            accept(x.expression)
+                if (x.expression != null) {
+                    space()
+                    accept(x.expression)
+                }
+            }
         }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitYieldStar(x: JsYieldStar) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.YIELD_STAR)
 
-        p.print(Chars.YIELD_STAR)
-
-        if (x.expression != null) {
-            space()
-            accept(x.expression)
+                if (x.expression != null) {
+                    space()
+                    accept(x.expression)
+                }
+            }
         }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitSpread(spread: JsSpread) {
-        pushSourceInfo(spread.source)
-        printCommentsBeforeNode(spread)
-
-        ellipsis()
-        printPair(spread, spread.expression)
-
-        printCommentsAfterNode(spread)
-        popSourceInfo()
+        withSourceMapping(spread.source) {
+            withComments(spread) {
+                ellipsis()
+                printPair(spread, spread.expression)
+            }
+        }
     }
 
     override fun visitCase(x: JsCase) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.CASE)
-        space()
-        accept(x.caseExpression)
-        colon()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.CASE)
+                space()
+                accept(x.caseExpression)
+                colon()
+            }
+        }
 
         newline()
 
-        sourceLocationConsumer.pushSourceInfo(null)
-        printSwitchMemberStatements(x)
-        sourceLocationConsumer.popSourceInfo()
+        withEmptySourceMapping {
+            printSwitchMemberStatements(x)
+        }
     }
 
     override fun visitCatch(x: JsCatch) {
-        printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withComments(x) {
+            withSourceMapping(x.source) {
+                space()
+                p.print(Chars.CATCH)
+                space()
 
-        space()
-        p.print(Chars.CATCH)
-        space()
+                leftParen()
+                accept(x.parameter.declarable)
+                rightParen()
 
-        leftParen()
-        accept(x.parameter.declarable)
-        rightParen()
+                space()
+            }
+        }
 
-        space()
-
-        popSourceInfo()
-        printCommentsAfterNode(x)
-
-        sourceLocationConsumer.pushSourceInfo(null)
-        accept(x.body)
-        sourceLocationConsumer.popSourceInfo()
+        withEmptySourceMapping {
+            accept(x.body)
+        }
     }
 
     override fun visitConditional(x: JsConditional) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                // Associativity: for the then and else branches, it is safe to insert
+                // another
+                // ternary expression, but if the test expression is a ternary, it should
+                // get parentheses around it.
+                printPair(x, x.testExpression, true)
+                space()
 
-        // Associativity: for the then and else branches, it is safe to insert
-        // another
-        // ternary expression, but if the test expression is a ternary, it should
-        // get parentheses around it.
-        printPair(x, x.testExpression, true)
-        space()
+                p.print('?')
+                space()
 
-        p.print('?')
-        space()
+                printPair(x, x.thenExpression)
+                space()
 
-        printPair(x, x.thenExpression)
-        space()
+                colon()
+                space()
 
-        colon()
-        space()
-
-        printPair(x, x.elseExpression)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+                printPair(x, x.elseExpression)
+            }
+        }
     }
 
     override fun visitDebugger(x: JsDebugger) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.DEBUGGER)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.DEBUGGER)
+            }
+        }
     }
 
     override fun visitDefault(x: JsDefault) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.DEFAULT)
-        colon()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.DEFAULT)
+                colon()
+            }
+        }
 
         newline()
 
-        sourceLocationConsumer.pushSourceInfo(null)
-        printSwitchMemberStatements(x)
-        sourceLocationConsumer.popSourceInfo()
+        withEmptySourceMapping {
+            printSwitchMemberStatements(x)
+        }
     }
 
     override fun visitWhile(x: JsWhile) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                _while()
+                space()
 
-        _while()
-        space()
-
-        leftParen()
-        accept(x.getCondition())
-        rightParen()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+                leftParen()
+                accept(x.getCondition())
+                rightParen()
+            }
+        }
 
         val body = materialize(x.body)
-
-        nestedPush(body)
-        sourceLocationConsumer.pushSourceInfo(null)
-        accept(body)
-        sourceLocationConsumer.popSourceInfo()
-        nestedPop(body)
+        withNestedIndent(body) {
+            withEmptySourceMapping {
+                accept(body)
+            }
+        }
     }
 
     override fun visitDoWhile(x: JsDoWhile) {
-        sourceLocationConsumer.pushSourceInfo(null)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.DO)
-
         val body = materialize(x.body)
 
-        nestedPush(body)
-        accept(body)
-        sourceLocationConsumer.popSourceInfo()
+        // The body is printed with no source mapping, and the closing `while (...)` is mapped to the condition.
+        // Note that the indentation of the body is closed only after the mapping scope is left, as in the Java implementation.
+        withEmptySourceMapping {
+            printCommentsBeforeNode(x)
+
+            p.print(Chars.DO)
+
+            nestedPush(body)
+            accept(body)
+        }
         nestedPop(body)
 
-        pushSourceInfo(x.condition.source)
-        if (state.needsSemicolon) {
-            semi()
-            newline()
-        } else {
+        withSourceMapping(x.condition.source) {
+            if (state.needsSemicolon) {
+                semi()
+                newline()
+            } else {
+                space()
+                state.needsSemicolon = true
+            }
+
+            _while()
             space()
-            state.needsSemicolon = true
+
+            leftParen()
+            accept(x.getCondition())
+            rightParen()
+
+            printCommentsAfterNode(x)
         }
-
-        _while()
-        space()
-
-        leftParen()
-        accept(x.getCondition())
-        rightParen()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitEmpty(x: JsEmpty) {}
@@ -382,67 +356,59 @@ open class JsToStringGenerationVisitor(
             else -> x.source
         }
 
-        pushSourceInfo(source)
-        printCommentsBeforeNode(x)
-
-        val surroundWithParentheses = JsFirstExpressionVisitor.exec(x)
-        if (surroundWithParentheses) {
-            leftParen()
+        withSourceMapping(source) {
+            withComments(x) {
+                JsFirstExpressionVisitor.exec(x).let { withParentheses ->
+                    if (withParentheses) leftParen()
+                    accept(x.expression)
+                    if (withParentheses) rightParen()
+                }
+            }
         }
-        accept(x.expression)
-        if (surroundWithParentheses) {
-            rightParen()
-        }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitFor(x: JsFor) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                _for()
+                space()
+                leftParen()
 
-        _for()
-        space()
-        leftParen()
+                // The init expressions or var decl. Only one of them may be present at a time.
+                when {
+                    x.initExpression != null -> accept(x.initExpression)
+                    x.initVars != null -> accept(x.initVars)
+                }
 
-        // The init expressions or var decl. Only one of them may be present at a time.
-        when {
-            x.initExpression != null -> accept(x.initExpression)
-            x.initVars != null -> accept(x.initVars)
+                semi()
+
+                // The loop test.
+                x.condition?.let {
+                    space()
+                    accept(it)
+                }
+
+                semi()
+
+                // The incr expression.
+                x.incrementExpression?.let {
+                    space()
+                    accept(it)
+                }
+
+                rightParen()
+            }
         }
-
-        semi()
-
-        // The loop test.
-        x.condition?.let {
-            space()
-            accept(it)
-        }
-
-        semi()
-
-        // The incr expression.
-        x.incrementExpression?.let {
-            space()
-            accept(it)
-        }
-
-        rightParen()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
 
         val body = materialize(x.body)
-
-        nestedPush(body)
-        // Unlike the other loops, a `for` may have no body at all, e.g. `for (;;);`.
-        if (body != null) {
-            sourceLocationConsumer.pushSourceInfo(null)
-            accept(body)
-            sourceLocationConsumer.popSourceInfo()
+        withNestedIndent(body) {
+            // Unlike the other loops, a `for` may have no body at all, e.g. `for (;;);`.
+            if (body != null) {
+                withEmptySourceMapping {
+                    accept(body)
+                }
+            }
         }
-        nestedPop(body)
     }
 
     override fun visitForIn(x: JsForIn) {
@@ -454,73 +420,67 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitFunction(x: JsFunction) {
-        printCommentsBeforeNode(x)
-
-        when {
-            x.isEs6Arrow -> printEs6Arrow(x)
-            else -> printRegularFunction(x)
+        withComments(x) {
+            when {
+                x.isEs6Arrow -> printEs6Arrow(x)
+                else -> printRegularFunction(x)
+            }
         }
-
-        printCommentsAfterNode(x)
     }
 
     override fun visitClass(x: JsClass) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.CLASS)
+                if (x.name != null) {
+                    space()
+                    nameOf(x)
+                }
 
-        p.print(Chars.CLASS)
-        if (x.name != null) {
-            space()
-            nameOf(x)
-        }
+                if (x.baseClass != null) {
+                    space()
+                    p.print(Chars.EXTENDS)
+                    space()
+                    accept(x.baseClass)
+                }
 
-        if (x.baseClass != null) {
-            space()
-            p.print(Chars.EXTENDS)
-            space()
-            accept(x.baseClass)
-        }
+                space()
 
-        space()
+                if (x.constructor == null && x.members.isEmpty()) {
+                    p.print("{}")
+                    newline()
+                } else {
+                    blockOpen()
 
-        if (x.constructor == null && x.members.isEmpty()) {
-            p.print("{}")
-            newline()
-        } else {
-            blockOpen()
+                    x.constructor?.let {
+                        it.name = null
+                        printConstructor(it)
+                        newline()
+                    }
 
-            x.constructor?.let {
-                it.name = null
-                printConstructor(it)
-                newline()
+                    for (m in x.members) {
+                        printClassMember(m)
+                        newline()
+                    }
+
+                    blockClose()
+                }
+                state.needsSemicolon = false
             }
-
-            for (m in x.members) {
-                printClassMember(m)
-                newline()
-            }
-
-            blockClose()
         }
-        state.needsSemicolon = false
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitIf(x: JsIf) {
-        printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
+        withComments(x) {
+            withSourceMapping(x.source) {
+                _if()
+                space()
 
-        _if()
-        space()
-
-        leftParen()
-        accept(x.ifExpression)
-        rightParen()
-
-        popSourceInfo()
-        printCommentsAfterNode(x)
+                leftParen()
+                accept(x.ifExpression)
+                rightParen()
+            }
+        }
 
         var thenStmt = x.thenStatement
         val elseStatement = x.elseStatement
@@ -532,17 +492,15 @@ open class JsToStringGenerationVisitor(
             thenStmt = JsBlock(thenStmt)
         }
 
-        nestedPush(thenStmt)
+        withNestedIndent(thenStmt) {
+            if (thenStmt is JsBlock && elseStatement != null) {
+                state.needsLineBreakAfterBlock = false
+            }
 
-        if (thenStmt is JsBlock && elseStatement != null) {
-            state.needsLineBreakAfterBlock = false
+            withEmptySourceMapping {
+                accept(materialize(thenStmt))
+            }
         }
-
-        sourceLocationConsumer.pushSourceInfo(null)
-        accept(materialize(thenStmt))
-        sourceLocationConsumer.popSourceInfo()
-
-        nestedPop(thenStmt)
 
         if (elseStatement != null) {
             if (state.needsSemicolon) {
@@ -560,9 +518,9 @@ open class JsToStringGenerationVisitor(
                 space()
             }
 
-            sourceLocationConsumer.pushSourceInfo(null)
-            accept(materialize(elseStatement))
-            sourceLocationConsumer.popSourceInfo()
+            withEmptySourceMapping {
+                accept(materialize(elseStatement))
+            }
 
             if (elseStatement !is JsIf) {
                 nestedPop(elseStatement)
@@ -571,17 +529,15 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitInvocation(invocation: JsInvocation) {
-        pushSourceInfo(invocation.source)
-        printCommentsBeforeNode(invocation)
+        withSourceMapping(invocation.source) {
+            withComments(invocation) {
+                printPair(invocation, invocation.qualifier)
 
-        printPair(invocation, invocation.qualifier)
-
-        leftParen()
-        printExpressions(invocation.arguments)
-        rightParen()
-
-        printCommentsAfterNode(invocation)
-        popSourceInfo()
+                leftParen()
+                printExpressions(invocation.arguments)
+                rightParen()
+            }
+        }
     }
 
     override fun visitLabel(x: JsLabel) {
@@ -589,225 +545,204 @@ open class JsToStringGenerationVisitor(
         colon()
         space()
 
-        sourceLocationConsumer.pushSourceInfo(null)
-        accept(x.statement)
-        sourceLocationConsumer.popSourceInfo()
+        withEmptySourceMapping {
+            accept(x.statement)
+        }
     }
 
     override fun visitNameRef(nameRef: JsNameRef) {
-        printCommentsBeforeNode(nameRef)
-        p.maybeIndent()
+        withComments(nameRef) {
+            p.maybeIndent()
 
-        val qualifier = nameRef.qualifier
-        if (qualifier != null) {
-            val enclose = when (qualifier) {
-                // "42.foo" is not allowed, but "(42).foo" is. A BigInt literal needs no parens:
-                // the `n` suffix terminates it, so `1n.foo` already parses as a member access.
-                is JsIntLiteral, is JsDoubleLiteral -> true
-                else -> parenCalc(nameRef, qualifier, false)
+            val qualifier = nameRef.qualifier
+            if (qualifier != null) {
+                val enclose = when (qualifier) {
+                    // "42.foo" is not allowed, but "(42).foo" is. A BigInt literal needs no parens:
+                    // the `n` suffix terminates it, so `1n.foo` already parses as a member access.
+                    is JsIntLiteral, is JsDoubleLiteral -> true
+                    else -> parenCalc(nameRef, qualifier, false)
+                }
+
+                if (enclose) leftParen()
+                accept(qualifier)
+                if (enclose) rightParen()
+
+                p.print('.')
             }
 
-            if (enclose) leftParen()
-            accept(qualifier)
-            if (enclose) rightParen()
-
-            p.print('.')
+            withSourceMapping(nameRef.source) {
+                p.print(nameRef.ident)
+            }
         }
-
-        pushSourceInfo(nameRef.source)
-        p.print(nameRef.ident)
-        popSourceInfo()
-
-        printCommentsAfterNode(nameRef)
     }
 
     override fun visitNew(x: JsNew) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.NEW)
+                space()
 
-        p.print(Chars.NEW)
-        space()
+                val needsParens = JsConstructExpressionVisitor.exec(x.constructorExpression)
+                if (needsParens) leftParen()
+                accept(x.constructorExpression)
+                if (needsParens) rightParen()
 
-        val needsParens = JsConstructExpressionVisitor.exec(x.constructorExpression)
-        if (needsParens) leftParen()
-        accept(x.constructorExpression)
-        if (needsParens) rightParen()
+                leftParen()
+                printExpressions(x.getArguments())
+                rightParen()
 
-        leftParen()
-        printExpressions(x.getArguments())
-        rightParen()
-
-        // When using class expressions as construction expressions, they reset this from default 'true' to 'false',
-        // which produces invalid code due to the next statements ambiguity.
-        state.needsSemicolon = true
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+                // When using class expressions as construction expressions, they reset this from default 'true' to 'false',
+                // which produces invalid code due to the next statements ambiguity.
+                state.needsSemicolon = true
+            }
+        }
     }
 
     override fun visitNull(x: JsNullLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.NULL)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.NULL)
+            }
+        }
     }
 
     override fun visitInt(x: JsIntLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(x.value)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(x.value)
+            }
+        }
     }
 
     override fun visitDouble(x: JsDoubleLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(x.value)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(x.value)
+            }
+        }
     }
 
     override fun visitBigInt(x: JsBigIntLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(x.value.toString())
-        p.print('n')
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(x.value.toString())
+                p.print('n')
+            }
+        }
     }
 
     override fun visitObjectLiteral(x: JsObjectLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print('{')
 
-        p.print('{')
-
-        if (x.isMultiline) {
-            p.indentIn()
-        }
-
-        var notFirst = false
-        for (item in x.propertyInitializers) {
-            if (notFirst) {
-                p.print(',')
-            }
-
-            when {
-                x.isMultiline -> newline()
-                notFirst -> space()
-            }
-
-            notFirst = true
-
-            pushSourceInfo(item.source)
-
-            when (item) {
-                is JsPropertyInitializer.Spread -> {
-                    ellipsis()
-                    accept(item.expression)
+                if (x.isMultiline) {
+                    p.indentIn()
                 }
-                is JsPropertyInitializer.KeyValue -> {
-                    when (val labelExpr = item.labelExpr) {
-                        is JsStringLiteral -> {
-                            val value = labelExpr.value
-                            if (value.isValidES5Identifier()) {
-                                val escaped = if (RESERVED_KEYWORDS.contains(value)) "'$value'" else value
-                                accept(JsNameRef(escaped).withMetadataFrom(labelExpr))
-                            } else
-                                accept(labelExpr)
-                        }
-                        is JsNumberLiteral -> accept(labelExpr)
-                        else -> {
-                            leftSquare()
-                            accept(labelExpr)
-                            rightSquare()
-                        }
+
+                var notFirst = false
+                for (item in x.propertyInitializers) {
+                    if (notFirst) {
+                        p.print(',')
                     }
 
-                    colon()
-                    space()
+                    when {
+                        x.isMultiline -> newline()
+                        notFirst -> space()
+                    }
 
-                    parenPushIfCommaExpression(item.valueExpr).let { wasEnclosed ->
-                        accept(item.valueExpr)
-                        if (wasEnclosed) rightParen()
+                    notFirst = true
+
+                    withSourceMapping(item.source) {
+                        when (item) {
+                            is JsPropertyInitializer.Spread -> {
+                                ellipsis()
+                                accept(item.expression)
+                            }
+                            is JsPropertyInitializer.KeyValue -> {
+                                when (val labelExpr = item.labelExpr) {
+                                    is JsStringLiteral -> {
+                                        val value = labelExpr.value
+                                        if (value.isValidES5Identifier()) {
+                                            val escaped = if (RESERVED_KEYWORDS.contains(value)) "'$value'" else value
+                                            accept(JsNameRef(escaped).withMetadataFrom(labelExpr))
+                                        } else
+                                            accept(labelExpr)
+                                    }
+                                    is JsNumberLiteral -> accept(labelExpr)
+                                    else -> {
+                                        leftSquare()
+                                        accept(labelExpr)
+                                        rightSquare()
+                                    }
+                                }
+
+                                colon()
+                                space()
+
+                                parenPushIfCommaExpression(item.valueExpr).let { wasEnclosed ->
+                                    accept(item.valueExpr)
+                                    if (wasEnclosed) rightParen()
+                                }
+                            }
+                        }
                     }
                 }
+
+                if (x.isMultiline) {
+                    p.indentOut()
+                    newline()
+                }
+
+                p.print('}')
             }
-
-            popSourceInfo()
         }
-
-        if (x.isMultiline) {
-            p.indentOut()
-            newline()
-        }
-
-        p.print('}')
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitParameter(x: JsParameter) {
-        pushSourceInfo(x.source)
+        withSourceMapping(x.source) {
+            if (x.isRest) ellipsis()
 
-        if (x.isRest) ellipsis()
+            accept(x.declarable)
 
-        accept(x.declarable)
+            x.defaultValue?.let {
+                space()
+                assignment()
+                space()
 
-        x.defaultValue?.let {
-            space()
-            assignment()
-            space()
-
-            parenPushIfCommaExpression(it).let { wasEnclosed ->
-                accept(it)
-                if (wasEnclosed) {
-                    rightParen()
+                parenPushIfCommaExpression(it).let { wasEnclosed ->
+                    accept(it)
+                    if (wasEnclosed) {
+                        rightParen()
+                    }
                 }
             }
         }
-
-        popSourceInfo()
     }
 
     override fun visitPostfixOperation(x: JsPostfixOperation) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        // unary operators always associate correctly (I think)
-        printPair(x, x.arg)
-        p.print(x.operator.symbol)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
+        withSourceMapping(x.source) {
+            withComments(x) {
+                // unary operators always associate correctly (I think)
+                printPair(x, x.arg)
+                p.print(x.operator.symbol)
+            }
+        }
     }
 
     override fun visitPrefixOperation(x: JsPrefixOperation) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(x.operator.symbol)
 
-        p.print(x.operator.symbol)
+                if (spaceCalc(x.operator, x.arg)) {
+                    space()
+                }
 
-        if (spaceCalc(x.operator, x.arg)) {
-            space()
+                // unary operators always associate correctly (I think)
+                printPair(x, x.arg)
+            }
         }
-
-        // unary operators always associate correctly (I think)
-        printPair(x, x.arg)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitProgram(x: JsProgram) {
@@ -815,203 +750,176 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitRegExp(x: JsRegExp) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
+        withSourceMapping(x.source) {
+            withComments(x) {
+                slash()
+                p.print(x.pattern)
+                slash()
 
-        slash()
-        p.print(x.pattern)
-        slash()
-
-        x.flags?.let {
-            p.print(it)
-        }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitReturn(x: JsReturn) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.RETURN)
-        x.expression?.let {
-            space()
-            accept(it)
-        }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitString(x: JsStringLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(javaScriptString(x.value))
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitTemplateString(x: JsTemplateStringLiteral) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        accept(x.tag)
-
-        p.print('`')
-        for (segment in x.segments) {
-            accept(segment)
-        }
-        p.print('`')
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral) {
-        pushSourceInfo(x.source)
-
-        p.print(escapeTemplateStringSegment(x.value))
-
-        popSourceInfo()
-    }
-
-    override fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation) {
-        pushSourceInfo(x.source)
-
-        p.print($$"${")
-        accept(x.expression)
-        p.print('}')
-
-        popSourceInfo()
-    }
-
-    override fun visit(x: JsSwitch) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.SWITCH)
-        space()
-
-        leftParen()
-        accept(x.expression)
-        rightParen()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-
-        sourceLocationConsumer.pushSourceInfo(null)
-        space()
-
-        blockOpen()
-        acceptList(x.cases)
-        blockClose()
-        sourceLocationConsumer.popSourceInfo()
-    }
-
-    override fun visitThis(x: JsThisRef) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.THIS)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitSuper(x: JsSuperRef) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.SUPER)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitThrow(x: JsThrow) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        p.print(Chars.THROW)
-        space()
-
-        accept(x.expression)
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-    }
-
-    override fun visitTry(x: JsTry) {
-        printCommentsBeforeNode(x)
-        pushSourceInfo(x.source)
-
-        p.print(Chars.TRY)
-        space()
-        state.needsLineBreakAfterBlock = false
-
-        popSourceInfo()
-
-        accept(x.tryBlock)
-        acceptList(x.catches)
-
-        val finallyBlock = x.finallyBlock
-        if (finallyBlock != null) {
-            p.print(Chars.FINALLY)
-            space()
-
-            accept(finallyBlock)
-        }
-
-        printCommentsAfterNode(x)
-    }
-
-    override fun visit(x: JsVars.JsVar) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        accept(x.declarable)
-        x.initExpression?.let {
-            space()
-            assignment()
-            space()
-
-            parenPushIfCommaExpression(it).let { isEnclosed ->
-                accept(it)
-                if (isEnclosed) {
-                    rightParen()
+                x.flags?.let {
+                    p.print(it)
                 }
             }
         }
+    }
 
-        printCommentsAfterNode(x)
-        popSourceInfo()
+    override fun visitReturn(x: JsReturn) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.RETURN)
+                x.expression?.let {
+                    space()
+                    accept(it)
+                }
+            }
+        }
+    }
+
+    override fun visitString(x: JsStringLiteral) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(javaScriptString(x.value))
+            }
+        }
+    }
+
+    override fun visitTemplateString(x: JsTemplateStringLiteral) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                accept(x.tag)
+
+                p.print('`')
+                for (segment in x.segments) {
+                    accept(segment)
+                }
+                p.print('`')
+            }
+        }
+    }
+
+    override fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral) {
+        withSourceMapping(x.source) {
+            p.print(escapeTemplateStringSegment(x.value))
+        }
+    }
+
+    override fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation) {
+        withSourceMapping(x.source) {
+            p.print($$"${")
+            accept(x.expression)
+            p.print('}')
+        }
+    }
+
+    override fun visit(x: JsSwitch) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.SWITCH)
+                space()
+
+                leftParen()
+                accept(x.expression)
+                rightParen()
+            }
+        }
+
+        withEmptySourceMapping {
+            space()
+
+            blockOpen()
+            acceptList(x.cases)
+            blockClose()
+        }
+    }
+
+    override fun visitThis(x: JsThisRef) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.THIS)
+            }
+        }
+    }
+
+    override fun visitSuper(x: JsSuperRef) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.SUPER)
+            }
+        }
+    }
+
+    override fun visitThrow(x: JsThrow) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                p.print(Chars.THROW)
+                space()
+
+                accept(x.expression)
+            }
+        }
+    }
+
+    override fun visitTry(x: JsTry) {
+        withComments(x) {
+            withSourceMapping(x.source) {
+                p.print(Chars.TRY)
+                space()
+                state.needsLineBreakAfterBlock = false
+            }
+
+            accept(x.tryBlock)
+            acceptList(x.catches)
+
+            val finallyBlock = x.finallyBlock
+            if (finallyBlock != null) {
+                p.print(Chars.FINALLY)
+                space()
+
+                accept(finallyBlock)
+            }
+        }
+    }
+
+    override fun visit(x: JsVars.JsVar) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                accept(x.declarable)
+                x.initExpression?.let {
+                    space()
+                    assignment()
+                    space()
+
+                    parenPushIfCommaExpression(it).let { isEnclosed ->
+                        accept(it)
+                        if (isEnclosed) {
+                            rightParen()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun visitVars(x: JsVars) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        varModifier(x.variant)
-        space()
-
-        var notFirst = false
-        for (`var` in x) {
-            if (notFirst) {
-                if (x.isMultiline) newline()
-                p.print(',')
+        withSourceMapping(x.source) {
+            withComments(x) {
+                varModifier(x.variant)
                 space()
-            } else {
-                notFirst = true
+
+                var notFirst = false
+                for (`var` in x) {
+                    if (notFirst) {
+                        if (x.isMultiline) newline()
+                        p.print(',')
+                        space()
+                    } else {
+                        notFirst = true
+                    }
+
+                    accept(`var`)
+                }
             }
-
-            accept(`var`)
         }
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
     }
 
     override fun visitSingleLineComment(comment: JsSingleLineComment) {
@@ -1196,53 +1104,49 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitArrayPatternDeclarable(pattern: JsDeclarable.ArrayPattern) {
-        pushSourceInfo(pattern.source)
-        printCommentsBeforeNode(pattern)
+        withSourceMapping(pattern.source) {
+            withComments(pattern) {
+                p.print('[')
 
-        p.print('[')
+                var notFirst = false
+                for (item in pattern.elements) {
+                    notFirst = sepCommaSpace(notFirst)
 
-        var notFirst = false
-        for (item in pattern.elements) {
-            notFirst = sepCommaSpace(notFirst)
+                    if (item is JsBindingArrayItem.Hole) {
+                        continue
+                    }
 
-            if (item is JsBindingArrayItem.Hole) {
-                continue
+                    val element = (item as JsBindingArrayItem.Element).element
+                    visitBindingElement(element)
+                }
+
+                p.print(']')
             }
-
-            val element = (item as JsBindingArrayItem.Element).element
-            visitBindingElement(element)
         }
-
-        p.print(']')
-
-        printCommentsAfterNode(pattern)
-        popSourceInfo()
     }
 
     override fun visitObjectPatternDeclarable(pattern: JsDeclarable.ObjectPattern) {
-        pushSourceInfo(pattern.source)
-        printCommentsBeforeNode(pattern)
+        withSourceMapping(pattern.source) {
+            withComments(pattern) {
+                p.print('{')
+                var notFirst = false
+                for (property in pattern.properties) {
+                    notFirst = sepCommaSpace(notFirst)
 
-        p.print('{')
-        var notFirst = false
-        for (property in pattern.properties) {
-            notFirst = sepCommaSpace(notFirst)
+                    val propertyName = property.propertyName
+                    val element = property.element
 
-            val propertyName = property.propertyName
-            val element = property.element
+                    if (propertyName != null) {
+                        propertyName.accept(this)
+                        colon()
+                        space()
+                    }
 
-            if (propertyName != null) {
-                propertyName.accept(this)
-                colon()
-                space()
+                    visitBindingElement(element)
+                }
+                p.print('}')
             }
-
-            visitBindingElement(element)
         }
-        p.print('}')
-
-        printCommentsAfterNode(pattern)
-        popSourceInfo()
     }
 
     override fun visitBindingElement(element: JsBindingElement) {
@@ -1264,6 +1168,18 @@ open class JsToStringGenerationVisitor(
     //
     // Sourcemap info producing
 
+    private inline fun withSourceMapping(location: JsLocationWithSource?, f: () -> Unit) {
+        pushSourceInfo(location)
+        f()
+        popSourceInfo()
+    }
+
+    private inline fun withEmptySourceMapping(f: () -> Unit) {
+        sourceLocationConsumer.pushSourceInfo(null)
+        f()
+        sourceLocationConsumer.popSourceInfo()
+    }
+
     private fun pushSourceInfo(location: JsLocationWithSource?) {
         p.maybeIndent()
         sourceInfoStack.add(location)
@@ -1278,6 +1194,12 @@ open class JsToStringGenerationVisitor(
         }
     }
 
+    private inline fun withDeclaration(declaration: JsFunction, f: () -> Unit) {
+        pushDeclaration(declaration)
+        f()
+        popDeclaration()
+    }
+
     private fun pushDeclaration(declaration: JsFunction) {
         sourceLocationConsumer.pushDeclarationInfo(declaration.source)
     }
@@ -1288,6 +1210,12 @@ open class JsToStringGenerationVisitor(
 
     //
     // Preserving comments
+
+    private inline fun withComments(node: JsNode, f: () -> Unit) {
+        printCommentsBeforeNode(node)
+        f()
+        printCommentsAfterNode(node)
+    }
 
     private fun printCommentsBeforeNode(x: JsNode) {
         printComments(x.commentsBeforeNode, false)
@@ -1347,79 +1275,71 @@ open class JsToStringGenerationVisitor(
 
     // constructor <declaration>
     private fun printConstructor(x: JsFunction) {
-        pushDeclaration(x)
-        pushSourceInfo(x.source)
-
-        p.print(Chars.CONSTRUCTOR)
-        printFunction(x)
-
-        popSourceInfo()
-        popDeclaration()
+        withDeclaration(x) {
+            withSourceMapping(x.source) {
+                p.print(Chars.CONSTRUCTOR)
+                printFunction(x)
+            }
+        }
     }
 
     // [static?] [get|set?] <declaration>
     private fun printClassMember(x: JsFunction) {
-        pushDeclaration(x)
-        pushSourceInfo(x.source)
+        withDeclaration(x) {
+            withSourceMapping(x.source) {
+                if (x.isStatic) {
+                    p.print(Chars.STATIC)
+                    space()
+                }
 
-        if (x.isStatic) {
-            p.print(Chars.STATIC)
-            space()
-        }
+                when {
+                    x.isGetter -> {
+                        p.print(Chars.GET)
+                        space()
+                    }
+                    x.isSetter -> {
+                        p.print(Chars.SET)
+                        space()
+                    }
+                }
 
-        when {
-            x.isGetter -> {
-                p.print(Chars.GET)
-                space()
+                printFunction(x)
             }
-            x.isSetter -> {
-                p.print(Chars.SET)
-                space()
-            }
         }
-
-        printFunction(x)
-
-        popSourceInfo()
-        popDeclaration()
     }
 
     // (<params>) => { <body> }
     private fun printEs6Arrow(x: JsFunction) {
-        pushSourceInfo(x.source)
-
-        printFunctionParameterList(x.getParameters())
-        space()
-        arrow()
-        space()
-        val body = x.body
-        when (val firstStatement = body.statements.getOrNull(0)) {
-            is JsReturn if body.statements.size == 1 ->
-                firstStatement.expression.accept(this)
-            else -> {
-                state.needsLineBreakAfterBlock = false
-                sourceLocationConsumer.pushSourceInfo(null)
-                printJsBlock(body, true, x.body.source)
-                sourceLocationConsumer.popSourceInfo()
+        withSourceMapping(x.source) {
+            printFunctionParameterList(x.getParameters())
+            space()
+            arrow()
+            space()
+            val body = x.body
+            when (val firstStatement = body.statements.getOrNull(0)) {
+                is JsReturn if body.statements.size == 1 ->
+                    firstStatement.expression.accept(this)
+                else -> {
+                    state.needsLineBreakAfterBlock = false
+                    withEmptySourceMapping {
+                        printJsBlock(body, true, x.body.source)
+                    }
+                }
             }
         }
-
-        popSourceInfo()
 
         state.needsSemicolon = true
     }
 
     // function <declaration>
     private fun printRegularFunction(x: JsFunction) {
-        pushDeclaration(x)
-        pushSourceInfo(x.source)
-
-        p.print(Chars.FUNCTION)
-        space()
-        printFunction(x)
-
-        popSourceInfo()
-        popDeclaration()
+        withDeclaration(x) {
+            withSourceMapping(x.source) {
+                p.print(Chars.FUNCTION)
+                space()
+                printFunction(x)
+            }
+        }
     }
 
     // [name|computedName](<params>) { <body> }
@@ -1441,9 +1361,9 @@ open class JsToStringGenerationVisitor(
 
         state.needsLineBreakAfterBlock = false
 
-        sourceLocationConsumer.pushSourceInfo(null)
-        printJsBlock(x.body, true, x.body.source)
-        sourceLocationConsumer.popSourceInfo()
+        withEmptySourceMapping {
+            printJsBlock(x.body, true, x.body.source)
+        }
 
         state.needsSemicolon = true
     }
@@ -1451,15 +1371,15 @@ open class JsToStringGenerationVisitor(
     private fun printFunctionParameterList(parameters: MutableList<JsParameter>) {
         leftParen()
 
-        sourceLocationConsumer.pushSourceInfo(null)
-        var notFirst = false
-        for (param in parameters) {
-            notFirst = sepCommaSpace(notFirst)
-            printCommentsBeforeNode(param)
-            accept(param)
-            printCommentsAfterNode(param)
+        withEmptySourceMapping {
+            var notFirst = false
+            for (param in parameters) {
+                notFirst = sepCommaSpace(notFirst)
+                printCommentsBeforeNode(param)
+                accept(param)
+                printCommentsAfterNode(param)
+            }
         }
-        sourceLocationConsumer.popSourceInfo()
 
         rightParen()
     }
@@ -1592,47 +1512,44 @@ open class JsToStringGenerationVisitor(
     }
 
     private fun printIterableLoop(x: JsIterableLoop, separatorChars: CharArray) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        _for()
-        space()
-        leftParen()
-
-        if (x.bindingDeclarable != null && x.bindingVarVariant != null) {
-            varModifier(x.bindingVarVariant)
-            space()
-            accept(x.bindingDeclarable)
-
-            if (x.bindingExpression != null) {
+        withSourceMapping(x.source) {
+            withComments(x) {
+                _for()
                 space()
-                assignment()
+                leftParen()
+
+                if (x.bindingDeclarable != null && x.bindingVarVariant != null) {
+                    varModifier(x.bindingVarVariant)
+                    space()
+                    accept(x.bindingDeclarable)
+
+                    if (x.bindingExpression != null) {
+                        space()
+                        assignment()
+                        space()
+                        accept(x.bindingExpression)
+                    }
+                } else {
+                    // Just a name ref.
+                    //
+                    accept(x.bindingExpression)
+                }
+
                 space()
-                accept(x.bindingExpression)
+                p.print(separatorChars)
+                space()
+                accept(x.iterableExpression)
+
+                rightParen()
             }
-        } else {
-            // Just a name ref.
-            //
-            accept(x.bindingExpression)
         }
 
-        space()
-        p.print(separatorChars)
-        space()
-        accept(x.iterableExpression)
-
-        rightParen()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-
         val body = materialize(x.body)
-
-        nestedPush(body)
-        sourceLocationConsumer.pushSourceInfo(null)
-        accept(body)
-        sourceLocationConsumer.popSourceInfo()
-        nestedPop(body)
+        withNestedIndent(body) {
+            withEmptySourceMapping {
+                accept(body)
+            }
+        }
     }
 
     private fun isIfWithoutElse(statement: JsStatement): Boolean {
@@ -1645,6 +1562,12 @@ open class JsToStringGenerationVisitor(
         }
 
         return false
+    }
+
+    private inline fun withNestedIndent(statement: JsStatement?, f: () -> Unit) {
+        nestedPush(statement)
+        f()
+        nestedPop(statement)
     }
 
     private fun nestedPush(statement: JsStatement?) {
@@ -1833,6 +1756,13 @@ open class JsToStringGenerationVisitor(
             }
         }
 
+        private fun escapeTemplateStringSegment(str: String): String {
+            return buildString {
+                appendEscapedString(str, '`', Chars.TEMPLATE_ESCAPE_MAPPING)
+                appendEscapeClosingTags()
+            }
+        }
+
         private fun StringBuilder.appendEscapedString(str: String, quoteChar: Char, escapeMapping: Map<Char, Int>) {
             for (char in str) {
                 if (char == quoteChar) {
@@ -1870,13 +1800,6 @@ open class JsToStringGenerationVisitor(
                     append(Chars.HEX_DIGITS[digit])
                     shift -= 4
                 }
-            }
-        }
-
-        private fun escapeTemplateStringSegment(str: String): String {
-            return buildString {
-                appendEscapedString(str, '`', Chars.TEMPLATE_ESCAPE_MAPPING)
-                appendEscapeClosingTags()
             }
         }
 
