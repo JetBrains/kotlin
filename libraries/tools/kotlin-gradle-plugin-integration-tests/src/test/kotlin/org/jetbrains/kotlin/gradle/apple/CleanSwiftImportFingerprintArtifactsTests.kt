@@ -42,7 +42,6 @@ import kotlin.io.path.writeText
 @SwiftPMImportGradlePluginTests
 class CleanSwiftImportFingerprintArtifactsTests : KGPBaseTest() {
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `clean removes artifacts shared by projects with the same fingerprints`(version: GradleVersion) {
         project("empty", version) {
@@ -63,7 +62,6 @@ class CleanSwiftImportFingerprintArtifactsTests : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `subproject clean removes only artifacts matching its fingerprints`(version: GradleVersion) {
         project("empty", version) {
@@ -87,7 +85,6 @@ class CleanSwiftImportFingerprintArtifactsTests : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `root clean removes artifacts matching all subproject fingerprints`(version: GradleVersion) {
         project("empty", version) {

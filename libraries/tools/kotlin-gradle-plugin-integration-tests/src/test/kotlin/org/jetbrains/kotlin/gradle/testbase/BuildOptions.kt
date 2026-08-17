@@ -110,7 +110,7 @@ data class BuildOptions(
         /** Explicitly/forcefully enable Configuration Cache */
         ENABLED,
 
-        /** AUTO means unspecified by default, but enabled on macOS with Gradle >= 8.0 */
+        /** AUTO means unspecified by default but enabled on macOS */
         AUTO,
 
         /** Gradle, depending on its version, will decide whether to enable Configuration Cache */
@@ -119,7 +119,7 @@ data class BuildOptions(
         fun toBooleanFlag(gradleVersion: GradleVersion): Boolean? = when (this) {
             DISABLED -> false
             ENABLED -> true
-            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_0)) true else null
+            AUTO -> if (HostManager.hostIsMac) true else null
             UNSPECIFIED -> null
         }
     }
@@ -472,14 +472,6 @@ fun BuildOptions.withBundledKotlinNative() = copy(
         version = null
     )
 )
-
-fun BuildOptions.disableConfigurationCacheForGradle7(
-    currentGradleVersion: GradleVersion,
-) = if (currentGradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-    copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
-} else {
-    this
-}
 
 fun BuildOptions.disableKlibsCrossCompilation() = copy(
     nativeOptions = nativeOptions.copy(enableKlibsCrossCompilation = false)

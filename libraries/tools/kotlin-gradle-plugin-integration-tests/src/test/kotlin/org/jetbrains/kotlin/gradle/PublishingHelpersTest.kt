@@ -229,7 +229,7 @@ class PublishingHelpersTest : KGPBaseTest() {
     @GradleTest
     @Disabled("For manual testing only: needs external GnuPG program and key setup (replace keyName and passphrase in test)")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
+        additionalVersions = [TestVersions.Gradle.G_8_1],
     )
     @DisplayName("Signing check works with configuration cache and GPG signatory")
     internal fun signingCheckWorksWithConfigurationCacheAndGpg(gradleVersion: GradleVersion) {

@@ -42,7 +42,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
         ":${lowerCamelCaseName(FingerprintXcodeBuild.TASK_NAME, "iphonesimulator")}"
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `local Swift package source content change does not invalidate prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = createPackageDependency()
@@ -77,7 +76,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `adding local Swift package source file does not invalidate prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = createPackageDependency()
@@ -112,7 +110,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `deleting local Swift package source file does not invalidate prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = createPackageDependency()
@@ -150,7 +147,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `changing SwiftPM build settings invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         val useAlternateDeploymentTarget = "useAlternateDeploymentTarget"
         val packageDependencyDirName = "PackageDependency"
@@ -193,7 +189,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `changing remote SwiftPM dependency version invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         val useAlternateVersion = "useAlternateVersion"
         val repoName = "RemotePackage"
@@ -266,7 +261,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `changing selected SwiftPM product invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         val useAlternateProduct = "useAlternateProduct"
         val repoName = "RemotePackage"
@@ -342,7 +336,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun `changing package resolved synchronization identifier invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         val useAlternateIdentifier = "useAlternateIdentifier"
         val packageDependencyDirName = "PackageDependency"
@@ -383,7 +376,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `various different dependency versions with same lock identifier generate same fingerprints`(version: GradleVersion) {
         val useMapsDifferentVersions = "useMapsDifferentVersions"
@@ -457,7 +449,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `different dependency sets generate different fingerprints`(version: GradleVersion) {
         val useMapsRepo = "useMaps"
