@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompanionExtensionReceiver
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,25 +26,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-
-internal enum class ScopeKind {
-    TOP,
-    CLASS,
-    PACKAGE
-}
-
-internal enum class ElementKind {
-    FUNCTION,
-    PROPERTY,
-    TYPE
-}
-
-internal enum class DefinitionKind {
-    C_HEADER_DECLARATION,
-    C_HEADER_STRUCT,
-    C_SOURCE_DECLARATION,
-    C_SOURCE_STRUCT
-}
 
 @OptIn(K1Deprecation::class)
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
@@ -88,74 +68,22 @@ private fun functionImplName(descriptor: DeclarationDescriptor, default: String,
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
 }
 
-internal data class SignatureElement(val name: String, val type: KotlinType)
-
-internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
-    val elements = mutableListOf<ExportedElement>()
-    val scopes = mutableListOf<ExportedElementScope>()
-    private val scopeNames = mutableSetOf<String>()
-    private val scopeNamesMap = mutableMapOf<Pair<DeclarationDescriptor, Boolean>, String>()
-
-    override fun toString(): String {
-        return "$kind: $name ${elements.joinToString(", ")} ${scopes.joinToString("\n")}"
-    }
-
-    // collects names of inner scopes to make sure function<->scope name clashes would be detected, and functions would be mangled with "_" suffix
-    fun collectInnerScopeName(innerScope: ExportedElementScope) {
-        scopeNames += innerScope.name
-    }
-
-    fun scopeUniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
-        scopeNamesMap[descriptor to shortName]?.apply { return this }
-        var computedName = when (descriptor) {
-            is ConstructorDescriptor -> descriptor.constructedClass.fqNameSafe.shortName().asString()
-            is PropertyGetterDescriptor -> "get_${descriptor.correspondingProperty.name.asString()}"
-            is PropertySetterDescriptor -> "set_${descriptor.correspondingProperty.name.asString()}"
-            is FunctionDescriptor -> functionImplName(descriptor, descriptor.fqNameSafe.shortName().asString(), shortName)
-            else -> descriptor.fqNameSafe.shortName().asString()
-        }
-        while (scopeNames.contains(computedName) || cKeywords.contains(computedName)) {
-            computedName += "_"
-        }
-        scopeNames += computedName
-        scopeNamesMap[descriptor to shortName] = computedName
-        return computedName
-    }
-}
-
-internal sealed interface ExportedElement {
-    val kind: ElementKind
-    val scope: ExportedElementScope
-    val owner: CAdapterGenerator
-    val typeTranslator: CAdapterTypeTranslator
-    val isFunction: Boolean
-    val isTopLevelFunction: Boolean
-    val isConstructor: Boolean
-    val isClass: Boolean
-    val isEnumEntry: Boolean
-    val isSingletonObject: Boolean
-    val name: String
-    var cname: String
-    val cnameImpl: String
-    val irSymbol: IrSymbol
-    val classType: String
-    val enumEntryContainingType: String
-    fun addUsedTypes(set: MutableSet<KotlinType>) // TODO: replace KotlinType
-    fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement>
-    fun makeBridgeSignature(): List<String>
-}
+/** Descriptor-backed [ExportedDeclarationKey]; keys [ExportedElementScope]'s name cache by the descriptor. */
+private data class DescriptorNameKey(val descriptor: DeclarationDescriptor) : ExportedDeclarationKey
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExportedElementK1(
         override val kind: ElementKind,
         override val scope: ExportedElementScope,
         val declaration: DeclarationDescriptor,
-        override val owner: CAdapterGenerator,
-        override val typeTranslator: CAdapterTypeTranslator,
+        private val generator: CAdapterGenerator,
+        private val typeTranslator: CAdapterTypeTranslator,
 ) : ExportedElement {
     init {
         scope.elements.add(this)
     }
+
+    override val owner: CAdapterModelOwner get() = generator
 
     override val name: String
         get() = declaration.fqNameSafe.shortName().asString()
@@ -166,8 +94,16 @@ internal class ExportedElementK1(
         return "$kind: $name (aliased to ${if (::cname.isInitialized) cname else "<unknown>"})"
     }
 
-    fun uniqueName(descriptor: DeclarationDescriptor, shortName: Boolean) =
-            scope.scopeUniqueName(descriptor, shortName)
+    fun uniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
+        val baseName = when (descriptor) {
+            is ConstructorDescriptor -> descriptor.constructedClass.fqNameSafe.shortName().asString()
+            is PropertyGetterDescriptor -> "get_${descriptor.correspondingProperty.name.asString()}"
+            is PropertySetterDescriptor -> "set_${descriptor.correspondingProperty.name.asString()}"
+            is FunctionDescriptor -> functionImplName(descriptor, descriptor.fqNameSafe.shortName().asString(), shortName)
+            else -> descriptor.fqNameSafe.shortName().asString()
+        }
+        return scope.scopeUniqueName(DescriptorNameKey(descriptor), shortName, baseName)
+    }
 
     override val isFunction = declaration is FunctionDescriptor
     override val isTopLevelFunction: Boolean
@@ -185,9 +121,9 @@ internal class ExportedElementK1(
     override val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
 
     override val irSymbol = when {
-        isFunction -> owner.symbolTable.referenceFunction(declaration as FunctionDescriptor)
-        isClass -> owner.symbolTable.descriptorExtension.referenceClass(declaration as ClassDescriptor)
-        isEnumEntry -> owner.symbolTable.descriptorExtension.referenceEnumEntry(declaration as ClassDescriptor)
+        isFunction -> generator.symbolTable.referenceFunction(declaration as FunctionDescriptor)
+        isClass -> generator.symbolTable.descriptorExtension.referenceClass(declaration as ClassDescriptor)
+        isEnumEntry -> generator.symbolTable.descriptorExtension.referenceEnumEntry(declaration as ClassDescriptor)
         else -> error("unexpected $kind element: $declaration")
     }
 
@@ -201,18 +137,18 @@ internal class ExportedElementK1(
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
             original is ConstructorDescriptor ->
-                SignatureElement(uniqueName(original, shortName), original.constructedClass.defaultType)
+                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.constructedClass.defaultType))
             else ->
-                SignatureElement(uniqueName(original, shortName), original.returnType!!)
+                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.returnType!!))
         }
 
         @OptIn(K1Deprecation::class)
-        val uniqueNames = owner.paramsToUniqueNames(original.explicitParameters)
+        val uniqueNames = generator.paramsToUniqueNames(original.explicitParameters)
 
         @OptIn(K1Deprecation::class)
         val params = ArrayList(original.explicitParameters
                 .filter { it.type.includeToSignature() }
-                .map { SignatureElement(uniqueNames[it]!!, it.type) })
+                .map { SignatureElement(uniqueNames[it]!!, typeTranslator.exportedType(it.type)) })
         return listOf(returned) + params
     }
 
@@ -257,12 +193,12 @@ internal class ExportedElementK1(
         else
             "${cname}_impl"
 
-    private fun addUsedType(type: KotlinType, set: MutableSet<KotlinType>) {
+    private fun addUsedType(type: KotlinType, set: MutableSet<CExportedType>) {
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
-        set.add(type)
+        set.add(typeTranslator.exportedType(type))
     }
 
-    override fun addUsedTypes(set: MutableSet<KotlinType>) {
+    override fun addUsedTypes(set: MutableSet<CExportedType>) {
         val descriptor = declaration
         when (descriptor) {
             is FunctionDescriptor -> {
@@ -276,7 +212,7 @@ internal class ExportedElementK1(
                 addUsedType(original.correspondingProperty.type, set)
             }
             is ClassDescriptor -> {
-                set += descriptor.defaultType
+                addUsedType(descriptor.defaultType, set)
             }
         }
     }
@@ -288,9 +224,9 @@ internal class ExportedElementK1(
 internal class CAdapterGenerator(
         private val context: LinkKlibsContext,
         private val typeTranslator: CAdapterTypeTranslator,
-) : DeclarationDescriptorVisitor<Boolean, Void?> {
+) : DeclarationDescriptorVisitor<Boolean, Void?>, CAdapterModelOwner {
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix = typeTranslator.prefix
+    override val prefix = typeTranslator.prefix
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
     internal val symbolTable get() = context.symbolTable!!
@@ -450,7 +386,7 @@ internal class CAdapterGenerator(
                 })
 
         moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
-        return CAdapterExportedElements(typeTranslator, scopes)
+        return CAdapterExportedElements(prefix, scopes)
     }
 
     private val simpleNameMapping = mapOf(
@@ -469,5 +405,5 @@ internal class CAdapterGenerator(
     }
 
     private var functionIndex = 0
-    fun nextFunctionIndex() = functionIndex++
+    override fun nextFunctionIndex() = functionIndex++
 }
