@@ -309,14 +309,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
             "hierarchical-mpp-multi-modules",
             gradleVersion
         ) {
-            if (!isWithJavaSupported) {
-                listOf(
-                    "bottom-mpp",
-                    "top-mpp",
-                ).forEach {
-                    subProject(it).buildGradle.replaceText("withJava()", "")
-                }
-            }
             build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
         }
     }
@@ -339,25 +331,18 @@ open class HierarchicalMppIT : KGPBaseTest() {
             projectName = "kt-31468-multiple-jvm-targets-with-java",
             gradleVersion = gradleVersion
         ) {
-            if (!isWithJavaSupported) {
-                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
-                    subProject(it).buildGradleKts.replaceText("withJava()", "")
-                }
-            }
-
-            val testClassesTaskName = if (isWithJavaSupported) "testClasses" else "jvmTestClasses"
+            val testClassesTaskName = "jvmTestClasses"
 
             build("assemble", testClassesTaskName, "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
                 assertTasksExecuted(
                     ":dependsOnPlainJvm:compileKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnPlainJvm:compileJava" else ":dependsOnPlainJvm:compileJvmMainJava",
+                    ":dependsOnPlainJvm:compileJvmMainJava",
                     ":dependsOnJvmWithJava:compileKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnJvmWithJava:compileJava" else ":dependsOnJvmWithJava:compileJvmMainJava",
-
+                    ":dependsOnJvmWithJava:compileJvmMainJava",
                     ":dependsOnPlainJvm:compileTestKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnPlainJvm:compileTestJava" else ":dependsOnPlainJvm:compileJvmTestJava",
+                    ":dependsOnPlainJvm:compileJvmTestJava",
                     ":dependsOnJvmWithJava:compileTestKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnJvmWithJava:compileTestJava" else ":dependsOnJvmWithJava:compileJvmTestJava",
+                    ":dependsOnJvmWithJava:compileJvmTestJava",
                 )
             }
         }

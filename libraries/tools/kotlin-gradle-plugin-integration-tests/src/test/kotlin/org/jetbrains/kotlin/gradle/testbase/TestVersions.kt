@@ -16,7 +16,6 @@ interface TestVersions {
     // Gradle nightly releases retention policy is 3 months
     object Gradle {
         const val G_7_4 = "7.4.2"
-        const val G_8_7 = "8.7"
         const val G_8_8 = "8.8"
         const val G_8_9 = "8.9"
         const val G_8_10 = "8.10.2"
@@ -53,8 +52,6 @@ interface TestVersions {
     }
 
     object AGP {
-        const val AGP_85 = "8.5.2"
-        const val AGP_86 = "8.6.1"
         const val AGP_87 = "8.7.2"
         const val AGP_88 = "8.8.2"
         const val AGP_89 = "8.9.3"
@@ -68,7 +65,7 @@ interface TestVersions {
         const val AGP_93 = "9.3.1"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
-        const val MIN_SUPPORTED = AGP_85 // AgpCompatibilityCheck.minimalSupportedAgpVersion
+        const val MIN_SUPPORTED = AGP_88 // AgpCompatibilityCheck.minimalSupportedAgpVersion
         const val MAX_SUPPORTED = AGP_93 // Update once the Gradle MAX_SUPPORTED version is bumped
     }
 
@@ -78,8 +75,6 @@ interface TestVersions {
         val maxSupportedGradleVersion: GradleVersion,
         val requiredJdkVersion: JavaVersion,
     ) {
-        AGP_85(AGP.AGP_85, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_86(AGP.AGP_86, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         AGP_87(AGP.AGP_87, GradleVersion.version(Gradle.G_8_9), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),

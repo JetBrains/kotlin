@@ -390,12 +390,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            if (!isWithJavaSupported) {
-                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
-                    subProject(it).buildGradleKts.replaceText("withJava()", "")
-                }
-            }
-
             subProject("lib").buildGradleKts.appendText(
                 """
                 |
@@ -425,12 +419,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 kotlin.jvm.target.validation.mode = error
                 """.trimIndent()
             )
-
-            if (!isWithJavaSupported) {
-                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
-                    subProject(it).buildGradleKts.replaceText("withJava()", "")
-                }
-            }
 
             subProject("lib").buildGradleKts.appendText(
                 """

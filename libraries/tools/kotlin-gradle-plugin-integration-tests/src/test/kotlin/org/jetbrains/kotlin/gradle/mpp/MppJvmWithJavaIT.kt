@@ -178,7 +178,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
                 "clean", "build", "run", "shadowJar",
                 buildOptions = buildOptions
                     .suppressDeprecationWarningsOn("KT-66542: withJava() produces deprecation warning") {
-                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14)
                     }
             ) {
                 val expectedMainClasses =

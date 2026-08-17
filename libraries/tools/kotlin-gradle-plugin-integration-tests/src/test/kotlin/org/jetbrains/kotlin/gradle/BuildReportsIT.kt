@@ -196,7 +196,6 @@ class BuildReportsIT : KGPBaseTest() {
                 arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
             else arrayOf(task)
 
-            if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             addCompilerArgs(freeCompilerArgs)
             build(*buildArguments) {
                 assertBuildReportPathIsPrinted()
@@ -213,7 +212,6 @@ class BuildReportsIT : KGPBaseTest() {
             val buildArguments = if (buildReportOutput == BuildReportType.JSON)
                 arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
             else arrayOf(task)
-            if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             addCompilerArgs(freeCompilerArgs)
             build(*buildArguments) {
                 assertBuildReportPathIsPrinted()
