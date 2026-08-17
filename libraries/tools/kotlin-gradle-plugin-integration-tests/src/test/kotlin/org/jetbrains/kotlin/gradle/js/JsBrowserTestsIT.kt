@@ -161,7 +161,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
 
     @GradleTest
     fun `smoke js browser test`(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project(
             "empty",
@@ -204,7 +204,8 @@ class JsBrowserTestsIT : KGPBaseTest() {
                                 assertTrue(42 == 0)
                             }
                         }
-                        """.trimIndent())
+                        """.trimIndent()
+                    )
                 }
             }
 
@@ -227,9 +228,13 @@ class JsBrowserTestsIT : KGPBaseTest() {
     @GradleTest
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
-        enabledOnCI = [OS.LINUX, OS.MAC])
+        enabledOnCI = [OS.LINUX, OS.MAC]
+    )
     fun `prints clear error message when a test times out`(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion = gradleVersion) {
+        project(
+            "empty", gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
