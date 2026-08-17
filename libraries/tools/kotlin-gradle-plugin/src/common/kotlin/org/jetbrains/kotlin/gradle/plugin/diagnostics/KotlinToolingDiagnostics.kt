@@ -2307,7 +2307,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object SourceSetsAccessInAndroidExtension : ToolingDiagnosticFactory(
-        WARNING,
+        ERROR,
         DiagnosticGroup.Kgp.Deprecation
     ) {
         operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {

@@ -345,7 +345,7 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
     }
 
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
-        @Deprecated("Use source sets provided by Android Gradle Plugin instead.")
+        @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
         get() {
             /**
              * Android Gradle Plugin calls it for configuration purposes
