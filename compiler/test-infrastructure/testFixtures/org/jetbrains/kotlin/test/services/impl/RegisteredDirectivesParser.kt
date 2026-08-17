@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.directives.model.*
 
 class RegisteredDirectivesParser(private val container: DirectivesContainer, private val assertions: Assertions) {
     companion object {
-        private val DIRECTIVE_PATTERN = Regex("""^//\s*([A-Z0-9_]+)(:[ \t]*(.*))? *$""")
+        private val DIRECTIVE_PATTERN = Regex("""^\s*//\s*([A-Z0-9_]+)(:[ \t]*(.*))? *$""")
         val SPACES_PATTERN = Regex("""[,]?[ \t]+""")
         private const val NAME_GROUP = 1
         private const val VALUES_GROUP = 3
