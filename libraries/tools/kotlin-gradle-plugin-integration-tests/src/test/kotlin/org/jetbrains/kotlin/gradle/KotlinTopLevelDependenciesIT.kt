@@ -30,7 +30,6 @@ import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
-@GradleTestVersions(additionalVersions = [MinSupportedGradleVersionWithDependencyCollectorsConst])
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions =
