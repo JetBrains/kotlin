@@ -5,9 +5,8 @@
 package markdown
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.model.DPackage
+import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.DocumentationNode
-import org.jetbrains.dokka.pages.ModulePageNode
 import kotlin.test.assertEquals
 
 abstract class KDocTest : BaseAbstractTest() {
@@ -29,8 +28,8 @@ abstract class KDocTest : BaseAbstractTest() {
             |class Test
         """.trimMargin()
 
-    private fun actualDocumentationNode(modulePageNode: ModulePageNode) =
-        (modulePageNode.documentables.firstOrNull()?.children?.first() as DPackage)
+    private fun actualDocumentationNode(module: DModule) =
+        module.packages.single()
             .classlikes.single()
             .documentation.values.single()
 
@@ -40,10 +39,10 @@ abstract class KDocTest : BaseAbstractTest() {
             interpolateKdoc(kdoc),
             configuration
         ) {
-            pagesGenerationStage = {
+            documentablesMergingStage = { module ->
                 assertEquals(
                     expectedDocumentationNode,
-                    actualDocumentationNode(it as ModulePageNode)
+                    actualDocumentationNode(module)
                 )
             }
         }

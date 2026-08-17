@@ -10,9 +10,6 @@ import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.Nullable
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
-import org.jetbrains.dokka.pages.ClasslikePageNode
-import org.jetbrains.dokka.pages.ContentPage
-import org.jetbrains.dokka.pages.MemberPageNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -152,7 +149,7 @@ class DRITest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            pagesGenerationStage = { module ->
+            documentablesMergingStage = { module ->
                 // DRI(//qux/Foo[TypeParam(bounds=[kotlin.Comparable[kotlin.Any?]]),*]#/PointingToFunctionOrClasslike/)
                 val expectedDRI = DRI(
                     "",
@@ -179,8 +176,7 @@ class DRITest : BaseAbstractTest() {
 
                 val driCount = module
                     .withDescendants()
-                    .filterIsInstance<ContentPage>()
-                    .sumBy { it.dri.count { dri -> dri == expectedDRI } }
+                    .count { it.dri == expectedDRI }
 
                 assertEquals(1, driCount)
             }
@@ -200,14 +196,13 @@ class DRITest : BaseAbstractTest() {
         """.trimMargin(),
             defaultConfiguration
         ) {
-            pagesGenerationStage = { module ->
-                val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
-                val classDocumentable = sampleClass.documentables.firstOrNull() as DClass
+            documentablesMergingStage = { module ->
+                val sampleClass = module.dfs { it.name == "Sample" } as DClass
 
-                assertEquals("example/Sample///PointingToDeclaration/", sampleClass.dri.first().toString())
+                assertEquals("example/Sample///PointingToDeclaration/", sampleClass.dri.toString())
                 assertEquals(
                     "example/Sample///PointingToGenericParameters(0)/",
-                    classDocumentable.generics.first().dri.toString()
+                    sampleClass.generics.first().dri.toString()
                 )
             }
         }
@@ -236,15 +231,14 @@ class DRITest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            pagesGenerationStage = { module ->
-                val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
-                val functionNode = sampleClass.children.first { it.name == "genericFun" } as MemberPageNode
-                val functionDocumentable = functionNode.documentables.firstOrNull() as DFunction
+            documentablesMergingStage = { module ->
+                val sampleClass = module.dfs { it.name == "Sample" } as DClass
+                val functionDocumentable = sampleClass.functions.first { it.name == "genericFun" }
                 val parameter = functionDocumentable.parameters.first()
 
                 assertEquals(
                     "example/Sample/genericFun/#kotlin.String/PointingToDeclaration/",
-                    functionNode.dri.first().toString()
+                    functionDocumentable.dri.toString()
                 )
 
                 assertEquals(1, functionDocumentable.parameters.size)
@@ -289,13 +283,12 @@ class DRITest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            pagesGenerationStage = { module ->
-                val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
-                val sampleInner = sampleClass.children.first { it.name == "SampleInner" } as ClasslikePageNode
-                val foo = sampleInner.children.first { it.name == "foo" } as MemberPageNode
-                val documentable = foo.documentables.firstOrNull() as DFunction
+            documentablesMergingStage = { module ->
+                val sampleClass = module.dfs { it.name == "Sample" } as DClass
+                val sampleInner = sampleClass.classlikes.first { it.name == "SampleInner" } as DClass
+                val documentable = sampleInner.functions.first { it.name == "foo" }
 
-                val generics = (sampleClass.documentables.firstOrNull() as WithGenerics).generics
+                val generics = sampleClass.generics
                 assertEquals(generics.first().dri.toString(), (documentable.type as TypeParameter).dri.toString())
                 assertEquals(0, documentable.generics.size)
             }
@@ -314,13 +307,12 @@ class DRITest : BaseAbstractTest() {
         """.trimMargin(),
             defaultConfiguration
         ) {
-            pagesGenerationStage = { module ->
-                val extensionFunction = module.dfs { it.name == "extensionFunction" } as MemberPageNode
-                val documentable = extensionFunction.documentables.firstOrNull() as DFunction
+            documentablesMergingStage = { module ->
+                val documentable = module.dfs { it.name == "extensionFunction" } as DFunction
 
                 assertEquals(
                     "example//extensionFunction/kotlin.collections.List[TypeParam(bounds=[kotlin.Any?])]#/PointingToDeclaration/",
-                    extensionFunction.dri.first().toString()
+                    documentable.dri.toString()
                 )
                 assertEquals(
                     DRI(
@@ -340,7 +332,7 @@ class DRITest : BaseAbstractTest() {
                             params = emptyList()
                         )
                     ),
-                    extensionFunction.dri.first()
+                    documentable.dri
                 )
                 assertEquals(1, documentable.generics.size)
                 assertEquals("T", documentable.generics.first().name)

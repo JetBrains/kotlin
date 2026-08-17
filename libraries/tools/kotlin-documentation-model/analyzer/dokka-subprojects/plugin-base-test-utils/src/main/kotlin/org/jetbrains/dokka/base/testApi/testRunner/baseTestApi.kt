@@ -9,7 +9,6 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaGenerator
 import org.jetbrains.dokka.base.generation.SingleModuleGeneration
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.testApi.logger.TestLogger
@@ -57,15 +56,6 @@ public class BaseDokkaTestGenerator(
                     singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
                 documentablesTransformationStage(transformedDocumentation)
 
-                val pages = singleModuleGeneration.createPages(transformedDocumentation)
-                pagesGenerationStage(pages)
-
-                val transformedPages = singleModuleGeneration.transformPages(pages)
-                pagesTransformationStage(transformedPages)
-
-                singleModuleGeneration.render(transformedPages)
-                renderingStage(transformedPages, context)
-
                 singleModuleGeneration.runPostActions()
 
                 singleModuleGeneration.reportAfterRendering()
@@ -83,19 +73,13 @@ public data class BaseTestMethods(
     val documentablesFirstTransformationStep: (List<DModule>) -> Unit,
     override val documentablesMergingStage: (DModule) -> Unit,
     override val documentablesTransformationStage: (DModule) -> Unit,
-    override val pagesGenerationStage: (RootPageNode) -> Unit,
-    override val pagesTransformationStage: (RootPageNode) -> Unit,
-    override val renderingStage: (RootPageNode, DokkaContext) -> Unit
-) : CoreTestMethods(
+ ) : CoreTestMethods(
     pluginsSetupStage,
     verificationStage,
     documentablesCreationStage,
     documentablesMergingStage,
     documentablesTransformationStage,
-    pagesGenerationStage,
-    pagesTransformationStage,
-    renderingStage,
-)
+  )
 
 public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     public var pluginsSetupStage: (DokkaContext) -> Unit = {}
@@ -104,9 +88,6 @@ public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     public var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
     public var documentablesMergingStage: (DModule) -> Unit = {}
     public var documentablesTransformationStage: (DModule) -> Unit = {}
-    public var pagesGenerationStage: (RootPageNode) -> Unit = {}
-    public var pagesTransformationStage: (RootPageNode) -> Unit = {}
-    public var renderingStage: (RootPageNode, DokkaContext) -> Unit = { _, _ -> }
 
     override fun build(): BaseTestMethods {
         return BaseTestMethods(
@@ -116,9 +97,6 @@ public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
             preMergeDocumentablesTransformationStage,
             documentablesMergingStage,
             documentablesTransformationStage,
-            pagesGenerationStage,
-            pagesTransformationStage,
-            renderingStage
         )
     }
 }

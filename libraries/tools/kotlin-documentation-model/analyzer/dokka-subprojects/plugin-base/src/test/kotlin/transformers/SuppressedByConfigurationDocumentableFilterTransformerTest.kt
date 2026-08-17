@@ -184,7 +184,6 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
     ) = PackageOptionsImpl(
         matchingRegex = matchingRegex,
         suppress = suppress,
-        includeNonPublic = true,
         documentedVisibilities = DokkaDefaults.documentedVisibilities,
         reportUndocumented = false,
         skipDeprecated = false

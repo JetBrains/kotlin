@@ -67,15 +67,9 @@ fun TestDokkaConfiguration.toDokkaConfiguration(projectDir: File): DokkaConfigur
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val outputDir: File
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val cacheRoot: File
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val offlineMode: Boolean
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val failOnWarning: Boolean
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
+            get() = TODO("Not yet implemented")
         override val modules: List<DokkaConfiguration.DokkaModuleDescription>
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val delayTemplateSubstitution: Boolean
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val suppressObviousFunctions: Boolean
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
@@ -153,9 +147,7 @@ private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfi
          * analysis (i.e starts throwing an exception), a corresponding
          * test property should be added along with the mapping.
          */
-        @Suppress("OVERRIDE_DEPRECATION")
-        override val includeNonPublic: Boolean
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
+
         override val reportUndocumented: Boolean
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val skipEmptyPackages: Boolean
@@ -164,15 +156,7 @@ private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfi
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val jdkVersion: Int
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val sourceLinks: Set<DokkaConfiguration.SourceLinkDefinition>
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val perPackageOptions: List<DokkaConfiguration.PackageOptions>
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val externalDocumentationLinks: Set<DokkaConfiguration.ExternalDocumentationLink>
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val noStdlibLink: Boolean
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
-        override val noJdkLink: Boolean
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val suppressedFiles: Set<File>
             get() = throw NotImplementedError("Not expected to be used by analysis modules")

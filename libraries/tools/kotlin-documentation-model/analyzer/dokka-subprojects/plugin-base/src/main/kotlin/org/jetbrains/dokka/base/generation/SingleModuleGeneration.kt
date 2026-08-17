@@ -10,11 +10,9 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.Timer
 import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.resolvers.shared.PackageList
 import org.jetbrains.dokka.generation.Generation
 import org.jetbrains.dokka.generation.exitGenerationGracefully
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.query
@@ -40,18 +38,7 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
             ?: exitGenerationGracefully("Nothing to document")
 
         report("Transforming documentation model after merging")
-        val transformedDocumentation = transformDocumentationModelAfterMerge(transformedDocumentationAfterMerge)
-
-        // Step 2: Generate pages & transform them (change internally)
-        report("Creating pages")
-        val pages = createPages(transformedDocumentation)
-
-        report("Transforming pages")
-        val transformedPages = transformPages(pages)
-
-        // Step 3: Rendering
-        report("Rendering")
-        render(transformedPages)
+        transformDocumentationModelAfterMerge(transformedDocumentationAfterMerge)
 
         report("Running post-actions")
         runPostActions()
@@ -88,16 +75,6 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
     public fun transformDocumentationModelAfterMerge(documentationModel: DModule): DModule =
         context[CoreExtensions.documentableTransformer].fold(documentationModel) { acc, t -> t(acc, context) }
 
-    public fun createPages(transformedDocumentation: DModule): RootPageNode =
-        context.single(CoreExtensions.documentableToPageTranslator).invoke(transformedDocumentation)
-
-    public fun transformPages(pages: RootPageNode): RootPageNode =
-        context[CoreExtensions.pageTransformer].fold(pages) { acc, t -> t(acc) }
-
-    public fun render(transformedPages: RootPageNode) {
-        context.single(CoreExtensions.renderer).render(transformedPages)
-    }
-
     public fun runPostActions() {
         context[CoreExtensions.postActions].forEach { it() }
     }
@@ -111,7 +88,6 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
                 context.logger.error("Failed to run ${it.javaClass.name}: ${e.message}")
             }
         }
-        PackageList.clearCache()
     }
 
     public fun validityCheck(context: DokkaContext) {

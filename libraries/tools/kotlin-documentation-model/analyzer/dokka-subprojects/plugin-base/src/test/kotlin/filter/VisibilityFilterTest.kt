@@ -4,6 +4,7 @@
 
 package filter
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
@@ -269,7 +270,6 @@ class VisibilityFilterTest : BaseAbstractTest() {
                         PackageOptionsImpl(
                             matchingRegex = "other",
                             documentedVisibilities = setOf(Visibility.PRIVATE),
-                            includeNonPublic = false,
                             reportUndocumented = false,
                             skipDeprecated = false,
                             suppress = false
@@ -310,7 +310,6 @@ class VisibilityFilterTest : BaseAbstractTest() {
                         PackageOptionsImpl(
                             matchingRegex = "example",
                             documentedVisibilities = setOf(Visibility.PRIVATE),
-                            includeNonPublic = false,
                             reportUndocumented = false,
                             skipDeprecated = false,
                             suppress = false
@@ -373,45 +372,10 @@ class VisibilityFilterTest : BaseAbstractTest() {
     }
 
     @Test
-    fun `should choose new documentedVisibilities over deprecated includeNonPublic`() {
-        @Suppress("DEPRECATION")
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    includeNonPublic = true
-                    documentedVisibilities = setOf(Visibility.INTERNAL)
-                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
-                }
-            }
-        }
-
-        testInline(
-            """
-            |/src/main/kotlin/basic/Test.kt
-            |package example
-            |
-            | internal fun internalFun() { }
-            | 
-            | private fun privateFun() { }
-            |
-        """.trimMargin(),
-            configuration
-        ) {
-            preMergeDocumentablesTransformationStage = {
-                val functions = it.first().packages.first().functions
-                assertEquals(1, functions.size)
-                assertEquals("internalFun", functions[0].name)
-            }
-        }
-    }
-
-    @Test
     fun `includeNonPublic - public function with false global`() {
-        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                 }
             }
@@ -439,11 +403,9 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private function with false global`() {
-        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                 }
             }
@@ -476,7 +438,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
-                    includeNonPublic = true
+                    documentedVisibilities = setOf(Visibility.PRIVATE)
                 }
             }
         }
@@ -503,11 +465,9 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `private setter with false global includeNonPublic`() {
-        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                 }
             }
@@ -540,15 +500,15 @@ class VisibilityFilterTest : BaseAbstractTest() {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
-                    includeNonPublic = false
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
                             "example",
                             true,
                             false,
                             false,
-                            false,
-                            DokkaDefaults.documentedVisibilities
+                            setOf(
+                                DokkaConfiguration.Visibility.PRIVATE,
+                            )
                         )
                     )
                 }
@@ -577,16 +537,19 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private function with true global false package`() {
-        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
-                    includeNonPublic = true
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PRIVATE,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                    )
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
                             "example",
-                            false,
                             false,
                             false,
                             false,
@@ -619,11 +582,15 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private typealias should be skipped`() {
-        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                        DokkaConfiguration.Visibility.INTERNAL,
+                    )
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                 }
             }
@@ -650,7 +617,12 @@ class VisibilityFilterTest : BaseAbstractTest() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                        DokkaConfiguration.Visibility.INTERNAL,
+                    )
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                 }
             }
@@ -679,7 +651,12 @@ class VisibilityFilterTest : BaseAbstractTest() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PRIVATE,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                    )
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                 }
             }
@@ -719,7 +696,13 @@ class VisibilityFilterTest : BaseAbstractTest() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = true
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PRIVATE,
+                        DokkaConfiguration.Visibility.INTERNAL,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                    )
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                     classpath = listOfNotNull(jvmStdlibPath)
                 }

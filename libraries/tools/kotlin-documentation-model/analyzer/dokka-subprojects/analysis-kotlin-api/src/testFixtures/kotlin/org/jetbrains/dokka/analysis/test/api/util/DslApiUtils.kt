@@ -4,6 +4,5 @@
 
 package org.jetbrains.dokka.analysis.test.api.util
 
-@DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 annotation class AnalysisTestDslMarker

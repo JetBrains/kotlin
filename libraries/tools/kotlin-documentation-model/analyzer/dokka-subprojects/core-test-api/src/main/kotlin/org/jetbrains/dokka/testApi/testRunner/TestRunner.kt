@@ -6,16 +6,13 @@ package org.jetbrains.dokka.testApi.testRunner
 
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaConfigurationImpl
-import org.jetbrains.dokka.ExternalDocumentationLinkImpl
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import testApi.testRunner.TestDokkaConfigurationBuilder
 import java.io.File
-import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.InvalidPathException
@@ -91,9 +88,6 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
                     sourceSet.copy(
                         sourceRoots = sourceSet.sourceRoots.map { file -> tempDir.resolve(file) }.toSet(),
                         suppressedFiles = sourceSet.suppressedFiles.map { file -> tempDir.resolve(file) }.toSet(),
-                        sourceLinks = sourceSet.sourceLinks.map {
-                            link -> link.copy(localDirectory = tempDir.resolve(link.localDirectory).absolutePath)
-                        }.toSet(),
                         includes = sourceSet.includes.map { file -> tempDir.resolve(file) }.toSet()
                     )
                 }
@@ -197,11 +191,6 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
         jvmStdlibPath
     }
 
-    protected val stdlibExternalDocumentationLink: ExternalDocumentationLinkImpl = ExternalDocumentationLinkImpl(
-        URL("https://kotlinlang.org/api/core/"),
-        URL("https://kotlinlang.org/api/core/package-list")
-    )
-
     public companion object {
         private val filePathRegex = Regex("""[\n^](\/[\w|\-]+)+(\.\w+)?\s*\n""")
     }
@@ -215,9 +204,6 @@ public open class CoreTestMethods(
     public open val documentablesCreationStage: (List<DModule>) -> Unit,
     public open val documentablesMergingStage: (DModule) -> Unit,
     public open val documentablesTransformationStage: (DModule) -> Unit,
-    public open val pagesGenerationStage: (RootPageNode) -> Unit,
-    public open val pagesTransformationStage: (RootPageNode) -> Unit,
-    public open val renderingStage: (RootPageNode, DokkaContext) -> Unit,
 ) : TestMethods
 
 public abstract class TestBuilder<M : TestMethods> {

@@ -12,9 +12,6 @@ import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
-import org.jetbrains.dokka.pages.ClasslikePageNode
-import org.jetbrains.dokka.pages.ContentDRILink
-import org.jetbrains.dokka.pages.MemberPageNode
 import utils.text
 import java.io.File
 import kotlin.test.Test
@@ -54,14 +51,14 @@ class LinkTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            renderingStage = { rootPageNode, _ ->
-                assertNotNull(
-                    (rootPageNode.children.single().children.single() as MemberPageNode)
-                        .content
-                        .dfs { node ->
-                            node is ContentDRILink &&
-                                    node.address.toString() == "parser//test/#java.lang.ClassLoader/PointingToDeclaration/"
-                        }
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    DRI(
+                        packageName = "java.lang",
+                        classNames = "ClassLoader",
+                        callable = Callable("clearAssertionStatus", null, emptyList())
+                    ),
+                    module.getLinkDRIFrom("test")
                 )
             }
         }
@@ -90,14 +87,14 @@ class LinkTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            renderingStage = { rootPageNode, _ ->
-                val root = rootPageNode.children.single().children.single() as ClasslikePageNode
-                val innerClass = root.children.first { it is ClasslikePageNode }
-                val foo = innerClass.children.first { it.name == "foo" } as MemberPageNode
-                val destinationDri = (root.documentables.firstOrNull() as WithGenerics).generics.first().dri.toString()
+            documentablesMergingStage = { module ->
+                val outer = module.dfs { it.name == "Outer" } as DClass
+                val inner = outer.classlikes.single { it.name == "Inner" } as DClass
+                val foo = inner.functions.single { it.name == "foo" }
 
-                assertEquals(destinationDri, "/Outer///PointingToGenericParameters(0)/")
-                assertNotNull(foo.content.dfs { it is ContentDRILink && it.address.toString() == destinationDri })
+                val destinationDri = outer.generics.first().dri
+                assertEquals("/Outer///PointingToGenericParameters(0)/", destinationDri.toString())
+                assertEquals(destinationDri, (foo.type as TypeParameter).dri)
             }
         }
     }

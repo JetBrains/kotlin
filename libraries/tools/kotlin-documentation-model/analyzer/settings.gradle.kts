@@ -67,11 +67,6 @@ plugins {
     id("dokkasettings")
 }
 
-includeBuild("dokka-integration-tests")
-includeBuild("dokka-runners/dokka-gradle-plugin")
-includeBuild("dokka-runners/runner-maven-plugin")
-includeBuild("dokka-runners/runner-cli")
-
 include(
     ":docs-developer",
 
@@ -81,23 +76,9 @@ include(
     ":dokka-subprojects:analysis-kotlin-symbols",
     ":dokka-subprojects:analysis-markdown-jb",
     ":dokka-subprojects:core",
-    ":dokka-subprojects:core-content-matcher-test-utils",
     ":dokka-subprojects:core-test-api",
-    ":dokka-subprojects:plugin-all-modules-page",
-    ":dokka-subprojects:plugin-android-documentation",
     ":dokka-subprojects:plugin-base",
-    ":dokka-subprojects:plugin-base-frontend",
     ":dokka-subprojects:plugin-base-test-utils",
-    ":dokka-subprojects:plugin-gfm",
-    ":dokka-subprojects:plugin-gfm-template-processing",
-    ":dokka-subprojects:plugin-javadoc",
-    ":dokka-subprojects:plugin-jekyll",
-    ":dokka-subprojects:plugin-jekyll-template-processing",
-    ":dokka-subprojects:plugin-kotlin-as-java",
-    ":dokka-subprojects:plugin-kotlin-playground-samples",
-    ":dokka-subprojects:plugin-mathjax",
-    ":dokka-subprojects:plugin-templating",
-    ":dokka-subprojects:plugin-versioning"
 )
 
 // This hack is required for included build support.
