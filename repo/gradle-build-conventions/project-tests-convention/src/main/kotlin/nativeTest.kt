@@ -258,7 +258,9 @@ private open class NativeArgsProvider @Inject constructor(
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
             "-D${KOTLIN_NATIVE_HOME.fullName}=${internalNativeHomeDir.get().absolutePath}",
-            "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
+            "-D${COMPILER_CLASSPATH.fullName}=${
+                compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }
+            }",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
             "-D${TEAMCITY.fullName}=$teamcity",
@@ -339,6 +341,7 @@ fun ProjectTestsExtension.nativeTestTask(
     compilerPluginDependencies: List<FileCollection> = emptyList(),
     allowParallelExecution: Boolean = true,
     customCompilerDist: TaskProvider<Sync>? = null,
+    maxHeapSize: Size = 3.GiB, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSize: Size = testDefaultMaxMetaspaceSize,
     allowUnsafe: Boolean = false,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
@@ -346,7 +349,7 @@ fun ProjectTestsExtension.nativeTestTask(
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    maxHeapSize = 3.GiB, // Extra heap space for Kotlin/Native compiler.
+    maxHeapSize = maxHeapSize, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSize = maxMetaspaceSize,
     // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
     // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
