@@ -338,6 +338,11 @@ fun Test.setupJsc() {
         classpath.from(jscRunnerExecutablePath)
         property.set("javascript.engine.path.JavaScriptCore")
     }
+
+    systemProperty(
+        "javascript.engine.JavaScriptCore.EnableOnWindows",
+        kotlinBuildProperties.booleanProperty("kotlin.enable.tests.jsc.on.windows").get().toString()
+    )
 }
 
 testsJar {}
