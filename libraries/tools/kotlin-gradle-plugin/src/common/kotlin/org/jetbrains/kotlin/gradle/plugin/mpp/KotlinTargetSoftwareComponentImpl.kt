@@ -36,6 +36,42 @@ import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.collections.forEach
 
+internal fun Project.publishConfiguration(adhocComponent: AdhocComponentWithVariants, kotlinUsageContext: KotlinUsageContext) {
+    val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
+    val publishedConfiguration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
+        setInvisibleIfSupported()
+        if (project.kotlinPropertiesProvider.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
+            filterOutNonResolvableDependenciesForStandardKmpResolution(project, kotlinUsageContext)
+        } else {
+            extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
+        }
+
+        launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+            artifacts.addAll(kotlinUsageContext.artifacts)
+
+            // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
+            // So far I don't know the reason why it appears only on the second call to `keySet()`
+            // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
+            kotlinUsageContext.attributes.keySet()
+            kotlinUsageContext.copyAttributesTo(
+                project.providers,
+                dest = this@maybeCreateDependencyScope
+            )
+            kotlinUsageContext.configurePublishedConfiguration(this@maybeCreateDependencyScope)
+        }
+    }
+    adhocComponent.addVariantsFromConfiguration(publishedConfiguration) { configurationVariantDetails ->
+        val mavenScope = kotlinUsageContext.mavenScope
+        if (mavenScope != null) {
+            val mavenScopeString = when (mavenScope) {
+                KotlinUsageContext.MavenScope.COMPILE -> "compile"
+                KotlinUsageContext.MavenScope.RUNTIME -> "runtime"
+            }
+            configurationVariantDetails.mapToMavenScope(mavenScopeString)
+        }
+    }
+}
+
 internal fun KotlinTargetSoftwareComponent(
     target: AbstractKotlinTarget,
     kotlinComponent: KotlinTargetComponent,
@@ -48,35 +84,7 @@ internal fun KotlinTargetSoftwareComponent(
         kotlinComponent.internal.usages.forEach { kotlinUsageContext ->
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
             val project: Project = target.project
-            val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
-            val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
-                setInvisibleIfSupported()
-                if (project.kotlinPropertiesProvider.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
-                    filterOutNonResolvableDependenciesForStandardKmpResolution(project, kotlinUsageContext)
-                } else {
-                    extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
-                }
-                artifacts.addAll(kotlinUsageContext.artifacts)
-                // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
-                // So far I don't know the reason why it appears only on the second call to `keySet()`
-                // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
-                kotlinUsageContext.attributes.keySet()
-                kotlinUsageContext.copyAttributesTo(
-                    project.providers,
-                    dest = this
-                )
-            }
-
-            adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
-                val mavenScope = kotlinUsageContext.mavenScope
-                if (mavenScope != null) {
-                    val mavenScopeString = when (mavenScope) {
-                        KotlinUsageContext.MavenScope.COMPILE -> "compile"
-                        KotlinUsageContext.MavenScope.RUNTIME -> "runtime"
-                    }
-                    configurationVariantDetails.mapToMavenScope(mavenScopeString)
-                }
-            }
+            project.publishConfiguration(adhocVariant, kotlinUsageContext)
         }
     }
 

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.karAssembleTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.defaultKotlinUsageContextMaybeReplacedWithKar
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_CLASSIFIER
@@ -28,13 +29,18 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 // Use KotlinMultiplatformExtension to make sure this usage context is only creatable in MPP
 internal fun AbstractKotlinTarget.setUpResourcesVariant(
     compilation: KotlinCompilation<*>,
+    componentName: String,
 ): DefaultKotlinUsageContext? {
     if (project.multiplatformExtensionOrNull == null || !project.kotlinPropertiesProvider.mppResourcesPublication) return null
 
     var targetRegistersResourcesForPublication = false
-    val resourcesVariant = DefaultKotlinUsageContext(
+    val resourcesVariant = project.defaultKotlinUsageContextMaybeReplacedWithKar(
+        isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) isStoredInKotlinArchive else null,
+        requiresPlatformComponentCompatibilityCapability = if (this is KotlinTargetWithKotlinArchiveSupport) requiresPlatformComponentCompatibilityCapability else null,
         compilation = compilation,
+        mavenScope = null,
         dependencyConfigurationName = resourcesElementsConfigurationName,
+        componentName = componentName,
         includeIntoProjectStructureMetadata = false,
         publishOnlyIf = {
             targetRegistersResourcesForPublication

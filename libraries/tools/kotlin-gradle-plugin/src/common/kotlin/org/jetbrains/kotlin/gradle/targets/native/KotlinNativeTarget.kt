@@ -43,6 +43,11 @@ abstract class KotlinNativeTarget @Inject constructor(
         project.multiplatformExtension.publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE }
 
     @InternalKotlinGradlePluginApi
+    override val isPublishedInSeparateComponent: Provider<Boolean> = isStoredInKotlinArchive.map { isStored -> !isStored }
+    @InternalKotlinGradlePluginApi
+    override val requiresPlatformComponentCompatibilityCapability: Provider<Boolean> = isStoredInKotlinArchive
+
+    @InternalKotlinGradlePluginApi
     override val platformNameInKotlinArchive: String
         get() = konanTarget.presetName
 
@@ -73,7 +78,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         // NB: another usage context for the host-specific metadata may be added to this set below
-        val mutableUsageContexts = createUsageContexts(mainCompilation).toMutableSet()
+        val mutableUsageContexts = createPlatformCompilationsUsageContexts(targetName, mainCompilation).toMutableSet()
 
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
             val hostSpecificSourceSets = getHostSpecificSourceSets(project)
@@ -101,7 +106,8 @@ abstract class KotlinNativeTarget @Inject constructor(
 
         mutableUsageContexts.addIfNotNull(
             setUpResourcesVariant(
-                mainCompilation
+                compilation = mainCompilation,
+                componentName = targetName,
             )
         )
 
@@ -163,22 +169,21 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
     konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
-private suspend fun <T> getHostSpecificElements(
-    fragments: Iterable<T>,
-    isNativeShared: suspend (T) -> Boolean,
-    getKonanTargets: suspend (T) -> Set<KonanTarget>,
-): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
-
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
-    return getHostSpecificElements(
-        project.kotlinExtension.awaitSourceSets(),
-        isNativeShared = { sourceSet -> sourceSet.isNativeSourceSet.await() },
-        getKonanTargets = { sourceSet ->
-            sourceSet.internal.awaitPlatformCompilations()
-                .filterIsInstance<KotlinNativeCompilation>()
-                .mapTo(mutableSetOf()) { it.konanTarget }
+    return project.kotlinExtension.awaitSourceSets().filterTo(mutableSetOf()) {
+        if (!it.isNativeSourceSet.await()) {
+            return@filterTo false
         }
-    )
+
+        val nativeCompilations = it.internal.awaitPlatformCompilations()
+            .filterIsInstance<KotlinNativeCompilation>()
+
+        if (nativeCompilations.any { compilation -> compilation.target.isStoredInKotlinArchive.get() }) {
+            return@filterTo false
+        }
+
+        isHostSpecificKonanTargetsSet(nativeCompilations.map { it.konanTarget }.toSet())
+    }
 }
 
 /**

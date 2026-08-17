@@ -8,14 +8,23 @@ import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
+import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.addOutgoingKarArtifactTo
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.karPackTask
+
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -64,13 +73,13 @@ abstract class AbstractKotlinTarget(
 
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
-
         val componentName =
             if (project.kotlinExtension is KotlinMultiplatformExtension)
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
+
+        val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        val usageContexts = createPlatformCompilationsUsageContexts(componentName, mainCompilation).toMutableSet()
 
         usageContexts.addIfNotNull(
             createSourcesJarAndUsageContextIfPublishable(
@@ -90,7 +99,12 @@ abstract class AbstractKotlinTarget(
      * Returns, potentially not configured (e.g. without some usages), Gradle SoftwareComponent's for this target
      */
     override val components: Set<KotlinTargetSoftwareComponent> by lazy {
-        kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
+        // TODO: Defer this read until after the DSL is finalised when this provider becomes user-configurable.
+        if (this is KotlinTargetWithKotlinArchiveSupport && !isPublishedInSeparateComponent.get()) {
+            emptySet()
+        } else {
+            kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
+        }
     }
 
     protected open fun createKotlinVariant(
@@ -114,7 +128,8 @@ abstract class AbstractKotlinTarget(
         return result
     }
 
-    internal open fun createUsageContexts(
+    internal open fun createPlatformCompilationsUsageContexts(
+        componentName: String,
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
         return listOfNotNull(
@@ -124,10 +139,13 @@ abstract class AbstractKotlinTarget(
                 producingCompilation is KotlinCompilationToRunnableFiles
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
-            DefaultKotlinUsageContext(
-                producingCompilation,
-                mavenScope,
-                dependenciesConfigurationName
+            project.defaultKotlinUsageContextMaybeReplacedWithKar(
+                isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) { isStoredInKotlinArchive } else null,
+                requiresPlatformComponentCompatibilityCapability = if (this is KotlinTargetWithKotlinArchiveSupport) { requiresPlatformComponentCompatibilityCapability } else null,
+                compilation = producingCompilation,
+                mavenScope = mavenScope,
+                dependencyConfigurationName = dependenciesConfigurationName,
+                componentName = componentName,
             )
         }
     }
@@ -160,7 +178,13 @@ abstract class AbstractKotlinTarget(
             overrideConfigurationAttributes = overrideConfigurationAttributes,
             mavenScope = mavenScope,
             includeIntoProjectStructureMetadata = false,
-            publishOnlyIf = { isSourcesPublishable }
+            publishOnlyIf = {
+                if (this is KotlinTargetWithKotlinArchiveSupport) {
+                    isSourcesPublishable && isPublishedInSeparateComponent.get()
+                } else {
+                    isSourcesPublishable
+                }
+            }
         )
     }
 
@@ -184,3 +208,51 @@ abstract class AbstractKotlinTarget(
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
 
+internal fun Project.defaultKotlinUsageContextMaybeReplacedWithKar(
+    isStoredInKotlinArchive: Provider<Boolean>?,
+    requiresPlatformComponentCompatibilityCapability: Provider<Boolean>?,
+    compilation: KotlinCompilation<*>,
+    mavenScope: KotlinUsageContext.MavenScope?,
+    dependencyConfigurationName: String,
+    componentName: String?,
+    includeIntoProjectStructureMetadata: Boolean = true,
+    publishOnlyIf: DefaultKotlinUsageContext.PublishOnlyIf = DefaultKotlinUsageContext.PublishOnlyIf { true },
+): DefaultKotlinUsageContext {
+    val platformComponentCapabilityIds: Provider<Set<ModuleVersionIdentifier>>? = requiresPlatformComponentCompatibilityCapability?.map {
+        if (it) {
+            require(componentName != null)
+            val rootCoordinates = multiplatformExtension.rootSoftwareComponent.coordinates
+            setOf(
+                rootCoordinates,
+                DefaultModuleVersionIdentifier.newId(
+                    /* group = */ rootCoordinates.group,
+                    /* name = */ dashSeparatedName(rootCoordinates.name, componentName.toLowerCaseAsciiOnly()),
+                    /* version = */ rootCoordinates.version
+                ),
+            )
+        } else {
+            null
+        }
+    }
+    val overrideConfigurationArtifacts: Provider<Set<PublishArtifact>>? = isStoredInKotlinArchive?.map { if (it) emptySet<PublishArtifact>() else null }
+    val karTaskProvider = karPackTask
+    return DefaultKotlinUsageContext(
+        compilation = compilation,
+        mavenScope = mavenScope,
+        dependencyConfigurationName = dependencyConfigurationName,
+        includeIntoProjectStructureMetadata = includeIntoProjectStructureMetadata,
+        publishOnlyIf = publishOnlyIf,
+        overrideConfigurationArtifacts = overrideConfigurationArtifacts,
+        configurePublishedConfiguration = {
+            if (isStoredInKotlinArchive?.orNull == true) {
+                addOutgoingKarArtifactTo(karTaskProvider)
+            }
+            for (capability in platformComponentCapabilityIds?.orNull.orEmpty()) {
+                // TODO: why we even call this code for unpublished modules?
+                if (capability.group.isNotBlank()) {
+                    outgoing.capability("${capability.group}:${capability.name}:${capability.version}")
+                }
+            }
+        }
+    )
+}

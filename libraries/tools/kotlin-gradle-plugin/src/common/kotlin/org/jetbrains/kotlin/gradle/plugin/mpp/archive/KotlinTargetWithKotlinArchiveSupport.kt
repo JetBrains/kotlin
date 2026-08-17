@@ -10,5 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasProject
 
 internal interface KotlinTargetWithKotlinArchiveSupport : HasProject {
     val isStoredInKotlinArchive: Provider<Boolean>
+    val isPublishedInSeparateComponent: Provider<Boolean>
+    val requiresPlatformComponentCompatibilityCapability: Provider<Boolean>
     val platformNameInKotlinArchive: String
 }

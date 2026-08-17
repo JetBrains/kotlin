@@ -265,9 +265,8 @@ internal constructor(
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
         KotlinSoftwareComponentWithCoordinatesAndPublication(
             project,
-            "kotlin",
             targets,
-            publishing.adhocSoftwareComponent
+            publishing.adhocSoftwareComponent,
         )
     }
 

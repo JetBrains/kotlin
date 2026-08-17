@@ -67,6 +67,10 @@ internal constructor(
     @InternalKotlinGradlePluginApi
     override val isStoredInKotlinArchive: Provider<Boolean> =
         project.multiplatformExtension.publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE }
+    @InternalKotlinGradlePluginApi
+    override val isPublishedInSeparateComponent: Provider<Boolean> = isStoredInKotlinArchive.map { isStored -> !isStored }
+    @InternalKotlinGradlePluginApi
+    override val requiresPlatformComponentCompatibilityCapability: Provider<Boolean> = isStoredInKotlinArchive
 
     @InternalKotlinGradlePluginApi
     override val platformNameInKotlinArchive: String
@@ -95,13 +99,13 @@ internal constructor(
         internal set
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
-        val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
-
         val componentName =
             if (project.kotlinExtension is KotlinMultiplatformExtension)
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
+
+        val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
+        val usageContexts = createPlatformCompilationsUsageContexts(componentName, mainCompilation).toMutableSet()
 
         usageContexts.addIfNotNull(
             createSourcesJarAndUsageContextIfPublishable(
@@ -113,7 +117,8 @@ internal constructor(
 
         usageContexts.addIfNotNull(
             setUpResourcesVariant(
-                mainCompilation
+                compilation = mainCompilation,
+                componentName = componentName,
             )
         )
 

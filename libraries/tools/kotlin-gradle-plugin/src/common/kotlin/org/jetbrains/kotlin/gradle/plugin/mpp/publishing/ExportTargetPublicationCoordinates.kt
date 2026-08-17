@@ -65,7 +65,6 @@ private suspend fun Project.exportForPomDependenciesRewriter(target: KotlinTarge
     project.kotlinPluginLifecycle.await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
 
     val rootComponent = multiplatformExtension.rootSoftwareComponent
-    if (rootComponent !is ComponentWithCoordinates) return
 
     val projectDataSharingService = project.kotlinSecondaryVariantsDataSharing
     for (targetComponent in target.internal.kotlinComponents) {

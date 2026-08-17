@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.mpp.publication.ENABLE_KAR_PUBLICATION
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import java.io.File
@@ -30,11 +31,15 @@ fun KGPBaseTest.resourcesProducerProject(
     gradleVersion: GradleVersion,
     providedJdk: JdkVersions.ProvidedJdk? = null,
     androidVersion: String? = null,
+    enableKarPublication: Boolean = false,
 ) = project(
     "multiplatformResources/publication",
     gradleVersion,
     buildJdk = providedJdk?.location,
-    buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+    buildOptions = defaultBuildOptions.copy(
+        androidVersion = androidVersion,
+        freeArgs = defaultBuildOptions.freeArgs + if (enableKarPublication) listOf(ENABLE_KAR_PUBLICATION) else emptyList(),
+    ),
 ) {
     addKgpToBuildScriptCompilationClasspath()
     androidVersion?.let { addAgpToBuildScriptCompilationClasspath(it) }
