@@ -6,6 +6,6 @@ Kotlin to JS compiler performance report
       DYNAMIC PHASES        $UINT>>$ ms
     IR SERIALIZATION        $UINT>>$ ms
         KLIB WRITING        $UINT>>$ ms
-GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
-GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
+GC time for G1 Old Generation is $UINT$ ms, $UINT$ collections
+GC time for G1 Young Generation is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms
