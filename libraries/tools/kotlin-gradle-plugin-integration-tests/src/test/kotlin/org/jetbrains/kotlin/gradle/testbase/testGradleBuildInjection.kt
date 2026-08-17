@@ -24,7 +24,6 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -86,17 +85,10 @@ class OnBuildCompletionSerializingInjection<Return : Any>(
                 ObjectOutputStream(it).writeObject(returnValue)
             }
         }
-        if (GradleVersion.current() < GradleVersion.version("8.1")) {
-            @Suppress("DEPRECATION")
-            target.gradle.buildFinished {
-                serializeOutput()
-            }
-        } else {
-            target.serviceOf<FlowScope>().always(
-                ExecuteOnBuildFinish::class.java
-            ) {
-                it.parameters.onBuildFinish.set(serializeOutput)
-            }
+        target.serviceOf<FlowScope>().always(
+            ExecuteOnBuildFinish::class.java
+        ) {
+            it.parameters.onBuildFinish.set(serializeOutput)
         }
     }
 }
@@ -145,18 +137,10 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
             }
         }
 
-        // Catch the errors caused directly by the build failure
-        if (GradleVersion.current() < GradleVersion.version("8.1")) {
-            @Suppress("DEPRECATION")
-            target.gradle.buildFinished {
-                serializeOutput(it.failure)
-            }
-        } else {
-            val result = target.serviceOf<FlowProviders>().buildWorkResult
-            target.serviceOf<FlowScope>().always(CatchBuildFailure::class.java) {
-                it.parameters.onBuildFinish.set(serializeOutput)
-                it.parameters.buildWorkResult.set(result)
-            }
+        val result = target.serviceOf<FlowProviders>().buildWorkResult
+        target.serviceOf<FlowScope>().always(CatchBuildFailure::class.java) {
+            it.parameters.onBuildFinish.set(serializeOutput)
+            it.parameters.buildWorkResult.set(result)
         }
     }
 

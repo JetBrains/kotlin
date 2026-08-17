@@ -29,25 +29,13 @@ fun GradleProject.prepareConsumerProject(
     dependencies: List<Scenario.Project>,
     localRepoDir: Path,
 ) {
-    // prepend with local repository prevent unnecessary network calls
-    if (consumer.gradleVersion < GradleVersion.version("8.1")) {
-        buildGradleKts.writeText(
-            """
-        repositories {
-            maven("${localRepoDir.absolutePathString().replace("\\", "\\\\")}")
-        }
-
-    """.trimIndent() + buildGradleKts.readText()
-        )
-    } else {
-        settingsGradleKts.replaceText("""dependencyResolutionManagement {""", """
-            dependencyResolutionManagement {
-                repositories {
-                    maven("${localRepoDir.absolutePathString().replace("\\", "\\\\")}")
-                }
-            
-        """.trimIndent())
-    }
+    settingsGradleKts.replaceText("""dependencyResolutionManagement {""", """
+        dependencyResolutionManagement {
+            repositories {
+                maven("${localRepoDir.absolutePathString().replace("\\", "\\\\")}")
+            }
+                
+    """.trimIndent())
 
     when (consumer.variant) {
         ProjectVariant.AndroidOnly -> prepareAndroidConsumer(dependencies)

@@ -1396,13 +1396,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS, expect Kotlin/Wasm tools are downloaded correctly")
     @GradleTest
     fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
-        // Gradle versions below 8.1 do not correctly support repository mode
-        val dependencyManagement =
-            if (gradleVersion <= GradleVersion.version("8.1")) {
-                DependencyManagement.DisabledDependencyManagement
-            } else {
-                DependencyManagement.DefaultDependencyManagement()
-            }
+        val dependencyManagement = DependencyManagement.DefaultDependencyManagement()
 
         project(
             "wasm-project-repos",
@@ -1480,13 +1474,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS without downloading tools, expect KGP does not download tools")
     @GradleTest
     fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
-        // Gradle versions below 8.1 do not correctly support repository mode
-        val dependencyManagement =
-            if (gradleVersion <= GradleVersion.version("8.1")) {
-                DependencyManagement.DisabledDependencyManagement
-            } else {
-                DependencyManagement.DefaultDependencyManagement()
-            }
+        val dependencyManagement = DependencyManagement.DefaultDependencyManagement()
 
         project(
             "wasm-project-repos",
