@@ -106,18 +106,18 @@ class SubpluginEnvironment(
 @Suppress("DEPRECATION")
 internal fun addCompilationSourcesToExternalCompileTask(
     compilation: KotlinCompilation<*>,
-    task: TaskProvider<out AbstractKotlinCompileTool<*>>
+    kaptTaskProvider: TaskProvider<out AbstractKotlinCompileTool<*>>
 ) {
     if (compilation is KotlinJvmAndroidCompilation && compilation.androidVariant != null) {
         compilation.androidVariant.forEachKotlinSourceDirectorySet(compilation.project) { sourceSet ->
-            task.configure { it.source(sourceSet) }
+            kaptTaskProvider.configure { it.source(sourceSet) }
         }
         compilation.androidVariant.forEachJavaSourceDir { sources ->
-            task.configure { it.source(sources.dir) }
+            kaptTaskProvider.configure { it.source(sources.dir) }
         }
     } else {
-        task.configure { taskInstance ->
-            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.defaultImpl.allKotlin) }
+        kaptTaskProvider.configure { kaptTask ->
+            compilation.allKotlinSourceSets.forEach { sourceSet -> kaptTask.source(sourceSet.defaultImpl.allKotlin) }
         }
     }
 }

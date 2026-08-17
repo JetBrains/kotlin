@@ -136,7 +136,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         val optionsForWorker = KaptOptionsForWorker(
             projectDir,
             compileClasspath,
-            source.files.toList(),
+            allJavaSources.files.toList(),
 
             changedFiles,
             compiledSources.toList(),

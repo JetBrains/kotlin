@@ -9,7 +9,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -158,7 +157,7 @@ abstract class KaptTask @Inject constructor(
 
             @Suppress("DEPRECATION_ERROR")
             val changedFiles = listOf(
-                source,
+                allJavaSources,
                 internalNonAbiClasspath,
                 internalAbiClasspath,
                 classpathStructure

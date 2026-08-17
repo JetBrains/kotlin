@@ -112,6 +112,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             CONFIGURATION -> throw CliOptionProcessingException("${CONFIGURATION.optionName} should be handled earlier")
 
             TOOLS_JAR_OPTION -> throw CliOptionProcessingException("'${TOOLS_JAR_OPTION.optionName}' is only supported in the kapt CLI tool")
+            KAPT_KOTLIN_GENERATED -> processingOptions[KAPT_KOTLIN_GENERATED.optionName] = value
         }
     }
 

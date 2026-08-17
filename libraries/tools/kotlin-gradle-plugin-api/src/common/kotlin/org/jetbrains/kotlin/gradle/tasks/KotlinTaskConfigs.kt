@@ -195,7 +195,7 @@ interface KaptGenerateStubs : KotlinJvmCompile {
      *
      * Configure this property with the same artifacts as its related [Kapt] task.
      */
-    @get:Internal("Not an input, just passed as kapt args. ")
+    @get:Classpath
     val kaptClasspath: ConfigurableFileCollection
 
 }
@@ -311,7 +311,7 @@ interface BaseKapt : Task,
     @get:Incremental
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val source: ConfigurableFileCollection
+    val allJavaSources: ConfigurableFileCollection
 
     /**
      * Enable searching for annotation processors in the [classpath].

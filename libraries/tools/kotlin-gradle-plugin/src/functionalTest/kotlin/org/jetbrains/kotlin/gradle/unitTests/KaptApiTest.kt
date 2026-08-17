@@ -52,16 +52,16 @@ class KaptApiTest {
             it.createNewFile()
         }
         val task = configureKapt {
-            source.from(sourcePath)
+            allJavaSources.from(sourcePath)
         }
-        assertEquals(setOf(sourcePath), task.source.files)
+        assertEquals(setOf(sourcePath), task.allJavaSources.files)
 
         val sourcesDir = tmpDir.resolve("sourcesDir").also { it.mkdirs() }.also {
             it.resolve("a.kt").createNewFile()
             it.resolve("b.kt").createNewFile()
         }
-        task.source.from(sourcesDir)
-        assertEquals(setOf(sourcePath, sourcesDir), task.source.files)
+        task.allJavaSources.from(sourcesDir)
+        assertEquals(setOf(sourcePath, sourcesDir), task.allJavaSources.files)
     }
 
     @Test
