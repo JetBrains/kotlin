@@ -6,6 +6,7 @@ plugins {
     id("test-federation-convention")
     kotlin("jvm")
     id("generated-sources")
+    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -93,3 +94,9 @@ generatedSourcesTask(
         )
     },
 )
+
+testing {
+    this.suites.withType<JvmTestSuite> {
+        useJUnitJupiter(libs.versions.junit5.get())
+    }
+}
