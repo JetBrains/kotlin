@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
-import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
-import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
-import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -40,28 +37,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrClass.enumValueGetter: IrSimpleFunction? by irAttribute(copyByDefault = false)
-private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by irAttribute(copyByDefault = false)
-
-internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
 
 internal class EnumsSupport(
         private val irBuiltIns: IrBuiltIns,
         private val irFactory: IrFactory,
 ) {
-    fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
-        require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
-        return enumClass::enumEntriesMap.getOrSetIfNull {
-            data class NameWithOrdinal(val name: Name, val ordinal: Int)
-            enumClass.declarations.asSequence()
-                    .filterIsInstance<IrEnumEntry>()
-                    .mapIndexed { index, it -> NameWithOrdinal(it.name, index) }
-                    .sortedBy { it.name }
-                    .withIndex()
-                    .associate { it.value.name to LoweredEnumEntryDescription(it.value.ordinal, it.index) }
-                    .toMap()
-        }
-    }
-
     fun getValueGetter(enumClass: IrClass): IrSimpleFunction {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
         return enumClass::enumValueGetter.getOrSetIfNull {
@@ -93,7 +73,7 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
         // so that incremental compilation invalidates this caller when the enum's source file changes.
         generationState.dependenciesTracker.add(entry, weak = false)
 
-        val enumEntriesMap = (context as NativeBackendContext).enumsSupport.enumEntriesMap(entry.parentAsClass)
+        val enumEntriesMap = enumEntriesMap(entry.parentAsClass)
         return enumEntriesMap[entry.name]!!.ordinal
     }
 }
@@ -216,7 +196,7 @@ internal class EnumClassLowering(val context: NativeBackendContext) : FileLoweri
         }
 
         // also saves this in enumSupport before removing them from list
-        private val enumEntriesMap = enumsSupport.enumEntriesMap(irClass)
+        private val enumEntriesMap = enumEntriesMap(irClass)
 
 
         fun run() {
