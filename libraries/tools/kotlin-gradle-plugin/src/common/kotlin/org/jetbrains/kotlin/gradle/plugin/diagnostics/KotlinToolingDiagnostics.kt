@@ -2474,6 +2474,7 @@ internal object KotlinToolingDiagnostics {
                 .solution {
                     "Declare a chromium(\"$runnerName\") or  a chromium() runner, or pass --browser-debug-runner with a declared runner name"
                 }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
         }
     }
 
