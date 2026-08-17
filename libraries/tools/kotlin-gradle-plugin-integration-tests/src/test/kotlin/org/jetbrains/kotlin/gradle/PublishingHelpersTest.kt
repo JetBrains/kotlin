@@ -271,9 +271,7 @@ class PublishingHelpersTest : KGPBaseTest() {
             buildAndFail(
                 *buildArguments,
             ) {
-                if (gradleVersion >= GradleVersion.version("8.1")) {
-                    assertConfigurationCacheStored()
-                }
+                assertConfigurationCacheStored()
                 assertOutputContains("None of the keyservers contain the public key with id:")
             }
         }

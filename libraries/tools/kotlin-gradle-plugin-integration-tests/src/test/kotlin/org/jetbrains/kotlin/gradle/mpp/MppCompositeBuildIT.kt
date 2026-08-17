@@ -180,7 +180,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
         var buildOptions = defaultBuildOptions
-        if (gradleVersion < GradleVersion.version("9.1")) {
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_1)) {
             // FIXME: KT-74795
             buildOptions = buildOptions.disableIsolatedProjects()
         }

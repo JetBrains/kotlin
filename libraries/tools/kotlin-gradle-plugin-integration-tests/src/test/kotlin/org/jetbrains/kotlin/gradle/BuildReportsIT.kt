@@ -533,7 +533,7 @@ class BuildReportsIT : KGPBaseTest() {
                 }
             }
 
-            if (gradleVersion.baseVersion >= GradleVersion.version("9.1")) {
+            if (gradleVersion.baseVersion >= GradleVersion.version(TestVersions.Gradle.G_9_1)) {
                 buildScriptInjection {
                     val buildOperationListenerManager =
                         (project.gradle as GradleInternal).services.get(BuildOperationListenerManager::class.java) as DefaultBuildOperationListenerManager
