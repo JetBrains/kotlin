@@ -7,7 +7,6 @@ plugins {
 tasks.register("analysisApiArtifactTests") {
     group = "verification"
 
-    @Suppress("UNCHECKED_CAST")
     val analysisApiProjects = CompilerModules.analysisApiArtifacts
 
     val analysisApiProjectChecks = analysisApiProjects

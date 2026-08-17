@@ -7,11 +7,9 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib("jdk8"))
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginEmbeddedDependencies
         .forEach { implementation(project(it)) }
 
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
