@@ -30,7 +30,10 @@ import kotlin.test.assertIs
 class MppCompositeBuildIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         // FIXME: KT-81095 these tests fail with OOM when CC is enabled
-        get() = super.defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+        get() = super.defaultBuildOptions.copy(
+            configurationCache = ConfigurationCacheValue.DISABLED,
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+        )
 
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
@@ -220,9 +223,12 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .suppressDeprecationWarningsOn(
-                    reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
+                    reason = "KGP 1.7.21 produces deprecation warnings"
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) }
-                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                .copy(
+                    configurationCache = ConfigurationCacheValue.DISABLED,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                )
         ) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)

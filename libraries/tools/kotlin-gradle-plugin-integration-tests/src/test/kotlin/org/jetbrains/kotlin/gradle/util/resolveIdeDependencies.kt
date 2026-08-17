@@ -24,7 +24,10 @@ import kotlin.test.fail
 
 
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
-private fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+private fun BuildOptions.disableConfigurationCache_KT70416() = copy(
+    configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+)
 
 /* Test Utils / Test Infrastructure Implementation */
 

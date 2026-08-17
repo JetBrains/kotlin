@@ -63,7 +63,10 @@ class FusStatisticsIT : KGPBaseTest() {
             "simpleProject",
             gradleVersion,
             // TODO: KT-70336 dokka doesn't support Configuration Cache
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = IsolatedProjectsMode.DISABLED,
+            )
         ) {
             assertNoErrorFilesCreated {
                 applyDokka(TestVersions.ThirdPartyDependencies.DOKKA)
@@ -674,10 +677,6 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("add configuration metrics after build was finish")
     @GradleTest
     @MppGradlePluginTests
-    @GradleTestVersions(
-        //test uses internal internal method `org.gradle.internal.extensions.core.serviceOf`
-        minVersion = TestVersions.Gradle.G_8_11,
-    )
     fun addConfigurationMetricsAfterFlowActionWasCalled(gradleVersion: GradleVersion) {
         project(
             "multiplatformFlowAction",

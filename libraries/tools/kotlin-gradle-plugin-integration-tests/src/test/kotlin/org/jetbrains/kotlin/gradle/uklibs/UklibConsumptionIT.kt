@@ -1351,7 +1351,10 @@ class UklibConsumptionIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileSource("class Common")
                 }
             }
-        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
+        }.publish(
+            publisherConfiguration = PublisherConfiguration(group = "producer"),
+            deriveBuildOptions = { buildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() }
+        )
 
         val consumer = project(
             "empty",

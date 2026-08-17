@@ -23,7 +23,10 @@ class SubpluginsIT : KGPBaseTest() {
         project(
             "kotlinGradleSubplugin",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")

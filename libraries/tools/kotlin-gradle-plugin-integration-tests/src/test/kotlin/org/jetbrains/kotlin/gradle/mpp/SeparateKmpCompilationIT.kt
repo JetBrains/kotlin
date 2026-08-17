@@ -219,7 +219,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     if (compilationName == "main") ":compileKotlin${targetName.capitalize()}"
                     else ":compile${compilationName.capitalize()}Kotlin${targetName.capitalize()}"
                 }.toTypedArray(),
-                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
+                deriveBuildOptions = {
+                    // otherwise we would access GMT task outputs before the task execution
+                    buildOptions.copy(
+                        configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                    )
+                },
             )
             for ([_, particularCompileArgs] in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies

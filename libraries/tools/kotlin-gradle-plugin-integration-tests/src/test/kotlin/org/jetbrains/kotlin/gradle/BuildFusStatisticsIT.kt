@@ -14,11 +14,6 @@ import org.junit.jupiter.api.DisplayName
 class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("works for project with buildSrc and kotlinDsl plugin")
     @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [
-            TestVersions.Gradle.G_8_11
-        ],
-    )
     fun testCompatibilityBuildSrcWithKotlinDsl(gradleVersion: GradleVersion) {
         project(
             "buildSrcUsingKotlinCompilationAndKotlinPlugin",
@@ -29,18 +24,6 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
                 //register build service for buildSrc.
                 when {
-                    //for gradle 8.5+ kotlin 1.9.20+ versions KGP from buildSrc registered both services
-                    gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_11) -> {
-                        assertOutputContainsExactlyTimes(
-                            "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService: new instance", // the legacy service for compatibility
-                            1
-                        )
-                        assertOutputContainsExactlyTimes(
-                            "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService_v2: new instance", // the current default version of the service
-                            1
-                        )
-
-                    }
                     // Since Gradle 8.11 Kotlin version 2.0.20 is used which contains only one service
                     gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0) -> {
                         assertOutputContainsExactlyTimes(

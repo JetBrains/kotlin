@@ -183,7 +183,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
             "errorsFailOnlyRelevantProjects",
             gradleVersion,
             // CC should be explicitly disabled because it hides the warning on subsequent builds: KT-75750
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             buildAndFail("brokenProjectA:assemble") {
                 assertEqualsToFile(expectedOutputFile("brokenA"), extractProjectsAndTheirDiagnostics())
@@ -223,7 +226,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
             "diagnosticsRenderingWithStacktraceOption",
             gradleVersion,
             // CC should be explicitly disabled because it hides the warning on subsequent builds: KT-75750
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,
             // need to override that to mimic real-life scenarios

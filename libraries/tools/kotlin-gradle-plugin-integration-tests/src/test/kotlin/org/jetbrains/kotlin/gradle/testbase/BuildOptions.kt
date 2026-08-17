@@ -479,28 +479,6 @@ fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedPro
 // KT-75899: Support Gradle Project Isolation in KGP JS & Wasm
 fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = disableIsolatedProjects()
 
-/**
- * Before 8.12 Gradle fails IP CC serialization with "cannot access 'Project.group' functionality on another project"
- */
-fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(
-    currentGradleVersion: GradleVersion,
-) = copy(
-    isolatedProjects =
-        if (currentGradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_11)) isolatedProjects
-        else IsolatedProjectsMode.DISABLED
-)
-
-// KMP dependencies checker does not work with Gradle isolated projects feature in older Gradle releases
-fun BuildOptions.disableIsolatedProjectsForKmpDependenciesChecker(
-    gradleVersion: GradleVersion,
-) = copy(
-    isolatedProjects = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
-        IsolatedProjectsMode.DISABLED
-    } else {
-        isolatedProjects
-    }
-)
-
 fun BuildOptions.suppressWarningForOldKotlinVersion(
     currentGradleVersion: GradleVersion,
 ) = suppressDeprecationWarningsSinceGradleVersion(

@@ -44,7 +44,10 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
                 "KGP 1.9.25 produces deprecation warning in Gradle 9.x releases"
             ).run {
                 if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0)) {
-                    copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                    copy(
+                        configurationCache = ConfigurationCacheValue.DISABLED,
+                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+                    )
                 } else this
             }
         ) {
@@ -73,7 +76,10 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
                 "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
             )
                 // KGP 1.7.20 is not compatible with configuration cache in Gradle 8
-                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                .copy(
+                    configurationCache = ConfigurationCacheValue.DISABLED,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+                )
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")

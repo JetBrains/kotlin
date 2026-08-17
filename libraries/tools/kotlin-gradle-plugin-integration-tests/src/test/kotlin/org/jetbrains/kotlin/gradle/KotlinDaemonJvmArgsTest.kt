@@ -255,6 +255,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
                 "assemble",
                 buildOptions = buildOptions.copy(
                     configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
                     runViaBuildToolsApi = withBta
                 )
             ) {

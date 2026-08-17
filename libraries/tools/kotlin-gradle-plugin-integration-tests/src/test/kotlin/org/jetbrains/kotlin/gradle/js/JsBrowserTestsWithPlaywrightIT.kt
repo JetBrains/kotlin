@@ -105,7 +105,10 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
         ) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {

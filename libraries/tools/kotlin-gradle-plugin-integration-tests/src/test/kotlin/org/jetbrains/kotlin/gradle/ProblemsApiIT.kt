@@ -18,7 +18,6 @@ import kotlin.test.assertNotNull
 class ProblemsApiIT : KGPBaseTest() {
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_11, // html reports available only from Gradle 8.11
         additionalVersions = [TestVersions.Gradle.G_9_5],
     )
     @DisplayName("Test problems emitted")

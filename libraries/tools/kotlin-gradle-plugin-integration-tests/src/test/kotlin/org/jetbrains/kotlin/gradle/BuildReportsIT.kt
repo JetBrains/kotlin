@@ -518,7 +518,8 @@ class BuildReportsIT : KGPBaseTest() {
             "simpleProject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 buildReport = listOf(BuildReportType.JSON),
-                configurationCache = ConfigurationCacheValue.DISABLED
+                configurationCache = ConfigurationCacheValue.DISABLED,
+                isolatedProjects = IsolatedProjectsMode.DISABLED,
             )
         ) {
             val errorMessage = "BuildMetricsService should remove itself from BuildOperationListenerManager"
@@ -993,7 +994,6 @@ class BuildReportsIT : KGPBaseTest() {
             "incrementalMultiproject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 buildReport = listOf(BuildReportType.BUILD_SCAN),
                 // KT-68847 Support build reports for build scan with project isolation
                 isolatedProjects = IsolatedProjectsMode.DISABLED,

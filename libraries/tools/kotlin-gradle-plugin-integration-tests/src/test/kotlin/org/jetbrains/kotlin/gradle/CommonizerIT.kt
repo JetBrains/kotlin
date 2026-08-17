@@ -846,7 +846,14 @@ open class CommonizerIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         commonSourceSetName: String,
     ) {
-        project("empty", gradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -945,7 +952,6 @@ open class CommonizerIT : KGPBaseTest() {
                     }
             }.buildAndReturn(
                 ":compileKotlinLinuxX64",
-                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
             )
 
             val sharedSourceSetDeps = fragmentDependencies[commonSourceSetName].orEmpty()
