@@ -49,7 +49,11 @@ internal fun produceObjCExportInterface(
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
     val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
+    val moduleDescriptors = if (config.produce.isObjCCache) {
+        moduleDescriptor.getExportedDependencies(config)
+    } else {
+        listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
+    }
     val entryPoints = config.objcEntryPoints
     val expandEntryPoints = config.configuration.getBoolean(BinaryOptions.objcExportExpandEntryPoints)
     val effectiveEntryPoints = if (entryPoints != ObjCEntryPoints.ALL && expandEntryPoints) {
@@ -92,7 +96,7 @@ internal fun produceObjCExportInterface(
     val additionalImports = context.config.configuration.getNotNull(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)
     val headerGenerator = ObjCExportHeaderGenerator.createInstance(
             moduleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
-            additionalImports = additionalImports)
+            additionalImports = additionalImports, restrictToLocalModules = config.produce.isObjCCache)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
 }

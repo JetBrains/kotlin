@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class ObjCExportHeaderGeneratorImpl(
     moduleDescriptors: List<ModuleDescriptor>,
@@ -16,7 +18,11 @@ internal class ObjCExportHeaderGeneratorImpl(
     objcExportBlockExplicitParameterNames: Boolean,
     override val shouldExportKDoc: Boolean,
     private val additionalImports: List<String>,
+    private val restrictToLocalModules: Boolean = false,
 ) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, objcExportBlockExplicitParameterNames, problemCollector) {
     override fun getAdditionalImports(): List<String> =
         additionalImports
+
+    override fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean =
+        !restrictToLocalModules || descriptor.module in moduleDescriptors
 }

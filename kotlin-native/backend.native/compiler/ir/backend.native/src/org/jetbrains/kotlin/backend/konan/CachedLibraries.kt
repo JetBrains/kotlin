@@ -353,10 +353,11 @@ class ObjCCacheMetadata(
     val protocolAdapters: List<ObjCCacheAdapterEntry>,
 ) {
     fun serialize(writer: java.io.Writer) {
-        val properties = java.util.Properties()
-        properties.setProperty("classAdapters", classAdapters.joinToString(";") { "${it.objcName},${it.symbolName}" })
-        properties.setProperty("protocolAdapters", protocolAdapters.joinToString(";") { "${it.objcName},${it.symbolName}" })
-        properties.store(writer, null)
+        val classAdaptersStr = classAdapters.joinToString(";") { "${it.objcName},${it.symbolName}" }
+        val protocolAdaptersStr = protocolAdapters.joinToString(";") { "${it.objcName},${it.symbolName}" }
+        writer.write("classAdapters=$classAdaptersStr\n")
+        writer.write("protocolAdapters=$protocolAdaptersStr\n")
+        writer.flush()
     }
 
     companion object {

@@ -291,6 +291,12 @@ internal class ObjCExportCodeGenerator(
 
     val selectorsToDefine = mutableMapOf<String, MethodBridge>()
 
+    internal val allOverriddenFunctionsCache = mutableMapOf<IrSimpleFunction, Set<IrSimpleFunction>>()
+    internal val directAdaptersCache = mutableMapOf<ObjCClassForKotlinClass, List<DirectAdapterRequest>>()
+
+    internal fun IrSimpleFunction.getCachedAllOverriddenFunctions(): Set<IrSimpleFunction> =
+        allOverriddenFunctionsCache.getOrPut(this) { this.allOverriddenFunctions }
+
     internal val continuationToRetainedCompletionConverter: LlvmCallable by lazy {
         generateContinuationToRetainedCompletionConverter(blockGenerator)
     }
@@ -393,8 +399,6 @@ internal class ObjCExportCodeGenerator(
     private fun generateTypeAdaptersForKotlinTypes(spec: ObjCExportCodeSpec?): List<ObjCTypeAdapter> {
         val types = spec?.types.orEmpty() + objCClassForAny
 
-        val allReverseAdapters = createReverseAdapters(types)
-
         val isObjCCache = generationState.config.produce == CompilerOutputKind.OBJC_CACHE
         val libraryToCache = generationState.config.libraryToCache?.klib
         val moduleName = generationState.config.fullExportedNamePrefix
@@ -417,6 +421,8 @@ internal class ObjCExportCodeGenerator(
                 }
             }
         }
+
+        val allReverseAdapters = createReverseAdapters(types, typesToGenerate.toSet())
 
         return typesToGenerate.map {
             val reverseAdapters = allReverseAdapters.getValue(it).adapters
@@ -1629,7 +1635,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 }
 
 private fun ObjCExportCodeGenerator.createReverseAdapters(
-        types: List<ObjCTypeForKotlinType>
+        types: List<ObjCTypeForKotlinType>,
+        typesToGenerate: Set<ObjCTypeForKotlinType> = types.toSet()
 ): Map<ObjCTypeForKotlinType, ReverseAdapters> {
     val irClassSymbolToType = types.associateBy { it.irClassSymbol }
 
@@ -1653,10 +1660,15 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
         val inheritedAdapters = inheritsAdaptersFrom.map { getOrCreateFor(it) }
 
-        createReverseAdapters(type, inheritedAdapters)
+        if (type in typesToGenerate) {
+            createReverseAdapters(type, inheritedAdapters)
+        } else {
+            val coveredMethods = type.irClassSymbol.owner.simpleFunctions().map { it.getLowered() }.toSet()
+            ReverseAdapters(emptyList(), coveredMethods + inheritedAdapters.flatMap { it.coveredMethods })
+        }
     }
 
-    types.forEach { getOrCreateFor(it) }
+    typesToGenerate.forEach { getOrCreateFor(it) }
 
     return result
 }
@@ -1678,7 +1690,8 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
     val allBaseMethodsByIr = type.kotlinMethods.map { it.baseMethod }.associateBy { it.owner }
 
     for (method in type.irClassSymbol.owner.simpleFunctions().map { it.getLowered() }) {
-        val baseMethods = method.allOverriddenFunctions.mapNotNull { allBaseMethodsByIr[it] }
+        val allOverriddenMethods = method.getCachedAllOverriddenFunctions()
+        val baseMethods = allOverriddenMethods.mapNotNull { allBaseMethodsByIr[it] }
         if (baseMethods.isEmpty()) continue
 
         val hasSelectorAmbiguity = baseMethods.map { it.selector }.distinct().size > 1
@@ -1689,8 +1702,6 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
             val presentVtableBridges = mutableSetOf<Int?>(null)
             val presentMethodTableBridges = mutableSetOf<String>()
             val presentItableBridges = mutableSetOf<ClassLayoutBuilder.InterfaceTablePlace?>(null)
-
-            val allOverriddenMethods = method.allOverriddenFunctions
 
             val [inherited, uninherited] = allOverriddenMethods.partition {
                 it in methodsCoveredByInheritedAdapters
@@ -1748,11 +1759,13 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
         superClass: ObjCClassForKotlinClass?
 ): List<ObjCToKotlinMethodAdapter> {
 
-    fun ObjCClassForKotlinClass.getAllRequiredDirectAdapters() = this.kotlinMethods.map { method ->
-        DirectAdapterRequest(
-                findImplementation(irClassSymbol.owner, method.baseMethod.owner, context),
-                method.baseMethod
-        )
+    fun ObjCClassForKotlinClass.getAllRequiredDirectAdapters() = directAdaptersCache.getOrPut(this) {
+        this.kotlinMethods.map { method ->
+            DirectAdapterRequest(
+                    findImplementation(irClassSymbol.owner, method.baseMethod.owner, context),
+                    method.baseMethod
+            )
+        }
     }
 
     val inheritedAdapters = superClass?.getAllRequiredDirectAdapters().orEmpty().toSet()
@@ -1763,7 +1776,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
 
 private fun ObjCExportCodeGenerator.findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
     val override = irClass.simpleFunctions().singleOrNull {
-        method in it.getLowered().allOverriddenFunctions
+        method in it.getLowered().getCachedAllOverriddenFunctions()
     } ?: error("no implementation for ${method.render()}\nin ${irClass.fqNameWhenAvailable}")
     return OverriddenFunctionInfo(override.getLowered(), method, context.config.bridgesPolicy).getImplementation(context)
 }
