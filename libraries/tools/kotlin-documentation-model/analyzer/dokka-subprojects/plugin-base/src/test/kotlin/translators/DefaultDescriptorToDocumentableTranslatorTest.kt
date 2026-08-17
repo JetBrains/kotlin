@@ -27,12 +27,16 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         }
     }
 
-    @Suppress("DEPRECATION") // for includeNonPublic
     val javaConfiguration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/java")
-                includeNonPublic = true
+                documentedVisibilities = setOf(
+                    DokkaConfiguration.Visibility.PUBLIC,
+                    DokkaConfiguration.Visibility.PRIVATE,
+                    DokkaConfiguration.Visibility.PROTECTED,
+                    DokkaConfiguration.Visibility.PACKAGE,
+                )
             }
         }
     }
@@ -478,7 +482,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main/kotlin")
-                    includeNonPublic = false
+                    documentedVisibilities = setOf(DokkaConfiguration.Visibility.PRIVATE, DokkaConfiguration.Visibility.INTERNAL)
                 }
             }
         }

@@ -14,17 +14,11 @@ public fun assertDokkaConfigurationEquals(
     assertEquals(expected.moduleName, actual.moduleName, "DokkaConfiguration.moduleName")
     assertEquals(expected.moduleVersion, actual.moduleVersion, "DokkaConfiguration.moduleVersion")
     assertEquals(expected.outputDir, actual.outputDir, "DokkaConfiguration.outputDir")
-    assertEquals(expected.cacheRoot, actual.cacheRoot, "DokkaConfiguration.cacheRoot")
-    assertEquals(expected.offlineMode, actual.offlineMode, "DokkaConfiguration.offlineMode")
     assertEquals(expected.pluginsClasspath, actual.pluginsClasspath, "DokkaConfiguration.pluginsClasspath")
     assertEquals(expected.pluginsConfiguration, actual.pluginsConfiguration, "DokkaConfiguration.pluginsConfiguration")
     assertEquals(expected.modules, actual.modules, "DokkaConfiguration.modules")
     assertEquals(expected.failOnWarning, actual.failOnWarning, "DokkaConfiguration.failOnWarning")
-    assertEquals(
-        expected.delayTemplateSubstitution,
-        actual.delayTemplateSubstitution,
-        "DokkaConfiguration.delayTemplateSubstitution"
-    )
+
     assertEquals(
         expected.suppressObviousFunctions,
         actual.suppressObviousFunctions,
@@ -55,55 +49,18 @@ public fun assertDokkaSourceSetEquals(
     assertEquals(expected.dependentSourceSets, actual.dependentSourceSets, "DokkaSourceSet.dependentSourceSets")
     assertEquals(expected.samples, actual.samples, "DokkaSourceSet.samples")
     assertEquals(expected.includes, actual.includes, "DokkaSourceSet.includes")
-    @Suppress("DEPRECATION")
-    assertEquals(expected.includeNonPublic, actual.includeNonPublic, "DokkaSourceSet.includeNonPublic")
     assertEquals(expected.reportUndocumented, actual.reportUndocumented, "DokkaSourceSet.reportUndocumented")
     assertEquals(expected.skipEmptyPackages, actual.skipEmptyPackages, "DokkaSourceSet.skipEmptyPackages")
     assertEquals(expected.skipDeprecated, actual.skipDeprecated, "DokkaSourceSet.skipDeprecated")
     assertEquals(expected.jdkVersion, actual.jdkVersion, "DokkaSourceSet.jdkVersion")
-    assertSourceLinksEquals(expected.sourceLinks, actual.sourceLinks)
     assertEquals(expected.perPackageOptions, actual.perPackageOptions, "DokkaSourceSet.perPackageOptions")
-    assertExternalDocumentationLinksEquals(expected.externalDocumentationLinks, actual.externalDocumentationLinks)
     assertEquals(expected.languageVersion, actual.languageVersion, "DokkaSourceSet.languageVersion")
     assertEquals(expected.apiVersion, actual.apiVersion, "DokkaSourceSet.apiVersion")
-    assertEquals(expected.noStdlibLink, actual.noStdlibLink, "DokkaSourceSet.noStdlibLink")
-    assertEquals(expected.noJdkLink, actual.noJdkLink, "DokkaSourceSet.noJdkLink")
     assertEquals(expected.suppressedFiles, actual.suppressedFiles, "DokkaSourceSet.suppressedFiles")
     assertEquals(expected.analysisPlatform, actual.analysisPlatform, "DokkaSourceSet.analysisPlatform")
     assertEquals(
         expected.documentedVisibilities,
         actual.documentedVisibilities,
         "DokkaSourceSet.documentedVisibilities"
-    )
-}
-
-private fun assertSourceLinksEquals(
-    expected: Set<DokkaConfiguration.SourceLinkDefinition>,
-    actual: Set<DokkaConfiguration.SourceLinkDefinition>
-) {
-    fun transform(link: DokkaConfiguration.SourceLinkDefinition) = Triple(
-        link.localDirectory,
-        link.remoteUrl.toURI(), // to avoid URL.equals calls
-        link.remoteLineSuffix
-    )
-    assertEquals(
-        expected.mapTo(mutableSetOf(), ::transform),
-        actual.mapTo(mutableSetOf(), ::transform),
-        "DokkaSourceSet.sourceLinks"
-    )
-}
-
-private fun assertExternalDocumentationLinksEquals(
-    expected: Set<DokkaConfiguration.ExternalDocumentationLink>,
-    actual: Set<DokkaConfiguration.ExternalDocumentationLink>
-) {
-    fun transform(link: DokkaConfiguration.ExternalDocumentationLink) = Pair(
-        link.url.toURI(), // to avoid URL.equals calls
-        link.packageListUrl.toURI(), // to avoid URL.equals calls
-    )
-    assertEquals(
-        expected.mapTo(mutableSetOf(), ::transform),
-        actual.mapTo(mutableSetOf(), ::transform),
-        "DokkaSourceSet.externalDocumentationLinks"
     )
 }

@@ -11,8 +11,6 @@ import org.jetbrains.dokka.utilities.serializeAsPrettyJson
 
 public fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
 
-public fun GlobalDokkaConfiguration(json: String): GlobalDokkaConfiguration = parseJson(json)
-
 @Deprecated("Renamed to better distinguish between compact/pretty prints", ReplaceWith("this.toCompactJsonString()"))
 public fun DokkaConfiguration.toJsonString(): String = this.toCompactJsonString()
 

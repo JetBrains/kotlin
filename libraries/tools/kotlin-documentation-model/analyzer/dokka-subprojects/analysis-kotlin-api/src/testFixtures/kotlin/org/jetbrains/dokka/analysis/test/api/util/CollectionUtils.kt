@@ -5,7 +5,7 @@
 package org.jetbrains.dokka.analysis.test.api.util
 
 internal inline fun <reified T> flatListOf(vararg lists: List<T>): List<T> {
-    val overallSize = lists.sumBy { it.size }
+    val overallSize = lists.sumOf { it.size }
     val aggregatingList = ArrayList<T>(overallSize)
     lists.forEach {
         aggregatingList.addAll(it)

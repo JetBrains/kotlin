@@ -4,22 +4,15 @@
 
 package org.jetbrains.dokka.base.signatures
 
-import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
-import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.links.DriOfUnit
 import org.jetbrains.dokka.model.*
-import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.WithExtraProperties
-import org.jetbrains.dokka.pages.ContentKind
 
 public object KotlinSignatureUtils : JvmSignatureUtils {
 
-    private const val classExtension = "::class"
-    private val strategy = OnlyOnce
-    private val listBrackets = Pair('[', ']')
     private val ignoredAnnotations = setOf(
         /**
          * Rendered separately, see [SinceKotlinTransformer]
@@ -35,13 +28,6 @@ public object KotlinSignatureUtils : JvmSignatureUtils {
     )
 
 
-    override fun PageContentBuilder.DocumentableContentBuilder.annotationsBlock(d: AnnotationTarget) {
-        annotationsBlockWithIgnored(d, ignoredAnnotations, strategy, listBrackets, classExtension)
-    }
-
-    override fun PageContentBuilder.DocumentableContentBuilder.annotationsInline(d: AnnotationTarget) {
-        annotationsInlineWithIgnored(d, ignoredAnnotations, strategy, listBrackets, classExtension)
-    }
 
     override fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>> {
         return extra[AdditionalModifiers]?.content?.entries?.associate {

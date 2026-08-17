@@ -6,11 +6,8 @@ package org.jetbrains.dokka.base
 
 // revisit in scope of https://github.com/Kotlin/dokka/issues/2776
 internal object DokkaBaseInternalConfiguration {
-    const val SHOULD_DISPLAY_ALL_TYPES_PAGE_SYS_PROP = "dokka.shouldDisplayAllTypesPage"
     const val SHOULD_DISPLAY_SINCE_KOTLIN_SYS_PROP = "dokka.shouldDisplaySinceKotlin"
 
-    var allTypesPageEnabled: Boolean = false
-        private set
     var sinceKotlinRenderingEnabled: Boolean = false
         private set
 
@@ -20,7 +17,6 @@ internal object DokkaBaseInternalConfiguration {
 
     // should be private, internal is only for usage in tests
     internal fun reinitialize() {
-        allTypesPageEnabled = getBooleanProperty(SHOULD_DISPLAY_ALL_TYPES_PAGE_SYS_PROP)
         sinceKotlinRenderingEnabled = getBooleanProperty(SHOULD_DISPLAY_SINCE_KOTLIN_SYS_PROP)
     }
 

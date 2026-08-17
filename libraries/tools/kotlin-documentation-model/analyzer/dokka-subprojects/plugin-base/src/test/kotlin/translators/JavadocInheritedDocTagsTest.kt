@@ -4,6 +4,7 @@
 
 package translators
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
@@ -21,7 +22,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/java")
-                includeNonPublic = true
+                documentedVisibilities = setOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PACKAGE)
             }
         }
     }
