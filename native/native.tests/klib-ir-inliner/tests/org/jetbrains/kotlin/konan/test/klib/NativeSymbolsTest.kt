@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
 class NativeSymbolsTest : AbstractSymbolsValidationTest(
@@ -43,6 +44,7 @@ class NativeSymbolsTest : AbstractSymbolsValidationTest(
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeSecondStageEnvironmentConfigurator,
         )
     }
 }

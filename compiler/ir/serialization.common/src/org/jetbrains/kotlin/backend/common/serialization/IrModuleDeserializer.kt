@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -271,10 +270,4 @@ class IrModuleDeserializerWithBuiltIns(
         irBuiltInsCallableIdMap[callableId]?.let { return it }
         return super.getAllMatchingSignatures(callableId, signatureKind)
     }
-}
-
-fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
-    return DFS.topologicalOrder(moduleDependencies.keys) { m ->
-        moduleDependencies.getValue(m)
-    }.reversed()
 }

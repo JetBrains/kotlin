@@ -30,12 +30,14 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 
 abstract class AbstractNativeLoadCompiledKotlinTest : AbstractKotlinCompilerNativeTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeSecondStageEnvironmentConfigurator,
         )
         globalDefaults {
             frontend = FrontendKinds.FIR
