@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.cexport
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -46,17 +45,12 @@ internal class CAdapterTypeTranslator(
         return type.isUnit() || type.isNothing()
     }
 
-    fun translateType(element: SignatureElement): String =
-            translateTypeFull(element.type).first
-
     fun translateType(type: KotlinType): String
             = translateTypeFull(type).first
 
     fun translateTypeBridge(type: KotlinType): String = translateTypeFull(type).second
 
-    fun translateTypeFqName(name: String): String {
-        return name.replace('.', '_')
-    }
+    fun exportedType(type: KotlinType): CExportedType = CExportedTypeK1(type, this)
 
     private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
             eachInlinedClass = { inlinedClass, _ ->
@@ -73,32 +67,31 @@ internal class CAdapterTypeTranslator(
                 if (clazz == builtIns.string) {
                     "const char*" to "KObjHeader*"
                 } else {
-                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
+                    CAdapterCAbi.krefTypeName(prefix, clazz.fqNameSafe.asString()) to "KObjHeader*"
                 }
             }
     )
 
-    private val primitiveTypeMapping = KonanPrimitiveType.values().associate {
-        it to when (it) {
-            KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
-            KonanPrimitiveType.CHAR -> "${prefix}_KChar"
-            KonanPrimitiveType.BYTE -> "${prefix}_KByte"
-            KonanPrimitiveType.SHORT -> "${prefix}_KShort"
-            KonanPrimitiveType.INT -> "${prefix}_KInt"
-            KonanPrimitiveType.LONG -> "${prefix}_KLong"
-            KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
-            KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
-            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
-            KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
-        }
+    private val primitiveTypeMapping = KonanPrimitiveType.entries.associate {
+        it to CAdapterCAbi.primitiveCType(prefix, it)
     }
 
-    private val unsignedTypeMapping = UnsignedType.values().associate {
-        it.classId to when (it) {
-            UnsignedType.UBYTE -> "${prefix}_KUByte"
-            UnsignedType.USHORT -> "${prefix}_KUShort"
-            UnsignedType.UINT -> "${prefix}_KUInt"
-            UnsignedType.ULONG -> "${prefix}_KULong"
-        }
-    }
+    private val unsignedTypeMapping = CAdapterCAbi.unsignedCTypesByClassId(prefix)
+}
+
+internal class CExportedTypeK1(
+        private val type: KotlinType,
+        private val typeTranslator: CAdapterTypeTranslator,
+) : CExportedType {
+    override fun translateType(): String = typeTranslator.translateType(type)
+    override fun translateTypeBridge(): String = typeTranslator.translateTypeBridge(type)
+    override fun isMappedToVoid(): Boolean = typeTranslator.isMappedToVoid(type)
+    override fun isMappedToString(): Boolean = typeTranslator.isMappedToString(type)
+    override fun isMappedToReference(): Boolean = typeTranslator.isMappedToReference(type)
+
+    // Two exported types are the same C type iff they render the same. Used to de-duplicate the typedef section.
+    override fun equals(other: Any?): Boolean =
+            other is CExportedType && other.translateType() == translateType()
+
+    override fun hashCode(): Int = translateType().hashCode()
 }
