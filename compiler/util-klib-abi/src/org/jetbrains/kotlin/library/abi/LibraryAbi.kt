@@ -297,11 +297,8 @@ interface AbiEnumEntry : AbiDeclaration
  *   Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
  *   a well-defined order: context parameters, extension receiver, regular parameters.
  * @property returnType The function's return type. Always `null` for constructors.
- * @property declarationOrigin Where this function comes from, to the extent that the ABI reader can tell origins
- *   apart. Derived from the IR declaration origin, which — like annotations — is **not** a part of the ABI and must
- *   not be relied upon for binary-compatibility decisions. It is exposed only for filtering/searching, e.g. to
- *   exclude compiler-synthesized declarations when diffing the ABI produced before and after pre-serialization
- *   lowerings.
+ * @property declarationOrigin Where this function comes from, so the ABI reader can tell origins apart.
+ *   This information is not a part of the ABI and must not be relied upon for binary-compatibility decisions.
  */
 @ExperimentalLibraryAbiReader
 interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
@@ -335,18 +332,15 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
  */
 @ExperimentalLibraryAbiReader
 enum class AbiDeclarationOrigin {
-    /**
-     * An accessor that the IR inliner generates so that an inline function body can reach a private declaration
-     * from another module. Covers accessor functions and accessors for private fields, whose names start with
-     * `access$`, and accessor **constructors**, which instead take a trailing `SyntheticConstructorMarker` parameter.
-     */
+    /** Anything different from the origins below, including every declaration that was written by hand. */
+    OTHER,
+
+    /** An accessor that the IR inliner generates so that an inline function body can reach a private declaration from another module. */
     SYNTHETIC_ACCESSOR,
 
     /** An overload wrapper synthesized for a declaration that has `@IntroducedAt` parameters. */
     VERSION_OVERLOAD_WRAPPER,
 
-    /** Anything else, including every declaration that was written by hand. */
-    OTHER,
 }
 
 /**
