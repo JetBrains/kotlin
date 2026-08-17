@@ -136,8 +136,10 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                     val internalSourceSet = sourceSet.internal
                     if (internalSourceSet.isNativeSourceSet.await()) {
                         val mostCommonFragmentPerNativePlatforms = mostCommonFragmentPerNativePlatformsFuture.await()
-                        val mostCommonNativeFragment = mostCommonFragmentPerNativePlatforms.maxBy { it.key.size }.value
-                        if (mostCommonNativeFragment == fragmentName) {
+                        val mostCommonNativeFragment = mostCommonFragmentPerNativePlatforms.maxByOrNull { it.key.size }?.value
+                        // 'null' could happen in case of a project with only native target
+                        // and, essentially, "common" source set becomes native one.
+                        if (mostCommonNativeFragment == null || mostCommonNativeFragment == fragmentName) {
                             add(project.konanDistribution.stdlib)
                         }
 
