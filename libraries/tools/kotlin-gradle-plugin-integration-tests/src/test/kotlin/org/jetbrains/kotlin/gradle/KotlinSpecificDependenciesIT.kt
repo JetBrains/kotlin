@@ -650,9 +650,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @DisplayName("KT-65271: Don't mutate dependency after it is being finalized")
     @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_6]
-    )
     @TestMetadata("kt-65271-test-suite-with-kotlin-test-dependency")
     fun testDontMutateDependencyAfterItIsFinalized(gradleVersion: GradleVersion) {
         project("kt-65271-test-suite-with-kotlin-test-dependency", gradleVersion) {
