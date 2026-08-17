@@ -100,7 +100,7 @@ internal class KaptConfigurationImpl(
         )
     }
 
-    private fun toCompilerPluginOptions(): List<CompilerPluginOption> {
+    internal fun toCompilerPluginOptions(): List<CompilerPluginOption> {
         val compilerPluginOptions = mutableListOf<CompilerPluginOption>()
         val aptMode = when {
             hasAptPhase && hasStubsPhase -> "stubsAndApt"
@@ -135,7 +135,7 @@ internal class KaptConfigurationImpl(
             }
             is Map<*, *> -> this.forEach { (key, value) ->
                 require(key is String && value is String) { "Only Strings supported in key and values for map arguments for now" }
-                val keyValue = listOf(key, value).filterNot { it.isNotEmpty() }.joinToString("=")
+                val keyValue = listOf(key, value).filter { it.isNotEmpty() }.joinToString("=")
                 compilerPluginOptions.add(CompilerPluginOption(outerKey, keyValue))
             }
             else -> compilerPluginOptions.add(CompilerPluginOption(outerKey, this.toString()))
@@ -193,7 +193,7 @@ internal class KaptConfigurationImpl(
         val ANNOTATION_PROCESSORS: Option<List<String>?> = Option("processors", null)
         val APT_OPTIONS: Option<Map<String, String>?> = Option("apOption", null)
         val JAVAC_OPTIONS: Option<Map<String, String>?> = Option("javacOption", null)
-        val DETECT_MEMORY_LEAKS: Option<KaptDetectMemoryLeaksMode> = Option("detectMemoryLeaks", KaptDetectMemoryLeaksMode.NONE)
+        val DETECT_MEMORY_LEAKS: Option<KaptDetectMemoryLeaksMode> = Option("detectMemoryLeaks", KaptDetectMemoryLeaksMode.DEFAULT)
         val DUMP_FILE_READ_HISTORY: Option<Path?> = Option("dumpFileReadHistory", null)
         val SHOW_PROCESSOR_STATS: Option<Boolean> = Option("showProcessorStats", false)
         val DUMP_PROCESSOR_STATS: Option<Path?> = Option("dumpProcessorStats", null)
