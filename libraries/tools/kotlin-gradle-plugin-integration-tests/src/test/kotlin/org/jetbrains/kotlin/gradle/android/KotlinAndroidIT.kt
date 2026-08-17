@@ -62,8 +62,7 @@ class KotlinAndroidIT : KGPBaseTest() {
                 // In Gradle 8, `KotlinGradleBuildServices` is instantiated twice on the first run:
                 // once during the configuration phase, and again during the execution phase
                 // when the stored configuration cache entry is deserialized
-                // In contrast, Gradle 7 only instantiates it once and does not reuse the configuration cache entry for this process
-                val times = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) 1 else 2
+                val times = 2
                 assertKotlinGradleBuildServicesAreInitialized(times)
             }
 
@@ -341,14 +340,6 @@ class KotlinAndroidIT : KGPBaseTest() {
                 |fun test() = println("hello")
                 """.trimMargin()
             )
-
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                gradleProperties.appendText(
-                    """
-                systemProp.org.gradle.kotlin.dsl.precompiled.accessors.strict=true
-                """.trimIndent()
-                )
-            }
 
             build("help")
         }

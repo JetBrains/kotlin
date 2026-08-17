@@ -223,9 +223,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @MppGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_0 // configuration cache and precompiled script plugins fails on earlier versions
-    )
     @GradleTest
     fun `test composite build with precompiled script plugins and multiplatform`(gradleVersion: GradleVersion) {
         val buildOptions = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)) {
@@ -327,9 +324,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("with build report")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project(

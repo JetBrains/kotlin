@@ -379,35 +379,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
-    @DisplayName("Default value becomes 'error' with Gradle 8+")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_0)
-    @GradleTest
-    internal fun errorByDefaultWithGradle8(gradleVersion: GradleVersion) {
-        project("simple".fullProjectName, gradleVersion) {
-            //language=Groovy
-            @Suppress("UnnecessaryQualifiedReference")
-            buildGradle.appendText(
-                """
-                |
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).configureEach {
-                |    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-                |}
-                """.trimMargin()
-            )
-
-            if (gradleVersion.baseVersion >= GradleVersion.version("8.0")) {
-                buildAndFail("assemble") {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
-                }
-            } else {
-                build("assemble") {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
-                }
-            }
-        }
-    }
-
     @MppGradlePluginTests
     @DisplayName("Validation should show error for MPP JVM target withJava")
     @GradleTest

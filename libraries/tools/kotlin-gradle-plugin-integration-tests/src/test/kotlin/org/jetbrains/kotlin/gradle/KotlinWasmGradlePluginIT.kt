@@ -1328,8 +1328,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         project(
             "wasm-composite-build",
             gradleVersion,
-            // `:compileKotlinWasmJs` task is not compatible with CC on Gradle 7
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()

@@ -225,7 +225,6 @@ class FatFrameworkIT : KGPBaseTest() {
     }
 
     @DisplayName("Test that the configurations exposing fat frameworks with the same baseName are resolved normally")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testExposingFrameworksWithSameBaseName(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {

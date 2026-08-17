@@ -24,7 +24,6 @@ import kotlin.test.assertEquals
 @SwiftPMImportGradlePluginTests
 class LazyMapWithCCTest : KGPBaseTest() {
 
-    @GradleTestVersions(TestVersions.Gradle.G_8_0)
     @GradleTest
     fun test(version: GradleVersion) {
         project("empty", version) {

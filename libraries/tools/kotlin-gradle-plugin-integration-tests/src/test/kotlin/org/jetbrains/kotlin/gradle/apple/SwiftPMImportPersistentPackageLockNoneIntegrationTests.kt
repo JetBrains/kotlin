@@ -22,7 +22,6 @@ import kotlin.io.path.*
 
 @DisplayName("SwiftPM import Persistent Package.resolved integration tests")
 @SwiftPMImportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
 class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
 
     /**

@@ -176,7 +176,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
-        var buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion)
+        var buildOptions = defaultBuildOptions
         if (gradleVersion < GradleVersion.version("9.1")) {
             // FIXME: KT-74795
             buildOptions = buildOptions.disableIsolatedProjects()

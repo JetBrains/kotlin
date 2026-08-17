@@ -409,7 +409,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
     @GradleTest
     fun `integrateLinkagePackage task base idempotency check`(version: GradleVersion) {
-        project("emptyxcode", version, buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(version)) {
+        project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM()
 
             build(
@@ -433,7 +433,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
     @GradleTest
     fun `KT-86155 - forEmbedAndSignLinkage prints changed files when linkage package is mutated`(version: GradleVersion) {
-        project("emptyxcode", version, buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(version)) {
+        project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM()
 
             // Step 1: generate the synthetic project via the standard flow so it exists on disk.

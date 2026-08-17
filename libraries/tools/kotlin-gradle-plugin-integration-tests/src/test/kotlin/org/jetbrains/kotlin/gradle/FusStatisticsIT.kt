@@ -59,7 +59,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testDokka(gradleVersion: GradleVersion) {
         project(
@@ -85,7 +85,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka v2 html doc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testDokkaV2HtmlDoc(gradleVersion: GradleVersion) {
         val expectedDokkaFusMetrics = arrayOf(
@@ -101,7 +101,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka v2 javadoc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testDokkaV2Javadoc(gradleVersion: GradleVersion) {
         val expectedDokkaFusMetrics = arrayOf(
@@ -233,7 +233,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for project with buildSrc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2]
+        additionalVersions = [TestVersions.Gradle.G_8_2]
     )
     fun testProjectWithBuildSrcForGradleVersion7(gradleVersion: GradleVersion) {
         //KT-64022 there are different build instances in buildSrc and rest project:
@@ -255,35 +255,11 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("for project with included build")
-    @GradleTest
-    @JvmGradlePluginTests
-    @GradleTestVersions(
-        maxVersion = TestVersions.Gradle.G_8_0
-    )
-    fun testProjectWithIncludedBuild(gradleVersion: GradleVersion) {
-        //KT-64022
-        //there are a different build instances in buildSrc and rest project
-
-        project("instantExecutionWithIncludedBuildPlugin", gradleVersion) {
-            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
-                fusStatisticsDirectory.assertAllFusReportContains(*expectedMetrics)
-            }
-            fusStatisticsDirectory.listDirectoryEntries().forEach {
-                assertTrue(it.deleteIfExists())
-            }
-
-            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
-                fusStatisticsDirectory.assertAllFusReportContains(*expectedMetrics)
-            }
-        }
-    }
-
     @JvmGradlePluginTests
     @DisplayName("for failed build")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsForFailedBuild(gradleVersion: GradleVersion) {
         project(
@@ -314,7 +290,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("fus metric for multiproject")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsForMultiproject(gradleVersion: GradleVersion) {
         project(
@@ -345,7 +321,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("test configuration time ksp metrics")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsForKsp(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {
@@ -366,7 +342,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("fus metric for jvm feature flags")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsForJvmMultiprojectWithFeatureFlags(gradleVersion: GradleVersion) {
         project(
@@ -435,7 +411,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("general fields with configuration cache")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion) {
         testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.DISABLED)
@@ -445,7 +421,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("general fields with configuration cache and project isolation")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsWithConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.ENABLED)
@@ -503,7 +479,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("configuration type metrics")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testConfigurationTypeFusMetrics(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

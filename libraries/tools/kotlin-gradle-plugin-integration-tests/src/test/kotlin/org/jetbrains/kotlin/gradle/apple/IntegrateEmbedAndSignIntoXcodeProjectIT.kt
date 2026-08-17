@@ -29,9 +29,6 @@ import kotlin.test.assertTrue
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_0
-)
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("integrateEmbedAndSign task tests")
 @SwiftPMImportGradlePluginTests

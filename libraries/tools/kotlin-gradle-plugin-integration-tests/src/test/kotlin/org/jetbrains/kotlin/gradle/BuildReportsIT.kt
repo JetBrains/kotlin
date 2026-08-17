@@ -54,9 +54,6 @@ class BuildReportsIT : KGPBaseTest() {
         get() = projectPath.getSingleFileInDir("build/reports/kotlin-build")
 
     @DisplayName("Build report is created")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildReportSmokeTest(gradleVersion: GradleVersion) {
@@ -72,9 +69,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build report output property accepts only certain values")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildReportOutputProperty(gradleVersion: GradleVersion) {
@@ -86,9 +80,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build metrics produces valid report")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
@@ -96,9 +87,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build metrics produces valid report for mpp-jvm")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildMetricsForMppJvm(gradleVersion: GradleVersion) {
@@ -106,9 +94,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build metrics produces valid report for mpp-js")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildMetricsForMppJs(gradleVersion: GradleVersion) {
@@ -122,9 +107,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build metrics produces valid report for JS project")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @TestMetadata("kotlin-js-plugin-project")
     @JvmGradlePluginTests
@@ -140,9 +122,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build metrics produces valid report for lowerings in JS project")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @TestMetadata("kotlin-js-plugin-project")
     @JvmGradlePluginTests
@@ -259,9 +238,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Build metrics produces valid report for lowerings in Native project")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @TestMetadata("native-incremental-simple")
     @NativeGradlePluginTests
@@ -431,9 +407,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Compiler build metrics report is produced")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testCompilerBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
@@ -455,9 +428,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("with no kotlin task executed")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testFileReportWithoutKotlinTask(gradleVersion: GradleVersion) {
@@ -474,9 +444,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("validation")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
@@ -491,9 +458,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("single build report output")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
@@ -510,9 +474,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("deprecated properties")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testDeprecatedReportProperties(gradleVersion: GradleVersion) {
@@ -529,9 +490,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("smoke")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
@@ -619,9 +577,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("custom value limit")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testCustomValueLimitForBuildScan(gradleVersion: GradleVersion) {
@@ -641,9 +596,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("build scan listener lazy initialisation")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildScanListenerLazyInitialisation(gradleVersion: GradleVersion) {
@@ -662,9 +614,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("build scan with project isolation")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildReportWithProjectIsolation(gradleVersion: GradleVersion) {
@@ -688,9 +637,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Error file is created")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testErrorsFileSmokeTest(
@@ -746,9 +692,6 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("Error file should not contain compilation exceptions")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testErrorsFileWithCompilationError(
@@ -823,9 +766,6 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("build scan metrics validation")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     fun testBuildScanMetricsValidation(gradleVersion: GradleVersion) {
         project(
@@ -842,9 +782,6 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("build reports work with init script")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     fun testBuildReportsWithInitScript(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
@@ -895,9 +832,6 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("json report default directory")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     fun testJsonReportDefaultDirectory(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
@@ -934,9 +868,6 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("json report")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     fun testJsonBuildReport(gradleVersion: GradleVersion) {
         project("incrementalMultiproject", gradleVersion) {
@@ -1036,9 +967,6 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("build scan with project isolation")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        //There is an exception for gradle 7.6 with project isolation:
-        //Plugin 'com.gradle.enterprise': Cannot access project ':app' from project ':'
-        minVersion = TestVersions.Gradle.G_8_0,
         // https://youtrack.jetbrains.com/issue/KT-68847
         maxVersion = TestVersions.Gradle.G_8_14,
     )

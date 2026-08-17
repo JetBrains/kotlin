@@ -124,9 +124,6 @@ open class CommonizerIT : KGPBaseTest() {
         nativeProject(
             "commonizeCurlInterop",
             gradleVersion,
-            // with CC enabled on Gradle 7 `CInteropCommonizerTask.getAllInteropGroupsForUpToDateCheck` nested input
-            // always fails the up-to-date check
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
 
             configureCommonizerTargets()

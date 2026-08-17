@@ -27,34 +27,17 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     fun testUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val compilationConfiguredTasks = configuredTasks().buildAndReturn("compileKotlin")
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                assertEquals(
-                    mapOf(
-                        ":" to setOf(
-                            "checkKotlinGradlePluginConfigurationErrors",
-                            "clean",
-                            "compileDeployJava",
-                            "compileJava",
-                            "compileKotlin",
-                            "compileTestJava",
-                            "jar"
-                        )
-                    ),
-                    compilationConfiguredTasks,
-                )
-            } else {
-                assertEquals(
-                    mapOf(
-                        ":" to setOf(
-                            "checkKotlinGradlePluginConfigurationErrors",
-                            "clean",
-                            "compileJava",
-                            "compileKotlin",
-                        )
-                    ),
-                    compilationConfiguredTasks,
-                )
-            }
+            assertEquals(
+                mapOf(
+                    ":" to setOf(
+                        "checkKotlinGradlePluginConfigurationErrors",
+                        "clean",
+                        "compileJava",
+                        "compileKotlin",
+                    )
+                ),
+                compilationConfiguredTasks,
+            )
         }
     }
 
