@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -100,7 +101,7 @@ internal constructor(
                 "Only Chromium runners can be debugged. Only used with --browser-debug.",
     )
     internal val browserDebugRunner: Property<String> = objects.property(String::class.java)
-        .convention(providers.environmentVariable(BROWSER_DEBUG_RUNNER_ENV).orElse("chromium"))
+        .convention(providers.environmentVariable(BROWSER_DEBUG_RUNNER_ENV).orElse(PwBrowserKind.CHROMIUM.browserName))
 
     @get:Input
     @get:Option(
