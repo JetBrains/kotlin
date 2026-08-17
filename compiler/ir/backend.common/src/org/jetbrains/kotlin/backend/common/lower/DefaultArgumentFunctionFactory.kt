@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class DefaultArgumentFunctionFactory(
     val context: CommonBackendContext,
@@ -73,6 +74,9 @@ abstract class DefaultArgumentFunctionFactory(
         }
     }
 
+    protected open val IrFunction.hasDefaultValues: Boolean
+        get() = parameters.any { it.defaultValue != null }
+
     fun findBaseFunctionWithDefaultArgumentsFor(
         declaration: IrFunction,
         skipInlineMethods: Boolean,
@@ -93,7 +97,7 @@ abstract class DefaultArgumentFunctionFactory(
                 }
             }
 
-            if (parameters.any { it.defaultValue != null }) return this
+            if (hasDefaultValues) return this
 
             return null
         }
@@ -160,7 +164,7 @@ abstract class DefaultArgumentFunctionFactory(
         //     }
         // Since this bug causes the metadata serializer to write the "has default value" flag into compiled
         // binaries, it's way too late to fix it. Hence the workaround.
-        if (declaration.parameters.any { it.defaultValue != null }) {
+        if (declaration.hasDefaultValues) {
             return generateDefaultsFunctionImpl(
                 declaration,
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
