@@ -717,7 +717,8 @@ class FusStatisticsIT : KGPBaseTest() {
                 build("clean", buildOptions = buildOptions)
             }
 
-            assertEquals(getExpectedFusFilesCount(gradleVersion, rounds), fusStatisticsDirectory.filterKotlinFusFiles().size)
+            //every submodule will create a separate file. There are two modules in the project
+            assertEquals(rounds * 2, fusStatisticsDirectory.filterKotlinFusFiles().size)
 
             fusStatisticsDirectory.assertFusReportContains(
                 "CONFIGURATION_IMPLEMENTATION_COUNT",
@@ -815,16 +816,6 @@ class FusStatisticsIT : KGPBaseTest() {
                 }
             }
         }
-    }
-
-    private fun getExpectedFusFilesCount(gradleVersion: GradleVersion, rounds: Int): Int {
-        val expectedFiles = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_9)) {
-            //every submodule will create a separate file. There are two modules in the project
-            rounds * 2
-        } else {
-            rounds
-        }
-        return expectedFiles
     }
 
     @DisplayName("FUS should not break project configuration for included build")

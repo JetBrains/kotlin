@@ -31,7 +31,6 @@ import kotlin.test.fail
 @AndroidTestVersions(
     maxVersion = TestVersions.AGP.AGP_813,
     additionalVersions = [
-        TestVersions.AGP.AGP_87,
         TestVersions.AGP.AGP_88,
         TestVersions.AGP.AGP_89,
         TestVersions.AGP.AGP_810,
