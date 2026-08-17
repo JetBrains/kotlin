@@ -29,6 +29,68 @@ json_value() {
     return 1
 }
 
+json_number_value() {
+    local json="$1"
+    local key="$2"
+    local pattern
+
+    json="${json//$'\n'/ }"
+    pattern="\"${key}\"[[:space:]]*:[[:space:]]*([0-9]+)"
+    if [[ "$json" =~ $pattern ]]; then
+        printf '%s\n' "${BASH_REMATCH[1]}"
+        return 0
+    fi
+
+    return 1
+}
+
+resolve_push_remote() {
+    local current_branch="$1"
+    local candidate
+    local remote
+    local remotes=()
+
+    candidate=""
+    if [[ -n "$current_branch" ]]; then
+        candidate="$(git config --get "branch.$current_branch.pushRemote" || true)"
+    fi
+    if [[ -z "$candidate" ]]; then
+        candidate="$(git config --get remote.pushDefault || true)"
+    fi
+    if [[ -z "$candidate" && -n "$current_branch" ]]; then
+        candidate="$(git config --get "branch.$current_branch.remote" || true)"
+    fi
+
+    if [[ -n "$candidate" ]]; then
+        if [[ "$candidate" == "." ]]; then
+            echo "Error: The current branch is configured to push to the local repository." >&2
+            return 1
+        fi
+        if ! git remote get-url "$candidate" >/dev/null 2>&1; then
+            echo "Error: The configured Git push remote '$candidate' does not exist." >&2
+            return 1
+        fi
+        printf '%s\n' "$candidate"
+        return 0
+    fi
+
+    if git remote get-url origin >/dev/null 2>&1; then
+        printf '%s\n' origin
+        return 0
+    fi
+
+    while IFS= read -r remote; do
+        [[ -n "$remote" ]] && remotes+=("$remote")
+    done < <(git remote)
+    if [[ ${#remotes[@]} -eq 1 ]]; then
+        printf '%s\n' "${remotes[0]}"
+        return 0
+    fi
+
+    echo "Error: Could not determine which Git remote should receive the smart branch." >&2
+    return 1
+}
+
 print_status_table() {
     local domain_width=6
     local domain
@@ -56,6 +118,11 @@ if ! command -v teamcity >/dev/null 2>&1; then
     echo "Error: The TeamCity CLI is not installed or is not available on PATH." >&2
     echo "Install it from https://github.com/JetBrains/teamcity-cli and authenticate with:" >&2
     echo "  teamcity auth login --server $TEAMCITY_SERVER_URL" >&2
+    exit 1
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+    echo "Error: Git is not installed or is not available on PATH." >&2
     exit 1
 fi
 
@@ -87,6 +154,26 @@ if [[ ${#domains[@]} -eq 0 ]]; then
     exit 0
 fi
 
+if ! head_revision="$(git rev-parse --verify HEAD)"; then
+    echo "Error: Could not determine the current Git HEAD." >&2
+    exit 1
+fi
+current_branch="$(git symbolic-ref --quiet --short HEAD || true)"
+if [[ -z "$current_branch" ]]; then
+    teamcity_branch="smart/detached-${head_revision:0:12}"
+elif [[ "$current_branch" == smart/* ]]; then
+    teamcity_branch="$current_branch"
+else
+    teamcity_branch="smart/$current_branch"
+fi
+push_remote="$(resolve_push_remote "$current_branch")"
+
+echo "Pushing HEAD $head_revision to $push_remote/$teamcity_branch."
+if ! git push "$push_remote" "HEAD:refs/heads/$teamcity_branch"; then
+    echo "Error: Could not push HEAD to $push_remote/$teamcity_branch; no TeamCity builds were started." >&2
+    exit 1
+fi
+
 export TEAMCITY_URL="$TEAMCITY_SERVER_URL"
 
 watch_directory="$(mktemp -d "${TMPDIR:-/tmp}/kotlin-smart-run.XXXXXX")"
@@ -106,6 +193,47 @@ terminate_watchers() {
     done
 }
 
+cancel_build_via_api() {
+    local build_id="$1"
+    local error_file="$2"
+    local build
+    local endpoint
+    local state
+
+    if ! build="$(teamcity --no-input --no-color api "/app/rest/builds/id:$build_id?fields=id,state" --raw 2>> "$error_file")"; then
+        return 1
+    fi
+
+    state="$(json_value "$build" state || true)"
+    case "$state" in
+        finished)
+            return 0
+            ;;
+        queued)
+            endpoint="/app/rest/buildQueue/id:$build_id"
+            ;;
+        running)
+            endpoint="/app/rest/builds/id:$build_id"
+            ;;
+        *)
+            printf 'Could not determine build %s state from TeamCity REST response.\n' "$build_id" >> "$error_file"
+            return 1
+            ;;
+    esac
+
+    printf '%s\n' '{"comment":"Cancelled by smart-run.sh","readdIntoQueue":false}' | \
+        teamcity --no-input --no-color api "$endpoint" -X POST --input - --silent 2>> "$error_file"
+}
+
+print_cancel_errors() {
+    local error_file="$1"
+    local line
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        printf '    %s\n' "$line" >&2
+    done < "$error_file"
+}
+
 cleanup() {
     local exit_status=$?
 
@@ -118,6 +246,7 @@ cleanup() {
 cancel_builds_and_exit() {
     local exit_status="$1"
     local build_id
+    local error_file
     local index
 
     trap - EXIT INT TERM
@@ -127,10 +256,15 @@ cancel_builds_and_exit() {
     for ((index = 0; index < ${#build_ids[@]}; index++)); do
         build_id="${build_ids[$index]}"
         if [[ "$build_id" != "-" && "${build_finished[$index]}" == "0" ]]; then
-            if teamcity --no-input --no-color run cancel "$build_id" --yes --comment "Cancelled by smart-run.sh" >/dev/null 2>&1; then
+            error_file="$watch_directory/cancel-$index.error"
+            if teamcity --no-input --no-color run cancel "$build_id" --yes --comment "Cancelled by smart-run.sh" \
+                >/dev/null 2> "$error_file"; then
                 echo "  Cancelled ${domains[$index]} build $build_id." >&2
+            elif cancel_build_via_api "$build_id" "$error_file"; then
+                echo "  Cancelled ${domains[$index]} build $build_id using the REST fallback." >&2
             else
                 echo "  Warning: Could not cancel ${domains[$index]} build $build_id." >&2
+                print_cancel_errors "$error_file"
             fi
         fi
     done
@@ -145,8 +279,9 @@ echo "Starting ${#domains[@]} affected domain build(s) on $TEAMCITY_SERVER_URL."
 status=0
 for domain in "${domains[@]}"; do
     build_configuration="$BUILD_CONFIGURATION_PREFIX$domain"
-    if start_result="$(teamcity --no-input --no-color run start "$build_configuration" --branch @this --json)"; then
-        if build_id="$(json_value "$start_result" id)"; then
+    if start_result="$(teamcity --no-input --no-color run start "$build_configuration" \
+        --branch "$teamcity_branch" --revision "$head_revision" --no-push --json)"; then
+        if build_id="$(json_number_value "$start_result" id)"; then
             build_ids+=("$build_id")
             build_statuses+=("QUEUED")
             build_urls+=("$(json_value "$start_result" webUrl || printf '%s\n' '-')")
