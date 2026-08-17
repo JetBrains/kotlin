@@ -40,7 +40,6 @@ class MppCrossCompilationIT : KGPBaseTest() {
 
     @DisplayName("Cross compilation enabled with dependecy, dependency with cinterops")
     @GradleTest
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_14])
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun testCrossCompilationWithCinterops(
         gradleVersion: GradleVersion,
