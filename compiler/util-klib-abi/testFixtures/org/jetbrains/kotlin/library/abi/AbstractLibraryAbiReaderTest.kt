@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.testFederation.AffectedByJs
@@ -66,7 +65,6 @@ abstract class AbstractLibraryAbiReaderTest(
         }
 
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
-        useAdditionalService(::LibraryProvider)
 
         facadeStep(frontendFacade)
         firHandlersStep {

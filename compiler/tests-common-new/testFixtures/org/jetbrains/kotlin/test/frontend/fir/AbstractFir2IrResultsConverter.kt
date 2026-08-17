@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import kotlin.io.path.absolutePathString
 
 abstract class AbstractFir2IrResultsConverter(
     testServices: TestServices
@@ -67,7 +66,6 @@ abstract class AbstractFir2IrResultsConverter(
     final override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(
             service(::FirDiagnosticCollectorService),
-            service(::LibraryProvider),
         )
 
     final override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? =
@@ -99,7 +97,6 @@ abstract class AbstractFir2IrResultsConverter(
         val [dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?] = loadModuleDescriptors(
             libraries,
             testServices.targetPlatformProvider.getTargetPlatform(module),
-            testServices
         )
 
         val fir2IrConfiguration = createFir2IrConfiguration(compilerConfiguration, diagnosticReporter)
@@ -151,42 +148,37 @@ abstract class AbstractFir2IrResultsConverter(
     private fun loadModuleDescriptors(
         libraries: List<KotlinLibrary>,
         targetPlatform: TargetPlatform,
-        testServices: TestServices
     ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
         val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
 
         var builtIns: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl =
-            testServices.libraryProvider.getOrCreateStdlibByPath(library.path.absolutePathString()) {
-                // TODO: check safety of the approach of creating a separate storage manager per library
-                val storageManager = LockBasedStorageManager("ModulesStructure")
+        fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
+            val moduleName = special("<${library.uniqueName}>")
+            val moduleOrigin = DeserializedKlibModuleOrigin(library)
+            val builtInsToUse = builtIns ?: object : KotlinBuiltIns(LockBasedStorageManager.NO_LOCKS) {}
+            val moduleDescriptor = ModuleDescriptorImpl(
+                moduleName,
+                LockBasedStorageManager.NO_LOCKS,
+                builtInsToUse,
+                capabilities = mapOf(
+                    KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                    @OptIn(K1Deprecation::class)
+                    ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+                ),
+                platform = targetPlatform
+            )
 
-                val moduleName = special("<${library.uniqueName}>")
-                val moduleOrigin = DeserializedKlibModuleOrigin(library)
-                val builtInsToUse = builtIns ?: object : KotlinBuiltIns(storageManager) {}
-                val moduleDescriptor = ModuleDescriptorImpl(
-                    moduleName,
-                    storageManager,
-                    builtInsToUse,
-                    capabilities = mapOf(
-                        KlibModuleOrigin.CAPABILITY to moduleOrigin,
-                        @OptIn(K1Deprecation::class)
-                        ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
-                    ),
-                    platform = targetPlatform
-                )
+            if (builtIns == null) {
+                builtInsToUse.builtInsModule = moduleDescriptor
+            }
 
-                if (builtIns == null) {
-                    builtInsToUse.builtInsModule = moduleDescriptor
-                }
+            dependencies += moduleDescriptor
+            moduleDescriptor.setDependencies(dependencies.toList())
 
-                dependencies += moduleDescriptor
-                moduleDescriptor.setDependencies(dependencies.toList())
-
-                Pair(moduleDescriptor, library)
-            } as ModuleDescriptorImpl
+            return moduleDescriptor
+        }
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
         if (stdlib != null) {

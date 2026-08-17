@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
@@ -58,7 +57,6 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
             ::FirFailingTestSuppressor,
         )
         enableMetaInfoHandler()
-        useAdditionalService(::LibraryProvider)
     }
 }
 

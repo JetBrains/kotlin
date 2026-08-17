@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
 import org.junit.jupiter.api.Test
@@ -55,8 +54,6 @@ abstract class AbstractSymbolsValidationTest(
         defaultDirectives {
             +ConfigurationDirectives.WITH_STDLIB
         }
-
-        useAdditionalService(::LibraryProvider)
 
         facadeStep(frontendFacade)
         firHandlersStep()
