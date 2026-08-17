@@ -1,5 +1,7 @@
 // TARGET_BACKEND: WASM
 // ENABLE_TAIL_CALLS
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-JS:2.4
+// ^ `-Xwasm-enable-tail-calls` was introduced in 2.5
 
 // Direct static tail call
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=staticTailCaller
