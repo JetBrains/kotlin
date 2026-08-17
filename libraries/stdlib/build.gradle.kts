@@ -877,11 +877,6 @@ tasks {
             enabled = false  // Causes out-of-memory in CI: KTI-2150
         }
     }
-    val wasmWasiWasmtimeTest by existing {
-        if (!kotlinBuildProperties.booleanProperty("kotlin.stdlib.wasi.tests").get()) {
-            enabled = false
-        }
-    }
 
     /*
     We are using a custom 'kotlin-project-structure-metadata' to ensure 'nativeApiElements' lists 'commonMain' as source set
