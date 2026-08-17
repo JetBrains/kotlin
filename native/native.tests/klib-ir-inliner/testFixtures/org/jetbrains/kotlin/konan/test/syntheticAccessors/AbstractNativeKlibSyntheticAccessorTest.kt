@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.configuration.commonConfigurationForDumpSynthet
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 
 // Base class for IR dump synthetic accessors test, configured with FIR frontend, in Native-specific way.
@@ -38,6 +39,7 @@ open class AbstractNativeKlibSyntheticAccessorTest(
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeSecondStageEnvironmentConfigurator,
         )
     }
 }
