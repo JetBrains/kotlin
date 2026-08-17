@@ -65,10 +65,26 @@ class LogOnOuterClassWhenItsCompanionHasLogField {
     }
 }
 
-class LogOnCompanionWhenCompanionHasLogField {
-    <!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
+// `lombok.log.fieldIsStatic` alone decides whether the logger is static, so the annotation belongs on the class
+// rather than on its companion object - and on the latter it generated nothing whatsoever with
+// `fieldIsStatic=false`, KT-88288.
+class LogOnCompanion {
+    <!ANNOTATION_HAS_NO_EFFECT!>@Log<!>
     companion object MyCompanion {
-        val log = "No log"
+        fun test() {
+            <!UNRESOLVED_REFERENCE!>log<!>.info("Nothing is generated into the companion object")
+        }
+    }
+}
+
+// The annotation on the class keeps working: an inert one must not suppress one that has an effect.
+@Log
+class LogOnBothClassAndItsCompanion {
+    <!ANNOTATION_HAS_NO_EFFECT!>@Log<!>
+    companion object MyCompanion {
+        fun test() {
+            log.info("Generated from the annotation on the class")
+        }
     }
 }
 

@@ -102,27 +102,6 @@ FILE: log.kt
         }
 
     }
-    public final class LogOnCompanion : R|kotlin/Any| {
-        public constructor(): R|LogOnCompanion| {
-            super<R|kotlin/Any|>()
-        }
-
-        @R|lombok/extern/java/Log|() public final companion object Companion : R|kotlin/Any| {
-            private constructor(): R|LogOnCompanion.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-            public final fun test(): R|kotlin/Unit| {
-                this@R|/LogOnCompanion.Companion|.R|/LogOnCompanion.Companion.log|.R|java/util/logging/Logger.addHandler|(R|/logHandler|)
-                this@R|/LogOnCompanion.Companion|.R|/LogOnCompanion.Companion.log|.R|java/util/logging/Logger.info|(String(Check @Log on companion object))
-            }
-
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnCompanion.Companion|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
-                private get(): R|java/util/logging/Logger|
-
-        }
-
-    }
     public final class LogOnNestedClass : R|kotlin/Any| {
         public constructor(): R|LogOnNestedClass| {
             super<R|kotlin/Any|>()
@@ -284,14 +263,13 @@ FILE: log.kt
         R|/LogExampleWithExistingCompanion.LogExampleWithExistingCompanion|().R|/LogExampleWithExistingCompanion.test|()
         R|/assertEquals|<R|kotlin/String|>(String(No log), R|/LogExampleWithExistingCompanionAndLogField.LogExampleWithExistingCompanionAndLogField|().R|/LogExampleWithExistingCompanionAndLogField.test|())
         R|/LogExampleWithTopic.LogExampleWithTopic|().R|/LogExampleWithTopic.test|()
-        Q|LogOnCompanion|.R|/LogOnCompanion.Companion.test|()
         Q|LogOnNestedClass|.R|/LogOnNestedClass.Nested.Nested|().R|/LogOnNestedClass.Nested.test|()
         R|/LogOnInnerClass.LogOnInnerClass|<R|kotlin/String|>().R|SubstitutionOverride</LogOnInnerClass.Inner.Inner>|().R|SubstitutionOverride</LogOnInnerClass.Inner.test: R|kotlin/Unit|>|()
         Q|LogOnObject|.R|/LogOnObject.test|()
         Q|LogOnEnum|.R|/LogOnEnum.ExampleEntry|.R|/LogOnEnum.test|()
         Q|LogWhenNonConflictingExtensionProperty|.R|/LogWhenNonConflictingExtensionProperty.Companion.test|()
         Q|LogWhenNonConflictingContextualProperty|.R|/LogWhenNonConflictingContextualProperty.Companion.test|()
-        lval expected: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(INFO: Call from public log), String(INFO: Test LogExample), String(WARNING: Test LogExampleWithExistingCompanion), String(INFO: Test LogExampleWithTopic), String(INFO: Check @Log on companion object), String(INFO: Check @Log on nested class), String(INFO: Check @Log on inner class), String(INFO: Check @Log on object), String(INFO: Check @Log on enum), String(INFO: Check LogWhenNonConflictingExtensionProperty), String(INFO: Check LogWhenNonConflictingContextualProperty)))
+        lval expected: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(INFO: Call from public log), String(INFO: Test LogExample), String(WARNING: Test LogExampleWithExistingCompanion), String(INFO: Test LogExampleWithTopic), String(INFO: Check @Log on nested class), String(INFO: Check @Log on inner class), String(INFO: Check @Log on object), String(INFO: Check @Log on enum), String(INFO: Check LogWhenNonConflictingExtensionProperty), String(INFO: Check LogWhenNonConflictingContextualProperty)))
         R|/assertEquals|<R|kotlin/collections/List<kotlin/String>|>(R|<local>/expected|, R|/logMessages|)
         ^box String(OK)
     }

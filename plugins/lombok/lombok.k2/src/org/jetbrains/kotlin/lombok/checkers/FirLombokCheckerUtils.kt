@@ -46,7 +46,11 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
     val logInfo = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
-            KotlinTarget.OBJECT,
+            // `STANDALONE_OBJECT` rather than the umbrella `OBJECT`, which also covers a companion object:
+            // `lombok.log.fieldIsStatic` alone decides whether the logger is static, so putting the annotation on
+            // the companion object rather than on its class buys nothing - and with `fieldIsStatic=false` it did
+            // nothing at all, neither generating nor reporting (KT-88288).
+            KotlinTarget.STANDALONE_OBJECT,
             KotlinTarget.ENUM_CLASS,
         )
     )
