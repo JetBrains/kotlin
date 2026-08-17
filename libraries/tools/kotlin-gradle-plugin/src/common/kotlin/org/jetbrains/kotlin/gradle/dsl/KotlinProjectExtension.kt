@@ -360,6 +360,13 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
         }
         @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
         set(_) {}
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
+    // Workaround for https://github.com/gradle/gradle/issues/37652.
+    fun sourceSets(configure: NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit) {
+        configure(sourceSets)
+    }
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {
