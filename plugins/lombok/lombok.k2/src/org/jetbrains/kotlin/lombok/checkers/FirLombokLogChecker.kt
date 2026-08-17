@@ -26,17 +26,19 @@ import org.jetbrains.kotlin.name.Name
 object FirLombokLogChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
+        // A log annotation on a companion object generates nothing and is reported as `ANNOTATION_HAS_NO_EFFECT` by
+        // `checkLombokAnnotations` instead (KT-88288), so there is no logger of its own here to clash with anything.
+        // The logger a companion object does hold comes from the class around it, and is checked when that class is
+        // visited, `loggerContainer` being its companion object then.
+        if (declaration.isCompanion) return
+
         val lombokService = context.session.lombokService
         val logs = lombokService.getLogs(declaration.symbol).takeIf { it.isNotEmpty() } ?: return
 
         val loggerContainer = if (lombokService.config.logFieldIsStatic) {
-            if (declaration.isCompanion) {
-                declaration.symbol
-            } else {
-                // Absent when the logger is not generated at all: either the class can hold no companion object,
-                // or `LoggerGenerator` refused to create one because the logger would be shadowed anyway.
-                declaration.companionObjectSymbol
-            }
+            // Absent when the logger is not generated at all: either the class can hold no companion object,
+            // or `LoggerGenerator` refused to create one because the logger would be shadowed anyway.
+            declaration.companionObjectSymbol
         } else {
             declaration.symbol
         }
