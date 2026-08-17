@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
+import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -27,6 +28,11 @@ import java.io.PrintStream
 class CustomNativeCompilerFirstStageFacade(testServices: TestServices) : CustomKlibCompilerFirstStageFacade(testServices) {
     override val TestModule.customKlibCompilerDefaultLanguageVersion: LanguageVersion
         get() = customNativeCompilerSettings.defaultLanguageVersion
+
+    // Without this check, the facade would compile a module with no Kotlin sources into an empty KLIB.
+    override fun shouldTransform(module: TestModule): Boolean {
+        return super.shouldTransform(module) && module.files.none { it.name.endsWith(".def") }
+    }
 
     override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices)
 
