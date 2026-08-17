@@ -538,7 +538,6 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Xcode style errors when sync framework configuration failed")
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenConfigurationFailed(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(

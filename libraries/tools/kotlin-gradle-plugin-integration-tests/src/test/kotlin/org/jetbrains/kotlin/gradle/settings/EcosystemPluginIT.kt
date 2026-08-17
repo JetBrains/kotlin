@@ -47,7 +47,7 @@ class EcosystemPluginIT : KGPBaseTest() {
                 projectPath.createDirectories()
                 buildGradleKts.createFile()
                 settingsGradleKts.createFile()
-                projectPath.addDefaultSettingsToSettingsGradle(gradleVersion)
+                projectPath.addDefaultSettingsToSettingsGradle()
 
                 addEcosystemPluginToBuildScriptCompilationClasspath(buildOptions.kotlinVersion)
 

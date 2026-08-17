@@ -513,9 +513,6 @@ class BuildReportsIT : KGPBaseTest() {
 
     @Suppress("DEPRECATION")
     @DisplayName("BuildMetricsService unsubscribes from BuildOperationListenerManager on close")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_1],
-    )
     @GradleTest
     @JvmGradlePluginTests
     fun testBuildOperationListenerUnsubscribed(gradleVersion: GradleVersion) {
