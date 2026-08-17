@@ -83,8 +83,17 @@ fun runWithKotlinLauncherScript(
         addAll(compilerArgs)
     }
 
+    // The launcher script picks `$JAVA_HOME/bin/java`, falling back to whatever `java` is on the `PATH`, so
+    // without this the compiler would run on an ambient JDK unrelated to the one running the test. Tests that
+    // derive a `-jvm-target` from `java.runtime.version` — see `MainKtsIT.testWithDifferrentJvmTarget` — then
+    // ask for bytecode the launched compiler cannot load back, and fail with an `UnsupportedClassVersionError`
+    // that depends on the machine rather than on the code.
+    val sameJvmAsTest = listOf("JAVA_HOME" to System.getProperty("java.home"))
+
     runAndCheckResults(
-        args, expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, additionalEnvVars
+        args, expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory,
+        // `additionalEnvVars` last, so a caller can still override the JDK deliberately.
+        additionalEnvVars = sameJvmAsTest + (additionalEnvVars ?: emptyList()),
     )
 }
 
