@@ -72,6 +72,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 // AGP's SourceSetsTask is not CC compatible
                 // see https://issuetracker.google.com/issues/242872035
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
             ),
             buildJdk = jdkVersion.location
         ) {

@@ -421,7 +421,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 {
                     val hashesWithCc = provider.buildAndReturn(
                         ":all",
-                        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
                     )
                     assertNotNull(hashesWithCc["one"])
                     assertNotEquals(hashesWithCc["one"], hashesWithCc["two"])
@@ -429,7 +428,12 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 {
                     val hashesWithCc = provider.buildAndReturn(
                         ":all",
-                        configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                        deriveBuildOptions = {
+                            buildOptions.copy(
+                                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                            )
+                        },
                     )
                     assertNotNull(hashesWithCc["one"])
                     assertEquals(hashesWithCc["one"], hashesWithCc["two"])

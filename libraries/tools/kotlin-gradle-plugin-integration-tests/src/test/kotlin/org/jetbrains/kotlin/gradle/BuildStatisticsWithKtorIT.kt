@@ -307,6 +307,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                     logLevel = LogLevel.WARN,
                     // CC disrupts task order to validate, so it's disabled to ensure the proper task order
                     configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                    isolatedProjects = IsolatedProjectsMode.DISABLED,
                 ),
             ) {
                 setProjectForTest(port)

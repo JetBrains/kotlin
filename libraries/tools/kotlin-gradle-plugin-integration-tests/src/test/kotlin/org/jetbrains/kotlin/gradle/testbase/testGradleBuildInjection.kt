@@ -314,14 +314,6 @@ class ReturnFromBuildScriptAfterExecution<T>(
     fun buildAndReturn(
         vararg buildArguments: String = arrayOf(defaultEvaluationTask),
         executingProject: TestProject = returnContainingGradleProject,
-        /**
-         * FIXME: With enabled CC and "configuration-cache.problems=fail" if build fails due to CC serialization, Gradle will not report an
-         * error in the FlowScope and it will not be caught in [catchBuildFailures]. With "configuration-cache.problems=warn" Gradle
-         * always forces CC deserialization before task execution and will therefore produce a catchable build failure, but only if the
-         * violating task actually executes
-         */
-        configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.AUTO,
-        configurationCacheProblems: BuildOptions.ConfigurationCacheProblems = BuildOptions.ConfigurationCacheProblems.FAIL,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
         buildAction: BuildAction = defaultBuildAction,
     ): T {
@@ -330,10 +322,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
                 *buildArguments,
                 "-P${injectionLoadProperty}=true",
             ),
-            executingProject.deriveBuildOptions().copy(
-                configurationCache = configurationCache,
-                configurationCacheProblems = configurationCacheProblems,
-            )
+            executingProject.deriveBuildOptions(),
         )
         ObjectInputStream(serializedReturnPath.inputStream()).use {
             @Suppress("UNCHECKED_CAST")

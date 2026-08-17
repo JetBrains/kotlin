@@ -544,7 +544,11 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildCacheEnabled = true, configurationCache = ENABLED),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                buildCacheEnabled = true,
+                configurationCache = ENABLED
+            ),
             enableGradleDaemonMemoryLimitInMb = 1024
         ) {
             buildScriptInjection {

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
 import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
-import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsForKmpDependenciesChecker
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
@@ -82,7 +81,10 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         }
 
         consumer.resolveIdeDependencies(
-            buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) { container ->
             container["commonMain"].assertMatches(
                 kotlinStdlibDependencies,
@@ -190,7 +192,6 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
     ) {
         val buildOpions = defaultBuildOptions
             .copy(androidVersion = agpVersion)
-            .disableIsolatedProjectsForKmpDependenciesChecker(gradleVersion)
         val consumer = project("empty", gradleVersion, buildOpions) {
             val producer = project("empty", gradleVersion) {
                 plugins {

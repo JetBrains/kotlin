@@ -159,9 +159,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         project("empty", version) {
             buildScriptReturn {
                 project.layout.projectDirectory.file("foo").asFile
-            }.buildAndReturn(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
+            }.buildAndReturn()
         }
 
         // Make sure delayed task providers (e.g. mapped from a task) get queried at the correct time even in runs with CC
@@ -198,9 +196,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
 
             providerBuildScriptReturn {
                 mappedTaskOutputProvider()
-            }.buildAndReturn(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
+            }.buildAndReturn()
         }
     }
 

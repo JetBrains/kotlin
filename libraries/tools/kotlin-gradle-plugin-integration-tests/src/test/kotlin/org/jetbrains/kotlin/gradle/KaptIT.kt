@@ -1230,6 +1230,7 @@ open class KaptIT : KaptBaseIT() {
                  */
                 warningMode = WarningMode.None,
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
             ),
         ) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }

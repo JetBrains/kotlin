@@ -356,6 +356,7 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
                 // model builder below breaks configuration cache in Gradle 9+,
                 // making it configuration cache friendly isn't necessary for this test
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS
             )
         ) {

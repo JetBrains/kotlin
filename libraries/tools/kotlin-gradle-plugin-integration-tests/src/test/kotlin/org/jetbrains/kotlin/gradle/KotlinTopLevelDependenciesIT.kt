@@ -235,11 +235,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
         // Verify that the published jvm POM contains the kotlinx-coroutines dependency
         val pomFile = parsePom(
-            publish(
-                deriveBuildOptions = {
-                    buildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(gradleVersion)
-                }
-            ).jvmMultiplatformComponent.pom
+            publish().jvmMultiplatformComponent.pom
         )
 
         assertEquals<PrettyPrint<List<MavenModule>>>(

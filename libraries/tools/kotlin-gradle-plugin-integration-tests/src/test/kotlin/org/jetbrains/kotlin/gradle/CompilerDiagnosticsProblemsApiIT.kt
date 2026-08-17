@@ -14,7 +14,6 @@ import kotlin.io.path.writeText
 
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_11, // This test asserts via the HTML problems report, which is available from Gradle 8.11+
     additionalVersions = [
         TestVersions.Gradle.G_8_13,
         TestVersions.Gradle.G_9_5,
@@ -55,7 +54,6 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
 
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_11,
         additionalVersions = [TestVersions.Gradle.G_8_13, TestVersions.Gradle.G_9_3],
     )
     @DisplayName("Test compiler warning is not duplicated in build output by Problems API renderer")

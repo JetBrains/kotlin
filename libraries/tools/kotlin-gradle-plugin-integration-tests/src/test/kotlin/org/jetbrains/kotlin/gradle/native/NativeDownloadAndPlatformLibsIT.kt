@@ -65,7 +65,10 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
     // KT-71497: Generation of native distribution is not Configuration Cache friendly
     private fun BuildOptions.disableConfigurationCacheForNativeDistGeneration() =
-        copy(configurationCache = ConfigurationCacheValue.DISABLED)
+        copy(
+            configurationCache = ConfigurationCacheValue.DISABLED,
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+        )
 
     @AfterEach
     fun afterEach() {
