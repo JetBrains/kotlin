@@ -15,7 +15,6 @@ import kotlin.io.path.writeText
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
     additionalVersions = [
-        TestVersions.Gradle.G_8_13,
         TestVersions.Gradle.G_9_5,
     ]
 )
@@ -54,7 +53,7 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
 
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_13, TestVersions.Gradle.G_9_3],
+        additionalVersions = [TestVersions.Gradle.G_9_3],
     )
     @DisplayName("Test compiler warning is not duplicated in build output by Problems API renderer")
     fun testCompilerWarningNotDuplicatedInOutput(gradleVersion: GradleVersion) {
