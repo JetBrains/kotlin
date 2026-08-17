@@ -454,6 +454,57 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         doTestSingleTargetMetadata(gradleVersion, localRepoDir, enableSeparateCompilation = false)
     }
 
+    // Generally should be covered by other tests once KMP separate compilation is enabled by default
+    @DisplayName("single-target native project compiles successfully")
+    @GradleTest
+    fun singleTargetNativeProject(gradleVersion: GradleVersion) {
+        doTestFragmentDependenciesArg(
+            gradleVersion = gradleVersion,
+            targetsToInclude = listOf("linuxX64"),
+            targetsToRun = listOf("linuxX64"),
+            compilationName = "test"
+        ) { fragmentDependenciesPerFragment ->
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/common/stdlib",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.linux",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("commonTest").prettyPrinted,
+                "Kotlin stdlib and platform dependencies are expected to be in 'commonTest' fragment dependencies"
+            )
+
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/common/stdlib",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.linux",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("nativeTest").prettyPrinted,
+                "Only one Kotlin stdlib and platform dependencies are expected to be in 'nativeTest' fragment dependencies"
+            )
+
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/common/stdlib",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.linux",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/platform/linux_x64/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("linuxTest").prettyPrinted,
+                "Only platform dependencies are expected to be in 'linuxTest' fragment dependencies"
+            )
+        }
+    }
+
     @DisplayName("KT-79073 - test compilation compiles with use of internals from main code")
     @GradleTest
     fun `KT-79073 - friend fragment dependencies`(gradleVersion: GradleVersion) {
