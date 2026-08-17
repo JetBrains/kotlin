@@ -13,6 +13,7 @@ import org.gradle.internal.operations.DefaultBuildOperationListenerManager
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.formatSize
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
@@ -174,7 +175,7 @@ class BuildReportsIT : KGPBaseTest() {
         project: String,
         task: String,
         gradleVersion: GradleVersion,
-        languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
+        languageVersion: String = LanguageVersion.LATEST_STABLE.versionString,
         disableIsolatedProjects: Boolean = false,
         freeCompilerArgs: List<String> = listOf(),
         expectedReportLines: List<String> = listOf(),
