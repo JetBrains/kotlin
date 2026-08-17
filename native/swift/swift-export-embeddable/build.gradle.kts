@@ -1,4 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 import java.util.zip.ZipFile
 
 plugins {
@@ -233,5 +235,6 @@ projectTests {
         )
         testClassesDirs = testSourceSet.output.classesDirs
         systemProperty("ide.can.use.coroutines.fork", "false")
+        testFederationAllowAffectedBy = setOf(Domain.AnalysisApi, Domain.Native)
     }
 }

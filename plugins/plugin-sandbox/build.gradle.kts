@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -76,11 +78,12 @@ sourceSets {
 }
 
 projectTests {
-    testTask() {
+    testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         useJUnitPlatform {
             excludeTags("sandbox-native")
         }
+        testFederationAllowAffectedBy = setOf(Domain.Js, Domain.Compiler)
     }
 
     nativeTestTask(
@@ -89,7 +92,9 @@ projectTests {
         requirePlatformLibs = false,
         customTestDependencies = listOf(sandboxAnnotationsNativeRuntimeForTests),
         compilerPluginDependencies = listOf(sandboxPluginForTests)
-    )
+    ) {
+        testFederationAllowAffectedBy = setOf(Domain.Native)
+    }
 
     testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
