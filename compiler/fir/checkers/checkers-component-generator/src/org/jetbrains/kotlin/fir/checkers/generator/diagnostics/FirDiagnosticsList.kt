@@ -220,7 +220,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val ROOT_IDE_PACKAGE_DEPRECATED by warning<PsiElement>(PositioningStrategy.DEFAULT)
 
-        val SMARTCAST_TO_TYPE_VARIABLE by error<PsiElement>()
+        val SMARTCAST_TO_TYPE_VARIABLE by warning<PsiElement>()
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
