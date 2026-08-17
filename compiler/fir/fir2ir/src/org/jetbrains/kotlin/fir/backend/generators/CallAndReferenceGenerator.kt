@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
-import org.jetbrains.kotlin.fir.resolve.calls.stages.supportsNumericClassConversionFrom
-import org.jetbrains.kotlin.fir.resolve.calls.stages.supportsNumericClassConversionTo
+import org.jetbrains.kotlin.fir.supportsNumericClassConversionFrom
+import org.jetbrains.kotlin.fir.supportsNumericClassConversionTo
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
