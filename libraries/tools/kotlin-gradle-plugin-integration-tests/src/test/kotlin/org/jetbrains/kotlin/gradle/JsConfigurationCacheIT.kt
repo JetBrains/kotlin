@@ -148,15 +148,9 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         project("kotlin-js-nodejs-project", gradleVersion) {
             build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
                 assertTasksExecuted(":jsNodeDevelopmentRun")
-                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
-                    assertOutputContains(
-                        "Calculating task graph as no configuration cache is available for tasks: jsNodeDevelopmentRun"
-                    )
-                } else {
-                    assertOutputContains(
-                        "Calculating task graph as no cached configuration is available for tasks: jsNodeDevelopmentRun"
-                    )
-                }
+                assertOutputContains(
+                    "Calculating task graph as no cached configuration is available for tasks: jsNodeDevelopmentRun"
+                )
 
                 assertConfigurationCacheStored()
             }

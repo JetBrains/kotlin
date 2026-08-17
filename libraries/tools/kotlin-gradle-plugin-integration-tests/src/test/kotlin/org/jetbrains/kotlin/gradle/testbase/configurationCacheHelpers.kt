@@ -24,15 +24,9 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
-        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
-            assertOutputContains(
-                "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
-            )
-        } else {
-            assertOutputContains(
-                "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
-            )
-        }
+        assertOutputContains(
+            "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+        )
 
         assertConfigurationCacheStored()
     }

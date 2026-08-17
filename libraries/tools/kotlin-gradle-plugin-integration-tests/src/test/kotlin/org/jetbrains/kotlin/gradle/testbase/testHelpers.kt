@@ -213,25 +213,14 @@ fun GradleProject.addPropertyToGradleProperties(
 internal fun TestProject.addArchivesBaseNameCompat(
     archivesBaseName: String,
 ) {
-    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)) {
-        buildGradle.appendText(
-            """
-            |
-            |base {
-            |    archivesName = '$archivesBaseName'
-            |}
-            """.trimMargin()
-        )
-    } else {
-        buildGradle.appendText(
-            """
-            |
-            |base {
-            |    archivesBaseName = '$archivesBaseName'
-            |}
-            """.trimMargin()
-        )
-    }
+    buildGradle.appendText(
+        """
+        |
+        |base {
+        |    archivesName = '$archivesBaseName'
+        |}
+        """.trimMargin()
+    )
 }
 
 /**
