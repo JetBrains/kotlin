@@ -180,10 +180,18 @@ internal class KotlinImportModelProvider(
     private fun compilationUnitId(compilationName: String): CompilationUnitId {
         val buildPath = project.currentBuildId().compatAccessor(project).buildPath
         val targetKey = project.kotlinJvmExtension.target.targetName.ifEmpty { "jvm" }
-        // Stable opaque format: <build-path>|<project-path>|<target-key>|<compilation-name>
-        return compilationUnitId { value = listOf(buildPath, project.path, targetKey, compilationName).joinToString("|") }
+        return compilationUnitId { value = compilationUnitIdValue(buildPath, project.path, targetKey, compilationName) }
     }
 }
+
+// Stable opaque format: percent-escape each component before joining with `|`
+internal fun compilationUnitIdValue(
+    buildPath: String,
+    projectPath: String,
+    targetKey: String,
+    compilationName: String,
+): String = listOf(buildPath, projectPath, targetKey, compilationName)
+    .joinToString("|") { it.replace("%", "%25").replace("|", "%7C") }
 
 private fun KotlinToolingVersion.toImportModelVersion(): Version = version {
     major = this@toImportModelVersion.major

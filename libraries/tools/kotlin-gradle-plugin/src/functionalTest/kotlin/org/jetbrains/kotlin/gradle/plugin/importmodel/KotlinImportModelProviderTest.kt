@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class KotlinImportModelProviderTest {
@@ -81,6 +82,18 @@ class KotlinImportModelProviderTest {
         assertEquals(mainId, model.parameters.compilationUnitId)
         assertTrue("-Xdebug" in model.argumentsList)
         assertTrue("-opt-in my.custom.OptInAnnotation" in model.argumentsList.joinToString(" "))
+    }
+
+    @Test
+    fun `escapes compilation unit ID components without collisions`() {
+        assertEquals(
+            ":included%7Cbuild|:app%25demo|jvm|test%7Cfixture",
+            compilationUnitIdValue(":included|build", ":app%demo", "jvm", "test|fixture"),
+        )
+        assertNotEquals(
+            compilationUnitIdValue("a|b", "c", "d", "e"),
+            compilationUnitIdValue("a", "b", "c", "d|e"),
+        )
     }
 
     private fun assertCompilationUnit(
