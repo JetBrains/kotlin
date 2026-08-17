@@ -16,7 +16,6 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [
-            TestVersions.Gradle.G_8_3,
             TestVersions.Gradle.G_8_11
         ],
     )
@@ -30,16 +29,6 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
                 //register build service for buildSrc.
                 when {
-                    gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_3) -> {
-                        assertOutputContainsExactlyTimes(
-                            "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService: new instance", // the legacy service for compatibility
-                            1
-                        )
-                        assertOutputContainsExactlyTimes(
-                            "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService_v2: new instance", // the current default version of the service
-                            1
-                        )
-                    }
                     //for gradle 8.3 kotlin 1.9.0 is used, log message is changed
                     gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5) -> {
                         assertOutputContainsExactlyTimes(

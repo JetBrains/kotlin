@@ -28,7 +28,6 @@ class MppJvmWithJavaIT : KGPBaseTest() {
 
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_3, // Shadow requires Gradle 8.3+
         maxVersion = TestVersions.Gradle.G_8_6, // last version where 'withJava()' method has warning deprecation
     )
     @TestMetadata(value = "new-mpp-lib-and-app")
