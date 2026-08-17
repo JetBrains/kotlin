@@ -278,6 +278,7 @@ Unknown:
  - compiler/CLAUDE.md
  - compiler/ir/ReadMe.md
  - compiler/ir/code-rules.md
+ - compiler/test-coverage
  - dependencies
  - docs
  - generators
