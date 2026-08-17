@@ -8,8 +8,6 @@ plugins {
     `maven-publish`
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
-
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
 val builtinsMetadata = configurations.create("builtinsMetadata")

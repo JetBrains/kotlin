@@ -7,8 +7,6 @@ plugins {
     java
 }
 
-project.updateJvmTarget("1.8")
-
 sourceSets {
     "main" { projectDefault() }
     "test" {}

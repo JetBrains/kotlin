@@ -39,6 +39,8 @@ plugins {
 
 description = "Kotlin Standard Library"
 
+// The `main` compilation needs `-Xjdk-release=6`, and the `ct.sym` of a modern JDK does not go below
+// release 8, so the compilers have to run on the JDK they target.
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 fun resolvingConfiguration(name: String, configure: Action<Configuration> = Action {}) =

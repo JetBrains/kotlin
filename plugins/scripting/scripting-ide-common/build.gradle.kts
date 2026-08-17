@@ -5,8 +5,6 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.8"
-
 dependencies {
     implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))

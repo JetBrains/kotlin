@@ -18,8 +18,6 @@ plugins {
     kotlin("jvm")
 }
 
-configureJvmToolchain(JdkMajorVersion.JDK_1_8)
-
 sourceSets {
     "main" {
         java.srcDir("$rootDir/core/reflection.jvm/src")
