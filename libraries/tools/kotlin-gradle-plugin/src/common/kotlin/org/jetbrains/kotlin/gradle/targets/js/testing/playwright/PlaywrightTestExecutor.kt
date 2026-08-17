@@ -266,7 +266,12 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         browser.use {
             val page = browser.newPage()
             page.use {
-                runner.awaitDebuggerAttached()
+                runner.debugOptions?.let { debugOptions ->
+                    debugOptions.debuggerReadyPort?.let { readyPort ->
+                        runner.awaitDebuggerAttached(readyPort, debugOptions.debuggerReadyTimeoutMillis)
+                    }
+                }
+
                 val timeoutMillis = if (runner.isDebugEnabled) NO_TIMEOUT else runner.timeout.inWholeMilliseconds.toDouble()
                 page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
@@ -288,10 +293,8 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         }
     }
 
-    // With no ready port we don't wait at all. The timeout covers the connect and the reply separately.
-    private fun PwRunnerSpec.awaitDebuggerAttached() {
-        val readyPort = debugOptions?.debuggerReadyPort ?: return
-        val timeoutMillis = debugOptions.debuggerReadyTimeoutMillis
+    // The timeout covers the connect and the reply separately.
+    private fun PwRunnerSpec.awaitDebuggerAttached(readyPort: Int, timeoutMillis: Int) {
         log.info("Waiting up to $timeoutMillis ms for a debugger to attach to '$name'")
         try {
             Socket().use { socket ->
