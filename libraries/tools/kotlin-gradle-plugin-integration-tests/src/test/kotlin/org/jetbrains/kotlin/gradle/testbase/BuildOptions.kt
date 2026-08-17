@@ -34,7 +34,7 @@ data class BuildOptions(
     val warningMode: WarningMode = WarningMode.Fail,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
-    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.AUTO,
+    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.ENABLED,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
@@ -126,9 +126,6 @@ data class BuildOptions(
 
     enum class IsolatedProjectsMode {
 
-        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.G_8_5]; Disabled in other cases */
-        AUTO,
-
         /** Always disable Isolated Projects */
         DISABLED,
 
@@ -136,8 +133,6 @@ data class BuildOptions(
         ENABLED;
 
         fun toBooleanFlag(gradleVersion: GradleVersion) = when (this) {
-            // according to https://docs.gradle.org/current/userguide/isolated_projects.html#how_do_i_use_it
-            AUTO -> gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)
             DISABLED -> false
             ENABLED -> true
         }
