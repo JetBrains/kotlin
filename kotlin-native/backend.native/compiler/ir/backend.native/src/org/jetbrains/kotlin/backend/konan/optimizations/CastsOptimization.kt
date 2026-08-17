@@ -1331,6 +1331,14 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             VisitorResult(resultPredicate, result.variable)
         }
 
+        fun IrValueDeclaration.aliasesTo(variable: IrVariable): Boolean {
+            var current: IrValueDeclaration? = this
+            while (current != variable && current != null)
+                current = variableAliases[current]
+
+            return current == variable
+        }
+
         fun setVariable(variable: IrVariable, value: IrExpression, data: Predicate): Predicate {
             return if (variable.type.isBoolean()) {
                 val booleanPredicate = usingUpperLevelPredicate(data) { buildBooleanPredicate(value) }
@@ -1348,7 +1356,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 val result = VisitorResult()
                 val nullablePredicate = usingUpperLevelPredicate(data) { buildNullablePredicate(value, result) }
                 val predicate = Predicates.and(data, result.predicate)
-                val alias = result.variable
+                val alias = result.variable?.takeIf { !it.aliasesTo(variable) } // Break possible aliases cycle.
                         ?: if (variable.isMutable) createPhantomVariable(variable, value) else variable
                 if (alias != variable)
                     variableAliases[variable] = alias
@@ -1365,7 +1373,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 }
             } else {
                 (val predicate, val delegatedVariable = variable) = value.accept(this, data)
-                val alias = delegatedVariable
+                val alias = delegatedVariable?.takeIf { !it.aliasesTo(variable) } // Break possible aliases cycle.
                         ?: if (variable.isMutable) createPhantomVariable(variable, value) else variable
                 if (alias != variable)
                     variableAliases[variable] = alias

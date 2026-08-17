@@ -1,3 +1,5 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
+
 fun f(a: String?) {
     var p = a
     while (p != null) {
