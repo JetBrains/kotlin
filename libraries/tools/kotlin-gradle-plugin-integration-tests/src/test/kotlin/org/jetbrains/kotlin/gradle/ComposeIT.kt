@@ -194,8 +194,7 @@ class ComposeIT : KGPBaseTest() {
             .suppressDeprecationWarningsOn(
                 "JB Compose produces deprecation warning: CMP-3945"
             ) {
-                gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) &&
-                        gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
+                gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
             }
         if (OS.WINDOWS.isCurrentOs) {
             // CMP-8375 Compose Gradle Plugin is not compatible with Gradle isolated projects on Windows

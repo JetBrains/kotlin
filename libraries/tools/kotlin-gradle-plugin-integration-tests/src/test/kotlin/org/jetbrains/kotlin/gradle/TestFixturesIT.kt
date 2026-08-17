@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.io.path.exists
 
 @DisplayName("Integration with the Gradle java-test-fixtures plugin")
 class TestFixturesIT : KGPBaseTest() {
@@ -187,25 +186,6 @@ class TestFixturesIT : KGPBaseTest() {
             build(":lib:testClasses")
         }
     }
-
-    /**
-     * The `java` plugin is not required for `java-test-fixtures` since Gradle 8.4:
-     * https://github.com/gradle/gradle/commit/7cc5e4f695e42ecbdd3cc938a2a4dd7ade01ad2a
-     */
-    private fun TestProject.applyJavaPluginIfRequired(gradleVersion: GradleVersion) {
-        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_4)) {
-            if (buildGradle.exists()) {
-                buildGradle.modify {
-                    it.replace("id(\"java-test-fixtures\")", "id(\"java\")\nid(\"java-test-fixtures\")")
-                }
-            } else {
-                buildGradleKts.modify {
-                    it.replace("`java-test-fixtures`", "java\n`java-test-fixtures`")
-                }
-            }
-        }
-    }
-
 
     companion object {
         private const val JVM_TEST_FIXTURES_PROJECT_NAME = "jvm-test-fixtures"

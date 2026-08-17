@@ -72,7 +72,6 @@ class GradleCompatibilityIT : KGPBaseTest() {
                     GradleVersion.version(TestVersions.Gradle.G_8_7) -> "gradle86"
                     GradleVersion.version(TestVersions.Gradle.G_8_6) -> "gradle86"
                     GradleVersion.version(TestVersions.Gradle.G_8_5) -> "gradle85"
-                    GradleVersion.version(TestVersions.Gradle.G_8_4) -> "gradle82"
                     else -> "main"
                 }
 

@@ -221,7 +221,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .suppressDeprecationWarningsOn(
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
-                ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
+                ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) }
                 .copy(configurationCache = ConfigurationCacheValue.DISABLED)
         ) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
