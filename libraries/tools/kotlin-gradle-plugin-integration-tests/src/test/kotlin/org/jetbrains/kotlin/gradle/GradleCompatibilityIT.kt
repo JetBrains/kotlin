@@ -40,7 +40,6 @@ class GradleCompatibilityIT : KGPBaseTest() {
     @DisplayName("Proper Gradle plugin variant is used")
     @GradleTestVersions(
         additionalVersions = [
-            TestVersions.Gradle.G_8_6,
             TestVersions.Gradle.G_8_8,
             TestVersions.Gradle.G_8_11,
             TestVersions.Gradle.G_8_12,
@@ -69,7 +68,6 @@ class GradleCompatibilityIT : KGPBaseTest() {
                     GradleVersion.version(TestVersions.Gradle.G_8_9) -> "gradle88"
                     GradleVersion.version(TestVersions.Gradle.G_8_8) -> "gradle88"
                     GradleVersion.version(TestVersions.Gradle.G_8_7) -> "gradle86"
-                    GradleVersion.version(TestVersions.Gradle.G_8_6) -> "gradle86"
                     else -> "main"
                 }
 

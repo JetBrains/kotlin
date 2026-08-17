@@ -26,15 +26,6 @@ class MppJvmWithJavaIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
     ): Unit = doTestJvmWithJava(gradleVersion, testJavaSupportInJvmTargets = false)
 
-    @GradleTest
-    @GradleTestVersions(
-        maxVersion = TestVersions.Gradle.G_8_6, // last version where 'withJava()' method has warning deprecation
-    )
-    @TestMetadata(value = "new-mpp-lib-and-app")
-    fun testJavaSupportInJvmTargets(
-        gradleVersion: GradleVersion,
-    ): Unit = doTestJvmWithJava(gradleVersion, testJavaSupportInJvmTargets = true)
-
     private fun doTestJvmWithJava(
         gradleVersion: GradleVersion,
         testJavaSupportInJvmTargets: Boolean,
