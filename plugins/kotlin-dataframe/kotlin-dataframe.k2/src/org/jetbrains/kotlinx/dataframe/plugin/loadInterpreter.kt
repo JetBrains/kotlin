@@ -151,6 +151,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataColumnValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameAddAll
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFill
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFillIndexed
@@ -703,6 +704,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "AggregateRow" -> AggregateRow()
         "DataFrameOf3" -> DataFrameOf3()
         "ValueCounts" -> ValueCounts()
+        "DataColumnValueCounts" -> DataColumnValueCounts()
         "RenameToCamelCase" -> RenameToCamelCase()
         "RenameToCamelCaseClause" -> RenameToCamelCaseClause()
         "MoveUnder0" -> MoveUnder0()
