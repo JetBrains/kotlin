@@ -985,9 +985,6 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("for build scan with develocity plugin")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_14
-    )
     @GradleTest
     fun testBuildScanReportWithDevelocityPlugin(gradleVersion: GradleVersion) {
         project(

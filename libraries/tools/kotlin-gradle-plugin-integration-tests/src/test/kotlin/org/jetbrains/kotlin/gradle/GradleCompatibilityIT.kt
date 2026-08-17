@@ -131,7 +131,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
 
     @DisplayName("KT-78754: Configuration.isVisible is not set on Gradle 9+")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_14, TestVersions.Gradle.G_9_0, TestVersions.Gradle.G_9_1, TestVersions.Gradle.G_9_2],
+        additionalVersions = [TestVersions.Gradle.G_9_0, TestVersions.Gradle.G_9_1, TestVersions.Gradle.G_9_2],
     )
     @GradleTest
     fun testSetInvisibleIfSupported(gradleVersion: GradleVersion) {
