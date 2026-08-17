@@ -44,6 +44,7 @@ interface NativeCompilationConfig {
     val metadataKlib: Boolean
         get() = configuration.metadataKlib
 
+    // TODO(KT-61096): Read friend paths from `LoadedNativeKlibs.friends`, drop this property.
     val friendModuleFiles: Set<Path>
         get() = configuration.konanFriendLibraries.map { Path(it) }.toSet()
 
