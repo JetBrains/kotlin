@@ -5,39 +5,25 @@
 package transformers
 
 import org.jetbrains.dokka.DokkaSourceSetID
-import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jsoup.nodes.Element
-import signatures.renderedContent
-import utils.TestOutputWriterPlugin
-import java.net.URL
+import org.jetbrains.dokka.model.DEnum
+import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.WithSources
+import org.jetbrains.dokka.model.withDescendants
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SourceLinkTransformerTest : BaseAbstractTest() {
 
-    private fun Element.getSourceLink() = select(".symbol .source-link")
-        .select("a[href]")
-        .attr("href")
-
     @Test
-    fun `source link should lead to name`() {
+    fun `source should point to the declaration line, not to kdoc or annotations`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
-                    sourceLinks = listOf(
-                        SourceLinkDefinitionImpl(
-                            localDirectory = "src/main/kotlin",
-                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/kotlin"),
-                            remoteLineSuffix = "#L"
-                        )
-                    )
                 }
             }
         }
-
-        val writerPlugin = TestOutputWriterPlugin()
 
         testInline(
             """
@@ -55,23 +41,20 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
             |    val level: DeprecationLevel = DeprecationLevel.WARNING
             |)
         """.trimMargin(),
-            configuration,
-            pluginOverrides = listOf(writerPlugin)
+            configuration
         ) {
-            renderingStage = { _, _ ->
-                val page = writerPlugin.writer.renderedContent("root/testpackage/-deprecated/index.html")
-                val sourceLink = page.getSourceLink()
+            documentablesMergingStage = { module ->
+                val deprecated = module.packages.single().classlikes.single() as WithSources
+                val source = deprecated.sources.values.single()
 
-                assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L8",
-                    sourceLink
-                )
+                assertEquals("Deprecated.kt", source.path.substringAfterLast('/'))
+                assertEquals(8, source.computeLineNumber())
             }
         }
     }
 
     @Test
-    fun `source link should be for actual typealias`() {
+    fun `source should be for actual typealias`() {
         val mppConfiguration = dokkaConfiguration {
             moduleName = "test"
             sourceSets {
@@ -79,26 +62,15 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
                     name = "common"
                     sourceRoots = listOf("src/main/kotlin/common/Test.kt")
                     classpath = listOf(commonStdlibPath!!)
-                    externalDocumentationLinks = listOf(stdlibExternalDocumentationLink)
                 }
                 sourceSet {
                     name = "jvm"
                     dependentSourceSets = setOf(DokkaSourceSetID("test", "common"))
                     sourceRoots = listOf("src/main/kotlin/jvm/Test.kt")
                     classpath = listOf(commonStdlibPath!!)
-                    externalDocumentationLinks = listOf(stdlibExternalDocumentationLink)
-                    sourceLinks = listOf(
-                        SourceLinkDefinitionImpl(
-                            localDirectory = "src/main/kotlin",
-                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/kotlin"),
-                            remoteLineSuffix = "#L"
-                        )
-                    )
                 }
             }
         }
-
-        val writerPlugin = TestOutputWriterPlugin()
 
         testInline(
             """
@@ -114,39 +86,31 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
                 |actual typealias Foo = Bar
                 |
             """.trimMargin(),
-            mppConfiguration,
-            pluginOverrides = listOf(writerPlugin)
+            mppConfiguration
         ) {
-            renderingStage = { _, _ ->
-                val page = writerPlugin.writer.renderedContent("test/example/-foo/index.html")
-                val sourceLink = page.getSourceLink()
+            documentablesMergingStage = { module ->
+                val jvmSource = module.withDescendants()
+                    .filterIsInstance<WithSources>()
+                    .filter { (it as Documentable).name == "Foo" }
+                    .flatMap { it.sources.entries }
+                    .single { it.key.sourceSetID.sourceSetName == "jvm" }
+                    .value
 
-                assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/kotlin/jvm/Test.kt#L4",
-                    sourceLink
-                )
+                assertEquals("Test.kt", jvmSource.path.substringAfterLast('/'))
+                assertEquals(4, jvmSource.computeLineNumber())
             }
         }
     }
 
     @Test
-    fun `each declaration should include exactly one source link in the case #4338`() {
+    fun `property and function with the same name should have their own source lines #4338`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
-                    sourceLinks = listOf(
-                        SourceLinkDefinitionImpl(
-                            localDirectory = "src/main/kotlin",
-                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/kotlin"),
-                            remoteLineSuffix = "#L"
-                        )
-                    )
                 }
             }
         }
-
-        val writerPlugin = TestOutputWriterPlugin()
 
         testInline(
             """
@@ -156,42 +120,29 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
             |val ff = 0 // #4338
             |fun ff() = 0
         """.trimMargin(),
-            configuration,
-            pluginOverrides = listOf(writerPlugin)
+            configuration
         ) {
-            renderingStage = { _, _ ->
-                val pageFf = writerPlugin.writer.renderedContent("root/testpackage/ff.html")
-                fun Element.getAllSourceElements() = select(".symbol .source-link")
-                assertEquals(
-                    2,
-                    pageFf.getAllSourceElements().size
-                )
-                assertEquals(
-                    listOf("https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L4", "https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L3"),
-                    pageFf.getAllSourceElements().map { it.select("a[href]").attr("href") }
-                )
+            documentablesMergingStage = { module ->
+                val pkg = module.packages.single()
+
+                val property = pkg.properties.single { it.name == "ff" }
+                assertEquals(3, property.sources.values.single().computeLineNumber())
+
+                val function = pkg.functions.single { it.name == "ff" }
+                assertEquals(4, function.sources.values.single().computeLineNumber())
             }
         }
     }
 
     @Test
-    fun `each declaration should include exactly one source link in the case #4049`() {
+    fun `overloaded functions should have their own source lines #4049`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
-                    sourceLinks = listOf(
-                        SourceLinkDefinitionImpl(
-                            localDirectory = "src/main/kotlin",
-                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/kotlin"),
-                            remoteLineSuffix = "#L"
-                        )
-                    )
                 }
             }
         }
-
-        val writerPlugin = TestOutputWriterPlugin()
 
         testInline(
             """
@@ -200,43 +151,29 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
             |fun overloadWithVararg(novararg: String){}  // #4049
             |fun overloadWithVararg(vararg elements: String){}
         """.trimMargin(),
-            configuration,
-            pluginOverrides = listOf(writerPlugin)
+            configuration
         ) {
-            renderingStage = { _, _ ->
-                val pageOverloadWithVararg = writerPlugin.writer.renderedContent("root/testpackage/overload-with-vararg.html")
-                fun Element.getAllSourceElements() = select(".symbol .source-link")
+            documentablesMergingStage = { module ->
+                val overloads = module.packages.single().functions.filter { it.name == "overloadWithVararg" }
 
+                assertEquals(2, overloads.size)
                 assertEquals(
-                    2,
-                    pageOverloadWithVararg.getAllSourceElements().size
-                )
-                assertEquals(
-                    listOf("https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L2", "https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L3"),
-                    pageOverloadWithVararg.getAllSourceElements().map { it.select("a[href]").attr("href") }
+                    setOf(2, 3),
+                    overloads.map { it.sources.values.single().computeLineNumber() }.toSet()
                 )
             }
         }
     }
 
     @Test
-    fun `synthetic enum values should have source link`() {
+    fun `synthetic enum values should have a source line`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
-                    sourceLinks = listOf(
-                        SourceLinkDefinitionImpl(
-                            localDirectory = "src/main/kotlin",
-                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/kotlin"),
-                            remoteLineSuffix = "#L"
-                        )
-                    )
                 }
             }
         }
-
-        val writerPlugin = TestOutputWriterPlugin()
 
         testInline(
             """
@@ -248,17 +185,14 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
             |}
 
         """.trimMargin(),
-            configuration,
-            pluginOverrides = listOf(writerPlugin)
+            configuration
         ) {
-            renderingStage = { _, _ ->
-                val page = writerPlugin.writer.renderedContent("root/testpackage/-deprecated/values.html")
-                val sourceLink = page.getSourceLink()
+            documentablesMergingStage = { module ->
+                val enum = module.packages.single().classlikes.single() as DEnum
+                val values = enum.functions.single { it.name == "values" }
 
-                assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L3",
-                    sourceLink
-                )
+                // synthetic `values` falls back to the enum declaration line
+                assertEquals(3, values.sources.values.single().computeLineNumber())
             }
         }
     }

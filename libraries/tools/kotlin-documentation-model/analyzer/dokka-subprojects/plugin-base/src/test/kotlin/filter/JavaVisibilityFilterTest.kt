@@ -229,36 +229,41 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
     )
 
     companion object TestDataSources {
-        @Suppress("DEPRECATION") // for includeNonPublic
         val globalExcludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
                     sourceRoots = listOf("src/")
                 }
             }
         }
 
-        @Suppress("DEPRECATION") // for includeNonPublic
         val globalIncludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = true
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PRIVATE,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                    )
                     sourceRoots = listOf("src/")
                 }
             }
         }
 
-        @Suppress("DEPRECATION") // for includeNonPublic
         val globalIncludesPackageExcludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = true
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PRIVATE,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.PACKAGE,
+                    )
                     sourceRoots = listOf("src/")
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
                             "basic",
-                            includeNonPublic = false,
                             reportUndocumented = false,
                             skipDeprecated = false,
                             suppress = false,
@@ -269,20 +274,22 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
         }
 
-        @Suppress("DEPRECATION") // for includeNonPublic
         val globalExcludesPackageIncludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
-                    includeNonPublic = false
                     sourceRoots = listOf("src/")
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
-                            "basic",
-                            true,
-                            false,
-                            false,
-                            false,
-                            DokkaDefaults.documentedVisibilities
+                            matchingRegex = "basic",
+                            reportUndocumented = false,
+                            skipDeprecated = false,
+                            suppress = false,
+                            documentedVisibilities = setOf(
+                                DokkaConfiguration.Visibility.PUBLIC,
+                                DokkaConfiguration.Visibility.PRIVATE,
+                                DokkaConfiguration.Visibility.PROTECTED,
+                                DokkaConfiguration.Visibility.PACKAGE,
+                            )
                         )
                     )
                 }
