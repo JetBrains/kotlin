@@ -550,7 +550,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     @DisplayName("KT-70380: KMM App failed to consume android binary lib when published incorrectly")
     @GradleAndroidTest
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3])
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_3])
     fun kotlinAndroidHasBuildTypeAttribute(
         gradleVersion: GradleVersion,
         agpVersion: String,
