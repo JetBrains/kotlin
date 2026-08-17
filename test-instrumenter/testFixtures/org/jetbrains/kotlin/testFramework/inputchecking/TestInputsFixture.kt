@@ -26,6 +26,7 @@ import kotlin.io.path.createFile
  *     │   └── src
  *     │       └── main
  *     │           └── kotlin
+ *     ├── allowed
  *     └── kotlin-native
  *         └── dist
  *             └── klib
@@ -45,6 +46,7 @@ class TestInputsFixture(
     private val rootDir: Path = baseDir.resolve("root")
     private val buildDir: Path = rootDir.resolve("some-project/build")
     private val srcKotlin: Path = rootDir.resolve("some-project/src/main/kotlin")
+    private val allowedDir: Path = rootDir.resolve("allowed")
     private val klibCacheDir: Path = rootDir.resolve("kotlin-native/dist/klib/cache")
     private val klibStdlibCacheDir: Path = klibCacheDir.resolve("target-gSTATIC-system/stdlib-per-file-cache")
 
@@ -56,6 +58,7 @@ class TestInputsFixture(
     val nulls: List<String?> field = mutableListOf()
     val filesOutsideRootDir: Set<String> field = mutableSetOf()
     val filesInsideBuildDir: Set<String> field = mutableSetOf()
+    val filesInsideAllowedDir: Set<String> field = mutableSetOf()
     val klibCacheFiles: Set<String> field = mutableSetOf()
     val klibStdlibCacheFiles: Set<String> field = mutableSetOf()
     val directories: Set<String> field = mutableSetOf()
@@ -65,6 +68,7 @@ class TestInputsFixture(
         rootDir.createDirectories()
         buildDir.createDirectories()
         srcKotlin.createDirectories()
+        allowedDir.createDirectories()
         klibCacheDir.createDirectories()
         klibStdlibCacheDir.createDirectories()
         context(ConfigurationScope) { configure() }
@@ -88,6 +92,7 @@ class TestInputsFixture(
             buildDir.toString(),
             klibCacheDir.toString(),
             klibStdlibCacheDir.toString(),
+            listOf(allowedDir.toString()),
             declaredInputs,
             failFast,
         )
@@ -141,6 +146,20 @@ class TestInputsFixture(
     }
 
     context(_: ConfigurationScope)
+    fun createFileInsideAllowedDirectory(suffix: Int? = null) {
+        filesInsideAllowedDir.add(allowedDir.createFile("generated${suffix.orEmptyString()}.ini"))
+    }
+
+    /**
+     * Reproduces the case the option exists for: the file does not exist when the checker is initialized, so it
+     * could not have been part of the declared inputs, and only appears while the test runs.
+     */
+    fun createFileInsideAllowedDirectoryAfterInitialization(suffix: Int? = null): String =
+        allowedDir.createFile("generatedLate${suffix.orEmptyString()}.ini").also {
+            filesInsideAllowedDir.add(it)
+        }
+
+    context(_: ConfigurationScope)
     fun createKlibCacheFile(suffix: Int? = null) {
         val path = klibCacheDir.createFile("klib_cache${suffix.orEmptyString()}")
         klibCacheFiles.add(path)
@@ -168,6 +187,7 @@ class TestInputsFixture(
             addAll(nulls)
             addAll(filesOutsideRootDir)
             addAll(filesInsideBuildDir)
+            addAll(filesInsideAllowedDir)
             addAll(klibCacheFiles)
             addAll(klibStdlibCacheFiles)
             addAll(directories)
