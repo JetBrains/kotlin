@@ -149,7 +149,8 @@ javadocJar()
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_1_8,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0),
+        maxHeapSize = 3.GiB
     ) {
         addClasspathProperty(runtimeJar.get().outputs.files, "compose.compiler.hosted.jar.path")
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
