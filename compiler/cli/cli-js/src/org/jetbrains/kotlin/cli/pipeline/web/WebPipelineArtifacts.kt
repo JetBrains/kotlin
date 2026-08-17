@@ -16,10 +16,15 @@ import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
+import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
+import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 import java.io.File
+import java.util.*
 
 data class WebFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
@@ -102,6 +107,18 @@ data class WasmBackendPipelineArtifact(
 ) : WebBackendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WasmBackendPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
+
+data class WebIncrementalCachePipelineArtifact<M : ModuleArtifact>(
+    val artifacts: List<M>,
+    val dirtyFileLastStats: KotlinSourceFileMap<EnumSet<DirtyFileState>>,
+    val cacheGuard: IncrementalCacheGuard,
+    override val configuration: CompilerConfiguration,
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
         return copy(configuration = newConfiguration)
     }
 }
