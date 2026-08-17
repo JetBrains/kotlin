@@ -4,11 +4,8 @@
 
 package enums
 
-import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import signatures.renderedContent
-import utils.TestOutputWriterPlugin
-import java.net.URL
+import org.jetbrains.dokka.model.DEnum
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,27 +19,10 @@ class JavaEnumsTest : BaseAbstractTest() {
         }
     }
 
-    // Shouldn't try to give source links to synthetic methods (values, valueOf) if any are present
-    // https://github.com/Kotlin/dokka/issues/2544
+    // The enum declaration should resolve its source line even in the presence of synthetic
+    // methods (values, valueOf), see https://github.com/Kotlin/dokka/issues/2544
     @Test
-    fun `java enum with configured source links should not fail build due to any synthetic methods`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                    sourceLinks = listOf(
-                        SourceLinkDefinitionImpl(
-                            localDirectory = "src/main/java",
-                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/java"),
-                            remoteLineSuffix = "#L"
-                        )
-                    )
-                }
-            }
-        }
-
-        val writerPlugin = TestOutputWriterPlugin()
-
+    fun `java enum should resolve its source line`() {
         testInline(
             """
             |/src/main/java/testpackage/JavaEnum.java
@@ -55,20 +35,17 @@ class JavaEnumsTest : BaseAbstractTest() {
             |    ONE, TWO, THREE
             |}
         """.trimMargin(),
-            configuration,
-            pluginOverrides = listOf(writerPlugin)
+            basicConfiguration
         ) {
-            renderingStage = { _, _ ->
-                val enumPage = writerPlugin.writer.renderedContent("root/testpackage/-java-enum/index.html")
-                val sourceLink = enumPage.select(".symbol .source-link")
-                    .select("a[href]")
-                    .attr("href")
+            documentablesMergingStage = { module ->
+                val enum = module.packages.single()
+                    .classlikes.single() as DEnum
 
+                assertEquals(2, enum.functions.count { it.name == "values" || it.name == "valueOf" })
 
-                assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/java/testpackage/JavaEnum.java#L6",
-                    sourceLink
-                )
+                val enumSource = enum.sources.values.single()
+                assertEquals("JavaEnum.java", enumSource.path.substringAfterLast('/'))
+                assertEquals(6, enumSource.computeLineNumber())
             }
         }
     }

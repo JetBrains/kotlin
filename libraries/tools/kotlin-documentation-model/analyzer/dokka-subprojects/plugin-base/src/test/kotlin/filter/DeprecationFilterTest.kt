@@ -26,7 +26,6 @@ class DeprecationFilterTest : BaseAbstractTest() {
                             true,
                             false,
                             false,
-                            false,
                             DokkaDefaults.documentedVisibilities
                         )
                     )
@@ -190,12 +189,11 @@ class DeprecationFilterTest : BaseAbstractTest() {
                     skipDeprecated = false
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
-                            "example.*",
-                            true,
-                            false,
-                            true,
-                            false,
-                            DokkaDefaults.documentedVisibilities
+                            matchingRegex = "example.*",
+                            reportUndocumented = false,
+                            skipDeprecated = true,
+                            suppress = false,
+                            documentedVisibilities = DokkaDefaults.documentedVisibilities
                         )
                     )
                 }
@@ -231,7 +229,6 @@ class DeprecationFilterTest : BaseAbstractTest() {
                     skipDeprecated = true
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl("example",
-                            false,
                             false,
                             false,
                             false,

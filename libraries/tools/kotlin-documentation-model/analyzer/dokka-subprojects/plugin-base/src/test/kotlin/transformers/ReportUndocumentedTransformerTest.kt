@@ -35,7 +35,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport(Regex("init"))
                 assertSingleUndocumentedReport(Regex("""sample/X/"""))
             }
@@ -62,7 +62,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -91,7 +91,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
                 assertSingleUndocumentedReport(Regex("X/x"))
             }
@@ -121,7 +121,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
                 assertSingleUndocumentedReport(Regex("X/x"))
             }
@@ -150,7 +150,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -178,7 +178,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport(Regex("component"))
                 assertNumberOfUndocumentedReports(1)
             }
@@ -209,7 +209,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
                 assertSingleUndocumentedReport(Regex("X.*init.*Unit"))
             }
@@ -242,7 +242,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport(Regex("B"))
                 assertSingleUndocumentedReport(Regex("A.*a"))
             }
@@ -275,7 +275,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport(Regex("B"))
                 assertSingleUndocumentedReport(Regex("A.*a"))
             }
@@ -312,7 +312,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -348,7 +348,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -374,7 +374,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -404,7 +404,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
             }
         }
@@ -441,7 +441,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("Enabled"))
                 assertNumberOfUndocumentedReports(1)
             }
@@ -479,7 +479,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("Enabled"))
                 assertNumberOfUndocumentedReports(1)
             }
@@ -521,7 +521,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNumberOfUndocumentedReports(2, Regex("X"))
                 assertSingleUndocumentedReport(Regex("X.*jvmMain"))
                 assertSingleUndocumentedReport(Regex("X.*commonMain"))
@@ -565,7 +565,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNumberOfUndocumentedReports(0)
             }
         }
@@ -620,7 +620,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNumberOfUndocumentedReports(2)
                 assertSingleUndocumentedReport(Regex("x.*commonMain"))
                 assertSingleUndocumentedReport(Regex("x.*jvmMain"))
@@ -647,7 +647,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport(Regex("init"))
                 assertSingleUndocumentedReport(Regex("""Test"""))
                 assertNumberOfUndocumentedReports(1)
@@ -674,7 +674,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -703,7 +703,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -731,7 +731,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
                 assertSingleUndocumentedReport(Regex("X.*x"))
                 assertNumberOfUndocumentedReports(1)
@@ -761,7 +761,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
                 assertSingleUndocumentedReport(Regex("X.*x"))
                 assertNumberOfUndocumentedReports(1)
@@ -799,7 +799,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
                 assertSingleUndocumentedReport(Regex("X.*x"))
                 assertSingleUndocumentedReport(Regex("Super.*x"))
@@ -839,7 +839,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -877,7 +877,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
             """.trimMargin(),
             configuration
         ) {
-            pagesTransformationStage = {
+            documentablesTransformationStage = {
                 assertNoUndocumentedReport()
             }
         }
@@ -912,14 +912,12 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
     private fun packageOptions(
         matchingRegex: String,
         reportUndocumented: Boolean?,
-        includeNonPublic: Boolean = true,
         skipDeprecated: Boolean = false,
         suppress: Boolean = false,
         documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities
     ) = PackageOptionsImpl(
         matchingRegex = matchingRegex,
         reportUndocumented = reportUndocumented,
-        includeNonPublic = includeNonPublic,
         documentedVisibilities = documentedVisibilities,
         skipDeprecated = skipDeprecated,
         suppress = suppress

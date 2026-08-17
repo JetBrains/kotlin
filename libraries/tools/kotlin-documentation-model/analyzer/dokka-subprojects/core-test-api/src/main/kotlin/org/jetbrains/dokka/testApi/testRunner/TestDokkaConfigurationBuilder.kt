@@ -32,7 +32,6 @@ public class TestDokkaConfigurationBuilder {
     public var moduleVersion: String = "1.0-SNAPSHOT"
     public var outputDir: File = File("out")
     public var format: String = "html"
-    public var offlineMode: Boolean = false
     public var cacheRoot: String? = null
     public var pluginsClasspath: List<File> = emptyList()
     public var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
@@ -41,15 +40,12 @@ public class TestDokkaConfigurationBuilder {
     public var suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions
     public var includes: List<File> = emptyList()
     public var suppressInheritedMembers: Boolean = DokkaDefaults.suppressInheritedMembers
-    public var delayTemplateSubstitution: Boolean = DokkaDefaults.delayTemplateSubstitution
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
     public fun build(): DokkaConfigurationImpl = DokkaConfigurationImpl(
         moduleName = moduleName,
         moduleVersion = moduleVersion,
         outputDir = outputDir,
-        cacheRoot = cacheRoot?.let(::File),
-        offlineMode = offlineMode,
         sourceSets = lazySourceSets.map { it.value }.toList(),
         pluginsClasspath = pluginsClasspath,
         pluginsConfiguration = pluginsConfigurations,
@@ -58,7 +54,6 @@ public class TestDokkaConfigurationBuilder {
         suppressObviousFunctions = suppressObviousFunctions,
         includes = includes.toSet(),
         suppressInheritedMembers = suppressInheritedMembers,
-        delayTemplateSubstitution = delayTemplateSubstitution,
         finalizeCoroutines = false
     )
 
@@ -96,8 +91,6 @@ public class DokkaSourceSetBuilder(
     public var dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
     public var samples: List<String> = emptyList(),
     public var includes: List<String> = emptyList(),
-    @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
-    public var includeNonPublic: Boolean = false,
     public var documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities,
     public var reportUndocumented: Boolean = false,
     public var skipEmptyPackages: Boolean = false,
@@ -105,13 +98,9 @@ public class DokkaSourceSetBuilder(
     public var jdkVersion: Int = 8,
     public var languageVersion: String? = null,
     public var apiVersion: String? = null,
-    public var noStdlibLink: Boolean = false,
-    public var noJdkLink: Boolean = false,
     public var suppressedFiles: List<String> = emptyList(),
     public var analysisPlatform: String = "jvm",
     public var perPackageOptions: List<PackageOptionsImpl> = emptyList(),
-    public var externalDocumentationLinks: List<ExternalDocumentationLinkImpl> = emptyList(),
-    public var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList(),
     public var suppressAnnotatedWith: Set<String> = DokkaDefaults.suppressAnnotatedWith
 ) {
     @Suppress("DEPRECATION")
@@ -124,19 +113,14 @@ public class DokkaSourceSetBuilder(
             dependentSourceSets = dependentSourceSets,
             samples = samples.map(::File).toSet(),
             includes = includes.map(::File).toSet(),
-            includeNonPublic = includeNonPublic,
             documentedVisibilities = documentedVisibilities,
             reportUndocumented = reportUndocumented,
             skipEmptyPackages = skipEmptyPackages,
             skipDeprecated = skipDeprecated,
             jdkVersion = jdkVersion,
-            sourceLinks = sourceLinks.toSet(),
             perPackageOptions = perPackageOptions.toList(),
-            externalDocumentationLinks = externalDocumentationLinks.toSet(),
             languageVersion = languageVersion,
             apiVersion = apiVersion,
-            noStdlibLink = noStdlibLink,
-            noJdkLink = noJdkLink,
             suppressedFiles = suppressedFiles.map(::File).toSet(),
             suppressAnnotatedWith = suppressAnnotatedWith,
             analysisPlatform = Platform.fromString(analysisPlatform)
@@ -152,19 +136,14 @@ public val defaultSourceSet: DokkaSourceSetImpl = DokkaSourceSetImpl(
     dependentSourceSets = emptySet(),
     samples = emptySet(),
     includes = emptySet(),
-    includeNonPublic = false,
     documentedVisibilities = DokkaDefaults.documentedVisibilities,
     reportUndocumented = false,
     skipEmptyPackages = true,
     skipDeprecated = false,
     jdkVersion = 8,
-    sourceLinks = emptySet(),
     perPackageOptions = emptyList(),
-    externalDocumentationLinks = emptySet(),
     languageVersion = null,
     apiVersion = null,
-    noStdlibLink = false,
-    noJdkLink = false,
     suppressedFiles = emptySet(),
     analysisPlatform = Platform.DEFAULT
 )
