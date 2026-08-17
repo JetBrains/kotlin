@@ -36,6 +36,7 @@ import kotlin.reflect.jvm.internal.asReflectCallable
  *
  * @see [java.lang.reflect.AccessibleObject]
  */
+@Suppress("DEPRECATION")
 var KCallable<*>.isAccessible: Boolean
     get() {
         return when (this) {

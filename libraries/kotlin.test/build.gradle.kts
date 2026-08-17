@@ -33,8 +33,6 @@ plugins {
 description = "Kotlin Test Library"
 base.archivesName = "kotlin-test"
 
-configureJvmToolchain(JdkMajorVersion.JDK_1_8)
-
 val kotlinTestCapability = "$group:${base.archivesName.get()}:$version" // add to variants with explicit capabilities when the default one is needed, too
 val baseCapability = "$group:kotlin-test-framework:$version"
 val implCapability = "$group:kotlin-test-framework-impl:$version"
