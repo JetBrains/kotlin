@@ -48,7 +48,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
                 } else this
             }
         ) {
-            projectPath.resolve("lib").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("lib").addDefaultSettingsToSettingsGradle()
             subprojects("app", "lib").buildScriptInjection {
                 project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
                 dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")

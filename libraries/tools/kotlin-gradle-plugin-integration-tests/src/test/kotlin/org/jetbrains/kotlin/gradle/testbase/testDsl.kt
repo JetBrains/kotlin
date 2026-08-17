@@ -80,10 +80,8 @@ fun KGPBaseTest.project(
         projectPathAdditionalSuffix,
     )
     projectPath.addDefaultSettingsToSettingsGradle(
-        gradleVersion,
         dependencyManagement,
         localRepoDir,
-        buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
     )
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
@@ -649,7 +647,7 @@ class TestProject(
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
 
-        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
+        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle()
 
         if (settingsGradle.exists()) {
             settingsGradle.append(
@@ -880,26 +878,16 @@ private fun setupProjectFromTestResources(
 private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
 
 internal fun Path.addDefaultSettingsToSettingsGradle(
-    gradleVersion: GradleVersion,
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
-    projectIsolationEnabled: Boolean = false,
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
         is DependencyManagement.DefaultDependencyManagement -> {
-            // we cannot switch to dependencyManagement before Gradle 8.1 because of KT-65708
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1) && !projectIsolationEnabled) {
-                addDependencyRepositoriesToBuildScript(
-                    additionalDependencyRepositories = dependencyManagement.additionalRepos,
-                    localRepo = localRepo
-                )
-            } else {
-                addDependencyManagementToSettings(
-                    additionalDependencyRepositories = dependencyManagement.additionalRepos,
-                    localRepo = localRepo
-                )
-            }
+            addDependencyManagementToSettings(
+                additionalDependencyRepositories = dependencyManagement.additionalRepos,
+                localRepo = localRepo
+            )
         }
         is DependencyManagement.DisabledDependencyManagement -> {}
     }

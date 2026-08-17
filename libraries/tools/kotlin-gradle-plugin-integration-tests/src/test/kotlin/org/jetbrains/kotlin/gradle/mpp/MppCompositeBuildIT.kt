@@ -150,7 +150,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -186,7 +186,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = buildOptions,
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -224,7 +224,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
                 .copy(configurationCache = ConfigurationCacheValue.DISABLED)
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
             projectPath.resolve("included-build/included/build.gradle.kts").replaceText(

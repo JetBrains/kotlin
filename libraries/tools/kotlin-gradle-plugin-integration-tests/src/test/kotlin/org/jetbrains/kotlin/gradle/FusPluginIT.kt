@@ -49,9 +49,6 @@ class FusPluginIT : KGPBaseTest() {
     }
 
     @DisplayName("with configuration cache and project isolation")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_1],
-    )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         val executionTimeValue = "EXECUTION_METRIC_VALUE"

@@ -33,9 +33,6 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
-@GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_1
-)
 @OsCondition(
     supportedOn = [OS.LINUX, OS.WINDOWS],
     enabledOnCI = [OS.LINUX, OS.WINDOWS],

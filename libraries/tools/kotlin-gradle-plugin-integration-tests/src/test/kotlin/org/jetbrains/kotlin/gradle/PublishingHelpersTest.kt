@@ -228,9 +228,6 @@ class PublishingHelpersTest : KGPBaseTest() {
 
     @GradleTest
     @Disabled("For manual testing only: needs external GnuPG program and key setup (replace keyName and passphrase in test)")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_1],
-    )
     @DisplayName("Signing check works with configuration cache and GPG signatory")
     internal fun signingCheckWorksWithConfigurationCacheAndGpg(gradleVersion: GradleVersion) {
         checkSigningConfigurationTest(gradleVersion) { buildArguments ->
@@ -247,12 +244,10 @@ class PublishingHelpersTest : KGPBaseTest() {
                     "-Psigning.gnupg.keyName=48153D94",
                     "-Psigning.gnupg.passphrase=testtesttest",
                 ) {
-                    if (gradleVersion >= GradleVersion.version("8.1")) {
-                        if (firstRun) {
-                            assertConfigurationCacheStored()
-                        } else {
-                            assertConfigurationCacheReused()
-                        }
+                    if (firstRun) {
+                        assertConfigurationCacheStored()
+                    } else {
+                        assertConfigurationCacheReused()
                     }
                     assertOutputDoesNotContain("Plugin 'org.jetbrains.kotlin.jvm': external process started 'gpg")
                     assertOutputContains("None of the keyservers contain the public key with id: 48153D94")

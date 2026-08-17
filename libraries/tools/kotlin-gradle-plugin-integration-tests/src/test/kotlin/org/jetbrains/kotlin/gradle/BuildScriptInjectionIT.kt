@@ -140,9 +140,6 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_1,
-    )
     @GradleTest
     fun buildScriptReturnIsCCFriendly(version: GradleVersion) {
         // Sanity check that enabling CC produces CC serialization errors with inappropriately constructed providers in providerBuildScriptReturn
