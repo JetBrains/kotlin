@@ -210,22 +210,7 @@ val maxParallelTestForks =
 // Must be in sync with TestVersions.kt KTI-1612
 val gradleVersions = listOf(
     "7.4.2", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
-    "7.6.3",
-    "8.0.2",
-    "8.1.1",
-    "8.2.1",
-    "8.3",
-    "8.4",
-    "8.5",
-    "8.6",
-    "8.7",
-    "8.8",
-    "8.9",
-    "8.10.2",
-    "8.11.1",
-    "8.12.1",
-    "8.13",
-    "8.14",
+    "8.14.5",
     "9.0.0",
     "9.1.0",
     "9.2.1",
