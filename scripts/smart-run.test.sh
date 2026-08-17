@@ -3,7 +3,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_SOURCE="$SCRIPT_DIR/smart-run.sh"
+SCRIPT_SOURCE="$SCRIPT_DIR/smart-run.main.kts"
+KOTLIN_RUNNER="${KOTLIN_RUNNER:-kotlin}"
 
 if [[ ! -f "$SCRIPT_SOURCE" ]]; then
     echo "Expected $SCRIPT_SOURCE to exist" >&2
@@ -15,8 +16,18 @@ trap 'rm -rf "$TEST_ROOT"' EXIT
 
 PROJECT_ROOT="$TEST_ROOT/project"
 mkdir -p "$PROJECT_ROOT/scripts" "$TEST_ROOT/bin"
-cp "$SCRIPT_SOURCE" "$PROJECT_ROOT/scripts/smart-run.sh"
-chmod +x "$PROJECT_ROOT/scripts/smart-run.sh"
+cp "$SCRIPT_SOURCE" "$PROJECT_ROOT/scripts/smart-run.main.kts"
+if [[ -n "${KOTLIN_HOME_FOR_TEST:-}" ]]; then
+    SMART_RUN_COMMAND=(
+        java
+        "-Dkotlin.home=$KOTLIN_HOME_FOR_TEST"
+        -cp "$KOTLIN_HOME_FOR_TEST/lib/kotlin-runner.jar"
+        org.jetbrains.kotlin.runner.Main
+        "$PROJECT_ROOT/scripts/smart-run.main.kts"
+    )
+else
+    SMART_RUN_COMMAND=("$KOTLIN_RUNNER" "$PROJECT_ROOT/scripts/smart-run.main.kts")
+fi
 
 cat > "$PROJECT_ROOT/gradlew" <<'EOF'
 #!/usr/bin/env bash
@@ -115,7 +126,7 @@ case "$*" in
         fi
         printf '%s\n' '{"id":102,"state":"finished","status":"SUCCESS","webUrl":"https://teamcity/build/102"}'
         ;;
-    *"run cancel 101 --yes --comment Cancelled by smart-run.sh"* | *"run cancel 102 --yes --comment Cancelled by smart-run.sh"*)
+    *"run cancel 101 --yes --comment Cancelled by smart-run"* | *"run cancel 102 --yes --comment Cancelled by smart-run"*)
         if [[ "${CANCEL_COMMAND_FAIL:-}" == "1" ]]; then
             echo "mocked run cancel failure" >&2
             exit 1
@@ -159,7 +170,7 @@ assert_calls_contain() {
 }
 
 rm -f "$TEAMCITY_CALLS" "$GIT_CALLS" "$OPERATIONS"
-output="$(AFFECTED_DOMAINS=$'Frontend\nJs\n' "$PROJECT_ROOT/scripts/smart-run.sh" 2>&1)"
+output="$(AFFECTED_DOMAINS=$'Frontend\nJs\n' "${SMART_RUN_COMMAND[@]}" 2>&1)"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run start Kotlin_KotlinDev_Domain_Frontend --branch smart/user/topic --revision 0123456789abcdef0123456789abcdef01234567 --no-push --json"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run start Kotlin_KotlinDev_Domain_Js --branch smart/user/topic --revision 0123456789abcdef0123456789abcdef01234567 --no-push --json"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run watch 101 --json"
@@ -173,35 +184,35 @@ assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-colo
 [[ "$output" != *$'\033'* ]] || fail "Expected output without terminal control sequences"
 
 rm -f "$TEAMCITY_CALLS" "$GIT_CALLS" "$OPERATIONS"
-CURRENT_BRANCH='smart/already-prefixed' AFFECTED_DOMAINS=$'Frontend\n' "$PROJECT_ROOT/scripts/smart-run.sh" >/dev/null
+CURRENT_BRANCH='smart/already-prefixed' AFFECTED_DOMAINS=$'Frontend\n' "${SMART_RUN_COMMAND[@]}" >/dev/null
 [[ "$(<"$GIT_CALLS")" == *"push company HEAD:refs/heads/smart/already-prefixed"* ]] || \
     fail "Expected an existing smart prefix to be preserved"
 
 rm -f "$TEAMCITY_CALLS" "$GIT_CALLS" "$OPERATIONS"
-DETACHED_HEAD=1 AFFECTED_DOMAINS=$'Frontend\n' "$PROJECT_ROOT/scripts/smart-run.sh" >/dev/null
+DETACHED_HEAD=1 AFFECTED_DOMAINS=$'Frontend\n' "${SMART_RUN_COMMAND[@]}" >/dev/null
 [[ "$(<"$GIT_CALLS")" == *"push origin HEAD:refs/heads/smart/detached-0123456789ab"* ]] || \
     fail "Expected a detached HEAD to use a revision-based smart branch"
 
 rm -f "$TEAMCITY_CALLS"
-AFFECTED_DOMAINS='' "$PROJECT_ROOT/scripts/smart-run.sh"
+AFFECTED_DOMAINS='' "${SMART_RUN_COMMAND[@]}"
 [[ ! -s "$TEAMCITY_CALLS" ]] || fail "Expected no TeamCity calls when no domains are affected"
 
 rm -f "$TEAMCITY_CALLS" "$GIT_CALLS" "$OPERATIONS"
-if AFFECTED_DOMAINS=$'Frontend\n' PUSH_FAIL=1 "$PROJECT_ROOT/scripts/smart-run.sh"; then
-    fail "Expected a failed Git push to fail smart-run.sh"
+if AFFECTED_DOMAINS=$'Frontend\n' PUSH_FAIL=1 "${SMART_RUN_COMMAND[@]}"; then
+    fail "Expected a failed Git push to fail smart-run.main.kts"
 fi
 [[ ! -s "$TEAMCITY_CALLS" ]] || fail "Expected no TeamCity calls when the Git push fails"
 
 rm -f "$TEAMCITY_CALLS"
-if output="$(AFFECTED_DOMAINS=$'Frontend\nJs\n' FAIL_JOB='Kotlin_KotlinDev_Domain_Js' "$PROJECT_ROOT/scripts/smart-run.sh" 2>&1)"; then
-    fail "Expected a failed TeamCity build to fail smart-run.sh"
+if output="$(AFFECTED_DOMAINS=$'Frontend\nJs\n' FAIL_JOB='Kotlin_KotlinDev_Domain_Js' "${SMART_RUN_COMMAND[@]}" 2>&1)"; then
+    fail "Expected a failed TeamCity build to fail smart-run.main.kts"
 fi
 [[ "$output" == *"Js"*"102"*"FAILURE"* ]] || fail "Expected the failed build in the table"
 [[ "$(wc -l < "$TEAMCITY_CALLS" | tr -d ' ')" == "4" ]] || fail "Expected all builds to be launched and watched despite one failure"
 
 rm -f "$TEAMCITY_CALLS" "$WATCH_STARTED" "$CANCEL_REQUESTS"
 AFFECTED_DOMAINS=$'Frontend\nJs\n' SLOW_WATCH=1 CANCEL_COMMAND_FAIL=1 \
-    "$PROJECT_ROOT/scripts/smart-run.sh" > "$TEST_ROOT/cancel-output.txt" 2>&1 &
+    "${SMART_RUN_COMMAND[@]}" > "$TEST_ROOT/cancel-output.txt" 2>&1 &
 script_pid=$!
 for ((attempt = 0; attempt < 50; attempt++)); do
     if [[ -f "$WATCH_STARTED" && "$(wc -l < "$WATCH_STARTED" | tr -d ' ')" == "2" ]]; then
@@ -214,21 +225,21 @@ kill -TERM "$script_pid"
 cancel_status=0
 wait "$script_pid" || cancel_status=$?
 [[ "$cancel_status" == "143" ]] || fail "Expected cancellation to exit with status 143, got $cancel_status"
-assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run cancel 101 --yes --comment Cancelled by smart-run.sh"
-assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run cancel 102 --yes --comment Cancelled by smart-run.sh"
+assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run cancel 101 --yes --comment Cancelled by smart-run"
+assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color run cancel 102 --yes --comment Cancelled by smart-run"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color api /app/rest/builds/id:101?fields=id,state --raw"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color api /app/rest/builds/id:102?fields=id,state --raw"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color api /app/rest/builds/id:101 -X POST --input - --silent"
 assert_calls_contain "https://buildserver.labs.intellij.net|--no-input --no-color api /app/rest/buildQueue/id:102 -X POST --input - --silent"
-[[ "$(<"$CANCEL_REQUESTS")" == *'{"comment":"Cancelled by smart-run.sh","readdIntoQueue":false}'* ]] || \
+[[ "$(<"$CANCEL_REQUESTS")" == *'{"comment":"Cancelled by smart-run","readdIntoQueue":false}'* ]] || \
     fail "Expected REST cancellation requests with a cancellation comment"
 [[ "$(<"$TEST_ROOT/cancel-output.txt")" != *"Warning: Could not cancel"* ]] || \
     fail "Expected the REST fallback to cancel both builds"
 
 rm -f "$TEAMCITY_CALLS"
-if AFFECTED_DOMAINS=$'Frontend\ninvalid-domain\n' "$PROJECT_ROOT/scripts/smart-run.sh"; then
-    fail "Expected an invalid domain to fail smart-run.sh"
+if AFFECTED_DOMAINS=$'Frontend\ninvalid-domain\n' "${SMART_RUN_COMMAND[@]}"; then
+    fail "Expected an invalid domain to fail smart-run.main.kts"
 fi
 [[ ! -s "$TEAMCITY_CALLS" ]] || fail "Expected invalid domains to be rejected before launching builds"
 
-echo "smart-run.sh tests passed"
+echo "smart-run.main.kts tests passed"
