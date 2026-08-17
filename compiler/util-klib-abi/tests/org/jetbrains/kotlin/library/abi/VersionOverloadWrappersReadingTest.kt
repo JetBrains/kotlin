@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.library.abi
 
-import com.intellij.openapi.util.io.FileUtil.createTempDirectory
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 /**
@@ -42,17 +39,8 @@ import java.io.File
  */
 @OptIn(ExperimentalLibraryAbiReader::class)
 class VersionOverloadWrappersReadingTest {
+    @TempDir
     private lateinit var buildDir: File
-
-    @BeforeEach
-    fun setUp(testInfo: TestInfo) {
-        buildDir = createTempDirectory(testInfo.testClass.get().simpleName, testInfo.testMethod.get().name)
-    }
-
-    @AfterEach
-    fun tearDown() {
-        buildDir.deleteRecursively()
-    }
 
     @Test
     fun testVersionOverloadWrappersAreMarked() {
