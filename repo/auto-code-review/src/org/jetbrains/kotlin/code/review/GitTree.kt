@@ -13,6 +13,10 @@ class GitSHA1(val sha1: String) : GitRevision(sha1)
 class GitDiff(val changedFiles: List<ChangedFile>, val origin: Origin) {
     sealed class Origin {
         class Local(val from: GitSHA1, val to: GitWorkingTree) : Origin()
+        class GitHub(val repository: String, val base: GitRevision, val to: GitSHA1) : Origin() {
+            val rawDiffUrl: String
+                get() = "https://github.com/$repository/compare/${base.rev}...${to.sha1}.diff"
+        }
     }
 
     class ChangedFile(val oldPath: ProjectFilePath?, val newPath: ProjectFilePath?, val patchLines: List<String>) {
