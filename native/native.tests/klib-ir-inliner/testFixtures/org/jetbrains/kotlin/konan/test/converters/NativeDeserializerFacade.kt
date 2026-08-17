@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
@@ -54,10 +53,6 @@ class NativeDeserializerFacade(
     testServices: TestServices,
     private val partialLinkageLogLevel: PartialLinkageLogLevel = PartialLinkageLogLevel.ERROR, // Use the ERROR log level by default to fail any tests where PL detected any incompatibilities.
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
-
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::LibraryProvider), service(::ModuleDescriptorProvider))
-
     override fun transform(
         module: TestModule,
         inputArtifact: BinaryArtifacts.KLib,

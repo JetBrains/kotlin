@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirect
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
@@ -87,7 +86,6 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
             ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,
         )
-        useAdditionalService(::LibraryProvider)
 
         facadeStep(::FirCliNativeFacade)
         firHandlersStep {
