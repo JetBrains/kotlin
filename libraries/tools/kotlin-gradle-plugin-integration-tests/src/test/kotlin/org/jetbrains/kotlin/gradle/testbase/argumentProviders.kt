@@ -289,10 +289,6 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
         // https://docs.gradle.org/current/userguide/compatibility.html#java_runtime
         private val jdkGradleCompatibilityMatrix = setOf<GradleJavaVersionsRange>(
             GradleJavaVersionsRange(
-                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_13)..GradleVersion.version(TestVersions.Gradle.G_8_13),
-                javaVersions = JavaVersion.VERSION_17..JavaVersion.VERSION_23,
-            ),
-            GradleJavaVersionsRange(
                 gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_14)..GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED),
                 javaVersions = JavaVersion.VERSION_17..JavaVersion.VERSION_24,
             ),
