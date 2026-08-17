@@ -63,9 +63,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             .toSet()
             .map { browserKind -> project.registerBrowserInstall(browserKind, testCompilation) }
 
-
-        val chromiumInstallTask = project.registerBrowserInstall(PwBrowserKind.CHROMIUM, testCompilation)
-
         testTaskProvider.configure { testTask ->
             val objects = project.objects
             val inputs = KotlinPlaywrightJsTestFramework.createInputs(objects)
@@ -74,9 +71,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             // Per-browser tasks are independent and can run in parallel.
             // KT-87599: Design host-wide toolchain management
             browserInstallTasks.forEach { installTask -> testTask.dependsOn(installTask) }
-            testTask.dependsOn(
-                testTask.browserDebug.map { if (it) listOf(chromiumInstallTask) else emptyList() }
-            )
 
             // All install tasks write to the same global browsers directory; any one is sufficient to derive the path.
             inputs.playwrightBrowsersDirectory.set(browserInstallTasks.first().flatMap { it.outputDir })

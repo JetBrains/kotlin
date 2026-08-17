@@ -385,20 +385,6 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `a debug run does not depend on the chromium install task without browser debug`() {
-        val setup = buildBrowserTestProject { firefox("selected") }
-        val chromiumInstallTask = assertIs<PlaywrightBrowserInstall>(
-            setup.project.tasks.getByName(PwBrowserKind.CHROMIUM.getPwInstallBrowserTaskName())
-        )
-        val testTask = setup.jsBrowserTestTask
-
-        assertFalse(
-            testTask.taskDependencies.getDependencies(testTask).contains(chromiumInstallTask),
-            "Expected no Chromium install dependency without browser debugging"
-        )
-    }
-
-    @Test
     fun `browser debug option uses default port and does not wait without a readiness port`() {
         val setup = buildBrowserTestProject {
             chromium()
