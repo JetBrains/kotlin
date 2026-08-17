@@ -12,15 +12,6 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 
-suspend fun runReview(
-    gitTree: GitTree,
-    base: GitRevision,
-    agent: Agent,
-): ReviewResult {
-    val diff = gitTree.getDiffFromMergeBase(base)
-    return runReview(gitTree.project, diff, agent)
-}
-
 private suspend fun CodeRuleRepository.getRules(file: GitDiff.ChangedFile): Set<CodeRule> =
     file.oldPath?.let { getRules(it) }.orEmpty() +
             file.newPath?.let { getRules(it) }.orEmpty()
