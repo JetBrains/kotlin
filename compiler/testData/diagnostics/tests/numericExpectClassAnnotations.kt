@@ -71,6 +71,29 @@ fun main() {
 
     acceptULong(getSizeT())
     acceptLong(<!ARGUMENT_TYPE_MISMATCH!>getSizeT()<!>)
+
+    var a: NSInteger <!INITIALIZER_TYPE_MISMATCH!>=<!> 10
+    acceptNSInteger(a)
+    acceptLong(a)
+    acceptInt(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    a <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 20
+    acceptNSInteger(a)
+    acceptLong(a)
+    acceptInt(a)
+
+    var b: Long <!INITIALIZER_TYPE_MISMATCH!>=<!> getNSInteger()
+    acceptLong(b)
+    acceptNSInteger(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
+    b <!ASSIGNMENT_TYPE_MISMATCH!>=<!> getNSInteger()
+    acceptLong(b)
+    acceptNSInteger(b)
+
+    var c: ULong <!INITIALIZER_TYPE_MISMATCH!>=<!> getSizeT()
+    acceptULong(c)
+    acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
+    c <!ASSIGNMENT_TYPE_MISMATCH!>=<!> getSizeT()
+    acceptULong(c)
+    acceptSizeT(c)
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral */
