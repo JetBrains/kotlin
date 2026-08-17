@@ -38,6 +38,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
+import kotlin.io.path.pathString
 import kotlin.io.path.writeText
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
@@ -548,9 +549,9 @@ class CacheBuilder(
             config.configuration.konanHome?.let {
                 this.konanHome = it
             }
-            val libraryPath = library.path.absolutePathString()
-            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.path.absolutePathString() }
-            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.path.absolutePathString() to it.second }
+            val libraryPath = library.canonicalPath.pathString
+            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.canonicalPath.pathString }
+            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.canonicalPath.pathString to it.second }
             configuration.reportLog(
                     "-p static_cache -Xadd-cache=${library.path} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +
@@ -569,7 +570,7 @@ class CacheBuilder(
             konanLibraries = libraries + libraryPath
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
-                konanFriendLibraries = config.friendModuleFiles.map { it.absolutePathString() }
+                konanFriendLibraries = config.loadedKlibs.friends.map { it.canonicalPath.pathString }
                 this.generateTestRunner = generateTestRunner
                 konanIncludedLibraries = listOf(libraryPath)
                 configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
