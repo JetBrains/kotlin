@@ -60,7 +60,10 @@ internal constructor(
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
 
-    @Deprecated("Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.")
+    @Deprecated(
+        "Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.",
+        level = DeprecationLevel.ERROR,
+    )
     constructor(
         project: Project,
         platformType: KotlinPlatformType,
