@@ -8,6 +8,8 @@ description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
 
+// The `main` compilation needs `-Xjdk-release=7`, and the `ct.sym` of a modern JDK does not go below
+// release 8, so the compilers have to run on the JDK they target.
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 RepoArtifacts.publish(project)
@@ -55,5 +57,4 @@ compileTestKotlin {
 }
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
-
 

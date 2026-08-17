@@ -6,6 +6,8 @@ plugins {
     id("gradle-plugin-published-compiler-dependency-configuration") // via kotlin-util-klib
 }
 
+// Shaded into `kotlin-reflect`, whose `dexMethodCount` dexes the jar with a D8 that cannot read the
+// `MethodParameters` attribute a modern `javac` emits for bridge methods even under `--release 8`.
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
