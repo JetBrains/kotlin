@@ -89,14 +89,6 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
                 .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
             buildJdk = jdkVersion.location,
         ) {
-            if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
-                // The Transform API uses incremental APIs deprecated since Gradle 7.5
-                gradleProperties.appendText(
-                    """
-                    android.experimental.legacyTransform.forceNonIncremental=true
-                    """.trimIndent()
-                )
-            }
             build("assembleDebug") {
                 assertKaptSuccessful()
                 assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_CatRealmProxy.java")

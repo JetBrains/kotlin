@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -48,62 +47,6 @@ class KaptAndGradleDaemon : KGPDaemonsBaseTest() {
                     |${printBuildOutput()}
                     |
                     | 'javac' is loaded not only once: $loadsCount times.
-                    """.trimMargin()
-                }
-            }
-        }
-    }
-
-    @DisplayName("Annotation processor class should be loaded only once")
-    // Since Gradle 8.0 toolchain is always configured.
-    // Which forces Kapt tasks to run using workers with process isolation,
-    // which is not compatible with classloaders caching.
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8])
-    @GradleWithJdkTest
-    fun testAnnotationProcessorClassIsLoadedOnce(
-        gradleVersion: GradleVersion,
-        providedJdk: JdkVersions.ProvidedJdk
-    ) {
-        project(
-            "javacIsLoadedOnce".withPrefix,
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                kaptOptions = defaultBuildOptions.kaptOptions!!.copy(
-                    classLoadersCacheSize = 10
-                )
-            ),
-            buildJdk = providedJdk.location,
-        ) {
-            val loadPattern = ("Loaded example.ExampleAnnotationProcessor from").toRegex(RegexOption.LITERAL)
-            fun BuildResult.classLoadingCount() = loadPattern.findAll(output).count()
-
-            build("build") {
-                assertTasksExecuted(":module1:kaptKotlin", ":module2:kaptKotlin")
-                assert(classLoadingCount() == 1) {
-                    """
-                    |${printBuildOutput()}
-                    |
-                    |AP class is loaded not once: ${classLoadingCount()} times.
-                    """.trimMargin()
-                }
-            }
-
-            listOf(
-                subProject("module1").kotlinSourcesDir().resolve("module1/Module1Class.kt"),
-                subProject("module2").kotlinSourcesDir().resolve("module2/Module2Class.kt")
-            ).forEach {
-                it.append("\n fun touch() = null")
-            }
-
-            build("build") {
-                assertTasksExecuted(":module1:kaptKotlin", ":module2:kaptKotlin")
-                assert(classLoadingCount() == 0) {
-                    """
-                    | ${printBuildOutput()}
-                    |
-                    |AP class shouldn't be loaded on the second build, actually loaded ${classLoadingCount()} times.
-                    |
                     """.trimMargin()
                 }
             }

@@ -551,47 +551,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
-    // Starting Gradle 8.0 toolchain is always configured by default
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @GradleTest
-    internal fun shouldNotChangeJvmTargetWithNoToolchain(gradleVersion: GradleVersion) {
-        project(
-            projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
-            buildJdk = jdk11Info.javaHome
-        ) {
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = warning
-                """.trimIndent()
-            )
-
-            val defaultJvmTargetName = JvmTarget.DEFAULT.let {
-                "${it.declaringJavaClass.canonicalName}.${it.name}"
-            }
-
-            //language=Groovy
-            buildGradle.append(
-                """
-                tasks.named("compileKotlin") {
-                    doLast {
-                        def actualJvmTarget = compilerOptions.jvmTarget.orNull
-                        if (actualJvmTarget != $defaultJvmTargetName) {
-                            //noinspection GroovyAssignabilityCheck
-                            throw new GradleException("Expected `jvmTarget` value is 'JvmTarget.DEFAULT' but the actual value was ${'$'}actualJvmTarget")
-                        }
-                    }
-                }
-                """.trimIndent()
-            )
-            build("assemble")
-        }
-    }
-
-    @JvmGradlePluginTests
     @DisplayName("Kotlin toolchain should support configuration cache")
     @GradleTest
     internal fun testConfigurationCache(gradleVersion: GradleVersion) {
