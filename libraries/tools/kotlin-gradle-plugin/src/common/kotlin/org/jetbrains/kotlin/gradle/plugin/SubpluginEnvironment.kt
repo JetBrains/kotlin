@@ -3,8 +3,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.internal.KaptCombinedTask
 import org.jetbrains.kotlin.gradle.internal.kaptGenerateStubsTaskName
+import org.jetbrains.kotlin.gradle.internal.kaptTaskName
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
@@ -83,12 +86,23 @@ class SubpluginEnvironment(
             kotlinCompilation is KotlinJvmAndroidCompilation
         ) {
             whenKaptEnabled {
-                @Suppress("UNCHECKED_CAST")
-                val kaptGenerateStubsTaskName = (kotlinCompilation.compileTaskProvider as TaskProvider<KotlinJvmCompile>)
-                    .kaptGenerateStubsTaskName
-                tasks.withType<KaptGenerateStubs>().configureEach { task ->
-                    if (task.name == kaptGenerateStubsTaskName) {
-                        configureKotlinTask(task)
+                if (project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()) {
+                    @Suppress("UNCHECKED_CAST")
+                    val kaptGenerateStubsTaskName = (kotlinCompilation.compileTaskProvider as TaskProvider<KotlinJvmCompile>)
+                        .kaptTaskName
+                    tasks.withType<KaptCombinedTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            configureKotlinTask(task)
+                        }
+                    }
+                } else {
+                    @Suppress("UNCHECKED_CAST")
+                    val kaptGenerateStubsTaskName = (kotlinCompilation.compileTaskProvider as TaskProvider<KotlinJvmCompile>)
+                        .kaptGenerateStubsTaskName
+                    tasks.withType<KaptGenerateStubs>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            configureKotlinTask(task)
+                        }
                     }
                 }
             }

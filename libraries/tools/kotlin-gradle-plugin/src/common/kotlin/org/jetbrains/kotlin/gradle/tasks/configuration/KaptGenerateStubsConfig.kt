@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -94,11 +95,21 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             kotlinCompileTask: TaskProvider<out KotlinJvmCompile>
         ) {
             project.whenKaptEnabled {
-                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
-                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
-                    if (task.name == kaptGenerateStubsTaskName) {
-                        task.javaOutputDir.set(javaCompileTask.flatMap { it.destinationDirectory })
-                        task.kotlinCompileDestinationDirectory.set(kotlinCompileTask.flatMap { it.destinationDirectory })
+                if (project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()) {
+                    val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_PREFIX)
+                    project.tasks.withType<KaptCombinedTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            task.javaOutputDir.set(javaCompileTask.flatMap { it.destinationDirectory })
+                            task.kotlinCompileDestinationDirectory.set(kotlinCompileTask.flatMap { it.destinationDirectory })
+                        }
+                    }
+                } else {
+                    val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
+                    project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            task.javaOutputDir.set(javaCompileTask.flatMap { it.destinationDirectory })
+                            task.kotlinCompileDestinationDirectory.set(kotlinCompileTask.flatMap { it.destinationDirectory })
+                        }
                     }
                 }
             }
@@ -110,16 +121,25 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             vararg paths: Any
         ) {
             project.whenKaptEnabled {
-                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
-                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
-                    if (task.name == kaptGenerateStubsTaskName) {
-                        task.libraries.from(paths)
+                if (project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()) {
+                    val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_PREFIX)
+                    project.tasks.withType<KaptCombinedTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            task.libraries.from(paths)
+                        }
                     }
-                }
-                val kaptTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_PREFIX)
-                project.tasks.withType<BaseKapt>().configureEach { task ->
-                    if (task.name == kaptTaskName) {
-                        task.classpath.from(paths)
+                } else {
+                    val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
+                    project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            task.libraries.from(paths)
+                        }
+                    }
+                    val kaptTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_PREFIX)
+                    project.tasks.withType<BaseKapt>().configureEach { task ->
+                        if (task.name == kaptTaskName) {
+                            task.classpath.from(paths)
+                        }
                     }
                 }
             }
@@ -131,10 +151,19 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             config: Property<Boolean>.() -> Unit
         ) {
             project.whenKaptEnabled {
-                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
-                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
-                    if (task.name == kaptGenerateStubsTaskName) {
-                        config(task.useModuleDetection)
+                if (project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()) {
+                    val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_PREFIX)
+                    project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            config(task.useModuleDetection)
+                        }
+                    }
+                } else {
+                    val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
+                    project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                        if (task.name == kaptGenerateStubsTaskName) {
+                            config(task.useModuleDetection)
+                        }
                     }
                 }
             }

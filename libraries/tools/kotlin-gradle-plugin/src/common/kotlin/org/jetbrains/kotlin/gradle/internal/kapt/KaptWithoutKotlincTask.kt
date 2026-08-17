@@ -134,30 +134,30 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
 
         val optionsForWorker = KaptOptionsForWorker(
-            projectDir,
-            compileClasspath,
-            allJavaSources.files.toList(),
+            projectBaseDir = projectDir,
+            compileClasspath = compileClasspath,
+            javaSourceRoots = allJavaSources.files.toList(),
 
-            changedFiles,
-            compiledSources.toList(),
-            incAptCache.orNull?.asFile,
-            classpathChanges.toList(),
+            changedFiles = changedFiles,
+            compiledSources = compiledSources.toList(),
+            incAptCache = incAptCache.orNull?.asFile,
+            classpathChanges = classpathChanges.toList(),
 
-            destinationDir.get().asFile,
-            classesDir.get().asFile,
-            stubsDir.asFile.get(),
+            sourcesOutputDir = destinationDir.get().asFile,
+            classesOutputDir = classesDir.get().asFile,
+            stubsOutputDir = stubsDir.asFile.get(),
 
-            kaptClasspath.files.toList(),
-            kaptExternalClasspath.files.toList(),
-            annotationProcessorFqNames.get(),
+            processingClasspath = kaptClasspath.files.toList(),
+            processingExternalClasspath = kaptExternalClasspath.files.toList(),
+            processors = annotationProcessorFqNames.get(),
 
-            getAnnotationProcessorOptions(),
-            javacOptions.get(),
+            processingOptions = getAnnotationProcessorOptions(),
+            javacOptions = javacOptions.get(),
 
-            kaptFlagsForWorker,
-            stubGenerationScheme.get().optionValue,
+            flags = kaptFlagsForWorker,
+            stubGenerationScheme = stubGenerationScheme.get().optionValue,
 
-            disableClassloaderCacheForProcessors
+            disableClassloaderCacheForProcessors = disableClassloaderCacheForProcessors
         )
 
         val kaptClasspath = kaptJars

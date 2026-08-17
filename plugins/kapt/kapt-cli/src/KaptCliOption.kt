@@ -218,8 +218,6 @@ enum class KaptCliOption(
 
     INFO_AS_WARNINGS_OPTION("infoAsWarnings", "true | false", "Show information messages as warnings"),
 
-    KAPT_KOTLIN_GENERATED("kapt.kotlin.generated", "<path>", "Path to generated kotlin sources"),
-
     @Deprecated("No-op in K2")
     USE_LIGHT_ANALYSIS_OPTION(
         "useLightAnalysis",

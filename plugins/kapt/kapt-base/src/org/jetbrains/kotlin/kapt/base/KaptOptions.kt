@@ -214,8 +214,18 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("Annotation processors: " + processors.joinToString())
 
+    appendLine("Compile classpath: ${compileClasspath.joinToString()}")
+    appendLine("Java source roots: ${javaSourceRoots.joinToString()}")
+    appendLine("Processing classpath: ${processingClasspath.joinToString()}")
+    appendLine("Stub generation scheme: ${stubGenerationScheme.stringValue}")
+
     appendLine("AP options: $processingOptions")
     appendLine("Javac options: $javacOptions")
+
+    appendLine("Processing class loader: $processingClassLoader")
+    appendLine("Separate classloader for processors: ${separateClassloaderForProcessors.joinToString()}")
+    appendLine("Processors stats report file: $processorsStatsReportFile")
+    appendLine("File read history report file: $fileReadHistoryReportFile")
 
     appendLine("[incremental apt] Changed files: $changedFiles")
     appendLine("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")

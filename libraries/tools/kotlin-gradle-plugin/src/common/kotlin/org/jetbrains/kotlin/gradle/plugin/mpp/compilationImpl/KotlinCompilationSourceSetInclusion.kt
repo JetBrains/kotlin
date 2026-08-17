@@ -9,10 +9,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
+import org.jetbrains.kotlin.gradle.internal.KAPT_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
@@ -102,7 +104,12 @@ internal class KotlinCompilationSourceSetInclusion(
             )
 
             compilation.project.whenKaptEnabled {
-                val kaptGenerateStubsTaskName = getKaptTaskName(compilation.compileKotlinTaskName, KAPT_GENERATE_STUBS_PREFIX)
+                val kaptGenerateStubsTaskName =
+                    if (compilation.project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()) {
+                        getKaptTaskName(compilation.compileKotlinTaskName, KAPT_PREFIX)
+                    } else {
+                        getKaptTaskName(compilation.compileKotlinTaskName, KAPT_GENERATE_STUBS_PREFIX)
+                    }
                 addSourcesToKotlinCompileTask(
                     project = compilation.project,
                     taskName = kaptGenerateStubsTaskName,

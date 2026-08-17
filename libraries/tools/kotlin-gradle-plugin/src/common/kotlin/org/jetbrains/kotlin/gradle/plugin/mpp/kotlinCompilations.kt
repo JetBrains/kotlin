@@ -10,8 +10,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
+import org.jetbrains.kotlin.gradle.internal.KAPT_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
@@ -58,7 +60,11 @@ internal fun addSourcesToKotlinCompileTask(
             val compileTaskName = compileKotlinTask.name
             // We also should configure related Kapt* tasks as they are not pickup configuration from
             // related KotlinJvmCompile to avoid circular task dependencies
-            val kaptGenerateStubsTaskName = getKaptTaskName(compileTaskName, KAPT_GENERATE_STUBS_PREFIX)
+            val kaptGenerateStubsTaskName = if (project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()) {
+                getKaptTaskName(compileTaskName, KAPT_PREFIX)
+            } else {
+                getKaptTaskName(compileTaskName, KAPT_GENERATE_STUBS_PREFIX)
+            }
             if (compileTaskName == taskName || kaptGenerateStubsTaskName == taskName) {
                 compileKotlinTask.configureAction()
             }

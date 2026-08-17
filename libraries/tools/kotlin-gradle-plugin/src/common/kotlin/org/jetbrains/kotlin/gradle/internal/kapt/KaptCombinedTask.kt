@@ -25,6 +25,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
@@ -165,9 +167,9 @@ abstract class KaptCombinedTask @Inject constructor(
 
     @get:Input
     var disableClassloaderCacheForProcessors: Set<String> = emptySet()
-//
-//    @get:Nested
-//    abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
+
+    @get:Nested
+    abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JVMCompilerArguments> {
         primitive { args ->
@@ -188,7 +190,9 @@ abstract class KaptCombinedTask @Inject constructor(
                 pluginOptionsWithKapt.addPluginArgument(Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID, it)
             }
 
-            args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
+            args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray() + getAnnotationProcessorOptions().map { (key, value) ->
+                "plugin:${Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID}:apOption=$key=$value"
+            }
 
             args.verbose = verbose.get()
             args.destinationAsFile = destinationDirectory.get().asFile
@@ -210,5 +214,30 @@ abstract class KaptCombinedTask @Inject constructor(
         sources { args ->
             args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
         }
+    }
+
+    private fun getAnnotationProcessorOptions(): Map<String, String> {
+        val result = mutableMapOf<String, String>()
+        kaptPluginOptions.toSingleCompilerPluginOptions().subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID]?.forEach {
+            result[it.key] = it.value
+        }
+        fun addArgumentsFromProvider(provider: CommandLineArgumentProvider) {
+            for (argument in provider.asArguments()) {
+                result[argument.removePrefix("-A")] = ""
+            }
+        }
+
+        @Suppress("DEPRECATION")
+        val deprecatedProviders = annotationProcessorOptionProviders
+        for (providers in deprecatedProviders) {
+            for (provider in (providers as List<*>)) {
+                addArgumentsFromProvider(provider as CommandLineArgumentProvider)
+            }
+        }
+        for (provider in annotationProcessorOptionsProviders.get()) {
+            addArgumentsFromProvider(provider)
+        }
+
+        return result
     }
 }

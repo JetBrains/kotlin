@@ -647,6 +647,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableJvmClasspathMetadata: Provider<Boolean>
         get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(false)
 
+    val enableKaptCombinedStubsAndAptTask: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_KAPT_COMBINED_STUBS_AND_APT_TASK).orElse(true)
+
     val enableKlibsCrossCompilation: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
 
@@ -910,6 +913,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.wasm.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA =
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableKmpClasspathMetadataForIncrementalCompilation")
+        val KOTLIN_INTERNAL_KAPT_COMBINED_STUBS_AND_APT_TASK =
+            property("$KOTLIN_INTERNAL_NAMESPACE.kapt.combinedStubsAndAptTask")
         val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")
         val KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.enableWorkaroundForKT64115")
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")

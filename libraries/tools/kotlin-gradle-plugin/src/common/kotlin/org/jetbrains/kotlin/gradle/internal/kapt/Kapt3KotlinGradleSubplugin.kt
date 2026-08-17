@@ -24,6 +24,7 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -202,7 +203,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
             kaptExtension,
             kaptConfigurations,
         )
-        val combinedTask = true
+        val combinedTask = project.kotlinPropertiesProvider.enableKaptCombinedStubsAndAptTask.get()
 
         val kaptTaskProvider = if (combinedTask) {
             val kaptTaskProvider: TaskProvider<out KaptCombinedTask> = context.createCombinedKaptKotlinTask()
@@ -359,7 +360,8 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
         val taskConfigAction = KaptCombinedConfig(project, kotlinCompilation, kaptExtension)
         taskConfigAction.configureTask {
             it.stubsDir.set(getKaptStubsDir())
-            it.destinationDirectory.set(getKaptIncrementalDataDir())
+            it.destinationDirectory.set(sourcesOutputDir)
+            it.destinationDir.set(sourcesOutputDir)
             it.kaptClasspath.from(kaptClasspathConfigurations)
         }
 
@@ -435,7 +437,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
 
             val pluginOptions: Provider<CompilerPluginOptions> = getDslKaptApOptions().toCompilerPluginOptions()
 
-            task.pluginOptions.add(pluginOptions)
+            task.kaptPluginOptions.add(pluginOptions)
             task.annotationProcessorOptionsProviders.finalizeValueOnRead()
         }
 

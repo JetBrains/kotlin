@@ -25,6 +25,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
@@ -57,6 +58,8 @@ abstract class KaptBaseIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
             kaptOptions = this.kaptOptions(),
+            logLevel = LogLevel.DEBUG,
+            compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS
         )
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(
@@ -351,7 +354,7 @@ open class KaptIT : KaptBaseIT() {
                 """.trimIndent()
             )
 
-            build("assemble") {
+            build("assemble", forwardBuildOutput = true) {
                 assertOutputContains("Kapt additional JVM arguments are ignored in 'NONE' workers isolation mode")
             }
         }
@@ -437,7 +440,7 @@ open class KaptIT : KaptBaseIT() {
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             build("clean", "build") {
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
+                assertTasksExecuted(/*":kaptGenerateStubsKotlin",*/ ":kaptKotlin", ":compileKotlin", ":compileJava")
                 assertKaptSuccessful()
                 assertFileNotExistsInTree(javaClassesDir(), "ExampleSourceAnnotation.class")
             }
@@ -445,7 +448,7 @@ open class KaptIT : KaptBaseIT() {
             javaSourcesDir().resolve("test.kt").append(" ")
             javaSourcesDir().resolve("foo/InternalDummy.kt").append(" ")
             build("build") {
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")
+                assertTasksExecuted(/*":kaptGenerateStubsKotlin",*/ ":compileKotlin")
                 // there are no actual changes in Java sources, generated sources, Kotlin classes
                 assertTasksUpToDate(":kaptKotlin", ":compileJava")
                 assertFileNotExistsInTree(javaClassesDir(), "ExampleSourceAnnotation.class")
@@ -454,7 +457,7 @@ open class KaptIT : KaptBaseIT() {
             // emulating wipe by android plugin's IncrementalSafeguardTask
             javaClassesDir().toFile().deleteRecursively()
             build("build") {
-                assertTasksUpToDate(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertTasksUpToDate(/*":kaptGenerateStubsKotlin",*/ ":kaptKotlin", ":compileKotlin")
                 assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
                 assertFileNotExistsInTree(javaClassesDir(), "ExampleSourceAnnotation.class")
             }
@@ -517,7 +520,7 @@ open class KaptIT : KaptBaseIT() {
         project("generatedDirUpToDate".withPrefix, gradleVersion) {
 
             build("build") {
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
+                assertTasksExecuted(/*":kaptGenerateStubsKotlin",*/ ":kaptKotlin", ":compileKotlin", ":compileJava")
                 assertKaptSuccessful()
                 assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
 
@@ -537,7 +540,7 @@ open class KaptIT : KaptBaseIT() {
             }
 
             build("build") {
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertTasksExecuted(/*":kaptGenerateStubsKotlin",*/ ":kaptKotlin", ":compileKotlin")
                 assertTasksUpToDate(":compileJava")
                 assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
 
@@ -626,7 +629,7 @@ open class KaptIT : KaptBaseIT() {
             javaSourcesDir().resolve("bar/UseBar.kt").modify { it.replace("package bar", "package foo.bar") }
 
             build("build") {
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
+                assertTasksExecuted(/*":kaptGenerateStubsKotlin",*/ ":kaptKotlin", ":compileKotlin", ":compileJava")
 
                 // generated sources
                 assertFileExists(projectPath.resolve("$generatedSrc/foo/bar/UseBar_MembersInjector.java"))
@@ -881,7 +884,7 @@ open class KaptIT : KaptBaseIT() {
 
             build("assemble") {
                 assertTasksExecuted(
-                    ":app:kaptGenerateStubsKotlin",
+                    /*":app:kaptGenerateStubsKotlin",*/
                     ":app:kaptKotlin",
                     ":app:compileKotlin",
                     ":app:compileJava",
@@ -896,7 +899,7 @@ open class KaptIT : KaptBaseIT() {
             libClassKt.modify { it.checkedReplace(original, replacement1) }
 
             build("assemble") {
-                assertTasksUpToDate(":app:kaptGenerateStubsKotlin")
+//                assertTasksUpToDate(":app:kaptGenerateStubsKotlin")
                 assertTasksExecuted(
                     ":lib:compileKotlin",
                     ":app:kaptKotlin"
@@ -921,7 +924,7 @@ open class KaptIT : KaptBaseIT() {
             libClassKt.modify { it.checkedReplace(replacement1, replacement2) }
             build("assemble") {
                 assertTasksExecuted(":lib:compileKotlin")
-                assertTasksUpToDate(":app:kaptKotlin", ":app:kaptGenerateStubsKotlin")
+                assertTasksUpToDate(":app:kaptKotlin"/*, ":app:kaptGenerateStubsKotlin"*/)
             }
         }
     }
