@@ -171,34 +171,21 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
 }
 
 private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDescriptor, linker: KonanIrLinker) {
-    // context.config.librariesWithDependencies could change at each iteration.
-    var dependenciesCount = 0
-    while (true) {
-        // context.config.librariesWithDependencies could change at each iteration.
-        val libsWithDeps = config.librariesWithDependencies().toSet()
-        val dependencies = moduleDescriptor.allDependencyModules.filter {
-            libsWithDeps.contains(it.konanLibrary)
-        }
+    val directDependencies: List<ModuleDescriptor> = moduleDescriptor.allDependencyModules
+    val allDependenciesTopoSorted: List<ModuleDescriptor> = DFS.topologicalOrder(directDependencies) { it.allDependencyModules }.reversed()
 
-        fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
-            return DFS.topologicalOrder(dependencies) {
-                it.allDependencyModules
-            }.reversed()
-        }
+    for (dependency in allDependenciesTopoSorted.filterNot { it == moduleDescriptor }) {
+        val kotlinLibrary: KotlinLibrary? = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
 
-        for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
-            val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
-            val isFullyCachedLibrary = kotlinLibrary != null &&
-                    config.cachedLibraries.isLibraryCached(kotlinLibrary) && kotlinLibrary != config.libraryToCache?.klib
-            if (isFullyCachedLibrary && kotlinLibrary.isHeader)
-                linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
-            else if (isFullyCachedLibrary)
-                linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-            else
-                linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
+        val isFullyCachedLibrary = kotlinLibrary != null
+                && config.cachedLibraries.isLibraryCached(kotlinLibrary)
+                && kotlinLibrary != config.libraryToCache?.klib
+
+        when {
+            isFullyCachedLibrary && kotlinLibrary.isHeader -> linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
+            isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
+            else -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
         }
-        if (dependencies.size == dependenciesCount) break
-        dependenciesCount = dependencies.size
     }
 }
 
