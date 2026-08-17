@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -45,7 +44,6 @@ fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
         +ConfigurationDirectives.WITH_STDLIB
     }
     configureFirParser(FirParser.LightTree)
-    useAdditionalService(::LibraryProvider)
     useAdditionalSourceProviders(
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,

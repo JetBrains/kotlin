@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
@@ -70,7 +69,6 @@ open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersio
         }
 
         facadeStep(::Fir2IrResultsConverter)
-        useAdditionalService(::LibraryProvider)
 
         @OptIn(TestInfrastructureInternals::class)
         useModuleStructureTransformers(PlatformModuleProvider)

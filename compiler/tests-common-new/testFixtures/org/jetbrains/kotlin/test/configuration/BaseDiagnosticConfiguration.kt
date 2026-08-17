@@ -55,12 +55,10 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
-import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.LanguageFeatureDisabledMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
@@ -77,7 +75,6 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
     enableLazyResolvePhaseChecking()
     configureFirParser(parser)
 
-    useAdditionalService(::LibraryProvider)
     useMetaTestConfigurators(::FirSpecificParserSuppressor)
 }
 

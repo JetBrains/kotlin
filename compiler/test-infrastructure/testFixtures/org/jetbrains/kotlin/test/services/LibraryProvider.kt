@@ -12,29 +12,6 @@ class LibraryProvider(private val testServices: TestServices) : TestService {
     private val descriptorToLibrary = mutableMapOf<ModuleDescriptor, KotlinLibrary>()
     private val stdlibPathToDescriptor = mutableMapOf<String, ModuleDescriptor>()
 
-    fun getDescriptorByPath(path: String): ModuleDescriptor {
-        return stdlibPathToDescriptor[path] ?: testServices.assertions.fail {
-            "There is no library with path $path"
-        }
-    }
-
-    fun setDescriptorAndLibraryByName(name: String, descriptor: ModuleDescriptor, library: KotlinLibrary) {
-        stdlibPathToDescriptor[name] = descriptor
-        descriptorToLibrary[descriptor] = library
-    }
-
-    fun getCompiledLibraryByDescriptor(descriptor: ModuleDescriptor): KotlinLibrary {
-        return descriptorToLibrary[descriptor] ?: testServices.assertions.fail {
-            "There is no library for descriptor ${descriptor.name}"
-        }
-    }
-
-    fun getDescriptorByCompiledLibrary(library: KotlinLibrary): ModuleDescriptor {
-        return descriptorToLibrary.filterValues { it == library }.keys.singleOrNull() ?: testServices.assertions.fail {
-            "There is no descriptor for library ${library.path}"
-        }
-    }
-
     fun getOrCreateStdlibByPath(path: String, create: (String) -> Pair<ModuleDescriptor, KotlinLibrary>): ModuleDescriptor {
         return stdlibPathToDescriptor.getOrPut(path) {
             create(path).let {

@@ -35,11 +35,6 @@ fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: De
     return dependencies.map { testServices.artifactsProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
 }
 
-fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
-    return getKlibDependencies(module, testServices, kind)
-        .map { testServices.libraryProvider.getDescriptorByPath(it.absolutePath) }
-}
-
 fun createJsTestPhaseConfig(testServices: TestServices, module: TestModule): PhaseConfig {
     val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")
     return if (debugMode >= DebugMode.SUPER_DEBUG) {

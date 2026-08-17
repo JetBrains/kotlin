@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
@@ -67,8 +66,6 @@ abstract class AbstractJsIrTextTestBase(
             ::JsFirstStageEnvironmentConfigurator,
             ::JsSecondStageEnvironmentConfigurator,
         )
-
-        useAdditionalService(::LibraryProvider)
     }
 }
 

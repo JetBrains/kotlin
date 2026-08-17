@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.junit.jupiter.api.Assumptions
@@ -107,8 +106,6 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
         globalDefaults {
             targetBackend = TargetBackend.NATIVE
         }
-
-        useAdditionalService(::LibraryProvider)
 
         facadeStep(::Fir2IrCliNativeFacade)
         facadeStep(::NativePreSerializationLoweringCliFacade)
