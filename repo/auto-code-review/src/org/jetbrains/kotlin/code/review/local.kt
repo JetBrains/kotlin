@@ -87,6 +87,7 @@ private class LocalRenderingContext(output: File, project: LocalProject) : Rende
     override fun describeDiff(origin: GitDiff.Origin): String {
         return when (origin) {
             is GitDiff.Origin.Local -> "`git diff ${origin.from.sha1}` at `${origin.to.root}`"
+            is GitDiff.Origin.GitHub -> origin.compareMarkdownLink
         }
     }
 }
