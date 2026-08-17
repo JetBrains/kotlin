@@ -5972,20 +5972,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
-public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
-	public static final field NAME_SUFFIX Ljava/lang/String;
-	public fun <init> ()V
-	public final fun exec ()V
-	public final fun getCleanableStoreProvider ()Lorg/gradle/api/provider/Provider;
-	public final fun getTimeToLiveInDays ()J
-	public final fun setCleanableStoreProvider (Lorg/gradle/api/provider/Provider;)V
-	public final fun setTimeToLiveInDays (J)V
-}
-
-public final class org/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion {
-}
-
 public final class org/jetbrains/kotlin/gradle/tasks/CompilerPluginOptions : org/jetbrains/kotlin/gradle/plugin/CompilerPluginConfig {
 	public fun <init> ()V
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/CompilerPluginConfig;)V

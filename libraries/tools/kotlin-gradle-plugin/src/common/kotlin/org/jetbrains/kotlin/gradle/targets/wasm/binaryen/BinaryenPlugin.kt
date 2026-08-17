@@ -48,14 +48,6 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
                     .also { conf -> conf.isTransitive = false }
             }
         }
-
-        @Suppress("DEPRECATION_ERROR")
-        project.registerTask<org.jetbrains.kotlin.gradle.tasks.CleanDataTask>(
-            WasmPlatformDisambiguator.extensionName(
-                "binaryen" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
-                prefix = null,
-            )
-        ) {}
     }
 
     private fun ExtensionContainer.createBinaryenEnvSpec(): BinaryenEnvSpec {

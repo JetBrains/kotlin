@@ -2042,16 +2042,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("nodejs up-to-date check works")
-    @GradleTest
-    fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
-        project("cleanTask", gradleVersion) {
-            build("checkDownloadedFolder")
-
-            build("checkIfLastModifiedNotNow", "--rerun-tasks")
-        }
-    }
-
     @DisplayName("Disable download should not download Node.JS and Yarn")
     @GradleTest
     fun testNodeJsAndYarnNotDownloaded(gradleVersion: GradleVersion) {

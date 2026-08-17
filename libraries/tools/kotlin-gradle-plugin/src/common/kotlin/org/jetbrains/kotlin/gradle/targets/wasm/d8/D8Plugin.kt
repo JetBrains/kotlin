@@ -46,14 +46,6 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
                     .also { conf -> conf.isTransitive = false }
             }
         }
-
-        @Suppress("DEPRECATION_ERROR")
-        project.registerTask<org.jetbrains.kotlin.gradle.tasks.CleanDataTask>(
-            WasmPlatformDisambiguator.extensionName(
-                "d8" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
-                prefix = null,
-            )
-        ) {}
     }
 
     private fun ExtensionContainer.createD8EnvSpec(): D8EnvSpec {
