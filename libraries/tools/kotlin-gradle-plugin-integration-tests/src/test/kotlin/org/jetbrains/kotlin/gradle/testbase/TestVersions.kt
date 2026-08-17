@@ -16,7 +16,6 @@ interface TestVersions {
     // Gradle nightly releases retention policy is 3 months
     object Gradle {
         const val G_7_4 = "7.4.2"
-        const val G_8_9 = "8.9"
         const val G_8_10 = "8.10.2"
         const val G_8_11 = "8.11.1"
         const val G_8_12 = "8.12.1"
@@ -51,7 +50,6 @@ interface TestVersions {
     }
 
     object AGP {
-        const val AGP_87 = "8.7.2"
         const val AGP_88 = "8.8.2"
         const val AGP_89 = "8.9.3"
         const val AGP_810 = "8.10.1"
@@ -74,7 +72,6 @@ interface TestVersions {
         val maxSupportedGradleVersion: GradleVersion,
         val requiredJdkVersion: JavaVersion,
     ) {
-        AGP_87(AGP.AGP_87, GradleVersion.version(Gradle.G_8_9), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_12), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
