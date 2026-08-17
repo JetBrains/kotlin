@@ -6,17 +6,12 @@
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
-import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.*
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
@@ -39,6 +34,9 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<
         >(name = "JsBackendPipelinePhase") {
     override val klibLoadingPhase: WebIrLoadingPipelinePhase
         get() = JsIrLoadingPipelinePhase
+
+    override val icCachePreparationPhase: WebIncrementalCachePreparationPipelinePhase<JsModuleArtifact, *>
+        get() = JsIncrementalCachePreparationPipelinePhase
 
     override fun compileIncrementally(
         icCaches: List<JsModuleArtifact>,
@@ -75,19 +73,6 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<
         }
         return outputs
     }
-
-    override fun createCacheUpdater(
-        cacheDirectory: String,
-        configuration: CompilerConfiguration,
-        artifactConfiguration: WebArtifactConfiguration
-    ) = CacheUpdater(
-        cacheDir = cacheDirectory,
-        compilerConfiguration = configuration,
-        artifactConfiguration = artifactConfiguration,
-        icContext = JsICContext(artifactConfiguration.granularity),
-        checkForClassStructuralChanges = false,
-        loadBodiesOnlyForMainModule = false,
-    )
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): JsBackendPipelineArtifact? {
         val start = System.currentTimeMillis()

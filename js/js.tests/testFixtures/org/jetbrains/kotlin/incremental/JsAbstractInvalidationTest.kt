@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsIncrementalCachePreparationPipelinePhase
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
@@ -17,9 +19,7 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.config.targetPlatform
-import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.js.config.*
@@ -155,6 +155,7 @@ abstract class JsAbstractInvalidationTest(
 
                 configuration.phaseConfig = createPhaseConfig(projStep.id, buildDir)
                 configuration.additionalExportedDeclarationNames = setOf(FqName(BOX_FUNCTION_NAME))
+                configuration.icCacheDirectory = buildDir.resolve("incremental-cache").absolutePath
 
                 val artifactConfiguration = WebArtifactConfiguration(
                     moduleKind = projectInfo.moduleKind,
@@ -167,17 +168,14 @@ abstract class JsAbstractInvalidationTest(
                     minimizedMemberNames = false,
                 )
 
-                val cacheUpdater = CacheUpdater(
-                    cacheDir = buildDir.resolve("incremental-cache").absolutePath,
-                    compilerConfiguration = configuration,
-                    artifactConfiguration = artifactConfiguration,
-                    icContext = JsICContext(granularity)
-                )
+                configuration.artifactConfigurations = listOf(artifactConfiguration)
 
                 val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
 
-                val icCaches = cacheUpdater.actualizeCaches()
-                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
+                val [icCaches, dirtyFileLastStats, _, _] = JsIncrementalCachePreparationPipelinePhase.executePhase(
+                    ConfigurationPipelineArtifact(configuration, rootDisposable)
+                )!!
+                verifyCacheUpdateStats(projStep.id, dirtyFileLastStats, testInfo + removedModulesInfo)
 
                 val mainModuleName = icCaches.last().moduleExternalName
 

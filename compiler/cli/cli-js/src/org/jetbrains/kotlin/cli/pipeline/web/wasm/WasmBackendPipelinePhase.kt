@@ -12,22 +12,15 @@ import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
-import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
-import org.jetbrains.kotlin.wasm.config.wasmDebug
-import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
-import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 
 abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragments, TIcContext> : WebBackendPipelinePhase<
         WasmBackendPipelineArtifact,
@@ -61,34 +54,6 @@ abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragmen
             compileResult
         }
         WasmBackendPipelineArtifact(results, outputDir, configuration)
-    }
-
-    protected abstract fun createIcContext(
-        allowIncompleteImplementations: Boolean,
-        skipLocalNames: Boolean,
-        skipCommentInstructions: Boolean,
-        skipLocations: Boolean,
-    ): TIcContext
-
-    override fun createCacheUpdater(
-        cacheDirectory: String,
-        configuration: CompilerConfiguration,
-        artifactConfiguration: WebArtifactConfiguration
-    ): CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, WasmBackendContext> {
-        val icContext = createIcContext(
-            false,
-            !configuration.wasmDebug,
-            !configuration.wasmGenerateWat,
-            !(configuration.wasmGenerateDwarf || configuration.sourceMap),
-        )
-        return CacheUpdater(
-            cacheDir = cacheDirectory,
-            compilerConfiguration = configuration,
-            artifactConfiguration = artifactConfiguration,
-            icContext = icContext,
-            checkForClassStructuralChanges = true,
-            loadBodiesOnlyForMainModule = configuration.wasmCompilationMode() == WasmCompilationMode.SINGLE_MODULE,
-        )
     }
 
     protected abstract fun createNonIncrementalCompiler(
