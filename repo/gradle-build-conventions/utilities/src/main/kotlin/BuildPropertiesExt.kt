@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.provider.Provider
+
 val KotlinBuildProperties.includeJava9: Boolean
     get() = booleanProperty("kotlin.build.java9", true).get()
 
@@ -91,3 +93,24 @@ val KotlinBuildProperties.buildPlatformLibsByBootstrapCompiler: Boolean
  */
 val KotlinBuildProperties.alignKotlinNativeVersionInTCBuilds: Boolean
     get() = isTeamcityBuild.get() && booleanProperty("kotlin.align.versions.kotlin-native.in.tc.builds", true).get()
+
+/**
+ * Overrides the maximum heap size for all standard test JVMs.
+ * The value must use JVM size notation with a `k`, `m`, or `g` suffix.
+ */
+val KotlinBuildProperties.testXmx: Provider<Size>
+    get() = stringProperty("kotlin.test.xmx").map { Size.fromJvmArg(it) }
+
+/**
+ * Overrides the initial heap size for all standard test JVMs.
+ * The value must use JVM size notation with a `k`, `m`, or `g` suffix.
+ */
+val KotlinBuildProperties.testXms: Provider<Size>
+    get() = stringProperty("kotlin.test.xms").map { Size.fromJvmArg(it) }
+
+/**
+ * Overrides the garbage collector for all standard test JVMs.
+ * Supported values are `G1` and `Parallel`.
+ */
+val KotlinBuildProperties.testUseGC: Provider<String>
+    get() = stringProperty("kotlin.test.useGC")

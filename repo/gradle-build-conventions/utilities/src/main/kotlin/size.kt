@@ -25,6 +25,20 @@ value class Size(val bytes: Long) {
     val inWholeGigabytes get() = bytes / (1000L * 1000L * 1000L)
 
     val inWholeGiB get() = bytes / (1024L * 1024L * 1024L)
+
+    companion object {
+        fun fromJvmArg(value: String): Size {
+            val pattern = Regex("""(?<size>\d+)(?<unit>[kmg])""")
+            val match = pattern.matchEntire(value.lowercase()) ?: error("'$value' is not a valid JVM size notation")
+            val size = match.groups["size"]!!.value.toInt()
+            return when (val unit = match.groups["unit"]!!.value) {
+                "k" -> size.KiB
+                "m" -> size.MiB
+                "g" -> size.GiB
+                else -> error("Unrecognized size: $unit")
+            }
+        }
+    }
 }
 
 val Int.bytes: Size get() = Size(this)

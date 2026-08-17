@@ -86,6 +86,12 @@ internal fun Project.createGeneralTestTask(
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
+
+    val properties = kotlinBuildProperties
+    val effectiveXmx = properties.testXmx.orElse(maxHeapSize)
+    val effectiveXms = properties.testXms.orElse(minHeapSize)
+    val effectiveGC = properties.testUseGC.map { GC.valueOf(it) }.orElse(useGC)
+
     project.dependencies {
         "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
     }
@@ -141,7 +147,7 @@ internal fun Project.createGeneralTestTask(
         )
 
         jvmArgs(
-            when (useGC) {
+            when (effectiveGC.get()) {
                 GC.G1 -> "-XX:+UseG1GC"
                 GC.Parallel -> "-XX:+UseParallelGC"
             },
@@ -154,8 +160,8 @@ internal fun Project.createGeneralTestTask(
             jvmArgs("-XX:NativeMemoryTracking=${nativeMemoryTracking.get()}")
         }
 
-        this.maxHeapSize = maxHeapSize.toJvmMiB()
-        this.minHeapSize = minHeapSize.toJvmMiB()
+        this.maxHeapSize = effectiveXmx.get().toJvmMiB()
+        this.minHeapSize = effectiveXms.get().toJvmMiB()
 
         systemProperty("idea.is.unit.test", "true")
         systemProperty("idea.use.native.fs.for.win", false)
