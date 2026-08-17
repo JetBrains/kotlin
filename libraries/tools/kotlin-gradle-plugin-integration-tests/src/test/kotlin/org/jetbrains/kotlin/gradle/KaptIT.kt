@@ -1051,10 +1051,6 @@ open class KaptIT : KaptBaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            if (!isWithJavaSupported) {
-                subProject("dac").buildGradle.replaceText("withJava()", "")
-            }
-
             build(":dac:compileKotlinJvm") {
                 assertTasksExecuted(
                     ":dac:kaptGenerateStubsKotlinJvm",

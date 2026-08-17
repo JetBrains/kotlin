@@ -300,7 +300,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {
@@ -317,7 +316,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {

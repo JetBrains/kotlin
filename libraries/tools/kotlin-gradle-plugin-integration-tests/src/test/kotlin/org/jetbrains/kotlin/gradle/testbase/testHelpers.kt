@@ -262,12 +262,6 @@ val Throwable.fullMessage
     }.toString()
 
 /**
- * @return `true` if 'withJava()' method should not produce a configuration error.
- */
-internal val TestProject.isWithJavaSupported: Boolean
-    get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
-
-/**
  * Returns a list of subprojects for the [TestProject], explicitly specified by their names.
  * This method can be used as an explicit alternative to `subprojects { ... }`.
  * If a subproject name is an empty string (`""`) or a single dot (`"."`), it will be replaced by the [TestProject] itself.

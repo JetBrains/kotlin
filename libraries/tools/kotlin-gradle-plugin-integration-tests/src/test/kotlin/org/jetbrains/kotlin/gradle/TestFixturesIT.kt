@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -38,8 +37,6 @@ class TestFixturesIT : KGPBaseTest() {
     @TestMetadata(KMP_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessInKmpProject(gradleVersion: GradleVersion) {
         project(KMP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -83,8 +80,6 @@ class TestFixturesIT : KGPBaseTest() {
     @TestMetadata(KMP_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessFromTestsInKmpProject(gradleVersion: GradleVersion) {
         project(KMP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -110,9 +105,6 @@ class TestFixturesIT : KGPBaseTest() {
     @TestMetadata(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
     fun testTestFixturesAndFunctionalTestsInJvmProject(gradleVersion: GradleVersion) {
         project(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
-
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")
@@ -131,9 +123,6 @@ class TestFixturesIT : KGPBaseTest() {
     @TestMetadata(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
     fun testTestFixturesAndFunctionalTestsInKmpProject(gradleVersion: GradleVersion) {
         project(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
-
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")
@@ -177,9 +166,6 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("KT-75808: Correct project dependency on testFixtures")
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_4 // 'testFixturesApi' configuration is only available in KMP projects since this version
-    )
     @TestMetadata(KMP_JVM_TEST_FIXTURES_PROJECT_NAME)
     fun testProjectDependencyOnKmpTestFixtures(gradleVersion: GradleVersion) {
         project(KMP_JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {

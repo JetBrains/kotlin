@@ -45,7 +45,6 @@ class ProjectIsolationIT : KGPBaseTest() {
 
     @DisplayName("Multi-module Android project")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_85)
     @AndroidGradlePluginTests
     fun testProjectIsolationAndroid(
        gradleVersion: GradleVersion,
@@ -76,7 +75,7 @@ class ProjectIsolationIT : KGPBaseTest() {
 
     @DisplayName("Kapt with Android multi-module project")
     @AndroidGradlePluginTests
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_85, maxVersion = TestVersions.AGP.AGP_813)
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     @TestMetadata("kapt/android-databinding")
     @GradleAndroidTest
     fun testProjectIsolationAndroidWithKapt(

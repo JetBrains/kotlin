@@ -8,7 +8,5 @@ repositories {
 }
 
 kotlin {
-    jvm("jvmWithJava") {
-        withJava()
-    }
+    jvm("jvmWithJava")
 }

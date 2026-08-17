@@ -12,9 +12,7 @@ repositories {
 kotlin {
     jvmToolchain(8)
 
-    jvm("jvmWithJava") {
-        withJava()
-    }
+    jvm("jvmWithJava") { }
 }
 
 

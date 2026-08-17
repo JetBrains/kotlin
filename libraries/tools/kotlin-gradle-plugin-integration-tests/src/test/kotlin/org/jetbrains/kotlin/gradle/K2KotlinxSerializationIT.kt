@@ -68,7 +68,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = tempDir,
             buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_8_7,
+                TestVersions.Gradle.G_8_14,
                 gradleVersion,
                 "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
             )
