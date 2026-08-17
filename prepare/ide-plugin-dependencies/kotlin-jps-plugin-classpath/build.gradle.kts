@@ -6,9 +6,7 @@ plugins {
 }
 
 idePluginPublishingLatch {
-    @Suppress("UNCHECKED_CAST")
     val embeddedDependencies = CompilerModules.kotlinJpsPluginEmbeddedDependencies
-    @Suppress("UNCHECKED_CAST")
     val mavenDependencies = CompilerModules.kotlinJpsPluginMavenDependencies
 
     val otherProjects = listOf(":jps:jps-plugin", ":jps:jps-common")

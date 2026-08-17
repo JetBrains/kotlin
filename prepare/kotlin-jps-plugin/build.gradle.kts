@@ -6,14 +6,12 @@ plugins {
 }
 
 dependencies {
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
-@Suppress("UNCHECKED_CAST")
 val embeddedDependencies = CompilerModules.kotlinJpsPluginEmbeddedDependencies
 publishProjectJars(
     embeddedDependencies + listOf(":jps:jps-plugin", ":jps:jps-common"),

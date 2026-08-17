@@ -15,11 +15,9 @@ dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginEmbeddedDependencies
         .forEach { implementation(project(it)) }
 
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
