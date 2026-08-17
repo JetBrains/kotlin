@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
 import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -107,11 +108,12 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
 
     private fun createNameProperty(clazz: IrClass, reference: IrRichFunctionReference) {
         val reflectionTargetSymbol = reference.reflectionTargetSymbol ?: return
-        val superProperty = reference
-            .type
-            .classOrFail
-            .owner
-            .declarations
+        val superClass = reference.type.classOrFail.owner
+
+        // We need to have a view on the class before transformations made later in pipeline.
+        // The generated class should override the original method, and further lowerings would transformation correctly, if needed.
+        // Super class can be already transformed in case it is located in one of already processed modules.
+        val superProperty = (superClass.declarationsAtFunctionReferenceLowering ?: superClass.declarations)
             .filterIsInstance<IrProperty>()
             .single { it.name == StandardNames.NAME }  // In K/Wasm interfaces can have fake overridden properties from Any
 
