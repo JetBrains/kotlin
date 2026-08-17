@@ -298,7 +298,6 @@ abstract class KotlinIrLinker(
 
         val moduleFragment = deserializer.moduleFragment
         moduleFragment.kotlinLibrary = kotlinLibrary
-        moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
         return deserializer
     }
 
@@ -328,6 +327,8 @@ abstract class KotlinIrLinker(
                 moduleDeserializersByPackageName.putToMultiMap(packageName, deserializer)
             }
         }
+
+        moduleDependencyTracker.addModuleForTracking(module = deserializer.moduleFragment)
 
         return deserializer
     }
