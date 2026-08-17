@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTracker
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
@@ -47,6 +49,8 @@ class KonanIrLinker(
     }
 
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
+
+    override val moduleDependencyTracker: IrModuleDependencyTracker = IrModuleDependencyTrackerImpl()
 
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
         partialLinkageConfig = partialLinkageConfig,
@@ -89,7 +93,7 @@ class KonanIrLinker(
             KonanForwardDeclarationModuleDeserializer(moduleFragment, this)
         }
         klib == null -> {
-            error("Expecting kotlin library for $moduleFragment")
+            error("Expecting kotlin library for module fragment ${moduleFragment.name}")
         }
         klib.isCInteropLibrary() -> {
             cInteropModuleDeserializerFactory.createIrModuleDeserializer(
