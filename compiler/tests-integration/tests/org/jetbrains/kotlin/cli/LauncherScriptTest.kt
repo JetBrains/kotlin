@@ -568,7 +568,7 @@ Caused by: java.lang.AssertionError: assert
         }
         val file = tmpdir.resolve("test.kt").also { it.writeText(code) }
         runProcess(
-            "kotlinc", file.absolutePath,
+            "kotlinc", "-J-Xss1m", file.absolutePath,
             expectedExitCode = 2,
             checkStdout = { stdOut -> assertTrue(stdOut.isBlank()) },
             checkStderr = { stdErr ->
