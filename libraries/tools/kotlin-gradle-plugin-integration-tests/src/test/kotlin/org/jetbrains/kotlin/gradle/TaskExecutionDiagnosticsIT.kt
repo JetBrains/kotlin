@@ -199,7 +199,6 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
     @GradleTest
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
     fun `karOrKarXZFilesInCompileClasspathAreReported - native`(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {
             val unsupportedLibraryPaths = listOf("foo.kar", "bar.kar.xz").map { fileName ->
@@ -225,7 +224,6 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
     @GradleTest
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
     fun `karOrKarXZFilesInCompileClasspathAreReported - js`(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-plugin-project", gradleVersion,
