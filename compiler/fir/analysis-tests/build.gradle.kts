@@ -11,6 +11,7 @@ plugins {
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-coverage-convention")
     id("require-explicit-types")
 }
 
