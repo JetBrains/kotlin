@@ -2440,7 +2440,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object NoChromiumRunnerForBrowserDebug : ToolingDiagnosticFactory(
-        predefinedSeverity = FATAL,
+        predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(runnerName: String) = build {
@@ -2457,7 +2457,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object UnknownRunnerForBrowserDebug : ToolingDiagnosticFactory(
-        predefinedSeverity = FATAL,
+        predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(runnerName: String, declaredRunnerNames: List<String>) = build {
