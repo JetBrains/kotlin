@@ -121,7 +121,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
 
-    private fun resolveDebugRunner(task: KotlinJsTest, requestedName: String): ChromiumRunnerInput {
+    private fun resolveDebugRunner(task: KotlinJsTest, requestedName: String): ChromiumRunnerInput? {
         val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
         chromiumRunners.firstOrNull { it.name.get() == requestedName }?.let { return it }
 
@@ -136,8 +136,7 @@ internal class KotlinPlaywrightJsTestFramework(
                 )
             )
         }
-
-        error("Could not resolve the '$requestedName' browser test runner")
+        return null
     }
 
     override fun createTestExecutionSpec(
@@ -165,14 +164,16 @@ internal class KotlinPlaywrightJsTestFramework(
         val pwRunners = buildList {
             if (debugOptions != null) {
                 val runner = resolveDebugRunner(task, debugOptions.runnerName.get())
-                add(
-                    runner.createPwRunnerSpec(
-                        PwBrowserKind.CHROMIUM,
-                        browsersDirectory,
-                        cliArgs,
-                        debugOptions,
+                runner?.let {
+                    add(
+                        runner.createPwRunnerSpec(
+                            PwBrowserKind.CHROMIUM,
+                            browsersDirectory,
+                            cliArgs,
+                            debugOptions,
+                        )
                     )
-                )
+                }
             } else {
                 frameworkTaskInputs.chromiumRunners.get().forEach {
                     add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
