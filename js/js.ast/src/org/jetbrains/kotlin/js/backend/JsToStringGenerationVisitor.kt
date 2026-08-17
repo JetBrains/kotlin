@@ -15,164 +15,8 @@ open class JsToStringGenerationVisitor(
     protected val p: TextOutput,
     private val sourceLocationConsumer: SourceLocationConsumer,
 ) : JsVisitor() {
-    companion object {
-        private val CHARS_BREAK = "break".toCharArray()
-        private val CHARS_CASE = "case".toCharArray()
-        private val CHARS_CATCH = "catch".toCharArray()
-        private val CHARS_CLASS = "class".toCharArray()
-        private val CHARS_CONSTRUCTOR = "constructor".toCharArray()
-        private val CHARS_CONTINUE = "continue".toCharArray()
-        private val CHARS_YIELD = "yield".toCharArray()
-        private val CHARS_YIELD_STAR = "yield*".toCharArray()
-        private val CHARS_DEBUGGER = "debugger".toCharArray()
-        private val CHARS_DEFAULT = "default".toCharArray()
-        private val CHARS_DO = "do".toCharArray()
-        private val CHARS_ELSE = "else".toCharArray()
-        private val CHARS_EXTENDS = "extends".toCharArray()
-        private val CHARS_FALSE = "false".toCharArray()
-        private val CHARS_FINALLY = "finally".toCharArray()
-        private val CHARS_FOR = "for".toCharArray()
-        private val CHARS_FUNCTION = "function".toCharArray()
-        private val CHARS_STATIC = "static".toCharArray()
-        private val CHARS_GET = "get".toCharArray()
-        private val CHARS_SET = "set".toCharArray()
-        private val CHARS_IF = "if".toCharArray()
-        private val CHARS_IN = "in".toCharArray()
-        private val CHARS_OF = "of".toCharArray()
-        private val CHARS_NEW = "new".toCharArray()
-        private val CHARS_NULL = "null".toCharArray()
-        private val CHARS_RETURN = "return".toCharArray()
-        private val CHARS_SWITCH = "switch".toCharArray()
-        private val CHARS_THIS = "this".toCharArray()
-        private const val CHARS_GENERATOR = '*'
-
-        private val CHARS_SUPER = "super".toCharArray()
-        private val CHARS_THROW = "throw".toCharArray()
-        private val CHARS_TRUE = "true".toCharArray()
-        private val CHARS_TRY = "try".toCharArray()
-        private val CHARS_VAR = "var".toCharArray()
-        private val CHARS_LET = "let".toCharArray()
-        private val CHARS_CONST = "const".toCharArray()
-        private val CHARS_WHILE = "while".toCharArray()
-        private val CHARS_ELLIPSIS = "...".toCharArray()
-        private val HEX_DIGITS = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
-
-        private val COMMON_ESCAPE_MAPPING = mapOf(
-            '\b' to 'b'.code,
-            '\u000c' to 'f'.code,
-            '\n' to 'n'.code,
-            '\r' to 'r'.code,
-            '\t' to 't'.code,
-            '\\' to '\\'.code
-        )
-
-        private val STRING_ESCAPE_MAPPING = COMMON_ESCAPE_MAPPING
-
-        private val TEMPLATE_ESCAPE_MAPPING = STRING_ESCAPE_MAPPING + mapOf(
-            '$' to '$'.code
-        )
-
-        /**
-         * Generate JavaScript code that evaluates to the supplied string. Adapted
-         * from `org.mozilla.javascript.ScriptRuntime#escapeString(String)`.
-         *
-         * The difference is that we quote with either `&quot;` or `&apos;` depending on
-         * which one is used less inside the string.
-         */
-        fun javaScriptString(str: String, forceDoubleQuote: Boolean = false): String {
-            var quoteCount = 0
-            var aposCount = 0
-
-            for (char in str) {
-                when (char) {
-                    '"' -> quoteCount++
-                    '\'' -> aposCount++
-                }
-            }
-
-            val quoteChar = if (quoteCount < aposCount || forceDoubleQuote) '"' else '\''
-
-            return buildString(str.length + 16) {
-                append(quoteChar)
-                appendEscapedString(str, quoteChar, STRING_ESCAPE_MAPPING)
-                append(quoteChar)
-                appendEscapeClosingTags()
-            }
-        }
-
-        private fun StringBuilder.appendEscapedString(str: String, quoteChar: Char, escapeMapping: Map<Char, Int>) {
-            for (char in str) {
-                if (char == quoteChar) {
-                    append('\\')
-                    append(quoteChar)
-                    continue
-                }
-
-                if (char in ' '..'~' && char != '\\' && !escapeMapping.containsKey(char)) {
-                    // an ordinary print character (like C isprint())
-                    append(char)
-                    continue
-                }
-
-                val escape: Int? = escapeMapping.get(char)
-
-                if (escape != null && escape >= 0) {
-                    // an \escaped sort of character
-                    append('\\')
-                    append(escape.toChar())
-                    continue
-                }
-
-                val [hexSequence, hexSize] = when {
-                    char.code < 256 -> "\\x" to 2
-                    else -> "\\u" to 4
-                }
-
-                append(hexSequence)
-
-                // append hexadecimal form of ch left-padded with 0
-                var shift = (hexSize - 1) * 4
-                while (shift >= 0) {
-                    val digit = 0xf and (char.code shr shift)
-                    append(HEX_DIGITS[digit])
-                    shift -= 4
-                }
-            }
-        }
-
-        private fun escapeTemplateStringSegment(str: String): String {
-            return buildString {
-                appendEscapedString(str, '`', TEMPLATE_ESCAPE_MAPPING)
-                appendEscapeClosingTags()
-            }
-        }
-
-        /**
-         * Escapes any closing XML tags embedded in `str`, which could
-         * potentially cause a parse failure in a browser, for example, embedding a
-         * closing `<script>` tag.
-         */
-        private fun StringBuilder.appendEscapeClosingTags() {
-            var index = 0
-            while ((indexOf("</", index).also { index = it }) != -1) {
-                insert(index + 1, '\\')
-            }
-        }
-    }
-
     private val sourceInfoStack = mutableListOf<JsLocationWithSource?>()
-
-    protected var insideComments: Boolean = false
-    protected var needSemi: Boolean = true
-    private var lineBreakAfterBlock = true
-
-    /**
-     * "Global" blocks are either the global block of a fragment, or a block
-     * nested directly within some other global block. This definition matters
-     * because the statements designated by statementEnds and statementStarts are
-     * those that appear directly within these global blocks.
-     */
-    private val globalBlocks = mutableSetOf<JsBlock>()
+    private val state = GenerationState()
 
     constructor(p: TextOutput) : this(p, NoOpSourceLocationConsumer)
 
@@ -199,18 +43,6 @@ open class JsToStringGenerationVisitor(
 
         printCommentsAfterNode(x)
         popSourceInfo()
-    }
-
-    private fun printExpressions(expressions: MutableList<JsExpression?>) {
-        var notFirst = false
-        for (expression in expressions) {
-            notFirst = sepCommaSpace(notFirst) && expression !is JsDocComment
-            val isEnclosed = parenPushIfCommaExpression(expression)
-            accept(expression)
-            if (isEnclosed) {
-                rightParen()
-            }
-        }
     }
 
     override fun visitBinaryExpression(x: JsBinaryOperation) {
@@ -320,9 +152,9 @@ open class JsToStringGenerationVisitor(
         printCommentsBeforeNode(x)
 
         if (x.value) {
-            p.print(CHARS_TRUE)
+            p.print(Chars.TRUE)
         } else {
-            p.print(CHARS_FALSE)
+            p.print(Chars.FALSE)
         }
 
         printCommentsAfterNode(x)
@@ -333,7 +165,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_BREAK)
+        p.print(Chars.BREAK)
         continueOrBreakLabel(x)
 
         printCommentsAfterNode(x)
@@ -344,7 +176,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_CONTINUE)
+        p.print(Chars.CONTINUE)
         continueOrBreakLabel(x)
 
         printCommentsAfterNode(x)
@@ -355,7 +187,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_YIELD)
+        p.print(Chars.YIELD)
 
         if (x.expression != null) {
             space()
@@ -370,7 +202,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_YIELD_STAR)
+        p.print(Chars.YIELD_STAR)
 
         if (x.expression != null) {
             space()
@@ -392,18 +224,11 @@ open class JsToStringGenerationVisitor(
         popSourceInfo()
     }
 
-    private fun continueOrBreakLabel(x: JsContinue) {
-        x.label?.let {
-            space()
-            p.print(it.ident)
-        }
-    }
-
     override fun visitCase(x: JsCase) {
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_CASE)
+        p.print(Chars.CASE)
         space()
         accept(x.caseExpression)
         colon()
@@ -418,26 +243,12 @@ open class JsToStringGenerationVisitor(
         sourceLocationConsumer.popSourceInfo()
     }
 
-    private fun printSwitchMemberStatements(x: JsSwitchMember) {
-        p.indentIn()
-        for (stmt in x.statements) {
-            needSemi = true
-            accept(stmt)
-            if (needSemi) {
-                semi()
-            }
-            newline()
-        }
-        p.indentOut()
-        needSemi = false
-    }
-
     override fun visitCatch(x: JsCatch) {
         printCommentsBeforeNode(x)
         pushSourceInfo(x.source)
 
         space()
-        p.print(CHARS_CATCH)
+        p.print(Chars.CATCH)
         space()
 
         leftParen()
@@ -480,26 +291,11 @@ open class JsToStringGenerationVisitor(
         popSourceInfo()
     }
 
-    private fun printPair(parent: JsExpression, expression: JsExpression, wrongAssoc: Boolean) {
-        val isNeedParen = parenCalc(parent, expression, wrongAssoc)
-        if (isNeedParen) {
-            leftParen()
-        }
-        accept(expression)
-        if (isNeedParen) {
-            rightParen()
-        }
-    }
-
-    private fun printPair(parent: JsExpression, expression: JsExpression) {
-        printPair(parent, expression, false)
-    }
-
     override fun visitDebugger(x: JsDebugger) {
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_DEBUGGER)
+        p.print(Chars.DEBUGGER)
 
         printCommentsAfterNode(x)
         popSourceInfo()
@@ -509,7 +305,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_DEFAULT)
+        p.print(Chars.DEFAULT)
         colon()
 
         printCommentsAfterNode(x)
@@ -549,7 +345,7 @@ open class JsToStringGenerationVisitor(
         sourceLocationConsumer.pushSourceInfo(null)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_DO)
+        p.print(Chars.DO)
 
         val body = materialize(x.body)
 
@@ -559,12 +355,12 @@ open class JsToStringGenerationVisitor(
         nestedPop(body)
 
         pushSourceInfo(x.condition.source)
-        if (needSemi) {
+        if (state.needsSemicolon) {
             semi()
             newline()
         } else {
             space()
-            needSemi = true
+            state.needsSemicolon = true
         }
 
         _while()
@@ -650,55 +446,11 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitForIn(x: JsForIn) {
-        printIterableLoop(x, CHARS_IN)
+        printIterableLoop(x, Chars.IN)
     }
 
     override fun visitForOf(x: JsForOf) {
-        printIterableLoop(x, CHARS_OF)
-    }
-
-    private fun printIterableLoop(x: JsIterableLoop, separatorChars: CharArray) {
-        pushSourceInfo(x.source)
-        printCommentsBeforeNode(x)
-
-        _for()
-        space()
-        leftParen()
-
-        if (x.bindingDeclarable != null && x.bindingVarVariant != null) {
-            varModifier(x.bindingVarVariant)
-            space()
-            accept(x.bindingDeclarable)
-
-            if (x.bindingExpression != null) {
-                space()
-                assignment()
-                space()
-                accept(x.bindingExpression)
-            }
-        } else {
-            // Just a name ref.
-            //
-            accept(x.bindingExpression)
-        }
-
-        space()
-        p.print(separatorChars)
-        space()
-        accept(x.iterableExpression)
-
-        rightParen()
-
-        printCommentsAfterNode(x)
-        popSourceInfo()
-
-        val body = materialize(x.body)
-
-        nestedPush(body)
-        sourceLocationConsumer.pushSourceInfo(null)
-        accept(body)
-        sourceLocationConsumer.popSourceInfo()
-        nestedPop(body)
+        printIterableLoop(x, Chars.OF)
     }
 
     override fun visitFunction(x: JsFunction) {
@@ -712,130 +464,11 @@ open class JsToStringGenerationVisitor(
         printCommentsAfterNode(x)
     }
 
-    private fun printFunctionParameterList(parameters: MutableList<JsParameter>) {
-        leftParen()
-
-        sourceLocationConsumer.pushSourceInfo(null)
-        var notFirst = false
-        for (param in parameters) {
-            notFirst = sepCommaSpace(notFirst)
-            printCommentsBeforeNode(param)
-            accept(param)
-            printCommentsAfterNode(param)
-        }
-        sourceLocationConsumer.popSourceInfo()
-
-        rightParen()
-    }
-
-    // function <declaration>
-    private fun printRegularFunction(x: JsFunction) {
-        pushDeclaration(x)
-        pushSourceInfo(x.source)
-
-        p.print(CHARS_FUNCTION)
-        space()
-        printFunction(x)
-
-        popSourceInfo()
-        popDeclaration()
-    }
-
-    // constructor <declaration>
-    private fun printConstructor(x: JsFunction) {
-        pushDeclaration(x)
-        pushSourceInfo(x.source)
-
-        p.print(CHARS_CONSTRUCTOR)
-        printFunction(x)
-
-        popSourceInfo()
-        popDeclaration()
-    }
-
-    // [static?] [get|set?] <declaration>
-    private fun printClassMember(x: JsFunction) {
-        pushDeclaration(x)
-        pushSourceInfo(x.source)
-
-        if (x.isStatic) {
-            p.print(CHARS_STATIC)
-            space()
-        }
-
-        when {
-            x.isGetter -> {
-                p.print(CHARS_GET)
-                space()
-            }
-            x.isSetter -> {
-                p.print(CHARS_SET)
-                space()
-            }
-        }
-
-        printFunction(x)
-
-        popSourceInfo()
-        popDeclaration()
-    }
-
-    // [name|computedName](<params>) { <body> }
-    private fun printFunction(x: JsFunction) {
-        if (x.isGenerator)
-            p.print(CHARS_GENERATOR)
-
-        when {
-            x.computedName != null -> {
-                leftSquare()
-                accept(x.computedName)
-                rightSquare()
-            }
-            x.name != null -> nameOf(x)
-        }
-
-        printFunctionParameterList(x.getParameters())
-        space()
-
-        lineBreakAfterBlock = false
-
-        sourceLocationConsumer.pushSourceInfo(null)
-        printJsBlock(x.body, true, x.body.source)
-        sourceLocationConsumer.popSourceInfo()
-
-        needSemi = true
-    }
-
-    // (<params>) => { <body> }
-    private fun printEs6Arrow(x: JsFunction) {
-        pushSourceInfo(x.source)
-
-        printFunctionParameterList(x.getParameters())
-        space()
-        arrow()
-        space()
-        val body = x.body
-        when (val firstStatement = body.statements.getOrNull(0)) {
-            is JsReturn if body.statements.size == 1 ->
-                firstStatement.expression.accept(this)
-            else -> {
-                lineBreakAfterBlock = false
-                sourceLocationConsumer.pushSourceInfo(null)
-                printJsBlock(body, true, x.body.source)
-                sourceLocationConsumer.popSourceInfo()
-            }
-        }
-
-        popSourceInfo()
-
-        needSemi = true
-    }
-
     override fun visitClass(x: JsClass) {
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_CLASS)
+        p.print(Chars.CLASS)
         if (x.name != null) {
             space()
             nameOf(x)
@@ -843,7 +476,7 @@ open class JsToStringGenerationVisitor(
 
         if (x.baseClass != null) {
             space()
-            p.print(CHARS_EXTENDS)
+            p.print(Chars.EXTENDS)
             space()
             accept(x.baseClass)
         }
@@ -869,7 +502,7 @@ open class JsToStringGenerationVisitor(
 
             blockClose()
         }
-        needSemi = false
+        state.needsSemicolon = false
 
         printCommentsAfterNode(x)
         popSourceInfo()
@@ -902,7 +535,7 @@ open class JsToStringGenerationVisitor(
         nestedPush(thenStmt)
 
         if (thenStmt is JsBlock && elseStatement != null) {
-            lineBreakAfterBlock = false
+            state.needsLineBreakAfterBlock = false
         }
 
         sourceLocationConsumer.pushSourceInfo(null)
@@ -912,14 +545,14 @@ open class JsToStringGenerationVisitor(
         nestedPop(thenStmt)
 
         if (elseStatement != null) {
-            if (needSemi) {
+            if (state.needsSemicolon) {
                 semi()
                 newline()
             } else {
                 space()
-                needSemi = true
+                state.needsSemicolon = true
             }
-            p.print(CHARS_ELSE)
+            p.print(Chars.ELSE)
 
             if (elseStatement !is JsIf) {
                 nestedPush(elseStatement)
@@ -934,25 +567,6 @@ open class JsToStringGenerationVisitor(
             if (elseStatement !is JsIf) {
                 nestedPop(elseStatement)
             }
-        }
-    }
-
-    private fun isIfWithoutElse(statement: JsStatement): Boolean {
-        var statement: JsStatement? = statement
-        while (statement is JsIf) {
-            if (statement.elseStatement == null) {
-                return true
-            }
-            statement = statement.elseStatement
-        }
-
-        return false
-    }
-
-    private fun materialize(statement: JsStatement?): JsStatement? {
-        return when (statement) {
-            is JsCompositeBlock -> JsBlock(statement)
-            else -> statement
         }
     }
 
@@ -1011,7 +625,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_NEW)
+        p.print(Chars.NEW)
         space()
 
         val needsParens = JsConstructExpressionVisitor.exec(x.constructorExpression)
@@ -1025,7 +639,7 @@ open class JsToStringGenerationVisitor(
 
         // When using class expressions as construction expressions, they reset this from default 'true' to 'false',
         // which produces invalid code due to the next statements ambiguity.
-        needSemi = true
+        state.needsSemicolon = true
 
         printCommentsAfterNode(x)
         popSourceInfo()
@@ -1035,7 +649,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_NULL)
+        p.print(Chars.NULL)
 
         printCommentsAfterNode(x)
         popSourceInfo()
@@ -1220,7 +834,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_RETURN)
+        p.print(Chars.RETURN)
         x.expression?.let {
             space()
             accept(it)
@@ -1278,7 +892,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_SWITCH)
+        p.print(Chars.SWITCH)
         space()
 
         leftParen()
@@ -1301,7 +915,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_THIS)
+        p.print(Chars.THIS)
 
         printCommentsAfterNode(x)
         popSourceInfo()
@@ -1311,7 +925,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_SUPER)
+        p.print(Chars.SUPER)
 
         printCommentsAfterNode(x)
         popSourceInfo()
@@ -1321,7 +935,7 @@ open class JsToStringGenerationVisitor(
         pushSourceInfo(x.source)
         printCommentsBeforeNode(x)
 
-        p.print(CHARS_THROW)
+        p.print(Chars.THROW)
         space()
 
         accept(x.expression)
@@ -1334,9 +948,9 @@ open class JsToStringGenerationVisitor(
         printCommentsBeforeNode(x)
         pushSourceInfo(x.source)
 
-        p.print(CHARS_TRY)
+        p.print(Chars.TRY)
         space()
-        lineBreakAfterBlock = false
+        state.needsLineBreakAfterBlock = false
 
         popSourceInfo()
 
@@ -1345,7 +959,7 @@ open class JsToStringGenerationVisitor(
 
         val finallyBlock = x.finallyBlock
         if (finallyBlock != null) {
-            p.print(CHARS_FINALLY)
+            p.print(Chars.FINALLY)
             space()
 
             accept(finallyBlock)
@@ -1401,14 +1015,14 @@ open class JsToStringGenerationVisitor(
     }
 
     override fun visitSingleLineComment(comment: JsSingleLineComment) {
-        if (needSemi && insideComments) {
+        if (state.needsSemicolon && state.isInsideComments) {
             semi()
             space()
         }
         p.print("//")
         p.print(comment.text)
         newline()
-        needSemi = false
+        state.needsSemicolon = false
     }
 
     override fun visitMultiLineComment(comment: JsMultiLineComment) {
@@ -1516,7 +1130,7 @@ open class JsToStringGenerationVisitor(
             p.print(javaScriptString(export.fromModule))
         }
 
-        needSemi = true
+        state.needsSemicolon = true
     }
 
     override fun visitImport(import: JsImport) {
@@ -1647,10 +1261,8 @@ open class JsToStringGenerationVisitor(
         }
     }
 
-    private fun newline() {
-        p.newline()
-        sourceLocationConsumer.newLine()
-    }
+    //
+    // Sourcemap info producing
 
     private fun pushSourceInfo(location: JsLocationWithSource?) {
         p.maybeIndent()
@@ -1660,9 +1272,22 @@ open class JsToStringGenerationVisitor(
         }
     }
 
+    private fun popSourceInfo() {
+        if (sourceInfoStack.isNotEmpty() && sourceInfoStack.removeLast() != null) {
+            sourceLocationConsumer.popSourceInfo()
+        }
+    }
+
     private fun pushDeclaration(declaration: JsFunction) {
         sourceLocationConsumer.pushDeclarationInfo(declaration.source)
     }
+
+    private fun popDeclaration() {
+        sourceLocationConsumer.popDeclarationInfo()
+    }
+
+    //
+    // Preserving comments
 
     private fun printCommentsBeforeNode(x: JsNode) {
         printComments(x.commentsBeforeNode, false)
@@ -1675,36 +1300,175 @@ open class JsToStringGenerationVisitor(
     private fun printComments(comments: MutableList<JsComment>?, isAfterNode: Boolean) {
         if (comments == null) return
 
-        val previousNeedSemi: Boolean = needSemi
-        needSemi = isAfterNode
-        insideComments = true
+        val previousNeedSemi: Boolean = state.needsSemicolon
+        state.needsSemicolon = isAfterNode
+        state.isInsideComments = true
 
         for (comment in comments) {
             comment.accept(this)
         }
 
-        insideComments = false
+        state.isInsideComments = false
 
         if (!isAfterNode) {
-            needSemi = previousNeedSemi
+            state.needsSemicolon = previousNeedSemi
         }
     }
 
-    private fun popSourceInfo() {
-        if (sourceInfoStack.isNotEmpty() && sourceInfoStack.removeLast() != null) {
-            sourceLocationConsumer.popSourceInfo()
+    //
+    // Printing helpers
+
+    private fun printPair(parent: JsExpression, expression: JsExpression, wrongAssoc: Boolean) {
+        val isNeedParen = parenCalc(parent, expression, wrongAssoc)
+        if (isNeedParen) {
+            leftParen()
+        }
+        accept(expression)
+        if (isNeedParen) {
+            rightParen()
         }
     }
 
-    private fun popDeclaration() {
-        sourceLocationConsumer.popDeclarationInfo()
+    private fun printPair(parent: JsExpression, expression: JsExpression) {
+        printPair(parent, expression, false)
+    }
+
+    private fun printExpressions(expressions: MutableList<JsExpression?>) {
+        var notFirst = false
+        for (expression in expressions) {
+            notFirst = sepCommaSpace(notFirst) && expression !is JsDocComment
+            val isEnclosed = parenPushIfCommaExpression(expression)
+            accept(expression)
+            if (isEnclosed) {
+                rightParen()
+            }
+        }
+    }
+
+    // constructor <declaration>
+    private fun printConstructor(x: JsFunction) {
+        pushDeclaration(x)
+        pushSourceInfo(x.source)
+
+        p.print(Chars.CONSTRUCTOR)
+        printFunction(x)
+
+        popSourceInfo()
+        popDeclaration()
+    }
+
+    // [static?] [get|set?] <declaration>
+    private fun printClassMember(x: JsFunction) {
+        pushDeclaration(x)
+        pushSourceInfo(x.source)
+
+        if (x.isStatic) {
+            p.print(Chars.STATIC)
+            space()
+        }
+
+        when {
+            x.isGetter -> {
+                p.print(Chars.GET)
+                space()
+            }
+            x.isSetter -> {
+                p.print(Chars.SET)
+                space()
+            }
+        }
+
+        printFunction(x)
+
+        popSourceInfo()
+        popDeclaration()
+    }
+
+    // (<params>) => { <body> }
+    private fun printEs6Arrow(x: JsFunction) {
+        pushSourceInfo(x.source)
+
+        printFunctionParameterList(x.getParameters())
+        space()
+        arrow()
+        space()
+        val body = x.body
+        when (val firstStatement = body.statements.getOrNull(0)) {
+            is JsReturn if body.statements.size == 1 ->
+                firstStatement.expression.accept(this)
+            else -> {
+                state.needsLineBreakAfterBlock = false
+                sourceLocationConsumer.pushSourceInfo(null)
+                printJsBlock(body, true, x.body.source)
+                sourceLocationConsumer.popSourceInfo()
+            }
+        }
+
+        popSourceInfo()
+
+        state.needsSemicolon = true
+    }
+
+    // function <declaration>
+    private fun printRegularFunction(x: JsFunction) {
+        pushDeclaration(x)
+        pushSourceInfo(x.source)
+
+        p.print(Chars.FUNCTION)
+        space()
+        printFunction(x)
+
+        popSourceInfo()
+        popDeclaration()
+    }
+
+    // [name|computedName](<params>) { <body> }
+    private fun printFunction(x: JsFunction) {
+        if (x.isGenerator)
+            p.print(Chars.GENERATOR)
+
+        when {
+            x.computedName != null -> {
+                leftSquare()
+                accept(x.computedName)
+                rightSquare()
+            }
+            x.name != null -> nameOf(x)
+        }
+
+        printFunctionParameterList(x.getParameters())
+        space()
+
+        state.needsLineBreakAfterBlock = false
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        printJsBlock(x.body, true, x.body.source)
+        sourceLocationConsumer.popSourceInfo()
+
+        state.needsSemicolon = true
+    }
+
+    private fun printFunctionParameterList(parameters: MutableList<JsParameter>) {
+        leftParen()
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        var notFirst = false
+        for (param in parameters) {
+            notFirst = sepCommaSpace(notFirst)
+            printCommentsBeforeNode(param)
+            accept(param)
+            printCommentsAfterNode(param)
+        }
+        sourceLocationConsumer.popSourceInfo()
+
+        rightParen()
     }
 
     private fun printJsBlock(x: JsBlock, finalNewline: Boolean, defaultClosingBraceLocation: JsLocationWithSource?) {
         var finalNewline = finalNewline
-        if (!lineBreakAfterBlock) {
+        if (!state.needsLineBreakAfterBlock) {
             finalNewline = false
-            lineBreakAfterBlock = true
+            state.needsLineBreakAfterBlock = true
         }
 
         printCommentsBeforeNode(x)
@@ -1721,28 +1485,28 @@ open class JsToStringGenerationVisitor(
 
         val iterator = x.statements.iterator()
         while (iterator.hasNext()) {
-            val isGlobal = x.isTransparent || globalBlocks.contains(x)
+            val isGlobal = x.isTransparent || state.globalBlocks.contains(x)
 
             val statement = iterator.next()
             if (statement is JsEmpty) {
                 continue
             }
 
-            needSemi = true
+            state.needsSemicolon = true
             var stmtIsGlobalBlock = false
             if (isGlobal) {
                 if (statement is JsBlock) {
                     // A block inside a global block is still considered global
                     stmtIsGlobalBlock = true
-                    globalBlocks.add(statement)
+                    state.globalBlocks.add(statement)
                 }
             }
 
             accept<JsStatement?>(statement)
             if (stmtIsGlobalBlock) {
-                globalBlocks.remove(statement)
+                state.globalBlocks.remove(statement)
             }
-            if (needSemi) {
+            if (state.needsSemicolon) {
                 /*
                 * Special treatment of function declarations: If they are the only item in a
                 * statement (i.e. not part of an assignment operation), just give them
@@ -1795,44 +1559,92 @@ open class JsToStringGenerationVisitor(
         } else {
             sourceLocationConsumer.popSourceInfo()
         }
-        needSemi = false
+        state.needsSemicolon = false
         printCommentsAfterNode(x)
     }
 
-    private fun assignment() { p.print('=') }
-
-    private fun arrow() { p.print("=>") }
-
-    private fun blockClose() {
-        p.indentOut()
-        p.print('}')
-        newline()
-    }
-
-    private fun blockOpen() {
-        p.print('{')
-        p.indentIn()
-        newline()
-    }
-
-    private fun colon() { p.print(':') }
-
-    private fun _for() { p.print(CHARS_FOR) }
-
-    private fun _if() { p.print(CHARS_IF) }
-
-    private fun leftParen() { p.print('(') }
-
-    private fun leftSquare() { p.print('[') }
-
-    private fun nameDef(name: JsName) { p.print(name.ident) }
-
-    private fun nameOf(hasName: HasName) { nameDef(hasName.name) }
-
-    private fun nestedPop(statement: JsStatement?) {
-        if (statement !is JsBlock) {
-            p.indentOut()
+    private fun materialize(statement: JsStatement?): JsStatement? {
+        return when (statement) {
+            is JsCompositeBlock -> JsBlock(statement)
+            else -> statement
         }
+    }
+
+    private fun continueOrBreakLabel(x: JsContinue) {
+        x.label?.let {
+            space()
+            p.print(it.ident)
+        }
+    }
+
+    private fun printSwitchMemberStatements(x: JsSwitchMember) {
+        p.indentIn()
+        for (stmt in x.statements) {
+            state.needsSemicolon = true
+            accept(stmt)
+            if (state.needsSemicolon) {
+                semi()
+            }
+            newline()
+        }
+        p.indentOut()
+        state.needsSemicolon = false
+    }
+
+    private fun printIterableLoop(x: JsIterableLoop, separatorChars: CharArray) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        _for()
+        space()
+        leftParen()
+
+        if (x.bindingDeclarable != null && x.bindingVarVariant != null) {
+            varModifier(x.bindingVarVariant)
+            space()
+            accept(x.bindingDeclarable)
+
+            if (x.bindingExpression != null) {
+                space()
+                assignment()
+                space()
+                accept(x.bindingExpression)
+            }
+        } else {
+            // Just a name ref.
+            //
+            accept(x.bindingExpression)
+        }
+
+        space()
+        p.print(separatorChars)
+        space()
+        accept(x.iterableExpression)
+
+        rightParen()
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+
+        val body = materialize(x.body)
+
+        nestedPush(body)
+        sourceLocationConsumer.pushSourceInfo(null)
+        accept(body)
+        sourceLocationConsumer.popSourceInfo()
+        nestedPop(body)
+    }
+
+    private fun isIfWithoutElse(statement: JsStatement): Boolean {
+        var statement: JsStatement? = statement
+        while (statement is JsIf) {
+            if (statement.elseStatement == null) {
+                return true
+            }
+            statement = statement.elseStatement
+        }
+
+        return false
     }
 
     private fun nestedPush(statement: JsStatement?) {
@@ -1845,15 +1657,10 @@ open class JsToStringGenerationVisitor(
         }
     }
 
-    /**
-     * Calculates the need of parenthesis around the [child] node, which is inside the [parent] node.
-     *
-     * @return `true`, if left and right parens are required, otherwise `false`.
-     */
-    private fun parenCalc(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean): Boolean {
-        val parentPrecedence = JsPrecedenceVisitor.exec(parent)
-        val childPrecedence = JsPrecedenceVisitor.exec(child)
-        return parentPrecedence > childPrecedence || parentPrecedence == childPrecedence && wrongAssoc
+    private fun nestedPop(statement: JsStatement?) {
+        if (statement !is JsBlock) {
+            p.indentOut()
+        }
     }
 
     private fun parenPopOrSpace(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean): Boolean {
@@ -1882,23 +1689,16 @@ open class JsToStringGenerationVisitor(
         }
     }
 
-    private fun rightParen() { p.print(')') }
-
-    private fun rightSquare() { p.print(']') }
-
-    private fun semi() { p.print(';') }
-
-    private fun sepCommaSpace(isNonFirst: Boolean): Boolean {
-        if (isNonFirst) {
-            p.print(',')
-            space()
-        }
-        return true
+    /**
+     * Calculates the need of parenthesis around the [child] node, which is inside the [parent] node.
+     *
+     * @return `true`, if left and right parens are required, otherwise `false`.
+     */
+    private fun parenCalc(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean): Boolean {
+        val parentPrecedence = JsPrecedenceVisitor.exec(parent)
+        val childPrecedence = JsPrecedenceVisitor.exec(child)
+        return parentPrecedence > childPrecedence || parentPrecedence == childPrecedence && wrongAssoc
     }
-
-    private fun slash() { p.print('/') }
-
-    private fun space() { p.print(' ') }
 
     /**
      * Decide whether, if `op` is printed followed by `arg`,
@@ -1930,6 +1730,59 @@ open class JsToStringGenerationVisitor(
         }
     }
 
+    private fun sepCommaSpace(isNonFirst: Boolean): Boolean {
+        if (isNonFirst) {
+            p.print(',')
+            space()
+        }
+        return true
+    }
+
+    private fun newline() {
+        p.newline()
+        sourceLocationConsumer.newLine()
+    }
+
+    private fun assignment() { p.print('=') }
+
+    private fun arrow() { p.print("=>") }
+
+    private fun blockClose() {
+        p.indentOut()
+        p.print('}')
+        newline()
+    }
+
+    private fun blockOpen() {
+        p.print('{')
+        p.indentIn()
+        newline()
+    }
+
+    private fun colon() { p.print(':') }
+
+    private fun _for() { p.print(Chars.FOR) }
+
+    private fun _if() { p.print(Chars.IF) }
+
+    private fun nameDef(name: JsName) { p.print(name.ident) }
+
+    private fun nameOf(hasName: HasName) { nameDef(hasName.name) }
+
+    private fun leftParen() { p.print('(') }
+
+    private fun leftSquare() { p.print('[') }
+
+    private fun rightParen() { p.print(')') }
+
+    private fun rightSquare() { p.print(']') }
+
+    private fun semi() { p.print(';') }
+
+    private fun slash() { p.print('/') }
+
+    private fun space() { p.print(' ') }
+
     private fun varModifier(variant: JsVars.Variant) {
         when (variant) {
             JsVars.Variant.Var -> _var()
@@ -1938,13 +1791,179 @@ open class JsToStringGenerationVisitor(
         }
     }
 
-    private fun _var() { p.print(CHARS_VAR) }
+    private fun _var() { p.print(Chars.VAR) }
 
-    private fun let() { p.print(CHARS_LET) }
+    private fun let() { p.print(Chars.LET) }
 
-    private fun _const() { p.print(CHARS_CONST) }
+    private fun _const() { p.print(Chars.CONST) }
 
-    private fun _while() { p.print(CHARS_WHILE) }
+    private fun _while() { p.print(Chars.WHILE) }
 
-    private fun ellipsis() { p.print(CHARS_ELLIPSIS) }
+    private fun ellipsis() { p.print(Chars.ELLIPSIS) }
+
+    companion object {
+        //
+        // String escaping
+
+        /**
+         * Generate JavaScript code that evaluates to the supplied string. Adapted
+         * from `org.mozilla.javascript.ScriptRuntime#escapeString(String)`.
+         *
+         * The difference is that we quote with either `&quot;` or `&apos;` depending on
+         * which one is used less inside the string.
+         */
+        fun javaScriptString(str: String, forceDoubleQuote: Boolean = false): String {
+            var quoteCount = 0
+            var aposCount = 0
+
+            for (char in str) {
+                when (char) {
+                    '"' -> quoteCount++
+                    '\'' -> aposCount++
+                }
+            }
+
+            val quoteChar = if (quoteCount < aposCount || forceDoubleQuote) '"' else '\''
+
+            return buildString(str.length + 16) {
+                append(quoteChar)
+                appendEscapedString(str, quoteChar, Chars.STRING_ESCAPE_MAPPING)
+                append(quoteChar)
+                appendEscapeClosingTags()
+            }
+        }
+
+        private fun StringBuilder.appendEscapedString(str: String, quoteChar: Char, escapeMapping: Map<Char, Int>) {
+            for (char in str) {
+                if (char == quoteChar) {
+                    append('\\')
+                    append(quoteChar)
+                    continue
+                }
+
+                if (char in ' '..'~' && char != '\\' && !escapeMapping.containsKey(char)) {
+                    // an ordinary print character (like C isprint())
+                    append(char)
+                    continue
+                }
+
+                val escape: Int? = escapeMapping.get(char)
+
+                if (escape != null && escape >= 0) {
+                    // an \escaped sort of character
+                    append('\\')
+                    append(escape.toChar())
+                    continue
+                }
+
+                val [hexSequence, hexSize] = when {
+                    char.code < 256 -> "\\x" to 2
+                    else -> "\\u" to 4
+                }
+
+                append(hexSequence)
+
+                // append hexadecimal form of ch left-padded with 0
+                var shift = (hexSize - 1) * 4
+                while (shift >= 0) {
+                    val digit = 0xf and (char.code shr shift)
+                    append(Chars.HEX_DIGITS[digit])
+                    shift -= 4
+                }
+            }
+        }
+
+        private fun escapeTemplateStringSegment(str: String): String {
+            return buildString {
+                appendEscapedString(str, '`', Chars.TEMPLATE_ESCAPE_MAPPING)
+                appendEscapeClosingTags()
+            }
+        }
+
+        /**
+         * Escapes any closing XML tags embedded in `str`, which could
+         * potentially cause a parse failure in a browser, for example, embedding a
+         * closing `<script>` tag.
+         */
+        private fun StringBuilder.appendEscapeClosingTags() {
+            var index = 0
+            while ((indexOf("</", index).also { index = it }) != -1) {
+                insert(index + 1, '\\')
+            }
+        }
+    }
+
+    private object Chars {
+        val BREAK = "break".toCharArray()
+        val CASE = "case".toCharArray()
+        val CATCH = "catch".toCharArray()
+        val CLASS = "class".toCharArray()
+        val CONSTRUCTOR = "constructor".toCharArray()
+        val CONTINUE = "continue".toCharArray()
+        val YIELD = "yield".toCharArray()
+        val YIELD_STAR = "yield*".toCharArray()
+        val DEBUGGER = "debugger".toCharArray()
+        val DEFAULT = "default".toCharArray()
+        val DO = "do".toCharArray()
+        val ELSE = "else".toCharArray()
+        val EXTENDS = "extends".toCharArray()
+        val FALSE = "false".toCharArray()
+        val FINALLY = "finally".toCharArray()
+        val FOR = "for".toCharArray()
+        val FUNCTION = "function".toCharArray()
+        val STATIC = "static".toCharArray()
+        val GET = "get".toCharArray()
+        val SET = "set".toCharArray()
+        val IF = "if".toCharArray()
+        val IN = "in".toCharArray()
+        val OF = "of".toCharArray()
+        val NEW = "new".toCharArray()
+        val NULL = "null".toCharArray()
+        val RETURN = "return".toCharArray()
+        val SWITCH = "switch".toCharArray()
+        val THIS = "this".toCharArray()
+        const val GENERATOR = '*'
+
+        val SUPER = "super".toCharArray()
+        val THROW = "throw".toCharArray()
+        val TRUE = "true".toCharArray()
+        val TRY = "try".toCharArray()
+        val VAR = "var".toCharArray()
+        val LET = "let".toCharArray()
+        val CONST = "const".toCharArray()
+        val WHILE = "while".toCharArray()
+        val ELLIPSIS = "...".toCharArray()
+        val HEX_DIGITS = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+
+        val COMMON_ESCAPE_MAPPING = mapOf(
+            '\b' to 'b'.code,
+            '\u000c' to 'f'.code,
+            '\n' to 'n'.code,
+            '\r' to 'r'.code,
+            '\t' to 't'.code,
+            '\\' to '\\'.code
+        )
+
+        val STRING_ESCAPE_MAPPING = COMMON_ESCAPE_MAPPING
+
+        val TEMPLATE_ESCAPE_MAPPING = STRING_ESCAPE_MAPPING + mapOf(
+            '$' to '$'.code
+        )
+    }
+
+    //
+    // State
+
+    /**
+     * @param globalBlocks "Global" blocks are either the global block of a fragment, or a block
+     * nested directly within some other global block. This definition matters
+     * because the statements designated by statementEnds and statementStarts are
+     * those that appear directly within these global blocks.
+     */
+    private class GenerationState(
+        var isInsideComments: Boolean = false,
+        var needsSemicolon: Boolean = true,
+        var needsLineBreakAfterBlock: Boolean = true,
+        val globalBlocks: MutableSet<JsBlock> = mutableSetOf(),
+    )
 }
