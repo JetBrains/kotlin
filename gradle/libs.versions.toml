@@ -95,6 +95,7 @@ yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
 bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
+jacoco = "0.8.14"
 bytebuddy = "1.18.9"
 playwright = "1.61.0"
 fileLeakDetector = "1.21"

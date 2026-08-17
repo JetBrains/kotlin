@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-coverage-convention")
     id("require-explicit-types")
 }
 

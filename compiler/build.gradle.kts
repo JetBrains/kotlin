@@ -7,6 +7,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("test-coverage-convention")
 }
 
 val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
