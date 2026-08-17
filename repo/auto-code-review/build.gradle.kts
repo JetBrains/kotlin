@@ -62,7 +62,14 @@ tasks.register<CodeReviewTask>("reviewCode") {
 
     classpath(sourceSets.named("main").flatMap { it.kotlin.classesDirectory })
     classpath(sourceSets.named("main").map { it.compileClasspath })
-    mainClass.set("org.jetbrains.kotlin.code.review.LocalKt")
+
+    mainClass = kotlinBuildProperties.isTeamcityBuild.map {
+        if (it) {
+            "org.jetbrains.kotlin.code.review.TeamcityKt"
+        } else {
+            "org.jetbrains.kotlin.code.review.LocalKt"
+        }
+    }
 
     output.convention(layout.buildDirectory.file("review.md"))
     val rootDir = rootDir
