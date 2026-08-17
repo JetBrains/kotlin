@@ -1038,9 +1038,6 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("Verify metrics for for 2nd phase native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_2],
-    )
     fun testMetricFor2ndPhaseNativeProjectInProcess(gradleVersion: GradleVersion) {
         nativeProject(
             "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
@@ -1070,9 +1067,6 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("Verify that the metric for native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_2],
-    )
     fun testMetricForNativeProjectInProcess(gradleVersion: GradleVersion) {
         nativeProject(
             "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
@@ -1106,9 +1100,6 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("Verify that the metric for native in-process compilation with IR Inliner on 1st phase")
     @NativeGradlePluginTests
     @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_2],
-    )
     fun testMetricForNativeProjectWithInilnedFunInKlibInProcess(gradleVersion: GradleVersion) {
         nativeProject(
             "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(

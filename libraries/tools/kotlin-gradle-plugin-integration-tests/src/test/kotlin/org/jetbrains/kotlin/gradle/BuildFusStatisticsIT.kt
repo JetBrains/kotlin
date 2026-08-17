@@ -16,7 +16,6 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [
-            TestVersions.Gradle.G_8_2,
             TestVersions.Gradle.G_8_3,
             TestVersions.Gradle.G_8_11
         ],

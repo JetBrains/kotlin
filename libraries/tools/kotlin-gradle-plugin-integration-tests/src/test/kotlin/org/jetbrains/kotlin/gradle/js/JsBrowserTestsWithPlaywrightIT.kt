@@ -496,7 +496,6 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_2])
     fun `verify playwright install browsers executed only once for multiple js targets`(gradleVersion: GradleVersion) {
         project(
             "empty",
