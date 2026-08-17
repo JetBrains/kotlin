@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.NativeFirstStageCompilationConfig
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 
 object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
     name = "NativeFrontendPhase",
@@ -70,9 +71,9 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val dependencyList = DependencyListForCliModule.build {
             val [interopLibs, regularLibs] = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
-                dependencies(regularLibs.map { it.path.absolutePathString() })
-                friendDependencies(config.friendModuleFiles.map { it.absolutePathString() })
-                dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePathString() })
+                dependencies(regularLibs.map { it.canonicalPath.pathString })
+                friendDependencies(config.loadedKlibs.friends.map { it.canonicalPath.pathString })
+                dependsOnDependencies(config.refinesModuleFiles.map { it.canonicalPathString() })
             }
             if (interopLibs.isNotEmpty()) {
                 val interopModuleData =
@@ -80,7 +81,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
                         Name.special("<regular interop dependencies of $mainModuleName>"),
                         FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
-                dependencies(interopModuleData, interopLibs.map { it.path.absolutePathString() })
+                dependencies(interopModuleData, interopLibs.map { it.canonicalPath.pathString })
             }
             // TODO: !!! dependencies module data?
         }

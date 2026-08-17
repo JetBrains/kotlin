@@ -59,7 +59,7 @@ internal object TopDownAnalyzerFacadeForKonan {
                 storageManager = projectContext.storageManager,
                 builtIns = module.builtIns,
                 languageVersionSettings = config.languageVersionSettings,
-                friendModuleFiles = config.friendModuleFiles,
+                friendModuleFiles = config.friendModuleFiles, // TODO(KT-61096): Read friend paths from `LoadedNativeKlibs.friends`
                 refinesModuleFiles = config.refinesModuleFiles,
                 includedLibraryFiles = config.loadedKlibs.included.map { it.path }.toSet(),
                 additionalDependencyModules = listOf(module),

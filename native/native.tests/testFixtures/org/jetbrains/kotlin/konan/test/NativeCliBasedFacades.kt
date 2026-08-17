@@ -32,15 +32,12 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
-import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
-import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
-import kotlin.io.path.absolutePathString
 
 // NativeCliBasedFacades
 
@@ -73,9 +70,6 @@ class NativePreSerializationLoweringCliFacade(
 class KlibSerializerNativeCliFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = super.additionalServices + listOf(service(::LibraryProvider), service(::ModuleDescriptorProvider))
-
     override fun transform(
         module: TestModule,
         inputArtifact: IrBackendInput,
@@ -87,7 +81,6 @@ class KlibSerializerNativeCliFacade(
         val output = NativeKlibWritingPipelinePhase.executePhase(serializedOutput)
 
         updateTestConfiguration(
-            module = module,
             outputKlibPath = output.outputKlibPath,
             dependencyLibraries = input.phaseContext.config.loadedKlibs.all,
             languageVersionSettings = input.configuration.languageVersionSettings,
@@ -97,7 +90,6 @@ class KlibSerializerNativeCliFacade(
     }
 
     private fun updateTestConfiguration(
-        module: TestModule,
         outputKlibPath: String,
         dependencyLibraries: Collection<KotlinLibrary>,
         languageVersionSettings: LanguageVersionSettings,
@@ -114,6 +106,7 @@ class KlibSerializerNativeCliFacade(
         val storageManager = LockBasedStorageManager("ModulesStructure")
         val moduleName = special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
+
         @OptIn(K1Deprecation::class)
         val builtInsToUse = builtIns ?: KonanBuiltIns(storageManager)
         val moduleDescriptor = ModuleDescriptorImpl(
@@ -133,9 +126,6 @@ class KlibSerializerNativeCliFacade(
         }
 
         moduleDescriptor.setDependencies(dependencyModuleDescriptors + moduleDescriptor)
-
-        testServices.libraryProvider.setDescriptorAndLibraryByName(outputKlibPath, moduleDescriptor, library)
-        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
     }
 
     private fun loadDependencies(
@@ -143,26 +133,18 @@ class KlibSerializerNativeCliFacade(
         languageVersionSettings: LanguageVersionSettings,
     ): Pair<KotlinBuiltIns?, List<ModuleDescriptorImpl>> {
         val allModuleDescriptors = ArrayList<ModuleDescriptorImpl>()
-        val createdModuleDescriptors = ArrayList<ModuleDescriptorImpl>()
 
         val stdlib: KotlinLibrary? = dependencyLibraries.firstOrNull { it.isNativeStdlib }
         var builtIns: KotlinBuiltIns? = null
 
         fun loadOrCreateModuleDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
-            val moduleDescriptor = testServices.libraryProvider.getOrCreateStdlibByPath(library.path.absolutePathString()) {
-                val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                    library,
-                    languageVersionSettings,
-                    // TODO: check safety of the approach of creating a separate storage manager per library
-                    LockBasedStorageManager("ModulesStructure"),
-                    builtIns,
-                    lookupTracker = LookupTracker.DO_NOTHING
-                )
-
-                createdModuleDescriptors += moduleDescriptor
-
-                Pair(moduleDescriptor, library)
-            } as ModuleDescriptorImpl
+            val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                library,
+                languageVersionSettings,
+                LockBasedStorageManager.NO_LOCKS,
+                builtIns,
+                lookupTracker = LookupTracker.DO_NOTHING
+            )
 
             allModuleDescriptors += moduleDescriptor
 
@@ -179,7 +161,7 @@ class KlibSerializerNativeCliFacade(
         }
 
         // for all newly created modules, set dependencies
-        for (moduleDescriptor in createdModuleDescriptors) {
+        for (moduleDescriptor in allModuleDescriptors) {
             moduleDescriptor.setDependencies(allModuleDescriptors.toList())
         }
 
