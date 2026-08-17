@@ -38,9 +38,14 @@ if (kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
         }
     }
 
+    // Final published jars: 'jar'/'embeddableJar' (main variant in kgp-api/kgp) plus the per-Gradle-version
+    // variant jars ('gradle96Jar', 'embeddableGradle96Jar', ...).
+    // Intentionally excludes intermediate ShadowJar tasks ('embeddableBaselineJar', 'embeddable*JarSpecific')
+    // to avoid instrumenting the same classes twice.
+    val instrumentedJarName = Regex("^(jar|embeddableJar|(embeddableG|g)radle\\d+Jar)$")
+
     tasks.withType<Jar>()
-        // different tasks used in kgp and kgp-api, but don't want to instrument gradle variants
-        .matching { it.name == "jar" || it.name == "embeddableJar" }
+        .matching { it.name.matches(instrumentedJarName) }
         .configureEach {
             val jacocoCli = jacocoCliClasspathResolver.map { it.incoming.files }
             inputs.files(jacocoCli)
