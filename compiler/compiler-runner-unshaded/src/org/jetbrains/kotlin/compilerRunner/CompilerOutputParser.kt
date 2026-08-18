@@ -66,7 +66,7 @@ object CompilerOutputParser {
             // Load all the text into the stringBuilder
             try {
                 // This will not close the reader (see the wrapper above)
-                wrappingReader.readText()
+                val _ = wrappingReader.readText()
             } catch (ioException: IOException) {
                 reportException(messageCollector, ioException)
             }

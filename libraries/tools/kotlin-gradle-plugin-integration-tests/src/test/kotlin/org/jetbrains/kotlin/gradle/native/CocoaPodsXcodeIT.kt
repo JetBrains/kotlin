@@ -241,7 +241,7 @@ private fun TestProject.manualPodInstall(taskPrefix: String, iosAppPath: Path) {
     build("$taskPrefix:$DUMMY_FRAMEWORK_TASK_NAME", buildOptions = buildOptions)
 
     val environmentalVariables = environmentVariables.environmentalVariables.toMutableMap()
-    environmentalVariables.getOrPut("LC_ALL") { "en_US.UTF-8" }
+    environmentalVariables.putIfAbsent("LC_ALL", "en_US.UTF-8")
 
     runProcess(
         cmd = listOf("env", "pod", "install"),

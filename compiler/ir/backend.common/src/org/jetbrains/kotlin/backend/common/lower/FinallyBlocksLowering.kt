@@ -179,7 +179,6 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         val currentTryScope = tryScopes[index]
         currentTryScope.jumps.getOrPut(jump) {
             val type = (jump as? Return)?.target?.owner?.returnType(context) ?: value.type
-            jump.toString()
             val symbol = IrReturnableBlockSymbolImpl()
             with(currentTryScope) {
                 irBuilder.run {

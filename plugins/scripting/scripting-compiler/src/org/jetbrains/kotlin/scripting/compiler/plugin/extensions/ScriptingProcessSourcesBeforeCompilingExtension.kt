@@ -64,6 +64,7 @@ class KotlinScriptExpressionExplainTransformer(
         val symbol = currentScope!!.scope.scopeOwnerSymbol
         val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
         return builder.irExplain(expression, sourceFile) { variables ->
+            @Suppress("RETURN_VALUE_NOT_USED_COERCION") // Tracking issue: KT-88282
             variables.last()
         }
     }

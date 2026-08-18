@@ -87,7 +87,7 @@ fun TestProject.makeSnapshotTo(
         )
 
         if ("Windows" !in System.getProperty("os.name")) {
-            setPosixFilePermissions(
+            val _ = setPosixFilePermissions(
                 setOf(
                     PosixFilePermission.OWNER_EXECUTE,
                     PosixFilePermission.OWNER_READ,

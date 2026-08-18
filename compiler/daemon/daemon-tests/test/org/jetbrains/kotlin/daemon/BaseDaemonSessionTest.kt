@@ -59,7 +59,7 @@ abstract class BaseDaemonSessionTest {
     @AfterEach
     fun stopDaemons() {
         for (compileService in compileServices) {
-            runCatching { compileService.shutdown() }
+            val _ = runCatching { compileService.shutdown() }
         }
         Thread.sleep(500) // wait a bit so that all the daemons are shut down
     }

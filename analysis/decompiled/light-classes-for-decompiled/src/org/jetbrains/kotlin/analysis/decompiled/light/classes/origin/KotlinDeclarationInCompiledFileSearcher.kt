@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isCompanion
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -337,7 +338,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
     private fun doTypeParametersMatchByName(member: PsiMethod, callableDeclaration: KtCallableDeclaration): Boolean {
         if (member.typeParameters.size != callableDeclaration.typeParameters.size) return false
-        member.typeParameters.zip(callableDeclaration.typeParameters) { psiTypeParam, ktTypeParameter ->
+        member.typeParameters.forEachZipped(callableDeclaration.typeParameters) { psiTypeParam, ktTypeParameter ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) {
                 return false
             }
@@ -416,7 +417,7 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun doTypeParameters(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
         if (member.typeParameters.size != ktNamedFunction.typeParameters.size) return false
         val boundsByName = ktNamedFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
-        member.typeParameters.zip(ktNamedFunction.typeParameters) { psiTypeParam, ktTypeParameter ->
+        member.typeParameters.forEachZipped(ktNamedFunction.typeParameters) { psiTypeParam, ktTypeParameter ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) return false
             val psiBounds = mutableListOf<KtTypeReference>()
             psiBounds.addIfNotNull(ktTypeParameter.extendsBound)
@@ -425,7 +426,7 @@ class KotlinDeclarationInCompiledFileSearcher {
             }
             val expectedBounds = psiTypeParam.extendsListTypes
             if (psiBounds.size != expectedBounds.size) return false
-            expectedBounds.zip(psiBounds) { expectedBound, candidateBound ->
+            expectedBounds.forEachZipped(psiBounds) { expectedBound, candidateBound ->
                 if (!areTypesTheSame(candidateBound, expectedBound, false)) {
                     return false
                 }

@@ -150,7 +150,7 @@ fun getExpectedTypePredicate(
                             element.getStrictParentOfType<KtWhileExpression>()?.condition -> addSubtypesOf(builtIns.booleanType)
                             is KtProperty -> {
                                 val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? PropertyDescriptor
-                                propertyDescriptor?.accessors?.map {
+                                propertyDescriptor?.accessors?.forEach {
                                     addByExplicitReceiver(bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it])
                                 }
                             }

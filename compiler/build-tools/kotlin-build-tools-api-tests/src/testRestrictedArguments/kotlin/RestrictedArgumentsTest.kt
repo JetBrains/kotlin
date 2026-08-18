@@ -304,7 +304,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         } else {
             // Error args require separate compilations because the first error throws an exception
 
-            val compilationBody = {
+            val compilationBody: () -> Unit = {
                 compile(compilationConfigAction = {
                     it.compilerArguments.applyArgumentStrings(configuredArgs)
                 }) {

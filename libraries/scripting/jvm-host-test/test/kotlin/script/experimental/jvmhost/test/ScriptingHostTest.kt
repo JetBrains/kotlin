@@ -688,8 +688,8 @@ class ScriptingHostTest {
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") }
-            ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
+        if (res.reports.none { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") })
+            fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
     @Test
@@ -701,8 +701,8 @@ class ScriptingHostTest {
         }) {}
         assertTrue(res1 is ResultWithDiagnostics.Failure)
         val regex = "Unresolved reference\\W+println".toRegex()
-        res1.reports.find { it.message.contains(regex) }
-            ?: fail("Expected unresolved reference report. Reported:\n  ${res1.reports.joinToString("\n  ") { it.message }}")
+        if (res1.reports.none { it.message.contains(regex) })
+            fail("Expected unresolved reference report. Reported:\n  ${res1.reports.joinToString("\n  ") { it.message }}")
 
         val res2 = evalScriptWithConfiguration(script, compilation = {
             refineConfiguration {

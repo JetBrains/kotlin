@@ -548,7 +548,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             var resCode: Int? = null
             // running intermediate process (daemon command line controller) that executes the daemon
             val runnerProcess = ProcessBuilder(args).redirectErrorStream(true).start()
-            thread {
+            val _ = thread {
                 resOutput = runnerProcess.inputStream.reader().readText()
             }
             val waitThread = thread {
