@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
-import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendIrGenerationPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.js.config.outputDir
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
@@ -86,15 +84,9 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             configuration.outputName = WasmEnvironmentConfigurator.WASM_BASE_FILE_NAME
         }
 
-        val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
-        val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
-
         val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
-        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!.loweredIr
-
-        val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-            compiler.compileIr(loweredIr)
-        }.single()
+        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!
+        val compiledIr = WasmSingleModuleBackendIrGenerationPipelinePhase.executePhaseIsolatedWithActions(loweredIr)!!.backendIr.single()
 
         val linkedModule = linkWasmIr(compiledIr)
         val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
