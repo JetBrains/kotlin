@@ -95,7 +95,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
                     builder.addParameter(
                         @Suppress("UNCHECKED_CAST")
                         SymbolLightSuspendContinuationParameter(
-                            functionSymbolPointer = symbolPointer as KaSymbolPointer<KaNamedFunctionSymbol>,
+                            symbolPointer = symbolPointer as KaSymbolPointer<KaNamedFunctionSymbol>,
                             containingMethod = this@SymbolLightMethod,
                         )
                     )

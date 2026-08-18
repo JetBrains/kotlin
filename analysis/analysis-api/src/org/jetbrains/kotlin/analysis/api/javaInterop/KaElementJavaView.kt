@@ -36,11 +36,13 @@ public interface KaSymbolJavaView<out T : KaSymbol> : KaElementJavaView {
     /**
      * Pointer to the symbol represented by this view.
      */
+    @KaExperimentalApi
     public val symbolPointer: KaSymbolPointer<T>
 
     /**
      * [KaModule] from which view is provided.
      * The module is used for providing proper actualizations for `expect` declarations.
      */
+    @KaExperimentalApi
     public val useSiteModule: KaModule
 }

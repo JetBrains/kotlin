@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 @OptIn(KaImplementationDetail::class)
 internal class SymbolLightSuspendContinuationParameter(
-    private val functionSymbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod), KaSymbolJavaView<KaNamedFunctionSymbol> {
     private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaNamedFunctionSymbol) -> T): T {
-        return functionSymbolPointer.withSymbol(useSiteModule, action)
+        return symbolPointer.withSymbol(useSiteModule, action)
     }
 
     override fun getName(): String = SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -71,8 +71,6 @@ internal class SymbolLightSuspendContinuationParameter(
     }
 
     override fun hasModifierProperty(p0: String): Boolean = false
-    override val symbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>
-        get() = functionSymbolPointer
 
     override val kotlinOrigin: KtParameter? = null
 
@@ -82,5 +80,5 @@ internal class SymbolLightSuspendContinuationParameter(
 
     override fun hashCode(): Int = name.hashCode() * 31 + containingMethod.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && functionSymbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && symbolPointer.isValid(useSiteModule)
 }
