@@ -152,7 +152,7 @@ class ExpressionCodegen(
     val config: JvmBackendConfig = context.config
 
     val inlineScopesGenerator: InlineScopesGenerator? =
-        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS))
+        if (config.useInlineScopesNumbers)
             InlineScopesGenerator()
         else null
 

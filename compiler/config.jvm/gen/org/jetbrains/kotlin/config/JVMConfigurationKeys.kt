@@ -142,10 +142,6 @@ object JVMConfigurationKeys {
     @JvmField
     val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("NO_NEW_JAVA_ANNOTATION_TARGETS")
 
-    // Use inline scopes numbers for inline marker variables.
-    @JvmField
-    val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("USE_INLINE_SCOPES_NUMBERS")
-
     // Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT.
     @JvmField
     val SKIP_BODIES = CompilerConfigurationKey.create<Boolean>("SKIP_BODIES")
@@ -327,10 +323,6 @@ var CompilerConfiguration.enhancedCoroutinesDebugging: Boolean
 var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
     set(value) { put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, value) }
-
-var CompilerConfiguration.useInlineScopesNumbers: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
-    set(value) { put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, value) }
 
 var CompilerConfiguration.skipBodies: Boolean
     get() = getBoolean(JVMConfigurationKeys.SKIP_BODIES)
