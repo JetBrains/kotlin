@@ -1,0 +1,33 @@
+// CHECK_TYPE_WITH_EXACT
+
+import org.jetbrains.kotlinx.dataframe.*
+import org.jetbrains.kotlinx.dataframe.annotations.*
+import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.io.*
+
+fun box(): String {
+    val df = dataFrameOf(
+        "group1" to columnOf(
+            "col1" to columnOf(1, 2, 3),
+            "col2" to columnOf(3, 4, 5),
+        ),
+        "group2" to columnOf(
+            "col3" to columnOf(6, 7, 8),
+            "col4" to columnOf(1, 2, 3),
+            "col5" to columnOf("a", "b", "c"),
+        ),
+        "group3" to columnOf(
+            "col1" to columnOf(1, 2, 3),
+            "col3" to columnOf(6, 7, 8),
+            "col5" to columnOf("a", "b", "c"),
+        ),
+        "test" to columnOf(1, 2, 3),
+    )
+
+    val result = df.gather { group1 and group2 and group3 }.valuesInto("frames")
+
+    checkExactType<Int?>(result[0].frames.col1)
+    result.compareSchemas(strict = true)
+
+    return "OK"
+}

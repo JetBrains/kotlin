@@ -12,10 +12,11 @@ fun box(): String {
         ),
         "group1" to columnOf(
             "nested" to columnOf(456),
-            "nested1" to columnOf(456),
+            "nested1" to columnOf("456"),
         )
     )
 
-    df.gather { group and group1 }.into("key", "value")
+    val res = df.gather { group and group1 }.into("key", "value")
+    res.compareSchemas(strict = true)
     return "OK"
 }

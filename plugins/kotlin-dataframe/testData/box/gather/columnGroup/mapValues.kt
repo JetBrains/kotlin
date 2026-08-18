@@ -5,13 +5,14 @@ import org.jetbrains.kotlinx.dataframe.io.*
 
 fun box(): String {
     val df = dataFrameOf(
-        "group" to columnOf(
-            "nested" to columnOf(123321),
-        ),
+        "group" to columnOf("b" to columnOf(1)),
     )
 
-    val res = df.gather { group }.into("key", "value")
-    val col: DataColumn<Int> = res.value.nested
-//    df.gather { group }.explodeLists().into("key", "value")
+    val res = df.gather { group }
+        .mapValues { 1 }
+        .valuesInto("v")
+
+    val value: Int = res[0].v
+    res.compareSchemas(strict = true)
     return "OK"
 }
