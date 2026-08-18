@@ -6357,10 +6357,8 @@ public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
         val key = selector(this[i])
         if (i == 0) {
             firstKey = key
-        } else {
-            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-            val equal = firstKey?.equals(key) ?: (key == null)
-            if (!equal) return false
+        } else if (firstKey != key) {
+            return false
         }
     }
     return true
@@ -6391,10 +6389,8 @@ public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
         val key = selector(this[i])
         if (i == 0) {
             firstKey = key
-        } else {
-            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-            val equal = firstKey?.equals(key) ?: (key == null)
-            if (!equal) return false
+        } else if (firstKey != key) {
+            return false
         }
     }
     return true
@@ -6425,10 +6421,8 @@ public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
         val key = selector(this[i])
         if (i == 0) {
             firstKey = key
-        } else {
-            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-            val equal = firstKey?.equals(key) ?: (key == null)
-            if (!equal) return false
+        } else if (firstKey != key) {
+            return false
         }
     }
     return true
@@ -6459,10 +6453,8 @@ public inline fun <K> UShortArray.allEqualBy(selector: (UShort) -> K): Boolean {
         val key = selector(this[i])
         if (i == 0) {
             firstKey = key
-        } else {
-            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-            val equal = firstKey?.equals(key) ?: (key == null)
-            if (!equal) return false
+        } else if (firstKey != key) {
+            return false
         }
     }
     return true
