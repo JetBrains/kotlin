@@ -119,6 +119,7 @@ internal fun LinkKlibsContext.linkKlibs(
         val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
                 deserializationConfiguration = deserializationConfiguration,
                 cachedLibraries = config.cachedLibraries,
+                libraryBeingCached = config.libraryToCache,
         )
 
         // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
@@ -274,17 +275,22 @@ private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrB
 
 internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
+        private val libraryBeingCached: PartialCacheInfo?,
         private val deserializationConfiguration: DeserializationConfiguration,
 ) : CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,
             linker: KonanIrLinker,
-    ): IrModuleDeserializer = KonanInteropModuleDeserializer(
-            deserializationConfiguration,
-            moduleDescriptor,
-            klib,
-            cachedLibraries.isLibraryCached(klib),
-            linker,
-    )
+    ): IrModuleDeserializer {
+        val cache = cachedLibraries.getLibraryCache(klib)
+        val isCached = cache != null && cache.kind != CachedLibraries.Kind.HEADER && klib != libraryBeingCached?.klib
+        return KonanInteropModuleDeserializer(
+                deserializationConfiguration,
+                moduleDescriptor,
+                klib,
+                isCached,
+                linker,
+        )
+    }
 }

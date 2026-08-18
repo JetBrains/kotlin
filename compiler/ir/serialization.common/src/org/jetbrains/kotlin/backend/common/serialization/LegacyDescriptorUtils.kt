@@ -44,7 +44,7 @@ fun CallableMemberDescriptor.findSourceFile(): SourceFile {
         this is DeserializedPropertyDescriptor && proto.hasExtension(KlibMetadataProtoBuf.propertyFile) ->
             sourceByIndex(
                 this, proto.getExtension(KlibMetadataProtoBuf.propertyFile))
-        else -> TODO()
+        else -> SourceFile.NO_SOURCE_FILE
     }
 }
 
