@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
+import org.jetbrains.kotlin.konan.test.testLibraryAtomicFuCinteropInteropKlibFile
+import org.jetbrains.kotlin.konan.test.testLibraryAtomicFuKlibFile
+import org.jetbrains.kotlin.konan.test.testLibraryKotlinxCoroutinesKlibFile
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCoreKlibFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
@@ -41,6 +44,32 @@ abstract class AbstractExternalProjectTest : AbstractSwiftExportTest() {
             "kotlinx.serialization",
         )
         runTest(klibSettings, "kotlinx-serialization-core")
+    }
+
+    @Test
+    fun `kotlinx-coroutines-core`() {
+        minOSVersion = "15.0"
+        val atomicFuCinterop = KlibExportSettings(
+            testLibraryAtomicFuCinteropInteropKlibFile,
+            targets.testTarget,
+            "KotlinxAtomicFuCinterop",
+            "kotlinx.atomicfu",
+        )
+        val atomicFu = KlibExportSettings(
+            testLibraryAtomicFuKlibFile,
+            targets.testTarget,
+            "KotlinxAtomicFu",
+            "kotlinx.atomicfu",
+            setOf(atomicFuCinterop),
+        )
+        val coroutines = KlibExportSettings(
+            testLibraryKotlinxCoroutinesKlibFile,
+            targets.testTarget,
+            "KotlinxCoroutinesCore",
+            "kotlinx.coroutines",
+            setOf(atomicFu, atomicFuCinterop)
+        )
+        runTest(coroutines, "kotlinx-coroutines-core")
     }
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
