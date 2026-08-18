@@ -6,20 +6,13 @@
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextBase
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
-import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragments, TIcContext> : WebBackendPipelinePhase<
         WasmBackendPipelineArtifact,
@@ -41,21 +34,7 @@ abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragmen
     override fun compileIntermediate(
         intermediateResult: WasmIntermediatePipelineArtifact,
         configuration: CompilerConfiguration,
-    ): WasmBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-        val outputDir = configuration.outputDir!!
-        val results = intermediateResult.backendIr.map { result ->
-            val linkedModule = linkWasmIr(result)
-            val compileResult = compileWasmIrToBinary(result, linkedModule)
-            writeCompilationResult(
-                result = compileResult,
-                dir = outputDir,
-                fileNameBase = result.baseFileName,
-                configuration = configuration,
-            )
-            compileResult
-        }
-        WasmBackendPipelineArtifact(results, outputDir, configuration)
-    }
+    ): WasmBackendPipelineArtifact = WasmBinaryGenerationPipelinePhase.executePhaseIsolatedWithActions(intermediateResult)!!
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): WasmIntermediatePipelineArtifact? {
         val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(loadedIrArtifact) ?: return null

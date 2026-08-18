@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
-import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
 import org.jetbrains.kotlin.js.config.icCacheDirectory
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.util.PhaseType
@@ -41,11 +40,8 @@ abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifa
 
         if (cacheDirectory != null) {
             val preparedCachesArtifact = icCachePreparationPhase.executePhaseIsolatedWithActions(input) ?: return null
-            val [_, _, cacheGuard, _] = preparedCachesArtifact
             val backendIr = incrementalBuildingPhase.executePhaseIsolatedWithActions(preparedCachesArtifact)
-            return cacheGuard.tryAcquireAndRelease {
-                backendIr?.let { compileIntermediate(it, configuration) }
-            }
+            return backendIr?.let { compileIntermediate(it, configuration) }
         } else {
             configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             val loadedKlibArtifact = klibLoadingPhase.executePhaseIsolatedWithActions(input) ?: return null
