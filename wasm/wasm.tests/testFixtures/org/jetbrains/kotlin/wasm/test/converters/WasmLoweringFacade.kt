@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
@@ -117,7 +114,7 @@ class WasmLoweringFacade(
         val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, allModules, context)
+            compiler.lowerIr(moduleInfo.deserializer, allModules, context)
         }
 
         if (configuration.diagnosticsCollector.hasErrors) {

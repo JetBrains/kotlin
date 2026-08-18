@@ -68,7 +68,7 @@ abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragmen
         val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(loadedIrArtifact)!!
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(loadedIr, allModules, context)
+            compiler.lowerIr(loadedIr.deserializer, allModules, context)
         }
 
         return configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

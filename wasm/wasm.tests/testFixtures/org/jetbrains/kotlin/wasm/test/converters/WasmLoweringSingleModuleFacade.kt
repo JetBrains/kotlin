@@ -28,11 +28,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
-import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
-import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
-import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
-import org.jetbrains.kotlin.wasm.config.wasmTestBoxFunctionToExport
-import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
+import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
@@ -95,7 +91,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, allModules, context)
+            compiler.lowerIr(moduleInfo.deserializer, allModules, context)
         }
 
         val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
