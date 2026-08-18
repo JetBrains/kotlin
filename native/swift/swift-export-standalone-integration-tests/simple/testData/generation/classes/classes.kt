@@ -268,6 +268,31 @@ open class INHERITANCE_GENERIC : GENERIC_CLASS<Int>()
 
 class INHERITANCE_UNSUPPORTED_BASE : INHERITANCE_GENERIC()
 
+// FILE: intersection_overrides.kt
+
+package intersection_overrides
+
+interface Foo {
+    val foo: String
+    val baz: Int
+}
+
+interface Bar {
+    val bar: String
+    val baz: Int
+}
+
+class Baz : Foo, Bar {
+    override val foo: String get() = TODO()
+    override val bar: String get() = TODO()
+    override val baz: Int get() = TODO()
+    val fooBar: Int get() = TODO()
+}
+
+abstract class AbstractBaz : Foo, Bar {
+    abstract val fooBar: Int
+}
+
 // MODULE: inheritance
 // EXPORT_TO_SWIFT
 // FILE: inheritance.kt

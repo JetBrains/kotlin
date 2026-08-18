@@ -6,6 +6,7 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
@@ -111,7 +112,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations + syntheticDeclarations() + sealedTypeFunctions
+        childDeclarations + intersectionOverrideDeclarations + syntheticDeclarations() + sealedTypeFunctions
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -126,6 +127,14 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     protected val childDeclarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
+            .extractDeclarations()
+            .toList()
+    }
+
+    private val intersectionOverrideDeclarations: List<SirDeclaration> by lazyWithSessions {
+        if (ktSymbol.modality != KaSymbolModality.ABSTRACT) return@lazyWithSessions emptyList()
+        ktSymbol.combinedMemberScope.declarations
+            .filter { it.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE }
             .extractDeclarations()
             .toList()
     }

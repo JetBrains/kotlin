@@ -702,6 +702,48 @@ open class SEALED: KotlinRuntime.KotlinBase {
         fatalError("must implement sealedType in subclass")
     }
 }
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.intersection_overrides.Bar where Self : ExportedKotlinPackages.intersection_overrides.__Bar {
+    public var bar: Swift.String {
+        get {
+            return intersection_overrides_Bar_bar_get(self.__externalRCRef())
+        }
+    }
+    public var baz: Swift.Int32 {
+        get {
+            return intersection_overrides_Bar_baz_get(self.__externalRCRef())
+        }
+    }
+}
+extension ExportedKotlinPackages.intersection_overrides.Bar {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.intersection_overrides.Foo where Self : ExportedKotlinPackages.intersection_overrides.__Foo {
+    public var baz: Swift.Int32 {
+        get {
+            return intersection_overrides_Foo_baz_get(self.__externalRCRef())
+        }
+    }
+    public var foo: Swift.String {
+        get {
+            return intersection_overrides_Foo_foo_get(self.__externalRCRef())
+        }
+    }
+}
+extension ExportedKotlinPackages.intersection_overrides.Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.intersection_overrides.Foo, ExportedKotlinPackages.intersection_overrides.__Foo where Wrapped : ExportedKotlinPackages.intersection_overrides._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.intersection_overrides.Bar, ExportedKotlinPackages.intersection_overrides.__Bar where Wrapped : ExportedKotlinPackages.intersection_overrides._Bar {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.intersection_overrides._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.intersection_overrides._Bar {
+}
 extension ExportedKotlinPackages.namespace.deeper {
     public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
         public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {
@@ -963,6 +1005,96 @@ extension ExportedKotlinPackages.namespace.deeper {
         }
     }
 }
+extension ExportedKotlinPackages.intersection_overrides {
+    public protocol Bar: KotlinRuntime.KotlinBase, ExportedKotlinPackages.intersection_overrides._Bar {
+        var bar: Swift.String {
+            get
+        }
+        var baz: Swift.Int32 {
+            get
+        }
+    }
+    public protocol Foo: KotlinRuntime.KotlinBase, ExportedKotlinPackages.intersection_overrides._Foo {
+        var baz: Swift.Int32 {
+            get
+        }
+        var foo: Swift.String {
+            get
+        }
+    }
+    @objc(_ExportedKotlinPackages_intersection_overrides_Bar)
+    public protocol _Bar {
+    }
+    @objc(_ExportedKotlinPackages_intersection_overrides_Foo)
+    public protocol _Foo {
+    }
+    public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    open class AbstractBaz: KotlinRuntime.KotlinBase, ExportedKotlinPackages.intersection_overrides.Foo, ExportedKotlinPackages.intersection_overrides.__Foo, ExportedKotlinPackages.intersection_overrides.Bar, ExportedKotlinPackages.intersection_overrides.__Bar {
+        open var baz: Swift.Int32 {
+            get {
+                if Self.self == ExportedKotlinPackages.intersection_overrides.AbstractBaz.self {
+                    return intersection_overrides_AbstractBaz_baz_get(self.__externalRCRef())
+                } else {
+                    fatalError("Cannot invoke the inherited implementation of abstract property 'ExportedKotlinPackages.intersection_overrides.AbstractBaz.baz': a Swift subclass must override it and must not call super.")
+                }
+            }
+        }
+        open var fooBar: Swift.Int32 {
+            get {
+                if Self.self == ExportedKotlinPackages.intersection_overrides.AbstractBaz.self {
+                    return intersection_overrides_AbstractBaz_fooBar_get(self.__externalRCRef())
+                } else {
+                    fatalError("Cannot invoke the inherited implementation of abstract property 'ExportedKotlinPackages.intersection_overrides.AbstractBaz.fooBar': a Swift subclass must override it and must not call super.")
+                }
+            }
+        }
+        package init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    public final class Baz: KotlinRuntime.KotlinBase, ExportedKotlinPackages.intersection_overrides.Foo, ExportedKotlinPackages.intersection_overrides.__Foo, ExportedKotlinPackages.intersection_overrides.Bar, ExportedKotlinPackages.intersection_overrides.__Bar {
+        public var bar: Swift.String {
+            get {
+                return intersection_overrides_Baz_bar_get(self.__externalRCRef())
+            }
+        }
+        public var baz: Swift.Int32 {
+            get {
+                return intersection_overrides_Baz_baz_get(self.__externalRCRef())
+            }
+        }
+        public var foo: Swift.String {
+            get {
+                return intersection_overrides_Baz_foo_get(self.__externalRCRef())
+            }
+        }
+        public var fooBar: Swift.Int32 {
+            get {
+                return intersection_overrides_Baz_fooBar_get(self.__externalRCRef())
+            }
+        }
+        public init() {
+            let __kt = intersection_overrides_Baz_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { intersection_overrides_Baz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+}
 extension ExportedKotlinPackages.namespace {
     public final class Foo: KotlinRuntime.KotlinBase {
         public final class INSIDE_CLASS: KotlinRuntime.KotlinBase {
@@ -1043,4 +1175,45 @@ extension ExportedKotlinPackages.why_we_need_module_names {
     public static func foo() -> main.CLASS_WITH_SAME_NAME {
         return main.CLASS_WITH_SAME_NAME.__createClassWrapper(externalRCRef: why_we_need_module_names_foo())
     }
+}
+@_cdecl("intersection_overrides_AbstractBaz_baz_get__reverse_swift")
+package func intersection_overrides_AbstractBaz_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.intersection_overrides.AbstractBaz.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.baz
+    return _result
+}
+
+@_cdecl("intersection_overrides_AbstractBaz_fooBar_get__reverse_swift")
+package func intersection_overrides_AbstractBaz_fooBar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.intersection_overrides.AbstractBaz.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.fooBar
+    return _result
+}
+
+@_cdecl("intersection_overrides_Bar_bar_get__reverse_swift")
+package func intersection_overrides_Bar_bar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.intersection_overrides.Bar.Type.self) as! any ExportedKotlinPackages.intersection_overrides.Bar
+    let _result: Swift.String = _self.bar
+    return _result
+}
+
+@_cdecl("intersection_overrides_Bar_baz_get__reverse_swift")
+package func intersection_overrides_Bar_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.intersection_overrides.Bar.Type.self) as! any ExportedKotlinPackages.intersection_overrides.Bar
+    let _result: Swift.Int32 = _self.baz
+    return _result
+}
+
+@_cdecl("intersection_overrides_Foo_baz_get__reverse_swift")
+package func intersection_overrides_Foo_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.intersection_overrides.Foo.Type.self) as! any ExportedKotlinPackages.intersection_overrides.Foo
+    let _result: Swift.Int32 = _self.baz
+    return _result
+}
+
+@_cdecl("intersection_overrides_Foo_foo_get__reverse_swift")
+package func intersection_overrides_Foo_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.intersection_overrides.Foo.Type.self) as! any ExportedKotlinPackages.intersection_overrides.Foo
+    let _result: Swift.String = _self.foo
+    return _result
 }

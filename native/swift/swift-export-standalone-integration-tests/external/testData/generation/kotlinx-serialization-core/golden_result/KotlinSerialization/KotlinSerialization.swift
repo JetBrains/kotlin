@@ -2695,6 +2695,17 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     open class AbstractDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        open var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+            @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+            get {
+                if Self.self == ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.self {
+                    return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_encoding_AbstractDecoder_serializersModule_get(self.__externalRCRef()))
+                } else {
+                    fatalError("Cannot invoke the inherited implementation of abstract property 'ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.serializersModule': a Swift subclass must override it and must not call super.")
+                }
+            }
+        }
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func beginStructure(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
         ) -> any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder {
@@ -2941,6 +2952,17 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     open class AbstractEncoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        open var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+            @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+            get {
+                if Self.self == ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.self {
+                    return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get(self.__externalRCRef()))
+                } else {
+                    fatalError("Cannot invoke the inherited implementation of abstract property 'ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.serializersModule': a Swift subclass must override it and must not call super.")
+                }
+            }
+        }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func beginStructure(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
@@ -4315,6 +4337,13 @@ package func kotlinx_serialization_encoding_AbstractDecoder_endStructure__TypesO
     return { _result; return true }()
 }
 
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_serializersModule_get__reverse_swift")
+package func kotlinx_serialization_encoding_AbstractDecoder_serializersModule_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule = _self.serializersModule
+    return _result.__externalRCRef()
+}
+
 @_cdecl("kotlinx_serialization_encoding_AbstractEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
 package func kotlinx_serialization_encoding_AbstractEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
@@ -4432,6 +4461,13 @@ package func kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesO
     let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Void = _self.endStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor, conformsTo: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor.Type.self) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
     return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get__reverse_swift")
+package func kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule = _self.serializersModule
+    return _result.__externalRCRef()
 }
 
 @_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
