@@ -193,6 +193,7 @@ CONSTRUCTOR:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
   deprecation: null
+  javaMethodName: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE:

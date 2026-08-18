@@ -9,9 +9,9 @@
 #include <ostream>
 
 #include "Memory.h"
-#include "MemoryPrivate.hpp"
+#include "mm/MemoryPrivate.hpp"
 #include "ObjectTestSupport.hpp"
-#include "ThreadData.hpp"
+#include "mm/ThreadData.hpp"
 #include "concurrent/ScopedThread.hpp"
 
 namespace kotlin {

@@ -1,0 +1,7 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b 8
+Breakpoint 1: where = lldb_kt33055.kexe`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String + <breakpoint offset> at kt33055.kt:8:12, address = <memory address>
+(lldb) q

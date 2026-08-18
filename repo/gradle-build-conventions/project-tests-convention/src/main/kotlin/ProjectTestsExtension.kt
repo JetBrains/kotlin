@@ -74,6 +74,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         project.tasks.withType(Test::class.java).configureEach { withTestScriptDefinition() }
     }
 
+    fun withScriptingTestsRuntime() {
+        project.tasks.withType(Test::class.java).configureEach { withScriptingTestsRuntime() }
+    }
+
     @KotlinCompilerDistUsage
     fun withDist() {
         project.tasks.withType(Test::class.java).configureEach { withDist() }
@@ -258,11 +262,13 @@ abstract class ProjectTestsExtension(val project: Project) {
             }
             configure()
         }
-        if (generateTestsInBuildDirectory && !skipCollectDataTask) {
+        if (generateTestsInBuildDirectory) {
             project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
                 generatedDir(project, generatorTask.map { generationPath })
             }
-            configureCollectTestDataTask(generatorTask, configureTestDataCollection)
+            if (!skipCollectDataTask) {
+                configureCollectTestDataTask(generatorTask, configureTestDataCollection)
+            }
         }
     }
 

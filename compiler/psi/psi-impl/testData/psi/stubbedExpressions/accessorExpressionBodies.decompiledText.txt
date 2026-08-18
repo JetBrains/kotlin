@@ -1,0 +1,26 @@
+AccessorExpressionBodiesKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public val getter: kotlin.Int /* compiled code */
+      public final get() { /* compiled code */ }
+
+  public val inlineGetter: kotlin.String /* compiled code */
+      public final get() { /* compiled code */ }
+
+  public var withBothAccessors: kotlin.Int /* compiled code */
+      public final get() { /* compiled code */ }
+      public final set(value: kotlin.Int) { /* compiled code */ }
+
+WithMember.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final class WithMember public constructor() {
+      public final val member: kotlin.Char /* compiled code */
+          public final get() { /* compiled code */ }
+  }

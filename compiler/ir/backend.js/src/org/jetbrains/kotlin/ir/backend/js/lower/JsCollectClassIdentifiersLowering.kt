@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.classId
 class JsCollectClassIdentifiersLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass) {
-            declaration.classId?.let { declaration.originalClassId = it.toString() }
+            declaration.classId?.let { declaration.originalClassId = it }
         }
         return null
     }

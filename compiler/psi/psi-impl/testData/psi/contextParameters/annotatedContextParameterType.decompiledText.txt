@@ -2,16 +2,19 @@ MainKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>) public val bar: kotlin.String /* compiled code */
+  context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>)
+  public val bar: kotlin.String /* compiled code */
       public final get() { /* compiled code */ }
 
-  context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>) public fun foo(): kotlin.Unit { /* compiled code */ }
+  context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>)
+  public fun foo(): kotlin.Unit { /* compiled code */ }
 
 MyAnnotation.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class MyAnnotation public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
+  public final annotation class MyAnnotation public constructor() : kotlin.Annotation {
   }
 
 ParameterizedInterface.class:

@@ -18,13 +18,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
-internal val DeclarationDescriptor.isExpectMember: Boolean
-    get() = this is MemberDescriptor && this.isExpect
-
-internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
-    @OptIn(K1Deprecation::class)
-    get() = this is ClassDescriptor && OptionalAnnotationUtil.shouldGenerateExpectClass(this)
-
 @Deprecated("Moved to the ':core:descriptors' module", level = DeprecationLevel.HIDDEN)
 fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor = findPackage()
 

@@ -46,7 +46,7 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
                 assertions.assertContainsElements(from.followingNodes, node)
             }
             assertions.assertFalse(node.followingNodes.isEmpty() && node.previousNodes.isEmpty()) { "Unconnected CFG node: $node" }
-            assertions.assertTrue(node is ClassExitNode || node.flowInitialized) { "All nodes must have a flow: $node" }
+            assertions.assertTrue(node.flowInitialized) { "All nodes must have a flow: $node" }
         }
     }
 

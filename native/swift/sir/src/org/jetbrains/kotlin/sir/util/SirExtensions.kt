@@ -89,6 +89,11 @@ val SirType.swiftName
             "($parameters)$async$throws -> $returnType"
         }
         is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
+        is SirType.Metatype -> when (type) {
+            is SirNominalType, is SirType.Metatype -> type.swiftName
+            is SirExistentialType -> type.swiftName.removePrefix("any ").let { if (type.protocols.size == 1) it else "($it)" }
+            else -> "(${type.swiftName})"
+        }.let { "$it.Type" }
     }
 
 val SirType.annotatedSwiftName
@@ -183,6 +188,7 @@ val SirType.unavailableTypes: List<SirType>
         } + protocols.flatMap { [_, types] -> types.flatMap { it.unavailableTypes } }
         is SirTupleType -> types.flatMap { it.second.unavailableTypes }
         is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
+        is SirType.Metatype -> type.unavailableTypes
         is SirUnsupportedType -> listOf(this)
         is SirErrorType -> emptyList()
     }

@@ -12,7 +12,6 @@ object CompilerModules {
      * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
      */
     val commonCompilerModules = descriptorsCompilerModules + arrayOf(
-        ":analysis:light-classes-base",
         ":compiler:psi:psi-api",
         ":compiler:psi:psi-impl",
         ":compiler:psi:psi-utils",
@@ -107,7 +106,6 @@ object CompilerModules {
         ":core:deserialization",
         ":compiler:frontend:cfg",
         ":compiler:ir.psi2ir",
-        ":compiler:javac-wrapper",
         ":js:js.frontend",
         ":native:frontend.native",
         ":wasm:wasm.frontend",
@@ -217,6 +215,7 @@ object CompilerModules {
     val analysisApiModules = arrayOf(
         *analysisApiSurfaceModules,
         ":analysis:analysis-api-fir",
+        ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-api-platform-interface",
         ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
@@ -230,6 +229,7 @@ object CompilerModules {
         ":analysis:decompiled:light-classes-for-decompiled",
         ":analysis:low-level-api-fir",
         ":analysis:stubs",
+        ":analysis:light-classes-base",
         ":analysis:symbol-light-classes",
     )
 
@@ -248,6 +248,7 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-surface",
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
+        ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
         ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
         ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
@@ -440,6 +441,7 @@ object CompilerModules {
         ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
         ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
         ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-test-framework-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",

@@ -5,7 +5,7 @@ public abstract class CList /* test.CList*/<Elem>  implements test.IList<Elem> {
 public abstract class CList2 /* test.CList2*/<Elem>  implements test.IList<Elem> {
   private final int size;
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

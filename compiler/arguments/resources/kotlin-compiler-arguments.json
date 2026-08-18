@@ -521,7 +521,7 @@
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.1.0",
                         "stabilizedVersion": "2.2.0",
-                        "deprecatedVersion": null,
+                        "deprecatedVersion": "2.5.0",
                         "removedVersion": null
                     }
                 },
@@ -1574,6 +1574,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "es2020",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -2269,8 +2278,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Force the compiler to report errors on all public API declarations without an explicit return type.\nUse the 'warning' level to issue warnings instead of errors.\nThis flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether",
-                            "valueInVersions": []
+                            "current": "Force the compiler to report errors on all public API declarations and non-local functions without an explicit return type.\nUse the 'warning' level to issue warnings instead of errors.\nThis flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.0.20",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Force the compiler to report errors on all public API declarations without an explicit return type.\nUse the 'warning' level to issue warnings instead of errors.\nThis flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether"
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -3936,6 +3951,51 @@
                             },
                             "defaultValue": {
                                 "current": null,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
+                        "name": "Xequality-bounds",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable experimental support for `@EqualityBound` annotations in `equals` operators.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
                                 "valueInVersions": []
                             }
                         },
@@ -10812,6 +10872,51 @@
                         "name": "commonKlibBasedArguments",
                         "arguments": [
                             {
+                                "name": "Xfake-override-validator",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Enable the IR fake override validator.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "1.5.20",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": "2.5.0"
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xklib-abi-version",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -11329,51 +11434,6 @@
                                             },
                                             "defaultValue": {
                                                 "current": null,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "deprecatedMessage": null
-                                    },
-                                    {
-                                        "name": "Xfake-override-validator",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Enable the IR fake override validator.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "affectsCompilationOutcome": true,
-                                        "restrictedToCompilerPhase": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.4.30",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        },
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
                                                 "valueInVersions": []
                                             }
                                         },
@@ -12975,6 +13035,51 @@
                                                 "deprecatedMessage": null
                                             },
                                             {
+                                                "name": "Xwasm-enable-tail-calls",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
                                                 "name": "Xwasm-generate-closed-world-multimodule",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -13550,6 +13655,51 @@
                                                 "name": "jsArguments",
                                                 "arguments": [
                                                     {
+                                                        "name": "Xdts-use-unknown-instead-any",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type (instead of `any`).",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "2.5.0",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "deprecatedMessage": null
+                                                    },
+                                                    {
                                                         "name": "Xenable-extension-functions-in-externals",
                                                         "shortName": null,
                                                         "deprecatedName": null,
@@ -13904,6 +14054,51 @@
                                                             },
                                                             "defaultValue": {
                                                                 "current": true,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "deprecatedMessage": null
+                                                    },
+                                                    {
+                                                        "name": "Xinteger-division-check",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Check for division by zero in integer arithmetic and throw ArithmeticException.",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "2.5.0",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
                                                                 "valueInVersions": []
                                                             }
                                                         },
@@ -14405,51 +14600,6 @@
                                                         "deprecatedMessage": null
                                                     },
                                                     {
-                                                        "name": "Xts-export-untyped-as-unknown",
-                                                        "shortName": null,
-                                                        "deprecatedName": null,
-                                                        "description": {
-                                                            "current": "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type.",
-                                                            "valueInVersions": []
-                                                        },
-                                                        "delimiter": null,
-                                                        "affectsCompilationOutcome": true,
-                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
-                                                        "valueType": {
-                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                            "isNullable": {
-                                                                "current": false,
-                                                                "valueInVersions": []
-                                                            },
-                                                            "defaultValue": {
-                                                                "current": false,
-                                                                "valueInVersions": []
-                                                            }
-                                                        },
-                                                        "valueDescription": {
-                                                            "current": null,
-                                                            "valueInVersions": []
-                                                        },
-                                                        "releaseVersionsMetadata": {
-                                                            "introducedVersion": "2.5.0",
-                                                            "stabilizedVersion": null,
-                                                            "deprecatedVersion": null,
-                                                            "removedVersion": null
-                                                        },
-                                                        "argumentType": {
-                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                            "isNullable": {
-                                                                "current": false,
-                                                                "valueInVersions": []
-                                                            },
-                                                            "defaultValue": {
-                                                                "current": false,
-                                                                "valueInVersions": []
-                                                            }
-                                                        },
-                                                        "deprecatedMessage": null
-                                                    },
-                                                    {
                                                         "name": "Xtyped-arrays",
                                                         "shortName": null,
                                                         "deprecatedName": null,
@@ -14613,8 +14763,14 @@
                                                             }
                                                         },
                                                         "valueDescription": {
-                                                            "current": "{ es5, es2015 }",
-                                                            "valueInVersions": []
+                                                            "current": "{ es5, es2015, es2020 }",
+                                                            "valueInVersions": [
+                                                                {
+                                                                    "minReleaseVersion": "1.0.0",
+                                                                    "maxReleaseVersion": "2.4.20",
+                                                                    "value": "{ es5, es2015 }"
+                                                                }
+                                                            ]
                                                         },
                                                         "releaseVersionsMetadata": {
                                                             "introducedVersion": "1.0.0",
@@ -15093,6 +15249,51 @@
                                                 },
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
+                                                "name": "Xwasm-enable-tail-calls",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
                                                     "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null
@@ -16706,51 +16907,6 @@
                                         "deprecatedMessage": null
                                     },
                                     {
-                                        "name": "Xfake-override-validator",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Enable the IR fake override validator.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "affectsCompilationOutcome": true,
-                                        "restrictedToCompilerPhase": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.5.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        },
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "deprecatedMessage": null
-                                    },
-                                    {
                                         "name": "Xfile-to-cache",
                                         "shortName": null,
                                         "deprecatedName": null,
@@ -17821,7 +17977,7 @@
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
-                                            "removedVersion": null
+                                            "removedVersion": "2.5.0"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -18765,7 +18921,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": "1.5.20",
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "2.5.0",
                                             "removedVersion": null
                                         },
                                         "argumentType": {
@@ -18779,7 +18935,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": null
+                                        "deprecatedMessage": "Use '-generate-test-runner' ('-tr')"
                                     },
                                     {
                                         "name": "include-binary",

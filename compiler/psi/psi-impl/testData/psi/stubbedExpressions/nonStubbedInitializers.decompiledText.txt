@@ -1,0 +1,36 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public val lambdaArgument: kotlin.Int /* compiled code */
+
+public val namedLambdaArgument: kotlin.Int /* compiled code */
+
+public val positionalLambdaArgument: kotlin.Int /* compiled code */
+
+public val mixedArguments: kotlin.Int /* compiled code */
+
+public val parenthesizedLambdaArgument: kotlin.Int /* compiled code */
+
+public val lambda: () -> kotlin.Int /* compiled code */
+
+public val conditional: kotlin.Int /* compiled code */
+
+public val whenExpression: kotlin.Int /* compiled code */
+
+public val objectLiteral: kotlin.Any /* compiled code */
+
+public val callableReference: () -> kotlin.Int /* compiled code */
+
+public val interpolation: kotlin.String /* compiled code */
+
+public val localDeclaration: kotlin.Int /* compiled code */
+
+public fun compute(): kotlin.Int { /* compiled code */ }
+
+public fun evaluate(block: () -> kotlin.Int): kotlin.Int { /* compiled code */ }
+
+public fun combine(value: kotlin.Int, block: () -> kotlin.Int): kotlin.Int { /* compiled code */ }
+
+public fun expressionBodyWithLambda(): kotlin.Int { /* compiled code */ }

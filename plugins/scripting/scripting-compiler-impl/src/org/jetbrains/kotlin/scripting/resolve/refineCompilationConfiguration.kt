@@ -43,7 +43,7 @@ open class VirtualFileScriptSource(val virtualFile: VirtualFile, private val pre
     FileBasedScriptSource() {
     override val file: File get() = File(virtualFile.path)
     override val externalLocation: URL get() = URL(virtualFile.url)
-    override val text: String by lazy { preloadedText ?: virtualFile.inputStream.bufferedReader().readText() }
+    override val text: String by lazy { preloadedText ?: virtualFile.inputStream.bufferedReader().use { it.readText() } }
     override val name: String? get() = virtualFile.name
     override val locationId: String? get() = virtualFile.path
 
@@ -85,7 +85,7 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
 }
 
 class GenericKtSourceFileScriptSource(val ktSourceFile: KtSourceFile) : SourceCode {
-    override val text: String by lazy { ktSourceFile.getContentsAsStream().reader().readText() }
+    override val text: String by lazy { ktSourceFile.getContentsAsStream().use { it.reader().readText() } }
     override val name: String get() = ktSourceFile.name
     override val locationId: String? get() = ktSourceFile.path
 }
@@ -115,7 +115,7 @@ fun KtSourceFile.toSourceCode(): SourceCode = when (this) {
     is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
     is KtIoFileSourceFile -> FileScriptSource(file)
     is KtInMemoryTextSourceFile -> LazyTextScriptSource(name, path) { text.toString() }
-    else -> LazyTextScriptSource(name, path) { getContentsAsStream().reader().readText() }
+    else -> LazyTextScriptSource(name, path) { getContentsAsStream().use { it.reader().readText() } }
 }
 
 @Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
@@ -185,27 +185,25 @@ fun refineScriptCompilationConfiguration(
         script,
         collectedData,
         knownVirtualFileSources,
-        ktFileSource,
         definition
     )
 }
 
 fun refineScriptCompilationConfiguration(
     compilationConfiguration: ScriptCompilationConfiguration,
-    script: SourceCode,
+    sourceCode: SourceCode,
     collectedData: ScriptCollectedData,
     knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>?,
-    ktFileSource: KtFileScriptSource,
     definition: ScriptDefinition,
 ): ResultWithDiagnostics<ScriptCompilationConfigurationWrapper> =
-    compilationConfiguration.refineOnAnnotations(script, collectedData)
+    compilationConfiguration.refineOnAnnotations(sourceCode, collectedData)
         .onSuccess {
-            it.refineBeforeCompiling(script, collectedData)
+            it.refineBeforeCompiling(sourceCode, collectedData)
         }.onSuccess {
             it.resolveImportsToVirtualFiles(knownVirtualFileSources)
         }.onSuccess {
             ScriptCompilationConfigurationWrapper(
-                ktFileSource,
+                sourceCode,
                 it.adjustByDefinition(definition)
             ).asSuccess()
         }

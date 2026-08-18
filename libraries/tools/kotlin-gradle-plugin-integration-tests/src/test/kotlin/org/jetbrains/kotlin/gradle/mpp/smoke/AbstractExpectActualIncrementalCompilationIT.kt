@@ -10,7 +10,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
+import org.jetbrains.kotlin.testFederation.AffectedByFrontend
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
@@ -25,7 +26,9 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK2().copy(
             // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
-            enableUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
+            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
             logLevel = LogLevel.DEBUG,
         )
 
@@ -119,7 +122,8 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
 }
 
 @DisplayName("Incremental scenarios with expect/actual - K2")
-@AffectedByCompiler
+@AffectedByFrontend
+@AffectedByBuildToolsApi
 class ExpectActualIncrementalCompilationK2IT : AbstractExpectActualIncrementalCompilationIT() {
 
     @DisplayName("Incremental compilation with lenient mode")

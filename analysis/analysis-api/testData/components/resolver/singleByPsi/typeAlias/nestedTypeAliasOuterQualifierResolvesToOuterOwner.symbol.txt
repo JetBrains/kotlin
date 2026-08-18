@@ -1,6 +1,7 @@
 KtNameReferenceExpression(419,424): 'Outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Outer

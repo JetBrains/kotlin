@@ -18,7 +18,6 @@ private data class Context(val declaration: SirDeclarationParent)
 internal class SirAsSwiftSourcesPrinter private constructor(
     private val printer: ContextualizedPrinter<Context>,
     private val stableDeclarationsOrder: Boolean,
-    private val renderDocComments: Boolean,
     private val renderDeclarationOrigins: Boolean,
     private val emptyBodyStub: SirFunctionBody
 ) : ContextualizedPrinter<Context> by printer {
@@ -27,14 +26,12 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         public fun print(
             module: SirModule,
             stableDeclarationsOrder: Boolean,
-            renderDocComments: Boolean,
             renderDeclarationOrigins: Boolean,
             emptyBodyStub: SirFunctionBody
         ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
                 ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                 stableDeclarationsOrder = stableDeclarationsOrder,
-                renderDocComments = renderDocComments,
                 renderDeclarationOrigins = renderDeclarationOrigins,
                 emptyBodyStub = emptyBodyStub,
             )
@@ -47,7 +44,6 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 val importsPrinter = SirAsSwiftSourcesPrinter(
                     ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                     stableDeclarationsOrder = stableDeclarationsOrder,
-                    renderDocComments = renderDocComments,
                     renderDeclarationOrigins = renderDeclarationOrigins,
                     emptyBodyStub = emptyBodyStub,
                 )
@@ -315,8 +311,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     }
 
     private fun SirDeclaration.printDocumentation() {
-        if (!renderDocComments) return
-        documentation?.lines()?.forEach { println(it.trimIndent()) }
+        documentation?.trimIndent()?.prependIndent("/// ")?.let { printlnMultiLine(it) }
     }
 
     private fun SirImport.print() {
@@ -395,7 +390,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             .takeUnless { currentContext.declaration is SirProtocol }
             ?.let { (currentContext.declaration as? SirExtension)?.let { decl -> minOf(decl.visibility, it) } ?: it }
             .takeIf { it != SirVisibility.INTERNAL }
-            ?.let { it.swift + " " }
+            ?.let { it.value + " " }
             ?: ""
     )
 
@@ -627,18 +622,9 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     private val SirParameter.swiftRender: String
         get() = (argumentName?.swiftIdentifier ?: "_") +
                 (parameterName?.swiftIdentifier?.let { " $it" } ?: "") + ": " +
-                type.swiftRender((SirTypeVariance.CONTRAVARIANT)) +
+                type.swiftRender(if (isVariadic) SirTypeVariance.INVARIANT else SirTypeVariance.CONTRAVARIANT) +
                 if (isVariadic) "..." else ""
 }
-
-private val SirVisibility.swift
-    get(): String = when (this) {
-        SirVisibility.PRIVATE -> "private"
-        SirVisibility.FILEPRIVATE -> "fileprivate"
-        SirVisibility.INTERNAL -> "internal"
-        SirVisibility.PUBLIC -> "public"
-        SirVisibility.PACKAGE -> "package"
-    }
 
 private val SirClassMemberDeclaration.callableKind: SirCallableKind
     get() = when (this) {
@@ -670,6 +656,6 @@ private fun List<SirAttribute>.render(position: SirTypeVariance): String = mapNo
 private val SirType.isBivariantSelf: Boolean? get() = when (this) {
         is SirErrorType, is SirUnsupportedType -> null
         is SirExistentialType, is SirFunctionalType -> true
-        is SirTupleType -> false
+        is SirTupleType, is SirType.Metatype -> false
         is SirNominalType -> parent == null && typeArguments.isEmpty() && typeDeclaration !is SirClass /* also not actors */
     }

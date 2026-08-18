@@ -52,3 +52,30 @@ interface Boxed<T> {
     // property `_direct` witness.
     val boxLabel: String get() = "boxLabel"
 }
+
+// A throwing (`@Throws`) open method with a non-Unit return: its reverse bridge carries a Swift-thrown
+// error back to Kotlin through an out-error slot (the mirror of the forward `_out_error` channel), and
+// the non-Unit return exercises the scalar catch-path default.
+open class ThrowingMembers {
+    @Throws(Throwable::class)
+    open fun compute(x: Int): String = "computed: $x"
+}
+
+// Overloaded members: the reverse bridge of every overload must take over the virtual table slot of
+// that exact overload. `pick()` is final, so it has no slot at all; the `same` overloads differ only
+// in parameter types and the `nullable` ones only in their nullability.
+open class Overloaded {
+    fun pick(): String = "final"
+    open fun pick(arg1: String): String = "pick($arg1)"
+    open fun pick(arg1: String, arg2: Int): String = "pick($arg1, $arg2)"
+    open fun same(arg: String): String = "same(String)"
+    open fun same(arg: Int): String = "same(Int)"
+    open fun nullable(arg: String): String = "nullable(String)"
+    open fun nullable(arg: String?): String = "nullable(String?)"
+}
+
+// The same, but on an interface: the reverse bridges are placed into the interface table.
+interface OverloadedInterface {
+    fun say(): String
+    fun say(times: Int): String
+}

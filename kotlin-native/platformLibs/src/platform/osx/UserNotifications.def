@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.UserNotifications
 modules = UserNotifications
+apiNotesSwiftName = true
 
 compilerOpts = -framework UserNotifications
 linkerOpts = -framework UserNotifications

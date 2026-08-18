@@ -16,6 +16,7 @@
           <option value=":compiler:build-tools:kotlin-build-tools-api:generateBtaSources" />
           <option value=":compiler:build-tools:kotlin-build-tools-api:apiDump" />
           <option value=":compiler:build-tools:kotlin-build-tools-compat:generateBtaSources" />
+          <option value=":compiler:frontend.common-psi:generateFeatureToFlagMap" />
         </list>
       </option>
       <option name="vmOptions" />

@@ -10,10 +10,10 @@ import kotlin.math.*
 import kotlin.test.*
 
 
-@RunWith(Enclosed::class)
 class Collections {
 
-    class Collections {
+    @Nested
+    inner class Collections {
 
         @Sample
         fun indicesOfCollection() {
@@ -144,7 +144,8 @@ class Collections {
         }
     }
 
-    class Lists {
+    @Nested
+    inner class Lists {
 
         @Sample
         fun emptyReadOnlyList() {
@@ -518,7 +519,8 @@ class Collections {
             assertFailsWith<IndexOutOfBoundsException> { list.listIterator(list.size + 1) }
         }
 
-        class ArrayList {
+        @Nested
+        inner class ArrayList {
 
             @Sample
             fun trimToSize() {
@@ -560,7 +562,8 @@ class Collections {
         }
     }
 
-    class Sets {
+    @Nested
+    inner class Sets {
 
         @Sample
         fun emptyReadOnlySet() {
@@ -703,7 +706,8 @@ class Collections {
         }
     }
 
-    class Transformations {
+    @Nested
+    inner class Transformations {
 
         @Sample
         fun associate() {
@@ -979,7 +983,8 @@ class Collections {
         }
     }
 
-    class Aggregates {
+    @Nested
+    inner class Aggregates {
         @Sample
         fun all() {
             val isEven: (Int) -> Boolean = { it % 2 == 0 }
@@ -1298,7 +1303,8 @@ class Collections {
         }
     }
 
-    class Elements {
+    @Nested
+    inner class Elements {
         @Sample
         fun elementAt() {
             val list = listOf(1, 2, 3)
@@ -1379,7 +1385,8 @@ class Collections {
         }
     }
 
-    class Sorting {
+    @Nested
+    inner class Sorting {
 
         @Sample
         fun sortMutableList() {
@@ -1560,7 +1567,8 @@ class Collections {
         }
     }
 
-    class Filtering {
+    @Nested
+    inner class Filtering {
 
         @Sample
         fun filter() {

@@ -408,7 +408,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                  *   dependency modules (transitively);
                  * - no shared providers
                  *
-                 * For more information see KDoc for [FirCommonDeclarationsMappingSymbolProvider]
+                 * For more information see KDoc for [FirCommonDeclarationsMappingCollectingSymbolProvider]
                  */
                 val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
                 val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
@@ -429,7 +429,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                             binaryProvidersFromCommonModules += providers.dependencyProviders.flatMap {
                                 when {
                                     it.session.kind == FirSession.Kind.Library -> listOf(it)
-                                    it is FirCommonDeclarationsMappingSymbolProvider -> it.platformSymbolProvider.flatten()
+                                    it is FirCommonDeclarationsMappingCollectingSymbolProvider -> it.platformSymbolProvider.flatten()
                                     else -> emptyList()
                                 }
                             }
@@ -445,7 +445,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                     binaryProvidersFromPlatformModule.removeAll { it is FirFallbackBuiltinSymbolProvider }
                 }
 
-                val commonDeclarationsMappingProvider = FirCommonDeclarationsMappingSymbolProvider(
+                val commonDeclarationsMappingProvider = FirCommonDeclarationsMappingCollectingSymbolProvider(
                     session,
                     commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromCommonModules.distinct()),
                     platformSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromPlatformModule)
@@ -496,7 +496,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                     .mapNotNull { it.session.structuredProviders.incrementalProvider }
                 when {
                     structuredProvidersFromDependsOnFragments.isEmpty() -> incrementalProviderOfCurrentModule
-                    else -> FirCommonDeclarationsMappingSymbolProvider(
+                    else -> FirCommonDeclarationsMappingCollectingSymbolProvider(
                         session,
                         commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, structuredProvidersFromDependsOnFragments.distinct()),
                         platformSymbolProvider = incrementalProviderOfCurrentModule

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -320,7 +320,7 @@ internal fun String?.toFileAndFolder(config: NativeSecondStageCompilationConfig)
 
 internal fun alignTo(value: Long, align: Long): Long = (value + align - 1) / align * align
 
-internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LlvmCallable): LocationInfo? {
+internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LlvmFunction.Definition): LocationInfo? {
     if (!generationState.shouldContainLocationDebugInfo()) {
         return null
     }

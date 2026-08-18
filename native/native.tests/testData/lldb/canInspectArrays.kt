@@ -1,4 +1,9 @@
 // KIND: STANDALONE_LLDB
+// INPUT_DATA_FILE: canInspectArrays.in
+// OUTPUT_DATA_FILE: canInspectArrays.out
+
+
+
 
 fun main(args: Array<String>) {
     val xs = IntArray(3)

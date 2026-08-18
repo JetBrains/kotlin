@@ -1,7 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(BaseDriver::class, "4main10BaseDriverC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Driver::class, "_Driver")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Driver.Listener::class, "__Driver_Listener")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Driver::class, "_main_Driver")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Driver.Listener::class, "_main__Driver_Listener")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

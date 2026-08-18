@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// LANGUAGE: +JsExportInterfacesInImplementableWay
 package foo
 
 import kotlin.reflect.KClass
@@ -25,8 +24,7 @@ fun box(): String {
     check(E::class, jsClassbyName("E"))
     check(E.X::class, jsClassbyName("E").X.constructor)
     check(E.Y::class, jsClassbyName("E").Y.constructor)
-// TODO uncomment after KT-13338 is fixed
-//    check(E.Z::class, jsClassbyName("E").Z.constructor)
+    check(E.Z::class, jsClassbyName("E").Z.constructor)
 
     return "OK"
 }

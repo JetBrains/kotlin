@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrBuiltInsOverSymbolFinder
 import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.name.FqName
@@ -21,19 +22,16 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class IrBuiltInsForLinker(
     linker: KotlinIrLinker,
     override val languageVersionSettings: LanguageVersionSettings,
-    symbolFinder: SymbolFinder = SymbolFinderOverLinker(linker)
+    symbolFinder: SymbolFinder = SymbolFinderOverLinker(linker),
 ) : IrBuiltInsOverSymbolFinder(symbolFinder) {
     override val irFactory: IrFactory = linker.symbolTable.irFactory
+
+    private val builtInsModule: IrModuleFragment = linker.getBuiltInsModule()
 
     override val operatorsPackageFragment: IrExternalPackageFragment = createEmptyExternalPackageFragment(
         fqName = StandardClassIds.BASE_INTERNAL_IR_PACKAGE
     )
-    override val kotlinInternalPackageFragment: IrExternalPackageFragment = createEmptyExternalPackageFragment(
-        fqName = StandardClassIds.BASE_INTERNAL_PACKAGE
-    )
 
     private fun createEmptyExternalPackageFragment(fqName: FqName): IrExternalPackageFragment =
-        IrExternalPackageFragmentImpl(
-            IrExternalPackageFragmentSymbolImpl(), fqName
-        )
+        IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), fqName, builtInsModule)
 }

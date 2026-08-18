@@ -761,7 +761,7 @@ class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
             """,
             validate = { bytecode ->
                 val invokeMethod = run {
-                    val staticLambdaFunctionRegex = Regex("private final static lambda.*lambda%0[\\S\\s]*?\\v\\v", RegexOption.MULTILINE)
+                    val staticLambdaFunctionRegex = Regex("private final static _get_lambda.*lambda%0[\\S\\s]*?\\v\\v", RegexOption.MULTILINE)
                     val matches = staticLambdaFunctionRegex.findAll(bytecode)
                     matches.single().value
                 }
@@ -1140,4 +1140,18 @@ class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
             }
         }
     }
+
+    @Test
+    fun memoizationOfDefaultComposable() = testCompile(
+        source = """
+        import androidx.compose.runtime.*
+
+        @Composable
+        fun <S> Test(vm: S, content: @Composable (S) -> Unit = { vm -> Effect(vm) }) {
+            content(vm)
+        }
+
+        @Composable fun <S> Effect(vm: S) {}
+        """
+    )
 }

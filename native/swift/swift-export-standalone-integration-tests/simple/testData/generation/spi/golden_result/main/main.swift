@@ -20,12 +20,25 @@ public protocol MyInterface: KotlinRuntime.KotlinBase, main._MyInterface {
         set
     }
     func bar() -> Swift.Void
+    @_spi(ExperimentalLibApi)
+    func bazFun(
+        _ receiver: lib.ExperimentalLibClass
+    ) -> Swift.Bool
+    @_spi(ExperimentalLibApi)
+    func getBazProp(
+        _ receiver: lib.ExperimentalLibClass
+    ) -> Swift.Bool
     @_spi(MyOptInApi)
     func optInFun() -> Swift.Void
     @_spi(MyOptInApi)
     func optInFunWithDefault() -> Swift.Void
+    @_spi(ExperimentalLibApi)
+    func setBazProp(
+        _ receiver: lib.ExperimentalLibClass,
+        value: Swift.Bool
+    ) -> Swift.Void
 }
-@objc(_MyInterface)
+@objc(_main_MyInterface)
 public protocol _MyInterface {
 }
 public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {
@@ -170,7 +183,7 @@ public var functionalTypePropertyB: (any lib.InternalLibInterface) -> Swift.Void
         return { __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__({
             let originalBlock: (any lib.InternalLibInterface) -> Swift.Void = newValue
             return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: any lib.InternalLibInterface = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any lib.InternalLibInterface
+                let _arg0: any lib.InternalLibInterface = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: lib.InternalLibInterface.Type.self) as! any lib.InternalLibInterface
                 let _result = originalBlock(_arg0)
                 return { _result; return true }()
             }
@@ -203,7 +216,7 @@ public func optInFunctionC() -> lib.ExperimentalLibClass {
 }
 @_spi(InternalLibApi)
 public func optInFunctionD() -> main.MyInterfaceAlias {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___optInFunctionD()) as! any lib.InternalLibInterface
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___optInFunctionD(), conformsTo: lib.InternalLibInterface.Type.self) as! any lib.InternalLibInterface
 }
 @_spi(InternalLibApi)
 public func optInFunctionE() -> main.MyAliasAlias {
@@ -222,6 +235,7 @@ public func regularFunctionB() -> Swift.Void {
 public func regularFunctionC() -> lib.RegularLibClass {
     return lib.RegularLibClass.__createClassWrapper(externalRCRef: __root___regularFunctionC())
 }
+@_documentation(visibility: internal)
 extension main.MyInterface where Self : main.__MyInterface {
     public var foo: Swift.String {
         get {
@@ -245,6 +259,18 @@ extension main.MyInterface where Self : main.__MyInterface {
     public func bar() -> Swift.Void {
         return { MyInterface_bar(self.__externalRCRef()); return () }()
     }
+    @_spi(ExperimentalLibApi)
+    public func bazFun(
+        _ receiver: lib.ExperimentalLibClass
+    ) -> Swift.Bool {
+        return MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass__(self.__externalRCRef(), receiver.__externalRCRef())
+    }
+    @_spi(ExperimentalLibApi)
+    public func getBazProp(
+        _ receiver: lib.ExperimentalLibClass
+    ) -> Swift.Bool {
+        return MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass__(self.__externalRCRef(), receiver.__externalRCRef())
+    }
     @_spi(MyOptInApi)
     public func optInFun() -> Swift.Void {
         return { MyInterface_optInFun(self.__externalRCRef()); return () }()
@@ -252,6 +278,13 @@ extension main.MyInterface where Self : main.__MyInterface {
     @_spi(MyOptInApi)
     public func optInFunWithDefault() -> Swift.Void {
         return { MyInterface_optInFunWithDefault(self.__externalRCRef()); return () }()
+    }
+    @_spi(ExperimentalLibApi)
+    public func setBazProp(
+        _ receiver: lib.ExperimentalLibClass,
+        value: Swift.Bool
+    ) -> Swift.Void {
+        return { MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool__(self.__externalRCRef(), receiver.__externalRCRef(), value); return () }()
     }
 }
 extension main.MyInterface {
@@ -266,6 +299,18 @@ extension main.MyInterface {
             fatalError("'optInProp' is an @_spi requirement that must be implemented by Swift conformers")
         }
     }
+    @_spi(ExperimentalLibApi)
+    public func bazFun(
+        _ receiver: lib.ExperimentalLibClass
+    ) -> Swift.Bool {
+        fatalError("'bazFun' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    @_spi(ExperimentalLibApi)
+    public func getBazProp(
+        _ receiver: lib.ExperimentalLibClass
+    ) -> Swift.Bool {
+        fatalError("'getBazProp' is an @_spi requirement that must be implemented by Swift conformers")
+    }
     @_spi(MyOptInApi)
     public func optInFun() -> Swift.Void {
         fatalError("'optInFun' is an @_spi requirement that must be implemented by Swift conformers")
@@ -274,56 +319,72 @@ extension main.MyInterface {
     public func optInFunWithDefault() -> Swift.Void {
         return { MyInterface_optInFunWithDefault_direct(self.__externalRCRef()); return () }()
     }
+    @_spi(ExperimentalLibApi)
+    public func setBazProp(
+        _ receiver: lib.ExperimentalLibClass,
+        value: Swift.Bool
+    ) -> Swift.Void {
+        fatalError("'setBazProp' is an @_spi requirement that must be implemented by Swift conformers")
+    }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.MyInterface, main.__MyInterface where Wrapped : main._MyInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._MyInterface {
 }
 @_cdecl("MyInterface_bar__reverse_swift")
 package func MyInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.Void = _self.bar()
     return { _result; return true }()
 }
 
+@_cdecl("MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift")
+package func MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
+    let _result: Swift.Bool = _self.bazFun(lib.ExperimentalLibClass.__createClassWrapper(externalRCRef: receiver))
+    return _result
+}
+
 @_cdecl("MyInterface_foo_get__reverse_swift")
 package func MyInterface_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.String = _self.foo
     return _result
 }
 
 @_cdecl("MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift")
 package func MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.Void = { _self.foo = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("MyInterface_optInFunWithDefault__reverse_swift")
 package func MyInterface_optInFunWithDefault__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.Void = _self.optInFunWithDefault()
     return { _result; return true }()
 }
 
 @_cdecl("MyInterface_optInFun__reverse_swift")
 package func MyInterface_optInFun__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.Void = _self.optInFun()
     return { _result; return true }()
 }
 
 @_cdecl("MyInterface_optInProp_get__reverse_swift")
 package func MyInterface_optInProp_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.String = _self.optInProp
     return _result
 }
 
 @_cdecl("MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift")
 package func MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
     let _result: Swift.Void = { _self.optInProp = newValue }()
     return { _result; return true }()
 }

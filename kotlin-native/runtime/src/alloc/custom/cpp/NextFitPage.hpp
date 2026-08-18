@@ -14,7 +14,7 @@
 #include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "Cell.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "AllocationSize.hpp"
 #include "CustomLogging.hpp"
 #include "CustomFinalizerProcessor.hpp"

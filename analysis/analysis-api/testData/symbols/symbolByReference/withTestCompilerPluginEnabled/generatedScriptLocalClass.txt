@@ -113,6 +113,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
     deprecation: null
+    javaMethodName: getColumn
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -188,7 +189,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
   deprecation: null
-  javaGetterName: getColumn
-  javaSetterName: null
   isInline: false
   importableFqName: null

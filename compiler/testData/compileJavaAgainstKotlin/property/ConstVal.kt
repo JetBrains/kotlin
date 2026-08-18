@@ -1,3 +1,12 @@
+// FILE: ConstVal.java
+package test;
+
+@Ann(ABC.TOP_LEVEL + A.OBJECT + B.COMPANION)
+class Java {
+
+}
+
+// FILE: ConstVal.kt
 @file:JvmName("ABC")
 package test;
 

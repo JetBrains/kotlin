@@ -124,5 +124,15 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
          */
         @JvmField
         public val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES", KotlinReleaseVersion(2, 3, 0))
+
+        /**
+         * Enables extended snapshotting mode for top-level type aliases, which is required for correct KMP incremental compilation
+         * of type alias-based actual declarations (see [KT-77546](https://youtrack.jetbrains.com/issue/KT-77546)).
+         *
+         * This option is experimental and might be removed in future releases.
+         */
+        @JvmField
+        @ExperimentalBuildToolsApi
+        public val EXPAND_TYPE_ALIASES: Option<Boolean> = Option("EXPAND_TYPE_ALIASES", KotlinReleaseVersion(2, 5, 0))
     }
 }

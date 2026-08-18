@@ -22,7 +22,6 @@ val additionalCompilerProjects = listOf(
 )
 
 val excludedCompilerProjects = listOf(
-    ":compiler:javac-wrapper",
     ":compiler:incremental-compilation-impl",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-compiler-runner-unshaded",
@@ -36,6 +35,10 @@ dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-platform-interface"))
 
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components"))
+
+    // Diagnostics are shipped separately, but the FIR implementation instantiates them, so they are required at runtime.
+    implementation(project(":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics"))
+
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.antlr.runtime)
 
@@ -54,6 +57,9 @@ analysisApiArtifact {
             // Avoid copying content of 'kotlin-analysis-api-surface'
             removeAll(analysisApiSurfaceDependencies)
             removeAll(analysisApiSurfaceModules)
+
+            // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
+            remove(":analysis:analysis-api-fir-diagnostics")
         }
 
         projects(implementationProjects)

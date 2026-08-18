@@ -23,16 +23,11 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
     @DisplayName("K2 kapt stubs use kotlin.jvm.functions.Function0 instead of compiler plugin function kinds")
     @GradleTest
     fun testFunctionTypeKindCompilerPluginInKapt(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(
-            // KT-76289 KAPT does not support isolated projects
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
-        )
-        val kotlinVersion = buildOptions.kotlinVersion
+        val kotlinVersion = defaultBuildOptions.kotlinVersion
 
         project(
             "empty",
             gradleVersion,
-            buildOptions = buildOptions,
         ) {
             createCompilerPluginFunctionKindProject()
 
@@ -44,49 +39,53 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
                 )
             }
 
-            buildScriptInjection {
-                val pluginProject = project.project(":plugin")
-                pluginProject.applyJvm {
+            // Each subproject is configured via its own buildScriptInjection to avoid accessing another
+            // project's mutable state (e.g. Project.dependencies) from a different project, which is not
+            // compatible with Isolated Projects.
+            subProject("plugin").buildScriptInjection {
+                project.applyJvm {
                     jvmToolchain(8)
                     compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
                     compilerOptions.optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
                 }
-                pluginProject.dependencies.add(
+                project.dependencies.add(
                     "implementation",
                     "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion",
                 )
-                pluginProject.dependencies.add(
+                project.dependencies.add(
                     "compileOnly",
                     "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion",
                 )
+            }
 
-                val annotationProcessorProject = project.project(":annotation-processor")
-                annotationProcessorProject.applyJvm {
+            subProject("annotation-processor").buildScriptInjection {
+                project.applyJvm {
                     jvmToolchain(8)
                 }
-                annotationProcessorProject.dependencies.add(
+                project.dependencies.add(
                     "implementation",
                     "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
                 )
+            }
 
-                val exampleProject = project.project(":example")
-                exampleProject.applyJvm {
+            subProject("example").buildScriptInjection {
+                project.applyJvm {
                     jvmToolchain(8)
                 }
-                exampleProject.plugins.apply("org.jetbrains.kotlin.kapt")
+                project.plugins.apply("org.jetbrains.kotlin.kapt")
 
-                exampleProject.dependencies.add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-                exampleProject.dependencies.add(
+                project.dependencies.add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+                project.dependencies.add(
                     "implementation",
-                    exampleProject.dependencies.project(mapOf("path" to ":annotation-processor")),
+                    project.dependencies.project(mapOf("path" to ":annotation-processor")),
                 )
-                exampleProject.dependencies.add(
+                project.dependencies.add(
                     "kapt",
-                    exampleProject.dependencies.project(mapOf("path" to ":annotation-processor")),
+                    project.dependencies.project(mapOf("path" to ":annotation-processor")),
                 )
-                exampleProject.dependencies.add(
+                project.dependencies.add(
                     "kotlinCompilerPluginClasspath",
-                    exampleProject.dependencies.project(mapOf("path" to ":plugin")),
+                    project.dependencies.project(mapOf("path" to ":plugin")),
                 )
             }
 
@@ -136,6 +135,7 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
         settingsGradle.appendText("\ninclude ':annotation-processor', ':example', ':plugin'\n")
 
         subProject("plugin").apply {
+            projectPath.source("build.gradle") { "" }
             kotlinSourcesDir().source("FunctionKindPlugin.kt") { functionKindPluginSource }
             projectPath.source(
                 "src/main/resources/META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
@@ -145,13 +145,17 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
         }
 
         subProject("annotation-processor").apply {
+            projectPath.source("build.gradle") { "" }
             kotlinSourcesDir().source("InspectTypesProcessor.kt") { inspectTypesProcessorSource }
             projectPath.source("src/main/resources/META-INF/services/javax.annotation.processing.Processor") {
                 "repro.processor.InspectTypesProcessor"
             }
         }
 
-        subProject("example").kotlinSourcesDir().source("Reproducer.kt") { reproducerSource }
+        subProject("example").apply {
+            projectPath.source("build.gradle") { "" }
+            kotlinSourcesDir().source("Reproducer.kt") { reproducerSource }
+        }
     }
 
     private companion object {

@@ -11,6 +11,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -46,4 +47,6 @@ public interface KaInternalsJavaInteroperabilityComponent {
     public fun javaGetterName(symbol: KaPropertySymbol): Name
 
     public fun javaSetterName(symbol: KaPropertySymbol): Name?
+
+    public fun javaMethodName(function: KaFunctionSymbol): String?
 }

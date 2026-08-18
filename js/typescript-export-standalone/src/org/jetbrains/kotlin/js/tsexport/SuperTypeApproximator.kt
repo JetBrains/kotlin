@@ -48,7 +48,7 @@ internal class SuperTypeApproximator(private val config: TypeScriptExportConfig)
         val klass = type.expandedSymbol ?: return
         val packageFqName = klass.classId?.packageFqName ?: return
         when {
-            type.isAnyType || packageFqName.startsWith(StandardClassIds.BASE_JS_PACKAGE) -> return
+            type.classId == KaStandardTypeClassIds.ANY || packageFqName.startsWith(StandardClassIds.BASE_JS_PACKAGE) -> return
             klass.isEffectivelyExported(config, includingImplicitExport = true) || klass.isExportableExternalClass -> add(type)
             else -> collectSuperTypesTransitiveHierarchy(type)
         }

@@ -322,3 +322,51 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
     protected abstract fun getInvokeMethodOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getConstructorCallOrigin(reference: IrRichFunctionReference): IrStatementOrigin?
 }
+
+fun CommonBackendContext.addBoundValueAtOverride(
+    functionReferenceClass: IrClass,
+    fields: List<IrField>,
+    overrideOrigin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+) {
+    val overridden = functionReferenceClass.superTypes.mapNotNull { superType ->
+        superType.getClass()
+            ?.declarations
+            ?.filterIsInstance<IrSimpleFunction>()
+            ?.singleOrNull { it.name.asString() == "boundValueAt" }
+            ?.symbol
+    }
+    if (overridden.isEmpty()) return
+
+    val function = functionReferenceClass.addFunction {
+        startOffset = SYNTHETIC_OFFSET
+        endOffset = SYNTHETIC_OFFSET
+        name = Name.identifier("boundValueAt")
+        origin = overrideOrigin
+        returnType = overridden[0].owner.returnType
+    }
+    function.parameters += function.createDispatchReceiverParameterWithClassParent()
+    overridden[0].owner.parameters
+        .filter { it.kind == IrParameterKind.Regular }
+        .forEach { function.parameters += it.copyTo(function) }
+    function.overriddenSymbols += overridden
+
+    val anyNType = irBuiltIns.anyNType
+    function.body = createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+        +irReturn(irBoundValueAt(function, fields, anyNType))
+    }
+}
+
+private fun IrBuilderWithScope.irBoundValueAt(function: IrFunction, fields: List<IrField>, resultType: IrType): IrExpression {
+    val dispatchReceiver = function.dispatchReceiverParameter!!
+    fun boundValue(field: IrField) = irGetField(irGet(dispatchReceiver), field)
+
+    if (fields.size == 1) {
+        return boundValue(fields[0])
+    }
+
+    val indexParameter = function.parameters.single { it.kind == IrParameterKind.Regular }
+    val branches = (0..<fields.lastIndex).map { index ->
+        irBranch(irEquals(irGet(indexParameter), irInt(index)), boundValue(fields[index]))
+    } + irElseBranch(boundValue(fields.last()))
+    return irWhen(resultType, branches)
+}

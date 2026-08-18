@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -42,8 +43,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 import kotlin.time.Duration
-
-const val KLIB_IR_INLINER = "klibIrInliner"
 
 class NativeBlackBoxTestSupport : BeforeEachCallback {
     /**
@@ -252,7 +251,7 @@ object NativeTestSupport {
         output += computeCompilerOutputInterceptor(enforcedProperties)
         output += computeBinaryLibraryKind(enforcedProperties)
         output += computeCInterfaceMode(enforcedProperties)
-        output += computeXCTestRunner(enforcedProperties, nativeTargets)
+        output += computeXCTestRunner(enforcedProperties, nativeTargets, binaryOptions)
         output += computeKlibIrInlinerMode(tags)
         // Compute tests timeouts with regard to already calculated properties that may affect execution time
         output += computeTimeouts(enforcedProperties, output)
@@ -284,11 +283,12 @@ object NativeTestSupport {
             default = CompilerOutputInterceptor.DEFAULT
         )
 
+    /*
+     * KT-81022: Tests are performed only with "ON" cross-module IR inliner setting, which is the default since 2.5
+     * This trivial function is kept just for the convenience of trying out compilation without the cross-module IR inliner
+     */
     private fun computeKlibIrInlinerMode(tags: Set<String>): KlibIrInlinerMode =
-        if (tags.contains(KLIB_IR_INLINER))
-            KlibIrInlinerMode.ON
-        else
-            KlibIrInlinerMode.OFF
+        KlibIrInlinerMode.ON
 
     private fun computeGCType(enforcedProperties: EnforcedProperties): GCType =
         ClassLevelProperty.GC_TYPE
@@ -431,13 +431,18 @@ object NativeTestSupport {
         return Timeouts(executionTimeout)
     }
 
-    private fun computeXCTestRunner(enforcedProperties: EnforcedProperties, nativeTargets: KotlinNativeTargets) = XCTestRunner(
+    private fun computeXCTestRunner(
+        enforcedProperties: EnforcedProperties,
+        nativeTargets: KotlinNativeTargets,
+        binaryOptions: ExplicitBinaryOptions,
+    ) = XCTestRunner(
         ClassLevelProperty.XCTEST_FRAMEWORK.readValue(
             enforcedProperties,
             String::toBooleanStrictOrNull,
             default = false
         ),
-        nativeTargets
+        nativeTargets,
+        isMacabi = binaryOptions.getOrNull(BinaryOptions.macabi) ?: false,
     )
 
     private fun computePlatformLibs(enforcedProperties: EnforcedProperties): PlatformLibs {

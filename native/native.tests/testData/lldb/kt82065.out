@@ -1,0 +1,94 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:13
+Breakpoint 1: where = lldb_kt82065.kexe`<breakpoint offset> [inlined] kfun:#foo(kotlin.Int){}kotlin.Int at main.kt:13:5, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#main(){} at main.kt:13:5
+   10  	
+   11  	// FILE: main.kt
+   12  	fun main() {
+-> 13  	    foo()
+    	    ^
+   14  	    foo(5)
+   15  	    bar(10)
+   16  	    bar(10, 20)
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#foo(kotlin.Int){}kotlin.Int at lib.kt:8:25
+   5   	// OUTPUT_DATA_FILE: kt82065.out
+   6   	
+   7   	// FILE: lib.kt
+-> 8   	inline fun foo(a: Int = 1) = a + 1
+    	                        ^
+   9   	inline fun bar(b: Int, c: Int = 2) = b + c
+   10  	
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#main(){} at main.kt:14:9
+   11  	// FILE: main.kt
+   12  	fun main() {
+   13  	    foo()
+-> 14  	    foo(5)
+    	        ^
+   15  	    bar(10)
+   16  	    bar(10, 20)
+   17  	}
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#foo(kotlin.Int){}kotlin.Int at lib.kt:8:30
+   5   	// OUTPUT_DATA_FILE: kt82065.out
+   6   	
+   7   	// FILE: lib.kt
+-> 8   	inline fun foo(a: Int = 1) = a + 1
+    	                             ^
+   9   	inline fun bar(b: Int, c: Int = 2) = b + c
+   10  	
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#main(){} at main.kt:15:9
+   12  	fun main() {
+   13  	    foo()
+   14  	    foo(5)
+-> 15  	    bar(10)
+    	        ^
+   16  	    bar(10, 20)
+   17  	}
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#bar(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:9:33
+   6   	
+   7   	// FILE: lib.kt
+   8   	inline fun foo(a: Int = 1) = a + 1
+-> 9   	inline fun bar(b: Int, c: Int = 2) = b + c
+    	                                ^
+   10  	
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#main(){} at main.kt:16:9
+   13  	    foo()
+   14  	    foo(5)
+   15  	    bar(10)
+-> 16  	    bar(10, 20)
+    	        ^
+   17  	}
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_kt82065.kexe`kfun:#bar(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:9:38
+   6   	
+   7   	// FILE: lib.kt
+   8   	inline fun foo(a: Int = 1) = a + 1
+-> 9   	inline fun bar(b: Int, c: Int = 2) = b + c
+    	                                     ^
+   10

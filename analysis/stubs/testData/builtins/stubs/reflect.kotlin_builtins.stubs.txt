@@ -64,7 +64,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=String]
       FUN[fqName=kotlin.reflect.KClass.isInstance, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isInstance]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -72,6 +72,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
             TYPE_REFERENCE
@@ -110,7 +116,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             REFERENCE_EXPRESSION[referencedName=Int]
   CLASS[classId=kotlin/reflect/KClassifier, fqName=kotlin.reflect.KClassifier, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KClassifier, superNames=[]]
     MODIFIER_LIST[public]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -118,6 +124,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
     CLASS_BODY
   CLASS[classId=kotlin/reflect/KFunction, fqName=kotlin.reflect.KFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KFunction, superNames=[KCallable, Function]]
     MODIFIER_LIST[public expect]
@@ -479,7 +491,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
     CLASS_BODY
       PROPERTY[fqName=kotlin.reflect.KType.classifier, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=classifier]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -487,6 +499,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
@@ -497,7 +515,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=KClassifier]
       PROPERTY[fqName=kotlin.reflect.KType.arguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=arguments]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -505,6 +523,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -530,7 +554,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             REFERENCE_EXPRESSION[referencedName=Boolean]
   CLASS[classId=kotlin/reflect/KTypeParameter, fqName=kotlin.reflect.KTypeParameter, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KTypeParameter, superNames=[KClassifier]]
     MODIFIER_LIST[public]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -538,6 +562,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -591,7 +621,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             REFERENCE_EXPRESSION[referencedName=Boolean]
   CLASS[classId=kotlin/reflect/KTypeProjection, fqName=kotlin.reflect.KTypeProjection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KTypeProjection, superNames=[]]
     MODIFIER_LIST[public final data]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -599,6 +629,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=KTypeProjection]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
@@ -842,7 +878,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             REFERENCE_EXPRESSION[referencedName=Int]
   CLASS[classId=kotlin/reflect/KVariance, fqName=kotlin.reflect.KVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KVariance, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -850,6 +886,12 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=KVariance]
       MODIFIER_LIST[private MustUseReturnValue]
       VALUE_PARAMETER_LIST

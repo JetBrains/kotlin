@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensio
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -27,11 +26,14 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>,
+        executionContext: ExecutionContext,
     ): Collection<String> {
         // KT-84096 BTA: support daemon execution for script discovery operation
         check(executionPolicy is ExecutionPolicy.InProcess) { "Only in-process execution policy is supported for this operation." }

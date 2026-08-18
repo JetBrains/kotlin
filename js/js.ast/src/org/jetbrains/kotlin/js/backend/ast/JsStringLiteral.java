@@ -31,6 +31,6 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
     @NotNull
     @Override
     public JsStringLiteral deepCopy() {
-        return new JsStringLiteral(value).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsStringLiteral(value), this);
     }
 }

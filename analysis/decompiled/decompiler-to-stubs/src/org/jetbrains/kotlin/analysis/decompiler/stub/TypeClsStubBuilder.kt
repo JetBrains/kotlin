@@ -9,11 +9,16 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.analysis.decompiler.stub.flags.propertyFlagsToTranslate
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
+import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.StringValue
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type.Argument.Projection
@@ -26,7 +31,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.doNothing
@@ -44,7 +48,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         additionalAnnotations: () -> List<AnnotationWithTarget> = { emptyList() },
         loadTypeAnnotations: (Type) -> List<AnnotationWithArgs> = { c.components.annotationLoader.loadTypeAnnotations(it, c.nameResolver) }
     ) {
-        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
+        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtNodeTypes.TYPE_REFERENCE)
 
         val allAnnotationsInType = loadTypeAnnotations(type)
         val annotations = allAnnotationsInType.filterNot {
@@ -68,7 +72,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun nullableTypeParent(parent: KotlinStubBaseImpl<*>, type: Type): KotlinStubBaseImpl<*> = if (type.nullable)
-        KotlinPlaceHolderStubImpl<KtNullableType>(parent, KtStubElementTypes.NULLABLE_TYPE)
+        KotlinPlaceHolderStubImpl<KtNullableType>(parent, KtNodeTypes.NULLABLE_TYPE)
     else
         parent
 
@@ -88,11 +92,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, classId: ClassId, upperBoundType: KotlinTypeBean?) {
-        val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtStubElementTypes.INTERSECTION_TYPE)
-        val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
+        val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtNodeTypes.INTERSECTION_TYPE)
+        val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtNodeTypes.TYPE_REFERENCE)
         createStubForTypeName(classId, leftReference, upperBoundFun = { upperBoundType })
 
-        val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
+        val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtNodeTypes.TYPE_REFERENCE)
         createStubForTypeName(StandardClassIds.Any, rightReference)
     }
 
@@ -104,7 +108,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
             if (id == DYNAMIC_TYPE_DESERIALIZER_ID) {
-                KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
+                KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtNodeTypes.DYNAMIC_TYPE)
                 return
             }
         }
@@ -231,7 +235,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (typeArgumentProtoList.isEmpty()) {
             return
         }
-        val typeArgumentsListStub = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(typeStub, KtStubElementTypes.TYPE_ARGUMENT_LIST)
+        val typeArgumentsListStub = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(typeStub, KtNodeTypes.TYPE_ARGUMENT_LIST)
         typeArgumentProtoList.forEach { typeArgumentProto ->
             val projectionKind = typeArgumentProto.projection.toProjectionKind()
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
@@ -283,13 +287,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub =
-                KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
+                KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtNodeTypes.FUNCTION_TYPE_RECEIVER)
             val receiverTypeProto = typeArgumentList[processedTypes].type(c.typeTable)!!
             createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
             processedTypes++
         }
 
-        val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
+        val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtNodeTypes.VALUE_PARAMETER_LIST)
         val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(processedTypes, typeArgumentList.size - 1)
         var suspendParameterType: Type? = null
 
@@ -328,6 +332,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 hasValOrVar = false,
                 hasDefaultValue = false,
                 functionTypeParameterName = getFunctionTypeParameterName(annotations),
+                equalityBoundType = null,
+                kdocText = null,
+                constantInitializer = null,
             )
 
             createTypeReferenceStub(parameter, parameterType, loadTypeAnnotations = { annotations })
@@ -344,8 +351,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             // typealias MyAlias <T> = suspend () -> T
             // val usage: MyAlias<*>
             if (returnType.projection == Projection.STAR) {
-                KotlinPlaceHolderStubImpl<KtTypeReference>(functionType, KtStubElementTypes.TYPE_REFERENCE).apply {
-                    KotlinPlaceHolderStubImpl<KtNullableType>(this, KtStubElementTypes.NULLABLE_TYPE).apply {
+                KotlinPlaceHolderStubImpl<KtTypeReference>(functionType, KtNodeTypes.TYPE_REFERENCE).apply {
+                    KotlinPlaceHolderStubImpl<KtNullableType>(this, KtNodeTypes.NULLABLE_TYPE).apply {
                         createStubForTypeName(StandardClassIds.Any, this)
                     }
                 }
@@ -362,9 +369,18 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parameters: List<ProtoBuf.ValueParameter>,
         container: ProtoContainer,
         callableKind: AnnotatedCallableKind = callableProto.annotatedCallableKind,
+        foldedProperties: Map<Name, ProtoBuf.Property> = emptyMap(),
     ) {
-        val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtStubElementTypes.VALUE_PARAMETER_LIST)
-        createValueParameterStubs(parameters, parameterListStub, container, callableProto, callableKind, isContextParameter = false)
+        val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtNodeTypes.VALUE_PARAMETER_LIST)
+        createValueParameterStubs(
+            parameters,
+            parameterListStub,
+            container,
+            callableProto,
+            callableKind,
+            isContextParameter = false,
+            foldedProperties = foldedProperties,
+        )
     }
 
     fun createValueParameterStubs(
@@ -374,20 +390,27 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         callableProto: MessageLite,
         callableKind: AnnotatedCallableKind,
         isContextParameter: Boolean,
+        foldedProperties: Map<Name, ProtoBuf.Property> = emptyMap(),
     ) {
         for ([index, valueParameterProto] in parameters.withIndex()) {
             ProgressManager.checkCanceled()
 
             val parameterName = computeParameterName(c.nameResolver.getName(valueParameterProto.name))
+            val foldedProperty = foldedProperties[parameterName]
             val hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags)
+            val foldedInitializer = foldedProperty?.let { loadDefaultValue(valueParameterProto, container, it) }
+            val isVar = foldedProperty != null && Flags.IS_VAR.get(foldedProperty.flags)
             val parameterStub = KotlinParameterStubImpl(
                 parameterParent,
                 name = parameterName.ref(),
-                fqNameRef = null,
+                fqNameRef = foldedProperty?.let { c.containerFqName.child(parameterName).ref() },
                 hasDefaultValue = hasDefaultValue,
-                hasValOrVar = false,
-                isMutable = false,
+                hasValOrVar = foldedProperty != null,
+                isMutable = isVar,
                 functionTypeParameterName = null,
+                equalityBoundType = createKotlinTypeBean(valueParameterProto.equalityBoundType(c.typeTable)),
+                kdocText = foldedProperty?.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc),
+                constantInitializer = foldedInitializer,
             )
 
             val varargElementType = valueParameterProto.varargElementType(c.typeTable)
@@ -404,10 +427,23 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 modifiers.add(KtTokens.NOINLINE_KEYWORD)
             }
 
+            if (foldedProperty != null) {
+                val propertyFlags = foldedProperty.flags
+                val flagsToTranslate = propertyFlagsToTranslate(
+                    isVar = isVar,
+                    isTopLevel = false,
+                    isConst = false,
+                )
+
+                for (flagsToModifiers in flagsToTranslate) {
+                    flagsToModifiers.getModifiers(propertyFlags)?.let(modifiers::add)
+                }
+            }
+
             val modifierList = createModifierListStub(
                 parameterStub,
                 modifiers,
-                ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+                foldedProperty?.let { Flags.RETURN_VALUE_STATUS_PROPERTY.get(it.flags) } ?: ProtoBuf.ReturnValueStatus.UNSPECIFIED,
             )
 
             val parameterAnnotations = if (isContextParameter) {
@@ -428,17 +464,30 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 )
             }
 
-            if (parameterAnnotations.isNotEmpty()) {
-                createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
+            val annotations = if (foldedProperty == null) {
+                parameterAnnotations.map { AnnotationWithTarget(it, target = null) }
+            } else {
+                // A folded parameter carries the annotations of both declarations, so every one of them has to name its target
+                parameterAnnotations.map { AnnotationWithTarget(it, AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER) } +
+                        loadFoldedPropertyAnnotations(container, foldedProperty)
+            }
+
+            if (annotations.isNotEmpty()) {
+                createTargetedAnnotationStubs(annotations, modifierList ?: createEmptyModifierListStub(parameterStub))
             }
 
             createTypeReferenceStub(parameterStub, typeProto)
             if (hasDefaultValue) {
-                KotlinNameReferenceExpressionStubImpl(
-                    /* parent = */ parameterStub,
-                    /* referencedName = */ StringRef.fromString(COMPILED_DEFAULT_PARAMETER_VALUE),
-                    /* myClassRef = */ false,
-                )
+                // The property of a folded parameter is initialized with the very value the parameter defaults to
+                if (foldedInitializer != null && foldedInitializer.isRepresentableAsStub()) {
+                    createValueStub(parameterStub, foldedInitializer, containerClassId = (container as? ProtoContainer.Class)?.classId)
+                } else {
+                    KotlinNameReferenceExpressionStubImpl(
+                        /* parent = */ parameterStub,
+                        /* referencedName = */ StringRef.fromString(COMPILED_DEFAULT_PARAMETER_VALUE),
+                        /* myClassRef = */ false,
+                    )
+                }
             }
         }
     }
@@ -449,7 +498,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     ): List<Pair<Name, Type>> {
         if (typeParameterProtoList.isEmpty()) return listOf()
 
-        val typeParameterListStub = KotlinPlaceHolderStubImpl<KtTypeParameterList>(parent, KtStubElementTypes.TYPE_PARAMETER_LIST)
+        val typeParameterListStub = KotlinPlaceHolderStubImpl<KtTypeParameterList>(parent, KtNodeTypes.TYPE_PARAMETER_LIST)
         val protosForTypeConstraintList = arrayListOf<Pair<Name, Type>>()
         for (proto in typeParameterProtoList) {
             ProgressManager.checkCanceled()
@@ -480,11 +529,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (protosForTypeConstraintList.isEmpty()) {
             return
         }
-        val typeConstraintListStub = KotlinPlaceHolderStubImpl<KtTypeConstraintList>(parent, KtStubElementTypes.TYPE_CONSTRAINT_LIST)
+        val typeConstraintListStub = KotlinPlaceHolderStubImpl<KtTypeConstraintList>(parent, KtNodeTypes.TYPE_CONSTRAINT_LIST)
         for ([name, type] in protosForTypeConstraintList) {
             ProgressManager.checkCanceled()
 
-            val typeConstraintStub = KotlinPlaceHolderStubImpl<KtTypeConstraint>(typeConstraintListStub, KtStubElementTypes.TYPE_CONSTRAINT)
+            val typeConstraintStub = KotlinPlaceHolderStubImpl<KtTypeConstraint>(typeConstraintListStub, KtNodeTypes.TYPE_CONSTRAINT)
             KotlinNameReferenceExpressionStubImpl(
                 /* parent = */ typeConstraintStub,
                 /* referencedName = */ name.ref(),
@@ -527,6 +576,47 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
     }
 
+    /**
+     * The value the parameter of an annotation constructor defaults to.
+     *
+     * The metadata keeps it on the parameter since version 2.2 (KT-59526). An older library has it on the property
+     * instead, and only when the value happens to be a compile-time constant, which is what the JVM backend writes
+     * as the `AnnotationDefault` attribute of the accessor.
+     */
+    private fun loadDefaultValue(
+        valueParameterProto: ProtoBuf.ValueParameter,
+        container: ProtoContainer,
+        foldedProperty: ProtoBuf.Property,
+    ): ConstantValue<*>? {
+        if (valueParameterProto.hasAnnotationParameterDefaultValue()) {
+            return createConstantValue(valueParameterProto.annotationParameterDefaultValue, c.nameResolver)
+        }
+
+        return c.components.annotationLoader.loadPropertyInitializer(container, foldedProperty)
+    }
+
+    /**
+     * The annotations of a folded property, each named after the declaration it was written on,
+     * as a parameter has no member of its own to hold them.
+     */
+    private fun loadFoldedPropertyAnnotations(
+        container: ProtoContainer,
+        propertyProto: ProtoBuf.Property,
+    ): List<AnnotationWithTarget> {
+        val annotationLoader = c.components.annotationLoader
+        return buildList {
+            for ([kind, target] in FOLDED_PROPERTY_ANNOTATION_TARGETS) {
+                annotationLoader.loadCallableAnnotations(container, propertyProto, kind).mapTo(this) {
+                    AnnotationWithTarget(it, target)
+                }
+            }
+
+            annotationLoader.loadPropertyBackingFieldAnnotations(container, propertyProto).mapTo(this) {
+                AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD)
+            }
+        }
+    }
+
     private fun Type.isDefaultUpperBound(): Boolean {
         return this.hasClassName() &&
                 c.nameResolver.getClassId(className).let { StandardNames.FqNames.any == it.asSingleFqName().toUnsafe() } &&
@@ -537,7 +627,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (contextReceiverTypes.isEmpty()) return
         val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             parent,
-            KtStubElementTypes.CONTEXT_PARAMETER_LIST,
+            KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
         for (contextReceiverType in contextReceiverTypes) {
@@ -546,3 +636,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
     }
 }
+
+private val FOLDED_PROPERTY_ANNOTATION_TARGETS = listOf(
+    AnnotatedCallableKind.PROPERTY to AnnotationUseSiteTarget.PROPERTY,
+    AnnotatedCallableKind.PROPERTY_GETTER to AnnotationUseSiteTarget.PROPERTY_GETTER,
+    AnnotatedCallableKind.PROPERTY_SETTER to AnnotationUseSiteTarget.PROPERTY_SETTER,
+)

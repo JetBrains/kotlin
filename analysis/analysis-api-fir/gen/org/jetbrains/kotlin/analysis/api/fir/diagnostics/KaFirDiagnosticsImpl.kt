@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KaUnstableDiagnosticApi::class)
+
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
@@ -359,6 +361,7 @@ internal class UnresolvedReferenceImpl(
 
 internal class UnresolvedReferenceWrongReceiverImpl(
     override val candidate: KaSymbol,
+    override val operator: String?,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedReferenceWrongReceiver
@@ -518,6 +521,11 @@ internal class RootIdePackageDeprecatedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RootIdePackageDeprecated
+
+internal class SmartcastToTypeVariableImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SmartcastToTypeVariable
 
 internal class CreatingAnInstanceOfAbstractClassImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -1493,6 +1501,69 @@ internal class NestedJsModuleProhibitedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsModuleProhibited
 
+internal class UnresolvedEqualityBoundArgumentImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UnresolvedEqualityBoundArgument
+
+internal class AmbiguouslyResolvedEqualityBoundArgumentImpl(
+    override val candidates: List<KaType>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.AmbiguouslyResolvedEqualityBoundArgument
+
+internal class EqualityBoundArgumentExpandsToNonStarProjectedImpl(
+    override val expandedType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundArgumentExpandsToNonStarProjected
+
+internal class EqualityBoundMismatchOnInheritanceImpl(
+    override val overridingDeclaration: KaCallableSymbol,
+    override val overriddenDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundMismatchOnInheritance
+
+internal class EqualityBoundMismatchByDelegationImpl(
+    override val delegateDeclaration: KaCallableSymbol,
+    override val baseDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundMismatchByDelegation
+
+internal class InheritedIntersectionEqualityBoundImpl(
+    override val declaration: KaCallableSymbol,
+    override val candidates: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InheritedIntersectionEqualityBound
+
+internal class EqualityBoundNotSupertypeOfContainingClassImpl(
+    override val equalityBoundType: KaType,
+    override val receiverType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundNotSupertypeOfContainingClass
+
+internal class EqualityNotApplicableByEqualityBoundsImpl(
+    override val leftType: KaType,
+    override val rightType: KaType,
+    override val leftIsEqualityBound: String,
+    override val rightIsEqualityBound: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityNotApplicableByEqualityBounds
+
+internal class EqualitySuspiciousByEqualityBoundsImpl(
+    override val leftType: KaType,
+    override val rightType: KaType,
+    override val leftEqualityBound: KaType,
+    override val rightEqualityBound: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualitySuspiciousByEqualityBounds
+
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
     override val message: String,
@@ -2027,11 +2098,6 @@ internal class ValueClassCannotBeCloneableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotBeCloneable
-
-internal class ValueClassCannotHaveContextReceiversImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotHaveContextReceivers
 
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
@@ -4174,6 +4240,14 @@ internal class ExpectActualIncompatibleReturnTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleReturnType
 
+internal class ExpectActualIncompatibleEqualityBoundsImpl(
+    override val expectDeclaration: KaSymbol,
+    override val actualDeclaration: KaSymbol,
+    override val reason: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleEqualityBounds
+
 internal class ExpectActualIncompatibleParameterNamesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
@@ -5902,6 +5976,11 @@ internal class JvmExposeBoxedCannotExposePrivateImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposePrivate
 
+internal class JvmExposeBoxedCanBeReplacedWithJvmNameImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCanBeReplacedWithJvmName
+
 internal class WrongTypeForJavaOverrideImpl(
     override val override: KaCallableSymbol,
     override val base: KaCallableSymbol,
@@ -6175,6 +6254,12 @@ internal class AnnotationTargetsOnlyInJavaImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsOnlyInJava
+
+internal class RuntimeAnnotationOnLambdaIsNotRetainedImpl(
+    override val annotationClass: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RuntimeAnnotationOnLambdaIsNotRetained
 
 internal class LocalJvmRecordImpl(
     firDiagnostic: KtPsiDiagnostic,

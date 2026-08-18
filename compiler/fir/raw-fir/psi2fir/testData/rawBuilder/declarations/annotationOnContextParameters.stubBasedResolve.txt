@@ -3,12 +3,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnContextParameters.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun annotationOnContext(): R|kotlin/Unit| { LAZY_BLOCK }
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] @<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>()  kotlin/String|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun annotationWithConstructor(): R|kotlin/Unit| { LAZY_BLOCK }
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] @<ERROR TYPE REF: Symbol not found for Ann>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for Ann>()  kotlin/String|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val annotationOnContextProperty: R|kotlin/String|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] @<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>()  kotlin/String|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val annotationWithConstructorProperty: R|kotlin/String|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
+    context([ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for Ann>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for Ann>()  kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] val annotationOnContextProperty: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ String()
+        }
+    context([ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>()  kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] val annotationWithConstructorProperty: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ String()
+        }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun functionType([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|context(@<ERROR TYPE REF: Symbol not found for Ann>()  kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun functionTypeWithConstructor([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|context(@<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>()  kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun functionTypeNamed([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|context(@<ERROR TYPE REF: Symbol not found for Ann>()  kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

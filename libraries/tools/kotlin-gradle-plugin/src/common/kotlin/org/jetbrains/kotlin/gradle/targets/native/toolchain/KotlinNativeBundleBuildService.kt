@@ -175,6 +175,9 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
             when (archiveType) {
                 ArchiveType.ZIP -> archive.toPath().unzipTo(targetDirectory.toPath())
                 ArchiveType.TAR_GZ -> archive.toPath().unzipTarGz(targetDirectory.toPath())
+                // The Kotlin Gradle plugin only downloads the Kotlin/Native bundle (`.tar.gz`/`.zip`); the `.xip`
+                // whole-Xcode archive is expanded compiler-side by `native/utils` DependencyExtractor, never here.
+                ArchiveType.XIP -> error("Extracting .xip archives is not supported by the Kotlin Gradle plugin.")
             }
         }
     }

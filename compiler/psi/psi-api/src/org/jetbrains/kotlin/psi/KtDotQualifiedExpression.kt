@@ -58,25 +58,16 @@ class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDo
     }
 
     private fun getChildExpressionsByStub(stub: KotlinPlaceHolderStub<KtDotQualifiedExpression>): List<KtExpression>? {
-        if (stub.getParentStubOfType(KtImportDirective::class.java) == null &&
-            stub.getParentStubOfType(KtPackageDirective::class.java) == null &&
-            stub.getParentStubOfType(KtValueArgument::class.java) == null
-        ) {
-            LOG.error(
-                "KtDotQualifiedExpression should only have stubs inside import, argument or package directives.\n" +
-                        "Stubs were created for:\n$text\nFile text:\n${containingFile.text}"
-            )
-            return null
-        } else {
-            val expressions = stub.childrenStubs.mapNotNull { it.psi as? KtExpression }
-            if (expressions.size !in 1..2) {
-                LOG.logErrorWithAttachment("Invalid stub structure. DOT_QUALIFIED_EXPRESSION must have one or two children. Was: ${expressions.size}") {
-                    withPsiEntry("file", containingFile)
-                }
-                return null
+        val expressions = stub.childrenStubs.mapNotNull { it.psi as? KtExpression }
+        if (expressions.size !in 1..2) {
+            LOG.logErrorWithAttachment("Invalid stub structure. DOT_QUALIFIED_EXPRESSION must have one or two children. Was: ${expressions.size}") {
+                withPsiEntry("file", containingFile)
             }
-            return expressions
+
+            return null
         }
+
+        return expressions
     }
 
     companion object {

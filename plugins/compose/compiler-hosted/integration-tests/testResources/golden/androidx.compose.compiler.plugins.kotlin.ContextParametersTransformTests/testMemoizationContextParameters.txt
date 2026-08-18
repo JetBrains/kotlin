@@ -103,27 +103,33 @@ fun App(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%-1203334793: @[ExtensionFunctionType] Function4<BoxScope, A, Composer, Int, Unit> = composableLambdaInstance(<>, false) { <unused var>: BoxScope, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C<Text(t...>:Test.kt")
-    val %dirty = %changed
-    if (%changed and 0b00110000 == 0) {
-      %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
-        %composer.changed(%this%TypeCrossfade)
-      } else {
-        %composer.changedInstance(%this%TypeCrossfade)
+  val lambda%-1203334793: @[ExtensionFunctionType] Function4<BoxScope, A, Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { <unused var>: BoxScope, %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C<Text(t...>:Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b00110000 == 0) {
+            %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+              %composer.changed(%this%TypeCrossfade)
+            } else {
+              %composer.changedInstance(%this%TypeCrossfade)
+            }
+            ) 0b00100000 else 0b00010000
+          }
+          if (%composer.shouldExecute(%dirty and 0b10010001 != 0b10010000, %dirty and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            Text(%this%TypeCrossfade.toString(), %composer, 0)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      ) 0b00100000 else 0b00010000
+      return field
     }
-    if (%composer.shouldExecute(%dirty and 0b10010001 != 0b10010000, %dirty and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %dirty, -1, <>)
-      }
-      Text(%this%TypeCrossfade.toString(), %composer, 0)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
-    }
-  }
 }

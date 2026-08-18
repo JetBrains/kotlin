@@ -4,6 +4,23 @@
 // - Show declarations: true
 
 // Library unique name: <main>
+final class /Bar { // /Bar|null[0]
+    final val baz // /Bar.baz|(kotlin.String){}baz[0]
+        final fun (context(kotlin/String)).<get-baz>(): kotlin/Int // /Bar.baz.<get-baz>|<get-baz>(kotlin.String)(){}[0]
+    final var baz2 // /Bar.baz2|(kotlin.String;kotlin.Boolean){}baz2[0]
+        final fun (context(kotlin/String, kotlin/Boolean)).<get-baz2>(): kotlin/Int // /Bar.baz2.<get-baz2>|<get-baz2>(kotlin.String;kotlin.Boolean)(){}[0]
+        final fun (context(kotlin/String, kotlin/Boolean)).<set-baz2>(kotlin/Int) // /Bar.baz2.<set-baz2>|<set-baz2>(kotlin.String;kotlin.Boolean)(kotlin.Int){}[0]
+    constructor <init>() // /Bar.<init>|<init>(){}[0]
+}
 final val /foo // /foo|(kotlin.String){}foo[0]
     final fun (context(kotlin/String)).<get-foo>(): kotlin/Int // /foo.<get-foo>|<get-foo>(kotlin.String)(){}[0]
+final var /foo2 // /foo2|(kotlin.String;kotlin.Boolean){}foo2[0]
+    final fun (context(kotlin/String, kotlin/Boolean)).<get-foo2>(): kotlin/Int // /foo2.<get-foo2>|<get-foo2>(kotlin.String;kotlin.Boolean)(){}[0]
+    final fun (context(kotlin/String, kotlin/Boolean)).<set-foo2>(kotlin/Int) // /foo2.<set-foo2>|<set-foo2>(kotlin.String;kotlin.Boolean)(kotlin.Int){}[0]
+final val /qux // /qux|(kotlin.String)@kotlin.Int{}qux[0]
+    final fun (context(kotlin/String), kotlin/Int).<get-qux>(): kotlin/Int // /qux.<get-qux>|<get-qux>(kotlin.String)@kotlin.Int(){}[0]
+final var /qux2 // /qux2|(kotlin.String;kotlin.Boolean)@kotlin.Int{}qux2[0]
+    final fun (context(kotlin/String, kotlin/Boolean), kotlin/Int).<get-qux2>(): kotlin/Int // /qux2.<get-qux2>|<get-qux2>(kotlin.String;kotlin.Boolean)@kotlin.Int(){}[0]
+    final fun (context(kotlin/String, kotlin/Boolean), kotlin/Int).<set-qux2>(kotlin/Int) // /qux2.<set-qux2>|<set-qux2>(kotlin.String;kotlin.Boolean)@kotlin.Int(kotlin.Int){}[0]
 final fun (kotlin/String)./test() // /test|test@kotlin.String(){}[0]
+final fun (context(kotlin/String, kotlin/Boolean))./test2() // /test2|test2(kotlin.String;kotlin.Boolean)(){}[0]

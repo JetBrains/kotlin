@@ -24,6 +24,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
             MODIFIER_LIST[const]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -34,10 +35,12 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
           PROPERTY[fqName=test.PrivateConstField.Companion.field, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
           PROPERTY[fqName=test.PrivateConstField.Companion.fieldWithAnnotation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fieldWithAnnotation]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -48,3 +51,4 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]

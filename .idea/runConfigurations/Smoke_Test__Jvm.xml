@@ -16,7 +16,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":compilerTest" />
+          <option value=":jvmCodegenTest" />
           <option value=":jvmCompilerIntegrationTest" />
         </list>
       </option>

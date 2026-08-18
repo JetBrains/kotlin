@@ -29,5 +29,5 @@ internal object KotlinCompilerEmbeddableCheck {
     * https://github.com/GradleUp/shadow/issues/232,
     * so the chosen class should not be included into KGP and relocated by shadow plugin.
     */
-    private const val CLASS_FROM_KCE_FQN = "org/jetbrains/kotlin/asJava/KotlinAsJavaSupport.class"
+    private const val CLASS_FROM_KCE_FQN = "org/jetbrains/kotlin/asJava/KtLightClassMarker.class"
 }

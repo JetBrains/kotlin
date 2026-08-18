@@ -137,10 +137,11 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         result: CompilationResult?,
         assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
         forceOutput: LogLevel?,
+        assertionsContext: ModuleContext = this,
     ) {
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
         try {
-            assertions(outcome)
+            applyAssertions(assertionsContext, outcome, assertions)
             assertEquals(outcome.expectedResult, result) {
                 "Compilation result is unexpected"
             }
@@ -157,6 +158,19 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
             throw e
         }
     }
+
+    /**
+     * Runs the [assertions] block with [moduleContext] supplied as its [ModuleContext] context parameter.
+     *
+     * This allows an operation to point the assertions (which resolve files against `module.outputDirectory`) at a
+     * directory other than the module's own output directory - for example the JS linking operation writes its `.js`
+     * into a dedicated directory, mirroring the KGP, so that the input klib is not deleted.
+     */
+    private fun applyAssertions(
+        moduleContext: ModuleContext,
+        outcome: CompilationOutcome,
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
+    ) = with(moduleContext) { assertions(outcome) }
 
     protected abstract fun compileImpl(
         strategyConfig: ExecutionPolicy,

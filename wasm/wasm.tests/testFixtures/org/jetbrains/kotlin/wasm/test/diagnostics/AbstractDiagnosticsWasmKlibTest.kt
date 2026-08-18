@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
@@ -92,7 +91,6 @@ abstract class AbstractWasmDiagnosticTestBase(
             useHandlers(::IrDiagnosticsHandler)
         }
 
-        withIrInliner('-')
         facadeStep(::WasmPreSerializationLoweringFacade)
         loweredIrHandlersStep()
 
@@ -119,31 +117,8 @@ abstract class AbstractWasmJsDiagnosticTest : AbstractWasmDiagnosticTestBase(
     WasmTarget.JS,
 )
 
-abstract class AbstractWasmJsDiagnosticWithIrInlinerTest : AbstractWasmJsDiagnosticTest() {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(this)
-        withIrInliner('+')
-    }
-}
-
 abstract class AbstractWasmWasiDiagnosticTest : AbstractWasmDiagnosticTestBase(
     FirParser.LightTree,
     WasmPlatforms.wasmWasi,
     WasmTarget.WASI,
 )
-
-abstract class AbstractWasmWasiDiagnosticWithIrInlinerTestBase : AbstractWasmWasiDiagnosticTest() {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-        withIrInliner('+')
-    }
-}
-
-private fun TestConfigurationBuilder.withIrInliner(plusOrMinus: Char) {
-    defaultDirectives {
-        LANGUAGE with listOf(
-            "$plusOrMinus${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-            "$plusOrMinus${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-        )
-    }
-}

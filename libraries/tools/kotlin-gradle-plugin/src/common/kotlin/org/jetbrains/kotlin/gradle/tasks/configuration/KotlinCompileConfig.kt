@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
@@ -52,6 +52,9 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.incremental = propertiesProvider.incrementalJvm ?: true
                 task.useFirRunner.convention(propertiesProvider.incrementalJvmFir)
                 task.enableJvmClasspathMetadata.convention(propertiesProvider.enableJvmClasspathMetadata)
+                task.enableUnsafeIncrementalCompilationForMultiplatform
+                    .convention(propertiesProvider.enableJvmUnsafeOptimizationsForMultiplatform)
+                    .finalizeValueOnRead()
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
                 task.jvmTargetValidationMode.convention(propertiesProvider.jvmTargetValidationMode).finalizeValueOnRead()
 
@@ -60,15 +63,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     it.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                 }.files
                 task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
-                @Suppress("DEPRECATION")
-                task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
-                @Suppress("DEPRECATION")
-                task.taskOutputsBackupExcludes.addAll(
-                    task.classpathSnapshotProperties.classpathSnapshotDir.asFile.flatMap {
-                        // it looks weird, but it's required to work around this issue: https://github.com/gradle/gradle/issues/17704
-                        objectFactory.providerWithLazyConvention { listOf(it) }
-                    }.orElse(emptyList())
-                )
 
                 task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
                     task.kotlinDslPluginIsPresent.value(true).disallowChanges()
@@ -170,6 +164,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         parameters.compilationViaBuildToolsApi.set(runKotlinCompilerViaBuildToolsApi)
         parameters.kgpVersion.set(kgpVersion)
         parameters.parseInlinedLocalClasses.set(project.kotlinPropertiesProvider.parseInlinedLocalClasses)
+
+        val isMultiplatform = project.multiplatformExtensionOrNull != null
+        parameters.expandTypeAliases.set(
+            project.kotlinPropertiesProvider.expandTypeAliasesInClasspathSnapshots.map { it && isMultiplatform }
+        )
 
         val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         if (!suppressVersionInconsistencyChecks) {

@@ -11,16 +11,18 @@ if (project.findProperty("mppProjectDependency") == "true") {
 
     dependencies {
         api project(":mpp-lib")
+        api project(":mpp-lib-two")
     }
 
 } else {
 
     repositories {
-        maven { setUrl "${rootProject.buildDir}/repo" }
+        maven { setUrl "${rootProject.rootDir}/build/repo" }
     }
 
     dependencies {
         api "com.example:mpp-lib:1.0"
+        api "com.example:mpp-lib-two:1.0"
     }
 
 }
@@ -32,6 +34,6 @@ publishing {
         }
     }
     repositories {
-        maven { setUrl("${rootProject.buildDir}/repo") }
+        maven { setUrl("${rootProject.rootDir}/build/repo") }
     }
 }

@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getNameWithAssert
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.moduleFragment
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
@@ -82,21 +84,26 @@ internal fun IrDiagnosticReporter.reportMissingActual(expectSymbol: IrSymbol) {
     reportMissingActual(expectSymbol.owner as IrDeclaration)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclaration) {
     at(irDeclaration).report(
         IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
-        irDeclaration.module
+        irDeclaration.moduleFragment.toModuleInfoForDiagnostic()
     )
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclaration) {
     at(expectSymbol).report(
         IrActualizationErrors.AMBIGUOUS_ACTUALS,
         (expectSymbol as? IrDeclarationWithName)?.name?.asString().orEmpty(),
-        expectSymbol.module
+        expectSymbol.moduleFragment.toModuleInfoForDiagnostic()
+    )
+}
+
+private fun IrModuleFragment.toModuleInfoForDiagnostic(): ModuleInfoForDiagnostic {
+    return ModuleInfoForDiagnostic(
+        name = descriptor.getCapability(ModuleInfo.Capability)?.displayedName ?: name.asString(),
+        platform = descriptor.platform,
     )
 }
 

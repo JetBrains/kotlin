@@ -9,13 +9,14 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.allDependenciesInternal
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
@@ -23,8 +24,10 @@ import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
@@ -50,7 +53,9 @@ private fun KClass<*>.loadResource(path: String): String {
  *
  * @see [org.jetbrains.kotlin.gradle.targets.js.NpmVersions]
  */
-internal val kgpNpmToolingPackageJson: String by lazy {
+private fun createKgpNpmToolingPackageJson(
+    defaultNpmVersions: List<NpmPackageVersionForTests>,
+): String {
     val json = Json {
         prettyPrint = true
     }
@@ -61,13 +66,13 @@ internal val kgpNpmToolingPackageJson: String by lazy {
             put("version", "1.0.0")
             put("private", true)
             put("dependencies", buildJsonObject {
-                NpmVersions().allDependencies.forEach { [name, version] ->
-                    put(name, version)
+                defaultNpmVersions.forEach { dep ->
+                    put(dep.name, dep.requestedVersion)
                 }
             })
         }
 
-    json.encodeToString(JsonObject.serializer(), packageJson)
+    return json.encodeToString(JsonObject.serializer(), packageJson)
 }
 
 /**
@@ -77,9 +82,14 @@ internal fun TestProject.setupCustomKgpNpmToolingDependenciesDir(
     toolingCustomDir: Path,
     useYarn: Boolean,
 ) {
+    // Use the same NpmVersions that KGP uses (which is important, because we're also using KGP's lockfiles)
+    val defaultNpmVersions = extractDefaultKgpNpmPackageVersions()
+    val packageJson = createKgpNpmToolingPackageJson(defaultNpmVersions)
+
     createCustomKgpNpmToolingDependenciesDir(
         toolingCustomDir = toolingCustomDir,
         useYarn = useYarn,
+        packageJson = packageJson,
     )
     setCustomKgpNpmToolingDependenciesDir(toolingCustomDir = toolingCustomDir)
     registerCustomNpmToolingInstallTask(
@@ -88,14 +98,41 @@ internal fun TestProject.setupCustomKgpNpmToolingDependenciesDir(
     )
 }
 
+/**
+ * Extract KGP's default npm dependencies.
+ */
+private fun TestProject.extractDefaultKgpNpmPackageVersions(): List<NpmPackageVersionForTests> {
+    return buildScriptReturn {
+        val npmVersions = project.extensions.getByName<WasmNodeJsRootExtension>(WasmNodeJsRootExtension.EXTENSION_NAME).versions
+        @Suppress("INVISIBLE_REFERENCE")
+        npmVersions.allDependenciesInternal(project.objects, project.providers).map { npv ->
+            NpmPackageVersionForTests(
+                name = npv.name.get(),
+                requestedVersion = npv.requestedVersion.get(),
+            )
+        }
+    }.buildAndReturn()
+}
+
+/**
+ * Serializable copy of [org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal].
+ * (This class is required because `buildScriptReturn {}` can't serialize
+ * `NpmPackageVersionInternal` because it can't serialize [org.gradle.api.provider.Property].)
+ */
+private data class NpmPackageVersionForTests(
+    val name: String,
+    val requestedVersion: String,
+) : Serializable
+
 private fun createCustomKgpNpmToolingDependenciesDir(
     toolingCustomDir: Path,
     useYarn: Boolean,
+    packageJson: String,
 ) {
     toolingCustomDir.createDirectories()
 
     // A `package.json` file is required for `npm install` and `yarn install` commands to work.
-    toolingCustomDir.resolve("package.json").writeText(kgpNpmToolingPackageJson)
+    toolingCustomDir.resolve("package.json").writeText(packageJson)
 
     if (useYarn) {
         toolingCustomDir.resolve("yarn.lock").writeText(kgpYarnLockFileContent)
@@ -104,7 +141,6 @@ private fun createCustomKgpNpmToolingDependenciesDir(
     }
 }
 
-@OptIn(ExperimentalWasmDsl::class)
 private fun TestProject.setCustomKgpNpmToolingDependenciesDir(
     toolingCustomDir: Path,
 ) {
@@ -124,7 +160,6 @@ private fun TestProject.setCustomKgpNpmToolingDependenciesDir(
  * Used to test if users can specify custom npm/yarn executable locations,
  * meaning KGP does not need to install them.
  */
-@OptIn(ExperimentalWasmDsl::class)
 private fun TestProject.registerCustomNpmToolingInstallTask(
     useYarn: Boolean,
     toolingCustomDir: Path,
@@ -148,7 +183,14 @@ private fun TestProject.registerCustomNpmToolingInstallTask(
             val exec = project.serviceOf<ExecOperations>()
 
             val installArgs = if (useYarn) {
-                project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.map { listOf(it) }
+                project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.map { yarnExecutable ->
+                    listOf(
+                        yarnExecutable,
+                        "install",
+                        "--ignore-scripts",
+                        "--frozen-lockfile",
+                    )
+                }
             } else {
                 val npmCli = project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable
                 project.provider {

@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.common.linkage
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.name.Name
 
 interface IrDeserializer : IrProvider {
     enum class TopLevelSymbolKind {
@@ -19,8 +17,6 @@ interface IrDeserializer : IrProvider {
         PROPERTY_SYMBOL,
         TYPEALIAS_SYMBOL;
     }
-
-    fun init(moduleFragment: IrModuleFragment?)
 
     /**
      * Retrieves the symbol associated with the given signature and kind.

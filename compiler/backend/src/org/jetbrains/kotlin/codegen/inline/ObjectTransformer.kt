@@ -91,7 +91,7 @@ class WhenMappingTransformer(
                 // but that would require modification of both the inner (recreated) and the outer (caller-side) classes.
                 // The latter would require a lot of work without any clear benefits.
             }
-        }, ClassReader.SKIP_FRAMES)
+        }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
 
         assert(methodNodes.size == 1) {
             "When mapping ${fieldNode.owner} class should contain only one method but: " + methodNodes.joinToString { it.name }

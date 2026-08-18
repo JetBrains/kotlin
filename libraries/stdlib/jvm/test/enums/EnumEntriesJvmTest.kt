@@ -7,7 +7,7 @@
 
 package test.enums
 
-import org.junit.Test
+import kotlin.test.Test
 import test.collections.behaviors.listBehavior
 import test.collections.compare
 import test.io.deserializeFromByteArray

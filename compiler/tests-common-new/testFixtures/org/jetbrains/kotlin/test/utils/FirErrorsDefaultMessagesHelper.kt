@@ -174,6 +174,7 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
             FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
             "REQUIRED_KOTLIN_TOO_HIGH",
             "PROVIDED_RUNTIME_TOO_LOW",
+            FirErrors.SMARTCAST_TO_TYPE_VARIABLE.name,
         )
     )
 

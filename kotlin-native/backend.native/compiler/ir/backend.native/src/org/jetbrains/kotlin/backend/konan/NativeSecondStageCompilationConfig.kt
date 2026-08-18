@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
@@ -91,6 +93,7 @@ class NativeSecondStageCompilationConfig(
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.konanTarget)
     override val target = targetManager.target
+
     internal val phaseConfig = configuration.phaseConfig!!
 
     // See https://youtrack.jetbrains.com/issue/KT-67692.
@@ -386,19 +389,13 @@ class NativeSecondStageCompilationConfig(
 
     val resolvedLibraries get() = resolve.resolvedLibraries
 
-    val includedLibraries: List<KotlinLibrary>
-        get() = getIncludedLibraries(
-                configuration.konanIncludedLibraries.map { Path(it) },
-                configuration,
-                resolve.resolvedLibraries
-        )
-
-    val exportedLibraries: List<KotlinLibrary>
-        get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
-
     /**
      * Returns the list of libraries in reverse topological order.
      */
+    // TODO(KT-61096): This is a form of DCE to avoid loading ALL platform libraries from the Kotlin/Native distribution.
+    //  We should not use it. Instead, we should load all libraries, then run the IR linkage cycle and figure out which
+    //  platform libraries were actually not "touched" and filter them out. There should not be relevant `IrModuleFragment`s
+    //  down the pipeline after the IR linkage phase.
     fun librariesWithDependencies(): List<KotlinLibrary> {
         return resolvedLibraries.filterRoots {
             // Let's leave only those dependencies (roots) that have been explicitly specified by the used in compiler's CLI.
@@ -410,8 +407,25 @@ class NativeSecondStageCompilationConfig(
             // Later upon the subsequent `getFullList()` call, some of the implicit dependencies will be added. But only if they
             // are mentioned in `depends=` manifest property in root libraries. Which means only a small really required subset
             // of them will be added.
-            it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs
+            it.library.isExplicitlySpecifiedByUserInCLIArgument
         }.getFullList()
+    }
+
+    override val loadedKlibs = loadNativeKlibs(configuration, target).let { original ->
+        // Avoid having duplicates of the same `KotlinLibrary` loaded by the KLIB resolver and `KlibLoader`.
+        // TODO(KT-61096): Drop this `let { ... }` block when completely switching to `KlibLoader`.
+        // Note: The order of libraries is not important.
+        val canonicalPathToLibraryLoadedByKlibResolver: Map<Path, KotlinLibrary> = resolvedLibraries.getFullList().associateBy { it.canonicalPath }
+
+        val substituted = LoadedNativeKlibs(
+                all = original.all.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                friends = original.friends.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                exported = original.exported.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                included = original.included.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                toAddToCache = original.toAddToCache?.let { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+        )
+
+        substituted
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
@@ -615,9 +629,12 @@ class NativeSecondStageCompilationConfig(
         else -> null
     }
 
-    internal val cacheSupport = CacheSupport(
+    internal var cacheSupport: CacheSupport = createCacheSupport()
+        private set
+
+    private fun createCacheSupport() = CacheSupport(
             configuration = configuration,
-            resolvedLibraries = resolvedLibraries,
+            allLibraries = resolvedLibraries.getFullList(), // Note: There is the need to have RTO of libs in certain cases inside CacheSupport.
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,
@@ -625,6 +642,10 @@ class NativeSecondStageCompilationConfig(
             target = target,
             produce = produce
     )
+
+    internal fun reloadCacheSupport() {
+        cacheSupport = createCacheSupport()
+    }
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
@@ -712,9 +733,6 @@ class NativeSecondStageCompilationConfig(
 
     val languageVersionSettings: LanguageVersionSettings
         get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-
-    val purgeUserLibs: Boolean
-        get() = configuration.konanPurgeUserLibs
 
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"

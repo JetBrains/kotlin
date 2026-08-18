@@ -1,0 +1,3 @@
+package test
+
+public fun fff(/*0*/ java.lang.Integer?): kotlin.Int

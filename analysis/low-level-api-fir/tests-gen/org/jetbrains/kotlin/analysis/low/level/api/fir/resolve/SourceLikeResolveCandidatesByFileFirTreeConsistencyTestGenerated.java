@@ -215,6 +215,18 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
   }
 
   @Test
+  @TestMetadata("localLookupSafeQualifiedExpression.kt")
+  public void testLocalLookupSafeQualifiedExpression() {
+    run("localLookupSafeQualifiedExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("lookupLocallyShadows.kt")
+  public void testLookupLocallyShadows() {
+    run("lookupLocallyShadows.kt");
+  }
+
+  @Test
   @TestMetadata("multiEquals.kt")
   public void testMultiEquals() {
     run("multiEquals.kt");

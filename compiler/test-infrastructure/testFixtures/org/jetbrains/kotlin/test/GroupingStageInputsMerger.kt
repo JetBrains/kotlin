@@ -68,3 +68,6 @@ class GroupingStageInputsHolder(val nonGroupingStageOutputs: List<NonGroupingSta
 private val TestServices.groupingStageInputsHolder: GroupingStageInputsHolder by TestServices.testServiceAccessor()
 val TestServices.groupingStageInputs: List<NonGroupingStageOutput>
     get() = groupingStageInputsHolder.nonGroupingStageOutputs
+
+fun List<NonGroupingStageOutput>.isSingleTestBatch(): Boolean = map { it.testServices.testInfo }.distinct().size == 1
+fun TestServices.isSingleTestBatch(): Boolean = groupingStageInputs.isSingleTestBatch()

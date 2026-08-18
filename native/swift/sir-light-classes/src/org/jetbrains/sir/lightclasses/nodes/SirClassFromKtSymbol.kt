@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.providers.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImportFor
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
@@ -26,7 +28,6 @@ import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
@@ -79,8 +80,12 @@ internal abstract class SirAbstractClassFromKtSymbol(
         }
     }
 
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
+    val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
+
+    override val documentation: String? by lazyWithSessions {
+        translateDocumentation(kdocElements)
     }
 
     override val name: String by lazyWithSessions {
@@ -112,6 +117,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirAbstractClassFromKtSymbol.translatedAttributes)
+            addDocumentationVisibility(kdocElements)
             replaceOrAddPropagatedUnavailability {
                 superClass?.unavailableTypes ?: emptyList()
             }
@@ -147,7 +153,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
         val isUnavailable = this.isUnavailable
-        ktSymbol.superTypes
+        val errorConformance = SirSwiftModule.error.takeIf { ktSymbol.classId == StandardClassIds.Throwable }
+
+        listOfNotNull(errorConformance) + ktSymbol.superTypes
             .asSequence()
             .filterIsInstance<KaClassType>()
             .mapNotNull { it.expandedSymbol }
@@ -222,7 +230,7 @@ internal class SirObjectAccessorVariableFromKtSymbol(
         sirSession: SirSession,
     ) : SirAbstractGetter(sirSession), SirFromKtSymbol<KaNamedClassSymbol> {
         override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
-        override val documentation: String? by lazy { ktSymbol.documentation() }
+        override val documentation: String? get() = null
         override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
         override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
         override val isAsync: Boolean get() = false
@@ -255,9 +263,7 @@ internal class SirObjectAccessorVariableFromKtSymbol(
     }
     override val setter: SirSetter? get() = null
 
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
-    }
+    override val documentation: String? get() = null
 
     override val attributes: List<SirAttribute> by lazy {
         this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })

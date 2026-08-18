@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibFieldShadowingOverridabilityCondition
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.container.get
@@ -124,7 +124,10 @@ object JKlibIrCompilationPhase :
             symbolTable = symbolTable,
             descriptorMangler = mangler,
             typeSystemContextFactory = ::JvmIrTypeSystemContext,
-            externalOverridabilityConditions = listOf(IrJavaIncompatibilityRulesOverridabilityCondition()),
+            externalOverridabilityConditions = listOf(
+                IrJavaIncompatibilityRulesOverridabilityCondition(),
+                JKlibFieldShadowingOverridabilityCondition,
+            ),
         )
 
         // Deserialize modules
@@ -132,11 +135,14 @@ object JKlibIrCompilationPhase :
         // so that we don't rely on linker side effects for proper deserialization.
         lateinit var mainModuleFragment: IrModuleFragment
         for ([dep, descriptor] in dependencyDescriptorsByKlib) {
-            when {
-                descriptor == mainModule -> {
-                    mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
-                }
-                else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+            val strategy = if (descriptor == mainModule || dep.isJklibStdlib) {
+                DeserializationStrategy.ALL
+            } else {
+                DeserializationStrategy.WITH_INLINE_BODIES
+            }
+            val moduleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { strategy })
+            if (descriptor == mainModule) {
+                mainModuleFragment = moduleFragment
             }
         }
 
@@ -171,7 +177,6 @@ object JKlibIrCompilationPhase :
             linker = linker,
         )
 
-        linker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 

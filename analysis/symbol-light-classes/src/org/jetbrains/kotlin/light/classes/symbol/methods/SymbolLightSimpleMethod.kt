@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -53,7 +54,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             if (isJvmExposedBoxed) {
                 computeJvmExposeBoxedMethodName(functionSymbol, defaultName)
             } else {
-                computeJvmMethodName(functionSymbol, defaultName)
+                functionSymbol.javaMethodName ?: defaultName
             }
         }
     }
@@ -195,7 +196,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
     context(session: KaSession)
     private fun isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
-        return expandedType.isUnitType && !expandedType.isMarkedNullable
+        return expandedType.classId == KaStandardTypeClassIds.UNIT && !expandedType.isMarkedNullable
     }
 
     private val _returnedType: PsiType by lazyPub {
@@ -266,7 +267,11 @@ internal open class SymbolLightSimpleMethod protected constructor(
                 methodIndexBase = methodIndex,
             ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
                 val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
-                    hasValueClassInParameterType = hasValueClassInParameterType,
+                    // Not every value class in a parameter position mangles the name, so the check cannot be reused from above
+                    hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(
+                        callableSymbol = functionSymbol,
+                        valueParameterPickMask = valueParameterPickMask,
+                    ),
                     hasValueClassInReturnType = hasValueClassInReturnType,
                     isTopLevel = isTopLevel,
                 )

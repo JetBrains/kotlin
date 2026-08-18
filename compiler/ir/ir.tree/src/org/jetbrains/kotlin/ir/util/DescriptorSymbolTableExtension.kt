@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.threadLocal
 
 @ObsoleteDescriptorBasedAPI
@@ -335,7 +336,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return externalPackageFragmentSlice.declare(
             descriptor,
             { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it, descriptor.fqName) }
+            { IrExternalPackageFragmentImpl(it, descriptor.fqName, IrModuleFragmentImpl(descriptor.module)) }
         )
     }
 
@@ -343,7 +344,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return externalPackageFragmentSlice.declareIfNotExists(
             descriptor,
             { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it, descriptor.fqName) }
+            { IrExternalPackageFragmentImpl(it, descriptor.fqName, IrModuleFragmentImpl(descriptor.module)) }
         )
     }
 

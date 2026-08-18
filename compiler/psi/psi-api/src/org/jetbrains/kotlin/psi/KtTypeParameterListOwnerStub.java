@@ -61,6 +61,13 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
     /**
      * @deprecated Use {@link KtModifierList#getContextParameterList()} (via {@link #getModifierList()}) instead. This method is obsolete and exists for compatibility reasons only.
      */
+    @kotlin.Deprecated(
+            message = "Use 'KtModifierList.getContextParameterList()' (via 'getModifierList()') instead. This method is obsolete and exists for compatibility reasons only.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "modifierList?.contextParameterList",
+                    imports = {}
+            )
+    )
     @Deprecated
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
@@ -80,6 +87,13 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
      * @return a non-null list of {@link KtContextReceiverList} defined in the associated modifier list.
      * Returns an empty list if no context receiver lists are present.
      */
+    @kotlin.Deprecated(
+            message = "Use 'KtModifierList.getContextParameterLists()' (via 'getModifierList()') instead. This method is obsolete and exists for compatibility reasons only.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "modifierList?.contextParameterLists.orEmpty()",
+                    imports = {}
+            )
+    )
     @Deprecated
     @SuppressWarnings("unchecked")
     @NotNull

@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.reflect.KClass
-import kotlin.test.junit.JUnitAsserter.fail
+import kotlin.test.fail
 
 class ReflectionIntegrationTest {
     private lateinit var testInfo: TestInfo
@@ -147,6 +147,29 @@ class ReflectionIntegrationTest {
         if ("JvmProtoBuf" in stdout || "JvmProtoBuf" in stderr) {
             fail("Full reflection should not be loaded:\n\n$stdout\n\n$stderr\n\n")
         }
+    }
+
+    @Test
+    fun testDifferentClassLoaders() {
+        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
+        val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/differentClassLoaders").path
+
+        compileJavaFiles(
+            listOf(File("$root/Main.java")),
+            listOf("-d", tmpdir.absolutePath)
+        ).assertSuccessful()
+
+        val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
+
+        runJava(
+            "-ea",
+            "-classpath",
+            tmpdir.absolutePath,
+            "Main",
+            lib.absolutePath,
+            ForTestCompileRuntime.runtimeJarForTests().absolutePath,
+            ForTestCompileRuntime.reflectJarForTests().absolutePath,
+        )
     }
 
     @Test

@@ -91,6 +91,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: topLevelFunction
   importableFqName: topLevelFunction
 
 KaTypeParameterSymbol:
@@ -213,6 +214,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: TypeParametersStressTestKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getTopLevelProperty
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -298,8 +300,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: TypeParametersStressTestKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getTopLevelProperty
-  javaSetterName: null
   isInline: false
   importableFqName: topLevelProperty
 
@@ -470,6 +470,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: TopLevelClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: TopLevelClass
 
 KaTypeParameterSymbol:
@@ -647,6 +648,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: localMemberFunction
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -842,6 +844,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -914,6 +917,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: nestedFunction
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -1146,6 +1150,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: localMemberFunction
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -1341,6 +1346,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: null
   importableFqName: null
 
 KaLocalVariableSymbol:
@@ -1446,6 +1452,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: nestedFunction
   importableFqName: null
 
 KaNamedClassSymbol:

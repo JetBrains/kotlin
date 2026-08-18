@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff.impl
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasExpansions
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.*
@@ -38,12 +39,12 @@ internal object SingleClassSnapshotter {
     /** Computes a [KotlinClassSnapshot] of the given Kotlin class. */
     fun snapshotKotlinClass(
         classFile: ClassFileWithContents,
-        granularity: ClassSnapshotGranularity,
+        settings: ClasspathEntrySnapshotter.Settings,
         kotlinClassInfo: KotlinClassInfo,
     ): KotlinClassSnapshot {
         val classId = kotlinClassInfo.classId
         val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).hashToLong()
-        val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }
+        val classMemberLevelSnapshot = kotlinClassInfo.takeIf { settings.granularity == CLASS_MEMBER_LEVEL }
 
         return when (kotlinClassInfo.classKind) {
             CLASS -> RegularKotlinClassSnapshot(
@@ -52,10 +53,14 @@ internal object SingleClassSnapshotter {
                 companionObjectName = kotlinClassInfo.companionObject?.shortClassName?.identifier,
                 constantsInCompanionObject = kotlinClassInfo.constantsInCompanionObject
             )
-            FILE_FACADE, MULTIFILE_CLASS_PART -> PackageFacadeKotlinClassSnapshot(
-                classId, classAbiHash, classMemberLevelSnapshot,
-                packageMemberNames = (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMembers().toSet()
-            )
+            FILE_FACADE, MULTIFILE_CLASS_PART -> {
+                val packagePartProtoData = kotlinClassInfo.protoData as PackagePartProtoData
+                PackageFacadeKotlinClassSnapshot(
+                    classId, classAbiHash, classMemberLevelSnapshot,
+                    packageMemberNames = packagePartProtoData.getNonPrivateMembers().toSet(),
+                    typeAliases = packagePartProtoData.getTypeAliasSnapshotsOrNull(settings.expandTypeAliases)
+                )
+            }
             MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
                 constantNames = kotlinClassInfo.extraInfo.constantSnapshots.keys
@@ -118,5 +123,13 @@ internal object SingleClassSnapshotter {
             classMemberLevelSnapshot = classMemberLevelSnapshot,
             supertypes = classFile.classInfo.supertypes
         )
+    }
+
+    private fun PackagePartProtoData.getTypeAliasSnapshotsOrNull(expandTypeAliases: Boolean): List<TypeAliasSnapshot>? {
+        if (!expandTypeAliases) {
+            return null
+        }
+
+        return getVisibleTypeAliasExpansions().map { TypeAliasSnapshot(it.first, it.second) }
     }
 }

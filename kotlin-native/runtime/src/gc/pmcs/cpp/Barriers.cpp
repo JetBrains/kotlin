@@ -9,9 +9,9 @@
 #include <atomic>
 
 #include "GCImpl.hpp"
-#include "SafePoint.hpp"
-#include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
+#include "mm/SafePoint.hpp"
+#include "mm/ThreadData.hpp"
+#include "mm/ThreadRegistry.hpp"
 
 using namespace kotlin;
 

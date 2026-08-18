@@ -1,5 +1,3 @@
-// JAVAC_EXPECTED_FILE
-
 // FILE: P.java
 interface P<X, Y> {}
 

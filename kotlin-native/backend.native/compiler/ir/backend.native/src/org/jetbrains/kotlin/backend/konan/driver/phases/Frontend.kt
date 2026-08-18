@@ -28,7 +28,6 @@ sealed class FrontendPhaseOutput {
             val moduleDescriptor: ModuleDescriptor,
             val bindingContext: BindingContext,
             val frontendServices: FrontendServices,
-            val environment: KotlinCoreEnvironment,
     ) : FrontendPhaseOutput()
 }
 
@@ -54,7 +53,11 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
 
         val sourceFiles = input.getSourceFiles()
 
-        require(context.config.produce == CompilerOutputKind.LIBRARY || sourceFiles.isEmpty()) {
+        check(context.config.produce != CompilerOutputKind.LIBRARY) {
+            "Internal error: An attempt to run the 2nd compilation stage to produce ${CompilerOutputKind.LIBRARY}"
+        }
+
+        check(sourceFiles.isEmpty()) {
             "Internal error: no source files should have been passed here (${sourceFiles.first().virtualFilePath} in particular)\n" +
                     "to produce binary (e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()})\n" +
                     "KonanDriver.kt::splitOntoTwoStages() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
@@ -77,7 +80,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     val bindingContext = analysisResult.bindingContext
 
     if (analysisResult.shouldGenerateCode) {
-        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices, input)
+        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices)
     } else {
         FrontendPhaseOutput.ShouldNotGenerateCode
     }

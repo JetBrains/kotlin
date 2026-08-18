@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compose.compiler.gradle
 
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithMPP
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.composeOptions
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -23,7 +22,7 @@ class EnabledPlatformsConfigurationTest {
     @Test
     fun allKotlinPlatformsAreUsedByDefault() {
         val project = buildProjectWithMPP {
-            extensions.getByType<KotlinMultiplatformExtension>().apply {
+            extensions.getByType(KotlinMultiplatformExtension::class.java).apply {
                 jvm()
                 js { nodejs() }
                 wasmJs()
@@ -60,7 +59,7 @@ class EnabledPlatformsConfigurationTest {
     @Test
     fun disableKotlinPlatforms() {
         val project = buildProjectWithMPP {
-            extensions.getByType<KotlinMultiplatformExtension>().apply {
+            extensions.getByType(KotlinMultiplatformExtension::class.java).apply {
                 jvm()
                 js { nodejs() }
                 wasmJs()
@@ -70,7 +69,7 @@ class EnabledPlatformsConfigurationTest {
                 applyDefaultHierarchyTemplate()
             }
 
-            extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
                 .targetKotlinPlatforms
                 .set(setOf(KotlinPlatformType.jvm))
         }

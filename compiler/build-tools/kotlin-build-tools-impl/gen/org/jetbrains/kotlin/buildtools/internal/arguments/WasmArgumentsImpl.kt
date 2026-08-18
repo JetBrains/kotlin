@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_ARRAY_RANGE_CHECKS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_ASSERTS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_TAIL_CALLS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_DWARF
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_WAT
@@ -58,10 +59,9 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class WasmArgumentsImpl(
-  private val adapter: WasmArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
+) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
     WasmCompilerArguments,
     WasmCompilerArguments.Builder,
     WasmCompilerKlibArguments,
@@ -87,7 +87,7 @@ internal class WasmArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -95,14 +95,14 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -110,14 +110,14 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -125,10 +125,10 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
-  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): WasmArgumentsImpl = deepCopy()
 
@@ -150,6 +150,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in this) { arguments.wasmDisableArrayRangeChecksSafeElimination = get(X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)}
     if (X_WASM_ENABLE_ARRAY_RANGE_CHECKS in this) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)}
     if (X_WASM_ENABLE_ASSERTS in this) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)}
+    if (X_WASM_ENABLE_TAIL_CALLS in this) { arguments.wasmEnableTailCalls = get(X_WASM_ENABLE_TAIL_CALLS)}
     if (X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE in this) { arguments.wasmGenerateClosedWorldMultimodule = get(X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)}
     if (X_WASM_GENERATE_DWARF in this) { arguments.generateDwarf = get(X_WASM_GENERATE_DWARF)}
     if (X_WASM_GENERATE_WAT in this) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT)}
@@ -180,6 +181,7 @@ internal class WasmArgumentsImpl(
     try { this[X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION] = arguments.wasmDisableArrayRangeChecksSafeElimination } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = arguments.wasmEnableArrayRangeChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_ENABLE_ASSERTS] = arguments.wasmEnableAsserts } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_ENABLE_TAIL_CALLS] = arguments.wasmEnableTailCalls } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE] = arguments.wasmGenerateClosedWorldMultimodule } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_GENERATE_DWARF] = arguments.generateDwarf } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_GENERATE_WAT] = arguments.wasmGenerateWat } catch (_: NoSuchMethodError) {  }
@@ -208,6 +210,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in this) { arguments.wasmDisableArrayRangeChecksSafeElimination = get(X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)}
     if (X_WASM_ENABLE_ARRAY_RANGE_CHECKS in this) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)}
     if (X_WASM_ENABLE_ASSERTS in this) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)}
+    if (X_WASM_ENABLE_TAIL_CALLS in this) { arguments.wasmEnableTailCalls = get(X_WASM_ENABLE_TAIL_CALLS)}
     if (X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE in this) { arguments.wasmGenerateClosedWorldMultimodule = get(X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)}
     if (X_WASM_GENERATE_DWARF in this) { arguments.generateDwarf = get(X_WASM_GENERATE_DWARF)}
     if (X_WASM_GENERATE_WAT in this) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT)}
@@ -279,6 +282,9 @@ internal class WasmArgumentsImpl(
         WasmArgument("X_WASM_ENABLE_ARRAY_RANGE_CHECKS")
 
     public val X_WASM_ENABLE_ASSERTS: WasmArgument<Boolean> = WasmArgument("X_WASM_ENABLE_ASSERTS")
+
+    public val X_WASM_ENABLE_TAIL_CALLS: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_ENABLE_TAIL_CALLS")
 
     public val X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE: WasmArgument<Boolean> =
         WasmArgument("X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")

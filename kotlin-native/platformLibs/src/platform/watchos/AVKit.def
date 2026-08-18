@@ -2,5 +2,6 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Security darwin
 language = Objective-C
 package = platform.AVKit
 modules = AVKit
+apiNotesSwiftName = true
 compilerOpts = -framework AVKit
 linkerOpts = -framework AVKit

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendClassResolver {
-    fun resolveToClassDescriptors(type: Type): List<ClassDescriptor>
+    fun resolveToClasses(type: Type): List<IrClass>
 }
 
 val Type.classId: ClassId

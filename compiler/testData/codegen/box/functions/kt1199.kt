@@ -1,4 +1,6 @@
 // DUMP_IR
+// DUMP_IR_DIFFERENCE: JS_IR, JS_IR_ES6
+
 interface MyIterator<T> {
     operator fun hasNext() : Boolean
     operator fun next() : T

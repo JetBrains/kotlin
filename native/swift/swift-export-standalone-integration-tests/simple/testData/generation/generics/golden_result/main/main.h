@@ -37,6 +37,8 @@ int32_t Demo_foo_get(void * self);
 
 void * GenericWithComparableUpperBound_t_get(void * self);
 
+void * HolderConstrained_xs_get(void * self);
+
 void * _Nullable Holder_headOrNull(void * self);
 
 void * Holder_xs_get(void * self);
@@ -106,6 +108,10 @@ void * __root___TripleBox_init_allocate();
 _Bool __root___TripleBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * _Nullable __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
+
+void * __root___bar_get();
+
+void * __root___baz_get();
 
 NSDictionary<id, id> * __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(NSArray<id> * pairs);
 

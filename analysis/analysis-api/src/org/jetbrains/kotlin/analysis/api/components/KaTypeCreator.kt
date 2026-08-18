@@ -96,7 +96,7 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
     @Deprecated(
         "Use `isMarkedNullable` instead.",
         ReplaceWith("isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
     )
     @Suppress("DEPRECATION_ERROR")
     public var nullability: KaTypeNullability
@@ -137,7 +137,7 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
     @Deprecated(
         "Use `isMarkedNullable` instead.",
         ReplaceWith("isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
     )
     @Suppress("DEPRECATION_ERROR")
     public var nullability: KaTypeNullability

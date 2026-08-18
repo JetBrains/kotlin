@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirEmptySubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirGenericSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirSubstitutorBuilder
@@ -41,7 +42,9 @@ internal class KaFirSubstitutorProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSubstitutorProvider, KaFirSessionComponent {
     override fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
         withValidityAssertion {
-            if (subClass == superClass) return KaSubstitutor.Empty(token)
+            if (subClass == superClass) {
+                return emptySubstitutor()
+            }
 
             val baseFirSymbol = subClass.firSymbol
             val superFirSymbol = superClass.firSymbol
@@ -50,7 +53,7 @@ internal class KaFirSubstitutorProvider(
                 type.substitutorForSuperType(rootModuleSession, symbol)
             }
             return when (substitutors.size) {
-                0 -> KaSubstitutor.Empty(token)
+                0 -> emptySubstitutor()
                 else -> {
                     val chained = substitutors.reduce { left, right -> left.chain(right) }
                     firSymbolBuilder.typeBuilder.buildSubstitutor(chained)
@@ -89,7 +92,9 @@ internal class KaFirSubstitutorProvider(
     }
 
     override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor = withValidityAssertion {
-        if (mappings.isEmpty()) return KaSubstitutor.Empty(token)
+        if (mappings.isEmpty()) {
+            return emptySubstitutor()
+        }
 
         val substitution = buildMap {
             mappings.forEach { [typeParameterSymbol, type] ->
@@ -103,6 +108,10 @@ internal class KaFirSubstitutorProvider(
             is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
             else -> KaFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
         }
+    }
+
+    override fun emptySubstitutor(): KaSubstitutor.Empty = withValidityAssertion {
+        return KaFirEmptySubstitutor(token)
     }
 
     override fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor = withValidityAssertion {
@@ -148,7 +157,7 @@ internal class KaFirSubstitutorProvider(
     ): KaSubstitutor? {
         with(analysisSession) {
             if (leftTypesToRightTypes.isEmpty()) {
-                return KaSubstitutor.Empty(analysisSession.token)
+                return emptySubstitutor()
             }
 
             val leftTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
@@ -163,7 +172,7 @@ internal class KaFirSubstitutorProvider(
              * a regular [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] is called.
              */
             if (rightTypeParameters.isEmpty() && leftTypeParameters.isEmpty()) {
-                return KaSubstitutor.Empty(analysisSession.token).takeIf {
+                return emptySubstitutor().takeIf {
                     leftTypesToRightTypes.all { [leftType, rightType] ->
                         leftType.isSubtypeOf(rightType)
                     }

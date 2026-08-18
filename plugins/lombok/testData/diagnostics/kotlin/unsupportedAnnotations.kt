@@ -10,18 +10,6 @@ class KotlinClass {
     companion object
 }
 
-class BuilderOnConstructor {
-    <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!> // @Builder on constructor is not yet supported
-    constructor() {
-    }
-}
-
-class BuilderOnFunction {
-    <!ANNOTATION_HAS_NO_EFFECT!>@<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>Builder<!><!> // @Builder on functions is not yet supported
-    fun f() {
-    }
-}
-
 // Make sure compiler doesn't crash on unsupported annotations that are being processed
 
 <!ANNOTATION_IS_NOT_SUPPORTED!>@AllArgsConstructor<!>

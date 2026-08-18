@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
-import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -24,9 +23,6 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
-
-internal const val SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.base.compiler.arguments"
-internal val isRunningTestOnK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
 
 fun evalFile(
     scriptFile: File,
@@ -55,10 +51,7 @@ fun evalFileWithConfigurations(
         }
     )
 
-    val host =
-        if (isRunningTestOnK2) BasicJvmScriptingHost()
-        else BasicJvmScriptingHost.createLegacy()
-
+    val host = BasicJvmScriptingHost()
     return host.eval(scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration)
 }
 
@@ -141,6 +134,17 @@ class MainKtsTest {
     fun testResolveLog4jAndDocopt() {
         val res = evalFile(File("$TEST_DATA_ROOT/resolve-log4j-and-docopt.main.kts"))
         assertSucceeded(res)
+    }
+
+    @Test
+    fun testImportKt87958() {
+
+        val out = captureOut {
+            val res = evalFile(File("$TEST_DATA_ROOT/kt87958/testing.main.kts"))
+            assertSucceeded(res)
+        }.lines()
+
+        assertEquals(listOf("Ok"), out)
     }
 
     @Test
@@ -350,12 +354,6 @@ class MainKtsTest {
     private fun String.containsIgnoringPunctuation(it: String): Boolean {
         return this.replace(regexNonWord, "").contains(it.replace(regexNonWord, ""))
     }
-
-    private fun evalSuccessWithOut(scriptFile: File, cacheDir: File? = null): List<String> =
-        captureOut {
-            val res = evalFile(scriptFile, cacheDir)
-            assertSucceeded(res)
-        }.lines()
 }
 
 class CacheDirectoryDetectorTest {

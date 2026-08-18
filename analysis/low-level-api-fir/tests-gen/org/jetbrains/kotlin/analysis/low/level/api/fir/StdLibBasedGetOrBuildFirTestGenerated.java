@@ -44,4 +44,16 @@ public class StdLibBasedGetOrBuildFirTestGenerated extends AbstractStdLibBasedGe
   public void testFromBits() {
     run("fromBits.kt");
   }
+
+  @Test
+  @TestMetadata("jvmNameCommon.kt")
+  public void testJvmNameCommon() {
+    run("jvmNameCommon.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmNameJvm.kt")
+  public void testJvmNameJvm() {
+    run("jvmNameJvm.kt");
+  }
 }

@@ -12,8 +12,6 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -23,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescr
 
 fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarget {
     val project = this.project
-    val androidExtension = project.extensions.getByType<LibraryExtension>()
+    val androidExtension = project.extensions.getByType(LibraryExtension::class.java)
 
     /*
     Set a variant filter and only allow 'debug'.
@@ -54,11 +52,11 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         apiElements.configure { _, configuration ->
             configuration.attributes.attributeProvider(
                 TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                project.provider { project.objects.named(TargetJvmEnvironment::class.java, TargetJvmEnvironment.ANDROID) }
             )
             configuration.attributes.attributeProvider(
                 AgpVersionAttr.ATTRIBUTE,
-                project.provider { project.objects.named("7.4.0-beta02") } /* For demo */
+                project.provider { project.objects.named(AgpVersionAttr::class.java, "7.4.0-beta02") } /* For demo */
             )
         }
 
@@ -69,11 +67,11 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         runtimeElements.configure { _, configuration ->
             configuration.attributes.attributeProvider(
                 TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                project.provider { project.objects.named(TargetJvmEnvironment::class.java, TargetJvmEnvironment.ANDROID) }
             )
             configuration.attributes.attributeProvider(
                 AgpVersionAttr.ATTRIBUTE,
-                project.provider { project.objects.named("7.4.0-beta02") } /* For demo */
+                project.provider { project.objects.named(AgpVersionAttr::class.java, "7.4.0-beta02") } /* For demo */
             )
         }
 
@@ -84,12 +82,12 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         sourcesElements.configure { _, configuration ->
             configuration.attributes.attributeProvider(
                 TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                project.provider { project.objects.named(TargetJvmEnvironment::class.java, TargetJvmEnvironment.ANDROID) }
             )
             configuration.attributes.attributeProvider(
                 AgpVersionAttr.ATTRIBUTE,
                 project.provider {
-                    project.objects.named("7.4.0-beta02") /* For demo */
+                    project.objects.named(AgpVersionAttr::class.java, "7.4.0-beta02") /* For demo */
                 }
             )
         }
@@ -107,7 +105,7 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
             configuration.attributes.attributeProvider(
                 TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
                 project.provider {
-                    project.objects.named(TargetJvmEnvironment.ANDROID)
+                    project.objects.named(TargetJvmEnvironment::class.java, TargetJvmEnvironment.ANDROID)
                 }
             )
         }
@@ -121,7 +119,7 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
             configuration.attributes.attributeProvider(
                 TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
                 project.provider {
-                    project.objects.named(TargetJvmEnvironment.ANDROID)
+                    project.objects.named(TargetJvmEnvironment::class.java,TargetJvmEnvironment.ANDROID)
                 }
             )
         }

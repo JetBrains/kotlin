@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
 class KotlinClassStubImpl(
@@ -28,10 +27,14 @@ class KotlinClassStubImpl(
     override val isLocal: Boolean,
     override val isTopLevel: Boolean,
     override val kdocText: String?,
+    /**
+     * How the class is unboxed by the compiler if it is a value class, or `null` if it is not a value class.
+     * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
+     */
     val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
-    elementType = KtStubElementTypes.CLASS,
+    elementType = KtNodeTypes.CLASS,
 ), KotlinClassStub {
     override val fqName: FqName?
         get() = qualifiedName?.string?.let(::FqName)

@@ -11,7 +11,11 @@ import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 
 class JavaParsingBasicTest : JavaParsingTestBase() {
 
@@ -19,19 +23,19 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
     fun testBasicJavaParsing() {
         val source = "public final class A {}"
         val javaClass = parseFirstClass(source)
-        assert(javaClass.name.asString() == "A")
-        assert(javaClass.isFinal)
-        assert(!javaClass.isAbstract)
-        assert(javaClass.visibility.toString() == "public")
+        assertEquals("A", javaClass.name.asString())
+        assertTrue(javaClass.isFinal)
+        assertFalse(javaClass.isAbstract)
+        assertEquals("public", javaClass.visibility.toString())
     }
 
     @Test
     fun testAbstractInterface() {
         val source = "interface I {}"
         val javaClass = parseFirstClass(source)
-        assert(javaClass.name.asString() == "I")
-        assert(javaClass.isInterface)
-        assert(javaClass.isAbstract)
+        assertEquals("I", javaClass.name.asString())
+        assertTrue(javaClass.isInterface)
+        assertTrue(javaClass.isAbstract)
     }
 
     @Test
@@ -41,7 +45,7 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
             class A {}
         """.trimIndent()
         val javaClass = parseFirstClass(source)
-        assert(javaClass.fqName.asString() == "com.example.A")
+        assertEquals("com.example.A", javaClass.fqName.asString())
     }
 
     @Test
@@ -57,11 +61,10 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         val tree = parsed.tree
 
         val packageStmt = tree.findChildByType(parsed.root, JavaSyntaxElementType.PACKAGE_STATEMENT)
-        assert(packageStmt != null) { "Expected PACKAGE_STATEMENT node" }
-        val packageName = packageStmt?.let {
-            tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
-        }
-        assert(packageName == "example") { "Expected 'example', got $packageName" }
+        assertNotNull(packageStmt, "Expected PACKAGE_STATEMENT node")
+        val packageName =
+            tree.findChildByType(packageStmt, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
+        assertEquals("example", packageName)
     }
 
     @Test
@@ -94,21 +97,21 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         }
         val fooTypeNode = tree.findChildByType(fooMethod, JavaSyntaxElementType.TYPE)!!
         val fooTypes = collectTypes(fooTypeNode)
-        assert(fooTypes.any { it == "QUEST" }) { "foo should have QUEST in: $fooTypes" }
+        assertTrue(fooTypes.any { it == "QUEST" }, "foo should have QUEST in: $fooTypes")
 
         val barMethod = methods.first {
             tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "bar"
         }
         val barTypeNode = tree.findChildByType(barMethod, JavaSyntaxElementType.TYPE)!!
         val barTypes = collectTypes(barTypeNode)
-        assert(barTypes.any { it == "QUEST" }) { "bar should have QUEST in: $barTypes" }
+        assertTrue(barTypes.any { it == "QUEST" }, "bar should have QUEST in: $barTypes")
 
         val bazMethod = methods.first {
             tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "baz"
         }
         val bazTypeNode = tree.findChildByType(bazMethod, JavaSyntaxElementType.TYPE)!!
         val bazTypes = collectTypes(bazTypeNode)
-        assert(bazTypes.any { it == "QUEST" }) { "baz should have QUEST in: $bazTypes" }
-        assert(bazTypes.any { it == "SUPER_KEYWORD" }) { "baz should have SUPER_KEYWORD in: $bazTypes" }
+        assertTrue(bazTypes.any { it == "QUEST" }, "baz should have QUEST in: $bazTypes")
+        assertTrue(bazTypes.any { it == "SUPER_KEYWORD" }, "baz should have SUPER_KEYWORD in: $bazTypes")
     }
 }

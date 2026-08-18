@@ -1,0 +1,12 @@
+b main.kt:14
+r
+p x
+s
+s
+s
+s
+bt
+p x
+p y
+p z
+q

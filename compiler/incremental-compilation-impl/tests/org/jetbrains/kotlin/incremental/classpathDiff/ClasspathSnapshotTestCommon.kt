@@ -182,13 +182,20 @@ abstract class ClasspathSnapshotTestCommon {
 
         fun ClassFile.readBytes() = asFile().readBytes()
 
-        fun ClassFile.snapshot(granularity: ClassSnapshotGranularity? = null): ClassSnapshot = listOf(this).snapshot(granularity).single()
+        fun ClassFile.snapshot(
+            granularity: ClassSnapshotGranularity? = null,
+            expandTypeAliases: Boolean = false,
+        ): ClassSnapshot = listOf(this).snapshot(granularity, expandTypeAliases).single()
 
-        fun List<ClassFile>.snapshot(granularity: ClassSnapshotGranularity? = null): List<ClassSnapshot> {
+        fun List<ClassFile>.snapshot(
+            granularity: ClassSnapshotGranularity? = null,
+            expandTypeAliases: Boolean = false,
+        ): List<ClassSnapshot> {
             val classes = map { ClassFileWithContentsProvider(it) { it.readBytes() } }
             val settings = ClasspathEntrySnapshotter.Settings(
                 granularity = granularity ?: ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
-                parseInlinedLocalClasses = false
+                parseInlinedLocalClasses = false,
+                expandTypeAliases = expandTypeAliases
             )
             return PlainClassListSnapshotter(classes, settings).snapshot()
         }
@@ -198,7 +205,8 @@ abstract class ClasspathSnapshotTestCommon {
 internal fun snapshotClasspath(
     classpathSourceDir: File,
     tmpDir: File,
-    granularity: ClassSnapshotGranularity? = null
+    granularity: ClassSnapshotGranularity? = null,
+    expandTypeAliases: Boolean = false,
 ): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
     val classpathEntrySourceDirs = if (classpathSourceDir.listFiles()!!.size == 1) {
@@ -211,7 +219,7 @@ internal fun snapshotClasspath(
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshot(granularity)
+        val classSnapshots = classFiles.snapshot(granularity, expandTypeAliases)
         ClasspathEntrySnapshot(
             classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
         )

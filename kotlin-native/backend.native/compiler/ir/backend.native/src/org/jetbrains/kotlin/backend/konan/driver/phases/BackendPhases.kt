@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -48,14 +48,6 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<NativeBa
     SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns).lower(input.irModule)
 }
 
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
-        name = "CopyDefaultValuesToActual",
-        preactions = getDefaultIrActions(),
-        postactions = getDefaultIrActions(),
-) { _, [irModule, irBuiltins] ->
-    ExpectToActualDefaultValueCopier(irModule, irBuiltins).process()
-}
-
 internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: BackendNativeSymbols) {
     runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, irBuiltIns, symbols))
 }
@@ -78,12 +70,12 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
     file.addChild(makeEntryPoint(context))
 }
 
-internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, FrontendPhaseOutput.Full>(
+internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, ModuleDescriptor>(
         "CreateTestBundlePhase",
-) { context, input ->
+) { context, moduleDescriptor ->
     val config = context.config
     val output = OutputFiles(config.outputPath, config.target, config.produce).mainFile
-    createTestBundle(config, input.moduleDescriptor, output)
+    createTestBundle(config, moduleDescriptor, output)
 }
 
 private fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrFile {

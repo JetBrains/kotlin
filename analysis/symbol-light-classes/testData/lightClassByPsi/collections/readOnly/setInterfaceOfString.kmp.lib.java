@@ -5,7 +5,7 @@ public abstract class CSet /* test.CSet*/ implements test.ISet {
 public abstract class CSet2 /* test.CSet2*/ implements test.ISet {
   private final int size;
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JAVAC_EXPECTED_FILE
 // KT-498 Very strange error in the type checker
 
 class IdUnavailableException() : Exception() {}

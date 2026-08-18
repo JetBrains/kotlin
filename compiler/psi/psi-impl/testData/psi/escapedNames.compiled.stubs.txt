@@ -1,3 +1,70 @@
+Annotated Class.class:
+  FILE[kind=File[packageFqName=one two.three four]]
+    PACKAGE_DIRECTIVE
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=one two]
+        REFERENCE_EXPRESSION[referencedName=three four]
+    IMPORT_LIST
+    CLASS[classId=one two/three four/Annotated Class, fqName=one two.three four.Annotated Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotated Class, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation Class With Arguments]
+          valueArguments: [ parameter name -> Enum Class.Enum Entry ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=one two]
+                  REFERENCE_EXPRESSION[referencedName=three four]
+                REFERENCE_EXPRESSION[referencedName=Annotation Class With Arguments]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=parameter name]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=one two]
+                    REFERENCE_EXPRESSION[referencedName=three four]
+                  REFERENCE_EXPRESSION[referencedName=Enum Class]
+                REFERENCE_EXPRESSION[referencedName=Enum Entry]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotated Class]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+Annotation Class With Arguments.class:
+  FILE[kind=File[packageFqName=one two.three four]]
+    PACKAGE_DIRECTIVE
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=one two]
+        REFERENCE_EXPRESSION[referencedName=three four]
+    IMPORT_LIST
+    CLASS[classId=one two/three four/Annotation Class With Arguments, fqName=one two.three four.Annotation Class With Arguments, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class With Arguments, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation Class With Arguments]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=one two.three four.Annotation Class With Arguments.parameter name, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=parameter name]
+            MODIFIER_LIST[public final]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=one two]
+                  REFERENCE_EXPRESSION[referencedName=three four]
+                REFERENCE_EXPRESSION[referencedName=Enum Class]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
 Annotation Class.class:
   FILE[kind=File[packageFqName=one two.three four]]
     PACKAGE_DIRECTIVE
@@ -7,7 +74,7 @@ Annotation Class.class:
     IMPORT_LIST
     CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPEALIAS, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -17,6 +84,39 @@ Annotation Class.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=4]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=ANNOTATION_CLASS]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=TYPEALIAS]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CLASS]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation Class]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

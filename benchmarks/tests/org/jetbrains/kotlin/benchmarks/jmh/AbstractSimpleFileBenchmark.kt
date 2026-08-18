@@ -13,7 +13,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -82,8 +81,6 @@ abstract class AbstractSimpleFileBenchmark {
             newConfiguration(),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
-
-        PsiElementFinder.EP.getPoint(env.project).unregisterExtension(JavaElementFinder::class.java)
 
         file = createFile(
             "test.kt",

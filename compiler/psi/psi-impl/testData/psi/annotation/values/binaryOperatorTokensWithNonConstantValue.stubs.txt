@@ -1,0 +1,113 @@
+Binary.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Binary, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Binary]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Binary.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+
+
+WithElvis.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithElvis, fqName=WithElvis, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithElvis, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Binary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                NULL[kind=NULL, value=null]
+                OPERATION_REFERENCE[operationToken=ELVIS, referencedName=?:]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+
+
+WithIdentityEquality.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithIdentityEquality, fqName=WithIdentityEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithIdentityEquality, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Binary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                OPERATION_REFERENCE[operationToken=EQEQEQ, referencedName====]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+
+
+WithInOperator.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithInOperator, fqName=WithInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInOperator, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Binary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                OPERATION_REFERENCE[operationToken=in, referencedName=in]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  OPERATION_REFERENCE[operationToken=RANGE, referencedName=..]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+
+
+WithNotInOperator.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNotInOperator, fqName=WithNotInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNotInOperator, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Binary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                OPERATION_REFERENCE[operationToken=NOT_IN, referencedName=!in]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  OPERATION_REFERENCE[operationToken=RANGE, referencedName=..]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+
+
+WithRange.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithRange, fqName=WithRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithRange, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Binary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                OPERATION_REFERENCE[operationToken=RANGE, referencedName=..]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]

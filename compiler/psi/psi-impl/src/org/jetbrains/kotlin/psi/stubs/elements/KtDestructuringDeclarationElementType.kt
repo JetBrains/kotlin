@@ -23,8 +23,8 @@ internal object KtDestructuringDeclarationElementType :
     override fun shouldCreateStub(node: ASTNode): Boolean {
         val parent = node.treeParent
         return when (parent?.elementType) {
-            KtFileElementType, KtStubElementTypes.CLASS_BODY -> true
-            KtNodeTypes.BLOCK -> parent.treeParent?.elementType == KtStubElementTypes.SCRIPT
+            KtNodeTypes.FILE, KtNodeTypes.CLASS_BODY -> true
+            KtNodeTypes.BLOCK -> parent.treeParent?.elementType == KtNodeTypes.SCRIPT
             else -> false
         }
     }

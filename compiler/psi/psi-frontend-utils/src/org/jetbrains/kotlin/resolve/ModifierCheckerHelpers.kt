@@ -300,7 +300,10 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.TYPEALIAS
     ),
     FUN_KEYWORD to always(KotlinTarget.INTERFACE),
-    VALUE_KEYWORD to always(KotlinTarget.CLASS_ONLY)
+    VALUE_KEYWORD to or(
+        always(KotlinTarget.CLASS_ONLY),
+        ifSupported(LanguageFeature.FullValueClasses, KotlinTarget.STANDALONE_OBJECT)
+    )
 )
 
 // NOTE: deprecated targets must be possible!

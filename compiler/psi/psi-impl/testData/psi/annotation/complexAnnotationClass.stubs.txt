@@ -1,0 +1,211 @@
+FILE[kind=File[packageFqName=myPack]]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=myPack]
+  IMPORT_LIST
+  CLASS[classId=myPack/MyMetadata, fqName=myPack.MyMetadata, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyMetadata, superNames=[]]
+    MODIFIER_LIST[public annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=RUNTIME]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=CLASS]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.3]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyMetadata]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.kind, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=kind]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=k]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.metadataVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=metadataVersion]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=mv]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.bytecodeVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=bytecodeVersion]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Deprecated]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=level]
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+                    REFERENCE_EXPRESSION[referencedName=WARNING]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=bv]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.data1, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data1]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=d1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Array]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=String]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.data2, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data2]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=d2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Array]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=String]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.extraString, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraString]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=xs]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.packageName, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=packageName]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=1.2]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=pn]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.extraInt, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraInt]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=xi]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

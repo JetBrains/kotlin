@@ -1,0 +1,9 @@
+val name: kotlin.String
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor(name: kotlin.String)

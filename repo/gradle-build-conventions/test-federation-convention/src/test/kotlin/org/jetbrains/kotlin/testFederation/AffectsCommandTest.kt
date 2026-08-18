@@ -11,6 +11,17 @@ import kotlin.test.assertEquals
 class AffectsCommandTest {
 
     @Test
+    fun `test - command contributes to affected domains after expansion`() {
+        val changedDomains = inferChangedDomains(emptyList())
+
+        assertEquals(emptySet(), changedDomains)
+        assertEquals(
+            setOf(Domain.CommonBackend),
+            inferAffectedDomains(changedDomains, listOf("^affects: CommonBackend")),
+        )
+    }
+
+    @Test
     fun `test - no command`() {
         assertEquals(emptySet(), resolveAffectedDomainsFromCommitMessages(listOf("no affects command")))
     }
@@ -23,15 +34,15 @@ class AffectsCommandTest {
     @Test
     fun `test - multiple domains - different separators`() {
         assertEquals(
-            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.Compiler),
-            resolveAffectedDomainsFromCommitMessages(listOf("^affects: Gradle, IntelliJ AnalysisApi; Compiler"))
+            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.CompilerInfrastructure),
+            resolveAffectedDomainsFromCommitMessages(listOf("^affects: Gradle, IntelliJ AnalysisApi; CompilerInfrastructure"))
         )
     }
 
     @Test
     fun `test - multiple commands - in multiple messages`() {
         assertEquals(
-            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.Compiler),
+            setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.CompilerInfrastructure),
             resolveAffectedDomainsFromCommitMessages(
                 listOf(
                     """
@@ -42,7 +53,7 @@ class AffectsCommandTest {
                     ^affects: AnalysisApi
                     foo
                     bar
-                    ^affects: Compiler
+                    ^affects: CompilerInfrastructure
                     """.trimIndent()
                 )
             )

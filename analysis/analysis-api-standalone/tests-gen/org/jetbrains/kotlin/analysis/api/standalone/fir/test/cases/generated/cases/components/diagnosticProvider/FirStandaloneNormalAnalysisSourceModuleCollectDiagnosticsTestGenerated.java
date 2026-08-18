@@ -177,6 +177,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("equalityBoundFromLibrary.kt")
+  public void testEqualityBoundFromLibrary() {
+    run("equalityBoundFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("errorsInFunctionalInterfacesInstances.kt")
   public void testErrorsInFunctionalInterfacesInstances() {
     run("errorsInFunctionalInterfacesInstances.kt");
@@ -357,6 +363,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("superTypeCallDiagnostics.kt")
+  public void testSuperTypeCallDiagnostics() {
+    run("superTypeCallDiagnostics.kt");
+  }
+
+  @Test
   @TestMetadata("syntheticHashCode.kt")
   public void testSyntheticHashCode() {
     run("syntheticHashCode.kt");
@@ -378,6 +390,18 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
   @TestMetadata("unavailableRecord.kt")
   public void testUnavailableRecord() {
     run("unavailableRecord.kt");
+  }
+
+  @Test
+  @TestMetadata("unreachableCodeInClassInitializerAndConstructor.kt")
+  public void testUnreachableCodeInClassInitializerAndConstructor() {
+    run("unreachableCodeInClassInitializerAndConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("unreachableCodeInPropertyInitializer.kt")
+  public void testUnreachableCodeInPropertyInitializer() {
+    run("unreachableCodeInPropertyInitializer.kt");
   }
 
   @Test
@@ -487,6 +511,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     @TestMetadata("mustUseReturnValueHalfEnabledFromLibrary.kt")
     public void testMustUseReturnValueHalfEnabledFromLibrary() {
       run("mustUseReturnValueHalfEnabledFromLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("returnsParameterContract.kt")
+    public void testReturnsParameterContract() {
+      run("returnsParameterContract.kt");
     }
 
     @Test
@@ -655,6 +685,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     @TestMetadata("deprecationAtTopLevel.kt")
     public void testDeprecationAtTopLevel() {
       run("deprecationAtTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringEntrySuppression.kt")
+    public void testDestructuringEntrySuppression() {
+      run("destructuringEntrySuppression.kt");
     }
 
     @Test

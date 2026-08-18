@@ -1,6 +1,7 @@
 KtNameReferenceExpression(30,31): 'f'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       f: () -> kotlin.Unit

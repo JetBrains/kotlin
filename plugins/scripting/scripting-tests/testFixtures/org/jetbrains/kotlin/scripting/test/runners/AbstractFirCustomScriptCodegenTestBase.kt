@@ -1,0 +1,117 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.scripting.test.runners
+
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.KOTLIN_SCRIPT_DEFINITION
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
+
+abstract class AbstractFirCustomScriptCodegenTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
+
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
+        configureFirParser(parser)
+
+        globalDefaults {
+            frontend = FrontendKinds.FIR
+            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            dependencyKind = DependencyKind.Source
+        }
+
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator,
+            ::ScriptDefinitionConfigurator,
+            ::ScriptingPluginEnvironmentConfigurator,
+        )
+
+        facadeStep(::FirCliJvmFacade)
+        firHandlersStep {
+            useHandlers(
+                ::FirDiagnosticsHandler
+            )
+            commonFirHandlersForCodegenTest()
+        }
+
+        facadeStep(::Fir2IrResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrTextDumpHandler,
+                ::IrPrettyKotlinDumpHandler,
+            )
+            commonIrHandlersForCodegenTest()
+        }
+
+        facadeStep(::JvmIrBackendFacade)
+        jvmArtifactsHandlersStep {
+            commonBackendHandlersForCodegenTest()
+            useHandlers(
+                ::FirJvmScriptRunChecker,
+            )
+        }
+
+        enableMetaInfoHandler()
+
+        useFailureSuppressors(
+            ::FirFailingTestSuppressor,
+            ::BlackBoxCodegenSuppressor,
+        )
+    }
+}
+
+class ScriptDefinitionConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        val registeredDirectives = module.directives
+        val scriptDefinitions = registeredDirectives[KOTLIN_SCRIPT_DEFINITION]
+        if (scriptDefinitions.isNotEmpty()) {
+            val additionalDependencies =
+                scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
+                        ForTestCompileRuntime.scriptingTestsRuntimeClasspathForTests() +
+                        ForTestCompileRuntime.scriptingPluginFilesForTests()
+            configuration.addJvmClasspathRoots(additionalDependencies)
+            configureScriptDefinitions(
+                scriptDefinitions, configuration, this::class.java.classLoader,
+                MessageCollector.NONE, defaultJvmScriptingHostConfiguration
+            )
+        }
+    }
+}
+
+open class AbstractFirLightTreeCustomScriptCodegenTest : AbstractFirCustomScriptCodegenTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiCustomScriptCodegenTest : AbstractFirCustomScriptCodegenTestBase(FirParser.Psi)

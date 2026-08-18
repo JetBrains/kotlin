@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.TO_STRING_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -20,21 +19,18 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -101,39 +97,28 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         // Don't generate if toString() already exists in sources
         var functionWithoutParametersAlreadyExists = false
         declaredScope?.processFunctionsByName(TO_STRING_NAME) {
-            if (it.valueParameterSymbols.isEmpty() && it.isRelevantForConflictsCheck) {
+            if (it.valueParameterSymbols.isEmpty() && !it.hasReceiverOrContextParameters) {
                 functionWithoutParametersAlreadyExists = true
             }
         }
         if (functionWithoutParametersAlreadyExists) return null
 
-        return if (classSymbol.hasJavaOrigin) {
-            classSymbol.createJavaMethod(
-                name = TO_STRING_NAME,
-                valueParameters = emptyList(),
-                returnTypeRef = StandardTypes.String.toFirResolvedTypeRef(),
-                visibility = Visibilities.Public,
-                modality = Modality.OPEN,
-                isOverride = true,
-            ).symbol
-        } else {
-            createMemberFunction(
-                owner = classSymbol,
-                key = ToStringGeneratorKey(
+        return createJavaOrKotlinMemberFunction(
+            owner = classSymbol,
+            name = TO_STRING_NAME,
+            valueParameters = emptyList(),
+            returnTypeRef = session.builtinTypes.stringType,
+            visibility = Visibilities.Public,
+            modality = Modality.OPEN,
+            isOverride = true,
+            createKey = {
+                ToStringGeneratorKey(
                     className = classSymbol.classId.shortClassName.asString(),
-                    propertyInfos = computePropertiesToInclude(toStringConfig, declaredScope),
+                    propertyInfos = this.computePropertiesToInclude(toStringConfig, declaredScope),
                     callSuper = toStringConfig.callSuper == CallSuperMode.Call,
-                ),
-                name = TO_STRING_NAME,
-                returnType = StandardTypes.String,
-            ) {
-                modality = Modality.OPEN
-                status {
-                    isOverride = true
-                }
-                withGeneratedDefaultBody()
-            }.symbol
-        }
+                )
+            }
+        )
     }
 
     private fun computePropertiesToInclude(

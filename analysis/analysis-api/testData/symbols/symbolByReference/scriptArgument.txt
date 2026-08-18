@@ -87,6 +87,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
     deprecation: null
+    javaMethodName: getArgs
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -131,7 +132,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
   getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
   deprecation: null
-  javaGetterName: getArgs
-  javaSetterName: null
   isInline: false
   importableFqName: null

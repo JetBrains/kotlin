@@ -245,5 +245,165 @@ declare namespace JS_TESTS {
                 readonly "foo.ShouldBeNotImplementableWithIgnoredSuspend": unique symbol;
             };
         }
+        interface SuperOfSealed1 {
+            sos1(): void;
+            readonly [foo.SuperOfSealed1.Symbol]: true;
+        }
+        namespace SuperOfSealed1 {
+            const Symbol: unique symbol;
+        }
+        interface SuperOfSealed2 {
+            sos2(): void;
+            readonly [foo.SuperOfSealed2.Symbol]: true;
+        }
+        namespace SuperOfSealed2 {
+            const Symbol: unique symbol;
+        }
+        interface Sealed extends foo.SuperOfSealed1, foo.SuperOfSealed2 {
+            readonly value: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.Sealed": unique symbol;
+            };
+        }
+        namespace Sealed {
+            class A implements foo.Sealed {
+                constructor(value: string);
+                get value(): string;
+                sos1(): void;
+                sos2(): void;
+                copy(value?: string): foo.Sealed.A;
+                toString(): string;
+                hashCode(): number;
+                equals(other: Nullable<any>): boolean;
+                readonly [foo.SuperOfSealed2.Symbol]: true;
+                readonly [foo.SuperOfSealed1.Symbol]: true;
+                readonly __doNotUseOrImplementIt: foo.Sealed["__doNotUseOrImplementIt"];
+            }
+            namespace A {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => A;
+                }
+            }
+            interface B extends foo.Sealed, foo.FunIFace {
+                readonly [foo.Sealed.B.Symbol]: true;
+            }
+            namespace B {
+                const Symbol: unique symbol;
+            }
+        }
+        interface InterfaceInheritingFromSealed extends foo.Sealed.B {
+            readonly value2: string;
+            readonly [foo.InterfaceInheritingFromSealed.Symbol]: true;
+        }
+        namespace InterfaceInheritingFromSealed {
+            const Symbol: unique symbol;
+        }
+        class ClassInheritingFromSealed implements foo.Sealed.B {
+            constructor();
+            get value(): string;
+            sos1(): void;
+            sos2(): void;
+            apply(x: string): string;
+            readonly [foo.Sealed.B.Symbol]: true;
+            readonly [foo.FunIFace.Symbol]: true;
+            readonly [foo.SuperOfSealed2.Symbol]: true;
+            readonly [foo.SuperOfSealed1.Symbol]: true;
+            readonly __doNotUseOrImplementIt: foo.Sealed["__doNotUseOrImplementIt"];
+        }
+        namespace ClassInheritingFromSealed {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ClassInheritingFromSealed;
+            }
+        }
+        interface SealedNonExportedImplementor {
+            readonly value: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedNonExportedImplementor": unique symbol;
+            };
+        }
+        class SealedNonExportedImplementorA implements foo.SealedNonExportedImplementor {
+            constructor(value: string);
+            get value(): string;
+            copy(value?: string): foo.SealedNonExportedImplementorA;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+            readonly __doNotUseOrImplementIt: foo.SealedNonExportedImplementor["__doNotUseOrImplementIt"];
+        }
+        namespace SealedNonExportedImplementorA {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => SealedNonExportedImplementorA;
+            }
+        }
+        interface SealedNoRuntime {
+            readonly value: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedNoRuntime": unique symbol;
+            };
+        }
+        class SealedNoRuntimeA implements foo.SealedNoRuntime {
+            constructor(value: string);
+            get value(): string;
+            copy(value?: string): foo.SealedNoRuntimeA;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+            readonly __doNotUseOrImplementIt: foo.SealedNoRuntime["__doNotUseOrImplementIt"];
+        }
+        namespace SealedNoRuntimeA {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => SealedNoRuntimeA;
+            }
+        }
+        interface SealedNoRuntimeB extends foo.SealedNoRuntime {
+            readonly [foo.SealedNoRuntimeB.Symbol]: true;
+        }
+        namespace SealedNoRuntimeB {
+            const Symbol: unique symbol;
+        }
+        interface InterfaceInheritingFromSealedNoRuntime extends foo.SealedNoRuntimeB {
+            readonly value2: string;
+            readonly [foo.InterfaceInheritingFromSealedNoRuntime.Symbol]: true;
+        }
+        namespace InterfaceInheritingFromSealedNoRuntime {
+            const Symbol: unique symbol;
+        }
+        class ClassInheritingFromSealedNoRuntime implements foo.SealedNoRuntimeB {
+            constructor();
+            get value(): string;
+            readonly [foo.SealedNoRuntimeB.Symbol]: true;
+            readonly __doNotUseOrImplementIt: foo.SealedNoRuntime["__doNotUseOrImplementIt"];
+        }
+        namespace ClassInheritingFromSealedNoRuntime {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ClassInheritingFromSealedNoRuntime;
+            }
+        }
+        interface SealedNoRuntimeWithNonExportedImplementor {
+            readonly value: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedNoRuntimeWithNonExportedImplementor": unique symbol;
+            };
+        }
+        class SealedNoRuntimeWithNonExportedImplementorA implements foo.SealedNoRuntimeWithNonExportedImplementor {
+            constructor(value: string);
+            get value(): string;
+            copy(value?: string): foo.SealedNoRuntimeWithNonExportedImplementorA;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+            readonly __doNotUseOrImplementIt: foo.SealedNoRuntimeWithNonExportedImplementor["__doNotUseOrImplementIt"];
+        }
+        namespace SealedNoRuntimeWithNonExportedImplementorA {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => SealedNoRuntimeWithNonExportedImplementorA;
+            }
+        }
     }
 }

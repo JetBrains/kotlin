@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
@@ -28,11 +26,10 @@ import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -55,27 +52,10 @@ import java.nio.file.Paths
  * The main idea is that the test is launched on all hosts (Linux, Macos, Win) and therefore
  * indirectly asserts that the generated klib is "identical" across these hosts
  */
-@Tag("klib")
 open class AbstractKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTestBase("")
+
 @Tag("klib")
-open class AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest :
-    AbstractFirKlibCrossCompilationIdentityTestBase(".lowered") {
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
-    }
-}
-
-open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: String = "") :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
+open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: String = "") : AbstractKotlinCompilerNativeTest() {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
@@ -99,10 +79,6 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
 
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
-
-            LANGUAGE with listOf(
-                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
         }
 
         useFailureSuppressors(::BlackBoxCodegenSuppressor)

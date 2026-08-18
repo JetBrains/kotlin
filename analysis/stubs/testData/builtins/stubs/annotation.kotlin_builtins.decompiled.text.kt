@@ -40,19 +40,27 @@ public final enum class AnnotationTarget private constructor() : kotlin.Enum<kot
 
     FILE,
 
-    @kotlin.SinceKotlin TYPEALIAS;
+    @kotlin.SinceKotlin(version = "1.1")
+    TYPEALIAS;
 }
 
-@kotlin.annotation.Target public final annotation class MustBeDocumented public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
+public final annotation class MustBeDocumented public constructor() : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target public final annotation class Repeatable public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
+public final annotation class Repeatable public constructor() : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target public final annotation class Retention public constructor(value: kotlin.annotation.AnnotationRetention = COMPILED_CODE) : kotlin.Annotation {
-    public final val value: kotlin.annotation.AnnotationRetention /* compiled code */
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
+public final annotation class Retention public constructor(
+    public final val value: kotlin.annotation.AnnotationRetention = COMPILED_CODE,
+) : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented public final annotation class Target public constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget) : kotlin.Annotation {
-    public final val allowedTargets: kotlin.Array<out kotlin.annotation.AnnotationTarget> /* compiled code */
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
+@kotlin.annotation.MustBeDocumented
+public final annotation class Target public constructor(
+    public final vararg val allowedTargets: kotlin.annotation.AnnotationTarget,
+) : kotlin.Annotation {
 }

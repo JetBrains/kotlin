@@ -32,6 +32,15 @@ enum class JsEcmaVersion(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
+    ),
+
+    @SerialName("es2020")
+    ES2020(
+        versionName = "es2020",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            stabilizedVersion = null,
+        )
     );
 
     override val stringRepresentation: String

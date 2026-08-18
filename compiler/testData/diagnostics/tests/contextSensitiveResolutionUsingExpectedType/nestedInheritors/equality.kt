@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-77823
+// LANGUAGE: +StrictEquals
 
 sealed interface Settings {
     data object BasicSettings : Settings
@@ -11,8 +12,8 @@ fun work(message: String) { }
 fun usage(settings: Settings, basicSettings: Settings.BasicSettings) {
     if (settings == BasicSettings) work("Basic")
 
-    if (basicSettings == SpecificSettings) work("Specific")
-    if (basicSettings == Settings.SpecificSettings) work("Specific")
+    if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>basicSettings == SpecificSettings<!>) work("Specific")
+    if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>basicSettings == Settings.SpecificSettings<!>) work("Specific")
 }
 
 open class OpenSettings {
@@ -24,7 +25,7 @@ fun usageOpen(settings: OpenSettings, basicSettings: OpenSettings.OpenBasicSetti
     if (settings == OpenBasicSettings) work("Basic")
 
     if (basicSettings == <!UNRESOLVED_REFERENCE!>OpenSpecificSettings<!>) work("Specific")
-    if (basicSettings == OpenSettings.OpenSpecificSettings) work("Specific")
+    if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>basicSettings == OpenSettings.OpenSpecificSettings<!>) work("Specific")
 }
 
 /* GENERATED_FIR_TAGS: data, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nestedClass,

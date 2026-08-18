@@ -3,4 +3,13 @@ FILE[kind=Script[packageFqName=<root>]]
   IMPORT_LIST
   SCRIPT[fqName=OneLiner, fqName=OneLiner, isReplSnippet=false, name=OneLiner]
     PROPERTY[fqName=OneLiner.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=6]
     SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=println]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=x]
+              OPERATION_REFERENCE[operationToken=MUL, referencedName=*]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=7]

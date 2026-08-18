@@ -14,9 +14,9 @@ public final class DataClass /* DataClass*/ {
   public final @org.jetbrains.annotations.NotNull() DataClass copy();//  copy()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() DataClass copy(@kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int);//  copy(int, int, int, int)
+  public final @org.jetbrains.annotations.NotNull() DataClass copy(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "3") int);//  copy(int, int, int, int)
 
-  public  DataClass(@kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int);//  .ctor(int, int, int, int)
+  public  DataClass(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "3") int);//  .ctor(int, int, int, int)
 
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
@@ -42,7 +42,7 @@ public final class DataClass /* DataClass*/ {
 public final class SimpleClass /* SimpleClass*/ {
   public  SimpleClass();//  .ctor()
 
-  public final void foo(@kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int);//  foo(int, int, int, int)
+  public final void foo(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "3") int);//  foo(int, int, int, int)
 
-  public final void foo2(@kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int);//  foo2(int, int, int)
+  public final void foo2(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  foo2(int, int, int)
 }

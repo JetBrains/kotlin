@@ -9,7 +9,7 @@ import com.intellij.openapi.util.ModificationTracker
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.KProperty
 
-@Deprecated("Obsolete caching API. Do not use", level = DeprecationLevel.ERROR)
+@Deprecated("Obsolete caching API. Do not use", level = DeprecationLevel.HIDDEN)
 public class StrongRefModificationTrackerBasedCache<T> internal constructor(
     private val dependencies: List<ModificationTracker>,
     private val compute: () -> T,
@@ -45,7 +45,7 @@ private class CachedValue<T>(val value: T, val timestamps: List<Long>) {
  * So, the value will not be garbage collected until modification tracker changes.
  */
 @Suppress("DEPRECATION_ERROR")
-@Deprecated("Obsolete caching API. Do not use", level = DeprecationLevel.ERROR)
+@Deprecated("Obsolete caching API. Do not use", level = DeprecationLevel.HIDDEN)
 public fun <T> strongCachedValue(
     vararg dependencies: ModificationTracker,
     compute: () -> T,

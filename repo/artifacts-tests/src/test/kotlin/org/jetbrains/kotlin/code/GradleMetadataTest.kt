@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.code
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.MissingFieldException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.test.isTeamCityBuild
@@ -29,7 +31,12 @@ class GradleMetadataTest {
                 if ("${expectedGradleMetadataPath.parent.fileName}" !in excludedProjects) {
                     if ("${expectedGradleMetadataPath.parent.fileName}" !in nativeBundles) {
                         val actualString = actual.toFile().readText()
-                        val actualObject = Json.decodeFromString<GradleMetadata>(actualString)
+                        @OptIn(ExperimentalSerializationApi::class)
+                        val actualObject = try {
+                            Json.decodeFromString<GradleMetadata>(actualString)
+                        } catch (e: MissingFieldException) {
+                            fail("Fail to parse ${expectedGradleMetadataPath.fileName}", e)
+                        }
                         actualObject.removeFilesFingerprint()
                         actualObject.sortListsRecursively()
                         actualObject.replaceKotlinVersion(kotlinVersion, "ArtifactsTest.version")

@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.konan.test.testLibraryBKlibFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.junit.jupiter.api.Test
 import java.io.File
 
+// Uses external project klibs prebuilt for macos_arm64 only on the CI agents.
+@EnabledOnNativeTargets(targets = ["macos_arm64"])
 abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecutionTest() {
 
     @Test
@@ -54,7 +57,7 @@ abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecuti
     private fun runTestsAgainstKlib(klibSettings: Set<KlibExportSettings>, testPath: File) {
         val testModules = klibSettings.map { TestModule.Given(it.path.toFile()) }.toSet()
         val inputModules = klibSettings.map {
-            it.createInputModule(SwiftModuleConfig(rootPackage = it.rootPackage, shouldBeFullyExported = true))
+            it.createInputModule(SwiftModuleConfig(rootPackage = it.rootPackage, exportMode = SwiftModuleExportMode.Full))
         }.toSet()
 
         val swiftConfig = SwiftExportConfig(

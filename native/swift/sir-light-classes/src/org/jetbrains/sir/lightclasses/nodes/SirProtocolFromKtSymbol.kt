@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
@@ -35,8 +34,11 @@ internal open class SirProtocolFromKtSymbol(
 ) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol> {
     override val origin: SirOrigin = KotlinSource(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
+    val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
+    override val documentation: String? by lazyWithSessions {
+        translateDocumentation(kdocElements)
     }
     override val name: String by lazyWithSessions {
         (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
@@ -73,7 +75,12 @@ internal open class SirProtocolFromKtSymbol(
             .also { protocols -> protocols.forEach { ktSymbol.containingModule.sirModule().updateImportFor(it) } }
     }
 
-    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            addAll(translatedAttributes)
+            addDocumentationVisibility(kdocElements)
+        }
+    }
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         mutableListOf<SirDeclaration>().apply {
@@ -160,7 +167,8 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val documentation: String? = null
-    override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
+    override val attributes: List<SirAttribute>
+        get() = listOf(SirAttribute.ObjC("_${target.swiftFqName}".replace("`", "").replace('.', '_')))
     override val name: String get() = "_${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
@@ -239,9 +247,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val origin: SirOrigin = KotlinSource(ktSymbol)
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
-    }
+    override val documentation: String? get() = null
     override var parent: SirDeclarationParent
         get() = withSessions {
             ktSymbol.containingModule.sirModule()
@@ -262,6 +268,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy {
         buildList {
             replaceOrAddPropagatedUnavailability { extendedType.unavailableTypes }
+            add(SirAttribute.Documentation(SirVisibility.INTERNAL))
         }
     }
 
@@ -275,7 +282,10 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
                     else -> {}
                 }
             }
-            targetProtocol.sealedTypeFunctions.forEach { add(SirRelocatedFunction(it)) }
+            targetProtocol.sealedTypeFunctions.forEach {
+                if (it !is SirSealedTypeFunction.Sealed) return@forEach
+                add(SirRelocatedFunction(it))
+            }
         }.onEach { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
     }
 }
@@ -390,9 +400,7 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
     override val origin: SirOrigin = KotlinSource(ktSymbol)
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
-    }
+    override val documentation: String? get() = null
     override var parent: SirDeclarationParent
         get() = withSessions {
             ktSymbol.containingModule.sirModule()
@@ -415,6 +423,7 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
         buildList {
             addAll(this@SirExistentialProtocolImplementationFromKtSymbol.translatedOptInAttributes)
             replaceOrAddPropagatedUnavailability { SirNominalType(targetProtocol).unavailableTypes }
+            add(SirAttribute.Documentation(SirVisibility.INTERNAL))
         }
     }
 
@@ -462,6 +471,7 @@ internal class SirPenBoxMarkerConformanceFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy {
         buildList {
             replaceOrAddPropagatedUnavailability { SirNominalType(targetProtocol).unavailableTypes }
+            add(SirAttribute.Documentation(SirVisibility.INTERNAL))
         }
     }
 
@@ -476,6 +486,8 @@ internal class SirStubProtocol(
     sirSession
 ) {
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
+
+    override val protocols: List<SirProtocol> get() = emptyList()
 }
 
 /**
@@ -509,6 +521,7 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy {
         buildList {
             replaceOrAddPropagatedUnavailability { extendedType.unavailableTypes }
+            addDocumentationVisibility(targetProtocol.kdocElements)
         }
     }
 
@@ -528,7 +541,6 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             .map { declaration ->
                 buildTypealias {
                     origin = SirOrigin.Trampoline(declaration)
-                    visibility = SirVisibility.INTERNAL // visibility modifiers are disallowed in protocols
                     // FIXME: we make here the best effort to restore the original name of a relocated declaration
                     name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
                     type = SirNominalType(declaration) // Has to be nominal even for protocol declarations
@@ -546,8 +558,12 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
         fun createSpiTrap(name: String) =
             SirFunctionBody(listOf("fatalError(\"'${name}' is an @_spi requirement that must be implemented by Swift conformers\")"))
 
-        val defaultFunctions = members.filterIsInstance<SirFunctionFromKtSymbol>().mapNotNull { function ->
-            function.directDispatchProtocolWitnessOrNull() ?: runIf(isSpiMember(function)) {
+        val defaultFunctions = members.filterIsInstance<SirFunction>().mapNotNull { function ->
+            when (function) {
+                is SirFunctionFromKtSymbol -> function.directDispatchProtocolWitnessOrNull()
+                // TODO: Support direct dispatch protocol witness on SirFunctionFromKtPropertySymbol (KT-87795)
+                else -> null
+            } ?: runIf(isSpiMember(function)) {
                 buildFunctionCopy(function) {
                     origin = SirOrigin.Trampoline(function)
                     isOverride = false
@@ -558,14 +574,17 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             }
         }
 
-        val defaultVariables = members.filterIsInstance<SirAbstractVariableFromKtSymbol>().mapNotNull { variable ->
-            variable.directDispatchProtocolWitnessOrNull() ?: runIf(isSpiMember(variable)) {
+        val defaultVariables = members.filterIsInstance<SirVariable>().mapNotNull { variable ->
+            when (variable) {
+                is SirAbstractVariableFromKtSymbol -> variable.directDispatchProtocolWitnessOrNull()
+                else -> null
+            } ?: runIf(isSpiMember(variable)) {
                 buildVariableCopy(variable) {
                     origin = SirOrigin.Trampoline(variable)
                     isOverride = false
                     modality = SirModality.UNSPECIFIED
                     bridges.clear()
-                    getter = variable.getter.let { getter ->
+                    getter = variable.getter?.let { getter ->
                         buildGetterCopy(getter) {
                             origin = SirOrigin.Trampoline(getter)
                             bridges.clear()
@@ -586,7 +605,12 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             }
         }
 
-        (typeAliases + defaultFunctions + defaultVariables).onEach { it.parent = this }.toMutableList()
+        val sealedTypeLeafFunctions = targetProtocol.sealedTypeFunctions.mapNotNull {
+            if (it !is SirSealedTypeFunction.Leaf) return@mapNotNull null
+            SirRelocatedFunction(it)
+        }
+
+        (typeAliases + defaultFunctions + defaultVariables + sealedTypeLeafFunctions).onEach { it.parent = this }.toMutableList()
     }
 }
 

@@ -1,2 +1,1 @@
-multiple.java:5:23:compiler.err.annotation.type.not.applicable
-
+multiple.java:6:23:compiler.err.annotation.type.not.applicable

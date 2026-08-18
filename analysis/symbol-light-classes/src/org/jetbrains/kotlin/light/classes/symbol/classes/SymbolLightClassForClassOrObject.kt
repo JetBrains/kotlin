@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
+import org.jetbrains.kotlin.util.OperatorNameConventions.HASH_CODE
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
@@ -223,7 +223,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.
         val generatedFunctionsFromAny = classSymbol.memberScope
-            .callables(EQUALS, HASHCODE_NAME, TO_STRING)
+            .callables(EQUALS, HASH_CODE, TO_STRING)
             .filterIsInstance<KaNamedFunctionSymbol>()
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
 
@@ -231,7 +231,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
         // NB: functions from `Any` are not in an alphabetic order.
         functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it, result) }
-        functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it, result) }
+        functionsFromAnyByName[HASH_CODE]?.let { createMethodFromAny(it, result) }
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
     }
 

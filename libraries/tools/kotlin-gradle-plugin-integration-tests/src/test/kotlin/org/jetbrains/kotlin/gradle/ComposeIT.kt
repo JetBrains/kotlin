@@ -39,7 +39,7 @@ class ComposeIT : KGPBaseTest() {
     fun testAndroidDisabledCompose(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidSimpleApp",
@@ -87,7 +87,7 @@ class ComposeIT : KGPBaseTest() {
     fun testAndroidComposeSuggestion(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidSimpleApp",
@@ -132,7 +132,7 @@ class ComposeIT : KGPBaseTest() {
     fun testAndroidWithCompose(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidSimpleComposeApp",
@@ -282,7 +282,7 @@ class ComposeIT : KGPBaseTest() {
     fun testComposePluginWithRuntimeV1_0(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidSimpleApp",
@@ -316,7 +316,8 @@ class ComposeIT : KGPBaseTest() {
                 |import androidx.compose.runtime.Composable
                 |
                 |@Composable fun Test() { Test() }
-            """.trimMargin())
+            """.trimMargin()
+            )
 
             build("assembleDebug") {
                 assertTasksExecuted(":compileDebugKotlin")
@@ -332,7 +333,7 @@ class ComposeIT : KGPBaseTest() {
     fun testComposePluginWithRuntimeLatest(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
         val composeSnapshotVersion = TestVersions.Compose.composeVersion
@@ -371,7 +372,8 @@ class ComposeIT : KGPBaseTest() {
                 |import androidx.compose.runtime.Composable
                 |
                 |@Composable fun Test() { Test() }
-            """.trimMargin())
+            """.trimMargin()
+            )
 
             build("assembleDebug") {
                 assertTasksExecuted(":compileDebugKotlin")
@@ -392,7 +394,7 @@ class ComposeIT : KGPBaseTest() {
     fun testComposeDefaultParamsInOpenFunctionK1ToK2(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
         val composeSnapshotVersion = TestVersions.Compose.composeVersion
@@ -525,7 +527,7 @@ class ComposeIT : KGPBaseTest() {
     fun testComposeSourceInformationOldRuntime(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "composeMultiModule",
@@ -632,13 +634,14 @@ class ComposeIT : KGPBaseTest() {
     fun testMinifyWithCompose(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildCacheEnabled = true, configurationCache = ENABLED)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildCacheEnabled = true, configurationCache = ENABLED),
+            enableGradleDaemonMemoryLimitInMb = 1024
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -734,7 +737,7 @@ class ComposeIT : KGPBaseTest() {
     fun testMinifyWithComposeDisabled(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidSimpleComposeApp",

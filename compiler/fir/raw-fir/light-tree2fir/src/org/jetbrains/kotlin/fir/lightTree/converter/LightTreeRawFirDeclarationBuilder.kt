@@ -45,14 +45,12 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -73,7 +71,7 @@ class LightTreeRawFirDeclarationBuilder(
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parsePreamble]
      */
     fun convertFile(file: LighterASTNode, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
-        if (file.tokenType != KT_FILE) {
+        if (file.tokenType != KtNodeTypes.FILE) {
             //TODO throw error
             throw Exception()
         }
@@ -168,7 +166,9 @@ class LightTreeRawFirDeclarationBuilder(
             source = block.toFirSourceElement(kind)
             firStatements.forEach { firStatement ->
                 val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
-                if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
+                val isIncrementOrDecrement = firStatement is FirBlock
+                        && firStatement.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+                if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty() || isIncrementOrDecrement) {
                     statements += firStatement
                 } else {
                     statements += firStatement.statements
@@ -703,7 +703,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
-            if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+            if (classNode.getParent()?.elementType == CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
             it.initContainingScriptOrReplAttr()
@@ -1403,7 +1403,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
-            if (typeAlias.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+            if (typeAlias.getParent()?.elementType == CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
             if (isDirectlyInsideCompanionBlock) {

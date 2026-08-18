@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -81,23 +80,17 @@ fun PsiClass.resolveToFirSymbol(resolutionFacade: LLResolutionFacade): FirRegula
     resolutionFacade.resolveToFirSymbol(this)
 
 /**
- * Returns a list of Diagnostics compiler finds for given [KtElement]
+ * Returns a sequence of diagnostics which the compiler reports on the given [KtElement], and, if [isRecursive] is `true`, on all its
+ * children as well (which is the default).
+ *
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 @KaImplementationDetail
-fun KtElement.getDiagnostics(resolutionFacade: LLResolutionFacade, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
-    resolutionFacade.getDiagnostics(this, filter)
-
-/**
- * Returns a sequence of Diagnostics compiler finds for given [KtFile]
- * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
- */
-@KaImplementationDetail
-fun KtFile.diagnostics(
+fun KtElement.diagnostics(
     resolutionFacade: LLResolutionFacade,
-    filter: DiagnosticCheckerFilter
-): Sequence<KtPsiDiagnostic> =
-    resolutionFacade.diagnostics(this, filter)
+    filter: DiagnosticCheckerFilter,
+    isRecursive: Boolean = true,
+): Sequence<LLDiagnostic> = resolutionFacade.diagnostics(this, filter, isRecursive)
 
 /**
  * Build [FirElement] node in its final resolved state for a requested element.

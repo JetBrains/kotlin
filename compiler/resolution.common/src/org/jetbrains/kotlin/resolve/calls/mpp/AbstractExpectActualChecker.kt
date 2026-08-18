@@ -410,6 +410,17 @@ object AbstractExpectActualChecker {
             }
         }
 
+        if (
+            languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals) &&
+            expectDeclaration is SimpleFunctionSymbolMarker &&
+            actualDeclaration is SimpleFunctionSymbolMarker &&
+            substitutor != null
+        ) {
+            if (equalityBoundMatcher?.matches(expectDeclaration, actualDeclaration, substitutor) == false) {
+                add(ExpectActualIncompatibility.EqualityBoundsAreDifferent)
+            }
+        }
+
         if (sizesAreEqualAndElementsNotEqualBy(expectedTypeParameters, actualTypeParameters) { nameOf(it) }) {
             add(ExpectActualIncompatibility.TypeParameterNames)
         }

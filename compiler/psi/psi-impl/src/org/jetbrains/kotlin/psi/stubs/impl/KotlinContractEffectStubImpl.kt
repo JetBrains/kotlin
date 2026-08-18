@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtContractEffect
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeTypeBean
 import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
 
 @OptIn(KtImplementationDetail::class)
 class KotlinContractEffectStubImpl(parent: StubElement<*>?) : KotlinPlaceHolderStubImpl<KtContractEffect>(
     /* parent = */ parent,
-    /* elementType = */ KtStubElementTypes.CONTRACT_EFFECT,
+    /* elementType = */ KtNodeTypes.CONTRACT_EFFECT,
 ), KotlinContractEffectStub {
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinContractEffectStubImpl = KotlinContractEffectStubImpl(
@@ -133,6 +133,12 @@ enum class KotlinContractEffectType {
             return KtReturnsResultOfDeclaration(declaration as KtValueParameterReference)
         }
     },
+    RETURNS_PARAMETER {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtReturnsParameterDeclaration(declaration as KtValueParameterReference)
+        }
+    },
     ;
 
     abstract fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?>
@@ -188,6 +194,14 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
     ) {
         dataStream.writeVarInt(KotlinContractEffectType.RETURNS_RESULT_OF.ordinal)
         dataStream.writeVarInt(returnsResultOfEffect.valueParameterReference.parameterIndex)
+    }
+
+    override fun visitReturnsParameterEffectDeclaration(
+        returnsParameterEffect: KtReturnsParameterDeclaration<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
+        dataStream.writeVarInt(KotlinContractEffectType.RETURNS_PARAMETER.ordinal)
+        dataStream.writeVarInt(returnsParameterEffect.valueParameterReference.parameterIndex)
     }
 
     override fun visitLogicalBinaryOperationContractExpression(

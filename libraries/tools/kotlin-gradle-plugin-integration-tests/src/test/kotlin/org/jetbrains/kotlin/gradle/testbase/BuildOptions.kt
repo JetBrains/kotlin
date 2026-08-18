@@ -61,7 +61,9 @@ data class BuildOptions(
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
-    val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableJvmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableJsUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableWasmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
@@ -72,7 +74,10 @@ data class BuildOptions(
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
-    val fileLeaksReportFile: File? = null,
+    /**
+     * Enable file-leak-detector if not-null. A trace report will be written to the specified file.
+     */
+    val fileLeaksReportFile: Path? = null,
     val continueAfterFailure: Boolean = false,
     /**
      * Override the directory to store flag files indicating "daemon process is alive" controlled by Kotlin Daemon.
@@ -94,6 +99,8 @@ data class BuildOptions(
     val continuousBuild: Boolean? = null,
     val generateCompilerRefIndex: Boolean? = null,
     val jvmClasspathMetadata: Boolean? = null,
+    val separateCompilation: Boolean? = null,
+    val expandTypeAliasesInClasspathSnapshots: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -214,7 +221,15 @@ data class BuildOptions(
         }
         // Isolated projects can't be enabled, if the configuration cache is disabled
         val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion) && configurationCacheFlag == true
-        arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+            arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+        } else {
+            if (isolatedProjectsFlag) {
+                arguments.add("--isolated-projects")
+            } else {
+                arguments.add("--no-isolated-projects")
+            }
+        }
 
         if (parallel) {
             arguments.add("--parallel")
@@ -300,8 +315,16 @@ data class BuildOptions(
             arguments.add("-Pkotlin.test.languageVersion=$languageVersion")
         }
 
-        if (enableUnsafeIncrementalCompilationForMultiplatform != null) {
-            arguments.add("-Pkotlin.internal.incremental.enableUnsafeOptimizationsForMultiplatform=$enableUnsafeIncrementalCompilationForMultiplatform")
+        if (enableJvmUnsafeIncrementalCompilationForMultiplatform != null) {
+            arguments.add("-Pkotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform=$enableJvmUnsafeIncrementalCompilationForMultiplatform")
+        }
+
+        if (enableJsUnsafeIncrementalCompilationForMultiplatform != null) {
+            arguments.add("-Pkotlin.internal.js.enableUnsafeOptimizationsForMultiplatform=$enableJsUnsafeIncrementalCompilationForMultiplatform")
+        }
+
+        if (enableWasmUnsafeIncrementalCompilationForMultiplatform != null) {
+            arguments.add("-Pkotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform=$enableWasmUnsafeIncrementalCompilationForMultiplatform")
         }
 
         if (enableMonotonousIncrementalCompileSetExpansion != null) {
@@ -310,6 +333,16 @@ data class BuildOptions(
 
         if (jvmClasspathMetadata != null) {
             arguments.add("-Pkotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation=$jvmClasspathMetadata")
+        }
+
+        if (separateCompilation != null) {
+            arguments.add("-Pkotlin.kmp.separateCompilation=$separateCompilation")
+        }
+
+        if (expandTypeAliasesInClasspathSnapshots != null) {
+            arguments.add(
+                "-Pkotlin.internal.jvm.expandTypeAliasesInClasspathSnapshots=$expandTypeAliasesInClasspathSnapshots"
+            )
         }
 
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")

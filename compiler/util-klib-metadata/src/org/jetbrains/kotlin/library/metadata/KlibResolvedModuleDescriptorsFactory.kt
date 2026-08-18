@@ -3,26 +3,20 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.storage.StorageManager
 import java.nio.file.Path
+import kotlin.io.path.Path
 
 interface KlibResolvedModuleDescriptorsFactory {
 
     val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 
-    /**
-     * Given the [resolvedLibraries] creates the list of [ModuleDescriptorImpl]s with properly installed
-     * inter-dependencies. The result of this method is returned in a form of [KlibResolvedModuleDescriptors] instance.
-     *
-     * Please use this method with care: Unless this method accepts `null` for [builtIns], it is not recommended to
-     * invoke it this way. If you are compiling a source module, please supply the non-null [builtIns] from the
-     * source module, so that all modules created in your compilation session will share the same built-ins instance.
-     *
-     * Otherwise (if `null` was supplied), a new instance of [KotlinBuiltIns] will be created. The created built-ins
-     * instance will be shared by all modules created in this method. But this instance will have no connection
-     * with probably existing built-ins instance of your source module(s).
-     */
+    @Deprecated(
+        "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882.",
+        level = DeprecationLevel.HIDDEN
+    )
     @Suppress("DEPRECATION_ERROR")
     fun createResolved(
         resolvedLibraries: KotlinLibraryResolveResult,
@@ -34,16 +28,34 @@ interface KlibResolvedModuleDescriptorsFactory {
         includedLibraryFiles: Set<org.jetbrains.kotlin.konan.file.File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
-    ): KotlinResolvedModuleDescriptors
+    ): KotlinResolvedModuleDescriptors = createResolved2(
+        libraries = resolvedLibraries.getFullList(),
+        storageManager = storageManager,
+        builtIns = builtIns,
+        languageVersionSettings = languageVersionSettings,
+        friendModuleFiles = friendModuleFiles.mapTo(hashSetOf()) { Path(it.path) },
+        refinesModuleFiles = refinesModuleFiles.mapTo(hashSetOf()) { Path(it.path) },
+        includedLibraryFiles = includedLibraryFiles.mapTo(hashSetOf()) { Path(it.path) },
+        additionalDependencyModules = additionalDependencyModules,
+        isForMetadataCompilation = isForMetadataCompilation
+    )
 
     /**
-     * A duplicate of [createResolved], which accepts [java.nio.file.Path] instead of [org.jetbrains.kotlin.konan.file.File].
+     * Given the [libraries] creates the list of [ModuleDescriptorImpl]s with properly installed
+     * inter-dependencies. The result of this method is returned in a form of [KotlinResolvedModuleDescriptors] instance.
+     *
+     * Please use this method with care: Unless this method accepts `null` for [builtIns], it is not recommended to
+     * invoke it this way. If you are compiling a source module, please supply the non-null [builtIns] from the
+     * source module, so that all modules created in your compilation session will share the same built-ins instance.
+     *
+     * Otherwise (if `null` was supplied), a new instance of [KotlinBuiltIns] will be created. The created built-ins
+     * instance will be shared by all modules created in this method. But this instance will have no connection
+     * with probably existing built-ins instance of your source module(s).
      *
      * FYI: No much attention to naming of this function, anyway it's going to be removed soon as a part of K1.
      */
-    @Suppress("DEPRECATION_ERROR")
     fun createResolved2(
-        resolvedLibraries: KotlinLibraryResolveResult,
+        libraries: List<KotlinLibrary>,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
@@ -52,17 +64,7 @@ interface KlibResolvedModuleDescriptorsFactory {
         includedLibraryFiles: Set<Path>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
-    ): KotlinResolvedModuleDescriptors = createResolved(
-        resolvedLibraries = resolvedLibraries,
-        storageManager = storageManager,
-        builtIns = builtIns,
-        languageVersionSettings = languageVersionSettings,
-        friendModuleFiles = friendModuleFiles.mapTo(hashSetOf()) { org.jetbrains.kotlin.konan.file.File(it) },
-        refinesModuleFiles = refinesModuleFiles.mapTo(hashSetOf()) { org.jetbrains.kotlin.konan.file.File(it) },
-        includedLibraryFiles = includedLibraryFiles.mapTo(hashSetOf()) { org.jetbrains.kotlin.konan.file.File(it) },
-        additionalDependencyModules = additionalDependencyModules,
-        isForMetadataCompilation = isForMetadataCompilation,
-    )
+    ): KotlinResolvedModuleDescriptors
 }
 
 class KotlinResolvedModuleDescriptors(

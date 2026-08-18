@@ -43,6 +43,27 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
         return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
     }
 
+    /**
+     * @return every modifier list directly under this element, in source order.
+     *
+     * <p>An element normally has at most one modifier list, and {@link #getModifierList()} is the accessor to use.
+     * There are two situations where a second one shows up, and only then is this method needed.
+     *
+     * <p>A parenthesized type keeps the modifiers written inside the parentheses on the enclosing
+     * {@link KtTypeReference}, because the parentheses themselves are not a PSI element:
+     *
+     * <pre>{@code
+     * val x: @Foo (suspend () -> Unit) = {}
+     * //     ^__^  ^_____^
+     * }</pre>
+     *
+     * <p>Code that does not parse cleanly may also leave several modifier lists on one element.
+     */
+    @NotNull
+    public List<KtDeclarationModifierList> getAllModifierLists() {
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST);
+    }
+
     @Override
     public boolean hasModifier(@NotNull KtModifierKeywordToken modifier) {
         KtModifierList modifierList = getModifierList();
@@ -54,6 +75,13 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      * instead.
      */
     @Override
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.addModifierKeyword(modifier)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
+            )
+    )
     @Deprecated
     public void addModifier(@NotNull KtModifierKeywordToken modifier) {
         KtPsiMutationService.getInstance().addModifierKeyword(this, modifier);
@@ -64,6 +92,13 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      * instead.
      */
     @Override
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.removeModifierKeyword(modifier)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
+            )
+    )
     @Deprecated
     public void removeModifier(@NotNull KtModifierKeywordToken modifier) {
         KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier);
@@ -75,6 +110,13 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      */
     @NotNull
     @Override
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.addAnnotation(annotationEntry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
+            )
+    )
     @Deprecated
     public KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry) {
         return KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry);

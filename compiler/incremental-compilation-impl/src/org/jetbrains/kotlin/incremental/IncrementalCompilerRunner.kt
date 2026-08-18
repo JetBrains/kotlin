@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.incremental.snapshots.librarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
+import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -78,6 +79,7 @@ abstract class IncrementalCompilerRunner<
     protected val icFeatures: IncrementalCompilationFeatures,
 
     private val compilationCanceledStatus: CompilationCanceledStatus? = null,
+    private val pluginsLoader: PluginsLoader?,
 ) {
 
     protected open val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING
@@ -494,6 +496,7 @@ abstract class IncrementalCompilerRunner<
             register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, compilationCanceledStatus)
             register(ICFileMappingTracker::class.java, fileMappingTracker)
+            pluginsLoader?.let { register(PluginsLoader::class.java, it) }
         }
 
     protected abstract fun runCompiler(
@@ -604,7 +607,7 @@ abstract class IncrementalCompilerRunner<
             ).build()
 
             args.reportOutputFiles = true
-            val bufferingMessageCollector = MessageCollectorImpl()
+            val bufferingMessageCollector = BufferingMessageCollector()
 
             val compiledSources = reporter.measure(COMPILATION_ROUND) {
                 runCompiler(

@@ -75,7 +75,7 @@ Warning: this flag is not intended for production use. If you want to configure 
     @Argument(
         value = "-XXexplicit-return-types",
         valueDescription = "{strict|warning|disable}",
-        description = """Force the compiler to report errors on all public API declarations without an explicit return type.
+        description = """Force the compiler to report errors on all public API declarations and non-local functions without an explicit return type.
 Use the 'warning' level to issue warnings instead of errors.
 This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""",
     )
@@ -481,6 +481,17 @@ It may only be used with specific checkers that are not enabled by default, and 
         description = "Enable incremental compilation.",
     )
     var incrementalCompilation: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xequality-bounds",
+        description = "Enable experimental support for `@EqualityBound` annotations in `equals` operators.",
+    )
+    @Enables(LanguageFeature.StrictEquals)
+    var equalityBounds: Boolean = false
         set(value) {
             checkFrozen()
             field = value

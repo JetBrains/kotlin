@@ -32,6 +32,14 @@
 // CHECK_COMMENT_EXISTS: text="property:" multiline=true
 // CHECK_COMMENT_EXISTS: text="descriptor:" multiline=true
 // CHECK_COMMENT_EXISTS: text="Descriptor end" multiline=true
+// CHECK_COMMENT_EXISTS: text="Before for init var" multiline=true
+// CHECK_COMMENT_EXISTS: text="After for init var" multiline=true
+// CHECK_COMMENT_EXISTS: text="Before for condition" multiline=true
+// CHECK_COMMENT_EXISTS: text="After for condition" multiline=true
+// CHECK_COMMENT_EXISTS: text="Before for increment" multiline=true
+// CHECK_COMMENT_EXISTS: text="After for increment" multiline=true
+// CHECK_COMMENT_EXISTS: text="Before for init expr" multiline=true
+// CHECK_COMMENT_EXISTS: text="After for init expr" multiline=true
 
 /*
 * java.lang.AssertionError(Multi line comment with text 'The header multiline\ncomment' doesn't exist)
@@ -112,6 +120,14 @@ fun box(): String {
               writable: false
             } /* Descriptor end */)
         }
+        
+        for(
+            /* Before for init var */ var i = 0 /* After for init var */;
+            /* Before for condition */ i < 3 /* After for condition */;
+            /* Before for increment */ ++i /* After for increment */
+        ) {}
+        
+        for(/* Before for init expr */ 0 /* After for init expr */; i < 3; ++i) {}
     """)
     return "OK"
 }

@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
     protected JsNameRef label;
@@ -52,6 +52,6 @@ public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
     public JsContinue deepCopy() {
         if (label == null) return new JsContinue();
 
-        return new JsContinue(AstUtil.deepCopy(label)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsContinue(AstUtil.deepCopy(label)), this);
     }
 }

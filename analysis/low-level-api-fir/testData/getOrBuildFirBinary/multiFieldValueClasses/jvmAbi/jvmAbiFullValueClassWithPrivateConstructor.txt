@@ -1,0 +1,30 @@
+KT element: KtClass
+KT element text:
+public final value class Box<T> {
+    public companion object {
+        public final fun <T> of(element: T): Box<T> { /* compiled code */ }
+    }
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final value [ResolvedTo(BODY_RESOLVE)] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> of([ResolvedTo(BODY_RESOLVE)] element: R|T|): R|Box<T>|
+
+    }
+
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+}

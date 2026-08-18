@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclarationModifierList> implements KotlinModifierListStub {
 
     private final long mask;
 
     public KotlinModifierListStubImpl(@Nullable StubElement<?> parent, long mask) {
-        super(parent, KtStubElementTypes.MODIFIER_LIST);
+        super(parent, KtNodeTypes.MODIFIER_LIST);
         this.mask = mask;
     }
 

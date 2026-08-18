@@ -1,9 +1,5 @@
 package kotlin
 
-// CHECK_NOT_REFERENCED: Kotlin.isInstanceOf
-// CHECK_NOT_REFERENCED: Kotlin.isTypeOf
-// CHECK_NOT_REFERENCED: Kotlin.orNull
-
 fun success(message: String, fn: ()->Unit) {
     try {
         fn()

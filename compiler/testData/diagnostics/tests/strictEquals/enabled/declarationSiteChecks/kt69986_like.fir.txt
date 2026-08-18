@@ -1,0 +1,27 @@
+FILE: Foo.kt
+    public open class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class Bar : R|kotlin/Any| {
+            public constructor(): R|Foo.Bar| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: test.kt
+    package q
+
+    public final class Baz : R|Foo.Bar| {
+        public constructor(): R|q/Baz| {
+            super<R|Foo.Bar|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Foo.Bar] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Foo.Bar|) [evaluated = <getClass>(Q|Foo.Bar|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.delegatedWrapperData
+import org.jetbrains.kotlin.fir.isDelegated
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.isVisibleInClass
@@ -132,32 +133,27 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
                 AbstractTypeChecker.isSubtypeOf(typeCheckerState, inheritedTypeSubstituted, baseType)
         }
 
-        /**
-         * An intersection override is trivial if one of the overridden symbols subsumes all others.
-         *
-         * @see org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.convertGroupedCallablesToIntersectionResults
-         */
-        fun FirCallableSymbol<*>.isTrivialIntersectionOverride(): Boolean {
-            return callableId?.classId != containingClass.classId || MemberWithBaseScope(this, classScope).isTrivialIntersection()
-        }
+        val originatesFromThisClass = containingClass.symbol.toLookupTag() == symbol.containingClassLookupTag()
 
         val intersectionSymbols = when {
             //substitution override means simple materialization of single method, so nothing to check
             symbol.isSubstitutionOverride -> return
-            symbol.delegatedWrapperData != null -> {
+            symbol.isDelegated && originatesFromThisClass -> {
                 val allOverridden = classScope.getDirectOverriddenMembers(symbol)
-                //if there is intersection override - take its intersections - they will contain all substitutions
-                //otherwise we get base members with unsubstituted params too
-                val cleared = allOverridden.find { it is FirIntersectionCallableSymbol }?.let {
-                    (it as FirIntersectionCallableSymbol).intersections
-                } ?: allOverridden
                 //current symbol needs to be added, because basically it is the implementation
-                cleared + symbol
+                allOverridden + symbol
             }
-            symbol is FirIntersectionCallableSymbol && !symbol.isTrivialIntersectionOverride() ->
+            /**
+             * An intersection override is trivial if one of the overridden symbols subsumes all others.
+             *
+             * @see org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.convertGroupedCallablesToIntersectionResults
+             */
+            symbol is FirIntersectionCallableSymbol && originatesFromThisClass
+                    && !MemberWithBaseScope(symbol, classScope).isTrivialIntersection() -> {
                 // We intentionally don't use getNonSubsumedOverriddenSymbols here, otherwise we'll get lots of new errors (compared to K1)
                 // in cases where a Java superclass inherits multiple members with conflicting nullability annotations.
                 symbol.intersections
+            }
             else -> return
         }
 

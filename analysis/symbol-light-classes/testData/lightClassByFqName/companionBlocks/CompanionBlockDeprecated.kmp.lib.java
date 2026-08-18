@@ -2,7 +2,7 @@ public final class C /* one.C*/ {
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() java.lang.String oldProperty;
 
-  @kotlin.Deprecated()
+  @kotlin.Deprecated(message = "use newApi instead", replaceWith = @kotlin.ReplaceWith(expression = "newApi()", imports = {}))
   public static final int oldApi();//  oldApi()
 
   @org.jetbrains.annotations.NotNull()

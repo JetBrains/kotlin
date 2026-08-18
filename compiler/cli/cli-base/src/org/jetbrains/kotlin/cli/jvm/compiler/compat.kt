@@ -31,8 +31,7 @@ object IdeaStandaloneExecutionSetup {
         // See intellij platform PluginManagerCore.getBuildNumber.
         System.setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
 
-        // TODO: Remove it once KT-81457 is fixed
-        System.setProperty("ide.enable.implicit.blocking.context", "false")
+        System.setProperty("ide.can.use.coroutines.fork", "false")
     }
 
     /**

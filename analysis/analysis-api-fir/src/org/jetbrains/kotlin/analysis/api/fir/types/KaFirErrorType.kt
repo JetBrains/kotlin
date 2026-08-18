@@ -36,13 +36,16 @@ internal class KaFirErrorType(
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN,
     )
     @Suppress("DEPRECATION_ERROR")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
-            coneType.nullable?.let(KaTypeNullability::create)
-                ?: KaTypeNullability.UNKNOWN
+            when (coneType.nullable) {
+                true -> KaTypeNullability.NULLABLE
+                false -> KaTypeNullability.NON_NULLABLE
+                null -> KaTypeNullability.UNKNOWN
+            }
         }
 
     @KaNonPublicApi

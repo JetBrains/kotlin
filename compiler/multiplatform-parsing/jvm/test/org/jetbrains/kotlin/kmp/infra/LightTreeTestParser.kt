@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.kmp.infra
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilderFactory
 import com.intellij.openapi.Disposable
-import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -40,11 +38,8 @@ class LightTreeTestParser(disposable: Disposable) : AbstractTestParser<LighterAS
     }
 
     fun LighterASTNode.toTestParseTree(lightTree: FlyweightCapableTreeStructure<LighterASTNode>): TestParseNode<LighterASTNode> {
-        // For some reason the root token differs in PSI and LightTree modes. Normalize it to PSI
-        val normalizedToken = if (tokenType is IFileElementType) KtNodeTypes.KT_FILE else tokenType
-
         return TestParseNode(
-            normalizedToken.toString(),
+            tokenType.toString(),
             startOffset,
             endOffset,
             this,

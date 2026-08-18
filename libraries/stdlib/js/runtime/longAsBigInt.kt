@@ -107,14 +107,20 @@ internal fun Long.multiply(other: Long): Long = wrappingArithmetic(this, other, 
  */
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.divide(other: Long): Long = wrappingArithmetic(this, other, BigInt::div)
+internal fun Long.divide(other: Long): Long {
+    if (other == 0L) throw ArithmeticException("/ by zero")
+    return wrappingArithmetic(this, other, BigInt::div)
+}
 
 /**
  * @see kotlin.js.internal.boxedLong.modulo
  */
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.modulo(other: Long): Long = wrappingArithmetic(this, other, BigInt::rem)
+internal fun Long.modulo(other: Long): Long {
+    if (other == 0L) throw ArithmeticException("/ by zero")
+    return (unsafeCast<BigInt>() % other.unsafeCast<BigInt>()).unsafeCast<Long>()
+}
 
 // In JavaScript, shifting a bigint by a negative N is equivalent to shifting it by -N in the opposite direction.
 // This is not the semantics we want from Long, so we emulate what JavaScript does for Numbers, namely, take `numBits` modulo 64.

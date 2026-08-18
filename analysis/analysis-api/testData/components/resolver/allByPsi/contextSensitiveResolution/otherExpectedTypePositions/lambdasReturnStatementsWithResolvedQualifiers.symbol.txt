@@ -52,6 +52,7 @@ KtUserType(122,130): 'MySealed'
 KtNameReferenceExpression(122,130): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -96,6 +97,7 @@ KtUserType(153,161): 'MySealed'
 KtNameReferenceExpression(153,161): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -128,6 +130,7 @@ KtUserType(178,186): 'MySealed'
 KtNameReferenceExpression(178,186): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -175,6 +178,7 @@ KtUserType(223,231): 'MySealed'
 KtNameReferenceExpression(223,231): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -228,6 +232,7 @@ KtUserType(259,260): 'T'
 KtNameReferenceExpression(259,260): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -248,6 +253,7 @@ KtUserType(263,264): 'T'
 KtNameReferenceExpression(263,264): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -262,6 +268,7 @@ KtCallExpression(267,273): 'TODO()'
 KtNameReferenceExpression(267,271): 'TODO'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -300,6 +307,7 @@ KtUserType(289,290): 'X'
 KtNameReferenceExpression(289,290): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       X
@@ -320,6 +328,7 @@ KtUserType(293,294): 'X'
 KtNameReferenceExpression(293,294): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       X
@@ -334,6 +343,7 @@ KtCallExpression(297,303): 'TODO()'
 KtNameReferenceExpression(297,301): 'TODO'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -366,6 +376,7 @@ KtUserType(317,324): 'Boolean'
 KtNameReferenceExpression(317,324): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -383,6 +394,7 @@ KtDotQualifiedExpression(340,350): 'MySealed.X'
 KtNameReferenceExpression(340,348): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -391,6 +403,7 @@ KtNameReferenceExpression(340,348): 'MySealed'
 KtNameReferenceExpression(349,350): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -405,6 +418,7 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
@@ -431,6 +445,7 @@ KtContainerNode(388,389): 'b'
 KtNameReferenceExpression(388,389): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -451,6 +466,7 @@ KtContainerNode(397,415): '@myRunWithMySealed'
 KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -459,6 +475,7 @@ KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
 KtNameReferenceExpression(416,417): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -467,6 +484,7 @@ KtNameReferenceExpression(416,417): 'X'
 KtNameReferenceExpression(426,427): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -481,6 +499,7 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
@@ -507,6 +526,7 @@ KtContainerNode(471,472): 'b'
 KtNameReferenceExpression(471,472): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -527,6 +547,7 @@ KtContainerNode(480,498): '@myRunWithMySealed'
 KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -541,6 +562,7 @@ KtCallExpression(499,504): 'id(X)'
 KtNameReferenceExpression(499,501): 'id'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -555,6 +577,7 @@ KtValueArgument(502,503): 'X'
 KtNameReferenceExpression(502,503): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -569,6 +592,7 @@ KtCallExpression(513,518): 'id(Y)'
 KtNameReferenceExpression(513,515): 'id'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -583,6 +607,7 @@ KtValueArgument(516,517): 'Y'
 KtNameReferenceExpression(516,517): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -597,6 +622,7 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
 KtNameReferenceExpression(530,535): 'myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /myRun(b: () -> T): T
@@ -623,6 +649,7 @@ KtUserType(536,544): 'MySealed'
 KtNameReferenceExpression(536,544): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -649,6 +676,7 @@ KtContainerNode(560,561): 'b'
 KtNameReferenceExpression(560,561): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -669,6 +697,7 @@ KtContainerNode(569,575): '@myRun'
 KtLabelReferenceExpression(569,575): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -677,6 +706,7 @@ KtLabelReferenceExpression(569,575): '@myRun'
 KtNameReferenceExpression(576,577): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -685,6 +715,7 @@ KtNameReferenceExpression(576,577): 'X'
 KtNameReferenceExpression(586,587): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -699,6 +730,7 @@ KtCallExpression(598,682): 'foo('
 KtNameReferenceExpression(598,601): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(a: MySealed): kotlin.Unit
@@ -719,6 +751,7 @@ KtCallExpression(611,676): 'myRun {'
 KtNameReferenceExpression(611,616): 'myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /myRun(b: () -> T): T
@@ -745,6 +778,7 @@ KtContainerNode(635,636): 'b'
 KtNameReferenceExpression(635,636): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -765,6 +799,7 @@ KtContainerNode(644,650): '@myRun'
 KtLabelReferenceExpression(644,650): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -773,6 +808,7 @@ KtLabelReferenceExpression(644,650): '@myRun'
 KtNameReferenceExpression(651,652): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -781,6 +817,7 @@ KtNameReferenceExpression(651,652): 'X'
 KtNameReferenceExpression(665,666): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -804,6 +841,7 @@ KtUserType(695,703): 'MySealed'
 KtNameReferenceExpression(695,703): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -818,6 +856,7 @@ KtCallExpression(706,759): 'myRun {'
 KtNameReferenceExpression(706,711): 'myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /myRun(b: () -> T): T
@@ -844,6 +883,7 @@ KtContainerNode(726,727): 'b'
 KtNameReferenceExpression(726,727): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -864,6 +904,7 @@ KtContainerNode(735,741): '@myRun'
 KtLabelReferenceExpression(735,741): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed
@@ -872,6 +913,7 @@ KtLabelReferenceExpression(735,741): '@myRun'
 KtNameReferenceExpression(742,743): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -880,6 +922,7 @@ KtNameReferenceExpression(742,743): 'X'
 KtNameReferenceExpression(752,753): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -895,6 +938,7 @@ KtCallExpression(765,818): 'myRun {'
 KtNameReferenceExpression(765,770): 'myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /myRun(b: () -> T): T
@@ -922,6 +966,7 @@ KtContainerNode(785,786): 'b'
 KtNameReferenceExpression(785,786): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -942,6 +987,7 @@ KtContainerNode(794,800): '@myRun'
 KtLabelReferenceExpression(794,800): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y
@@ -950,6 +996,7 @@ KtLabelReferenceExpression(794,800): '@myRun'
 KtNameReferenceExpression(801,802): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
@@ -957,6 +1004,7 @@ KtNameReferenceExpression(801,802): 'X'
 KtNameReferenceExpression(811,812): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
@@ -971,6 +1019,7 @@ KtCallExpression(823,885): 'myRun {'
 KtNameReferenceExpression(823,828): 'myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /myRun(b: () -> T): T
@@ -998,6 +1047,7 @@ KtContainerNode(843,844): 'b'
 KtNameReferenceExpression(843,844): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -1018,6 +1068,7 @@ KtContainerNode(852,858): '@myRun'
 KtLabelReferenceExpression(852,858): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MySealed.X
@@ -1029,6 +1080,7 @@ KtDotQualifiedExpression(859,869): 'MySealed.X'
 KtNameReferenceExpression(859,867): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -1037,6 +1089,7 @@ KtNameReferenceExpression(859,867): 'MySealed'
 KtNameReferenceExpression(868,869): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -1045,6 +1098,7 @@ KtNameReferenceExpression(868,869): 'X'
 KtNameReferenceExpression(878,879): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y

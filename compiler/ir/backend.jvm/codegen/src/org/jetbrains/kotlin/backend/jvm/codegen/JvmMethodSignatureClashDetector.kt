@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -19,9 +20,14 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.overrides.IrOverrideChecker
+import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.isFromJava
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
@@ -81,34 +87,44 @@ class JvmMethodSignatureClashDetector(
 
         val conflictingJvmDeclarationsData = JvmIrConflictingDeclarationsData(signature, declarations)
 
+        if (classCodegen.irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+            // In IFoo$DefaultImpls we should report errors only if there are private methods among conflicting ones
+            // (otherwise such errors would be reported twice: once for IFoo and once for IFoo$DefaultImpls).
+            if (fakeOverridesCount == 0 && specialOverridesCount == 0 && declarations.any { DescriptorVisibilities.isPrivate(it.visibility) }) {
+                reportJvmSignatureClash(
+                    diagnosticReporter,
+                    JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
+                    declarations,
+                    conflictingJvmDeclarationsData
+                )
+            }
+            return
+        }
+
         when {
             realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
-                if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                    reportJvmSignatureClash(
-                        diagnosticReporter,
-                        JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                        listOf(classCodegen.irClass),
-                        conflictingJvmDeclarationsData
-                    )
-                }
+                reportJvmSignatureClash(
+                    diagnosticReporter,
+                    JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                    listOf(classCodegen.irClass),
+                    conflictingJvmDeclarationsData
+                )
 
             fakeOverridesCount == 0 && specialOverridesCount == 0 -> {
-                // In IFoo$DefaultImpls we should report errors only if there are private methods among conflicting ones
-                // (otherwise such errors would be reported twice: once for IFoo and once for IFoo$DefaultImpls).
-                if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS ||
-                    declarations.any { DescriptorVisibilities.isPrivate(it.visibility) }
-                ) {
-                    reportJvmSignatureClash(
-                        diagnosticReporter,
-                        JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
-                        declarations,
-                        conflictingJvmDeclarationsData
-                    )
-                }
+                reportJvmSignatureClash(
+                    diagnosticReporter,
+                    JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
+                    declarations,
+                    conflictingJvmDeclarationsData
+                )
             }
 
-            else ->
-                if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+            else -> {
+                val overrideChecker = IrOverrideChecker(
+                    classCodegen.context.typeSystem, listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
+                )
+                val canIgnoreConflict = declarations.all { a -> declarations.all { b -> overrideChecker.canIgnoreConflict(a, b) } }
+                if (!canIgnoreConflict) {
                     reportJvmSignatureClash(
                         diagnosticReporter,
                         JvmBackendErrors.ACCIDENTAL_OVERRIDE,
@@ -116,6 +132,7 @@ class JvmMethodSignatureClashDetector(
                         conflictingJvmDeclarationsData
                     )
                 }
+            }
         }
     }
 
@@ -190,4 +207,35 @@ internal class JvmIrConflictingDeclarationsData(
             declarations = fun JvmIrConflictingDeclarationsData.() = declarations.map(IrDeclaration::toIrBasedDescriptor),
         )
     }
+}
+
+private val IrFunction.isJavaStaticFakeOverride: Boolean
+    get() = (isFakeOverride && isStatic && this is IrSimpleFunction) && resolveFakeOverride()?.isFromJava() == true
+
+/**
+ * To preserve the old behavior of never allowing accidental overrides by synthetic/generated code,
+ * only allow it for source-defined functions and property accessors.
+ */
+private val IrFunction.isDefined: Boolean
+    get() = origin == IrDeclarationOrigin.DEFINED || origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+
+private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): Boolean {
+    if (a === b) return true
+
+    // Allow "accidental overrides" between two declarations if:
+    // 1. One is static and the other is not.
+    // 2. One is a fake override and the other is defined in source code.
+    //    Note: This is overly restrictive but needed for preserving behavior of JvmStatic/JvmOverloads-generated
+    //          methods before companion blocks where introduced, such as
+    //          compiler/testData/diagnostics/tests/jvm/duplicateJvmSignature/jvmStatic/jvmStaticInCompanionObject.kt
+    // 3. Neither of them is a fake override created for a static method from Java.
+    // 4. They "override"/hide each other.
+
+    if (a.isStatic == b.isStatic) return false
+    if (!((a.isDefined && b.isFakeOverride) || (a.isFakeOverride && b.isDefined))) return false
+    if (a.isJavaStaticFakeOverride || b.isJavaStaticFakeOverride) return false
+    if (a !is IrOverridableMember || b !is IrOverridableMember) return false
+    if (!getBothWaysOverridability(MemberWithOriginal(a, null), MemberWithOriginal(b, null)).overridable) return false
+
+    return true
 }

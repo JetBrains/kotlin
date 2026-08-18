@@ -133,5 +133,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NoGTInTypeArgumentsKt]]
                         TYPE_REFERENCE
                       TYPE_PROJECTION[projectionKind=NONE]
                         TYPE_REFERENCE
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     VALUE_PARAMETER_LIST

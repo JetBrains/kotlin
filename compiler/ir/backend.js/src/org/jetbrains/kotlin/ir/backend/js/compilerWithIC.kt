@@ -25,36 +25,13 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import java.io.File
 
-private object JsICCacheInvalidatingKeys : ICCacheInvalidatingKeys {
-    override val stringKeys: List<CompilerConfigurationKey<String>>
-        get() = listOf(
-            JSConfigurationKeys.SOURCE_MAP_PREFIX,
-            JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS
-        )
-
-    override val booleanKeys: List<CompilerConfigurationKey<Boolean>>
-        get() = listOf(
-            JSConfigurationKeys.SOURCE_MAP,
-            JSConfigurationKeys.USE_ES6_CLASSES,
-            JSConfigurationKeys.GENERATE_POLYFILLS,
-            JSConfigurationKeys.GENERATE_DTS,
-            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
-            JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS,
-            JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT,
-            JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR,
-            JSConfigurationKeys.OPTIMIZE_GENERATED_JS,
-        )
-
-    override val enumKeys: List<CompilerConfigurationKey<Enum<*>>>
-        get() = listOf(
-            JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
-            JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
-        )
-}
-
 class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDependentICContext {
-    override fun getCacheInvalidatingKeys(): ICCacheInvalidatingKeys =
-        JsICCacheInvalidatingKeys
+    override fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>> =
+        setOf(
+            JSConfigurationKeys.LIBRARIES,
+            JSConfigurationKeys.FRIEND_LIBRARIES,
+            JSConfigurationKeys.INCLUDES
+        )
 
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForJsIC(WholeWorldStageController())
@@ -67,7 +44,7 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
         configuration: CompilerConfiguration,
     ): JsCommonBackendContext {
         return JsIrBackendContext(
-            mainModule.descriptor,
+            mainModule,
             irBuiltIns,
             symbolTable,
             configuration = configuration,

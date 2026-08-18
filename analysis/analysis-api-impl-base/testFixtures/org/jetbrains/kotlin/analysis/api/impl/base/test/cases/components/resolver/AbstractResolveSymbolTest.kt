@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.lookupLocally
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -59,10 +60,26 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
         }
 
+        val localLookup = (mainElement as? KtSimpleNameExpression)?.lookupLocally()
+
+        if (localLookup != null) {
+            val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
+            testServices.assertions.assertNotNull(resolved) {
+                "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
+                        "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
+            }
+            ignoreStabilityIfNeeded {
+                testServices.assertions.assertTrue(resolved!!.isEquivalentTo(localLookup)) {
+                    "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
+                }
+            }
+        }
+
         prettyPrint {
             if (mainElement is KtSimpleNameExpression) {
                 appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
                 appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
+                appendLine("lookupLocally: ${localLookup != null}")
             }
 
             val representation = stringRepresentation(symbolAttempt)

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
-import java.io.File
 import java.nio.file.Path
 
 internal class JvmClasspathSnapshottingOperationImpl private constructor(
@@ -46,16 +45,22 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
         options[key] = value
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = get(GRANULARITY)
         val parseInlinedLocalClasses: Boolean = get(PARSE_INLINED_LOCAL_CLASSES)
+        val expandTypeAliases: Boolean = get(EXPAND_TYPE_ALIASES)
         val origin = ClasspathEntrySnapshotter.snapshot(
-            classpathEntry.toFile(), ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses), getMetricsReporter()
+            classpathEntry.toFile(),
+            ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses, expandTypeAliases),
+            getMetricsReporter()
         )
         return ClasspathEntrySnapshotImpl(origin)
     }
@@ -73,5 +78,7 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
         val GRANULARITY: Option<ClassSnapshotGranularity> = Option("GRANULARITY", ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
 
         val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES", true)
+
+        val EXPAND_TYPE_ALIASES: Option<Boolean> = Option("EXPAND_TYPE_ALIASES", false)
     }
 }

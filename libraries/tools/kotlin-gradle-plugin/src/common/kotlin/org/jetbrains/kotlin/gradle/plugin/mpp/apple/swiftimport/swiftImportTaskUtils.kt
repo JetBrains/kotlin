@@ -5,15 +5,36 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import kotlinx.serialization.decodeFromString
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import java.io.File
 
+internal abstract class SwiftImportFingerprintInput {
+
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val fingerprintFile: RegularFileProperty
+
+    fun readFingerprint(): SwiftImportFingerprint =
+        fingerprintFile.get().asFile.readSwiftImportFingerprint()
+
+    fun readFingerprintOrNull(): SwiftImportFingerprint? =
+        fingerprintFile.asFile.orNull
+            ?.takeIf(File::isFile)
+            ?.readSwiftImportFingerprint()
+
+}
+
+internal fun File.readSwiftImportFingerprint(): SwiftImportFingerprint =
+    fingerprintJson.decodeFromString<SwiftImportFingerprint>(readText())
 
 internal abstract class LocalPackageTrackingInputs {
 

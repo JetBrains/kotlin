@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
-import org.jetbrains.kotlin.fir.declarations.utils.isClass
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -211,32 +208,14 @@ fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntry
 }
 
 context(holder: SessionHolder)
-fun FirEnumEntrySymbol.getComplementarySymbols(): List<FirEnumEntrySymbol>? = resolvedReturnType
+fun FirEnumEntrySymbol.getEnumSiblings(): Set<FirEnumEntrySymbol>? = resolvedReturnType
     .toRegularClassSymbol()
     ?.collectEnumEntries(holder.session)
-    ?.filter { it != this }
+    ?.filterTo(mutableSetOf()) { it != this }
 
 context(holder: SessionHolder)
-fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol> {
-    val superTypes = getSuperTypes(holder.session)
-        .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol() }
-
-    return superTypes.flatMap { superType ->
-        if (!superType.isSealed) return@flatMap emptyList()
-
-        superType.fir.getSealedClassInheritors(holder.session)
-            .mapNotNull { it.toSymbol() as? FirRegularClassSymbol }
-            .filter { (isFinal || it.isFinal || isClass && it.isClass) && areUnrelated(this, it) }
-    }
-}
-
-context(holder: SessionHolder)
-private fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean =
-    isSubclassOf(other.toLookupTag(), holder.session, isStrict = false, lookupInterfaces = true)
-
-context(holder: SessionHolder)
-private fun areUnrelated(a: FirClassSymbol<*>, b: FirClassSymbol<*>): Boolean =
-    !a.isSubclassOf(b) && !b.isSubclassOf(a)
+fun FirRegularClassSymbol.getSealedSiblings(): Set<FirClassSymbol<*>> =
+    holder.session.sealedSiblingsCalculator.collectSealedSiblingsFor(this)
 
 /**
  * Returns the FirClassLikeDeclaration that the

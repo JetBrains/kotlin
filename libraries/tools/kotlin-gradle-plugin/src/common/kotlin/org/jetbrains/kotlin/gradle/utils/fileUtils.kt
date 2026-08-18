@@ -65,18 +65,14 @@ internal fun Iterable<File>.toPathsArray(): Array<String> =
     map { it.normalize().absolutePath }.toTypedArray()
 
 internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true): File {
-    return try {
-        (if (directory == null) Files.createTempFile(prefix, suffix) else Files.createTempFile(directory.toPath(), prefix, suffix))
-    } catch (e: NoSuchFileException) {
-        val parentDir = e.file.parentFile
-
-        if (parentDir.isFile) throw IOException("Temp folder $parentDir is not a directory")
-        if (!parentDir.isDirectory) {
-            if (!parentDir.mkdirs()) throw IOException("Could not create temp directory $parentDir")
-        }
-
-        Files.createTempFile(parentDir.toPath(), prefix, suffix)
-    }.toFile().apply { if (deleteOnExit) deleteOnExit() }
+    val tempFile = if (directory == null) {
+        Files.createTempFile(prefix, suffix)
+    } else {
+        val tempDir = directory.toPath()
+        Files.createDirectories(tempDir)
+        Files.createTempFile(tempDir, prefix, suffix)
+    }
+    return tempFile.toFile().apply { if (deleteOnExit) deleteOnExit() }
 }
 
 internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boolean {

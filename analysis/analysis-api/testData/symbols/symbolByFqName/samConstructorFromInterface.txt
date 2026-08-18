@@ -72,4 +72,5 @@ KaSamConstructorSymbol:
   getContainingJvmClassName: one.SamConstructorFromInterfaceKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: one.MyInterface

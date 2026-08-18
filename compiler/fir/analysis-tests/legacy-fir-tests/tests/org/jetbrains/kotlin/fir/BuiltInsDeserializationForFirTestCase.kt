@@ -95,19 +95,24 @@ class BuiltInsDeserializationForFirTestCase {
             arguments = K2JVMCompilerArguments().apply {
                 noStdlib = true
                 noReflect = true
-                noJdk = true
                 allowNoSourceFiles = true
-                val jdk = when (jdkKind) {
-                    TestJdkKind.MOCK_JDK -> KtTestUtil.findMockJdkRtJar()
-                    TestJdkKind.MODIFIED_MOCK_JDK -> KtTestUtil.findMockJdkRtModified()
-                    TestJdkKind.FULL_JDK_8 -> KtTestUtil.getJdk8Home()
-                    TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
-                    TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
-                    TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-                    TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
-                    TestJdkKind.FULL_JDK -> File(System.getProperty("java.home"))
+                when (jdkKind) {
+                    TestJdkKind.MOCK_JDK -> {
+                        noJdk = true
+                        classpath = KtTestUtil.findMockJdkRtJar().absolutePath
+                    }
+                    TestJdkKind.MODIFIED_MOCK_JDK -> {
+                        noJdk = true
+                        classpath = KtTestUtil.findMockJdkRtModified().absolutePath
+                    }
+                    TestJdkKind.FULL_JDK_8 -> jdkHome = KtTestUtil.getJdk8Home().absolutePath
+                    TestJdkKind.FULL_JDK_11 -> jdkHome = KtTestUtil.getJdk11Home().absolutePath
+                    TestJdkKind.FULL_JDK_17 -> jdkHome = KtTestUtil.getJdk17Home().absolutePath
+                    TestJdkKind.FULL_JDK_21 -> jdkHome = KtTestUtil.getJdk21Home().absolutePath
+                    TestJdkKind.FULL_JDK_25 -> jdkHome = KtTestUtil.getJdk25Home().absolutePath
+                    TestJdkKind.FULL_JDK_VALHALLA -> jdkHome = KtTestUtil.getJdkValhallaHome().absolutePath
+                    TestJdkKind.FULL_JDK -> jdkHome = File(System.getProperty("java.home")).absolutePath
                 }
-                classpath = jdk.absolutePath
             },
             services = Services.EMPTY,
             rootDisposable,

@@ -1,3 +1,16 @@
+// FILE: Delegation.java
+package test;
+
+class JavaClass {
+    void testMethod() {
+        Test test = new Test();
+        test.none();
+        test.one();
+        test.two();
+    }
+}
+
+// FILE: Delegation.kt
 package test
 
 class E1: Exception()

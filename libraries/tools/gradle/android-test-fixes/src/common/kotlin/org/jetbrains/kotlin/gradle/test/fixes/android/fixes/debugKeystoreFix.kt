@@ -9,7 +9,6 @@ import com.android.build.api.dsl.*
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.test.fixes.android.TestFixesProperties
 
 /**
@@ -30,9 +29,9 @@ internal fun Project.applyDebugKeystoreFix(
 private inline fun <reified AndroidExtension : CommonExtension<*, *, *, *, *, *>> Project.fix(
     testFixesProperties: TestFixesProperties
 ): Action<Plugin<*>> = Action {
-    extensions.configure<AndroidExtension> {
+    extensions.configure(AndroidExtension::class.java) {
         logger.info("Reconfiguring Android debug keystore")
-        buildTypes.named("debug") { buildType ->
+        it.buildTypes.named("debug") { buildType ->
             val signingConfig = when (buildType) {
                 is ApplicationBuildType -> buildType.signingConfig
                 is LibraryBuildType -> buildType.signingConfig

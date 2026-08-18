@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:analysis-api"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
@@ -22,7 +23,7 @@ dependencies {
     implementation(libs.opentelemetry.api)
     implementation(libs.caffeine)
 
-    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(kotlinTest("junit5"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))

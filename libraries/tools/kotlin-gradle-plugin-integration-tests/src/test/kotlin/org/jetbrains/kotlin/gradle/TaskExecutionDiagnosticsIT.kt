@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
@@ -12,13 +13,16 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.pathString
 
 @DisplayName("Execution time diagnostics")
 class TaskExecutionDiagnosticsIT : KGPBaseTest() {
@@ -107,6 +111,9 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")
     @JvmGradlePluginTests
     @GradleTest
+    @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ brings Kotlin runtime 2.4.0 which metadata is not compatible with Kotlin compiler 2.2.10
+    )
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersionDeprecation(gradleVersion: GradleVersion) =
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
@@ -187,6 +194,61 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             project.buildAndFail("compileKotlin", assertions = assertions)
         } else {
             project.build("compileKotlin", assertions = assertions)
+        }
+    }
+
+    @GradleTest
+    @OtherGradlePluginTests
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
+    fun `karOrKarXZFilesInCompileClasspathAreReported - native`(gradleVersion: GradleVersion) {
+        nativeProject("native-simple-project", gradleVersion) {
+            val unsupportedLibraryPaths = listOf("foo.kar", "bar.kar.xz").map { fileName ->
+                projectPath.resolve("libs").createDirectories().resolve(fileName).createFile().pathString
+            }
+
+            buildScriptInjection {
+                val project = this.project
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                kotlinMultiplatform.dependencies {
+                    implementation.invoke(project.files(unsupportedLibraryPaths))
+                }
+            }
+
+            build(":compileKotlinLinuxX64") {
+                assertHasDiagnostic(UnsupportedKotlinArchiveUsage)
+                unsupportedLibraryPaths.forEach { libraryPath ->
+                    assertOutputContains(libraryPath)
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    @OtherGradlePluginTests
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
+    fun `karOrKarXZFilesInCompileClasspathAreReported - js`(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-plugin-project", gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            val unsupportedLibraryPaths = listOf("foo.kar", "bar.kar.xz").map { fileName ->
+                projectPath.resolve("libs").createDirectories().resolve(fileName).createFile().pathString
+            }
+
+            buildScriptInjection {
+                val project = this.project
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                kotlinMultiplatform.dependencies {
+                    implementation.invoke(project.files(unsupportedLibraryPaths))
+                }
+            }
+
+            build(":compileKotlinJs") {
+                assertHasDiagnostic(UnsupportedKotlinArchiveUsage)
+                unsupportedLibraryPaths.forEach { libraryPath ->
+                    assertOutputContains(libraryPath)
+                }
+            }
         }
     }
 }

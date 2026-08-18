@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.isRestrictedSuspensionFunction
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 open class UpgradeCallableReferences(
@@ -59,18 +59,6 @@ open class UpgradeCallableReferences(
     )
 
     private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
-        private fun IrClass?.isRestrictedSuspension(): Boolean {
-            if (this == null) return false
-            return hasAnnotation(StandardClassIds.Annotations.RestrictsSuspension) ||
-                    getAllSuperclasses().any { hasAnnotation(StandardClassIds.Annotations.RestrictsSuspension) }
-        }
-
-        private fun IrFunction.isRestrictedSuspensionFunction(): Boolean {
-            return parameters.any {
-                return it.kind == IrParameterKind.ExtensionReceiver && it.type.classOrNull?.owner.isRestrictedSuspension()
-            }
-        }
-
         private fun IrFunction.flattenParameters(isLambda: Boolean) {
             for (parameter in parameters) {
                 require(parameter.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }

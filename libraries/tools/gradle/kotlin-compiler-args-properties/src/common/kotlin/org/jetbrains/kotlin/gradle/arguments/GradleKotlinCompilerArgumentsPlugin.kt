@@ -10,7 +10,6 @@ import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
@@ -28,7 +27,7 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
     }
 
     private fun Project.configureKotlinVersions(properties: KotlinTaskProperties) {
-        plugins.withType<KotlinBasePlugin>().configureEach {
+        plugins.withType(KotlinBasePlugin::class.java).configureEach {
             configureExtension(properties)
             if (properties.kotlinOverrideUserValues.get()) {
                 forceConfigureTask(properties)
@@ -49,7 +48,7 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
     }
 
     private fun Project.configureTask(properties: KotlinTaskProperties) {
-        tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        tasks.withType(KotlinCompilationTask::class.java).configureEach {
             configureKotlinOptions(properties, it.compilerOptions)
         }
     }
@@ -57,7 +56,7 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
     private fun Project.forceConfigureTask(properties: KotlinTaskProperties) {
         // Wrapping into afterEvaluate to reduce the number of exceptions trying to modify value from the user-script
         afterEvaluate {
-            tasks.withType<KotlinCompilationTask<*>>().configureEach {
+            tasks.withType(KotlinCompilationTask::class.java).configureEach {
                 configureKotlinOptions(properties, it.compilerOptions, true)
             }
         }

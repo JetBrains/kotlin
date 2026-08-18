@@ -2,5 +2,6 @@ depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork CoreA
 language = Objective-C
 package = platform.SensorKit
 modules = SensorKit
+apiNotesSwiftName = true
 compilerOpts = -framework SensorKit
 linkerOpts = -framework SensorKit

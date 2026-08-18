@@ -85,56 +85,56 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:47 box
-// test.kt:7 static_init_5
+// test.kt:7 Single$static_init
 // test.kt:44 compute
-// test.kt:10 static_init_5
-// test.kt:11 static_init_5
+// test.kt:10 Single$static_init
+// test.kt:11 Single$static_init
 // test.kt:48 box
 // test.kt:49 box
-// test.kt:19 static_init_6
+// test.kt:19 Multiple$static_init
 // test.kt:44 compute
-// test.kt:24 static_init_6
-// test.kt:25 static_init_6
+// test.kt:24 Multiple$static_init
+// test.kt:25 Multiple$static_init
 // test.kt:50 box
 // test.kt:51 box
-// test.kt:34 static_init_7
+// test.kt:34 Parent$static_init
 // test.kt:44 compute
-// test.kt:40 static_init_8
+// test.kt:40 Child$static_init
 // test.kt:44 compute
 // test.kt:52 box
 
 // EXPECTATIONS WASM
 // test.kt:47 $box (11)
-// test.kt:7 $static_init (16)
+// test.kt:7 $Single$static_init (16)
 // test.kt:44 $compute (16, 18)
-// test.kt:7 $static_init (8)
-// test.kt:9 $static_init (16)
-// test.kt:10 $static_init (20)
-// test.kt:11 $static_init (12, 14, 24)
-// test.kt:9 $static_init (8)
+// test.kt:7 $Single$static_init (8)
+// test.kt:9 $Single$static_init (16)
+// test.kt:10 $Single$static_init (20)
+// test.kt:11 $Single$static_init (12, 14, 24)
+// test.kt:9 $Single$static_init (8)
 // test.kt:47 $box (11)
 // test.kt:48 $box (11)
-// test.kt:7 $static_init (16)
+// test.kt:7 $Single$static_init (16)
 // test.kt:48 $box (11)
 // test.kt:49 $box (13)
-// test.kt:19 $static_init (20)
+// test.kt:19 $Multiple$static_init (20)
 // test.kt:44 $compute (16, 18)
-// test.kt:19 $static_init (8)
-// test.kt:23 $static_init (21)
-// test.kt:24 $static_init (20)
-// test.kt:25 $static_init (12, 14, 24)
-// test.kt:23 $static_init (8)
+// test.kt:19 $Multiple$static_init (8)
+// test.kt:23 $Multiple$static_init (21)
+// test.kt:24 $Multiple$static_init (20)
+// test.kt:25 $Multiple$static_init (12, 14, 24)
+// test.kt:23 $Multiple$static_init (8)
 // test.kt:49 $box (13)
 // test.kt:50 $box (13)
-// test.kt:19 $static_init (20)
+// test.kt:19 $Multiple$static_init (20)
 // test.kt:50 $box (13)
 // test.kt:51 $box (10)
-// test.kt:40 $static_init (16)
-// test.kt:34 $static_init (16)
+// test.kt:40 $Child$static_init (16)
+// test.kt:34 $Parent$static_init (16)
 // test.kt:44 $compute (16, 18)
-// test.kt:34 $static_init (8)
-// test.kt:40 $static_init (16)
+// test.kt:34 $Parent$static_init (8)
+// test.kt:40 $Child$static_init (16)
 // test.kt:44 $compute (16, 18)
-// test.kt:40 $static_init (8)
+// test.kt:40 $Child$static_init (8)
 // test.kt:51 $box (10)
 // test.kt:52 $box (1)

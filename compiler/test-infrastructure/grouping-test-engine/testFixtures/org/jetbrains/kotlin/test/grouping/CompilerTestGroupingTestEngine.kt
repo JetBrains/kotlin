@@ -158,6 +158,18 @@ class CompilerTestGroupingTestEngine : TestEngine {
         context: JupiterEngineExecutionContext,
     ): TestMethodInfo? {
         val methodContext = method.prepare(context)
+
+        // Honor JUnit `ExecutionCondition` extensions (e.g. the test-federation smoke-test filter,
+        // `SmokeTestExecutionCondition`) before running anything. The standard Jupiter engine evaluates
+        // `shouldBeSkipped` for every test as part of its node lifecycle, but this custom engine drives
+        // method execution directly, so we have to replicate that check here. Without it, conditionally
+        // disabled tests (e.g. tests muted in smoke mode) would always run.
+        val skipResult = method.shouldBeSkipped(methodContext)
+        if (skipResult.isSkipped) {
+            methodContext.executionListener.executionSkipped(method, skipResult.reason.orElse("<unknown reason>"))
+            return null
+        }
+
         methodContext.executionListener.executionStarted(method)
         methodContext.throwableCollector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
         val testInstance = methodContext.extensionContext

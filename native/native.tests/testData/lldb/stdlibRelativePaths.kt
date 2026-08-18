@@ -1,5 +1,6 @@
 // KIND: STANDALONE_LLDB
-
+// INPUT_DATA_FILE: stdlibRelativePaths.in
+// OUTPUT_DATA_FILE: stdlibRelativePaths.out
 fun main() {
     // Ideally, we should be testing relative paths in user klibs as well.
     // But that turned out to be trickier than expected.

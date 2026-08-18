@@ -3,11 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
-
 package org.jetbrains.kotlin.gradle.utils.processes
 
-import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import org.gradle.process.ProcessExecutionException

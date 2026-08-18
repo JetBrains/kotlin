@@ -26,8 +26,13 @@ function testCatch2() {
 }
 
 function testFinally() {
+    var $tmp;
     var result;
-    result = f("testFinally");
+    try {
+        $tmp = f("testFinally");
+    } finally {
+        result = $tmp;
+    }
     return result;
 }
 

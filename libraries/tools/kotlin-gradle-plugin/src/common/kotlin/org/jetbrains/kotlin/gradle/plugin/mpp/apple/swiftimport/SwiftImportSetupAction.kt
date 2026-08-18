@@ -9,7 +9,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.project
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -156,9 +156,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
-    val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
-        FetchSyntheticImportProjectPackages.TASK_NAME,
-    ) {
+    val fetchSyntheticImportProjectPackages = project.locateOrRegisterSwiftPMImportFetchTask()
+    fetchSyntheticImportProjectPackages.configure {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         it.ideaSyncEnabled.set(ideaSyncEnabled)
@@ -198,6 +197,17 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         when (val packageIdentifier = identifierSynchronizationOrNull()) {
             is PackageResolvedSynchronization.Identifier -> {
                 val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
+                val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
+                cleanSwiftImportFingerprintArtifacts.configure { cleanTaskProvider ->
+                    cleanTaskProvider.syntheticPackageFingerprint.set(
+                        fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
+                    )
+                    cleanTaskProvider.coordinationService.set(fingerprintCoordinationService)
+                }
+                tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure {
+                    it.dependsOn(cleanSwiftImportFingerprintArtifacts)
+                }
+
                 enableFingerprintCoordination(
                     fingerprintCoordinationService = fingerprintCoordinationService,
                     generateSyntheticPackageTask = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
@@ -273,7 +283,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             target.konanTarget,
         )
 
-        val cinteropName = "swiftPMImport"
+        val cinteropName = GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME
         val targetPlatform = target.konanTarget.applePlatform
         // use sdk for a more conventional name
         val targetSdk = target.konanTarget.appleTarget.sdk
@@ -296,7 +306,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             )
         ) { fingerprintTask ->
             fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-            fingerprintTask.syntheticPackageFingerprint.set(fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() })
+            fingerprintTask.syntheticPackageFingerprint.fingerprintFile.set(fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() })
             fingerprintTask.xcodebuildSdk.set(targetSdk)
         }
 
@@ -341,15 +351,22 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 is PackageResolvedSynchronization.Identifier -> {
                     xcodebuildDumpTask.configure {
                         it.fingerprintCoordinationService.set(fingerprintCoordinationService)
-                        it.syntheticPackageFingerprint.set(
-                            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+                        it.syntheticPackageFingerprint.fingerprintFile.set(
+                            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
                         )
-                        it.xcodebuildFingerprint.set(fingerprintXcode.map { it.xcodebuildFingerprint.get() })
+                        it.xcodebuildFingerprint.fingerprintFile.set(fingerprintXcode.map { it.xcodebuildFingerprintFile.get() })
+                    }
+
+                    val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
+                    cleanSwiftImportFingerprintArtifacts.configure {
+                        it.xcodebuildFingerprints.from(
+                            fingerprintXcode.map { it.xcodebuildFingerprintFile.get() }
+                        )
                     }
 
                     defFilesAndLdDumpGenerationTask.configure { defFileTask ->
-                        defFileTask.xcodebuildFingerprint.set(
-                            xcodebuildDumpTask.map { it.xcodebuildFingerprint.get() }
+                        defFileTask.xcodebuildFingerprint.fingerprintFile.set(
+                            xcodebuildDumpTask.map { it.xcodebuildFingerprint.fingerprintFile.get() }
                         )
                         defFileTask.fingerprintsXcodeDumpsDir.set(provideXcodeDumpsDir())
                     }
@@ -560,7 +577,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
             aggregationService.get().buildAggregatedResultDependencies(
                 packageResolvedSynchronizationIdentifier
             ).map {
-                project.dependencies.project(path = it)
+                project.dependencies.project(mapOf("path" to it))
             }
         }
     )
@@ -579,25 +596,31 @@ private fun enableFingerprintCoordination(
             fingerprintSwiftPMDependencyGraph(
                 directMetadata,
                 transitiveMetadata,
-                normalizeVersions = false,
+                normalizeVersions = true,
             )
         }
 
     generateSyntheticPackageTask.configure {
         it.useOnlyTransitiveImportedDependencies()
         it.coordinationService.set(fingerprintCoordinationService)
-        it.syntheticPackageFingerprint.set(
-            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+        it.syntheticPackageFingerprint.fingerprintFile.set(
+            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
         )
         it.transitiveSwiftPMMetadata.set(fingerprintedSwiftPMDependencyGraph)
     }
 
     fetchSyntheticImportProjectPackages.configure {
-        it.syntheticPackageFingerprint.set(
-            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+        it.syntheticPackageFingerprint.fingerprintFile.set(
+            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
         )
         it.coordinationService.set(fingerprintCoordinationService)
     }
+}
+
+private fun Project.locateOrRegisterCleanSwiftImportFingerprintArtifactsTask(): TaskProvider<CleanSwiftImportFingerprintArtifacts> {
+    return locateOrRegisterTask<CleanSwiftImportFingerprintArtifacts>(
+        CleanSwiftImportFingerprintArtifacts.TASK_NAME,
+    )
 }
 
 private fun Project.locateOrRegisterUmbrellaFetchTask(
@@ -908,6 +931,17 @@ internal fun Project.registerPackageGeneration(
         it.syntheticProductType.set(syntheticImportProjectProductType)
     }
 }
+
+internal fun Project.locateOrRegisterCoordinationService(): Provider<SwiftImportFingerprintedCoordinationService> =
+    SwiftImportFingerprintedCoordinationService.registerIfAbsent(
+        this,
+        provideXcodeDumpsDir(),
+        provideCheckoutDir(),
+        provideSyntheticPackageDir(),
+    )
+
+internal fun Project.locateOrRegisterSwiftPMImportFetchTask(): TaskProvider<FetchSyntheticImportProjectPackages> =
+    locateOrRegisterTask(FetchSyntheticImportProjectPackages.TASK_NAME)
 
 internal const val SHARED_XCODE_DUMP_DIR = "build/kotlin/swiftPMXcodeDumps"
 private fun Project.provideXcodeDumpsDir(): Provider<Directory> =

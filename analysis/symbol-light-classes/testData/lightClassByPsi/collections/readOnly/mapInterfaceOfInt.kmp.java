@@ -4,7 +4,7 @@ public abstract class CMap /* test.CMap*/ implements test.IMap {
 
 public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
   @java.lang.Override()
-  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

@@ -10,8 +10,8 @@
 
 #include "GCImpl.hpp"
 #include "Memory.h"
-#include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
+#include "mm/ThreadData.hpp"
+#include "mm/ThreadRegistry.hpp"
 
 using namespace kotlin;
 

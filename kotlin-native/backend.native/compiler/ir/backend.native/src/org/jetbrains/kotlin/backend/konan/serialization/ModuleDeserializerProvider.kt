@@ -41,7 +41,7 @@ internal class ModuleDeserializerProvider(
                 && cachedLibraries.isLibraryCached(klib, allowIncomplete = isFromLibraryBeingCached)
                 && !declarationBeingCached
         ) {
-            linker.moduleDeserializers[moduleDescriptor] ?: error("No module deserializer for ${declaration.render()}")
+            linker.moduleDeserializers[packageFragment.module] ?: error("No module deserializer for ${declaration.render()}")
         } else {
             null
         }

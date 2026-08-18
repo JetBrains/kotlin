@@ -102,6 +102,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecation: null
+  javaMethodName: null
   importableFqName: sample.B
 
 KaConstructorSymbol:
@@ -174,6 +175,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecation: null
+  javaMethodName: null
   importableFqName: sample.B
 
 KaNamedClassSymbol:
@@ -255,6 +257,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: bar
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -336,6 +339,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.B
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecation: null
+    javaMethodName: getN
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -375,8 +379,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecation: null
-  javaGetterName: getN
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -547,6 +549,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: baz
   importableFqName: sample.baz
 
 KaKotlinPropertySymbol:
@@ -620,6 +623,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecation: null
+    javaMethodName: getM
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -757,6 +761,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecation: null
+    javaMethodName: setM
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -764,7 +769,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.MainKt
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecation: null
-  javaGetterName: getM
-  javaSetterName: setM
   isInline: false
   importableFqName: sample.m

@@ -1,0 +1,5 @@
+package test
+
+public open class ConstructorGenericUpperBound {
+    /*primary*/ public constructor ConstructorGenericUpperBound(/*0*/ java.util.RandomAccess?)
+}

@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
@@ -21,11 +22,12 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
+import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -77,6 +79,18 @@ private class ClassClsStubBuilder(
     else
         null
 
+    private val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) }
+
+    /**
+     * The properties written as a `val` parameter of the primary constructor instead of a member, keyed by their name.
+     *
+     * The compiler forbids any member but a constructor parameter in an annotation class, so each of its properties
+     * is one of those parameters, and the pair belongs together exactly as it is spelled in the sources.
+     */
+    private val foldedProperties: Map<Name, ProtoBuf.Property> = computeFoldedProperties()
+
+    private val memberPropertyProtos = classProto.propertyList.filterNot { c.nameResolver.getName(it.name) in foldedProperties }
+
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
     fun build() {
@@ -90,8 +104,8 @@ private class ClassClsStubBuilder(
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
-        typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
         createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
+        typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
         return classOrObjectStub
     }
 
@@ -128,6 +142,7 @@ private class ClassClsStubBuilder(
         )
     }
 
+    @OptIn(KtImplementationDetail::class)
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val fqName = classId.asSingleFqName()
         val shortName = fqName.shortName().ref()
@@ -168,41 +183,119 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
-                    valueClassRepresentation = valueClassRepresentation(),
+                    valueClassRepresentation = createValueClassRepresentation(),
                 )
             }
         }
     }
 
-    private fun valueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        classProto.hasInlineClassUnderlyingPropertyName() -> KotlinValueClassRepresentation.INLINE_CLASS
+    /**
+     * Returns the kind of a value class together with its underlying properties, or `null` when the class is not a value class, or when its
+     * representation cannot be restored from the metadata at hand.
+     *
+     * A value object needs no representation of its own: it declares no underlying properties, and the `value` modifier in its modifier
+     * list is enough to restore the representation on the fly.
+     *
+     * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
+     */
+    @OptIn(KtImplementationDetail::class)
+    private fun createValueClassRepresentation(): KotlinValueClassRepresentation? = when {
+        // An inline class is the only kind of value class which names its underlying property in the class itself
+        classProto.hasInlineClassUnderlyingPropertyName() -> createInlineClassRepresentation()
+
+        // A full value class is marked with the class flag only, so its underlying properties have to be looked up
+        Flags.IS_VALUE_CLASS.get(classProto.flags) && !hasJvmInlineAnnotation() -> createFullValueClassRepresentation()
+
+        // Either not a value class at all, or a multi-field '@JvmInline' value class from an experimental compiler version.
+        // The latter has no representation anymore, exactly as in the compiler's own deserialization.
         else -> null
+    }
+
+    @OptIn(KtImplementationDetail::class)
+    private fun createInlineClassRepresentation(): KotlinInlineClassRepresentation? {
+        val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
+
+        // The compiler writes the type into the class itself only when the underlying property is not a part of the ABI
+        val typeProto = classProto.inlineClassUnderlyingType(c.typeTable) ?: findInlineClassUnderlyingPropertyTypeProto(name)
+        val type = typeProto?.let(::createValueClassUnderlyingTypeBean) ?: return null
+        return KotlinInlineClassRepresentation(name, type)
+    }
+
+    private fun findInlineClassUnderlyingPropertyTypeProto(name: Name): ProtoBuf.Type? {
+        val property = classProto.propertyList.singleOrNull { property ->
+            c.nameResolver.getName(property.name) == name &&
+                    !property.hasReceiver() &&
+                    property.contextParameterList.isEmpty() &&
+                    // Fallback for old metadata where context parameters don't exist (KT-74546)
+                    property.contextReceiverTypes(c.typeTable).isEmpty()
+        }
+
+        return property?.returnType(c.typeTable)
+    }
+
+    @OptIn(KtImplementationDetail::class)
+    private fun createFullValueClassRepresentation(): KotlinValueClassRepresentation? {
+        // An abstract or a sealed value class is not allowed to declare underlying properties, which the compiler denotes with 'null'
+        if (isAbstractOrSealed()) return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = null)
+
+        // A full value class stores nothing about its underlying properties, so they are taken from the primary constructor's parameters
+        val primaryConstructorProto = primaryConstructorProto ?: return null
+        val properties = primaryConstructorProto.valueParameterList.map { parameterProto ->
+            val type = createValueClassUnderlyingTypeBean(parameterProto.type(c.typeTable)) ?: return null
+            c.nameResolver.getName(parameterProto.name) to type
+        }
+
+        return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = properties)
+    }
+
+    private fun hasJvmInlineAnnotation(): Boolean = classProto.annotationList.any { annotationProto ->
+        c.nameResolver.getClassId(annotationProto.id) == JvmStandardClassIds.Annotations.JvmInline
+    }
+
+    private fun createValueClassUnderlyingTypeBean(typeProto: ProtoBuf.Type): KotlinRigidTypeBean? =
+        typeStubBuilder.createKotlinTypeBean(typeProto) as? KotlinRigidTypeBean
+
+    private fun computeFoldedProperties(): Map<Name, ProtoBuf.Property> {
+        if (classKind != ProtoBuf.Class.Kind.ANNOTATION_CLASS) return emptyMap()
+
+        val parameterNames = primaryConstructorProto?.valueParameterList?.mapTo(mutableSetOf()) {
+            c.nameResolver.getName(it.name)
+        } ?: return emptyMap()
+
+        return buildMap {
+            for (propertyProto in classProto.propertyList) {
+                val name = c.nameResolver.getName(propertyProto.name)
+                if (name in parameterNames) {
+                    put(name, propertyProto)
+                }
+            }
+        }
     }
 
     private fun createConstructorStub() {
         if (!isClass()) return
 
-        val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) } ?: return
+        val primaryConstructorProto = primaryConstructorProto ?: return
 
-        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, thisAsProtoContainer)
+        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, thisAsProtoContainer, foldedProperties)
     }
 
     private fun createDelegationSpecifierList() {
         // if single supertype is any then no delegation specifier list is needed
         if (supertypeIds.isEmpty()) return
 
-        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtStubElementTypes.SUPER_TYPE_LIST)
+        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtNodeTypes.SUPER_TYPE_LIST)
 
         classProto.supertypes(c.typeTable).forEach { type ->
             val superClassStub = KotlinPlaceHolderStubImpl<KtSuperTypeEntry>(
-                delegationSpecifierListStub, KtStubElementTypes.SUPER_TYPE_ENTRY
+                delegationSpecifierListStub, KtNodeTypes.SUPER_TYPE_ENTRY
             )
             typeStubBuilder.createTypeReferenceStub(superClassStub, type)
         }
     }
 
     private fun createClassBodyAndMemberStubs() {
-        val classBody = KotlinPlaceHolderStubImpl<KtClassBody>(classOrObjectStub, KtStubElementTypes.CLASS_BODY)
+        val classBody = KotlinPlaceHolderStubImpl<KtClassBody>(classOrObjectStub, KtNodeTypes.CLASS_BODY)
         createEnumEntryStubs(classBody)
         createCompanionObjectStub(classBody)
         createCallableMemberStubs(classBody)
@@ -245,11 +338,11 @@ private class ClassClsStubBuilder(
             ProgressManager.checkCanceled()
 
             if (Flags.IS_SECONDARY.get(secondaryConstructorProto.flags)) {
-                createConstructorStub(classBody, secondaryConstructorProto, c, thisAsProtoContainer)
+                createConstructorStub(classBody, secondaryConstructorProto, c, thisAsProtoContainer, foldedProperties = emptyMap())
             }
         }
 
-        createDeclarationsStubs(classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList)
+        createDeclarationsStubs(classBody, c, thisAsProtoContainer, classProto.functionList, memberPropertyProtos)
     }
 
     private fun isClass(): Boolean = when (classKind) {
@@ -259,6 +352,11 @@ private class ClassClsStubBuilder(
 
     private fun isObject(): Boolean = when (classKind) {
         ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> true
+        else -> false
+    }
+
+    private fun isAbstractOrSealed(): Boolean = when (Flags.MODALITY.get(classProto.flags)) {
+        ProtoBuf.Modality.ABSTRACT, ProtoBuf.Modality.SEALED -> true
         else -> false
     }
 

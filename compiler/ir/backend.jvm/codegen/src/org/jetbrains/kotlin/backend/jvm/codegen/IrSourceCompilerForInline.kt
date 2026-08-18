@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -123,27 +122,8 @@ class IrSourceCompilerForInline(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val isCallInsideSameModuleAsCallee: Boolean
-        get() {
-            val inlineFunModule = callee.fileOrNull?.module
-            val currentlyGeneratedFunModule = codegen.irFunction.fileOrNull?.module
-            check(currentlyGeneratedFunModule != null) {
-                "There is no module for function ${codegen.irFunction.name}:\n${codegen.irFunction.render()}"
-            }
-
-            return if (inlineFunModule == null) {
-                callee.module == codegen.irFunction.module
-            } else {
-                // Check by IR is needed for the evaluate expression in IDE.
-                // When we compile some code fragment with inline function call
-                // that has an anonymous object in callee, we will get incorrect behavior.
-                // Code fragment is wrapped in `EvaluatorModuleDescriptor` and we accidentally
-                // think that inline call and callee are in different modules that leads to an error in
-                // `AnonymousObjectTransformer.doTransform`.
-                inlineFunModule == currentlyGeneratedFunModule
-            }
-        }
+        get() = callee.moduleFragment == codegen.irFunction.moduleFragment
 
     override val isFinallyMarkerRequired: Boolean
         get() = codegen.isFinallyMarkerRequired

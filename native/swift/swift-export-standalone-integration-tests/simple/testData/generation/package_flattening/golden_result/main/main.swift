@@ -19,6 +19,11 @@ public var variable: Swift.Int32 {
         ExportedKotlinPackages.org.kotlin.foo.variable = newValue
     }
 }
+public func fun_with_keywoards(
+    `repeat`: Swift.Int32
+) -> Swift.Int32 {
+    ExportedKotlinPackages.org.kotlin.foo.fun_with_keywoards(`repeat`: `repeat`)
+}
 public func function(
     arg: Swift.Int32
 ) -> Swift.Int32 {
@@ -72,6 +77,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         set {
             return { org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(newValue); return () }()
         }
+    }
+    public static func fun_with_keywoards(
+        `repeat`: Swift.Int32
+    ) -> Swift.Int32 {
+        return org_kotlin_foo_fun_with_keywoards__TypesOfArguments__Swift_Int32__(`repeat`)
     }
     public static func function(
         arg: Swift.Int32

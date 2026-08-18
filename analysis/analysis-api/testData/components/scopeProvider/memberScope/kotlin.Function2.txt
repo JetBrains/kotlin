@@ -127,6 +127,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: invoke
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -213,6 +214,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -260,6 +262,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -307,4 +310,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null

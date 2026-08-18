@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getAllVirtualFilesFromJar
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
@@ -33,10 +34,12 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 /**
- * This test checks the membership of [content scopes][KaModule.contentScope] and [resolution scopes][KaResolutionScopeProvider]. It
- * incorporates a custom [KotlinContentScopeRefiner] for added/shadowed files.
+ * This test checks the membership of [content scopes][KaModule.contentScope] and [resolution scopes][KaResolutionScopeProvider] by using
+ * a custom [KotlinContentScopeRefiner] for added/shadowed files. Additionally, the test checks the internal structure of these scopes
+ * to cover registered [KotlinGlobalSearchScopeMergeStrategy] extensions.
  *
  * The test supports multiple modules and checks all of their content and resolution scopes. The test data can declare the module structure
  * as usual with `MODULE` and `FILE` directives.
@@ -49,11 +52,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *
  * It is also possible to put the `SHADOWED` directive directly on a file in the working module.
  *
- * The test output consists of two files which authoritatively record the *actual* scopes computed by the Analysis API:
+ * The test output consists of four files which authoritatively record the *actual* scopes computed by the Analysis API:
  *
  * - A `.content.scope` file lists, per working module, each relevant file marked with `+` if it is in the module's content scope, or `-` if
  *   it is not.
  * - A `.resolution.scope` file does the same for each module's resolution scope.
+ * - A `.content.scope.structure` file lists, per working module, the underlying structure of the module's content scope.
+ * - A `.resolution.scope.structure` file does the same for each module's resolution scope.
  *
  * The relevant files for a module are its own files plus the files of its refiner module. For the resolution scope, the files of all
  * working modules are considered, as a resolution scope may include files from dependency modules and we should also test unrelated files
@@ -254,19 +259,26 @@ abstract class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysi
         candidateFilesByKaModule: Map<KaModule, List<VirtualFile>>,
         testServices: TestServices,
     ) {
-        val stringBuilder = StringBuilder()
+        val contentScopeFileInclusionStringBuilder = StringBuilder()
+        val scopeStructureStringBuilder = StringBuilder()
 
-        workingModules.forEach { module ->
-            val contentScope = module.kaModule.contentScope
-            stringBuilder.appendLine("Module ${module.moduleName}:")
-            candidateFilesByKaModule.getValue(module.kaModule).forEach { file ->
-                stringBuilder.appendLine(formatMembership(file, contentScope.contains(file)))
-            }
+        constructInclusionAndStructureOutput(
+            contentScopeFileInclusionStringBuilder,
+            scopeStructureStringBuilder,
+            workingModules,
+            filesForInclusionRendering = { testModuleWithFiles -> candidateFilesByKaModule.getValue(testModuleWithFiles.kaModule) }
+        ) { testModuleWithFiles ->
+            testModuleWithFiles.kaModule.contentScope
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(
-            actual = "Resulting Content Scopes:\n$stringBuilder",
+            actual = "Resulting Content Scopes:\n$contentScopeFileInclusionStringBuilder",
             extension = ".content.scope"
+        )
+
+        testServices.assertions.assertEqualsToTestOutputFile(
+            actual = "Resulting Content Scope Structure:\n$scopeStructureStringBuilder",
+            extension = ".content.scope.structure"
         )
     }
 
@@ -281,20 +293,47 @@ abstract class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysi
         // resolution scope does *not* over-include files it shouldn't, which is coverage we'd lose if we only probed related files.
         val allCandidateFiles = candidateFilesByKaModule.values.flatten().distinct().sortedWith(virtualFilesComparator)
 
-        val stringBuilder = StringBuilder()
+        val resolutionScopeFileInclusionStringBuilder = StringBuilder()
+        val scopeStructureStringBuilder = StringBuilder()
 
-        workingModules.forEach { module ->
-            val resolutionScope = KaResolutionScopeProvider.getInstance(module.kaModule.project).getResolutionScope(module.kaModule)
-            stringBuilder.appendLine("Module ${module.moduleName}:")
-            allCandidateFiles.forEach { file ->
-                stringBuilder.appendLine(formatMembership(file, resolutionScope.contains(file)))
-            }
+        constructInclusionAndStructureOutput(
+            resolutionScopeFileInclusionStringBuilder,
+            scopeStructureStringBuilder,
+            workingModules,
+            filesForInclusionRendering = { allCandidateFiles }
+        ) { testModuleWithFiles ->
+            KaResolutionScopeProvider.getInstance(testModuleWithFiles.kaModule.project).getResolutionScope(testModuleWithFiles.kaModule)
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(
-            actual = "Resulting Resolution Scope:\n$stringBuilder",
+            actual = "Resulting Resolution Scope:\n$resolutionScopeFileInclusionStringBuilder",
             extension = ".resolution.scope"
         )
+
+        testServices.assertions.assertEqualsToTestOutputFile(
+            actual = "Resulting Resolution Scope Structure:\n$scopeStructureStringBuilder",
+            extension = ".resolution.scope.structure"
+        )
+    }
+
+    private fun constructInclusionAndStructureOutput(
+        inclusionStringBuilder: StringBuilder,
+        scopeStructureStringBuilder: StringBuilder,
+        workingModules: List<TestModuleWithFiles>,
+        filesForInclusionRendering: (TestModuleWithFiles) -> List<VirtualFile>,
+        moduleScopeProvider: (TestModuleWithFiles) -> GlobalSearchScope,
+    ) {
+        workingModules.forEach { module ->
+            val moduleHeader = "Module ${module.moduleName}:"
+            inclusionStringBuilder.appendLine(moduleHeader)
+            scopeStructureStringBuilder.appendLine(moduleHeader)
+
+            val scope = moduleScopeProvider.invoke(module)
+            filesForInclusionRendering(module).forEach { file ->
+                inclusionStringBuilder.appendLine(formatMembership(file, scope.contains(file)))
+            }
+            scopeStructureStringBuilder.appendLine(scope.renderAsTestOutput())
+        }
     }
 
     private fun formatMembership(file: VirtualFile, isInScope: Boolean): String =
@@ -370,13 +409,13 @@ private class DummyContentScopeRefiner : KotlinContentScopeRefiner {
     }
 
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> {
-        val files = addedFilesByKaModule[module] ?: return emptyList()
+        val files = addedFilesByKaModule[module]?.takeIfNotEmpty() ?: return emptyList()
         val scope = GlobalSearchScope.filesScope(module.project, files)
         return listOf(scope)
     }
 
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        val files = shadowedFilesByKaModule[module] ?: return emptyList()
+        val files = shadowedFilesByKaModule[module]?.takeIfNotEmpty() ?: return emptyList()
         val scope = GlobalSearchScope.filesScope(module.project, files)
         return listOf(GlobalSearchScope.notScope(scope))
     }

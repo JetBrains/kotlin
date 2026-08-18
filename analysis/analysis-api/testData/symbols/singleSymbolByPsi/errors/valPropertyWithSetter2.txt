@@ -107,4 +107,5 @@ KaPropertySetterSymbol:
   getContainingJvmClassName: ValPropertyWithSetter2Kt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: setI
   importableFqName: null

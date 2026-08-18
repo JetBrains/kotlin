@@ -42,7 +42,7 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
             ?: Visibilities.Unknown
     }
 
-    private fun FirCallableSymbol<*>.isObjCClassPropertyOrAccessor(session: FirSession) =
+    private fun FirCallableSymbol<*>.isObjCClassPropertyOrAccessor(session: FirSession): Boolean =
         (this is FirPropertySymbol || this is FirPropertyAccessorSymbol)
                 && containingClassLookupTag()?.toClassSymbol(session)?.isObjCClass(session) ?: false
 

@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
@@ -8,7 +10,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -32,7 +34,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 
-    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(kotlinTest("junit5"))
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testFixturesApi(platform(libs.junit.bom))
@@ -77,6 +79,8 @@ projectTests {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
+
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     testCodebaseTask(dumpDirs = listOf("api", "api-unstable"))

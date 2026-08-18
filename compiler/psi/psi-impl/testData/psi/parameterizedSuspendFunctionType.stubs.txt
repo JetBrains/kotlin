@@ -25,6 +25,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
                 REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      POSTFIX_EXPRESSION
+        NULL[kind=NULL, value=null]
+        OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
   PROPERTY[fqName=test.explicitAny, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitAny]
     TYPE_REFERENCE
       USER_TYPE
@@ -37,6 +40,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
                   REFERENCE_EXPRESSION[referencedName=Any]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      POSTFIX_EXPRESSION
+        NULL[kind=NULL, value=null]
+        OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
   PROPERTY[fqName=test.explicitStar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitStar]
     TYPE_REFERENCE
       USER_TYPE
@@ -45,3 +51,6 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
           TYPE_PROJECTION[projectionKind=STAR]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      POSTFIX_EXPRESSION
+        NULL[kind=NULL, value=null]
+        OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]

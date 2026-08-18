@@ -75,14 +75,14 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         }
         is SirExistentialType -> kotlinFqName(type)
         is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
-        is SirErrorType, is SirUnsupportedType, is SirTupleType ->
+        is SirErrorType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype ->
             error("Type $type can not be named")
     }
 
     private fun kotlinParametrizedName(type: SirType): String = when (type) {
         is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
         is SirExistentialType -> type.protocols.singleOrNull()?.first?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-        is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType -> null
+        is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype -> null
     } ?: kotlinFqName(type)
 
     @OptIn(KaExperimentalApi::class)
@@ -110,7 +110,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.void -> "Unit"
             SirSwiftModule.never -> "Nothing"
-            SirSwiftModule.error -> "platform.Foundation.NSError"
+            SirSwiftModule.error -> "kotlin.Throwable"
 
             SirSwiftModule.array -> "kotlin.collections.List<${kotlinParametrizedName(type.typeArguments.first())}>"
             SirSwiftModule.set -> "kotlin.collections.Set<${kotlinParametrizedName(type.typeArguments.first())}>"

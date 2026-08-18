@@ -45,7 +45,7 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
     }
 
     context(context: CheckerContext)
-    private fun FirClass.hasThrowableSupertype() =
+    private fun FirClass.hasThrowableSupertype(): Boolean =
         superConeTypes.any { it !is ConeErrorType && it.isSubtypeOfThrowable(context.session) }
 
     context(context: CheckerContext)

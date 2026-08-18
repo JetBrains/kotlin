@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeCodegenTest
 import org.jetbrains.kotlin.konan.test.configuration.setupStepsForNativeFirstStageUpToSerialization
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
@@ -39,10 +37,6 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
         super.configure(builder)
         commonConfiguration {
             defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
                 OPT_IN with listOf(
                     "kotlin.native.internal.InternalForKotlinNative",
                     "kotlin.native.internal.InternalForKotlinNativeTests",
@@ -66,7 +60,6 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
             )
 
             useGroupingTestIsolators(::NativeGroupingTestIsolator)
-            facadeStep(::ObjCInteropFacade)
 
             // Because of package escaping various dumps for grouping mode would be different from
             // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
@@ -85,6 +78,14 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
 
             facadeStep(::KlibSerializerNativeCliFacade)
             klibArtifactsHandlersStep()
+
+            /*
+             * Both `KlibSerializerNativeCliFacade` and `ObjCInteropFacade` produce Klib artifact, which means that
+             * the later one rewrites the first one inside the test infra. Modules with objc interop are expected to
+             * have no kotlin files, so it's acceptable to just run the `ObjCInteropFacade` last so its output would
+             * be used for compilation of other modules
+             */
+            facadeStep(::ObjCInteropFacade)
 
             useAdditionalSourceProviders(
                 ::NativeLauncherAdditionalSourceProvider,

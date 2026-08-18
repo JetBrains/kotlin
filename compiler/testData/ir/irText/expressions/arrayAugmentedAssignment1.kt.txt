@@ -28,11 +28,13 @@ fun testCall() {
 }
 
 fun testMember(c: C) {
-  val tmp_2: IntArray = c.<get-x>()
-  val tmp_3: Int = 0
-  val tmp_4: Int = tmp_2.get(index = tmp_3)
-  tmp_2.set(index = tmp_3, value = tmp_4.inc())
-  tmp_4 /*~> Unit */
+  { // BLOCK
+    val tmp_2: IntArray = c.<get-x>()
+    val tmp_3: Int = 0
+    val tmp_4: Int = tmp_2.get(index = tmp_3)
+    tmp_2.set(index = tmp_3, value = tmp_4.inc())
+    tmp_4
+  } /*~> Unit */
 }
 
 fun testVariable() {

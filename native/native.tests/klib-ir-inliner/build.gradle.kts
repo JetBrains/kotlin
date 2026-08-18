@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val llvmDevBinaryDataUsage = configurations.create("llvmDevBinaryDataUsage") {
@@ -32,6 +32,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":native:native.tests")))
     testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
     testImplementation(project(":kotlin-util-klib-metadata"))
+    testImplementation(project(":native:cinterop.deserialization"))
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))

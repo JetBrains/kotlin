@@ -7,10 +7,22 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DelegateAndInitializerKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=by]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=A]
+        VALUE_ARGUMENT_LIST
   PROPERTY[fqName=b, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=b]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=by]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=A]
+        VALUE_ARGUMENT_LIST
   PROPERTY[fqName=c, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=c]
     TYPE_REFERENCE
       USER_TYPE

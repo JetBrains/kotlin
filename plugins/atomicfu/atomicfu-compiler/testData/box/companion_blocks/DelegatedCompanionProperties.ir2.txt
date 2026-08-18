@@ -1,0 +1,187 @@
+FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:tA visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:tA type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG value: CONST Int type=kotlin.Int value=0
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-tA> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:tA visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-tA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:tA type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  FIELD ATOMICFU_GENERATED_FIELD name:tD$volatile type:kotlin.Int visibility:private [static]
+    annotations:
+      Volatile
+    EXPRESSION_BODY
+      CONST Int type=kotlin.Int value=0
+  CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DelegatedProperties
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:public modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG value: CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.DelegatedProperties'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>.DelegatedProperties' type=java.util.concurrent.atomic.AtomicInteger origin=null
+    FIELD ATOMICFU_GENERATED_FIELD name:d$volatile type:kotlin.Int visibility:private [static]
+      annotations:
+        Volatile
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=0
+    CONSTRUCTOR visibility:public returnType:<root>.DelegatedProperties [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:d visibility:public modality:FINAL [delegated,var]
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL returnType:kotlin.Int [companion]
+        correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:d$volatile type:kotlin.Int visibility:private [static] declared in <root>.DelegatedProperties' type=kotlin.Int origin=null
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-d> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
+        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
+        correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:d$volatile type:kotlin.Int visibility:private [static] declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
+              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.DelegatedProperties.<set-d>' type=kotlin.Int origin=null
+    PROPERTY name:dA visibility:public modality:FINAL [delegated,var]
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-dA> visibility:public modality:FINAL returnType:kotlin.Int [companion]
+        correspondingProperty: PROPERTY name:dA visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties'
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'public final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.DelegatedProperties' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-dA> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
+        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
+        correspondingProperty: PROPERTY name:dA visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <set-dA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties'
+            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+              ARG <this>: CALL 'public final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.DelegatedProperties' type=java.util.concurrent.atomic.AtomicInteger origin=null
+              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.DelegatedProperties.<set-dA>' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'private final fun testDelegates (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:testDelegates visibility:private modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=0
+        ARG actual: CALL 'public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun <set-dA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.Unit origin=EQ
+        ARG <set-?>: CONST Int type=kotlin.Int value=2
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=2
+        ARG actual: CALL 'public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=2
+        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'public final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.DelegatedProperties' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=3
+        ARG actual: CALL 'public final fun incrementAndGet (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+          ARG <this>: CALL 'public final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.DelegatedProperties' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=3
+        ARG actual: CALL 'public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=0
+        ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.Unit origin=EQ
+        ARG <set-?>: CONST Int type=kotlin.Int value=42
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=42
+        ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=0
+        ARG actual: CALL 'private final fun <get-tdA> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'private final fun <set-tdA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+        ARG <set-?>: CONST Int type=kotlin.Int value=2
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=2
+        ARG actual: CALL 'private final fun <get-tdA> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=2
+        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-tA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=3
+        ARG actual: CALL 'public final fun incrementAndGet (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-tA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=3
+        ARG actual: CALL 'private final fun <get-tdA> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=0
+        ARG actual: CALL 'private final fun <get-tD> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'private final fun <set-tD> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+        ARG <set-?>: CONST Int type=kotlin.Int value=42
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=42
+        ARG actual: CALL 'private final fun <get-tD> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+  PROPERTY name:tD visibility:private modality:FINAL [delegated,var]
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-tD> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:tD visibility:private modality:FINAL [delegated,var]
+      companionExtension: CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-tD> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:tD$volatile type:kotlin.Int visibility:private [static] declared in <root>' type=kotlin.Int origin=null
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<set-tD> visibility:private modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
+      correspondingProperty: PROPERTY name:tD visibility:private modality:FINAL [delegated,var]
+      companionExtension: CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <set-tD> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>'
+          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:tD$volatile type:kotlin.Int visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-tD>' type=kotlin.Int origin=null
+  PROPERTY name:tdA visibility:private modality:FINAL [delegated,var]
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-tdA> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:tdA visibility:private modality:FINAL [delegated,var]
+      companionExtension: CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-tdA> (): kotlin.Int declared in <root>'
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-tA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<set-tdA> visibility:private modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
+      correspondingProperty: PROPERTY name:tdA visibility:private modality:FINAL [delegated,var]
+      companionExtension: CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <set-tdA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>'
+          CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+            ARG <this>: CALL 'private final fun <get-tA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-tdA>' type=kotlin.Int origin=null

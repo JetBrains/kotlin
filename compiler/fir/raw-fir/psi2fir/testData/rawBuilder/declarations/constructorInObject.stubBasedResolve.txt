@@ -7,7 +7,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] constructorInObject.kt
         [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] enum class B : R|kotlin/Enum<B>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class B : R|kotlin/Enum<B>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Enum<B>|>()
         }
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] constructorInObject.kt
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<B>|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

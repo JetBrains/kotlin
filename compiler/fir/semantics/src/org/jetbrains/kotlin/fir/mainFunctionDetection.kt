@@ -61,7 +61,7 @@ fun FirNamedFunction.isMaybeMainFunction(
     return hasValidParameters && (isTopLevel || isPlatformStatic())
 }
 
-private fun ConeKotlinType.isValidMainFunctionParameter() =
+private fun ConeKotlinType.isValidMainFunctionParameter(): Boolean =
     isArrayType &&
             arrayElementType()?.isString == true &&
             this.variance != Variance.IN_VARIANCE

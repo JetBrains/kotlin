@@ -13,3 +13,10 @@ fun <T> returnsResultOfContract(block: () -> T): T {
     }
     return block()
 }
+
+fun <T> returnsParameterContract(value: T): T {
+    contract {
+        returnsParameter(value)
+    }
+    return value
+}

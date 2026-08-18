@@ -1,0 +1,6 @@
+package test
+
+public interface ReadOnlyExtendsWildcard {
+    public abstract fun bar(): kotlin.Unit
+    public abstract fun foo(/*0*/ (kotlin.collections.MutableList<out kotlin.CharSequence!>..kotlin.collections.List<kotlin.CharSequence!>?), /*1*/ kotlin.Comparable<kotlin.String!>!): kotlin.Unit
+}

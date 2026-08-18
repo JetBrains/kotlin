@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -36,24 +37,24 @@ internal class KlibToolIrLinker(
     override val returnUnboundSymbolsIfSignatureNotFound get() = true
 
     override fun createModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
         strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer = KlibToolModuleDeserializer(
-        module = moduleDescriptor,
-        klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
+        moduleFragment = moduleFragment,
+        klib = klib ?: error("Expecting kotlin library for $moduleFragment"),
         strategyResolver = strategyResolver
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor) = false
 
     private inner class KlibToolModuleDeserializer(
-        module: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
     ) : BasicIrModuleDeserializer(
         linker = this,
-        moduleDescriptor = module,
+        moduleFragment = moduleFragment,
         strategyResolver = strategyResolver,
         klib = klib,
         libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,

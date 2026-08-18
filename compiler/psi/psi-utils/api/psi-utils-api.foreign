@@ -13,6 +13,7 @@ org/jetbrains/kotlin/psi/KtDelegatedSuperTypeEntry
 org/jetbrains/kotlin/psi/KtDestructuringDeclaration
 org/jetbrains/kotlin/psi/KtDotQualifiedExpression
 org/jetbrains/kotlin/psi/KtEnumEntry
+org/jetbrains/kotlin/psi/KtExperimentalApi
 org/jetbrains/kotlin/psi/KtExpression
 org/jetbrains/kotlin/psi/KtIfExpression
 org/jetbrains/kotlin/psi/KtLambdaExpression

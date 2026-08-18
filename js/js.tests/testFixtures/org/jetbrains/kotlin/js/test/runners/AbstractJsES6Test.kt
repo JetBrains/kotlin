@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.js.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpAfterInliningVerifyingHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -28,6 +32,7 @@ abstract class AbstractJsES6Test(
                 +JsEnvironmentConfigurationDirectives.ES6_MODE
             }
         }
+        builder.configureLoweredIrDumpHandlers()
     }
 }
 
@@ -53,6 +58,11 @@ abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
 
         builder.configureIrHandlersStep {
             commonIrHandlersForCodegenTest()
+        }
+
+        // TODO KT-87965: Move it to setupCommonHandlersForJsTest() to fully turn or IR Inliner checks in all testrunners, inlcluding TS export
+        builder.configureKlibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpAfterInliningVerifyingHandler)
         }
     }
 }

@@ -2,6 +2,8 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
+
 package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.lang.ASTNode
@@ -11,6 +13,7 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
@@ -73,8 +76,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             dataStream.writeName(name)
         }
 
-        val representation = stub.valueClassRepresentation
-        dataStream.writeVarInt(if (representation == null) 0 else representation.ordinal + 1)
+        serializeValueClassRepresentation(dataStream, stub.valueClassRepresentation)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinClassStubImpl {
@@ -95,12 +97,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             superNames[i] = dataStream.readName()
         }
 
-        val representationOrdinal = dataStream.readVarInt()
-        val representation: KotlinValueClassRepresentation? =
-            if (representationOrdinal == 0)
-                null
-            else
-                KotlinValueClassRepresentation.entries[representationOrdinal - 1]
+        val valueClassRepresentation = deserializeValueClassRepresentation(dataStream)
 
         return KotlinClassStubImpl(
             parent = parentStub,
@@ -113,7 +110,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isLocal = isLocal,
             isTopLevel = isTopLevel,
             kdocText = kdocText,
-            valueClassRepresentation = representation,
+            valueClassRepresentation = valueClassRepresentation,
         )
     }
 

@@ -8,7 +8,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
@@ -309,7 +309,6 @@ testing {
                 implementation(project())
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared"))
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:arguments"))
             }
             targets.all {

@@ -1,0 +1,11 @@
+package test
+
+public open class AnnotatedValueParameter {
+    public constructor AnnotatedValueParameter()
+    public open fun f(/*0*/ @test.AnnotatedValueParameter.Anno(value = "non-empty") kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.Unit
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class Anno : kotlin.Annotation {
+        public final val value: kotlin.String
+            public final fun `<get-value>`(): kotlin.String
+    }
+}

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
-import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -38,11 +37,15 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
@@ -336,6 +339,7 @@ class ComposerLambdaMemoization(
             name = Name.identifier("ComposableSingletons${"$"}$shortName")
         }.also {
             it.createThisReceiverParameter()
+            it.superTypes = listOf(context.irBuiltIns.anyType)
 
             // store the full file path to the file that this class is associated with in an
             // annotation on the class. This will be used by tooling to associate the keys
@@ -820,25 +824,32 @@ class ComposerLambdaMemoization(
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = Name.identifier(lambdaName)
-                type = lambdaType
+                type = lambdaType.makeNullable()
                 visibility = DescriptorVisibilities.PRIVATE
                 isStatic = context.platform.isJvm()
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
-                f.initializer = DeclarationIrBuilder(context, clazz.symbol)
-                    .irExprBody(lambdaExpression.markIsTransformedLambda())
             }
             val getter = p.addGetter {
                 returnType = lambdaType
                 visibility = DescriptorVisibilities.INTERNAL
-                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
             }.also { fn ->
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
                 fn.parent = clazz
                 fn.parameters += thisParam
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                    val backingField = p.backingField!!
+                    +irIf(
+                        condition = irEqualsNull(irGetField(irGet(thisParam), backingField)),
+                        body = irSetField(
+                            irGet(thisParam),
+                            backingField,
+                            lambdaExpression.markIsTransformedLambda()
+                        )
+                    )
+                    +irReturn(irGetField(irGet(thisParam), backingField))
                 }
             }
 
@@ -860,7 +871,7 @@ class ComposerLambdaMemoization(
                         fn.parent = clazz
                         fn.parameters += thisParam
                         fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                            +irReturn(irCall(getter))
+                            +irReturn(irCall(getter).apply { dispatchReceiver = irGet(thisParam) })
                         }
                     }
                 }
@@ -904,7 +915,7 @@ class ComposerLambdaMemoization(
         declarationContext: DeclarationContext,
         expression: IrFunctionExpression,
         collector: CaptureCollector,
-        useComposableFactory: Boolean
+        useComposableFactory: Boolean,
     ): IrCall {
         val function = expression.function
         val argumentCount = function.parameters.size
@@ -966,6 +977,22 @@ class ComposerLambdaMemoization(
             arguments[index] = expression.markIsTransformedLambda()
         }
 
+        // Copy type parameters to ensure that types are captured correctly.
+        val functionContext = currentFunctionContext
+        if (functionContext != null && functionContext.composable && functionContext.declaration.typeParameters.isNotEmpty()) {
+            expression.function.copyTypeParametersFrom(functionContext.declaration)
+            expression.function.remapTypes(SimpleTypeRemapper(
+                object : SymbolRemapper by SymbolRemapper.EMPTY {
+                    override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
+                        if (symbol is IrTypeParameterSymbol && symbol.owner.parent == functionContext.declaration) {
+                            expression.function.typeParameters[symbol.owner.index].symbol
+                        } else {
+                            symbol
+                        }
+                }
+            ))
+        }
+
         return composableLambdaExpression.markHasTransformedLambda()
     }
 
@@ -982,7 +1009,7 @@ class ComposerLambdaMemoization(
                             // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
                             // on Android.
                             context.platform.isJvm()
-                    )
+                            )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
         if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {

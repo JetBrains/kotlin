@@ -5,7 +5,7 @@
 
 #include "GCSchedulerImpl.hpp"
 
-#include "GlobalData.hpp"
+#include "mm/GlobalData.hpp"
 #include "Memory.h"
 #include "Logging.hpp"
 #include "Porting.h"

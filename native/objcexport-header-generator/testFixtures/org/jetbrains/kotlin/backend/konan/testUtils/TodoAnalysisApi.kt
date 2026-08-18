@@ -11,5 +11,7 @@ package org.jetbrains.kotlin.backend.konan.testUtils
  * @param expectCrash If `false` (default), failed test assertions ([org.opentest4j.AssertionFailedError]) are ignored,
  * but other exceptions are reported.
  * If `true`, it is the opposite: failed test assertions are reported, other exceptions are ignored.
+ *
+ * @see IgnoreK1
  */
 annotation class TodoAnalysisApi(val expectCrash: Boolean = false)

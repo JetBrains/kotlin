@@ -29,4 +29,14 @@ just_cinterop_c/FooProtocol.setPublicProperty|objc:setPublicProperty:[100]
 just_cinterop_c/FooProtocolMeta|null[100]
 just_cinterop_c/FooProtocol|null[100]
 
-// Imported signatures: 0
+// Imported signatures: 10
+kotlin/Int|null[0]
+kotlin/Unit|null[0]
+kotlinx.cinterop/ExperimentalForeignApi|null[0]
+kotlinx.cinterop/ExternalObjCClass|null[0]
+kotlinx.cinterop/ObjCClassOf|null[0]
+kotlinx.cinterop/ObjCClass|null[0]
+kotlinx.cinterop/ObjCMethod|null[0]
+kotlinx.cinterop/ObjCObjectBaseMeta|null[0]
+kotlinx.cinterop/ObjCObjectBase|null[0]
+kotlinx.cinterop/ObjCObject|null[0]

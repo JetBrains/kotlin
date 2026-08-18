@@ -17,8 +17,13 @@ FILE[kind=File[packageFqName=<root>]]
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS_BODY
       PROPERTY[fqName=Foo.defaultProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=defaultProperty]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PROPERTY[fqName=Foo.defaultVariable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=defaultVariable]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=abc]
       PROPERTY[fqName=Foo.customAccessorAndBackingField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=customAccessorAndBackingField]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=custom]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
           REFERENCE_EXPRESSION[referencedName=field]
@@ -28,10 +33,13 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=Foo.customGetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetter]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=Foo]
       PROPERTY[fqName=Foo.customSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=customSetter]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -41,6 +49,8 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=Foo]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -52,6 +62,8 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=Bar]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private]
       PROPERTY[fqName=Foo.extensionProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=extensionProperty]
@@ -63,6 +75,7 @@ FILE[kind=File[packageFqName=<root>]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       PROPERTY[fqName=Foo.postponed, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=postponed]
         TYPE_REFERENCE
           USER_TYPE

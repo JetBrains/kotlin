@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
  * Represents a source-representable declaration such as a class, function, or property.
@@ -51,10 +49,6 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
      * see [KaUseSiteVisibilityChecker.isVisible][org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker.isVisible].
      */
     public val visibility: KaSymbolVisibility
-
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    public val compilerVisibility: Visibility
 
     /**
      * Whether the declaration is an `actual` declaration in a multiplatform project.

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test
 
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.analysis.api.KaSession
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
@@ -16,25 +17,24 @@ import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticMemberScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surface") {
     override val configurator = LLSourceLikeTestConfigurator()
@@ -104,99 +104,38 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
     }
 
     @Test
-    fun deprecatedMapToJvmType(mainFile: KtFile) {
-        val testFunction = mainFile.declarations.firstIsInstance<KtFunction>()
-        assertEquals("test", testFunction.name)
+    fun substitutedAnnotation(testServices: TestServices) {
+        val allFiles = testServices.ktTestModuleStructure.allSourceFiles
+        val commonFile = allFiles.single { it.name == "myFacade.kt" } as KtFile
+        val jvmFile = allFiles.single { it.name == "main.kt" } as KtFile
 
-        analyze(testFunction) {
-            val session = useSiteSession
-            val valueParameter = testFunction.valueParameters.single()
+        val project = commonFile.project
+        val facadeClass = JavaPsiFacade.getInstance(project).findClass(
+            "mypack.MyFacadeKt",
+            GlobalSearchScope.projectScope(project),
+        )
 
-            val kotlinType = valueParameter.symbol.returnType
+        assertNotNull(facadeClass, "'mypack.MyFacadeKt' light class is not found")
 
-            val memberMethod = session::class.java
-                .getMethod("mapToJvmType", KaType::class.java, TypeMappingMode::class.java)
+        val facadeMethod = facadeClass.methods.single()
 
-            assert(memberMethod.isSynthetic)
+        assertEquals("myCustomName", facadeMethod.name)
+        val psiAnnotation = facadeMethod.annotations.single()
 
-            val contextParameterBridgeMethod = Class
-                .forName("org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponentKt")
-                .getMethod("mapToJvmType", KaSession::class.java, KaType::class.java, TypeMappingMode::class.java)
+        assertEquals("kotlin.jvm.JvmName", psiAnnotation.qualifiedName)
 
-            assert(contextParameterBridgeMethod.isSynthetic)
+        analyze(jvmFile) {
+            val function = commonFile.declarations.single() as KtNamedFunction
+            val functionSymbol = function.symbol
+            val annotation = functionSymbol.annotations.single()
+            val constructorSymbol = annotation.constructorSymbol ?: error("The constructor symbol is absent")
 
-            val expectedResult = Type.getType("LFoo;")
+            // It has to point to the JVM Stdlib. JVM session cannot depend on classes from klib
+            assertEquals("Library kotlin-stdlib", constructorSymbol.containingModule.moduleDescription)
+            val constructorPsi = constructorSymbol.realPsi ?: error("The real psi is not found")
 
-            val memberResult = memberMethod.invoke(session, kotlinType, TypeMappingMode.DEFAULT)
-            assertEquals(expectedResult, memberResult)
-
-            val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, session, kotlinType, TypeMappingMode.DEFAULT)
-            assertEquals(expectedResult, contextParameterBridgeResult)
-        }
-    }
-
-    @Test
-    fun deprecatedFunctionTypeKind(mainFile: KtFile) {
-        val testFunction = mainFile.declarations.firstIsInstance<KtFunction>()
-        assertEquals("test", testFunction.name)
-
-        analyze(testFunction) {
-            val session = useSiteSession
-            val valueParameter = testFunction.valueParameters.single()
-
-            val kotlinType = valueParameter.symbol.returnType
-
-            val memberMethod = session::class.java
-                .getMethod("getFunctionTypeKind", KaType::class.java)
-
-            // For some reason, getters of HIDDEN-deprecated interface properties aren't synthetic
-            assert(!memberMethod.isSynthetic)
-
-            val contextParameterBridgeMethod = Class
-                .forName("org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProviderKt")
-                .getMethod("getFunctionTypeKind", KaSession::class.java, KaType::class.java)
-
-            assert(contextParameterBridgeMethod.isSynthetic)
-
-            val expectedResult = FunctionTypeKind.Function
-
-            val memberResult = memberMethod.invoke(session, kotlinType)
-            assertEquals(expectedResult, memberResult)
-
-            val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, session, kotlinType)
-            assertEquals(expectedResult, contextParameterBridgeResult)
-        }
-    }
-
-    @Test
-    fun deprecatedAnnotationApplicableTargets(mainFile: KtFile) {
-        val annotationClass = mainFile.declarations.firstIsInstance<KtClass>()
-        assertEquals("MyAnnotation", annotationClass.name)
-
-        analyze(annotationClass) {
-            val session = useSiteSession
-            val classSymbol = annotationClass.classSymbol!!
-
-            val memberMethod = session::class.java
-                .getMethod("getAnnotationApplicableTargets", KaClassSymbol::class.java)
-
-            // For some reason, getters of HIDDEN-deprecated interface properties aren't synthetic
-            assert(!memberMethod.isSynthetic)
-
-            val contextParameterBridgeMethod = Class
-                .forName("org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProviderKt")
-                .getMethod("getAnnotationApplicableTargets", KaSession::class.java, KaClassSymbol::class.java)
-
-            assert(contextParameterBridgeMethod.isSynthetic)
-
-            @Suppress("UNCHECKED_CAST")
-            val memberResult = memberMethod.invoke(session, classSymbol) as Set<KotlinTarget>
-            assert(KotlinTarget.CLASS in memberResult)
-            assert(KotlinTarget.FUNCTION in memberResult)
-
-            @Suppress("UNCHECKED_CAST")
-            val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, session, classSymbol) as Set<KotlinTarget>
-            assertEquals(memberResult, contextParameterBridgeResult)
+            // It has to be analyzable
+            assertTrue(constructorPsi.canBeAnalysed())
         }
     }
 }

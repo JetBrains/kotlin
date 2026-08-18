@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "std_support/Atomic.hpp"
 
 namespace kotlin::alloc {

@@ -1,3 +1,13 @@
+// FILE: MapImpl.java
+package test;
+
+class MapImpl {
+    {
+        new EmptyMap();
+    }
+}
+
+// FILE: MapImpl.kt
 package test
 
 class EmptyMap<V> : Map<String, V> {
@@ -11,4 +21,3 @@ class EmptyMap<V> : Map<String, V> {
     override val values: MutableCollection<V> = mutableSetOf()
     override val entries : MutableSet<MutableMap.MutableEntry<String, V>> = mutableSetOf()
 }
-

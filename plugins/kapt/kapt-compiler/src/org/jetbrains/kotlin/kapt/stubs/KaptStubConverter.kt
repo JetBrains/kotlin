@@ -96,6 +96,7 @@ import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -991,6 +992,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return parent.isInsideCompanionObject()
     }
 
+    // @JvmExposeBoxed generates an exposed function, which is not an override.
+    private fun IrSimpleFunction.isJvmOverride(): Boolean = when {
+        overriddenSymbols.isEmpty() -> false
+        !hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) -> true
+        else -> overriddenSymbols.any { it.owner.name == name }
+    }
+
     private fun convertMethod(
         method: MethodNode,
         containingClass: ClassNode,
@@ -1006,7 +1014,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         if (isSynthetic(method.access) && !isAnnotationHolderForProperty) return null
 
-        val isOverridden = declaration is IrOverridableDeclaration<*> && declaration.overriddenSymbols.isNotEmpty()
+        val isOverridden = declaration is IrSimpleFunction && declaration.isJvmOverride()
         val visibleAnnotations = if (isOverridden) {
             (method.visibleAnnotations ?: emptyList()) + AnnotationNode(Type.getType(Override::class.java).descriptor)
         } else {
@@ -1665,7 +1673,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (type is ConeErrorType) {
             val diagnostic = type.diagnostic as? ConeUnresolvedError
             val simpleName = diagnostic?.qualifier ?: return null
-            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverType
+            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverInfo?.type
             return if (outerType == null) {
                 treeMaker.SimpleName(simpleName) to simpleName
             } else {
@@ -1750,6 +1758,22 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is Double -> {
                 sb.append(specialFpValueNumerator(value)).append(" / 0.0")
                 treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value)), treeMaker.Literal(0.0))
+            }
+            is UByte -> {
+                sb.append("(byte)").append(value.toInt())
+                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
+            }
+            is UShort -> {
+                sb.append("(short)").append(value.toInt())
+                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
+            }
+            is UInt -> {
+                sb.append(value.toInt())
+                treeMaker.Literal(value.toInt())
+            }
+            is ULong -> {
+                sb.append(value.toLong()).append("L")
+                treeMaker.Literal(value.toLong())
             }
 
             else -> null
@@ -1967,6 +1991,6 @@ private class LegacyFunctionTypeKindProjector(private val session: FirSession) :
 }
 
 private fun Any?.isOfPrimitiveType(): Boolean = when (this) {
-    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double -> true
+    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double, is UByte, is UShort, is UInt, is ULong -> true
     else -> false
 }

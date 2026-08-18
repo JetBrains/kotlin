@@ -32,7 +32,9 @@ kotlin {
             implementation(kotlinTest("junit5"))
             // external deps
             implementation(composeRuntime()) { isTransitive = false }
+            implementation(composeRuntimeDesktop()) { isTransitive = false }
             implementation(composeRuntimeAnnotations()) { isTransitive = false }
+            implementation(composeRuntimeAnnotationsJvm()) { isTransitive = false }
             implementation(libs.androidx.collections)
         }
 

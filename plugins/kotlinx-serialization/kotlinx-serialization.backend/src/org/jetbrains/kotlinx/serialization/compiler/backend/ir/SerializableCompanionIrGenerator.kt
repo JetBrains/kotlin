@@ -64,7 +64,7 @@ class SerializableCompanionIrGenerator(
     fun generate() {
         val serializerGetterFunction =
             getSerializerGetterFunction(serializableIrClass, SerialEntityNames.SERIALIZER_PROVIDER_NAME)?.takeIf {
-                it.isFromPlugin(compilerContext.afterK2)
+                it.isFromPlugin()
             }
                 ?: throw IllegalStateException(
                     "Can't find synthesized 'Companion.serializer()' function to generate, " +
@@ -91,7 +91,7 @@ class SerializableCompanionIrGenerator(
                 getSerializerGetterFunction(
                     serializableIrClass,
                     SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME
-                )?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
+                )?.takeIf { it.isFromPlugin() }
                     ?: throw IllegalStateException(
                         "Can't find synthesized 'Companion.${
                             SerializationAnnotations.keepGeneratedSerializerAnnotationFqName.shortName().asString()
@@ -194,7 +194,7 @@ class SerializableCompanionIrGenerator(
                     && it.hasShape(dispatchReceiver = true, regularParameters = 1)
                     && it.parameters[1].isVararg
                     && it.returnType.isKSerializer()
-                    && it.isFromPlugin(compilerContext.afterK2)
+                    && it.isFromPlugin()
         }?.let { return it }
         val kSerializerStarType = compilerContext.getClassFromRuntime(SerialEntityNames.KSERIALIZER_CLASS).starProjectedType
         val f = irClass.addFunction(

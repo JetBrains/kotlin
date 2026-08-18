@@ -14,6 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryWhitespaceBeforeColo
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=x2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=x2]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann2]
@@ -25,3 +26,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryWhitespaceBeforeColo
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]

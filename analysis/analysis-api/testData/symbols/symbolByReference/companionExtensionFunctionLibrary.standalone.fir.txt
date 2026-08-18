@@ -70,4 +70,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: static1
   importableFqName: static1

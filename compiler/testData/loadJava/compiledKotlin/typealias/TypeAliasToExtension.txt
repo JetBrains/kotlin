@@ -1,8 +1,0 @@
-package test
-
-public fun </*0*/ P> foo(/*0*/ x: test.Foo<P>.() -> kotlin.Unit): kotlin.Unit
-
-public final class Foo</*0*/ T> {
-    /*primary*/ public constructor Foo</*0*/ T>()
-}
-public typealias MyHandler</*0*/ P> = test.Foo<P>.() -> kotlin.Unit

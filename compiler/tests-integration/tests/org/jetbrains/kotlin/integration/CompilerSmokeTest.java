@@ -140,33 +140,6 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
     }
 
     @Test
-    public void testSimpleScript() throws Exception {
-        runCompiler("script", "-script", "script.kts", "hi", "there");
-    }
-
-    @Test
-    public void testScriptDashedArgs() throws Exception {
-        runCompiler("script", "-script", "script.kts", "--", "hi", "-name", "Marty", "--", "there");
-    }
-
-    @Test
-    public void testScriptException() throws Exception {
-        runCompiler("script", "-script", "script.kts");
-    }
-
-    @Test
-    public void testScriptFlushBeforeShutdown() throws Exception {
-        runCompiler("script", "-script", "script.kts");
-    }
-
-    @Test
-    public void testCompileScript() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "script.jar";
-
-        runCompiler("script", "-Xallow-any-scripts-in-source-roots", "script.kts", "-d", jar);
-    }
-
-    @Test
     public void testInlineOnly() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "inlineOnly.jar";
 

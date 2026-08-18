@@ -34,7 +34,7 @@ internal class KaFirFlexibleType(
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN,
     )
     @Suppress("DEPRECATION_ERROR")
     override val nullability: KaTypeNullability
@@ -42,7 +42,7 @@ internal class KaFirFlexibleType(
             if (coneType.hasFlexibleMarkedNullability) {
                 KaTypeNullability.UNKNOWN
             } else {
-                KaTypeNullability.create(coneType.lowerBound.isMarkedNullable)
+                if (coneType.lowerBound.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
             }
         }
 

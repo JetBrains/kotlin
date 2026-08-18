@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 
 @K1Deprecation
 object DescriptorVisibilityUtils {
+    @ObsoleteDescriptorBasedAPI
     @JvmStatic
     fun findInvisibleMember(
         receiver: ReceiverValue?,
@@ -24,6 +26,7 @@ object DescriptorVisibilityUtils {
         return findInvisibleMember(receiver, what, from, languageVersionSettings.useSpecialRulesForPrivateSealedConstructors)
     }
 
+    @ObsoleteDescriptorBasedAPI
     @JvmStatic
     fun isVisible(
         receiver: ReceiverValue?,
@@ -34,6 +37,7 @@ object DescriptorVisibilityUtils {
         return isVisible(receiver, what, from, languageVersionSettings.useSpecialRulesForPrivateSealedConstructors)
     }
 
+    @ObsoleteDescriptorBasedAPI
     @JvmStatic
     fun isVisibleIgnoringReceiver(
         what: DeclarationDescriptorWithVisibility,
@@ -43,6 +47,7 @@ object DescriptorVisibilityUtils {
         return isVisibleIgnoringReceiver(what, from, languageVersionSettings.useSpecialRulesForPrivateSealedConstructors)
     }
 
+    @ObsoleteDescriptorBasedAPI
     @JvmStatic
     fun isVisibleWithAnyReceiver(
         what: DeclarationDescriptorWithVisibility,

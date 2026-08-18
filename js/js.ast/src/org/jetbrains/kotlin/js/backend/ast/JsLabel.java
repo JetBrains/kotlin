@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents a JavaScript label statement.
@@ -63,6 +63,6 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     @NotNull
     @Override
     public JsLabel deepCopy() {
-        return new JsLabel(label, AstUtil.deepCopy(statement)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsLabel(label, AstUtil.deepCopy(statement)), this);
     }
 }

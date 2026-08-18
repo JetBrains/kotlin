@@ -1,0 +1,13 @@
+--- a/functionsDifferInTypeParameterBounds.ir.txt
++++ b/functionsDifferInTypeParameterBounds.ir.js_ir.txt
+@@ -93,8 +93,8 @@
+               BRANCH
+                 if: CONST Boolean type=kotlin.Boolean value=true
+                 then: THROW type=kotlin.Nothing
+-                  CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
+-                    ARG p0: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
++                  CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.Any?) declared in kotlin.AssertionError' type=kotlin.AssertionError origin=null
++                    ARG message: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
+   CLASS CLASS name:Y modality:FINAL visibility:public superTypes:[<root>.X]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Y
+     CONSTRUCTOR visibility:public returnType:<root>.Y [primary]

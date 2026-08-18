@@ -10,7 +10,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val wabtVersion = "1.0.19"

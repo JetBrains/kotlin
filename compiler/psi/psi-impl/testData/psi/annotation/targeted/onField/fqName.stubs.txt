@@ -13,3 +13,5 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=String]

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JAVAC_EXPECTED_FILE
 // FILE: B.java
 public interface B<T1, T2> {
     double put(int x, double y);

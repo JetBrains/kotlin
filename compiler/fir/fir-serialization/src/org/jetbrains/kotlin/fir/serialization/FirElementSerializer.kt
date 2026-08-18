@@ -26,20 +26,19 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.projection
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
@@ -87,8 +85,6 @@ class FirElementSerializer private constructor(
     private val contractSerializer = FirContractSerializer()
     private val providedDeclarationsService = session.providedDeclarationsForMetadataService
     private val stdLibCompilation = languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
-
-    private var metDefinitelyNotNullType: Boolean = false
 
     fun packagePartProto(file: FirFile, actualizedExpectDeclarations: Set<FirDeclaration>?): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
@@ -155,16 +151,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(klass: FirClass, containingFile: FirFile?): ProtoBuf.Class.Builder {
-        return if (containingFile == null) {
-            // Containing file can be null for local classes, as well as synthetic ones like kotlin/Cloneable.
-            // Not using `processFile` means that we will not be able to use IR-based constant expression evaluator when serializing
-            // annotations in such classes, and will fall back to the FIR-based evaluator.
-            classProtoImpl(klass)
-        } else classProtoImpl(klass)
-    }
-
-    private fun classProtoImpl(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
+    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -284,9 +271,10 @@ class FirElementSerializer private constructor(
                 builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
 
                 val property = callableMembers.single {
-                    it is FirProperty && it.receiverParameter == null && it.contextParameters.isEmpty() &&
-                            it.name == representation.underlyingPropertyName
+                    it is FirProperty && it.fromPrimaryConstructor == true
                 }
+
+                assert((property as FirProperty).name == representation.underlyingPropertyName)
 
                 if (!property.visibility.isPublicAPI) {
                     if (useTypeTable()) {
@@ -315,12 +303,6 @@ class FirElementSerializer private constructor(
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(klass))
 
         extension.serializeClass(klass, builder, versionRequirementTable, this)
-
-        if (metDefinitelyNotNullType) {
-            builder.addVersionRequirement(
-                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
-            )
-        }
 
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
@@ -412,12 +394,6 @@ class FirElementSerializer private constructor(
 
         extension.serializeScript(script, builder, versionRequirementTable, this)
 
-        if (metDefinitelyNotNullType) {
-            builder.addVersionRequirement(
-                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
-            )
-        }
-
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
 
@@ -427,7 +403,7 @@ class FirElementSerializer private constructor(
     @OptIn(UnexpandedTypeCheck::class)
     fun snippetProto(snippet: FirReplSnippet): ProtoBuf.Class.Builder = whileAnalysing(session, snippet) {
         if (versionRequirementTable == null) error("Version requirements must be serialized for snippets: ${snippet.render()}")
-        val builder = classProtoImpl(snippet.snippetClass)
+        val builder = classProto(snippet.snippetClass)
         extension.serializeSnippet(snippet, builder, versionRequirementTable, this)
         return builder
     }
@@ -653,10 +629,6 @@ class FirElementSerializer private constructor(
 
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(property))
-
-            if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
-            }
         }
 
         extension.serializeProperty(property, builder, versionRequirementTable, local)
@@ -767,10 +739,6 @@ class FirElementSerializer private constructor(
 
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(function))
-
-            if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
-            }
         }
 
         builder.serializeCompilerPluginMetadata(function, ProtoBuf.Function.Builder::addCompilerPluginData)
@@ -832,11 +800,6 @@ class FirElementSerializer private constructor(
 
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(typeAlias))
-            if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(
-                    writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
-                )
-            }
 
             if (typeAlias.classId.isNestedClass) {
                 builder.addVersionRequirement(writeLanguageVersionRequirement(LanguageFeature.NestedTypeAliases, versionRequirementTable))
@@ -878,10 +841,6 @@ class FirElementSerializer private constructor(
 
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(constructor))
-
-            if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
-            }
         }
 
         extension.serializeConstructor(constructor, builder, local)
@@ -935,7 +894,7 @@ class FirElementSerializer private constructor(
         if (parameter.isVararg) {
             val delegatedTypeAttrs = (parameter.returnTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef?.coneTypeOrNull?.attributes
             val varargElementType = parameter.returnTypeRef.coneType.varargElementType().applyIf(delegatedTypeAttrs != null) {
-                withAttributes(delegatedTypeAttrs!!)
+                withAttributes(delegatedTypeAttrs)
             }
 
             if (useTypeTable()) {
@@ -1116,8 +1075,7 @@ class FirElementSerializer private constructor(
                 }
 
                 if (isDefinitelyNotNullType) {
-                    metDefinitelyNotNullType = true
-                    builder.flags = Flags.getTypeFlags(false, isDefinitelyNotNullType)
+                    builder.flags = Flags.getTypeFlags(/* isSuspend = */ false, /* isDefinitelyNotNull = */ true)
                 }
             }
             is ConeIntersectionType -> {
@@ -1312,19 +1270,12 @@ class FirElementSerializer private constructor(
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()
 
     private fun MutableVersionRequirementTable.serializeVersionRequirements(container: FirAnnotationContainer): List<Int> =
-        serializeVersionRequirements(container.annotations)
-
-    private fun MutableVersionRequirementTable.serializeVersionRequirements(annotations: List<FirAnnotation>): List<Int> =
-        annotations
+        container.annotations
             .filter {
                 it.toAnnotationClassId(session)?.asSingleFqName() == RequireKotlinConstants.FQ_NAME
             }
             .mapNotNull(::serializeVersionRequirementFromRequireKotlin)
             .map(::get)
-
-    private fun MutableVersionRequirementTable.writeVersionRequirement(languageFeature: LanguageFeature): Int {
-        return writeLanguageVersionRequirement(languageFeature, this)
-    }
 
     private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotation): ProtoBuf.VersionRequirement.Builder? {
         val convertedAnnotation = annotation.toConstantValue<AnnotationValue>() ?: return null

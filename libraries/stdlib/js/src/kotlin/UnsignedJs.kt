@@ -19,12 +19,18 @@ private inline fun jsToInt32(x: Double): Int = js("x | 0")
 private inline fun jsToString(x: Double, base: Int): String = js("x.toString(base)")
 
 @PublishedApi
-internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt =
-  jsToInt32(uintToDouble(v1.toInt()) % uintToDouble(v2.toInt())).toUInt()
+internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt {
+    val d1 = uintToDouble(v1.toInt()).unsafeCast<Int>()
+    val d2 = uintToDouble(v2.toInt()).unsafeCast<Int>()
+    return (d1 % d2).toUInt()
+}
 
 @PublishedApi
-internal actual fun uintDivide(v1: UInt, v2: UInt): UInt =
-  jsToInt32(uintToDouble(v1.toInt()) / uintToDouble(v2.toInt())).toUInt()
+internal actual fun uintDivide(v1: UInt, v2: UInt): UInt {
+    val d1 = uintToDouble(v1.toInt()).unsafeCast<Int>()
+    val d2 = uintToDouble(v2.toInt()).unsafeCast<Int>()
+    return (d1 / d2).toUInt()
+}
 
 @PublishedApi
 internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong {

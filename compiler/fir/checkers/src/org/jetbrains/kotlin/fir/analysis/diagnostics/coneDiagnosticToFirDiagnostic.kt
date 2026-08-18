@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -562,8 +561,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
 
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null, null, session)
     is ConeUnresolvedNameError -> {
-        val receiverClassLikeType = receiverType?.unwrapToSimpleTypeUsingLowerBound() as? ConeClassLikeType
-        FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverClassLikeType, session)
+        FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverInfo, session)
     }
     is ConeUnresolvedTypeQualifierError -> {
         when {
@@ -616,7 +614,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
             FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType, session)
-        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, session)
+        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, this.operatorToken, session)
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
 
@@ -786,7 +784,7 @@ private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, ses
         if (parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
             parent = treeStructure.getParent(parent) ?: return false
         }
-        if (parent.tokenType == KtStubElementTypes.LAMBDA_ARGUMENT) {
+        if (parent.tokenType == KtNodeTypes.LAMBDA_ARGUMENT) {
             var prevSibling = parent.getPreviousSibling(treeStructure)
             while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
                 if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {

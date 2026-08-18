@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 
 fun getQualifiedName(typeElement: KtTypeElement?, isSuspend: Boolean): String? {
@@ -33,7 +32,3 @@ private fun getQualifiedName(userType: KtUserType): String? {
     val qualifier = userType.qualifier ?: return userType.referencedName
     return getQualifiedName(qualifier) + "." + userType.referencedName
 }
-
-fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
-    @Suppress("DEPRECATION") // KT-78356
-    getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)

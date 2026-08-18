@@ -1,6 +1,7 @@
 KtNameReferenceExpression(216,219): 'inc'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int

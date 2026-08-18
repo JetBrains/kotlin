@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.config
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
@@ -18,6 +19,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SUPER_BUILDER_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_AUTO_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILD_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CHAIN
@@ -98,6 +102,9 @@ class GlobalConfig(
     val accessorsPrefix: List<String>,
     val getterNoIsPrefix: Boolean,
     val builderClassName: String,
+    val builderFlagUsage: FlagUsageValue?,
+    val superBuilderFlagUsage: FlagUsageValue?,
+    val singularAuto: Boolean,
     val logFieldName: String,
     val logFieldIsStatic: Boolean,
     val logFlagUsage: FlagUsageValue?,
@@ -127,6 +134,9 @@ class GlobalConfig(
                 accessorsPrefix = config.getMultiString(ACCESSORS_PREFIX_CONFIG) ?: emptyList(),
                 getterNoIsPrefix = config.getBoolean(GETTER_NO_IS_PREFIX_CONFIG) ?: false,
                 builderClassName = config.getString(BUILDER_CLASS_NAME_CONFIG) ?: "*Builder",
+                builderFlagUsage = parseFlagUsage(config, BUILDER_FLAG_USAGE_CONFIG),
+                superBuilderFlagUsage = parseFlagUsage(config, SUPER_BUILDER_FLAG_USAGE_CONFIG),
+                singularAuto = config.getBoolean(SINGULAR_AUTO_CONFIG) ?: true,
                 logFieldName = config.getString(LOG_FIELD_NAME_CONFIG) ?: "log",
                 logFieldIsStatic = config.getBoolean(LOG_FIELD_IS_STATIC_CONFIG) ?: true,
                 logFlagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),
@@ -321,6 +331,17 @@ object ConeLombokAnnotations {
             protected fun getSetterPrefix(annotation: FirAnnotation): String? =
                 annotation.getStringArgument(SETTER_PREFIX)
         }
+
+        /**
+         * Mirrors Lombok behavior (https://projectlombok.org/features/Builder#small-print):
+         *
+         * > If setting the access level to `PROTECTED`, all methods generated inside the builder class are actually generated as `public`;
+         * the meaning of the `protected` keyword is different inside the inner class, and the precise behavior that `PROTECTED` would indicate
+         * (access by any source in the same package is allowed, as well as any subclasses *from the outer class, marked with `@Builder`* is not possible,
+         * and marking the inner members `public` is as close as we can get.
+         */
+        val builderFunctionsVisibility: Visibility?
+            get() = if (visibility == JavaVisibilities.ProtectedAndPackage) Visibilities.Public else visibility
     }
 
     class Builder(

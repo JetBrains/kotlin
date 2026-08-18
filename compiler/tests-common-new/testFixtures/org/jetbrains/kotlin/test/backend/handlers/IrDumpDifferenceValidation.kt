@@ -9,16 +9,18 @@ import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
-import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
 
 /**
@@ -31,40 +33,45 @@ import java.io.File
  *   from the directive.
  *
  * @param testServices the test services instance
- * @param mainExpectedFile the main (non-target-specific) expected dump file
  * @param baseDumpExtension the base dump extension without target override (e.g., "ir.txt" or "kt.txt")
  * @param actualDump the actual dump
  */
 internal fun validateTargetSpecificDumpFile(
     testServices: TestServices,
     assertions: Assertions,
-    mainExpectedFile: File,
     baseDumpExtension: String,
+    directiveForIrDifference: ValueDirective<TargetBackend>,
     actualDump: String,
     isKotlinLikeDump: Boolean,
-): Boolean {
-    val targetBackend = testServices.defaultsProvider.targetBackend ?: return false
-    val targetBackendDirectiveName = targetBackend.name
+) {
     val moduleStructure = testServices.moduleStructure
+
+    fun assertWithoutPatch() {
+        assertions.assertEqualsToDump(moduleStructure, baseDumpExtension, actualDump.ifEmpty { null })
+    }
+
+    // Classified patches are not collapsed, so for consistency, they're always against classified dumps.
+    val mainExpectedFile = moduleStructure.getClassifiedDumpFile(baseDumpExtension)
+    val targetBackend = testServices.defaultsProvider.targetBackend ?: return assertWithoutPatch()
+    val targetBackendDirectiveName = targetBackend.name
     val dumpDescription = if (isKotlinLikeDump) "Kotlin-like IR dump" else "IR dump"
 
-    val matchedBackend = testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE)
+    val matchedBackend = testServices.getMatchedBackendFromDirective(directiveForIrDifference)
     if (matchedBackend != null) {
         val targetSpecificExtension = targetSpecificDumpExtension(baseDumpExtension, matchedBackend)
         val patchBackendName = targetBackend.directChildOf(matchedBackend).name.lowercase()
         val normalizedActualDump = actualDump.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
-        val targetSpecificFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(targetSpecificExtension)
+        val targetSpecificFile = moduleStructure.getClassifiedDumpFile(targetSpecificExtension)
 
         if (normalizedActualDump.isEmpty()) {
             checkTestInfrastructure(!targetSpecificFile.exists()) {
-                "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but there is no actual dump"
+                "$directiveForIrDifference directive specifies $targetBackendDirectiveName but there is no actual dump"
             }
-            return true
+            return
         }
 
         checkTestInfrastructure(mainExpectedFile.exists()) {
-            "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
+            "$directiveForIrDifference directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
         }
 
         val mainDump = mainExpectedFile.readText().trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
@@ -83,36 +90,39 @@ internal fun validateTargetSpecificDumpFile(
             if (isKotlinLikeDump) {
                 // Kotlin-like dumps show symbol's simple names, while text IR dumps show fqnames.
                 // When a used symbol's package is changed -> `*ir.<backend>.patch` is not empty, while `*kt.<backend>.patch` may legitimately be empty.
-                return true
+                return
             }
             assertions.fail {
-                "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from DUMP_IR_DIFFERENCE directive"
+                "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from $directiveForIrDifference directive"
             }
         }
 
         assertions.assertEqualsToFile(targetSpecificFile, expectedPatch)
         // Sanity check: patch application must result in the actual dump
-        checkTestInfrastructure(applyPatch(mainDump, targetSpecificFile) == normalizedActualDump) {
+        checkTestInfrastructure(applyPatch(mainDump, expectedPatch) == normalizedActualDump) {
             "Unable to reconstruct target-specific dump from patch: ${targetSpecificFile.absolutePath}"
         }
-        return true
+        return
     } else {
-        val baseTestFile = moduleStructure.originalTestDataFiles.first()
-
-        val existingTargetSpecificFile = findTargetSpecificPatchFile(targetBackend, baseTestFile, baseDumpExtension)
+        val existingTargetSpecificFile = moduleStructure.findTargetSpecificPatchFile(targetBackend, baseDumpExtension)
         checkTestInfrastructure(existingTargetSpecificFile == null) {
-            "Target-specific $dumpDescription file detected but no DUMP_IR_DIFFERENCE directive specified for " +
+            "Target-specific $dumpDescription file detected but no $directiveForIrDifference directive specified for " +
                     "$targetBackendDirectiveName or its compatible target: $existingTargetSpecificFile"
         }
-        return false
+        if (moduleStructure.allDirectives[directiveForIrDifference].isEmpty()) {
+            assertWithoutPatch()
+        } else {
+            // Because DUMP_IR_DIFFERENCE is set, some other backend will force classified dump to be generated.
+            assertions.assertEqualsToFile(mainExpectedFile, actualDump)
+        }
     }
 }
 
-private fun findTargetSpecificPatchFile(targetBackend: TargetBackend, baseTestFile: File, baseDumpExtension: String): File? {
+private fun TestModuleStructure.findTargetSpecificPatchFile(targetBackend: TargetBackend, baseDumpExtension: String): File? {
     var current = targetBackend
     while (current != TargetBackend.ANY) {
         val ext = targetSpecificDumpExtension(baseDumpExtension, current)
-        val file = baseTestFile.withExtension(ext)
+        val file = getClassifiedDumpFile(ext)
         if (file.exists()) {
             return file
         }
@@ -153,21 +163,20 @@ private fun String.insertBackendBeforeTxtExtension(targetBackendName: String): S
     }
 }
 
-private fun applyPatch(baseText: String, patchFile: File): String {
-    val patchText = patchFile.readText()
+private fun applyPatch(baseText: String, patchText: String): String {
     val lines = patchText.lines().dropLastWhile { it.isEmpty() }
     checkTestInfrastructure(lines.size >= 3) {
-        "Unknown target-specific patch format: ${patchFile.absolutePath}"
+        "Unknown target-specific patch format:\n$patchText"
     }
     checkTestInfrastructure(lines[0].startsWith("--- ") && lines[1].startsWith("+++ ")) {
-        "Unknown target-specific patch format: ${patchFile.absolutePath}"
+        "Unknown target-specific patch format:\n$patchText"
     }
 
     val patchedLines = try {
         val patch = UnifiedDiffUtils.parseUnifiedDiff(lines)
         DiffUtils.patch(baseText.lines(), patch)
     } catch (e: Throwable) {
-        testInfraError("Unknown target-specific patch format in ${patchFile.absolutePath}: $e")
+        throw TestInfrastructureException("Unknown target-specific patch format in:\n$patchText", e)
     }
 
     return patchedLines.joinToString(System.lineSeparator())

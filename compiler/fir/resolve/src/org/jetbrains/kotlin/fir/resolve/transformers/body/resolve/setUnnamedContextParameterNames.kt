@@ -73,5 +73,5 @@ private fun ConeKotlinType.erasedUpperBoundName(tryApproximation: Boolean): Name
     }
 }
 
-private fun String.replaceInvalidChars(invalidChars: Set<Char>) =
+private fun String.replaceInvalidChars(invalidChars: Set<Char>): String =
     invalidChars.fold(this) { acc, ch -> if (ch in acc) acc.replace(ch, '_') else acc }

@@ -3,14 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
-
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
@@ -41,7 +39,6 @@ import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URLClassLoader
@@ -56,6 +53,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     @UseFromImplModuleRestricted
     override fun <V> get(key: BaseCompilationOperation.Option<V>): V = options[key]
 
+    // In-process compilation and linking run a CLICompiler, which creates and uses the shared application environment.
+    override val usesApplicationEnvironment: Boolean
+        get() = true
+
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
@@ -64,7 +65,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
-    @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
@@ -75,7 +75,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -88,10 +88,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         return when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
-                compileInProcess(loggerAdapter)
+                compileInProcess(loggerAdapter, executionContext)
             }
             is DaemonExecutionPolicyImpl -> {
-                compileWithDaemon(executionPolicy, loggerAdapter, sessionIsAliveFlagFile)
+                compileWithDaemon(executionPolicy, loggerAdapter, executionContext)
             }
             else -> {
                 CompilationResult.COMPILATION_ERROR.also {
@@ -148,7 +148,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     private fun compileWithDaemon(
         executionPolicy: DaemonExecutionPolicyImpl,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        sessionIsAliveFlagFile: Lazy<File>,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
@@ -188,7 +188,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
                 clientIsAliveFile,
-                sessionIsAliveFlagFile.value,
+                executionContext.sessionIsAliveFlagFile.value,
                 loggerAdapter,
                 loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
                 daemonJVMOptions = jvmOptions,
@@ -256,20 +256,21 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilationResult {
+    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
         return if (shouldCompileIncrementally()) {
-            compileIncrementallyInProcess(arguments, loggerAdapter)
+            compileIncrementallyInProcess(arguments, loggerAdapter, executionContext)
         } else {
-            compileInProcessWithoutIc(arguments, loggerAdapter)
+            compileInProcessWithoutIc(arguments, loggerAdapter, executionContext)
         }
     }
 
     abstract fun compileIncrementallyInProcess(
         arguments: CompilerArgs,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
     ): CompilationResult
 
     abstract fun createCompiler(): CLICompiler<CompilerArgs>
@@ -279,6 +280,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     private fun compileInProcessWithoutIc(
         arguments: CompilerArgs,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compiler = createCompiler()
         arguments.addSources()
@@ -290,6 +292,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             get(IMPORT_TRACKER)?.let { tracker: CompilerImportTracker ->
                 register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
             }
+            executionContext.classloadersCache?.let { register(PluginsLoader::class.java, it.asPluginsLoader()) }
         }.build()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()

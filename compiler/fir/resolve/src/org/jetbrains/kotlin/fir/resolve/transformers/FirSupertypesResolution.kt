@@ -128,8 +128,15 @@ private class FirApplySupertypesTransformer(
     }
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass) {
-        if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }) {
-            val supertypeRefs = supertypeComputationSession.getResolvedSupertypeRefs(firClass)
+        val resolvedSupertypeRefs = supertypeComputationSession.getResolvedSupertypeRefs(firClass)
+        // Extensions may add supertypes even when every existing supertype was already resolved (i.e. implicit Enum<E> supertype).
+        // KT-88578
+        val hasGeneratedSupertypes = resolvedSupertypeRefs.size != firClass.superTypeRefs.size
+        if (
+            hasGeneratedSupertypes ||
+            firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }
+        ) {
+            val supertypeRefs = resolvedSupertypeRefs
                 .map { supertypeComputationSession.expandTypealiasInPlace(it, session) }
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
@@ -592,7 +599,7 @@ open class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind) = buildErrorTypeRef {
+private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind): FirErrorTypeRef = buildErrorTypeRef {
     source = sourceElement
     diagnostic = ConeSimpleDiagnostic(message, kind)
 }

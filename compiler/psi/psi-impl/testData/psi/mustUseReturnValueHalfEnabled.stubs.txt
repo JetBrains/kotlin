@@ -15,12 +15,18 @@ Marked.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
         PROPERTY[fqName=Marked.prop, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=prop]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=field]
+              OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+              STRING_TEMPLATE
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -35,6 +41,7 @@ Marked.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
 
 
 MyEnum.kt:
@@ -48,6 +55,7 @@ MyEnum.kt:
         ENUM_ENTRY[classId=null, fqName=MyEnum.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
         FUN[fqName=MyEnum.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           VALUE_PARAMETER_LIST
+          STRING_TEMPLATE
 
 
 Unmarked.kt:
@@ -61,12 +69,18 @@ Unmarked.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
         PROPERTY[fqName=Unmarked.prop, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=prop]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=field]
+              OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+              STRING_TEMPLATE
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -81,6 +95,7 @@ Unmarked.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
 
 
 markedTopLevel.kt:
@@ -101,9 +116,11 @@ markedTopLevel.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
+      STRING_TEMPLATE
     PROPERTY[fqName=markedTopProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=markedTopProperty]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=25]
 
 
 unmarkedTopLevel.kt:
@@ -117,9 +134,11 @@ unmarkedTopLevel.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
+      STRING_TEMPLATE
     PROPERTY[fqName=unmarkedTopProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=unmarkedTopProperty]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=25]
     FUN[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
@@ -131,3 +150,4 @@ unmarkedTopLevel.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
+      STRING_TEMPLATE

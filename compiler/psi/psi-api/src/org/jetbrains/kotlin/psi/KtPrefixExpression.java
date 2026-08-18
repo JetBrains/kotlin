@@ -9,6 +9,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
  * Represents a prefix unary expression where the operator precedes the operand.
@@ -24,6 +26,11 @@ public class KtPrefixExpression extends KtUnaryExpression {
         super(node);
     }
 
+    @KtImplementationDetail
+    public KtPrefixExpression(@NotNull KotlinPlaceHolderStub<KtPrefixExpression> stub) {
+        super(stub, KtStubBasedElementTypes.PREFIX_EXPRESSION);
+    }
+
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitPrefixExpression(this, data);
@@ -32,6 +39,12 @@ public class KtPrefixExpression extends KtUnaryExpression {
     @Override
     @Nullable @IfNotParsed
     public KtExpression getBaseExpression() {
-        return PsiTreeUtil.getNextSiblingOfType(getOperationReference(), KtExpression.class);
+        KtOperationReferenceExpression operationReference = getOperationReference();
+        KtExpression stubBasedOperand = operationReference.getStubBasedOperandAfter$org_jetbrains_kotlin_psi_api();
+        if (stubBasedOperand != null) {
+            return stubBasedOperand;
+        }
+
+        return PsiTreeUtil.getNextSiblingOfType(operationReference, KtExpression.class);
     }
 }

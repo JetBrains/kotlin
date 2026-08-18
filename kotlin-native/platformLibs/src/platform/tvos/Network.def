@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Secur
 language = Objective-C
 package = platform.Network
 modules = Network
+apiNotesSwiftName = true
 
 compilerOpts = -framework Network
 linkerOpts = -framework Network

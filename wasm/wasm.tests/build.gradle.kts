@@ -15,7 +15,8 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
+    id("wasmtime-configuration")
 }
 
 node {
@@ -157,27 +158,14 @@ val jsc = configurations.create("jsc") {
 }
 
 val wasmtimeVersion = libs.versions.wasmtime
-val wasmtimePlatformSuffix = when (currentOsType) {
-    OsType(OsName.LINUX, OsArch.X86_64) -> "x86_64-linux"
-    OsType(OsName.MAC, OsArch.X86_64) -> "x86_64-macos"
-    OsType(OsName.MAC, OsArch.ARM64) -> "aarch64-macos"
-    OsType(OsName.WINDOWS, OsArch.X86_32),
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "x86_64-windows"
-    else -> error("unsupported os type $currentOsType")
-}
-val wasmtimeSuffix = wasmtimePlatformSuffix + "@" + when (currentOsType.name) {
-    OsName.LINUX -> "tar.xz"
-    OsName.MAC -> "tar.xz"
-    OsName.WINDOWS -> "zip"
-    else -> error("unsupported os type $currentOsType")
-}
 
-val wasmtime = configurations.create("wasmtime") {
+configurations.create("wasmtime") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
 
 dependencies {
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
@@ -212,11 +200,9 @@ dependencies {
     implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
 
-    wasmtime("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:$wasmtimeSuffix")
-
-    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
-    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
-    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
+    implicitDependencies("bytecodealliance.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
+    implicitDependencies("bytecodealliance.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
+    implicitDependencies("bytecodealliance.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
 }
 
 optInToExperimentalCompilerApi()
@@ -321,22 +307,6 @@ val createJscRunner = tasks.register<CreateJscRunner>("createJscRunner") {
     inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
-val unzipWasmtime = tasks.register<UnzipWasmtime>("unzipWasmtime") {
-    from.setFrom(wasmtime)
-
-    val currentOsTypeForConfigurationCache = currentOsType.name
-
-    getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
-
-    val wasmtimeDirectoryName: Provider<String> = wasmtimeVersion.map { version -> "wasmtime-$version-$wasmtimePlatformSuffix" }
-
-    into.set(
-        toolsDirectory.zip(wasmtimeDirectoryName) { toolsDir: Directory, wasmtimeDir: String ->
-            toolsDir.dir("Wasmtime").dir(wasmtimeDir)
-        }
-    )
-}
-
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
         .map { it.destinationDir }
@@ -370,17 +340,6 @@ fun Test.setupJsc() {
     }
 }
 
-fun Test.setupWasmtime() {
-    val wasmtime = unzipWasmtime
-        .flatMap { it.into.dir("wasmtime-v${wasmtimeVersion.get()}-$wasmtimePlatformSuffix") }
-        .map { it.file("wasmtime") }
-
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(wasmtime)
-        property.set("wasm.engine.path.Wasmtime")
-    }
-}
-
 testsJar {}
 
 projectTests {
@@ -389,14 +348,23 @@ projectTests {
         generateTestsInBuildDirectory = true,
     )
 
-    fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
+    fun wasmProjectTest(
+        taskName: String,
+        tags: String? = null,
+        skipInLocalBuild: Boolean = true,
+        body: Test.() -> Unit = {},
+    ) {
         testTask(
             taskName = taskName,
             skipInLocalBuild = skipInLocalBuild,
+            enableGroupingTestEngine = true,
             maxHeapSizeMb = 6144
         ) {
             with(d8KotlinBuild) {
                 setupV8()
+            }
+            with(wasmtimeKotlinBuild) {
+                setupWasmtime()
             }
             with(wasmNodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
@@ -413,8 +381,10 @@ projectTests {
             setupSpiderMonkey()
             setupWasmEdge()
             setupJsc()
-            setupWasmtime()
-            useJUnitPlatform()
+            // Note: arbitrary JUnit tag expressions can be used here.
+            useJUnitPlatform {
+                tags?.let { includeTags(it) }
+            }
             setupGradlePropertiesForwarding()
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
@@ -423,22 +393,34 @@ projectTests {
         }
     }
 
-    // Test everything
-    wasmProjectTest("test") {
-        include("**/*.class")
-        exclude("**/*SingleModule*TestGenerated.class")
-        exclude("**/*MultiModule*TestGenerated.class")
+    // The tags are declared in testFixtures/org/jetbrains/kotlin/wasm/test/WasmTestGroups.kt
+    val icTag = "wasmIc"
+    val jsBoxTag = "wasmJsBox"
+    val jsSplittingTag = "wasmJsSplitting"
+    val jsMultiModuleTag = "wasmJsMultiModule"
+    val wasiBoxTag = "wasmWasiBox"
+    val extraTag = "wasmFirCompilerExtra"
+
+    val allTags = listOf(
+        icTag, jsBoxTag, jsSplittingTag,
+        jsMultiModuleTag, wasiBoxTag, extraTag
+    )
+
+    // Test everything, intended to use locally
+    wasmProjectTest("test", skipInLocalBuild = false) {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
-    wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
-        include("**/Diagnostics*.class")
-    }
-
-    wasmProjectTest("wasmFirCompilerExtraTest") {
-        include("**/*SingleModule*TestGenerated.class")
-        include("**/*MultiModule*TestGenerated.class")
-    }
+    // The nine tasks below split the content of the `test` task into disjoint groups.
+    // Tests without any of the group tags are run by the `wasmMiscTest` task.
+    // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
+    wasmProjectTest("wasmFirCompilerExtraTest", tags = extraTag)
+    wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag)
+    wasmProjectTest("wasmJsSplittingTest", tags = jsSplittingTag)
+    wasmProjectTest("wasmJsMultiModuleTest", tags = jsMultiModuleTag)
+    wasmProjectTest("wasmWasiBoxTest", tags = wasiBoxTag)
+    wasmProjectTest("wasmIcTest", tags = "$icTag & !$extraTag")
+    wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" })
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")

@@ -56,4 +56,9 @@ private val SirType.render: String
         is SirUnsupportedType -> "<UNSUPPORTED>"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.render }}) -> ${returnType.render}"
         is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.render}" }})"
+        is SirType.Metatype -> when (type) {
+            is SirNominalType, is SirType.Metatype -> type.render
+            is SirExistentialType -> type.render.removePrefix("any ").let { if (type.protocols.size == 1) it else "($it)" }
+            else -> "(${type.render})"
+        }.let { "$it.Type" }
     }

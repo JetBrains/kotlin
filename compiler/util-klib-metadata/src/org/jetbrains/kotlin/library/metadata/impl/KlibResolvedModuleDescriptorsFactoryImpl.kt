@@ -18,12 +18,15 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
@@ -32,21 +35,21 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
+import java.nio.file.Path
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
     override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 ) : KlibResolvedModuleDescriptorsFactory {
 
-    @Suppress("DEPRECATION_ERROR")
-    override fun createResolved(
-        resolvedLibraries: KotlinLibraryResolveResult,
+    override fun createResolved2(
+        libraries: List<KotlinLibrary>,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        friendModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
-        refinesModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
-        includedLibraryFiles: Set<org.jetbrains.kotlin.konan.file.File>,
+        friendModuleFiles: Set<Path>,
+        refinesModuleFiles: Set<Path>,
+        includedLibraryFiles: Set<Path>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
@@ -61,7 +64,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
-        resolvedLibraries.forEach { library ->
+        libraries.forEach { library ->
             profile("Loading ${library.path}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
@@ -71,13 +74,11 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
-                val libraryFile = org.jetbrains.kotlin.konan.file.File(library.path)
-
-                if (refinesModuleFiles.contains(libraryFile))
+                if (refinesModuleFiles.contains(library.path))
                     refinesModuleDescriptors.add(moduleDescriptor)
-                if (friendModuleFiles.contains(libraryFile))
+                if (friendModuleFiles.contains(library.path))
                     friendModuleDescriptors.add(moduleDescriptor)
-                if (includedLibraryFiles.contains(libraryFile))
+                if (includedLibraryFiles.contains(library.path))
                     includedLibraryDescriptors.add(moduleDescriptor)
             }
         }
@@ -125,7 +126,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         )
     }
 
-    fun createForwardDeclarationsModule(
+    private fun createForwardDeclarationsModule(
         builtIns: KotlinBuiltIns?,
         storageManager: StorageManager,
         isExpect: Boolean
@@ -160,10 +161,27 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         moduleOrigin: KlibModuleOrigin
-    ): ModuleDescriptorImpl = if (builtIns != null)
-        moduleDescriptorFactory.descriptorFactory.createDescriptor(name, storageManager, builtIns, moduleOrigin)
-    else
-        moduleDescriptorFactory.descriptorFactory.createDescriptorAndNewBuiltIns(name, storageManager, moduleOrigin)
+    ): ModuleDescriptorImpl {
+        val builtInsToUse = builtIns ?: moduleDescriptorFactory.createBuiltIns(storageManager)
+        val moduleDescriptor = ModuleDescriptorImpl(
+            name,
+            storageManager,
+            builtInsToUse,
+            capabilities = mapOf(
+                KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                @OptIn(K1Deprecation::class)
+                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+            ),
+            // TODO: don't use hardcoded platform; it should be supplied as a parameter
+            platform = NativePlatforms.unspecifiedNativePlatform
+        )
+
+        if (builtIns == null) {
+            builtInsToUse.builtInsModule = moduleDescriptor
+        }
+
+        return moduleDescriptor
+    }
 
     private fun createDescriptorOptionalBuiltsIns(
         library: KotlinLibrary,
@@ -213,8 +231,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
             findCinteropClassOrNull(NativeStandardInteropNames.ExperimentalForeignApi)?.defaultType
         }
 
-        private fun findCinteropClass(name: Name): ClassDescriptor = findCinteropClassOrNull(name) ?:
-          error("Class $name is not found")
+        private fun findCinteropClass(name: Name): ClassDescriptor = findCinteropClassOrNull(name) ?: error("Class $name is not found")
 
         private fun findCinteropClassOrNull(name: Name): ClassDescriptor? {
             return builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)

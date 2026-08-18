@@ -159,6 +159,13 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
      */
     @Override
     @Nullable
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyTypeReference(this, typeRef)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setPropertyTypeReference(typeRef)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setPropertyTypeReference"
+            )
+    )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
         return KtPsiMutationService.getInstance().setPropertyTypeReference(this, typeRef);
@@ -268,6 +275,11 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
             if (!stub.getHasInitializer()) {
                 return null;
             }
+
+            KtExpression fromStub = getExpressionFromStub();
+            if (fromStub != null) {
+                return fromStub;
+            }
         }
 
         return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class);
@@ -282,6 +294,13 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
      * instead.
      */
     @Nullable
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyInitializer(this, initializer)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setPropertyInitializer(initializer)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setPropertyInitializer"
+            )
+    )
     @Deprecated
     public KtExpression setInitializer(@Nullable KtExpression initializer) {
         return KtPsiMutationService.getInstance().setPropertyInitializer(this, initializer);

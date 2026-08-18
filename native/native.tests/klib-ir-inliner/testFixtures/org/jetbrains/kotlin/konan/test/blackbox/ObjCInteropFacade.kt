@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor.Companion.CINTEROP_SOURCE_EXTENSIONS
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.testInfraError
 import kotlin.collections.flatMap
@@ -58,6 +59,14 @@ class ObjCInteropFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): BinaryArtifacts.KLib {
+        require(module.files.none { it.isKtFile }) {
+            """
+                ObjC interop module should not contain any kotlin files inside.
+                Module: ${module.name}
+                Kotlin files: ${module.files.filter { it.isKtFile }.map { it.name }}
+            """.trimIndent()
+        }
+
         // the following code mimics `CInteropCompilation.result`
         val sourceFileProvider = testServices.sourceFileProvider
         val sourceFiles = module.files.map { sourceFileProvider.getOrCreateRealFileForSourceFile(it) }

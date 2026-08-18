@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtCallExpression at (38,8-14)
+    RETURN_VALUE_NOT_USED      text ranges: [(220,224)]
+      PSI: KtCallExpression at (38,8-14)
+  for PSI element of type KtCallExpression at (41,5-11)
+    RETURN_VALUE_NOT_USED      text ranges: [(247,251)]
+      PSI: KtCallExpression at (41,5-11)

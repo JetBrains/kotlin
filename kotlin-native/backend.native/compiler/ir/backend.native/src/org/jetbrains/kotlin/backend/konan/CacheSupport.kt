@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.irOrFail
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -65,7 +64,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
-        private val resolvedLibraries: KotlinLibraryResolveResult,
+        private val allLibraries: List<KotlinLibrary>,
         ignoreCacheReason: String?,
         systemCacheDirectory: Path,
         autoCacheDirectory: Path,
@@ -73,9 +72,7 @@ class CacheSupport(
         target: KonanTarget,
         val produce: CompilerOutputKind
 ) {
-    private val allLibraries = resolvedLibraries.getFullList()
-
-    // TODO: consider using [FeaturedLibraries.kt].
+    // Note: The order of libraries is not important here.
     private val pathToLibrary = allLibraries.associateBy { it.path }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
@@ -174,10 +171,11 @@ class CacheSupport(
 
     fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
-        val libraries = resolvedLibraries.getFullList()
-        val dependenciesMap = LegacyKlibDependencies(libraries)
+        val dependenciesMap = LegacyKlibDependencies(allLibraries)
 
-        for (library in libraries) {
+        // Note: The libraries should be in the reverse topo-order here.
+        // TODO(KT-61096): Use RTO of libraries here after switching to KlibLoader.
+        for (library in allLibraries) {
             val cache = cachedLibraries.getLibraryCache(library)
             if (cache != null || library == libraryToCache?.klib) {
                 val dependencies = dependenciesMap.getDependenciesFor(library)

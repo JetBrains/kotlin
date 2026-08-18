@@ -69,6 +69,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FooKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getFoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -104,8 +105,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.FooKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getFoo
-  javaSetterName: null
   isInline: false
   importableFqName: test.foo
 
@@ -150,6 +149,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: doFoo
   importableFqName: test.doFoo
 
 KaKotlinPropertySymbol:
@@ -223,6 +223,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FooKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getInternalFoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -258,8 +259,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.FooKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getInternalFoo
-  javaSetterName: null
   isInline: false
   importableFqName: test.internalFoo
 
@@ -304,6 +303,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalDoFoo
   importableFqName: test.internalDoFoo
 
 KaKotlinPropertySymbol:
@@ -377,6 +377,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FooKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateFoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -412,8 +413,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.FooKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateFoo
-  javaSetterName: null
   isInline: false
   importableFqName: test.privateFoo
 
@@ -458,6 +457,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateDoFoo
   importableFqName: test.privateDoFoo
 
 KaKotlinPropertySymbol:
@@ -531,6 +531,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -566,8 +567,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getBar
-  javaSetterName: null
   isInline: false
   importableFqName: test.bar
 
@@ -612,6 +611,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: doBar
   importableFqName: test.doBar
 
 KaKotlinPropertySymbol:
@@ -685,6 +685,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getInternalBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -720,8 +721,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getInternalBar
-  javaSetterName: null
   isInline: false
   importableFqName: test.internalBar
 
@@ -766,6 +765,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalDoBar
   importableFqName: test.internalDoBar
 
 KaKotlinPropertySymbol:
@@ -839,6 +839,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -874,8 +875,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateBar
-  javaSetterName: null
   isInline: false
   importableFqName: test.privateBar
 
@@ -920,6 +919,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateDoBar
   importableFqName: test.privateDoBar
 
 KaNamedFunctionSymbol:
@@ -994,6 +994,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: companionBar
   importableFqName: test.companionBar
 
 KaKotlinPropertySymbol:
@@ -1098,6 +1099,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getCompanionBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1164,8 +1166,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getCompanionBar
-  javaSetterName: null
   isInline: false
   importableFqName: test.companionBar
 
@@ -1241,6 +1241,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: companionInternalBar
   importableFqName: test.companionInternalBar
 
 KaKotlinPropertySymbol:
@@ -1345,6 +1346,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getCompanionInternalBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1411,8 +1413,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getCompanionInternalBar
-  javaSetterName: null
   isInline: false
   importableFqName: test.companionInternalBar
 
@@ -1488,6 +1488,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: companionPrivateBar
   importableFqName: test.companionPrivateBar
 
 KaKotlinPropertySymbol:
@@ -1592,6 +1593,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getCompanionPrivateBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1658,8 +1660,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getCompanionPrivateBar
-  javaSetterName: null
   isInline: false
   importableFqName: test.companionPrivateBar
 

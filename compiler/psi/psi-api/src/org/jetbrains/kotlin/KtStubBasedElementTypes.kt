@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -279,12 +279,32 @@ internal object KtStubBasedElementTypes {
         provider.enumEntrySuperclassReferenceExpressionType
 
     @JvmField
+    val OPERATION_REFERENCE: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression> =
+        provider.operationReferenceType
+
+    @JvmField
     val DOT_QUALIFIED_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression> =
         provider.dotQualifiedExpressionType
 
     @JvmField
     val CALL_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
         provider.callExpressionType
+
+    @JvmField
+    val PREFIX_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression> =
+        provider.prefixExpressionType
+
+    @JvmField
+    val POSTFIX_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression> =
+        provider.postfixExpressionType
+
+    @JvmField
+    val BINARY_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression> =
+        provider.binaryExpressionType
+
+    @JvmField
+    val PARENTHESIZED: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression> =
+        provider.parenthesizedExpressionType
 
     @JvmField
     val CLASS_LITERAL_EXPRESSION: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
@@ -294,6 +314,9 @@ internal object KtStubBasedElementTypes {
     val COLLECTION_LITERAL_EXPRESSION: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression> =
         provider.collectionLiteralExpressionType
 
+    @JvmField
+    val OBJECT_LITERAL: KtStubElementType<out KotlinPlaceHolderStub<KtObjectLiteralExpression>, KtObjectLiteralExpression> =
+        provider.objectLiteralType
 
     // Arguments
 

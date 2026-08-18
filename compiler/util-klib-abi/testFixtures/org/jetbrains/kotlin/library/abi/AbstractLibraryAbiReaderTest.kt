@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.library.abi
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsFacade
@@ -28,19 +27,21 @@ import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.testFederation.AffectedByJs
 import kotlin.test.assertNotNull
 
 /**
  * This test class can potentially be re-used in the future for other backends.
  */
+@OptIn(UnspecifiedTargetBackend::class)
 abstract class AbstractLibraryAbiReaderTest(
     private val targetPlatform: TargetPlatform,
     targetBackend: TargetBackend,
@@ -62,9 +63,6 @@ abstract class AbstractLibraryAbiReaderTest(
         defaultDirectives {
             +WITH_STDLIB
             DUMP_KLIB_ABI with KlibAbiDumpMode.ALL_SIGNATURE_VERSIONS
-            LANGUAGE with listOf(
-                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
         }
 
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
@@ -90,6 +88,7 @@ abstract class AbstractLibraryAbiReaderTest(
     }
 }
 
+@AffectedByJs
 abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
     final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirCliWebFacade
@@ -111,19 +110,6 @@ abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsP
         super.configure(builder)
     }
 }
-
-open class AbstractJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractJsLibraryAbiReaderTest() {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        defaultDirectives {
-            LANGUAGE with listOf(
-                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
-        }
-        super.configure(builder)
-    }
-}
-
 
 abstract class AbstractKlibDumpParserTest {
     @OptIn(ExperimentalLibraryAbiReader::class)

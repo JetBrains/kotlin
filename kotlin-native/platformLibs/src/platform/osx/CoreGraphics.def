@@ -2,6 +2,7 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase IOKit darwin libkern posix
 language = Objective-C
 package = platform.CoreGraphics
 modules = CoreGraphics
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreGraphics
 linkerOpts = -framework CoreGraphics

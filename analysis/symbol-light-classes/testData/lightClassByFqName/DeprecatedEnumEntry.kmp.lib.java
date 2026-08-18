@@ -1,7 +1,7 @@
 public enum E /* p.E*/ {
-  @kotlin.Deprecated() Entry1,
+  @kotlin.Deprecated(message = "a") Entry1,
   Entry2,
-  @kotlin.Deprecated() Entry3;
+  @kotlin.Deprecated(message = "b") Entry3;
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() p.E @org.jetbrains.annotations.NotNull() [] values();//  values()

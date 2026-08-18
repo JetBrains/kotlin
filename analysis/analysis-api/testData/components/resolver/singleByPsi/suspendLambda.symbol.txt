@@ -1,6 +1,7 @@
 KtNameReferenceExpression(78,85): 'suspend'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/suspend(block: suspend () -> R): suspend () -> R

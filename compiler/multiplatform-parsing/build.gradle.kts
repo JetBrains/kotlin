@@ -45,7 +45,7 @@ kotlin {
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 runtimeOnly(libs.junit.platform.launcher)
-                implementation(kotlinTest("junit"))
+                implementation(kotlinTest("junit5"))
             }
             kotlin {
                 srcDir("jvm/test")
@@ -62,6 +62,7 @@ tasks.withType<Test> {
         project(":compiler:tests-spec").isolated.projectDirectory.dir("testData"),
         project(":compiler:fir:analysis-tests").isolated.projectDirectory.dir("testData"),
         project(":analysis:analysis-api").isolated.projectDirectory.dir("testData"),
+        project(":compiler:psi:psi-impl").isolated.projectDirectory.dir("testData"),
     ).joinToString(File.pathSeparator)
     systemProperty("test.data.dirs", testDataDirs)
 
@@ -88,34 +89,11 @@ dependencies {
 
 val lexerGrammarsDirRelativeToRoot = layout.projectDirectory.dir("common/src/org/jetbrains/kotlin/kmp/lexer")
 
-// TODO: KT-77206 (Get rid of the skeleton downloading or use JFlex version instead of the commit hash).
-// The usage of permalink is confusing and might be not reliable.
-// It's blocked by https://github.com/JetBrains/intellij-deps-jflex/issues/9
-val skeletonDownloadTask = tasks.register("downloadSkeleton") {
-    val skeletonVersion = "9fca651b6dc684ac340b45f5abf71cac6856aa45"
-    val skeletonFile = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton")
-
-    inputs.property("skeletonVersion", skeletonVersion)
-    outputs.file(skeletonFile)
-
-    doFirst {
-        val skeletonFileOutput = skeletonFile.get().asFile
-        skeletonFileOutput.parentFile.mkdirs()
-        val skeletonUrl =
-            "https://raw.githubusercontent.com/JetBrains/intellij-community/$skeletonVersion/tools/lexer/idea-flex-kotlin.skeleton"
-        println("Downloading skeleton file $skeletonUrl")
-        URI.create(skeletonUrl).toURL().openStream().use { input ->
-            skeletonFileOutput.outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
-    }
-}
-
 for (lexerName in listOf("KDoc", "Kotlin")) {
     val taskName = "generate${lexerName}Lexer"
 
     val lexerFile = lexerGrammarsDirRelativeToRoot.file("$lexerName.flex")
+    val skeletonFile = lexerGrammarsDirRelativeToRoot.file("idea-flex-kotlin.skeleton")
     generatedSourcesTask(
         taskName = taskName,
         generatorClasspath = flexGeneratorClasspath,
@@ -124,7 +102,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
             listOf(
                 lexerFile.asFile.absolutePath,
                 "-skel",
-                skeletonDownloadTask.get().outputs.files.singleFile.absolutePath,
+                skeletonFile.asFile.absolutePath,
                 "-d",
                 generationRoot.asFile.absolutePath,
                 "--output-mode",
@@ -135,7 +113,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
         generatedSourceSetKind = GeneratedSourceSetKind.KmpCommon,
         additionalInputsToTrack = { fileCollection ->
             fileCollection.from(lexerFile)
-            fileCollection.from(skeletonDownloadTask)
+            fileCollection.from(skeletonFile)
         }
     )
 }

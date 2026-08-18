@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
-import org.jetbrains.kotlin.cli.common.prohibitExportKlibToOlderAbiVersionAtSecondStage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -91,7 +90,7 @@ class KonanDriver(
             configuration.filesToCache = fileNames
         }
 
-        var config = NativeSecondStageCompilationConfig(project, configuration)
+        val config = NativeSecondStageCompilationConfig(project, configuration)
 
         if (configuration.listTargets) {
             config.targetManager.list()
@@ -120,8 +119,6 @@ class KonanDriver(
                     "target ${config.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
         }
 
-        configuration.prohibitExportKlibToOlderAbiVersionAtSecondStage()
-
         ensureModuleName(config)
 
         val sourcesFiles = environment.getSourceFiles()
@@ -136,8 +133,13 @@ class KonanDriver(
 
         val cacheBuilder = CacheBuilder(config, compilationSpawner)
         if (cacheBuilder.needToBuild()) {
+            // Build missing caches.
             cacheBuilder.build()
-            config = NativeSecondStageCompilationConfig(project, configuration) // TODO: Just set freshly built caches.
+
+            // Reload `CacheSupport` inside `NativeSecondStageCompilationConfig` to reflect the up-to-date state of just built caches.
+            // This is important for further correct compilation of the resulting binary.
+            config.reloadCacheSupport()
+
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
             if (!hasCompilerInput && config.libraryToCache == null)
                 return
@@ -152,6 +154,7 @@ class KonanDriver(
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
         if (environment.getSourceFiles().isEmpty()) {
+            // Note: The order of libraries is not important.
             val libraries = config.resolvedLibraries.getFullList()
             val moduleName = config.moduleId
             if (libraries.any { it.uniqueName == moduleName }) {

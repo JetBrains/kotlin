@@ -102,6 +102,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listOf
   importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
@@ -208,6 +209,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listOf
   importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
@@ -279,4 +281,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listOf
   importableFqName: kotlin.collections.listOf

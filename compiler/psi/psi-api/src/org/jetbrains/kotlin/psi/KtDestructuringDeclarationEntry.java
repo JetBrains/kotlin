@@ -52,6 +52,13 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
      */
     @Override
     @Nullable
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setDestructuringDeclarationEntryTypeReference(this, typeRef)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setDestructuringDeclarationEntryTypeReference(typeRef)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setDestructuringDeclarationEntryTypeReference"
+            )
+    )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
         return KtPsiMutationService.getInstance().setDestructuringDeclarationEntryTypeReference(this, typeRef);

@@ -1,0 +1,121 @@
+public final class A : java/lang/Enum {
+    private final static kotlin.enums.EnumEntries $ENTRIES
+
+    private final static A[] $VALUES
+
+    public final static A EAST
+
+    public final static A WEST
+
+    private final static A[] $values() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    static void <clinit>() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    private void <init>(java.lang.String $enum$name, int $enum$ordinal) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public static kotlin.enums.EnumEntries getEntries() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public static A valueOf(java.lang.String value) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public static A[] values() {
+          ACONST_NULL
+          ATHROW
+    }
+}
+
+final class B$NORTH : B {
+    void <init>(java.lang.String $enum$name, int $enum$ordinal) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String getString() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+final class B$SOUTH : B {
+    void <init>(java.lang.String $enum$name, int $enum$ordinal) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String getString() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public abstract class B : java/lang/Enum {
+    private final static kotlin.enums.EnumEntries $ENTRIES
+
+    private final static B[] $VALUES
+
+    public final static B NORTH
+
+    public final static B SOUTH
+
+    private final static B[] $values() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    static void <clinit>() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    private void <init>(java.lang.String $enum$name, int $enum$ordinal) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public static kotlin.enums.EnumEntries getEntries() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public abstract java.lang.String getString()
+
+    public static B valueOf(java.lang.String value) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public static B[] values() {
+          ACONST_NULL
+          ATHROW
+    }
+}

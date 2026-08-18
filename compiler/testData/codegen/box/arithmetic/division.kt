@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // KT-66080
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// LANGUAGE: +JsIntegerDivisionCheck
 
 import kotlin.test.*
 

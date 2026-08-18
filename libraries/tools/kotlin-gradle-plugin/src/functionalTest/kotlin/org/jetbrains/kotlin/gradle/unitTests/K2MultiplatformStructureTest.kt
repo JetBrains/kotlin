@@ -3,12 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName", "DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -126,7 +125,7 @@ class K2MultiplatformStructureTest {
 
         // Add extra source file
         targets.forEach { target ->
-            val compileTask = target.compilations.get("main").compileTaskProvider.get() as KotlinCompileTool
+            val compileTask = target.compilations.getByName("main").compileTaskProvider.get() as KotlinCompileTool
             val extraSourceFile = project.file("${target.disambiguateName("generated")}.kt").also {
                 it.parentFile.mkdirs()
                 it.writeText("fun generated() {}")
@@ -137,7 +136,7 @@ class K2MultiplatformStructureTest {
         project.evaluate()
 
         val actualFragmentSources = targets.associate { target ->
-            val compileTask = target.compilations.get("main").compileTaskProvider.get() as K2MultiplatformCompilationTask
+            val compileTask = target.compilations.getByName("main").compileTaskProvider.get() as K2MultiplatformCompilationTask
             val args = compileTask.buildCompilerArguments()
 
             target.name to args.fragmentSources.toList().map {

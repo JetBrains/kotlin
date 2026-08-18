@@ -116,7 +116,7 @@ class UtilsTest {
         }
 
         fun assertMatchingFilesInJarTwoWay(jar: File, pattern: String, vararg expected: Pair<String, String>) {
-            assertFiles( JarFile(jar).filesBy(pattern), *expected)
+            assertFiles( JarFile(jar).use { it.filesBy(pattern) }, *expected)
             assertFiles( JarInputStream(jar.inputStream()).use { it.filesBy(pattern) }, *expected)
         }
 

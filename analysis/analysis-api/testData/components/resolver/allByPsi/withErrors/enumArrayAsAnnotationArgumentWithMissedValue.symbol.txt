@@ -44,6 +44,7 @@ KtUserType(29,45): 'MyJavaAnnotation'
 KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
@@ -62,6 +63,7 @@ KtValueArgumentName(46,50): 'test'
 KtNameReferenceExpression(46,50): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test: kotlin.Array<MyJavaEnum>

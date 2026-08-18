@@ -265,32 +265,44 @@ fun UseOptional(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%-1761910897: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%-1761910897: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
-  val lambda%449031748: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C<Leaf()>:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%449031748: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C<Leaf()>:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Leaf(%composer, 0)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Leaf(%composer, 0)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
 }

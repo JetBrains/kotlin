@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
@@ -25,7 +24,8 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -58,13 +58,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             },
             assertions = { fragmentDependencies ->
-                assertTrue(
-                    fragmentDependencies.getValue("commonMain").any { it.endsWith("common-dependency.jar") },
-                    "Expected commonMain dependencies in fragment dependencies: $fragmentDependencies",
-                )
-                assertTrue(
-                    fragmentDependencies.values.flatten().none { it.endsWith("jvm-dependency.jar") },
-                    "jvmMain dependencies should remain on the compilation classpath: $fragmentDependencies",
+                assertEquals(
+                    listOf(
+                        "/build/kotlinTransformedMetadataLibraries/commonMain/org.jetbrains.kotlin-kotlin-stdlib-<version>-commonMain-<klib-hash>.klib",
+                        "/common-dependency.jar",
+                    ).prettyPrinted,
+                    fragmentDependencies.getValue("commonMain").prettyPrinted,
+                    "Only common dependencies are present"
                 )
             }
         )
@@ -91,9 +91,10 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             val visitedDependencies = mutableSetOf<String>()
             for ([_, dependencies] in fragmentDependencies) {
                 for (dependency in dependencies) {
-                    assert(visitedDependencies.add(dependency)) {
-                        "Duplicate dependency '$dependency' found in fragment dependencies: $fragmentDependencies"
-                    }
+                    assertTrue(
+                        visitedDependencies.add(dependency),
+                        "Duplicate dependency '$dependency' found in fragment dependencies: $fragmentDependencies",
+                    )
                 }
             }
         }
@@ -103,27 +104,89 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @GradleTest
     fun nativeStdlibIsAdded(gradleVersion: GradleVersion) {
         doTestFragmentDependenciesArg(gradleVersion, targetsToRun = listOf("linuxX64")) { fragmentDependenciesPerFragment ->
-            val nativeDependencies = fragmentDependenciesPerFragment.getValue("nativeMain")
-            assert(nativeDependencies.count { "stdlib" in it } == 1 && nativeDependencies.any { "/klib/common/stdlib" in it }) {
-                "Exactly one K/N stdlib dependency is expected in nativeMain: $nativeDependencies"
-            }
-            assert(nativeDependencies.filter { "stdlib" !in it }.all { "(linux_arm64, linux_x64, macos_arm64)" in it }) {
-                "nativeMain dependencies are expected contain only commonized platform libraries and stdlib"
-            }
-            val commonDependencies = fragmentDependenciesPerFragment.getValue("commonMain")
-            assert(commonDependencies.count { "stdlib" in it } == 1 && commonDependencies.none { "/klib/common/stdlib" in it }) {
-                "No K/N stdlib dependency is expected in commonMain: $commonDependencies"
-            }
-            assert(commonDependencies.none { "commonized" in it }) {
-                "No commonized platform libraries are expected in commonMain because common is not native only: $commonDependencies"
-            }
-            val linuxDependencies = fragmentDependenciesPerFragment.getValue("linuxMain")
-            assert(linuxDependencies.all { "(linux_arm64, linux_x64)" in it }) {
-                "Expected linuxMain to contain only commonized platform libraries"
-            }
-            assert(fragmentDependenciesPerFragment.keys.size == 3) {
-                "Unexpected fragment dependencies: $fragmentDependenciesPerFragment"
-            }
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/common/stdlib",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("nativeMain").prettyPrinted,
+                "nativeMain dependencies are expected contain only commonized platform libraries and stdlib",
+            )
+
+            assertEquals(
+                listOf(
+                    "/build/kotlinTransformedMetadataLibraries/commonMain/org.jetbrains.kotlin-kotlin-stdlib-<version>-commonMain-<klib-hash>.klib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("commonMain").prettyPrinted,
+                "commonMain dependencies is expected to contain stdlib",
+            )
+
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.linux",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("linuxMain").prettyPrinted,
+                "Expected linuxMain to contain only commonized platform libraries",
+            )
+        }
+    }
+
+    @DisplayName("KT-82367 - native platform dependencies are added to test compilation fragment dependencies")
+    @GradleTest
+    fun `KT-82367 - nativePlatformDepsAreAddedToTestCompilationFragmentDependencies`(gradleVersion: GradleVersion) {
+        doTestFragmentDependenciesArg(
+            gradleVersion,
+            targetsToRun = listOf("linuxX64"),
+            compilationName = "test",
+            additionalProjectPostConfiguration = {
+                kotlinSourcesDir("nativeTest").createDirectories()
+                    .resolve("PosixTest.kt")
+                    .writeText(
+                        """
+                        import platform.posix.sched_yield
+                        fun yieldThread() { sched_yield() }
+                        """.trimIndent()
+                    )
+            },
+        ) { fragmentDependenciesPerFragment ->
+            assertEquals(
+                listOf(
+                    "/build/kotlinTransformedMetadataLibraries/commonTest/org.jetbrains.kotlin-kotlin-stdlib-<version>-commonMain-<klib-hash>.klib"
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("commonTest").prettyPrinted,
+                "Only Kotlin stdlib is expected to be in 'commonTest' fragment dependencies"
+            )
+
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/common/stdlib",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64, macos_arm64)/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("nativeTest").prettyPrinted,
+                "Only one Kotlin stdlib and only commonized dependencies are expected to be in 'nativeTest' fragment dependencies"
+            )
+
+            assertEquals(
+                listOf(
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.builtin",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.iconv",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.linux",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.posix",
+                    "<distribution>/kotlin-native-prebuilt-<prebuilt-version>/klib/commonized/<version>/(linux_arm64, linux_x64)/org.jetbrains.kotlin.native.platform.zlib",
+                ).prettyPrinted,
+                fragmentDependenciesPerFragment.getValue("linuxTest").prettyPrinted,
+                "Only commonized dependencies are expected to be in 'linuxTest' fragment dependencies"
+            )
         }
     }
 
@@ -131,16 +194,20 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         targetsToInclude: List<String> = ALL_TARGETS,
         targetsToRun: List<String> = listOf("linuxX64", "jvm", "js"),
+        compilationName: String = "main",
+        additionalProjectPostConfiguration: TestProject.() -> Unit = {},
         additionalProjectConfiguration: Project.() -> Unit = {},
         assertions: (Map<String, List<String>>) -> Unit,
     ) {
         defaultProject(gradleVersion, targetsToInclude, additionalProjectConfiguration) {
+            additionalProjectPostConfiguration()
+
             @Suppress("DEPRECATION")
             val compileArgs: List<Pair<String, CommonCompilerArguments>> = providerBuildScriptReturn {
                 val targets = targetsToRun.map { kotlinMultiplatform.targets.getByName(it) }
                 project.provider {
                     targets.map { target ->
-                        val task = target.compilations.getByName("main").compileTaskProvider.get()
+                        val task = target.compilations.getByName(compilationName).compileTaskProvider.get()
                         project.ignoreAccessViolations {
                             task as KotlinCompilerArgumentsProducer
                             target.name to task.createCompilerArguments() as CommonCompilerArguments
@@ -148,14 +215,25 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     }
                 }
             }.buildAndReturn(
-                *targetsToRun.map { ":compileKotlin${it.capitalize()}" }.toTypedArray(),
+                *targetsToRun.map { targetName ->
+                    if (compilationName == "main") ":compileKotlin${targetName.capitalize()}"
+                    else ":compile${compilationName.capitalize()}Kotlin${targetName.capitalize()}"
+                }.toTypedArray(),
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
             )
             for ([_, particularCompileArgs] in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
                 val dependenciesPerFragment = fragmentDependencies
-                    .map { it.replace('\\', '/') }
                     .groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
+                    .mapValues {
+                        it.value
+                            .sanitizeDependencies(
+                                projectPath,
+                                buildOptions.kotlinVersion,
+                                konanDir,
+                            )
+                            .sorted()
+                    }
                 assertions(dependenciesPerFragment)
             }
         }
@@ -179,7 +257,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             gradleVersion,
             localRepoDir = localRepository,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899().copy(separateCompilation = true),
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -224,8 +302,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
 
-            enableSeparateCompilation()
-
             val librarySubproject = project("empty", gradleVersion) {
                 buildScriptInjection {
                     project.applyMultiplatform {
@@ -258,7 +334,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             buildAndFail(
                 ":assemble",
-                buildOptions = defaultBuildOptions.copy(continueAfterFailure = true)
+                buildOptions = buildOptions.copy(continueAfterFailure = true, separateCompilation = true)
             ) {
                 // ensures no unexpected task dependencies are added
                 val libraryTasks = setOf(
@@ -403,7 +479,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     }
 
     private fun doTestSingleTargetMetadata(gradleVersion: GradleVersion, localRepoDir: Path, enableSeparateCompilation: Boolean) {
-        project("empty", gradleVersion, localRepoDir = localRepoDir) {
+        project(
+            "empty",
+            gradleVersion,
+            localRepoDir = localRepoDir,
+            buildOptions = defaultBuildOptions.copy(separateCompilation = enableSeparateCompilation),
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -425,9 +506,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
 
-            if (enableSeparateCompilation) {
-                enableSeparateCompilation()
-            }
             build(":publish") {
                 val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
                 assertFileExists(metadataJar)
@@ -448,15 +526,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         }
     }
 
-    private fun GradleProject.enableSeparateCompilation() {
-        gradleProperties.appendText(
-            """
-                |${PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION}=true
-                |
-                """.trimMargin()
-        )
-    }
-
     @DisplayName("Enabling new KMP compilation scheme should emit event KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED")
     @GradleTest
     fun fusEvent(gradleVersion: GradleVersion) {
@@ -472,23 +541,86 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 collectFusEvents(":compileKotlinJs", ":compileKotlinJvm", ":compileKotlinLinuxX64").count {
                     it.startsWith(eventPrefix)
                 })
-            enableSeparateCompilation()
+            val separateCompilationOptions: TestProject.() -> BuildOptions = { buildOptions.copy(separateCompilation = true) }
             // the event is global, so check each task emits it
             assertEquals(
                 1,
-                collectFusEvents(*rerunTask(":compileKotlinJvm")).count {
+                collectFusEvents(*rerunTask(":compileKotlinJvm"), deriveBuildOptions = separateCompilationOptions).count {
                     it.startsWith(eventPrefix)
                 })
             assertEquals(
                 1,
-                collectFusEvents(*rerunTask(":compileKotlinLinuxX64")).count {
+                collectFusEvents(*rerunTask(":compileKotlinLinuxX64"), deriveBuildOptions = separateCompilationOptions).count {
                     it.startsWith(eventPrefix)
                 })
             assertEquals(
                 1,
-                collectFusEvents(*rerunTask(":compileKotlinJs")).count {
+                collectFusEvents(*rerunTask(":compileKotlinJs"), deriveBuildOptions = separateCompilationOptions).count {
                     it.startsWith(eventPrefix)
                 })
+        }
+    }
+
+    @DisplayName("Fragment dependencies should be propagated to non-default common source sets (single Linux target)")
+    @GradleTest
+    fun nonDefaultHierarchySingleLinux(gradleVersion: GradleVersion) {
+        testNonDefaultHierarchySingleLinux(gradleVersion, includeLinuxArm64 = false)
+    }
+
+    @DisplayName("Fragment dependencies should be propagated to non-default common source sets (multiple Linux targets)")
+    @GradleTest
+    fun nonDefaultHierarchyMultipleLinux(gradleVersion: GradleVersion) {
+        testNonDefaultHierarchySingleLinux(gradleVersion, includeLinuxArm64 = true)
+    }
+
+    private fun testNonDefaultHierarchySingleLinux(gradleVersion: GradleVersion, includeLinuxArm64: Boolean) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                        applyDefaultHierarchyTemplate {
+                            common {
+                                group("commonKotlin") {
+                                    group("native") {
+                                        group("darwin") {
+                                            withLinuxX64()
+                                            if (includeLinuxArm64) {
+                                                withLinuxArm64()
+                                            }
+                                        }
+                                        group("windows") {
+                                            withMingw()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        mingwX64()
+                        linuxX64()
+                        if (includeLinuxArm64) {
+                            linuxArm64()
+                        }
+                    }
+                }
+            }
+            kotlinSourcesDir("darwinMain").source("darwinMain.kt") {
+                """
+                    import platform.linux.ERROR
+
+                    val theDate: Int = ERROR
+                """.trimIndent()
+            }
+
+
+            build(
+                "compileKotlinLinuxX64",
+                buildOptions = defaultBuildOptions.copy(separateCompilation = true)
+            )
         }
     }
 
@@ -500,12 +632,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         buildOptions: BuildOptions = defaultBuildOptions,
         sourceStubs: Boolean = true,
         test: TestProject.() -> Unit,
-    ): GradleProject = project("empty", gradleVersion, buildOptions = buildOptions) {
+    ): GradleProject = project(
+        "empty",
+        gradleVersion,
+        buildOptions = if (autoEnableSeparateKmpCompilation) buildOptions.copy(separateCompilation = true) else buildOptions,
+    ) {
         plugins {
             kotlin("multiplatform")
-        }
-        if (autoEnableSeparateKmpCompilation) {
-            enableSeparateCompilation()
         }
         buildScriptInjection {
             with(project) {
@@ -535,6 +668,27 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             }
         }
         test()
+    }
+
+    private val nativePrebuiltVersionRegex = """kotlin-native-prebuilt-[^/]+""".toRegex()
+
+    /**
+     * See 'CompositeMetadataArtifactImpl.ArtifactFile.checksum' logic.
+     */
+    private val transformedMetadataLibraryChecksumRegex =
+        """(kotlinTransformedMetadataLibraries/.*-)[A-Za-z0-9_-]{5}[AQgw](\.klib)""".toRegex()
+
+    private fun List<String>.sanitizeDependencies(
+        projectPath: Path,
+        version: String,
+        distributionPath: Path,
+    ): List<String> = map {
+        it.substringAfter(projectPath.absolutePathString())
+            .replace(distributionPath.absolutePathString(), "<distribution>")
+            .normalizePath()
+            .replace(nativePrebuiltVersionRegex, "kotlin-native-prebuilt-<prebuilt-version>")
+            .replace(version, "<version>")
+            .replace(transformedMetadataLibraryChecksumRegex, "$1<klib-hash>$2")
     }
 
     companion object {

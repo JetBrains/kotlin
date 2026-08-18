@@ -1,0 +1,9 @@
+/messages.kt:17:9: warning: Equality operator is not applicable: type of left-hand side 'G<String>' and equality bound type of right-hand side 'H<*>' are incompatible.
+
+/messages.kt:18:9: warning: Equality operator is not applicable: equality bound type of left-hand side 'H<*>' and type of right-hand side 'G<String>' are incompatible.
+
+/messages.kt:19:9: warning: Comparison might not be intended:
+ - Type of left-hand side 'H<String>' is not a subtype of equality bound of right-hand side 'K'.
+ - Type of right-hand side 'K' is not a subtype of equality bound of left-hand side 'H<*>'.
+
+If the comparison is intended, suppress this warning or add an explicit 'is' check before the comparison.

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.fir.types.ConeCapturedType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
+import kotlin.DeprecationLevel
 
 internal class KaFirCapturedType(
     override val coneType: ConeCapturedType,
@@ -25,10 +26,13 @@ internal class KaFirCapturedType(
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN,
     )
     @Suppress("DEPRECATION_ERROR")
-    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
+    override val nullability: KaTypeNullability
+        get() = withValidityAssertion {
+            if (coneType.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
+        }
 
     override val projection: KaTypeProjection
         get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }

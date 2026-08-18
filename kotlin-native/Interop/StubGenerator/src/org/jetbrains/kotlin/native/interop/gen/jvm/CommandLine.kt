@@ -59,8 +59,12 @@ open class CommonInteropArguments(val argParser: ArgParser) {
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,
             description = "don't link the libraries from dist/klib automatically",
             deprecatedWarning = "Old form of flag. Please, use $NODEFAULTLIBS.").default(false)
+
+    @Suppress("unused")
     val purgeUserLibs by argParser.option(ArgType.Boolean, PURGE_USER_LIBS,
-            description = "don't link unused libraries even explicitly specified").default(false)
+            description = "don't link unused libraries even explicitly specified",
+            deprecatedWarning = "The option is deprecated. It will be removed in one of the future releases.").default(false)
+
     val nopack by argParser.option(ArgType.Boolean, fullName = NOPACK,
             description = "Don't pack the produced library into a klib file").default(false)
     val tempDir by argParser.option(ArgType.String, TEMP_DIR,

@@ -1,0 +1,4 @@
+package test
+
+@test.AnnotatedAnnotation @kotlin.annotation.Retention(value = ...) public final annotation class AnnotatedAnnotation : kotlin.Annotation {
+}

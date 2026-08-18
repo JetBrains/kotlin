@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 
-private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
-    return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<LoweringContext> {
+    return IrValidationAfterInliningPrivateFunctionsKlibPhase(
         context,
         checkInlineFunctionCallSites = { inlineFunctionUseSite ->
             // Call sites of only non-private functions are allowed at this stage.
@@ -44,8 +44,8 @@ private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringC
     )
 }
 
-private fun createValidateIrAfterInliningAllFunctions(context: LoweringContext): IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<LoweringContext> {
-    return IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
+private fun createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<LoweringContext> {
+    return IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
         context,
         checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
             // No inline function call sites should remain at this stage.
@@ -125,7 +125,7 @@ fun jsLoweringsOfTheFirstPhase(
 
 val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
     // BEGIN: Common Native/JS/Wasm prefix.
-    ::KlibIrValidationBeforeLoweringPhase,
+    ::IrValidationBeforeLoweringsKlibSecondStagePhase,
     ::InlineCallCycleCheckerLowering,
     ::createUpgradeCallableReferences,
     ::createJsCodeOutliningPhaseOnSecondStage,
@@ -136,12 +136,10 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
     ::createSyntheticAccessorGenerationPhase,
-    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
-    // just because it goes so in Native.
-    ::createValidateIrAfterInliningOnlyPrivateFunctions,
+    ::createIrValidationAfterInliningPrivateFunctionsKlibPhase,
     ::JsAllFunctionInlining,
     ::RedundantCastsRemoverLowering,
-    ::createValidateIrAfterInliningAllFunctions,
+    ::createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
     // END: Common Native/JS/Wasm prefix.
 
     ::createConstEvaluationPhase,
@@ -207,7 +205,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::RangeContainsLowering,
     ::ForLoopsLowering,
     ::PrimitiveCompanionLowering,
-    ::PropertyLazyInitLowering,
+    ::JsPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
     ::JsPropertyAccessorInlineLowering,
     ::CopyAccessorBodyLowerings,
@@ -245,7 +243,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::EscapedIdentifiersLowering,
     ::MainFunctionCallWrapperLowering,
     ::CleanupLowering,
-    ::IrValidationAfterLoweringPhase,
+    ::IrValidationAfterLoweringsSecondStagePhase,
 )
 
 val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
@@ -256,6 +254,9 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModu
     ::ES6PrimaryConstructorUsageOptimizationLowering,
     ::PurifyObjectInstanceGettersLowering,
     ::InlineObjectsWithPureInitializationLowering,
+    ::JsCleanupPurifiedLeftoverDeclarationsLowering,
+    ::JsCleanupPurifiedLeftoverUsagesLowering,
     ::MoveCallableFactoriesToDeclarationsLowering,
-    ::DeduplicateCallableReferenceFactoriesLowering
+    ::DeduplicateCallableReferenceFactoriesLowering,
+    ::WhileConditionFoldingLowering,
 )

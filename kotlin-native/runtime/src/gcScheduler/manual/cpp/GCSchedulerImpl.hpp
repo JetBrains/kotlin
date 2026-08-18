@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GCScheduler.hpp"
+#include "gcScheduler/GCScheduler.hpp"
 
 #include "Logging.hpp"
 

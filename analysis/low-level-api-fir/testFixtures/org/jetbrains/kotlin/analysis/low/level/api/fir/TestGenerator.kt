@@ -255,13 +255,13 @@ fun main(args: Array<String>) {
                     model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
                 }
 
-                testClass<AbstractLLDiagnosticsTest> {
+                testClass<AbstractLLDiagnosticsTest>("LLDiagnosticsCompilerLikeTestGenerated") {
                     modelInit()
                 }
-                testClass<AbstractLLReversedDiagnosticsTest> {
+                testClass<AbstractLLReversedDiagnosticsTest>("LLReversedDiagnosticsCompilerLikeTestGenerated") {
                     modelInit()
                 }
-                testClass<AbstractLLPartialDiagnosticsTest> {
+                testClass<AbstractLLPartialDiagnosticsTest>("LLPartialDiagnosticsCompilerLikeTestGenerated") {
                     modelInit()
                 }
             }

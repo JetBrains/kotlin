@@ -8,4 +8,7 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @PublishedApi // Used from the JavaScript Plain Objects compiler plugin
 @UsedFromCompilerGeneratedCode
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
 internal val VOID: Nothing? = js("void 0")

@@ -5,7 +5,7 @@ public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Ele
 public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

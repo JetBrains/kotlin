@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpOrFail
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -415,7 +415,7 @@ private class CollectingIrGenerationExtension(private val annotationToCheckCalls
             printFilePath = false
         )
 
-        result = moduleFragment.dump(dumpOptions)
+        result = moduleFragment.dumpOrFail(dumpOptions)
 
         annotationToCheckCalls?.let { annotationFqName ->
             moduleFragment.accept(

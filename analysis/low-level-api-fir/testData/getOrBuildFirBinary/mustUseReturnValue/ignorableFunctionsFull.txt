@@ -3,12 +3,14 @@ KT element text:
 public interface X {
     public abstract fun x(): kotlin.String
 
-    @kotlin.IgnorableReturnValue public abstract fun ignorable(): kotlin.String
+    @kotlin.IgnorableReturnValue
+    public abstract fun ignorable(): kotlin.String
 
     public final class Y public constructor() {
         public final fun y(): kotlin.String { /* compiled code */ }
 
-        @kotlin.IgnorableReturnValue public final fun ignorable(): kotlin.String { /* compiled code */ }
+        @kotlin.IgnorableReturnValue
+        public final fun ignorable(): kotlin.String { /* compiled code */ }
     }
 }
 FIR element: FirRegularClassImpl

@@ -20,7 +20,7 @@ public class JavaBad extends KotlinClass {
 package p
 
 abstract class KotlinSuper {
-    override fun equals(@EqualityBound(KotlinClass::class) other: Any?): Boolean = true
+    override fun equals(@EqualityBound(KotlinSuper::class) other: Any?): Boolean = true
 }
 
 abstract class KotlinClass(val x: Int) : KotlinSuper() {

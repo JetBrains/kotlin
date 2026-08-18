@@ -2,9 +2,12 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(AbstractBase::class, "4main12AbstractBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Base::class, "4main4BaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GreeterBase::class, "4main11GreeterBaseC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Boxed::class, "_Boxed")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Defaulter::class, "_Defaulter")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Greeter::class, "_Greeter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Overloaded::class, "4main10OverloadedC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ThrowingMembers::class, "4main15ThrowingMembersC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Boxed::class, "_main_Boxed")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Defaulter::class, "_main_Defaulter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Greeter::class, "_main_Greeter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OverloadedInterface::class, "_main_OverloadedInterface")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
@@ -226,6 +229,105 @@ public fun Greeter_salutation__reverse(self: Greeter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Greeter_salutation__reverse_swift(__self)
     return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, times: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OverloadedInterface::class, "say")
+public fun OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse(self: OverloadedInterface, times: Int): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift(__self, times)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("OverloadedInterface_say__reverse_swift")
+internal external fun OverloadedInterface_say__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OverloadedInterface::class, "say")
+public fun OverloadedInterface_say__reverse(self: OverloadedInterface): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = OverloadedInterface_say__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift")
+internal external fun Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Overloaded::class, "nullable")
+public fun Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse(self: Overloaded, arg: kotlin.String?): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = if (arg == null) kotlin.native.internal.NativePtr.NULL else arg.objcPtr()
+    val _result = Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift(__self, __arg)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Overloaded::class, "nullable")
+public fun Overloaded_nullable__TypesOfArguments__Swift_String____reverse(self: Overloaded, arg: kotlin.String): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = arg.objcPtr()
+    val _result = Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift(__self, __arg)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift")
+internal external fun Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Overloaded::class, "pick")
+public fun Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse(self: Overloaded, arg1: kotlin.String, arg2: Int): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg1 = arg1.objcPtr()
+    val _result = Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift(__self, __arg1, arg2)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Overloaded::class, "pick")
+public fun Overloaded_pick__TypesOfArguments__Swift_String____reverse(self: Overloaded, arg1: kotlin.String): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg1 = arg1.objcPtr()
+    val _result = Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift(__self, __arg1)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, arg: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Overloaded::class, "same")
+public fun Overloaded_same__TypesOfArguments__Swift_Int32____reverse(self: Overloaded, arg: Int): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift(__self, arg)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Overloaded_same__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun Overloaded_same__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Overloaded::class, "same")
+public fun Overloaded_same__TypesOfArguments__Swift_String____reverse(self: Overloaded, arg: kotlin.String): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = arg.objcPtr()
+    val _result = Overloaded_same__TypesOfArguments__Swift_String____reverse_swift(__self, __arg)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, x: Int, _out_error: kotlinx.cinterop.CPointer<kotlinx.cinterop.COpaquePointerVar>): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(ThrowingMembers::class, "compute")
+public fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse(self: ThrowingMembers, x: Int): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    return kotlinx.cinterop.memScoped {
+        val _out_error = alloc<kotlinx.cinterop.COpaquePointerVar>()
+        val _result = ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(__self, x, _out_error.ptr)
+        throwErrorFromReverseBridge(_out_error.value)
+        interpretObjCPointer<kotlin.String>(_result)
+    }
 }
 
 @ExportedBridge("AbstractBase_abstractMethod")
@@ -497,6 +599,154 @@ public fun Greeter_salutation(self: kotlin.native.internal.NativePtr): kotlin.na
     return _result.objcPtr()
 }
 
+@ExportedBridge("OverloadedInterface_say")
+public fun OverloadedInterface_say(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverloadedInterface
+    val _result = run { __self.say() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverloadedInterface_say__TypesOfArguments__Swift_Int32__")
+public fun OverloadedInterface_say__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, times: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverloadedInterface
+    val __times = times
+    val _result = run { __self.say(__times) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_nullable__TypesOfArguments__Swift_String__")
+public fun Overloaded_nullable__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = interpretObjCPointer<kotlin.String>(arg)
+    val _result = run { __self.nullable(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String___")
+public fun Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String___(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(arg)
+    val _result = run { __self.nullable(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_nullable__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "nullable")
+public fun Overloaded_nullable__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = interpretObjCPointer<kotlin.String>(arg)
+    val _result = run { __self.nullable(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String____direct", nonVirtualTargetMethod = "nullable")
+public fun Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String____direct(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(arg)
+    val _result = run { __self.nullable(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_pick")
+public fun Overloaded_pick(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val _result = run { __self.pick() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_pick__TypesOfArguments__Swift_String__")
+public fun Overloaded_pick__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg1 = interpretObjCPointer<kotlin.String>(arg1)
+    val _result = run { __self.pick(__arg1) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32__")
+public fun Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32__(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg1 = interpretObjCPointer<kotlin.String>(arg1)
+    val __arg2 = arg2
+    val _result = run { __self.pick(__arg1, __arg2) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_pick__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "pick")
+public fun Overloaded_pick__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg1 = interpretObjCPointer<kotlin.String>(arg1)
+    val _result = run { __self.pick(__arg1) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32___direct", nonVirtualTargetMethod = "pick")
+public fun Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32___direct(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg1 = interpretObjCPointer<kotlin.String>(arg1)
+    val __arg2 = arg2
+    val _result = run { __self.pick(__arg1, __arg2) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_same__TypesOfArguments__Swift_String__")
+public fun Overloaded_same__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = interpretObjCPointer<kotlin.String>(arg)
+    val _result = run { __self.same(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_same__TypesOfArguments__Swift_Int32__")
+public fun Overloaded_same__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, arg: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = arg
+    val _result = run { __self.same(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_same__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "same")
+public fun Overloaded_same__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = interpretObjCPointer<kotlin.String>(arg)
+    val _result = run { __self.same(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Overloaded_same__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "same")
+public fun Overloaded_same__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, arg: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Overloaded
+    val __arg = arg
+    val _result = run { __self.same(__arg) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("ThrowingMembers_compute__TypesOfArguments__Swift_Int32__")
+public fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, x: Int, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ThrowingMembers
+    val __x = x
+    val ___out_error = _out_error
+    try {
+        val _result = run { __self.compute(__x) }
+        return _result.objcPtr()
+    } catch (error: Throwable) {
+        ___out_error.value = StableRef.create(error).asCPointer()
+        return kotlin.native.internal.NativePtr.NULL
+    }
+}
+
+@ExportedBridge("ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "compute")
+public fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, x: Int, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ThrowingMembers
+    val __x = x
+    val ___out_error = _out_error
+    try {
+        val _result = run { __self.compute(__x) }
+        return _result.objcPtr()
+    } catch (error: Throwable) {
+        ___out_error.value = StableRef.create(error).asCPointer()
+        return kotlin.native.internal.NativePtr.NULL
+    }
+}
+
 @ExportedBridge("__root___Base_init_allocate")
 public fun __root___Base_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<Base>() }
@@ -520,5 +770,31 @@ public fun __root___GreeterBase_init_allocate(): kotlin.native.internal.NativePt
 public fun __root___GreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, GreeterBase()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___Overloaded_init_allocate")
+public fun __root___Overloaded_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<Overloaded>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Overloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___Overloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, Overloaded()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___ThrowingMembers_init_allocate")
+public fun __root___ThrowingMembers_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<ThrowingMembers>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, ThrowingMembers()) }
     return run { _result; true }
 }

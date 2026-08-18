@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
@@ -94,7 +95,7 @@ abstract class AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest :
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
         return super.createCompilerArguments(destinationDir, testDir).apply {
-            languageVersion = "2.0"
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString
         }
     }
 }

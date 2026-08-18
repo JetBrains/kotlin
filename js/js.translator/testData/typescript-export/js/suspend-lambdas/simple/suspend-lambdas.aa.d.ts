@@ -21,6 +21,7 @@ declare namespace JS_TESTS {
         function getSuspendIncRef(): (p0: number) => Promise<number>;
         function callHandlerFromInterface(holder: foo.InterfaceWithSuspendLambdaProp, x: number): Promise<string>;
         function callHandlerFromAbstractClass(holder: foo.AbstractClassWithSuspendLambdaProp, x: number): Promise<string>;
+        function callAnonymousAbstractClassHandler(): Promise<string>;
         function callbackThatThrows(callback: () => Promise<string>): Promise<string>;
         function throwingSuspendLambda(): Promise<string>;
         function applyAll(start: number, callbacks: Array<(p0: number) => Promise<number>>): Promise<number>;

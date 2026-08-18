@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
-import kotlin.test.assertFalse
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.konan.library.components.bitcode
 
 abstract class AbstractNativeCInteropFModulesTest : AbstractNativeCInteropTest() {
@@ -51,6 +51,7 @@ abstract class AbstractNativeCInteropHeaderModeTest : AbstractNativeCInteropNoFM
         val bitcodeFiles = library.bitcode(targets.testTarget)?.bitcodeFilePaths ?: emptyList()
 
         assertTrue(bitcodeFiles.isEmpty()) { "Klib contains bitcode files: $bitcodeFiles" }
+        assertTrue(library.isHeader) { "Expected header klib manifest to contain header=true" }
     }
 }
 

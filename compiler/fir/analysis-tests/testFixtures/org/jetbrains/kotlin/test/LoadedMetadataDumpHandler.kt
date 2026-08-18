@@ -183,8 +183,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val languageSettingsBuilder = testServices.defaultsProvider.newLanguageSettingsBuilder()
         languageSettingsBuilder.configureUsingDirectives(
             testServices.defaultDirectives,
-            testServices.environmentConfigurators,
-            testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
+            testServices.environmentConfigurators
         )
 
         val emptyModule = TestModule(

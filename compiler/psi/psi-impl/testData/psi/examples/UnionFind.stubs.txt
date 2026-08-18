@@ -7,6 +7,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
     CLASS_BODY
       PROPERTY[fqName=UnionFind.data, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=data]
         MODIFIER_LIST[private]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=IMutableList]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_ARGUMENT_LIST
       FUN[fqName=UnionFind.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -41,3 +49,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
         REFERENCE_EXPRESSION[referencedName=Boolean]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          OPERATION_REFERENCE[operationToken=PERC, referencedName=%]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+        OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

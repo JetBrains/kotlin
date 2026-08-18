@@ -20,24 +20,6 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     private var prefixes: PersistentList<String> = persistentListOf()
     private var indentationLevel: Int = 0
 
-    @Deprecated("Do not use. Left for binary compatibility", level = DeprecationLevel.HIDDEN)
-    public val builder: StringBuilder
-        get() = result
-
-    @Deprecated("Do not use. Left for binary compatibility", level = DeprecationLevel.HIDDEN)
-    public var prefixesToPrint: PersistentList<String>
-        get() = prefixes
-        set(value) {
-            prefixes = value
-        }
-
-    @Deprecated("Do not use. Left for binary compatibility", level = DeprecationLevel.HIDDEN)
-    public var indent: Int
-        get() = indentationLevel
-        set(value) {
-            indentationLevel = value
-        }
-
     override fun append(nullableSeq: CharSequence?): Appendable = apply {
         val seq = nullableSeq ?: "null"
         if (seq.isEmpty()) return@apply

@@ -76,6 +76,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function2
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -157,6 +158,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getVariable2
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -298,6 +300,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setVariable2
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -309,8 +312,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getVariable2
-  javaSetterName: setVariable2
   isInline: false
   importableFqName: null
 
@@ -359,6 +360,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateFunction2
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -406,6 +408,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalFunction2$main
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -487,6 +490,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateVariable2
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -628,6 +632,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setPrivateVariable2
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -639,8 +644,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateVariable2
-  javaSetterName: setPrivateVariable2
   isInline: false
   importableFqName: null
 
@@ -723,6 +726,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getInternalVariable2$main
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -864,6 +868,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setInternalVariable2$main
     importableFqName: null
   typeParameters: []
   visibility: INTERNAL
@@ -875,8 +880,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getInternalVariable2
-  javaSetterName: setInternalVariable2
   isInline: false
   importableFqName: null
 
@@ -992,6 +995,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1039,6 +1043,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateFunction
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1086,6 +1091,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalFunction$main
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -1167,6 +1173,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1308,6 +1315,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1319,8 +1327,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getVariable
-  javaSetterName: setVariable
   isInline: false
   importableFqName: null
 
@@ -1403,6 +1409,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1544,6 +1551,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setPrivateVariable
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -1555,8 +1563,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateVariable
-  javaSetterName: setPrivateVariable
   isInline: false
   importableFqName: null
 
@@ -1639,6 +1645,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getInternalVariable$main
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1780,6 +1787,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setInternalVariable$main
     importableFqName: null
   typeParameters: []
   visibility: INTERNAL
@@ -1791,8 +1799,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getInternalVariable
-  javaSetterName: setInternalVariable
   isInline: false
   importableFqName: null
 
@@ -2137,6 +2143,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: WithConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: WithConstructor
 
 KaEnumEntrySymbol:

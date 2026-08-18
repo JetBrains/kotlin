@@ -1,0 +1,53 @@
+Module: lib
+public final class lib/FirstKt : java/lang/Object {
+    public final static void myFunc() {
+          ACONST_NULL
+          ATHROW
+    }
+}
+
+public final class lib/SealedClass$Implementation : lib/SealedClass {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+abstract class lib/SealedClass : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+Module: main
+public final class main/App : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+        LINENUMBER (19)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final void run() {
+        LABEL (L0)
+        LINENUMBER (21)
+          INVOKESTATIC (lib/FirstKt, myFunc, ()V)
+        LABEL (L1)
+        LINENUMBER (22)
+          RETURN
+        LABEL (L2)
+    }
+}

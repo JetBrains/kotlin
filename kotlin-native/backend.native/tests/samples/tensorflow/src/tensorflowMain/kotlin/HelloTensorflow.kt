@@ -47,14 +47,14 @@ fun scalarTensor(value: Int): Tensor {
             /* dims = */ null,
             /* num_dims = */ 0,
             /* data = */ data,
-            /* len = */ IntVar.size.convert(),
+            /* len = */ sizeOf<IntVar>().convert(),
             /* deallocator = */ staticCFunction { dataToFree, _, _ -> nativeHeap.free(dataToFree!!.reinterpret<IntVar>()) },
             /* deallocator_arg = */ null
     )!!
 }
 
 val Tensor.scalarIntValue: Int get() {
-    if (TF_INT32 != TF_TensorType(this) || IntVar.size.convert<size_t>() != TF_TensorByteSize(this)) {
+    if (TF_INT32 != TF_TensorType(this) || sizeOf<IntVar>().convert<size_t>() != TF_TensorByteSize(this)) {
         throw Error("Tensor is not of type int.")
     }
     if (0 != TF_NumDims(this)) {

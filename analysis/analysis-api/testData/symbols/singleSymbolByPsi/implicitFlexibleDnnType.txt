@@ -83,6 +83,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: KotlinClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPropertyWithFlexibleDnnImplicitType
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -125,7 +126,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: KotlinClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPropertyWithFlexibleDnnImplicitType
-  javaSetterName: null
   isInline: false
   importableFqName: null

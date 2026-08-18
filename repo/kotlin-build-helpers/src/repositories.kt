@@ -145,14 +145,29 @@ fun RepositoryHandler.teamcityRepository() {
     }
 }
 
+fun RepositoryHandler.androidxSnapshotRepository(composeSnapshotId: String) {
+    maven { repository ->
+        repository.setUrl("https://androidx.dev/snapshots/builds/$composeSnapshotId/artifacts/repository")
+        repository.content { content ->
+            content.includeGroup("androidx.compose.runtime")
+            content.includeGroup("androidx.collection")
+            content.includeGroup("androidx.annotation")
+        }
+    }
+}
+
 fun RepositoryHandler.googleAndroidRepository() {
     exclusiveContent { exclusive ->
         exclusive.forRepository {
-            google()
+            maven { repository ->
+                repository.url = google().url
+                repository.content { content ->
+                    content.includeGroupByRegex("""androidx(\..*)?""")
+                }
+            }
         }
         exclusive.filter { content ->
             content.includeGroupByRegex("""com\.android(\..*)?""")
-            content.includeGroupByRegex("""androidx(\..*)?""")
             content.includeGroup("com.google.testing.platform")
         }
     }
@@ -318,6 +333,24 @@ fun RepositoryHandler.d8Distributions() {
         }
         exclusive.filter { content ->
             content.includeModule("google.d8", "v8")
+        }
+    }
+}
+
+fun RepositoryHandler.wasmtimeDistributions() {
+    exclusiveContent { exclusive ->
+        exclusive.forRepository {
+            ivy { repository ->
+                repository.name = "Wasmtime Distributions"
+                repository.setUrl("https://cache-redirector.jetbrains.com/github.com/bytecodealliance/wasmtime/releases/download")
+                repository.patternLayout { layout ->
+                    layout.artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+                }
+                repository.metadataSources { sources -> sources.artifact() }
+            }
+        }
+        exclusive.filter { content ->
+            content.includeModule("bytecodealliance.wasmtime", "wasmtime")
         }
     }
 }

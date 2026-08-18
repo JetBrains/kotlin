@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
@@ -15,17 +13,17 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object IrActualizationErrors : KtDiagnosticsContainer() {
-    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
@@ -136,10 +134,11 @@ internal object IrActualizationDiagnosticRenderers {
     }
 
     @JvmField
-    val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->
+    val MODULE_WITH_PLATFORM = Renderer<ModuleInfoForDiagnostic> { module ->
         val platform = module.platform
-        val moduleName = module.getCapability(ModuleInfo.Capability)?.displayedName ?: module.name.asString()
         val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
-        moduleName + platformNameIfAny
+        module.name + platformNameIfAny
     }
 }
+
+data class ModuleInfoForDiagnostic(val name: String, val platform: TargetPlatform?)

@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +66,6 @@ public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
         JsExpression expressionCopy = AstUtil.deepCopy(expression);
         List<JsSwitchMember> casesCopy = AstUtil.deepCopy(cases);
 
-        return new JsSwitch(expressionCopy, casesCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsSwitch(expressionCopy, casesCopy), this);
     }
 }

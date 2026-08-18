@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import com.intellij.openapi.util.text.Strings
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_JVM_FLAGS
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JvmClassFileArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -18,7 +22,7 @@ import java.lang.reflect.Modifier
 import java.util.*
 
 /*
- * Test correctness of written flags in class file
+ * Test correctness of written flags in class file. Enabled by the CHECK_JVM_FLAGS directive.
  *
  *  TESTED_OBJECT_KIND - maybe class, function or property
  *  TESTED_OBJECTS - className, [function/property name], [function/property signature]
@@ -39,11 +43,16 @@ import java.util.*
  * FLAGS: ACC_PUBLIC, ACC_SYNTHETIC
  */
 class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(CodegenTestDirectives)
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         require(info is JvmClassFileArtifact)
+        // Only check flags when the test opts in; lets this handler be attached to a whole box suite where only some files verify them.
+        if (CHECK_JVM_FLAGS !in module.directives) return
         val classFileFactory = info.classFileFactory
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val fileText = testDataFile.readText()
+        val fileText = Strings.convertLineSeparators(testDataFile.readText())
         val testedObjects: MutableList<TestedObject> = parseExpectedTestedObject(fileText, assertions)
         for (testedObject in testedObjects) {
             var className: String? = null

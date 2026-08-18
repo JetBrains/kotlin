@@ -3,38 +3,46 @@
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlin.native.internal.ExportedBridge
-import platform.Foundation.NSError
-import platform.Foundation.NSLocalizedFailureReasonErrorKey
-import platform.Foundation.NSUnderlyingErrorKey
+import platform.darwin.NSObject
 
-public class SwiftException(error: NSError) : RuntimeException(
-    message = buildMessage(error),
-    cause = (error.userInfo[NSUnderlyingErrorKey] as? NSError)?.let(::SwiftException)
-) {
-    companion object {
-        private fun buildMessage(error: NSError): String {
-            val description = error.localizedDescription
+/**
+ * Universal Kotlin wrapper for a Swift error that crosses into Kotlin through a reverse bridge.
+ * This is the symmetric counterpart of the Swift `KotlinError` struct.
+ */
+public class SwiftError internal constructor(
+    internal val box: NSObject,
+) : RuntimeException() {
+    override val message: String? get() = box.description()
+}
 
-            val details = buildList {
-                add("domain=${error.domain}")
-                add("code=${error.code}")
+public fun throwableFromReverseBridge(ref: kotlin.native.internal.NativePtr): kotlin.Throwable {
+    val throwable = kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as kotlin.Throwable
+    kotlin.native.internal.ref.releaseExternalRCRef(ref)
+    kotlin.native.internal.ref.disposeExternalRCRef(ref)
+    return throwable
+}
 
-                ((error.userInfo[NSLocalizedFailureReasonErrorKey] as? String)
-                    ?: error.localizedFailureReason)
-                    ?.takeUnless(String::isBlank)
-                    ?.let { add("reason=$it") }
-            }
+public fun throwErrorFromReverseBridge(errorRef: kotlinx.cinterop.COpaquePointer?) {
+    if (errorRef == null) return
+    throw throwableFromReverseBridge(errorRef.rawValue)
+}
 
-            return buildString {
-                append(description)
-                if (details.isNotEmpty()) {
-                    append(" (")
-                    append(details.joinToString())
-                    append(')')
-                }
-            }
-        }
-    }
+@ExportedBridge("SwiftError_create")
+public fun SwiftError_create(box: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val boxObject = interpretObjCPointer<NSObject>(box)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(SwiftError(boxObject))
+}
+
+@ExportedBridge("SwiftError_retainedThrowableRef")
+public fun SwiftError_retainedThrowableRef(ref: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val throwable = kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as? kotlin.Throwable ?: return kotlin.native.internal.NativePtr.NULL
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(throwable)
+}
+
+@ExportedBridge("SwiftError_unwrapBoxOrNull")
+public fun SwiftError_unwrapBoxOrNull(ref: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val throwable = kotlin.native.internal.ref.dereferenceExternalRCRef(ref)
+    return (throwable as? SwiftError)?.box?.objcPtr() ?: kotlin.native.internal.NativePtr.NULL
 }
 
 @ExportedBridge("__root____getExceptionMessage__TypesOfArguments__ExportedKotlinPackages_kotlin_Exception__")

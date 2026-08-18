@@ -1,0 +1,24 @@
+Anno.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Anno public constructor(
+      public final val value: kotlin.Int,
+  ) : kotlin.Annotation {
+  }
+
+WithCast.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Anno(value = 1)
+  public final class WithCast public constructor() {
+  }
+
+WithCastOperand.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Anno(value = 3)
+  public final class WithCastOperand public constructor() {
+  }

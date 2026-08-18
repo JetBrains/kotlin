@@ -30,7 +30,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.exportKDoc = from.exportKDoc
     to.exportedLibraries = from.exportedLibraries.copyOf()
     to.externalDependencies = from.externalDependencies
-    to.fakeOverrideValidator = from.fakeOverrideValidator
     to.filesToCache = from.filesToCache.copyOf()
     to.frameworkImportHeaders = from.frameworkImportHeaders.copyOf()
     to.friendModules = from.friendModules
@@ -38,6 +37,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.generateDebugTrampolineString = from.generateDebugTrampolineString
     to.generateNoExitTestRunner = from.generateNoExitTestRunner
     to.generateTestRunner = from.generateTestRunner
+    @Suppress("DEPRECATION")
     to.generateWorkerTestRunner = from.generateWorkerTestRunner
     to.headerKlibPath = from.headerKlibPath
     to.includeBinaries = from.includeBinaries.copyOf()
@@ -74,7 +74,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.printIr = from.printIr
     to.produce = from.produce
     to.propertyLazyInitialization = from.propertyLazyInitialization
-    to.purgeUserLibs = from.purgeUserLibs
     to.refinesPaths = from.refinesPaths.copyOf()
     to.runtimeFile = from.runtimeFile
     to.runtimeLogs = from.runtimeLogs

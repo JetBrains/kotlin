@@ -549,13 +549,22 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             }
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
             annotations = irConstructor.annotations.withoutJvmExposeBoxedAnnotation()
+            // A Valhalla value class has a strict backing field (JEP 401), which must be assigned before super().
+            val fieldInitBeforeSuper = valueClass.isKotlinValhallaValueClass(context.config.languageVersionSettings)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                +irSetField(
+                val superCall = irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                val fieldInit = irSetField(
                     irGet(valueClass.thisReceiver!!),
                     getInlineClassBackingField(valueClass),
                     irGet(this@apply.parameters[0])
                 )
+                if (fieldInitBeforeSuper) {
+                    +fieldInit
+                    +superCall
+                } else {
+                    +superCall
+                    +fieldInit
+                }
             }
         }
 

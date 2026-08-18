@@ -1,4 +1,5 @@
 KtOperationReferenceExpression(62,65): '!=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null

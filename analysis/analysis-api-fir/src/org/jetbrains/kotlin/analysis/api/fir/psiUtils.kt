@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
+import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaAbstractFirDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaUnstableDiagnosticApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -215,7 +218,20 @@ context(analysisSession: KaFirSession)
 internal fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
 
 internal fun KtPsiDiagnostic.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
+    @OptIn(KaUnstableDiagnosticApi::class)
     return KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
+}
+
+context(analysisSession: KaFirSession)
+internal fun LLDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
+
+internal fun LLDiagnostic.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
+    val result = diagnostic.asKaDiagnostic(analysisSession)
+
+    // Every 'KaFirDiagnostic' implementation is a 'KaAbstractFirDiagnostic'
+    (result as KaAbstractFirDiagnostic<*>).isSuppressed = isSuppressed
+
+    return result
 }
 
 /**

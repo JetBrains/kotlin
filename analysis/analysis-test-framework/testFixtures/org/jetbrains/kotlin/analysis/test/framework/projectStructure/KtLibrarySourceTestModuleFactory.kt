@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.platform.isMultiPlatform
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import java.nio.file.Path
 
 /**
@@ -33,9 +33,9 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
-        Assume.assumeFalse(
-            "Compilation of multi-platform libraries is not supported",
+        Assumptions.assumeFalse(
             testModule.targetPlatform(testServices).isMultiPlatform(),
+            "Compilation of multi-platform libraries is not supported",
         )
 
         (val libraryJars = roots, val librarySourcesJars = sourceRoots) = testServices.compiledLibraryProvider.compileToLibrary(

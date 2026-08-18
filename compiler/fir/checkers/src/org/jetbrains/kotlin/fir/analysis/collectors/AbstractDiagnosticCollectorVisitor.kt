@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFr
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
-import org.jetbrains.kotlin.fir.shouldSuppressInlineContextAt
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -131,13 +129,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
-        if (shouldSuppressInlineContextAt(anonymousFunctionExpression, context.containingDeclarations.lastOrNull())) {
-            suppressInlineFunctionBodyContext {
-                visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
-            }
-        } else {
-            visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
-        }
+        visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
@@ -478,13 +470,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
     inline fun <R> withAdditionalSuppresses(property: FirProperty, block: () -> R): R {
         val existingContext = context
         property.correspondingValueParameterFromPrimaryConstructor?.let {
-            it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
             addSuppressedDiagnosticsToContext(it.fir)
         }
+
         FirDestructuringDeclarationChecker.getDestructuringVariableIfEntry(property)?.let {
-            it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
             addSuppressedDiagnosticsToContext(it.fir)
         }
+
         return try {
             block()
         } finally {

@@ -4,3 +4,71 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnsignedLiteralKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=array, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=array]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=array]
+      TYPE_ARGUMENT_LIST
+        TYPE_PROJECTION[projectionKind=NONE]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Any]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1u]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0u]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1_1u]
+        VALUE_ARGUMENT[isSpread=false]
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2u]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0xFFu]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0b100u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1e1]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0e1]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2_2.0f]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.022_137e+2_3f]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1U]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0xFU]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1u]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=U]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1U]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=u]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=U]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1uL]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1UL]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3Ul]

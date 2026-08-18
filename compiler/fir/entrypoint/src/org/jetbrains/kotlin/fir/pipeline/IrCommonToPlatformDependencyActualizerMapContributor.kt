@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingCollectingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.session.structuredProviders
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
     private val platformSession: FirSession,
-    private val platformMappingProvider: FirCommonDeclarationsMappingSymbolProvider,
-    private val commonMappingProviders: List<FirCommonDeclarationsMappingSymbolProvider>,
+    private val platformMappingProvider: FirCommonDeclarationsMappingCollectingSymbolProvider,
+    private val commonMappingProviders: List<FirCommonDeclarationsMappingCollectingSymbolProvider>,
     private val componentsPerSession: Map<FirSession, Fir2IrComponents>,
 ) : IrActualizerMapContributor() {
     companion object {
@@ -37,12 +37,12 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             platformSession: FirSession,
             componentsPerSession: Map<FirSession, Fir2IrComponents>,
         ): IrCommonToPlatformDependencyActualizerMapContributor? {
-            val mappingProviders = mutableListOf<FirCommonDeclarationsMappingSymbolProvider>()
+            val mappingProviders = mutableListOf<FirCommonDeclarationsMappingCollectingSymbolProvider>()
 
             fun process(session: FirSession) {
                 val mappingProvidersOfSesssion = (session.symbolProvider as FirCachingCompositeSymbolProvider)
                     .providers
-                    .filterIsInstance<FirCommonDeclarationsMappingSymbolProvider>()
+                    .filterIsInstance<FirCommonDeclarationsMappingCollectingSymbolProvider>()
                 mappingProviders.addAll(mappingProvidersOfSesssion)
                 for (dependency in session.moduleData.dependsOnDependencies) {
                     process(dependency.session)

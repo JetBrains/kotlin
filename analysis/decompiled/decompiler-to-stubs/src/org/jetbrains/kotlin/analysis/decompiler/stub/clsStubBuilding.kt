@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.FlagsToModifiers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
@@ -139,9 +139,9 @@ fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl
 }
 
 private fun setupFileStub(fileStub: KotlinFileStubImpl) {
-    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtStubElementTypes.PACKAGE_DIRECTIVE)
+    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtNodeTypes.PACKAGE_DIRECTIVE)
     createStubForPackageName(packageDirectiveStub, fileStub.getPackageFqName())
-    KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtStubElementTypes.IMPORT_LIST)
+    KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtNodeTypes.IMPORT_LIST)
 }
 
 fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
@@ -162,7 +162,7 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
             }
             else -> {
                 val lastSegment = iterator.previous()
-                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
                 KotlinNameReferenceExpressionStubImpl(
                     /* parent = */ receiver,
@@ -293,19 +293,25 @@ fun createTargetedAnnotationStubs(
 
     annotations.forEach { annotation ->
         val (annotationWithArgs, target) = annotation
+        val args = annotationWithArgs.args
+        val hasStubBasedArguments = args.isNotEmpty() && args.areRepresentableAsStubs()
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
             shortNameRef = annotationWithArgs.classId.shortClassName.ref(),
-            hasValueArguments = false,
-            annotationWithArgs.args,
+            hasValueArguments = hasStubBasedArguments,
+            args,
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
         }
         val constructorCallee =
-            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
-        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
+            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtNodeTypes.CONSTRUCTOR_CALLEE)
+        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtNodeTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationWithArgs.classId, typeReference)
+
+        if (hasStubBasedArguments) {
+            createValueArgumentListStub(annotationEntryStubImpl, args)
+        }
     }
 }
 

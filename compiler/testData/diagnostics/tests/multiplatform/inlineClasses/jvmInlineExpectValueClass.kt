@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ALLOW_KOTLIN_PACKAGE
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 
 // MODULE: m1-common
 // FILE: common.kt

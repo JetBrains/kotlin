@@ -5,8 +5,8 @@
 
 #include "ConcurrentMark.hpp"
 
-#include "MarkAndSweepUtils.hpp"
-#include "GCStatistics.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
+#include "gc/GCStatistics.hpp"
 #include "GCImpl.hpp"
 
 using namespace kotlin;

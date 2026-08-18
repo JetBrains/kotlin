@@ -8,9 +8,9 @@
 #include "Barriers.hpp"
 #include "ConcurrentMark.hpp"
 #include "CmsGCTraits.hpp"
-#include "GC.hpp"
-#include "GCState.hpp"
-#include "MainGCThread.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCState.hpp"
+#include "gc/MainGCThread.hpp"
 
 namespace kotlin {
 namespace gc {

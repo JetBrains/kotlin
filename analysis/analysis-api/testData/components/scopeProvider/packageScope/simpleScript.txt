@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: testFunction
   importableFqName: test.testFunction
 
 KaKotlinPropertySymbol:
@@ -112,6 +113,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScript.kts"
     deprecation: null
+    javaMethodName: getTestValue
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -147,8 +149,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   deprecation: null
-  javaGetterName: getTestValue
-  javaSetterName: null
   isInline: false
   importableFqName: test.testValue
 

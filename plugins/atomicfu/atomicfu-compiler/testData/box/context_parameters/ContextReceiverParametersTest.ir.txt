@@ -1,0 +1,249 @@
+FILE fqName:<root> fileName:/ContextReceiverParametersTest.kt
+  CLASS CLASS name:C1 modality:FINAL visibility:private superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C1
+    PROPERTY name:n visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'n: kotlin.Int declared in <root>.C1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-n> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C1
+        correspondingProperty: PROPERTY name:n visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-n> (): kotlin.Int declared in <root>.C1'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C1 declared in <root>.C1.<get-n>' type=<root>.C1 origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.C1 [primary]
+      VALUE_PARAMETER kind:Regular name:n index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:C2 modality:FINAL visibility:private superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C2
+    PROPERTY name:n visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'n: kotlin.Int declared in <root>.C2.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-n> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C2
+        correspondingProperty: PROPERTY name:n visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-n> (): kotlin.Int declared in <root>.C2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C2 declared in <root>.C2.<get-n>' type=<root>.C2 origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.C2 [primary]
+      VALUE_PARAMETER kind:Regular name:n index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:ContextReceiverParametersFunctionTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ContextReceiverParametersFunctionTest
+    PROPERTY name:a visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+            ARG initial: CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ContextReceiverParametersFunctionTest
+        correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final]' type=kotlinx.atomicfu.AtomicInt origin=null
+              receiver: GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.<get-a>' type=<root>.ContextReceiverParametersFunctionTest origin=null
+    PROPERTY name:arr visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicIntArray origin=null
+            ARG size: CONST Int type=kotlin.Int value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicIntArray
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ContextReceiverParametersFunctionTest
+        correspondingProperty: PROPERTY name:arr visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.ContextReceiverParametersFunctionTest'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final]' type=kotlinx.atomicfu.AtomicIntArray origin=null
+              receiver: GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.<get-arr>' type=<root>.ContextReceiverParametersFunctionTest origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.ContextReceiverParametersFunctionTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ContextReceiverParametersFunctionTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:extensionWithContextParameters visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ContextReceiverParametersFunctionTest
+      VALUE_PARAMETER kind:Context name:c1 index:1 type:<root>.C1
+      VALUE_PARAMETER kind:Context name:c2 index:2 type:<root>.C2
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:3 type:kotlinx.atomicfu.AtomicInt
+      VALUE_PARAMETER kind:Regular name:arg1 index:4 type:kotlin.Int
+      BLOCK_BODY
+        CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+          ARG <set-?>: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C1' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR 'c1: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=<root>.C1 origin=null
+        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG x: CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+            ARG expect: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C1' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR 'c1: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=<root>.C1 origin=null
+            ARG update: GET_VAR 'arg1: kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlin.Int origin=null
+        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG x: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+            ARG arg1: GET_VAR 'arg1: kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlin.Int origin=null
+        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG x: CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+            ARG expect: GET_VAR 'arg1: kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlin.Int origin=null
+            ARG update: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C2' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR 'c2: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=<root>.C2 origin=null
+        CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG x: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+            ARG arg1: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C2' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR 'c2: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParameters' type=<root>.C2 origin=null
+    FUN name:extensionWithContextParametersLoop visibility:private modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ContextReceiverParametersFunctionTest
+      VALUE_PARAMETER kind:Context name:c1 index:1 type:<root>.C1
+      VALUE_PARAMETER kind:Context name:c2 index:2 type:<root>.C2
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:3 type:kotlinx.atomicfu.AtomicInt
+      VALUE_PARAMETER kind:Regular name:arg1 index:4 type:kotlin.Int
+      BLOCK_BODY
+        CALL 'public final fun loop (<this>: kotlinx.atomicfu.AtomicInt, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
+          ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+          ARG action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:kotlin.Int
+              BLOCK_BODY
+                CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                  ARG x: CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
+                    ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+                    ARG expect: GET_VAR 'cur: kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop.<anonymous>' type=kotlin.Int origin=null
+                    ARG update: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C1' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR 'c1: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=<root>.C1 origin=null
+                CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                  ARG x: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+                    ARG arg1: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C1' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR 'c1: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=<root>.C1 origin=null
+                CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                  ARG x: CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
+                    ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+                    ARG expect: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C1' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR 'c1: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=<root>.C1 origin=null
+                    ARG update: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C2' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR 'c2: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=<root>.C2 origin=null
+                CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                  ARG x: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR '<this>(index:3): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+                    ARG arg1: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.C2' type=kotlin.Int origin=GET_PROPERTY
+                      ARG <this>: GET_VAR 'c2: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.extensionWithContextParametersLoop' type=<root>.C2 origin=null
+                RETURN type=kotlin.Nothing from='private final fun extensionWithContextParametersLoop (c1: <root>.C1, c2: <root>.C2, <this>: kotlinx.atomicfu.AtomicInt, arg1: kotlin.Int): kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest'
+                  CONST Int type=kotlin.Int value=777
+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ContextReceiverParametersFunctionTest
+      BLOCK_BODY
+        VAR name:c1 type:<root>.C1 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.C1' type=<root>.C1 origin=null
+            ARG n: CONST Int type=kotlin.Int value=111
+        VAR name:c2 type:<root>.C2 [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.C2' type=<root>.C2 origin=null
+            ARG n: CONST Int type=kotlin.Int value=222
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
+            TYPE_ARG T: <root>.C1
+            TYPE_ARG R: kotlin.Int
+            ARG receiver: GET_VAR 'val c1: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.C1 origin=null
+            ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.C1, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.C1
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$with: <root>.C1): kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest.test'
+                    CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
+                      TYPE_ARG T: <root>.C2
+                      TYPE_ARG R: kotlin.Int
+                      ARG receiver: GET_VAR 'val c2: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.C2 origin=null
+                      ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.C2, kotlin.Int> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                          VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.C2
+                          BLOCK_BODY
+                            CALL 'private final fun extensionWithContextParameters (c1: <root>.C1, c2: <root>.C2, <this>: kotlinx.atomicfu.AtomicInt, arg1: kotlin.Int): kotlin.Unit declared in <root>.ContextReceiverParametersFunctionTest' type=kotlin.Unit origin=null
+                              ARG <this>(index:0): GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                              ARG c1: GET_VAR '$this$with: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>' type=<root>.C1 origin=IMPLICIT_ARGUMENT
+                              ARG c2: GET_VAR '$this$with: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>.<anonymous>' type=<root>.C2 origin=IMPLICIT_ARGUMENT
+                              ARG <this>(index:3): CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+                                ARG <this>: GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                              ARG arg1: CONST Int type=kotlin.Int value=333
+                            CALL 'private final fun extensionWithContextParameters (c1: <root>.C1, c2: <root>.C2, <this>: kotlinx.atomicfu.AtomicInt, arg1: kotlin.Int): kotlin.Unit declared in <root>.ContextReceiverParametersFunctionTest' type=kotlin.Unit origin=null
+                              ARG <this>(index:0): GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                              ARG c1: GET_VAR '$this$with: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>' type=<root>.C1 origin=IMPLICIT_ARGUMENT
+                              ARG c2: GET_VAR '$this$with: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>.<anonymous>' type=<root>.C2 origin=IMPLICIT_ARGUMENT
+                              ARG <this>(index:3): CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+                                ARG <this>: CALL 'private final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.ContextReceiverParametersFunctionTest' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                                  ARG <this>: GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                                ARG index: CONST Int type=kotlin.Int value=2
+                              ARG arg1: CONST Int type=kotlin.Int value=333
+                            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                              CALL 'private final fun extensionWithContextParametersLoop (c1: <root>.C1, c2: <root>.C2, <this>: kotlinx.atomicfu.AtomicInt, arg1: kotlin.Int): kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest' type=kotlin.Int origin=null
+                                ARG <this>(index:0): GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                                ARG c1: GET_VAR '$this$with: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>' type=<root>.C1 origin=IMPLICIT_ARGUMENT
+                                ARG c2: GET_VAR '$this$with: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>.<anonymous>' type=<root>.C2 origin=IMPLICIT_ARGUMENT
+                                ARG <this>(index:3): CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.ContextReceiverParametersFunctionTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+                                  ARG <this>: GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                                ARG arg1: CONST Int type=kotlin.Int value=333
+                            RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$with: <root>.C2): kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>'
+                              CALL 'private final fun extensionWithContextParametersLoop (c1: <root>.C1, c2: <root>.C2, <this>: kotlinx.atomicfu.AtomicInt, arg1: kotlin.Int): kotlin.Int declared in <root>.ContextReceiverParametersFunctionTest' type=kotlin.Int origin=null
+                                ARG <this>(index:0): GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                                ARG c1: GET_VAR '$this$with: <root>.C1 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>' type=<root>.C1 origin=IMPLICIT_ARGUMENT
+                                ARG c2: GET_VAR '$this$with: <root>.C2 declared in <root>.ContextReceiverParametersFunctionTest.test.<anonymous>.<anonymous>' type=<root>.C2 origin=IMPLICIT_ARGUMENT
+                                ARG <this>(index:3): CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+                                  ARG <this>: CALL 'private final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.ContextReceiverParametersFunctionTest' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                                    ARG <this>: GET_VAR '<this>: <root>.ContextReceiverParametersFunctionTest declared in <root>.ContextReceiverParametersFunctionTest.test' type=<root>.ContextReceiverParametersFunctionTest origin=IMPLICIT_ARGUMENT
+                                  ARG index: CONST Int type=kotlin.Int value=3
+                                ARG arg1: CONST Int type=kotlin.Int value=333
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:test type:<root>.ContextReceiverParametersFunctionTest [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ContextReceiverParametersFunctionTest' type=<root>.ContextReceiverParametersFunctionTest origin=null
+      CALL 'public final fun test (): kotlin.Unit declared in <root>.ContextReceiverParametersFunctionTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val test: <root>.ContextReceiverParametersFunctionTest declared in <root>.box' type=<root>.ContextReceiverParametersFunctionTest origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

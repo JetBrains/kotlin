@@ -1,0 +1,3 @@
+/module_main_targetConstraintWarnings.kt:51:9: warning: Calling a X, Y or Z composable function where a U, V or W composable was expected
+
+/module_main_targetConstraintWarnings.kt:57:9: warning: Calling a U, V or W composable function where a X, Y or Z composable was expected

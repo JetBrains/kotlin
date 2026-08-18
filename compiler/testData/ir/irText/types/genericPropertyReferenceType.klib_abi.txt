@@ -4,12 +4,39 @@
 // - Show declarations: true
 
 // Library unique name: <main>
+final class /A { // /A|null[0]
+    final var z // /A.z|@C<0:0>{0§<kotlin.Any?>}z[0]
+        final fun <#A2: kotlin/Any?> (/C<#A2>).<get-z>(): #A2 // /A.z.<get-z>|<get-z>@C<0:0>(){0§<kotlin.Any?>}[0]
+        final fun <#A2: kotlin/Any?> (/C<#A2>).<set-z>(#A2) // /A.z.<set-z>|<set-z>@C<0:0>(0:0){0§<kotlin.Any?>}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final class /B { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    final class N { // /B.N|null[0]
+        final var z // /B.N.z|@C<0:0>{0§<kotlin.Any?>}z[0]
+            final fun <#A3: kotlin/Any?> (/C<#A3>).<get-z>(): #A3 // /B.N.z.<get-z>|<get-z>@C<0:0>(){0§<kotlin.Any?>}[0]
+            final fun <#A3: kotlin/Any?> (/C<#A3>).<set-z>(#A3) // /B.N.z.<set-z>|<set-z>@C<0:0>(0:0){0§<kotlin.Any?>}[0]
+        constructor <init>() // /B.N.<init>|<init>(){}[0]
+    }
+}
 final class <#A: kotlin/Any?> /C { // /C|null[0]
     final var x // /C.x|{}x[0]
         final fun <get-x>(): #A // /C.x.<get-x>|<get-x>(){}[0]
         final fun <set-x>(#A) // /C.x.<set-x>|<set-x>(1:0){}[0]
     constructor <init>(#A) // /C.<init>|<init>(1:0){}[0]
 }
+final class <#A: kotlin/Any?, #B: kotlin/Any?> /Pair { // /Pair|null[0]
+    final var x // /Pair.x|{}x[0]
+        final fun <get-x>(): #A // /Pair.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(#A) // /Pair.x.<set-x>|<set-x>(1:0){}[0]
+    final var y // /Pair.y|{}y[0]
+        final fun <get-y>(): #B // /Pair.y.<get-y>|<get-y>(){}[0]
+        final fun <set-y>(#B) // /Pair.y.<set-y>|<set-y>(1:1){}[0]
+    constructor <init>(#A, #B) // /Pair.<init>|<init>(1:0;1:1){}[0]
+}
+final var /first // /first|@Pair<0:0,0:1>{0§<kotlin.Any?>;1§<kotlin.Any?>}first[0]
+    final fun <#A1: kotlin/Any?, #B1: kotlin/Any?> (/Pair<#A1, #B1>).<get-first>(): #A1 // /first.<get-first>|<get-first>@Pair<0:0,0:1>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?, #B1: kotlin/Any?> (/Pair<#A1, #B1>).<set-first>(#A1) // /first.<set-first>|<set-first>@Pair<0:0,0:1>(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final var /y // /y|@C<0:0>{0§<kotlin.Any?>}y[0]
     final fun <#A1: kotlin/Any?> (/C<#A1>).<get-y>(): #A1 // /y.<get-y>|<get-y>@C<0:0>(){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Any?> (/C<#A1>).<set-y>(#A1) // /y.<set-y>|<set-y>@C<0:0>(0:0){0§<kotlin.Any?>}[0]

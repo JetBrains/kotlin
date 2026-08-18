@@ -11,22 +11,19 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.ir.BridgeDirection
-import org.jetbrains.kotlin.backend.konan.ir.BridgeDirectionKind
-import org.jetbrains.kotlin.backend.konan.ir.BridgeDirections
-import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -40,14 +37,60 @@ import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SHORT_NAMES
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.TypeSafeBarrierDescription
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? by irAttribute(copyByDefault = false)
 
-@OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
-internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction() = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
+internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction(): TypeSafeBarrierDescription? {
+    if (this.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
+    if (this !is IrSimpleFunction) return null
+
+    var result: TypeSafeBarrierDescription? = null
+    return DFS.dfs(listOf(this.symbol),
+            { current -> current?.owner?.overriddenSymbols ?: emptyList() },
+            object : DFS.NodeHandler<IrSimpleFunctionSymbol, TypeSafeBarrierDescription?> {
+                override fun beforeChildren(current: IrSimpleFunctionSymbol): Boolean = result == null
+
+                override fun afterChildren(current: IrSimpleFunctionSymbol) {
+                    if (result != null) return
+                    SIGNATURE_TO_DEFAULT_VALUES_MAP[current.owner.computeJvmLikeSignature()]?.let { result = it }
+                }
+
+                override fun result(): TypeSafeBarrierDescription? = result
+            }
+    )
+}
+
+private val SIGNATURE_TO_DEFAULT_VALUES_MAP = mapOf(
+        "${StandardClassIds.Collection}.contains(${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
+        "${StandardClassIds.MutableCollection}.remove(${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
+
+        "${StandardClassIds.Map}.containsKey(${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
+        "${StandardClassIds.Map}.containsValue(${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
+        "${StandardClassIds.Map}.get(${StandardClassIds.Any}): ${StandardClassIds.Any}" to TypeSafeBarrierDescription.NULL,
+        "${StandardClassIds.MutableMap}.remove(${StandardClassIds.Any}): ${StandardClassIds.Any}" to TypeSafeBarrierDescription.NULL,
+
+        "${StandardClassIds.List}.indexOf(${StandardClassIds.Any}): ${StandardClassIds.Int}" to TypeSafeBarrierDescription.INDEX,
+        "${StandardClassIds.List}.lastIndexOf(${StandardClassIds.Any}): ${StandardClassIds.Int}" to TypeSafeBarrierDescription.INDEX,
+)
+
+private fun IrSimpleFunction.computeJvmLikeSignature(): String {
+    return buildString {
+        append(this@computeJvmLikeSignature.parentClassOrNull?.classId)
+        append(".")
+        append(this@computeJvmLikeSignature.name)
+        val params = this@computeJvmLikeSignature.nonDispatchParameters
+                .joinToString(separator = ", ", prefix = "(", postfix = ")") { it.type.erasedUpperBound.classId.toString() }
+        append(params)
+        append(": ")
+        append(this@computeJvmLikeSignature.returnType.erasedUpperBound.classId)
+    }
+}
 
 internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: BackendNativeSymbols, val irFactory: IrFactory) {
     fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {

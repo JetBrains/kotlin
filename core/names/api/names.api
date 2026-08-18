@@ -382,6 +382,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Callables {
 	public final fun getCoroutineContext ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getNot ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getSuspend ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getThrowNoWhenBranchMatchedException ()Lorg/jetbrains/kotlin/name/CallableId;
 }
 
 public final class org/jetbrains/kotlin/name/StandardClassIds$Collections {

@@ -2,6 +2,7 @@ depends = AVFAudio AVFoundation ApplicationServices AudioToolbox CFCGTypes CFNet
 language = Objective-C
 package = platform.Photos
 modules = Photos
+apiNotesSwiftName = true
 
 compilerOpts = -framework Photos
 linkerOpts = -framework Photos

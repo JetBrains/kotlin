@@ -10,6 +10,12 @@ import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.swiftexport.standalone.UnsupportedDeclarationReporterKind
 import org.jetbrains.kotlin.swiftexport.standalone.utils.rootPackageToFqn
 
+public enum class SwiftModuleExportMode {
+    Full,
+    Transitive,
+    Excluded,
+}
+
 /**
  * @param experimentalFeatures currently used to pass custom settings in between KGP and SwiftExport.
  * We plan to improve experiments support and replace the map. See KT-75191 for details.
@@ -19,8 +25,22 @@ public data class SwiftModuleConfig(
     val rootPackage: String? = null,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val experimentalFeatures: Map<String, String> = emptyMap(),
-    val shouldBeFullyExported: Boolean,
+    val exportMode: SwiftModuleExportMode,
 ) {
+    // TODO: remove me when OSIP-1138 is done
+    public constructor(
+        bridgeModuleName: String = DEFAULT_BRIDGE_MODULE_NAME,
+        rootPackage: String? = null,
+        unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
+        experimentalFeatures: Map<String, String> = emptyMap(),
+        shouldBeFullyExported: Boolean,
+    ) : this(
+        bridgeModuleName = bridgeModuleName,
+        rootPackage = rootPackage,
+        unsupportedDeclarationReporterKind = unsupportedDeclarationReporterKind,
+        experimentalFeatures = experimentalFeatures,
+        exportMode = if (shouldBeFullyExported) SwiftModuleExportMode.Full else SwiftModuleExportMode.Transitive,
+    )
 
     val targetPackageFqName: FqName? = rootPackage?.rootPackageToFqn()
     val unsupportedDeclarationReporter: UnsupportedDeclarationReporter = unsupportedDeclarationReporterKind.toReporter()

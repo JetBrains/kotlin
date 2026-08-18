@@ -37,10 +37,6 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
  * out the restriction scope to still allow the library base content scopes to be merged. As such, even with the restriction scope, library
  * content scopes are still mergeable.
  *
- * The content scope refiner is limited to the K2 implementation of the Analysis API: The K1 implementation doesn't honor the content scope
- * of a library module (while resolving calls, for example). If we restrict the content scope of a K1 `KaModule`, we can get unexpected
- * `KaBaseIllegalPsiException`s when we try to analyze a function symbol acquired via such call resolution.
- *
  * @see KaModulePlatformKind
  */
 internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScopeRefiner {

@@ -1,0 +1,23 @@
+public final class Module_main_composableInferredTargetConstraintsKt {
+    // source: 'module_main_composableInferredTargetConstraints.kt'
+    public final static method CallContent(p0: kotlin.jvm.functions.Function2, p1: androidx.compose.runtime.Composer, p2: int): kotlin.jvm.functions.Function3
+    public final static method CallWX(p0: kotlin.jvm.functions.Function2, p1: androidx.compose.runtime.Composer, p2: int): kotlin.jvm.functions.Function3
+    private final static method WX$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method WX(p0: androidx.compose.runtime.Composer, p1: int): void
+}
+
+public annotation class WComposable {
+    // source: 'module_main_composableInferredTargetConstraints.kt'
+}
+
+public annotation class XComposable {
+    // source: 'module_main_composableInferredTargetConstraints.kt'
+}
+
+public annotation class YComposable {
+    // source: 'module_main_composableInferredTargetConstraints.kt'
+}
+
+public annotation class ZComposable {
+    // source: 'module_main_composableInferredTargetConstraints.kt'
+}

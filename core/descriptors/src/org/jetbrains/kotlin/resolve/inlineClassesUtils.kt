@@ -64,3 +64,4 @@ fun KotlinType.isNullableUnderlyingType(): Boolean {
 fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean =
     extensionReceiverParameter == null && contextReceiverParameters.isEmpty() &&
             (containingDeclaration as? ClassDescriptor)?.inlineClassRepresentation?.underlyingPropertyName == this.name
+            && dispatchReceiverParameter != null

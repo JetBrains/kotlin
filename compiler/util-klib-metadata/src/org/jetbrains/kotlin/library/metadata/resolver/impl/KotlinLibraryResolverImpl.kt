@@ -213,9 +213,5 @@ class KotlinLibraryResolverResultImpl(
      */
     override fun getFullList(): List<KotlinLibrary> = all.map { it.library }
 
-    override fun forEach(action: (KotlinLibrary) -> Unit) {
-        all.forEach { action(it.library) }
-    }
-
     override fun toString() = "roots=$roots, all=$all"
 }

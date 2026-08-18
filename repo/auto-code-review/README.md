@@ -3,11 +3,11 @@
 This module implements a tool that automatically reviews code changes by running Claude Code
 and instructing it to check the changed files against rules defined in `code-rules.md` files.
 
-## Requirements
+## Requirements for running locally
 
 Install Claude Code CLI and log in: https://code.claude.com/docs/en/quickstart.
 
-## Usage
+## Run locally
 
 ```shell
 ../../gradlew -q reviewCode
@@ -27,6 +27,17 @@ The report includes rule violations (if any) and some meta-information.
 If you run the tool from IntelliJ IDEA, the printed report link is clickable and opens the report in the IDE.
 Viewing the report in IntelliJ IDEA with Markdown preview enabled is the intended way of reading it:
 all the links to code and code rules are clickable and open the destinations in the IDE.
+
+## Run on CI
+
+JetBrains employees can also run the tool on the CI.
+
+1. Go to [the build configuration](https://kotlinlang.teamcity.com/buildConfiguration/Kotlin_KotlinCloud_Dev_AutoCodeReview).
+2. Select the branch to review in the "Branch" area.
+3. Press "Run".
+4. In the opened dialog, make sure to enter the proper base branch name ("master" by default).
+5. Press "Run Build" in the dialog and navigate to the scheduled build.
+6. Wait until the build is finished, and read the review report in the "Review" tab of the build.
 
 ## Operation
 

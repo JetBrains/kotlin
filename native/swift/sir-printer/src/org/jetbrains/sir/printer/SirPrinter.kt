@@ -21,7 +21,6 @@ import org.jetbrains.sir.printer.impl.SirAsSwiftSourcesPrinter
 
 public class SirPrinter(
     private val stableDeclarationsOrder: Boolean = true,
-    private val renderDocComments: Boolean = false,
     private val renderDeclarationOrigins: Boolean = false,
     private val emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
 ) {
@@ -30,7 +29,6 @@ public class SirPrinter(
             val sirTree = SirAsSwiftSourcesPrinter.print(
                 module,
                 stableDeclarationsOrder = this@SirPrinter.stableDeclarationsOrder,
-                renderDocComments = this@SirPrinter.renderDocComments,
                 renderDeclarationOrigins = this@SirPrinter.renderDeclarationOrigins,
                 emptyBodyStub = this@SirPrinter.emptyBodyStub,
             )

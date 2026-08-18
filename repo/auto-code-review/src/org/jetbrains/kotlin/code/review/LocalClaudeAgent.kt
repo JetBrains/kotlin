@@ -104,14 +104,16 @@ class LocalClaudeAgent private constructor(
             }
 
             if (
+                authSettings.env?.anthropicAuthToken == null &&
+                System.getenv(ANTHROPIC_AUTH_TOKEN) == null &&
                 authSettings.apiKeyHelper == null &&
                 authSettings.env?.anthropicApiKey == null &&
                 System.getenv(ANTHROPIC_API_KEY) == null
             ) {
                 error(
                     """
-                        No Anthropic API key found in environment or ${allSettingsFile.toURI().toURL()}.
-                        Please make sure that either "$ANTHROPIC_API_KEY" or "apiKeyHelper" is defined.
+                        No Anthropic API key or auth token found in environment or ${allSettingsFile.toURI().toURL()}.
+                        Please make sure that either "$ANTHROPIC_API_KEY", "$ANTHROPIC_AUTH_TOKEN" or "apiKeyHelper" is defined.
                     """.trimIndent()
                 )
             }
@@ -120,6 +122,7 @@ class LocalClaudeAgent private constructor(
         }
 
         private const val ANTHROPIC_API_KEY = "ANTHROPIC_API_KEY"
+        private const val ANTHROPIC_AUTH_TOKEN = "ANTHROPIC_AUTH_TOKEN"
     }
 
     @Serializable
@@ -133,6 +136,8 @@ class LocalClaudeAgent private constructor(
             val anthropicBaseUrl: String? = null,
             @SerialName(ANTHROPIC_API_KEY)
             val anthropicApiKey: String? = null,
+            @SerialName(ANTHROPIC_AUTH_TOKEN)
+            val anthropicAuthToken: String? = null,
         )
     }
 
@@ -143,6 +148,7 @@ class LocalClaudeAgent private constructor(
     ): AgentResult {
         val diffDescription = when (diffOrigin) {
             is GitDiff.Origin.Local -> "`git diff ${diffOrigin.from.sha1}` at `${diffOrigin.to.root}`"
+            is GitDiff.Origin.GitHub -> diffOrigin.rawDiffUrl
         }
 
         val input = buildString {

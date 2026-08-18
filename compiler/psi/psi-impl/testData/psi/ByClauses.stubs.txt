@@ -18,6 +18,41 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=b]
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=a]
+          OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+          BINARY_EXPRESSION
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=b]
+              VALUE_ARGUMENT_LIST
+            OPERATION_REFERENCE[operationToken=MUL, referencedName=*]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=b]
+        PARENTHESIZED
+          REFERENCE_EXPRESSION[referencedName=a]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=b]
+        PARENTHESIZED
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            LAMBDA_ARGUMENT[isSpread=false]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
@@ -38,6 +73,13 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=b]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=a]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=a]
+                LAMBDA_ARGUMENT[isSpread=false]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
@@ -48,30 +90,14 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=b]
-    CLASS_BODY
-      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
-        MODIFIER_LIST[companion]
-        CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
-    SUPER_TYPE_LIST
-      DELEGATED_SUPER_TYPE_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=b]
-    CLASS_BODY
-      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
-        MODIFIER_LIST[companion]
-        CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
-    SUPER_TYPE_LIST
-      DELEGATED_SUPER_TYPE_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=b]
-        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
-          CLASS_BODY
-            FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-              VALUE_PARAMETER_LIST
+        OBJECT_LITERAL
+          OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+            CLASS_BODY
+              FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                VALUE_PARAMETER_LIST
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=a]
+                  LAMBDA_ARGUMENT[isSpread=false]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]

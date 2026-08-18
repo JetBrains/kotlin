@@ -14,12 +14,14 @@ data class WasmIgnoreForConfig(
     val mode: WasmCompilationMode? = null,
     val os: String? = null,
     val vmName: String? = null,
+    val runner: String? = null,
 ) {
     override fun toString(): String {
         val props = listOfNotNull(
             mode?.let { "mode=$it" },
             os?.let { "os=$it" },
-            vmName?.let { "vm=$it" }).joinToString(" ")
+            vmName?.let { "vm=$it" },
+            runner?.let { "runner=$it" }).joinToString(" ")
         return "WASM_IGNORE_FOR: $props"
     }
 }
@@ -46,24 +48,36 @@ fun wasmIgnoreForParser(raw: String): WasmIgnoreForConfig? {
         System.err.println("Directive $raw does not specify any properties to base the suppressor on.\nIf this is an intentional catch-all suppression, use IGNORE_BACKEND")
         return null
     }
-    if (parts.keys.any { it !in listOf("mode", "os", "vm") }) {
-        System.err.println("Invalid key specified in directive $raw, only know keys 'mode', 'os', 'vm'")
+    if (parts.keys.any { it !in listOf("mode", "os", "vm", "runner") }) {
+        System.err.println("Invalid key specified in directive $raw, only know keys 'mode', 'os', 'vm', 'runner")
         return null
     }
     if (parts["os"]?.lowercase() !in listOf(null, "linux", "windows", "mac")) {
         System.err.println("Invalid OS specified in WASM_IGNORE_FOR directive: os=${parts["os"]}. Must be linux, windows, or mac (case insensitive)")
         return null
     }
+    val runnerFqName = parts["runner"]
+    if (runnerFqName != null) {
+        try {
+            Class.forName(runnerFqName)
+        } catch (_: ClassNotFoundException) {
+            // Only a warning: generated runner classes are not on the classpath of every module parsing this directive
+            // (e.g. `:wasm:wasm.tests:klib-compatibility`), so an unresolvable name is not necessarily a mistake.
+            System.err.println("WARNING: specified runner=$runnerFqName could not be found among loaded classes")
+        }
+    }
+
     // NOTE: mode mismatch will be caught by WasmCompilationMode.valueOf
     // NOTE: vm mismatches will be caught by the test itself, i.e. it will fail, or warn that it should be unmuted,
     //       if the config is wrong.
-    //       There's unfortunately no non-hardcoded way to check all WasmVMs, without kotlin-reflections,
-    //       and adding a module dependency on the testFixtures module.
+    //       There's unfortunately no non-hardcoded way to check all WasmVMs,
+    //       without adding a module dependency on the testFixtures module.
 
     return WasmIgnoreForConfig(
         mode = parts["mode"]?.let { WasmCompilationMode.valueOf(it.uppercase().replace('-', '_')) },
         os = parts["os"]?.lowercase(),
         vmName = parts["vm"],
+        runner = runnerFqName
     )
 }
 

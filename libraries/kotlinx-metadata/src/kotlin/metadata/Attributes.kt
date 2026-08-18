@@ -299,7 +299,7 @@ public var KmFunction.returnValueStatus: ReturnValueStatus by returnValueStatusD
 
 /**
  * Indicates whether the function is compiled as static on the JVM.
- * It is true for functions declared in the companion blocks or as companion extensions.
+ * It is true for functions declared in the companion blocks.
  *
  * Note that there are some other functions that are also compiled as static, such as `Enum.valueOf`
  * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
@@ -412,7 +412,7 @@ public var KmProperty.returnValueStatus: ReturnValueStatus by returnValueStatusD
 
 /**
  * Indicates whether the property is compiled as static on the JVM.
- * It is true for properties declared in the companion blocks or as companion extensions.
+ * It is true for properties declared in the companion blocks.
  * Property accessor in this case is also static, and there is no separate attribute for it.
  *
  * Note that there are some other properties that are also compiled as static, such as `Enum.entries`

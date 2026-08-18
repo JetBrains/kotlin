@@ -2,8 +2,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -34,11 +34,11 @@ class UKlibKotlinTestJsResolution {
                 wasmJs()
                 wasmWasi()
                 val stdlibVersion = project.getKotlinPluginVersion()
-                val kotlinTestJs = dependencies.create("org.jetbrains.kotlin:kotlin-test-js:${stdlibVersion}") {
-                    isTransitive = false
-                }
+                val kotlinTestJs = dependencies.create("org.jetbrains.kotlin:kotlin-test-js:${stdlibVersion}")
                 dependencies {
-                    implementation.add(kotlinTestJs)
+                    implementation.add(kotlinTestJs) { dep ->
+                        (dep as ModuleDependency).isTransitive = false
+                    }
                 }
             }
         }.evaluate()

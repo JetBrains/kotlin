@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents a JavaScript do..while statement.
@@ -38,6 +38,6 @@ public class JsDoWhile extends JsWhile {
         JsExpression conditionCopy = AstUtil.deepCopy(condition);
         JsStatement bodyCopy = AstUtil.deepCopy(body);
 
-        return new JsDoWhile(conditionCopy, bodyCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsDoWhile(conditionCopy, bodyCopy), this);
     }
 }

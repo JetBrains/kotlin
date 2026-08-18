@@ -34,8 +34,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val FRIEND_PATHS by key<List<String>>()
     val USE_PSI_CLASS_FILES_READING by key<Boolean>("Use a slower, PSI-based, class files reading implementation.")
     val USE_FAST_JAR_FILE_SYSTEM by key<Boolean>()
-    val USE_JAVAC by key<Boolean>()
-    val COMPILE_JAVA by key<Boolean>()
     val ADDITIONAL_JAVA_MODULES by key<List<String>>()
     val EMIT_JVM_TYPE_ANNOTATIONS by key<Boolean>()
     val STRING_CONCAT by key<JvmStringConcat>()

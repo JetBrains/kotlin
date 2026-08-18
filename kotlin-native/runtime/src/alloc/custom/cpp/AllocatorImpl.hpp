@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 
 #include "CustomAllocator.hpp"
 #include "CustomFinalizerProcessor.hpp"
-#include "GlobalData.hpp"
+#include "mm/GlobalData.hpp"
 #include "Heap.hpp"
-#include "SegregatedFinalizerProcessor.hpp"
+#include "alloc/SegregatedFinalizerProcessor.hpp"
 
 namespace kotlin::alloc {
 

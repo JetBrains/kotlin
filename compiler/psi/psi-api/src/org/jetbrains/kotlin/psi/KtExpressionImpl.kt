@@ -29,8 +29,8 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
 
     companion object {
         @Deprecated(
-            "Use expression.replaceExpression(newElement, reformat, rawReplaceHandler) instead",
-            ReplaceWith(
+            message = "Use expression.replaceExpression(newElement, reformat, rawReplaceHandler) instead",
+            replaceWith = ReplaceWith(
                 "expression.replaceExpression(newElement, reformat, rawReplaceHandler)",
                 "org.jetbrains.kotlin.idea.base.psi.replaceExpression",
             ),

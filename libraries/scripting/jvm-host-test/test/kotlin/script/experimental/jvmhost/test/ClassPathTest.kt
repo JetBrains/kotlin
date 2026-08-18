@@ -43,8 +43,9 @@ class ClassPathTest {
     fun testExtractFromFat() {
         val collection =
             createTempFile(directory = tempDir, "col", ".jar").apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
-        val cl = URLClassLoader(arrayOf(collection.toUri().toURL()), null)
-        val cp = classpathFromClassloader(cl, true)
+        val cp = URLClassLoader(arrayOf(collection.toUri().toURL()), null).use { cl ->
+            classpathFromClassloader(cl, true)
+        }
         assertTrue(cp != null && cp.isNotEmpty())
 
         testUnpackedCollection(cp, emulatedCollectionFiles)
@@ -54,12 +55,13 @@ class ClassPathTest {
     fun testDetectClasspathFromResources() {
         val root1 = createTempDirectory(directory = tempDir, "root1")
         val jar = createTempFile(directory = tempDir, "jar1", ".jar").apply { createJarWithManifest() }
-        val cl = URLClassLoader(
+        val cp = URLClassLoader(
             (emulatedClasspath.map { (root1 / it).apply { createDirectories() }.toUri().toURL() }
                     + jar.toUri().toURL()).toTypedArray(),
             null
-        )
-        val cp = cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
+        ).use { cl ->
+            cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
+        }
 
         assertTrue(cp.contains(jar.toFile().canonicalFile))
         for (el in emulatedClasspath) {
@@ -78,10 +80,9 @@ class ClassPathTest {
             )
             files.forEach { it.createDirectories() }
 
-            val classloader = URLClassLoader(files.map { it.toUri().toURL() }.toTypedArray(), null)
-
-            val classpath =
+            val classpath = URLClassLoader(files.map { it.toUri().toURL() }.toTypedArray(), null).use { classloader ->
                 scriptCompilationClasspathFromContextOrNull("projX", classLoader = classloader)!!.map { it.toPath().relativeTo(tempDir) }
+            }
 
             assertEquals(files.dropLast(1).map { it.relativeTo(tempDir) }, classpath)
         } finally {

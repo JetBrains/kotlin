@@ -81,8 +81,12 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
 
     override fun getBodyExpression(): KtExpression? {
         val stub = greenStub
-        if (stub != null && !stub.hasBody) {
-            return null
+        if (stub != null) {
+            if (!stub.hasBody) {
+                return null
+            }
+
+            expressionFromStub?.let { return it }
         }
 
         return findChildByClass(KtExpression::class.java)
@@ -141,8 +145,8 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     }
 
     @Deprecated(
-        "Use setFunctionTypeReference(typeRef) instead",
-        ReplaceWith("this.setFunctionTypeReference(typeRef)", "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReference"),
+        message = "Use setFunctionTypeReference(typeRef) instead",
+        replaceWith = ReplaceWith("this.setFunctionTypeReference(typeRef)", "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReference"),
     )
     @OptIn(KtNonPublicApi::class)
     override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? =

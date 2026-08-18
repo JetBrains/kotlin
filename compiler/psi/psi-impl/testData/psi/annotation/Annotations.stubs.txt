@@ -85,6 +85,10 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
                     REFERENCE_EXPRESSION[referencedName=sdfsdf]
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -98,6 +102,10 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
                     REFERENCE_EXPRESSION[referencedName=sdfsdf]
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
@@ -112,6 +120,10 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
                     REFERENCE_EXPRESSION[referencedName=sdfsdf]
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=sdfsd]
               CONSTRUCTOR_CALLEE

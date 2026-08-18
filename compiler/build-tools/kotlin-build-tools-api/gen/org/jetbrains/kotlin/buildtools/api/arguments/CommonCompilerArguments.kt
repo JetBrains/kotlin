@@ -405,6 +405,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ENABLE_ADDITIONAL_IR_CHECKERS", KotlinReleaseVersion(2, 4, 20))
 
     /**
+     * Enable experimental support for `@EqualityBound` annotations in `equals` operators.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EQUALITY_BOUNDS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EQUALITY_BOUNDS", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

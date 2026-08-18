@@ -7,5 +7,5 @@ FILE: suspendCOnversionForReceiver.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/parameterFunc|(::R|/testFunc|)
-        ::R|/testFunc|.R|/extensionFunc|()
+        ::R|/testFunc|.R|/extensionFunc<Candidate is inapplicable because of receiver type mismatch: /extensionFunc>#|()
     }

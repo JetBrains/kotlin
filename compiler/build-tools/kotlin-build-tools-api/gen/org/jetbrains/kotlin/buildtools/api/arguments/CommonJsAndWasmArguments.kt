@@ -60,16 +60,6 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
 
   public companion object {
     /**
-     * Enable the IR fake override validator.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_FAKE_OVERRIDE_VALIDATOR: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_FAKE_OVERRIDE_VALIDATOR", KotlinReleaseVersion(1, 4, 30))
-
-    /**
      * Paths to friend modules.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

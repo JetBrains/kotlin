@@ -116,6 +116,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: hash32
   importableFqName: null
 
 KaJavaFieldSymbol:
@@ -198,6 +199,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: java.lang.String
     getContainingModule: KaLibraryModule "SDK jdk"
     deprecation: null
+    javaMethodName: length
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -236,8 +238,6 @@ KaSyntheticJavaPropertySymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
-  javaGetterName: length
-  javaSetterName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -285,6 +285,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: isEmpty
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -371,6 +372,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: codePointAt
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -457,6 +459,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: codePointBefore
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -581,6 +584,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: codePointCount
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -705,6 +709,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: offsetByCodePoints
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -828,6 +833,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: getChars
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1027,6 +1033,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: getChars
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1229,6 +1236,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   returnValueStatus: Unspecified
+  javaMethodName: getBytes
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1313,6 +1321,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: getBytes
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1397,6 +1406,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: getBytes
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1443,6 +1453,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: getBytes
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1529,6 +1540,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1614,6 +1626,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: contentEquals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1699,6 +1712,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: contentEquals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1784,6 +1798,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: equalsIgnoreCase
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1869,6 +1884,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1954,6 +1970,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: compareToIgnoreCase
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2153,6 +2170,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: regionMatches
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2390,6 +2408,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: regionMatches
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2513,6 +2532,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: startsWith
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2598,6 +2618,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: startsWith
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2683,6 +2704,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: endsWith
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2730,6 +2752,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2816,6 +2839,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: indexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2940,6 +2964,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: indexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3025,6 +3050,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: indexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3148,6 +3174,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: indexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3272,6 +3299,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: indexOfSupplementary
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3358,6 +3386,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: lastIndexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3482,6 +3511,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: lastIndexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3567,6 +3597,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: lastIndexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3690,6 +3721,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: lastIndexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3814,6 +3846,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: lastIndexOfSupplementary
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3899,6 +3932,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: substring
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4022,6 +4056,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: substring
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4146,6 +4181,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: subSequence
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4230,6 +4266,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: concat
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4353,6 +4390,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: replace
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4474,6 +4512,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: replace
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4559,6 +4598,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: matches
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4644,6 +4684,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: contains
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4765,6 +4806,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: replaceFirst
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4886,6 +4928,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: replaceAll
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5008,6 +5051,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: split
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5092,6 +5136,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: split
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5176,6 +5221,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: toLowerCase
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5222,6 +5268,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: toLowerCase
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5306,6 +5353,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: toUpperCase
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5352,6 +5400,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: toUpperCase
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5398,6 +5447,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: trim
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5445,6 +5495,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5491,6 +5542,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: toCharArray
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5537,6 +5589,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: intern
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5623,6 +5676,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: get
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -5702,6 +5756,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5773,6 +5828,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5844,6 +5900,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5991,6 +6048,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6138,6 +6196,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6326,6 +6385,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6438,6 +6498,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6622,6 +6683,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6806,6 +6868,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6914,6 +6977,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7022,6 +7086,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7169,6 +7234,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7240,6 +7306,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7311,6 +7378,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7382,6 +7450,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7491,6 +7560,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: null
+  javaMethodName: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -7641,4 +7711,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
+  javaMethodName: null
   importableFqName: java.lang.String

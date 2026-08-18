@@ -627,6 +627,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("valueClassAsContextParameter.kt")
+  public void testValueClassAsContextParameter() {
+    run("valueClassAsContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassInSignature.kt")
+  public void testValueClassInSignature() {
+    run("valueClassInSignature.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassMembers.kt")
+  public void testValueClassMembers() {
+    run("valueClassMembers.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassWithImplicitlyActualConstructorAndProperty.kt")
   public void testValueClassWithImplicitlyActualConstructorAndProperty() {
     run("valueClassWithImplicitlyActualConstructorAndProperty.kt");

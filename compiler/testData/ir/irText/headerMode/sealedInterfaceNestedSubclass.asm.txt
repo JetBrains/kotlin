@@ -1,0 +1,41 @@
+Module: lib
+public final class lib/FirstKt : java/lang/Object {
+    public final static void myFunc() {
+          ACONST_NULL
+          ATHROW
+    }
+}
+
+public final class lib/SealedInterface$Implementation : java/lang/Object, lib/SealedInterface {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+abstract interface lib/SealedInterface : java/lang/Object {
+
+}
+Module: main
+public final class main/App : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+        LINENUMBER (19)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final void run() {
+        LABEL (L0)
+        LINENUMBER (21)
+          INVOKESTATIC (lib/FirstKt, myFunc, ()V)
+        LABEL (L1)
+        LINENUMBER (22)
+          RETURN
+        LABEL (L2)
+    }
+}

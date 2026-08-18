@@ -24,16 +24,10 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class RedundantStatementElimination(private val root: JsFunction) {
+internal class RedundantStatementElimination(private val root: JsFunction) : FunctionPostProcessorStep() {
     private val localVars = root.collectLocalVariables()
-    private var hasChanges = false
 
-    fun apply(): Boolean {
-        process()
-        return hasChanges
-    }
-
-    private fun process() {
+    override fun apply() {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
                 if (!x.expression.isSuspend) {

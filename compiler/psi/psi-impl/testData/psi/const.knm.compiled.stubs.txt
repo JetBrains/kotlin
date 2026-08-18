@@ -13,4 +13,4 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

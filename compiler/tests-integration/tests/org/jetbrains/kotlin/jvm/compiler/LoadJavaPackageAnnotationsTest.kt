@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
@@ -45,29 +44,23 @@ class LoadJavaPackageAnnotationsTest {
         private const val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
     }
 
-    private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit): Unit = runWithDisposable { testRootDisposable ->
+    private fun doTest(configurator: (CompilerConfiguration) -> Unit): Unit = runWithDisposable { testRootDisposable ->
         val configuration = KotlinTestUtils.newConfiguration(
             ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KtTestUtil.getAnnotationsJar()
         ).apply {
-            if (useJavac) {
-                put(JVMConfigurationKeys.USE_JAVAC, true)
-            }
             languageVersionSettings = LanguageVersionSettingsImpl(
                 LanguageVersion.LATEST_STABLE,
                 ApiVersion.LATEST_STABLE,
             )
             configurator(this)
         }
+
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             configuration,
             EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).apply {
-            if (useJavac) {
-                registerJavac()
-            }
-        }
+        )
 
         @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
@@ -87,14 +80,7 @@ class LoadJavaPackageAnnotationsTest {
 
     @Test
     fun testAnnotationFromSource() {
-        doTest(useJavac = false) {
-            it.addJavaSourceRoots(listOf(File(TEST_DATA_PATH)))
-        }
-    }
-
-    @Test
-    fun testAnnotationFromSourceWithJavac() {
-        doTest(useJavac = true) {
+        doTest {
             it.addJavaSourceRoots(listOf(File(TEST_DATA_PATH)))
         }
     }
@@ -103,16 +89,7 @@ class LoadJavaPackageAnnotationsTest {
     fun testAnnotationFromCompiledCode() {
         val jar = prepareJar()
 
-        doTest(useJavac = false) {
-            it.addJvmClasspathRoot(jar)
-        }
-    }
-
-    @Test
-    fun testAnnotationFromCompiledCodeWithJavac() {
-        val jar = prepareJar()
-
-        doTest(useJavac = true) {
+        doTest {
             it.addJvmClasspathRoot(jar)
         }
     }

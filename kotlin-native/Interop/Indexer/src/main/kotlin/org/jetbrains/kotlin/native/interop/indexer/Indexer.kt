@@ -97,7 +97,15 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     private val apiNotes: ApiNotes? by lazy {
         if (library.apiNotesSwiftName) {
-            ApiNotes.load(library)
+            ApiNotes.load(library).also { apiNotes ->
+                if (apiNotes == null) {
+                    val modules = (library.headerFilter as? NativeLibraryHeaderFilter.Predefined)?.modules.orEmpty()
+                    val forModules = if (modules.isEmpty()) "" else " for module(s) ${modules.joinToString()}"
+                    System.err.println(
+                            "warning: apiNotesSwiftName is enabled${forModules}, but no API notes were found."
+                    )
+                }
+            }
         } else {
             null
         }

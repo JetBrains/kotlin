@@ -484,7 +484,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         fun fork(): MiniFlow = MiniFlow(setOf(this))
 
         companion object {
-            fun start() = MiniFlow(emptySet())
+            fun start(): MiniFlow = MiniFlow(emptySet())
         }
     }
 
@@ -506,16 +506,16 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             visitLocalDeclaration(anonymousInitializer, data)
         }
 
-        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
+        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData): Unit =
             visitLocalDeclaration(anonymousFunction, data)
 
-        override fun visitNamedFunction(namedFunction: FirNamedFunction, data: MiniCfgData) =
+        override fun visitNamedFunction(namedFunction: FirNamedFunction, data: MiniCfgData): Unit =
             visitLocalDeclaration(namedFunction, data)
 
-        override fun visitRegularClass(regularClass: FirRegularClass, data: MiniCfgData) =
+        override fun visitRegularClass(regularClass: FirRegularClass, data: MiniCfgData): Unit =
             visitLocalDeclaration(regularClass, data)
 
-        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MiniCfgData) =
+        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MiniCfgData): Unit =
             visitLocalDeclaration(anonymousObject, data)
 
         private fun visitLocalDeclaration(declaration: FirDeclaration, data: MiniCfgData) {
@@ -567,10 +567,10 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             data.forks[loop] = Fork(data.flow.assignedLater, assignedInside)
         }
 
-        override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) =
+        override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData): Unit =
             visitLoop(whileLoop, data)
 
-        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) =
+        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData): Unit =
             visitLoop(doWhileLoop, data)
 
         // TODO: liveness analysis - return/throw/break/continue terminate the flow.

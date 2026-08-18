@@ -31,6 +31,7 @@ KtUserType(12,15): 'Any'
 KtNameReferenceExpression(12,15): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -45,6 +46,7 @@ KtIsExpression(59,70): 'a is String'
 KtNameReferenceExpression(59,60): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.Any
@@ -53,6 +55,7 @@ KtNameReferenceExpression(59,60): 'a'
 KtOperationReferenceExpression(61,63): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(64,70): 'String'
@@ -70,6 +73,7 @@ KtUserType(64,70): 'String'
 KtNameReferenceExpression(64,70): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -81,6 +85,7 @@ KtIsExpression(75,87): 'a !is String'
 KtNameReferenceExpression(75,76): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.Any
@@ -89,6 +94,7 @@ KtNameReferenceExpression(75,76): 'a'
 KtOperationReferenceExpression(77,80): '!is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(81,87): 'String'
@@ -106,6 +112,7 @@ KtUserType(81,87): 'String'
 KtNameReferenceExpression(81,87): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -117,6 +124,7 @@ KtBinaryExpressionWithTypeRHS(143,154): 'a as String'
 KtNameReferenceExpression(143,144): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.Any
@@ -125,6 +133,7 @@ KtNameReferenceExpression(143,144): 'a'
 KtOperationReferenceExpression(145,147): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(148,154): 'String'
@@ -142,6 +151,7 @@ KtUserType(148,154): 'String'
 KtNameReferenceExpression(148,154): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -153,6 +163,7 @@ KtBinaryExpressionWithTypeRHS(159,171): 'a as? String'
 KtNameReferenceExpression(159,160): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.Any
@@ -161,6 +172,7 @@ KtNameReferenceExpression(159,160): 'a'
 KtOperationReferenceExpression(161,164): 'as?'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(165,171): 'String'
@@ -178,6 +190,7 @@ KtUserType(165,171): 'String'
 KtNameReferenceExpression(165,171): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String

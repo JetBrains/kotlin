@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
  */
 abstract class AnalysisApiTestOutputSanitizer : TestService {
     /**
-     * A sanitizer applicable to text rendered by [DebugSymbolRenderer][org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer].
+     * A sanitizer applicable to text rendered by [org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer].
      */
     abstract fun satinizeSymbolDebugRendererOutput(output: String): String
 }

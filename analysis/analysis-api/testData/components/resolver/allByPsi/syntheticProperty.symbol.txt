@@ -25,6 +25,7 @@ KtUserType(36,45): 'JavaClass'
 KtNameReferenceExpression(36,45): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
@@ -51,6 +52,7 @@ KtUserType(61,70): 'JavaClass'
 KtNameReferenceExpression(61,70): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
@@ -68,6 +70,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
 KtNameReferenceExpression(78,83): 'print'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/io/print(message: kotlin.Int): kotlin.Unit
@@ -88,6 +91,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
 KtNameReferenceExpression(84,93): 'javaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       javaClass: JavaClass
@@ -96,6 +100,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
 KtNameReferenceExpression(94,103): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -116,6 +121,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
 KtNameReferenceExpression(109,118): 'javaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       javaClass: JavaClass
@@ -124,6 +130,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
 KtNameReferenceExpression(119,128): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -132,6 +139,7 @@ KtNameReferenceExpression(119,128): 'something'
 KtOperationReferenceExpression(129,130): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtConstantExpression(131,132): '1'
@@ -153,6 +161,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
 KtNameReferenceExpression(137,146): 'javaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       javaClass: JavaClass
@@ -161,6 +170,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
 KtNameReferenceExpression(147,156): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -169,6 +179,7 @@ KtNameReferenceExpression(147,156): 'something'
 KtOperationReferenceExpression(157,159): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -193,6 +204,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
 KtNameReferenceExpression(166,175): 'javaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       javaClass: JavaClass
@@ -201,6 +213,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
 KtNameReferenceExpression(176,185): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -209,6 +222,7 @@ KtNameReferenceExpression(176,185): 'something'
 KtOperationReferenceExpression(185,187): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -224,6 +238,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
 KtOperationReferenceExpression(192,194): '--'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -238,6 +253,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
 KtNameReferenceExpression(194,203): 'javaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       javaClass: JavaClass
@@ -246,6 +262,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
 KtNameReferenceExpression(204,213): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -261,6 +278,7 @@ KtPostfixExpression(219,230): 'something++'
 KtNameReferenceExpression(219,228): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -269,6 +287,7 @@ KtNameReferenceExpression(219,228): 'something'
 KtOperationReferenceExpression(228,230): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -287,6 +306,7 @@ KtParenthesizedExpression(235,246): '(something)'
 KtNameReferenceExpression(236,245): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -295,6 +315,7 @@ KtNameReferenceExpression(236,245): 'something'
 KtOperationReferenceExpression(246,248): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -312,6 +333,7 @@ KtParenthesizedExpression(253,264): '(something)'
 KtNameReferenceExpression(254,263): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -320,6 +342,7 @@ KtNameReferenceExpression(254,263): 'something'
 KtOperationReferenceExpression(265,266): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtConstantExpression(267,268): '1'
@@ -343,6 +366,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
 KtNameReferenceExpression(274,283): 'javaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       javaClass: JavaClass
@@ -351,6 +375,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
 KtNameReferenceExpression(284,293): 'something'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var something: kotlin.Int
@@ -359,6 +384,7 @@ KtNameReferenceExpression(284,293): 'something'
 KtOperationReferenceExpression(295,296): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtConstantExpression(297,298): '1'

@@ -7,6 +7,7 @@ KtPackageDirective(157,169): 'package test'
 KtNameReferenceExpression(165,169): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -51,6 +52,7 @@ KtUserType(215,218): 'Foo'
 KtNameReferenceExpression(215,218): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo
@@ -80,6 +82,7 @@ KtUserType(237,240): 'Foo'
 KtNameReferenceExpression(237,240): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo
@@ -97,6 +100,7 @@ KtCallExpression(247,266): 'expectsFoo(Foo.BAR)'
 KtNameReferenceExpression(247,257): 'expectsFoo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/expectsFoo(foo: test.Foo): kotlin.Unit
@@ -117,6 +121,7 @@ KtDotQualifiedExpression(258,265): 'Foo.BAR'
 KtNameReferenceExpression(258,261): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo
@@ -125,6 +130,7 @@ KtNameReferenceExpression(258,261): 'Foo'
 KtNameReferenceExpression(262,265): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
@@ -145,6 +151,7 @@ KtDotQualifiedExpression(278,285): 'Foo.BAR'
 KtNameReferenceExpression(278,281): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo
@@ -153,6 +160,7 @@ KtNameReferenceExpression(278,281): 'Foo'
 KtNameReferenceExpression(282,285): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: regular.kt
 package n
@@ -12,7 +12,7 @@ interface I2 {
 }
 
 interface I3 : I1, I2 {
-    override fun equals(other: Any?): Boolean
+    <!INHERITED_INTERSECTION_EQUALITY_BOUND!>override fun equals(other: Any?): Boolean<!>
 }
 
 interface I4 {
@@ -20,15 +20,15 @@ interface I4 {
 }
 
 interface I5 : I3, I4 {
-    override fun equals(other: Any?): Boolean
+    <!INHERITED_INTERSECTION_EQUALITY_BOUND!>override fun equals(other: Any?): Boolean<!>
 }
 
 interface I6 : I4, I3 {
-    override fun equals(other: Any?): Boolean
+    <!INHERITED_INTERSECTION_EQUALITY_BOUND!>override fun equals(other: Any?): Boolean<!>
 }
 
 interface I7 : I5, I6 {
-    override fun equals(other: Any?): Boolean
+    <!INHERITED_INTERSECTION_EQUALITY_BOUND!>override fun equals(other: Any?): Boolean<!>
 }
 
 interface I10 : I1 {
@@ -107,12 +107,12 @@ open class C {
 }
 
 class D : C(), I {
-    override fun equals(other: Any?): Boolean = true
+    <!INHERITED_INTERSECTION_EQUALITY_BOUND!>override fun equals(other: Any?): Boolean = true<!>
 }
 
 class E : I, C() {
-    override fun equals(other: Any?): Boolean = true
+    <!INHERITED_INTERSECTION_EQUALITY_BOUND!>override fun equals(other: Any?): Boolean = true<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, interfaceDeclaration, nullableType,
-operator, out, outProjection, override, typeParameter */
+operator, out, override, typeParameter */

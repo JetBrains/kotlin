@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
 /**
  * Allows the platform to communicate to the Analysis API about restricted analysis. When analysis is restricted, the platform typically
  * lacks full, up-to-date information about the project. For example, [declaration providers][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider]
- * might return incomplete results. In addition, the available information might change without associated [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics].
+ * might return incomplete results. In addition, the available information might change without associated [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind].
  *
  * As a consequence, results returned by the Analysis API might be incomplete or incorrect. Handling such results is the responsibility of
  * the Analysis API user. The user should be aware of the platform's conventions around its restricted analysis mode and develop
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  * and [package providers][org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider] are adapted to restricted analysis.
  * This also extends to other platform components which might be affected by restricted analysis.
  *
- * The platform must ensure that [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics] are
+ * The platform must ensure that [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind] are
  * published when *entering* and *exiting* restricted analysis mode:
  *
  * - The platform must publish modification events for all [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s which
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  *   restricted analysis mode.
  *     - Generally, the usual modification events published by the platform in reaction to project changes should be sufficient to cover
  *       this requirement.
- * - A [global module state modification event][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION]
+ * - A [global module state modification event][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.GLOBAL_MODULE_STATE_MODIFICATION]
  *   must be published when *exiting* restricted analysis mode, to mitigate potential issues with inconsistent cache states that accumulated
  *   during restricted analysis.
  */

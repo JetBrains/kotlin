@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnostic
+import kotlin.io.path.writeText
 
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
@@ -31,10 +32,11 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
             }
 
             kotlinSourcesDir().source("deprecatedUsage.kt") {
+                //language=kotlin
                 """
                 @Deprecated("Use newFunction instead")
                 fun oldFunction(): String = "old"
-
+                
                 fun callerOfOldFunction(): String = oldFunction()
                 """.trimIndent()
             }
@@ -43,7 +45,7 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
                 assertOutputContains(Regex("""file:///.*deprecatedUsage\.kt"""))
                 assertOutputContainsAny("is deprecated", "Use newFunction instead")
                 assertProblemsReportContainsDiagnostic(
-                    "compiler-warning",
+                    "DEPRECATION",
                     "Use newFunction instead",
                     gradleVersion,
                 )
@@ -85,7 +87,7 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
 
                 // The warning should be reported to the Problems API HTML report
                 assertProblemsReportContainsDiagnostic(
-                    "compiler-warning",
+                    "DEPRECATION",
                     "Use newFunction instead",
                     gradleVersion,
                 )
@@ -114,7 +116,7 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
                 assertOutputContains(Regex("""file:///.*errorFile\.kt"""))
                 assertOutputContains(Regex("""[Uu]nresolved reference"""))
                 assertProblemsReportContainsDiagnostic(
-                    "compiler-error",
+                    "UNRESOLVED_REFERENCE",
                     "nresolved reference",
                     gradleVersion,
                 )

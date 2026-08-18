@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.generators.tests.standalone
-import org.jetbrains.kotlin.generators.tests.standaloneNoTR
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
@@ -24,7 +23,27 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
+            testClass<AbstractFirLightTreeJvmPluginIrTextTest> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirLightTreeJvmPluginIrTextTestWithoutPlugins> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractLightTreeJsPluginIrTextTest> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractLightTreeJsPluginIrTextTestWithoutPlugins> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
+                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTestWithoutPlugins> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 

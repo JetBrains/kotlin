@@ -10,7 +10,8 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.native.internal.ExportedBridge
 import kotlin.plus
-import platform.Foundation.NSError
+import platform.Foundation.NSValue
+import platform.Foundation.valueWithPointer
 
 @OptIn(InternalCoroutinesApi::class)
 private fun Job.invokeOnCancelling(block: (CancellationException) -> Unit) {
@@ -55,7 +56,7 @@ class SwiftJob private constructor() : Job by Job() {
 @OptIn(InternalCoroutinesApi::class)
 public fun <T> swiftCoroutine(
     continuation: (T) -> Unit,
-    exception: (Any?) -> Unit,
+    exception: (Throwable?) -> Unit,
     cancellation: SwiftJob,
     block: suspend CoroutineScope.() -> T
 ) {
@@ -71,15 +72,15 @@ public fun <T> swiftCoroutine(
 }
 
 public suspend fun <T> suspendSwiftCoroutine(
-    block: ((T) -> Unit, (NSError?) -> Unit, SwiftJob) -> Unit
+    block: ((T) -> Unit, (Throwable?) -> Unit, SwiftJob) -> Unit
 ): T {
     val cancellation = SwiftJob(coroutineContext.job)
     return suspendCoroutine { cont ->
         val continuation: (T) -> Unit = { _result ->
             cont.resume(_result)
         }
-        val exception: (NSError?) -> Unit = { _error ->
-            cont.resumeWithException(_error?.let(::SwiftException) ?: CancellationException("Cancelled using CancellationError in Swift"))
+        val exception: (Throwable?) -> Unit = { _error ->
+            cont.resumeWithException(_error ?: CancellationException("Cancelled using CancellationError in Swift"))
         }
         block(continuation, exception, cancellation)
     }
@@ -295,4 +296,21 @@ public fun __root___SwiftFlowIterator_init_initialize__TypesOfArguments__Swift_U
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __flow = kotlin.native.internal.ref.dereferenceExternalRCRef(flow) as kotlinx.coroutines.flow.Flow<kotlin.Any?>
     kotlin.native.internal.initInstance(____kt, SwiftFlowIterator<kotlin.Any?>(__flow))
+}
+
+@ExportedBridge("_kotlin_swift_StateFlow_value_get")
+public fun StateFlow_value_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.StateFlow<kotlin.Any?>
+    val _result = __self.value
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("_kotlin_swift_SharedFlow_replayCache_get")
+public fun SharedFlow_replayCache_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.SharedFlow<kotlin.Any?>
+    val _result = __self.replayCache.map {
+        val ptr = if (it == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(it)
+        NSValue.valueWithPointer(interpretCPointer<COpaque>(ptr))
+    }
+    return _result.objcPtr()
 }

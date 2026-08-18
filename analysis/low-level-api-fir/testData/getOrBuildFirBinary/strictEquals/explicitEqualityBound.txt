@@ -1,0 +1,15 @@
+KT element: KtClass
+KT element text:
+public final class Explicit public constructor() {
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Explicit : R|kotlin/Any| {
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=Explicit] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Explicit] constructor(): R|Explicit|
+
+}

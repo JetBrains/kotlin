@@ -52,6 +52,7 @@ public interface KaCompilerPluginGeneratedDeclarations :
         "this.compilerPluginGeneratedDeclarations",
         "org.jetbrains.kotlin.analysis.api.compilerPlugins.compilerPluginGeneratedDeclarations",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi

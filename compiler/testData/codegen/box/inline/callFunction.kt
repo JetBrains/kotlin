@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: JS_IR_ES6
 // FILE: lib.kt
-// CHECK_CONTAINS_NO_CALLS: box except=Foo_getInstance;Bar;Baz_getInstance;callLocal;callLocalExtension
+// CHECK_CONTAINS_NO_CALLS: box except=Foo$getInstance;Bar;Baz$getInstance;callLocal;callLocalExtension
 // CHECK_CONTAINS_NO_CALLS: callLocal
 // CHECK_CONTAINS_NO_CALLS: callLocalExtension
 
@@ -35,7 +35,7 @@ fun callLocalExtension(a: Int): String {
 }
 
 // FILE: main.kt
-// CHECK_CONTAINS_NO_CALLS: box except=Foo_getInstance;Bar;Baz_getInstance;callLocal;callLocalExtension
+// CHECK_CONTAINS_NO_CALLS: box except=Foo$getInstance;Bar;Baz$getInstance;callLocal;callLocalExtension
 // CHECK_CONTAINS_NO_CALLS: callLocal
 // CHECK_CONTAINS_NO_CALLS: callLocalExtension
 // CHECK_BREAKS_COUNT: function=box count=0

@@ -323,7 +323,7 @@ abstract class AbstractInvalidationTest(
                     }
                 }
 
-                JUnit5Assertions.assertSameElements(got.entries, info.expectedFileStats.entries) {
+                JUnit5Assertions.assertSameElements(info.expectedFileStats.entries, got.entries) {
                     "Mismatched file stats for module [${info.moduleName}] at step $stepId"
                 }
             }

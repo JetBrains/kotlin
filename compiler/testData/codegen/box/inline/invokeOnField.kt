@@ -1,5 +1,5 @@
-// CHECK_CONTAINS_NO_CALLS: testDispatch except=Unit_getInstance
-// CHECK_CONTAINS_NO_CALLS: testExtension except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: testDispatch except=Unit$getInstance
+// CHECK_CONTAINS_NO_CALLS: testExtension except=Unit$getInstance
 class Bar {
     inline operator fun invoke(f: () -> String) { f() }
 }

@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 
 public protocol Semaphore: KotlinRuntime.KotlinBase, main._Semaphore {
 }
-@objc(_Semaphore)
+@objc(_main_Semaphore)
 public protocol _Semaphore {
 }
 public protocol __Semaphore: KotlinRuntimeSupport._KotlinBridgeable {
@@ -53,11 +53,14 @@ public func forwardingTarget(
 ) -> Swift.Void {
     return { __root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(`for`.__externalRCRef()); return () }()
 }
+@_documentation(visibility: internal)
 extension main.Semaphore where Self : main.__Semaphore {
 }
 extension main.Semaphore {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Semaphore, main.__Semaphore where Wrapped : main._Semaphore {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Semaphore {
 }

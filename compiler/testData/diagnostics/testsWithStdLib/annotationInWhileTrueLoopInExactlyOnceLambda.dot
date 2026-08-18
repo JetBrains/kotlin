@@ -188,4 +188,11 @@ digraph annotationInWhileTrueLoopInExactlyOnceLambda_kt {
     59 -> {60} [style=dotted];
     60 -> {61} [style=dotted];
 
+    subgraph cluster_18 {
+        color=red
+        62 [label="Enter static <static of Bar>" style="filled" fillcolor=red];
+        63 [label="Exit static <static of Bar>" style="filled" fillcolor=red];
+    }
+    62 -> {63} [color=green];
+
 }

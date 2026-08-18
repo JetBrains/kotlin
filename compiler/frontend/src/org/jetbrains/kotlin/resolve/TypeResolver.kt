@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.PossiblyBareType.bare
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
@@ -136,9 +135,8 @@ class TypeResolver(
         return type
     }
 
-    internal fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
+    internal fun KtElementImplStub<*>.getAllModifierLists(): List<KtModifierList> =
+        if (this is KtModifierListOwnerStub<*>) allModifierLists else emptyList()
 
     // TODO: remove this method and its usages in 1.4
     private fun checkNonParenthesizedAnnotationsOnFunctionalType(

@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -26,9 +25,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.ClassId
@@ -37,7 +33,13 @@ import org.jetbrains.kotlin.name.Name
 class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(session) {
     companion object {
         private val PREDICATE = DeclarationPredicate.create {
-            annotated(listOf(LombokNames.BUILDER))
+            annotated(
+                listOf(
+                    LombokNames.BUILDER,
+                    LombokNames.SINGULAR,
+                    LombokNames.BUILDER_DEFAULT_ID.asSingleFqName()
+                )
+            )
         }
     }
 
@@ -65,13 +67,13 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         builder: Builder,
         builderSymbol: FirClassSymbol<*>,
         builderDeclaration: FirDeclaration,
+        substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
-        if (builder.visibility == null) return
+        val visibility = builder.builderFunctionsVisibility ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
-            val builderTypeArguments = builderSymbol.typeParameterSymbols.map { typeParameter -> typeParameter.toConeType() }.toTypedArray()
-            val returnTypeRef = when (builderDeclaration) {
+            val declaredReturnTypeRef = when (builderDeclaration) {
                 is FirRegularClass -> builderDeclaration.defaultType().toFirResolvedTypeRef()
                 is FirNamedFunction -> builderDeclaration.returnTypeRef
                 is FirConstructor -> builderDeclaration.returnTypeRef
@@ -83,34 +85,30 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                             builderDeclaration.source
                         )
                 }
-            }.let {
-                // Construct a new type with new type arguments
-                // that bound to builder's class type parameters instead of its original class with `@Builder` annotation
-                if (it is FirResolvedTypeRef && builderTypeArguments.isNotEmpty()) {
-                    it.coneType.classId!!.constructClassLikeType(builderTypeArguments).toFirResolvedTypeRef()
-                } else {
-                    it
-                }
             }
-            if (builderSymbol.hasJavaOrigin) {
-                builderSymbol.createJavaMethod(
-                    name,
-                    valueParameters = emptyList(),
-                    returnTypeRef = returnTypeRef,
-                    visibility = builder.visibility,
-                    modality = Modality.OPEN
-                ).symbol
+
+            // Rebind the type to the builder class's own type parameters, which are fresh copies of the annotated
+            // declaration's ones (see `extractTypeParametersMapping`), instead of the originals.
+            // Java type refs need no substitution: their type variables are resolved by name through the owning
+            // declaration's `javaTypeParameterStack`, which is already populated with those copies — the same split
+            // as in `addSetterMethod` and `parameterType`.
+            val returnTypeRef = if (declaredReturnTypeRef is FirResolvedTypeRef) {
+                substitutor.substituteOrSelf(declaredReturnTypeRef.coneType).toFirResolvedTypeRef()
             } else {
-                createMemberFunction(
-                    owner = builderSymbol,
-                    key = BuilderGeneratorKey(BuilderDeclarationType.Build),
-                    name = name,
-                    returnType = returnTypeRef.coneType,
-                ) {
-                    visibility = builder.visibility
-                    modality = Modality.OPEN
-                }.symbol
+                declaredReturnTypeRef
             }
+
+            createJavaOrKotlinMemberFunction(
+                owner = builderSymbol,
+                name = name,
+                valueParameters = emptyList(),
+                returnTypeRef = returnTypeRef,
+                visibility = visibility,
+                modality = Modality.OPEN,
+                createKey = {
+                    BuilderGeneratorKey(BuilderDeclarationType.Function.Build(builderDeclaration.symbol))
+                }
+            )
         }
     }
 

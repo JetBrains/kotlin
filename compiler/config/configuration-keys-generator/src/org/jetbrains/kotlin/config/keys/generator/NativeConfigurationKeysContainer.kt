@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.konan.config", "NativeConfigurationKeys") {
     val CHECK_DEPENDENCIES by key<Boolean>("Check dependencies and download the missing ones.")
     val DEBUG by key<Boolean>()
-    val FAKE_OVERRIDE_VALIDATOR by key<Boolean>()
     val EMIT_LAZY_OBJC_HEADER_FILE by key<String>()
     val ENABLE_ASSERTIONS by key<Boolean>()
     val KONAN_ENTRY_POINT by key<String>("Fully qualified main() name.")
@@ -58,7 +57,6 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val KONAN_PRINT_IR by key<Boolean>()
     val KONAN_PRINT_FILES by key<Boolean>()
     val KONAN_PRODUCED_ARTIFACT_KIND by key<CompilerOutputKind>()
-    val KONAN_PURGE_USER_LIBS by key<Boolean>()
     val RUNTIME_FILE by key<String>()
     val KONAN_INCLUDED_LIBRARIES by key<List<String>>("Klibs processed in the same manner as source files.")
     val KONAN_SHORT_MODULE_NAME by key<String>("Short module name for IDE and export.")

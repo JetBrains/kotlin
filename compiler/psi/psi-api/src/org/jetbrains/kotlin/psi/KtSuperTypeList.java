@@ -46,6 +46,13 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addSuperType(this, entry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.addSuperType(entry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.addSuperType"
+            )
+    )
     @Deprecated
     public KtSuperTypeListEntry addEntry(@NotNull KtSuperTypeListEntry entry) {
         return KtPsiMutationService.getInstance().addSuperType(this, entry);
@@ -55,6 +62,13 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeSuperType(this, entry)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeSuperType(this, entry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.removeSuperType(entry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.removeSuperType"
+            )
+    )
     @Deprecated
     public void removeEntry(@NotNull KtSuperTypeListEntry entry) {
         KtPsiMutationService.getInstance().removeSuperType(this, entry);

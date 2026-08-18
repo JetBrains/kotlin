@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.allDependenciesInternal
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.userKotlinPersistentDir
+import javax.inject.Inject
 
 /**
  * Represents the root plugin class for configuring and applying Node.js-related functionality specifically tailored for WebAssembly (Wasm) projects.
@@ -37,7 +41,12 @@ import org.jetbrains.kotlin.gradle.utils.userKotlinPersistentDir
  * - Configuring dependencies and lockfile management for Wasm project setups.
  *
  */
-abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlugin {
+abstract class WasmNodeJsRootPlugin
+@Inject
+internal constructor(
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) : CommonNodeJsRootPlugin {
 
     override fun apply(target: Project) {
         val rootDirectoryName = WasmPlatformDisambiguator.platformDisambiguator
@@ -72,7 +81,7 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
 
         val packageManagerName = nodeJsRoot.packageManagerExtension.map { it.name }
 
-        val allDeps = nodeJsRoot.versions.allDependencies
+        val allDeps = nodeJsRoot.versions.allDependenciesInternal(objects, providers)
 
         val npmTooling = target.extensions.create(
             "wasmNpmTooling",

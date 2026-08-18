@@ -6,13 +6,19 @@ plugins {
     id("java")
 }
 
+val protocVersion = libs.versions.protobufComposeTest.get()
+
 dependencies {
-    implementation(libs.protobuf.java.lite)
+    implementation(libs.protobuf.java.compose.test)
+
+    implicitDependencies("com.google.protobuf:protoc:$protocVersion:linux-x86_64@exe")
+    implicitDependencies("com.google.protobuf:protoc:$protocVersion:osx-aarch_64@exe")
+    implicitDependencies("com.google.protobuf:protoc:$protocVersion:osx-x86_64@exe")
+    implicitDependencies("com.google.protobuf:protoc:$protocVersion:windows-x86_64@exe")
 }
 
 protobuf {
     protoc {
-        val protocVersion = libs.versions.protobuf.get()
         artifact = "com.google.protobuf:protoc:$protocVersion"
     }
 

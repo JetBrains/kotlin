@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.KLIB_RELATIVE_PATH_BASES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.ENABLE_TAIL_CALLS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
@@ -180,18 +182,9 @@ open class WasmSecondStageEnvironmentConfigurator(
 
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, DISABLE_WASM_EXCEPTION_HANDLING in registeredDirectives)
 
-        val hasUseNewExceptionsDirective = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
-        val hasUseOldExceptionsDirective = USE_OLD_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
-        if (hasUseNewExceptionsDirective && hasUseOldExceptionsDirective) error("Can't use both old and new exception handling proposals")
-
-        val useNewExceptions = when {
-            hasUseNewExceptionsDirective -> true
-            hasUseOldExceptionsDirective -> false
-            else -> wasmTarget == WasmTarget.WASI
-        }
-
-        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptions)
+        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, registeredDirectives.useNewExceptionHandling(wasmTarget))
         configuration.put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, USE_STACK_SWITCHING_PROPOSAL in registeredDirectives)
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS, ENABLE_TAIL_CALLS in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(
             WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,
@@ -222,3 +215,19 @@ fun TestConfigurationBuilder.enableByConfigurationKey(key: CompilerConfiguration
         { WasmJsCompilerConfigurationKeyEnablerConfigurator(it, key) }
     )
 }
+
+fun RegisteredDirectives.useNewExceptionHandling(wasmTarget: WasmTarget): Boolean {
+    val hasUseNewExceptionsDirective = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in this
+    val hasUseOldExceptionsDirective = USE_OLD_EXCEPTION_HANDLING_PROPOSAL in this
+    checkTestInfrastructure(!(hasUseNewExceptionsDirective && hasUseOldExceptionsDirective)) {
+        "Can't use both old and new exception handling proposals"
+    }
+    return when {
+        hasUseNewExceptionsDirective -> true
+        hasUseOldExceptionsDirective -> false
+        else -> wasmTarget == WasmTarget.WASI
+    }
+}
+
+fun TestServices.useNewExceptionHandling(wasmTarget: WasmTarget): Boolean =
+    moduleStructure.allDirectives.useNewExceptionHandling(wasmTarget)

@@ -18,6 +18,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
         REFERENCE_EXPRESSION[referencedName=KClass]
   PROPERTY[fqName=test.CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
     MODIFIER_LIST[const]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
   CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
     CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]

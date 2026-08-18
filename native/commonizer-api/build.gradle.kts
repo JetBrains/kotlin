@@ -8,7 +8,7 @@ plugins {
     id("gradle-plugin-published-compiler-dependency-configuration")
     id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 kotlin {

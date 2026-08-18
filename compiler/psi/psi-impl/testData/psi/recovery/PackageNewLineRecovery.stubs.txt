@@ -17,3 +17,4 @@ FILE[kind=Facade[packageFqName=foo.bar.baz.buzz, facadeFqName=foo.bar.baz.buzz.P
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=test]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]

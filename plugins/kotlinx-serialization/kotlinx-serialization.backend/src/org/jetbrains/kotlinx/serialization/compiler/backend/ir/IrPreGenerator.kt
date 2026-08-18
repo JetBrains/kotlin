@@ -51,10 +51,7 @@ class IrPreGenerator(
         val serializerClass = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
 
         if (!irClass.shouldHaveSpecificSyntheticMethods(isJvm = compilerContext.platform.isJvm()) {
-                serializerClass.findPluginGeneratedMethod(
-                    SerialEntityNames.SAVE,
-                    compilerContext.afterK2
-                )
+                serializerClass.findPluginGeneratedMethod(SerialEntityNames.SAVE)
             }) return
         if (irClass.findWriteSelfMethod() != null) return
         val method = irClass.addFunction {
@@ -117,7 +114,7 @@ class IrPreGenerator(
         if (!irClass.shouldHaveGeneratedMethods()) return
         // do not add synthetic deserialization constructor if .deserialize method is customized
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
-                ?.findPluginGeneratedMethod(SerialEntityNames.LOAD, compilerContext.afterK2) == null
+                ?.findPluginGeneratedMethod(SerialEntityNames.LOAD) == null
         ) return
         if (irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = !compilerContext.platform.isJvm())) return
         if (irClass.findSerializableSyntheticConstructor() != null) return

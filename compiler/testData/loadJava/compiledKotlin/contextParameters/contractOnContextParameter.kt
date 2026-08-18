@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_FIR_METADATA_LOADING_K1
 
 package test
 

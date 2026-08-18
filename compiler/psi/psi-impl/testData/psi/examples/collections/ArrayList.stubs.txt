@@ -17,10 +17,17 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       PROPERTY[fqName=ArrayList.data, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=data]
         MODIFIER_LIST[private]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=MutableArray]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
       PROPERTY[fqName=ArrayList.used, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=used]
         MODIFIER_LIST[private]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       PROPERTY[fqName=ArrayList.version, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=version]
         MODIFIER_LIST[private]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       FUN[fqName=ArrayList.iterator, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -32,6 +39,9 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=mutableIterator]
+          VALUE_ARGUMENT_LIST
       FUN[fqName=ArrayList.mutableIterator, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mutableIterator]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -43,33 +53,39 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[IMutableIterator]]
-          SUPER_TYPE_LIST
-            SUPER_TYPE_CALL_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=IMutableIterator]
-              VALUE_ARGUMENT_LIST
-          CLASS_BODY
-            PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=index]
-              MODIFIER_LIST[private]
-            PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=myVersion]
-              MODIFIER_LIST[private]
-              REFERENCE_EXPRESSION[referencedName=version]
-            FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=checkVersion]
-              MODIFIER_LIST[private]
-              VALUE_PARAMETER_LIST
-            FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
-              MODIFIER_LIST[override]
-              VALUE_PARAMETER_LIST
-            PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
-              MODIFIER_LIST[override]
-              PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+        OBJECT_LITERAL
+          OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[IMutableIterator]]
+            SUPER_TYPE_LIST
+              SUPER_TYPE_CALL_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=IMutableIterator]
+                VALUE_ARGUMENT_LIST
+            CLASS_BODY
+              PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=index]
+                MODIFIER_LIST[private]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+              PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=myVersion]
+                MODIFIER_LIST[private]
+                REFERENCE_EXPRESSION[referencedName=version]
+              FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=checkVersion]
+                MODIFIER_LIST[private]
                 VALUE_PARAMETER_LIST
-            FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-              MODIFIER_LIST[override]
-              VALUE_PARAMETER_LIST
+              FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+                MODIFIER_LIST[override]
+                VALUE_PARAMETER_LIST
+              PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
+                MODIFIER_LIST[override]
+                PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+                  VALUE_PARAMETER_LIST
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=index]
+                    OPERATION_REFERENCE[operationToken=LT, referencedName=<]
+                    REFERENCE_EXPRESSION[referencedName=used]
+              FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+                MODIFIER_LIST[override]
+                VALUE_PARAMETER_LIST
       FUN[fqName=ArrayList.get, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -88,6 +104,10 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=used]
+            OPERATION_REFERENCE[operationToken=EQEQ, referencedName===]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       PROPERTY[fqName=ArrayList.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]

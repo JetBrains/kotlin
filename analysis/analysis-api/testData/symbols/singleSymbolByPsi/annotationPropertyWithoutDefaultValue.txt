@@ -116,6 +116,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: pack.Anno
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: an
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -192,7 +193,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: pack.Anno
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getAn
-  javaSetterName: null
   isInline: false
   importableFqName: null

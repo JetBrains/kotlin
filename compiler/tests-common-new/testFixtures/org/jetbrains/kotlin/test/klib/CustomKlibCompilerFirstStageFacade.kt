@@ -45,7 +45,7 @@ abstract class CustomKlibCompilerFirstStageFacade(
     final override val inputKind get() = SourcesKind
     final override val outputKind get() = ArtifactKinds.KLib
 
-    final override fun shouldTransform(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return if (module.languageVersionSettings.supportsFeature(MultiPlatformProjects)) {
             module.isLeafModuleInMppGraph(testServices)
         } else {

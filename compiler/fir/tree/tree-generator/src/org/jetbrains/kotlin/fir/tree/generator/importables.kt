@@ -20,6 +20,7 @@ val fakeSourceElementKindImport = ArbitraryImportable("org.jetbrains.kotlin", "K
 val fakeElementImport = ArbitraryImportable("org.jetbrains.kotlin", "fakeElement")
 
 val transformInPlaceImport = ArbitraryImportable(VISITOR_PACKAGE, "transformInplace")
+val transformSingleImport = ArbitraryImportable(VISITOR_PACKAGE, "transformSingle")
 val toMutableOrEmptyImport = ArbitraryImportable("org.jetbrains.kotlin.fir.builder", "toMutableOrEmpty")
 
 val visibilitiesImport = ArbitraryImportable("org.jetbrains.kotlin.descriptors", "Visibilities")

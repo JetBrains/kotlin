@@ -284,14 +284,8 @@ class StateMachineBuilder(
 
         if (expression.isSuspend) {
             val result = lastExpression()
-            val expectedType = expression.symbol.owner.returnType
-            val isInlineClassExpected = context.inlineClassesUtils.getInlinedClass(expectedType) != null
             val continueState = SuspendState(unit)
-            val unboxState = if (isInlineClassExpected) SuspendState(unit) else null
-
-            val dispatch = createDispatchPoint(unboxState ?: continueState)
-
-            if (unboxState != null) currentState.successors += unboxState
+            val dispatch = createDispatchPoint(continueState)
 
             currentState.successors += continueState
 
@@ -313,31 +307,11 @@ class StateMachineBuilder(
             val suspensionBlock = JsIrBuilder.buildBlock(unit, listOf(irReturn))
             addStatement(JsIrBuilder.buildIfElse(unit, check, suspensionBlock))
 
-            if (isInlineClassExpected) {
-                addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
-                    arguments[0] = thisReceiver
-                    arguments[1] = createDispatchPoint(continueState)
-                })
-            }
-
             doContinue()
-
-            unboxState?.let { buildUnboxingState(it, continueState, expectedType) }
 
             updateState(continueState)
             addStatement(getSuspendResultAsType(expression.type))
         }
-    }
-
-    private fun buildUnboxingState(unboxState: SuspendState, continueState: SuspendState, expectedType: IrType) {
-        unboxState.successors += continueState
-        updateState(unboxState)
-        val result = getSuspendResultAsType(anyN)
-        val tmp = JsIrBuilder.buildVar(expectedType, function.owner, name = "unboxed", initializer = result)
-        addStatement(tmp)
-        addStatement(setSuspendResultValue(JsIrBuilder.buildGetValue(tmp.symbol)))
-
-        doDispatch(continueState)
     }
 
     override fun visitBreak(jump: IrBreak) {

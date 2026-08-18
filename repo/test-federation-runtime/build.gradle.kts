@@ -2,17 +2,21 @@
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
+import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederationDomains
 
 plugins {
     id("common-configuration")
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val generateSources = tasks.register<GenerateTestFederationRuntimeCodeTask>("generateTestFederationSources")
@@ -42,6 +46,11 @@ tasks.withType<Test>().configureEach {
             "Disabled" -> SmokeTestConfig.Disabled
             else -> error("Unknown _PSEUDO_TEST_ configuration")
         }
+    }
+
+    @OptIn(DelicateTestFederationApi::class)
+    providers.environmentVariable("_DOMAINS_OVERRIDE_").orNull?.let { value ->
+        testFederationDomains = Domain.fromArgumentStringOrThrow(value)
     }
 
     testLogging {

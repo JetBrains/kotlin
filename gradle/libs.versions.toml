@@ -30,6 +30,7 @@ gson = "2.11.0"
 jetbrains-ideaExt = "1.4.1"
 jackson = "2.21.1"
 jgit = "7.3.0.202506031305-r"
+jline = "3.30.16"
 jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.14.4"
@@ -57,7 +58,7 @@ fastutil = "8.5.14-jb1"
 rwmutex-idea = "0.0.10"
 # Wasm specific
 wasmedge = "0.16.3"
-wasmtime = "44.0.1"
+wasmtime = "47.0.3"
 jscTahoe = "312950"
 jscLinux = "312950"
 jscWindows = "312950"
@@ -66,6 +67,7 @@ vavr = "0.10.4"
 downloadTask = "5.6.0"
 oshi = "6.6.5"
 protobuf = "4.28.2"
+protobufComposeTest = "4.35.1"
 woodstox-core = "7.1.0"
 http-client = "4.5.14"
 json = "20231013"
@@ -95,6 +97,8 @@ bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
 bytebuddy = "1.18.9"
 playwright = "1.61.0"
+fileLeakDetector = "1.21"
+jmh = "0.7.3"
 
 analysis-api-kotlin = "2.3.21"
 analysis-api-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
@@ -158,6 +162,7 @@ guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref =
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+jline = { module = "org.jline:jline", version.ref = "jline" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -170,6 +175,7 @@ opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" 
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+protobuf-java-compose-test = { module = "com.google.protobuf:protobuf-java", version.ref = "protobufComposeTest" }
 protobuf-java-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
 protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
@@ -240,9 +246,12 @@ analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metad
 analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
 analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
 
+fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
+
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }
 kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }
 kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-crypto-checksum = { id = "org.gradle.crypto.checksum", version.ref = "gradle-crypto-checksum" }
+jmh = { id = "me.champeau.jmh", version.ref = "jmh" }

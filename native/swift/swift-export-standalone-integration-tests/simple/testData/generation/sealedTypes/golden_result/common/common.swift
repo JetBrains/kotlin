@@ -112,19 +112,22 @@ public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value: Kot
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.InterfaceC where Self : ExportedKotlinPackages.org.kotlin.foo.__InterfaceC {
+}
+extension ExportedKotlinPackages.org.kotlin.foo.InterfaceC {
     public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
         .interfaceC(.init(self))
     }
 }
-extension ExportedKotlinPackages.org.kotlin.foo.InterfaceC {
-}
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.QueryResult where Self : ExportedKotlinPackages.org.kotlin.foo.__QueryResult {
 }
 extension ExportedKotlinPackages.org.kotlin.foo.QueryResult {
-    typealias AsyncValue = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
-    typealias Value = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value
+    public typealias AsyncValue = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
+    public typealias Value = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
         .unknown(.init(self))
@@ -132,27 +135,36 @@ extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA where Self : Ex
 }
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceB {
+}
+extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB {
     public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
         .sealedInterfaceB(.init(self))
     }
 }
-extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB {
-}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.QueryResult, ExportedKotlinPackages.org.kotlin.foo.__QueryResult where Wrapped : ExportedKotlinPackages.org.kotlin.foo._QueryResult {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA where Wrapped : ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceB where Wrapped : ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceB {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.InterfaceC, ExportedKotlinPackages.org.kotlin.foo.__InterfaceC where Wrapped : ExportedKotlinPackages.org.kotlin.foo._InterfaceC {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._QueryResult {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceB {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._InterfaceC {
 }
 extension ExportedKotlinPackages.org.kotlin.foo {
@@ -317,16 +329,16 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public protocol SealedInterfaceB: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceB {
         func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType
     }
-    @objc(_InterfaceC)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_InterfaceC)
     public protocol _InterfaceC: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
-    @objc(_QueryResult)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_QueryResult)
     public protocol _QueryResult {
     }
-    @objc(_SealedInterfaceA)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceA)
     public protocol _SealedInterfaceA {
     }
-    @objc(_SealedInterfaceB)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceB)
     public protocol _SealedInterfaceB: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
     public protocol __InterfaceC: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {

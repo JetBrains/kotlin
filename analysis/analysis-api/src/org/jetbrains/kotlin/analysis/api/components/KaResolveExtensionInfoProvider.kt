@@ -68,6 +68,7 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
         "resolveExtensionScopeWithTopLevelDeclarations",
         "org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionScopeWithTopLevelDeclarations",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -86,6 +87,7 @@ public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
         "this.isResolveExtensionFile",
         "org.jetbrains.kotlin.analysis.api.resolve.extensions.isResolveExtensionFile",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -104,6 +106,7 @@ public val VirtualFile.isResolveExtensionFile: Boolean
         "this.isFromResolveExtension",
         "org.jetbrains.kotlin.analysis.api.resolve.extensions.isFromResolveExtension",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -127,6 +130,7 @@ public val KtElement.isFromResolveExtension: Boolean
         "this.resolveExtensionNavigationElements",
         "org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionNavigationElements",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

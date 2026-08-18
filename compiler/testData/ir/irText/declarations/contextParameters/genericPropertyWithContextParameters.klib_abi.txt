@@ -4,6 +4,21 @@
 // - Show declarations: true
 
 // Library unique name: <main>
+final class <#A: kotlin/Any?> /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final class <#A1: kotlin/Any?> N { // /A.N|null[0]
+        final var ctx // /A.N.ctx|(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}ctx[0]
+            final fun <#A3: kotlin/Any?, #B3: kotlin/Any?> (context(#A3, #B3)).<get-ctx>(): #A3 // /A.N.ctx.<get-ctx>|<get-ctx>(0:0;0:1)(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+            final fun <#A3: kotlin/Any?, #B3: kotlin/Any?> (context(#A3, #B3)).<set-ctx>(#A3) // /A.N.ctx.<set-ctx>|<set-ctx>(0:0;0:1)(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+        constructor <init>() // /A.N.<init>|<init>(){}[0]
+    }
+}
+final class <#A: kotlin/Any?> /B { // /B|null[0]
+    final var ctx // /B.ctx|(0:0;kotlin.collections.Map<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}ctx[0]
+        final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> (context(#A2, kotlin.collections/Map<#A2, #B2>)).<get-ctx>(): #A2 // /B.ctx.<get-ctx>|<get-ctx>(0:0;kotlin.collections.Map<0:0,0:1>)(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+        final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> (context(#A2, kotlin.collections/Map<#A2, #B2>)).<set-ctx>(#A2) // /B.ctx.<set-ctx>|<set-ctx>(0:0;kotlin.collections.Map<0:0,0:1>)(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+}
 final class <#A: kotlin/Any?> /C { // /C|null[0]
     final var ctx // /C.ctx|(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}ctx[0]
         final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> (context(#A2, #B2)).<get-ctx>(): #A2 // /C.ctx.<get-ctx>|<get-ctx>(0:0;0:1)(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]

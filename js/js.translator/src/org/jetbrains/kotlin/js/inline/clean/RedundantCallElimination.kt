@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import org.jetbrains.kotlin.js.backend.ast.metadata.isJsCall
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 
-// Replaces a.foo.call(a, b) with a.foo(b)
-class RedundantCallElimination(private val root: JsBlock) {
-    private var changed = false
-
-    fun apply(): Boolean {
+/**
+ * Replaces `a.foo.call(a, b)` with `a.foo(b)`
+ */
+internal class RedundantCallElimination(private val root: JsBlock) : FunctionPostProcessorStep() {
+    override fun apply() {
         root.accept(object : RecursiveJsVisitor() {
             override fun visitInvocation(invocation: JsInvocation) {
                 tryEliminate(invocation)
@@ -49,11 +49,9 @@ class RedundantCallElimination(private val root: JsBlock) {
                 if (receiver.qualifier == null && receiver.name != null && firstArg.qualifier == null && receiver.name == firstArg.name) {
                     invocation.arguments.removeAt(0)
                     invocation.qualifier = qualifier
-                    changed = true
+                    hasChanges = true
                 }
             }
         })
-
-        return changed
     }
 }

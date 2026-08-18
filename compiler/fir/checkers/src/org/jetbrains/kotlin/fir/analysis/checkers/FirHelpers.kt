@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
@@ -379,7 +379,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
             if (
                 parentClassSymbol is FirRegularClassSymbol &&
                 parentClassSymbol.isData &&
-                symbol.matchesDataClassSyntheticMemberSignatures
+                symbol.isMethodOfAny
             ) {
                 return ImplementationStatus.INHERITED_OR_SYNTHESIZED
             }
@@ -421,29 +421,6 @@ private fun List<FirCallableSymbol<*>>.subjectToManyNotImplemented(): Boolean {
     }
     return false
 }
-
-private val FirNamedFunctionSymbol.matchesDataClassSyntheticMemberSignatures: Boolean
-    get() {
-        val name = callableId.callableName
-        return receiverParameterSymbol == null &&
-                !hasContextParameters &&
-                (name == OperatorNameConventions.EQUALS && matchesEqualsSignature) ||
-                (name == HASHCODE_NAME && matchesHashCodeSignature) ||
-                (name == OperatorNameConventions.TO_STRING && matchesToStringSignature)
-    }
-
-// NB: we intentionally do not check return types
-private val FirNamedFunctionSymbol.matchesEqualsSignature: Boolean
-    get() {
-        val valueParameters = valueParameterSymbols
-        return valueParameters.size == 1 && valueParameters[0].resolvedReturnType.isNullableAny
-    }
-
-private val FirNamedFunctionSymbol.matchesHashCodeSignature: Boolean
-    get() = valueParameterSymbols.isEmpty()
-
-private val FirNamedFunctionSymbol.matchesToStringSignature: Boolean
-    get() = valueParameterSymbols.isEmpty()
 
 val Name.isDelegated: Boolean get() = asString().startsWith("\$\$delegate_")
 
@@ -1050,27 +1027,31 @@ fun ConeKotlinType.isMalformedExpandedType(allowNullableNothing: Boolean): Boole
 }
 
 context(context: CheckerContext)
-private fun ConeKotlinType.containsMalformedArgument(allowNullableNothing: Boolean) =
+private fun ConeKotlinType.containsMalformedArgument(allowNullableNothing: Boolean): Boolean =
     typeArguments.any {
         it.type?.fullyExpandedType()?.isMalformedExpandedType(allowNullableNothing) == true
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun KtSourceElement?.requireFeatureSupport(
+inline fun KtSourceElement?.requireFeatureSupport(
     feature: LanguageFeature,
     positioningStrategy: SourceElementPositioningStrategy? = null,
+    ifSupported: () -> Unit = {},
 ) {
     if (feature.isDisabled()) {
         reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, positioningStrategy)
+    } else {
+        ifSupported()
     }
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun FirElement.requireFeatureSupport(
+inline fun FirElement.requireFeatureSupport(
     feature: LanguageFeature,
     positioningStrategy: SourceElementPositioningStrategy? = null,
+    ifSupported: () -> Unit = {},
 ) {
-    source.requireFeatureSupport(feature, positioningStrategy)
+    source.requireFeatureSupport(feature, positioningStrategy, ifSupported)
 }
 
 context(context: CheckerContext)
@@ -1253,4 +1234,26 @@ fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
         is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
         else -> null
     }
+}
+
+internal fun FirDeclaration.containsErrorTypes(): Boolean {
+    var hasErrorType = false
+
+    accept(object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+            hasErrorType = true
+        }
+
+        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+            if (resolvedTypeRef.coneType.hasError()) {
+                hasErrorType = true
+            }
+        }
+    }, null)
+
+    return hasErrorType
 }

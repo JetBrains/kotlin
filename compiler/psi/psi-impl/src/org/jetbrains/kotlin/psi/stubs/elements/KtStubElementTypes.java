@@ -1,13 +1,23 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.stubs.StubElementTypeHolderEP;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.*;
 
+/**
+ * A container for all stub-based elements {@link StubElementTypeHolderEP}.
+ * <p>
+ * The interface is not supposed to be used directly, use {@link KtNodeTypes} instead.
+ *
+ * @see KtNodeTypes
+ */
+@KtImplementationDetail
 public interface KtStubElementTypes {
     @NotNull KtClassElementType CLASS = KtClassElementType.INSTANCE;
     @NotNull KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
@@ -94,8 +104,23 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver.class);
 
     @NotNull KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
-    @NotNull KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
-    @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION = KtCallExpressionElementType.INSTANCE;
+    @NotNull KtPlaceHolderStubElementType<KtDotQualifiedExpression> DOT_QUALIFIED_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("DOT_QUALIFIED_EXPRESSION", KtDotQualifiedExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("CALL_EXPRESSION", KtCallExpression.class);
+    @NotNull KtOperationReferenceExpressionElementType OPERATION_REFERENCE = KtOperationReferenceExpressionElementType.INSTANCE;
+
+    @NotNull KtPlaceHolderStubElementType<KtPrefixExpression> PREFIX_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("BINARY_EXPRESSION", KtBinaryExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED =
+            new KtPlaceHolderStubElementType<>("PARENTHESIZED", KtParenthesizedExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtObjectLiteralExpression> OBJECT_LITERAL =
+            new KtPlaceHolderStubElementType<>("OBJECT_LITERAL", KtObjectLiteralExpression.class);
+
     @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
     @NotNull KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
@@ -150,7 +175,7 @@ public interface KtStubElementTypes {
     @NotNull KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
 
     @NotNull KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
-            new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
+            new KtPlaceHolderStubElementType<>("STRING_TEMPLATE", KtStringTemplateExpression.class);
 
     @NotNull KtBlockStringTemplateEntryElementType LONG_STRING_TEMPLATE_ENTRY =
             new KtBlockStringTemplateEntryElementType("LONG_STRING_TEMPLATE_ENTRY");

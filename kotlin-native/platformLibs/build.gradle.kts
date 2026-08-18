@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
 import org.jetbrains.kotlin.utils.reproducibilityCompilerFlags
-import org.jetbrains.kotlin.utils.reproducibilityRootsMap
 
 plugins {
     id("common-configuration")
@@ -101,6 +100,8 @@ enabledTargets(platformManager).forEach { target ->
             )
             df.file?.let { this.defFile.set(it) }
             df.config.depends.forEach { defName ->
+                // Set explicit dependencies on other platform libs that should be built prior to the current one.
+                // `this.klibFiles` is transformed to a set of `-library ...` arguments later in `KonanInteropTask`.
                 this.klibFiles.from(tasks.named(interopTaskName(defFileToLibName(targetName, defName), targetName)))
             }
 
@@ -110,10 +111,9 @@ enabledTargets(platformManager).forEach { target ->
             }.toTypedArray()
 
             this.extraOpts.addAll(
-                    "-Xpurge-user-libs",
                     "-Xshort-module-name", df.name,
                     "-Xdisable-experimental-annotation",
-                    "-no-default-libs",
+                    "-no-default-libs", // We shall not try to (implicitly) load platform libs while they are being built to avoid seeing some "middle" state.
                     "-Xccall-mode", "indirect", // Default is `-Xccall-mode both`, but platform libs use `indirect` for now. See KT-82062.
                     *reproducibilityCompilerFlags,
             )

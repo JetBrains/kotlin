@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:getJavaClass(p: PsiType:KClass<T>): PsiType:Class<T>

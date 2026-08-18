@@ -7,6 +7,7 @@ KtPackageDirective(15,31): 'package lowlevel'
 KtNameReferenceExpression(23,31): 'lowlevel'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel
@@ -48,6 +49,7 @@ KtUserType(34,40): 'Target'
 KtNameReferenceExpression(34,40): 'Target'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/Target
@@ -68,6 +70,7 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget
@@ -76,6 +79,7 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
 KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
@@ -93,6 +97,7 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
 KtNameReferenceExpression(83,99): 'AnnotationTarget'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget
@@ -101,6 +106,7 @@ KtNameReferenceExpression(83,99): 'AnnotationTarget'
 KtNameReferenceExpression(100,108): 'FUNCTION'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.FUNCTION
@@ -118,6 +124,7 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
 KtNameReferenceExpression(114,130): 'AnnotationTarget'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget
@@ -126,6 +133,7 @@ KtNameReferenceExpression(114,130): 'AnnotationTarget'
 KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
@@ -143,6 +151,7 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
 KtNameReferenceExpression(152,168): 'AnnotationTarget'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget
@@ -151,6 +160,7 @@ KtNameReferenceExpression(152,168): 'AnnotationTarget'
 KtNameReferenceExpression(169,173): 'TYPE'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.TYPE
@@ -180,6 +190,7 @@ KtUserType(213,219): 'String'
 KtNameReferenceExpression(213,219): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -233,6 +244,7 @@ KtUserType(260,264): 'Anno'
 KtNameReferenceExpression(260,264): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -256,6 +268,7 @@ KtSimpleNameStringTemplateEntry(275,280): '$prop'
 KtNameReferenceExpression(276,280): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -297,6 +310,7 @@ KtUserType(289,293): 'Anno'
 KtNameReferenceExpression(289,293): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -320,6 +334,7 @@ KtSimpleNameStringTemplateEntry(310,315): '$prop'
 KtNameReferenceExpression(311,315): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -361,6 +376,7 @@ KtUserType(323,327): 'Anno'
 KtNameReferenceExpression(323,327): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -384,6 +400,7 @@ KtSimpleNameStringTemplateEntry(340,345): '$prop'
 KtNameReferenceExpression(341,345): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -398,6 +415,7 @@ KtUserType(348,393): 'List<@Anno("nested bound type $prop") String>'
 KtNameReferenceExpression(348,352): 'List'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -445,6 +463,7 @@ KtUserType(354,358): 'Anno'
 KtNameReferenceExpression(354,358): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -468,6 +487,7 @@ KtSimpleNameStringTemplateEntry(378,383): '$prop'
 KtNameReferenceExpression(379,383): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -482,6 +502,7 @@ KtUserType(386,392): 'String'
 KtNameReferenceExpression(386,392): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -526,6 +547,7 @@ KtUserType(405,409): 'Anno'
 KtNameReferenceExpression(405,409): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -549,6 +571,7 @@ KtSimpleNameStringTemplateEntry(420,425): '$prop'
 KtNameReferenceExpression(421,425): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -581,6 +604,7 @@ KtUserType(429,433): 'Anno'
 KtNameReferenceExpression(429,433): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -604,6 +628,7 @@ KtSimpleNameStringTemplateEntry(449,454): '$prop'
 KtNameReferenceExpression(450,454): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -618,6 +643,7 @@ KtUserType(457,551): 'List<@Anno("nested receiver type $prop") List<@Anno("neste
 KtNameReferenceExpression(457,461): 'List'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -665,6 +691,7 @@ KtUserType(463,467): 'Anno'
 KtNameReferenceExpression(463,467): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -688,6 +715,7 @@ KtSimpleNameStringTemplateEntry(490,495): '$prop'
 KtNameReferenceExpression(491,495): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -702,6 +730,7 @@ KtUserType(498,550): 'List<@Anno("nested nested receiver type $prop") Int>'
 KtNameReferenceExpression(498,502): 'List'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -749,6 +778,7 @@ KtUserType(504,508): 'Anno'
 KtNameReferenceExpression(504,508): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -772,6 +802,7 @@ KtSimpleNameStringTemplateEntry(538,543): '$prop'
 KtNameReferenceExpression(539,543): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -786,6 +817,7 @@ KtUserType(546,549): 'Int'
 KtNameReferenceExpression(546,549): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -827,6 +859,7 @@ KtUserType(562,566): 'Anno'
 KtNameReferenceExpression(562,566): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -850,6 +883,7 @@ KtSimpleNameStringTemplateEntry(578,583): '$prop'
 KtNameReferenceExpression(579,583): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -891,6 +925,7 @@ KtUserType(594,598): 'Anno'
 KtNameReferenceExpression(594,598): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -914,6 +949,7 @@ KtSimpleNameStringTemplateEntry(615,620): '$prop'
 KtNameReferenceExpression(616,620): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -928,6 +964,7 @@ KtUserType(623,728): 'Collection<@Anno("nested parameter type $prop") List<@Anno
 KtNameReferenceExpression(623,633): 'Collection'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/Collection
@@ -975,6 +1012,7 @@ KtUserType(635,639): 'Anno'
 KtNameReferenceExpression(635,639): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -998,6 +1036,7 @@ KtSimpleNameStringTemplateEntry(663,668): '$prop'
 KtNameReferenceExpression(664,668): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1012,6 +1051,7 @@ KtUserType(671,727): 'List<@Anno("nested nested parameter type $prop") String>'
 KtNameReferenceExpression(671,675): 'List'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -1059,6 +1099,7 @@ KtUserType(677,681): 'Anno'
 KtNameReferenceExpression(677,681): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -1082,6 +1123,7 @@ KtSimpleNameStringTemplateEntry(712,717): '$prop'
 KtNameReferenceExpression(713,717): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1096,6 +1138,7 @@ KtUserType(720,726): 'String'
 KtNameReferenceExpression(720,726): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -1140,6 +1183,7 @@ KtUserType(736,740): 'Anno'
 KtNameReferenceExpression(736,740): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -1163,6 +1207,7 @@ KtSimpleNameStringTemplateEntry(754,759): '$prop'
 KtNameReferenceExpression(755,759): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1177,6 +1222,7 @@ KtUserType(762,852): 'List<@Anno("nested return type $prop") List<@Anno("nested 
 KtNameReferenceExpression(762,766): 'List'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -1224,6 +1270,7 @@ KtUserType(768,772): 'Anno'
 KtNameReferenceExpression(768,772): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -1247,6 +1294,7 @@ KtSimpleNameStringTemplateEntry(793,798): '$prop'
 KtNameReferenceExpression(794,798): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1261,6 +1309,7 @@ KtUserType(801,851): 'List<@Anno("nested nested return type $prop") Int>'
 KtNameReferenceExpression(801,805): 'List'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -1308,6 +1357,7 @@ KtUserType(807,811): 'Anno'
 KtNameReferenceExpression(807,811): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -1331,6 +1381,7 @@ KtSimpleNameStringTemplateEntry(839,844): '$prop'
 KtNameReferenceExpression(840,844): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1345,6 +1396,7 @@ KtUserType(847,850): 'Int'
 KtNameReferenceExpression(847,850): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1359,6 +1411,7 @@ KtTypeConstraint(867,956): 'T : @Anno("constraint type $prop") Collection<@Anno(
 KtNameReferenceExpression(867,868): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -1400,6 +1453,7 @@ KtUserType(872,876): 'Anno'
 KtNameReferenceExpression(872,876): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -1423,6 +1477,7 @@ KtSimpleNameStringTemplateEntry(894,899): '$prop'
 KtNameReferenceExpression(895,899): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1443,6 +1498,7 @@ KtUserType(902,955): 'Collection<@Anno("nested constraint type $prop") Int>'
 KtNameReferenceExpression(902,912): 'Collection'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/Collection
@@ -1490,6 +1546,7 @@ KtUserType(914,918): 'Anno'
 KtNameReferenceExpression(914,918): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       lowlevel/Anno
@@ -1513,6 +1570,7 @@ KtSimpleNameStringTemplateEntry(943,948): '$prop'
 KtNameReferenceExpression(944,948): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -1527,6 +1585,7 @@ KtUserType(951,954): 'Int'
 KtNameReferenceExpression(951,954): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int

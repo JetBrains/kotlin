@@ -1,10 +1,12 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Kotlin/Native utils"
@@ -36,6 +38,7 @@ configureKotlinCompileTasksGradleCompatibility()
 
 tasks {
     withType<Test>().configureEach {
+        inputs.property("os.name", OperatingSystem.current().name)
         useJUnitPlatform()
     }
 }

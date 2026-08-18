@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
+import org.jetbrains.kotlin.fir.diagnostics.ConeSmartcastToTypeVariable
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -350,7 +352,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun inferLowerTypesFromSymbol(symbol: FirEnumEntrySymbol): Set<DfaType>? =
-        with(components) { symbol.getComplementarySymbols() }
+        with(components) { symbol.getEnumSiblings() }
             ?.takeIf { it.isNotEmpty() }
             ?.mapTo(mutableSetOf(), DfaType::Symbol)
 
@@ -438,14 +440,30 @@ abstract class FirDataFlowAnalyzer(
         context.variableAssignmentAnalyzer.enterClass(klass)
     }
 
-    fun exitClass(): ControlFlowGraph? {
+    fun exitClass(): CfgExitClassResult? {
         context.variableAssignmentAnalyzer.exitClass()
-        val [node, graph] = graphBuilder.exitClass()
-        if (node != null) {
-            node.mergeIncomingFlow()
-        } else {
+        val result = graphBuilder.exitClass()
+        val staticGraph = result?.staticGraph
+        val memberGraph = result?.memberGraph
+
+        staticGraph?.enterNode?.mergeIncomingFlow()
+        staticGraph?.exitNode?.mergeIncomingFlow()
+        memberGraph?.exitNode?.mergeIncomingFlow()
+
+        if (memberGraph == null || !memberGraph.exitNode.isUnion) {
             resetSmartCastPosition() // to state before class initialization
         }
+        return result
+    }
+
+    fun enterEnumEntry(klass: FirEnumEntry) {
+        val node = graphBuilder.enterEnumEntry(klass)
+        node.mergeIncomingFlow()
+    }
+
+    fun exitEnumEntry(): ControlFlowGraph {
+        val [node, graph] = graphBuilder.exitEnumEntry()
+        node.mergeIncomingFlow()
         return graph
     }
 
@@ -563,8 +581,8 @@ abstract class FirDataFlowAnalyzer(
     private fun addTypeOperatorStatements(flow: MutableFlow, typeOperatorCall: FirTypeOperatorCall) {
         val type = typeOperatorCall.conversionTypeRef.coneType
         val operandVariable = flow.getVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
-        val complementarySymbols = typeOperatorCall.conversionTypeRef.coneType
-                .toRegularClassSymbol()?.getComplementarySymbols()?.takeIf { it.isNotEmpty() }
+        val siblings = typeOperatorCall.conversionTypeRef.coneType
+            .toRegularClassSymbol()?.getSealedSiblings()?.takeIf { it.isNotEmpty() }
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 val isType = operation == FirOperation.IS
@@ -579,8 +597,8 @@ abstract class FirDataFlowAnalyzer(
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
                             flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
 
-                            if (!complementarySymbols.isNullOrEmpty()) {
-                                flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq complementarySymbols))
+                            if (siblings != null) {
+                                flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq siblings))
                             }
                         }
                         if (!type.canBeNull()) {
@@ -598,8 +616,8 @@ abstract class FirDataFlowAnalyzer(
                 if (operandVariable.isReal()) {
                     flow.addTypeStatement(operandVariable typeEq type)
 
-                    if (complementarySymbols != null) {
-                        flow.addTypeStatement(operandVariable valueNotEq complementarySymbols)
+                    if (siblings != null) {
+                        flow.addTypeStatement(operandVariable valueNotEq siblings)
                     }
                 }
                 if (!type.canBeNull()) {
@@ -617,8 +635,8 @@ abstract class FirDataFlowAnalyzer(
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
 
-                    if (complementarySymbols != null) {
-                        flow.addImplication((expressionVariable notEq null) implies (operandVariable valueNotEq complementarySymbols))
+                    if (siblings != null) {
+                        flow.addImplication((expressionVariable notEq null) implies (operandVariable valueNotEq siblings))
                     }
                 }
             }
@@ -806,12 +824,23 @@ abstract class FirDataFlowAnalyzer(
         // TODO: this check should not be here (KT-87406)
         if (leftOperand.resolvedType.isMarkedNullable && rightOperand.resolvedType.isMarkedNullable) return
 
-        if (leftOperandVariable is RealVariable && equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
-            flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperand.resolvedType))
+        fun check(aOperand: FirExpression, aOperandVariable: DataFlowVariable?, bOperandType: ConeKotlinType) {
+            if (aOperandVariable !is RealVariable || equalsContract != EqualsOverrideContract.SAFE_FOR_SMART_CAST) return
+
+            if (!bOperandType.contains { it is ConeTypeVariableType }) {
+                flow.addImplication((expressionVariable eq isEq) implies (aOperandVariable typeEq bOperandType))
+                return
+            }
+
+            when (val correspondingQualifiedAccess = aOperand.unwrapSmartcastExpression()) {
+                is FirQualifiedAccessExpression -> correspondingQualifiedAccess.appendNonFatalDiagnostics(ConeSmartcastToTypeVariable)
+                is FirResolvedQualifier -> correspondingQualifiedAccess.appendNonFatalDiagnostics(ConeSmartcastToTypeVariable)
+                else -> error("Unexpected smartcast expression: ${correspondingQualifiedAccess::class.simpleName}")
+            }
         }
-        if (rightOperandVariable is RealVariable && equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
-            flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperand.resolvedType))
-        }
+
+        check(leftOperand, leftOperandVariable, rightOperand.resolvedType)
+        check(rightOperand, rightOperandVariable, leftOperand.resolvedType)
     }
 
     /**
@@ -834,13 +863,13 @@ abstract class FirDataFlowAnalyzer(
             }
             if (symbol == null) return
             flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
-            val complementarySymbols = when (symbol) {
-                is FirEnumEntrySymbol -> with(components) { symbol.getComplementarySymbols() }
-                is FirRegularClassSymbol if symbol.classKind.isObject -> with(components) { symbol.getComplementarySymbols() }
+            val siblings = when (symbol) {
+                is FirEnumEntrySymbol -> context(components) { symbol.getEnumSiblings() }
+                is FirRegularClassSymbol if symbol.classKind.isObject -> context(components) { symbol.getSealedSiblings() }
                 else -> null
             }
-            if (!complementarySymbols.isNullOrEmpty()) {
-                flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementarySymbols))
+            if (!siblings.isNullOrEmpty()) {
+                flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq siblings))
             }
         }
 
@@ -849,8 +878,9 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun ProcessEqContext.processEqContractBasedOnEqualityBound() {
+        if (LanguageFeature.StrictEquals.isDisabled()) return
         if (rightOperandVariable !is RealVariable) return
-        val boundForRhs = components.equalsOverrideContractCalculator.computeTypeForEqualityBoundBasedContract(leftOperand.resolvedType)
+        val boundForRhs = leftOperand.resolvedType.calculateEqualityBoundType(holder = components)
         if (boundForRhs != null) {
             flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq boundForRhs))
         }
@@ -923,7 +953,7 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterWhenBranchCondition(whenBranch).mergeWhenBranchEntryFlow()
     }
 
-    private fun CFGNode<*>.mergeWhenBranchEntryFlow() = mergeIncomingFlow { _, flow ->
+    private fun CFGNode<*>.mergeWhenBranchEntryFlow(): Unit = mergeIncomingFlow { _, flow ->
         val previousConditionExitNode = previousNodes.singleOrNull() as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
         val previousCondition = previousConditionExitNode.fir.condition
         if (!previousCondition.resolvedType.isBoolean) return@mergeIncomingFlow
@@ -1583,7 +1613,7 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitBooleanOperatorExpression(booleanOperatorExpression).mergeBooleanLogicOperatorFlow()
     }
 
-    private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow() = mergeIncomingFlow { path, flow ->
+    private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow(): Unit = mergeIncomingFlow { path, flow ->
         val inferMoreImplications =
             LanguageFeature.InferMoreImplicationsFromBooleanExpressions.isEnabled()
 

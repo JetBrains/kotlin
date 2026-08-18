@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,8 +26,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -72,10 +68,6 @@ class IrBuiltInsOverDescriptors(
 
     private val builtInsModule = builtIns.builtInsModule
 
-    private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
-    override val kotlinInternalPackageFragment =
-        createEmptyExternalPackageFragment(IrModuleFragmentImpl(builtInsModule), kotlinInternalPackage)
-
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
 
     /*
@@ -95,14 +87,10 @@ class IrBuiltInsOverDescriptors(
         return symbolTable.descriptorExtension.referenceSimpleFunction(this)
     }
 
-    private fun PropertyDescriptor.toIrSymbol(): IrPropertySymbol {
-        return symbolTable.descriptorExtension.referenceProperty(this)
-    }
-
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     private fun defineOperator(
-        name: String, returnType: IrType, valueParameterTypes: List<IrType>, isIntrinsicConst: Boolean = false
+        name: String, returnType: IrType, valueParameterTypes: List<IrType>
     ): IrSimpleFunctionSymbol {
         val operatorDescriptor =
             IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
@@ -155,12 +143,6 @@ class IrBuiltInsOverDescriptors(
                 ).apply {
                     parent = operator
                 }
-            }
-
-            if (isIntrinsicConst) {
-                operator.annotations += IrAnnotationImpl.fromSymbolDescriptor(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, intrinsicConstType, intrinsicConstConstructor.symbol
-                )
             }
 
             operator
@@ -279,7 +261,7 @@ class IrBuiltInsOverDescriptors(
     }
 
     private fun defineComparisonOperator(name: String, operandType: IrType) =
-        defineOperator(name, booleanType, listOf(operandType, operandType), isIntrinsicConst = true)
+        defineOperator(name, booleanType, listOf(operandType, operandType))
 
     private fun List<IrType>.defineComparisonOperatorForEachIrType(name: String) =
         associate { it.classifierOrFail to defineComparisonOperator(name, it) }
@@ -288,10 +270,6 @@ class IrBuiltInsOverDescriptors(
     override val anyType = any.toIrType()
     override val anyClass = builtIns.any.toIrSymbol()
     override val anyNType = anyType.makeNullable()
-
-    private val intrinsicConstClass = createIntrinsicConstEvaluationClass()
-    private val intrinsicConstType = intrinsicConstClass.defaultType
-    private val intrinsicConstConstructor = intrinsicConstClass.primaryConstructor as IrConstructor
 
     val bool = builtIns.booleanType
     override val booleanType = bool.toIrType()
@@ -483,8 +461,7 @@ class IrBuiltInsOverDescriptors(
             it.classifierOrFail to defineOperator(
                 BuiltInOperatorNames.IEEE754_EQUALS,
                 booleanType,
-                listOf(it.makeNullable(), it.makeNullable()),
-                isIntrinsicConst = true
+                listOf(it.makeNullable(), it.makeNullable())
             )
         }.toMap()
 
@@ -493,11 +470,11 @@ class IrBuiltInsOverDescriptors(
     override val booleanNotSymbol = booleanNot.toIrSymbol()
 
     override val eqeqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQEQ, booleanType, listOf(anyNType, anyNType))
-    override val eqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQ, booleanType, listOf(anyNType, anyNType), isIntrinsicConst = true)
+    override val eqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQ, booleanType, listOf(anyNType, anyNType))
     override val throwCceSymbol = defineOperator(BuiltInOperatorNames.THROW_CCE, nothingType, listOf())
     override val throwIseSymbol = defineOperator(BuiltInOperatorNames.THROW_ISE, nothingType, listOf())
-    override val andandSymbol = defineOperator(BuiltInOperatorNames.ANDAND, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
-    override val ororSymbol = defineOperator(BuiltInOperatorNames.OROR, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
+    override val andandSymbol = defineOperator(BuiltInOperatorNames.ANDAND, booleanType, listOf(booleanType, booleanType))
+    override val ororSymbol = defineOperator(BuiltInOperatorNames.OROR, booleanType, listOf(booleanType, booleanType))
     override val noWhenBranchMatchedExceptionSymbol =
         defineOperator(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType, listOf())
     override val illegalArgumentExceptionSymbol =

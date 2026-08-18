@@ -91,11 +91,6 @@ public class KtTestUtil {
         return file;
     }
 
-    public static String doLoadFile(String myFullDataPath, String name) throws IOException {
-        String fullName = myFullDataPath + File.separatorChar + name;
-        return doLoadFile(new File(fullName));
-    }
-
     public static String doLoadFile(@NotNull File file) {
         try {
             return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
@@ -179,6 +174,11 @@ public class KtTestUtil {
     @NotNull
     public static File getJdk21Home() {
         return getJdkHome("JDK_21_0", "JDK_21");
+    }
+
+    @NotNull
+    public static File getJdk25Home() {
+        return getJdkHome("JDK_25_0", "JDK_25");
     }
 
     @NotNull

@@ -19,6 +19,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJsLangu
         put(LanguageFeature.JsAllowExportingSuspendFunctions, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.integerDivisionCheck) {
+        put(LanguageFeature.JsIntegerDivisionCheck, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.allowExportingSuspendLambdas) {
         put(LanguageFeature.JsExportingSuspendLambdas, LanguageFeature.State.ENABLED)
     }

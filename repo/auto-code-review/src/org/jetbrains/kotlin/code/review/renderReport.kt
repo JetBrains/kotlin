@@ -8,10 +8,22 @@ package org.jetbrains.kotlin.code.review
 interface RenderingContext {
     fun codeLink(path: ProjectFilePath, line: Int): String
     fun markdownLink(path: ProjectFilePath, title: String): String
+
+    /**
+     * Returns a Markdown link to [title] in the report, or `null` if unsupported.
+     */
+    fun localLink(text: String, title: String): String? {
+        val anchor = slugifyMarkdownTitle(title)
+        return "[$text](#$anchor)"
+    }
+
     fun describeDiff(origin: GitDiff.Origin): String
 
     fun ruleLink(rule: CodeRule): String = markdownLink(rule.source, rule.name)
 }
+
+val GitDiff.Origin.GitHub.compareMarkdownLink: String
+    get() = "[${base.rev}...${to.sha1}](https://github.com/${repository}/compare/${base.rev}...${to.rev})"
 
 private const val WARNING_EMOJI = "⚠\uFE0F"
 
@@ -25,8 +37,14 @@ fun render(review: ReviewResult): String = buildString {
 
 context(renderingContext: RenderingContext)
 fun StringBuilder.appendOrigin(review: ReviewResult) {
-    appendLine("Reviewing ${renderingContext.describeDiff(review.diffOrigin)}")
-    appendLine()
+    val readme = ProjectFilePath("repo/auto-code-review/README.md")
+    appendLine(
+        """
+            ${renderingContext.markdownLink(readme, "Auto Code Review")} for
+            ${renderingContext.describeDiff(review.diffOrigin)}
+            
+        """.trimIndent()
+    )
 }
 
 context(renderingContext: RenderingContext)
@@ -124,10 +142,11 @@ private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Me
             is AgentResult.Failure -> WARNING_EMOJI
             is AgentResult.Success -> {
                 val count = result.reviewResult.comments.size
+                val countString = count.toString()
                 if (count == 0) {
-                    "0"
+                    countString
                 } else {
-                    "[$count](#${slugifyMarkdownTitle(rule.name)})"
+                    renderingContext.localLink(countString, rule.name) ?: countString
                 }
             }
         }

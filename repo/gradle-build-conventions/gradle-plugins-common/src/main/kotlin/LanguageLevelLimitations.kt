@@ -22,7 +22,12 @@ internal fun Project.limitLanguageAndApiVersions(version: KotlinVersion) {
                 apiVersion.set(version)
             }
             languageVersion.set(version)
-            freeCompilerArgs.add("-Xsuppress-version-warnings")
+            freeCompilerArgs.addAll(
+                "-Xsuppress-version-warnings",
+                "-Xallow-contracts-on-more-functions",
+                "-Xallow-condition-implies-returns-contracts",
+                "-Xallow-holdsin-contract",
+            )
         }
     }
 }

@@ -6,7 +6,11 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
+}
+
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
 }
 
 dependencies {
@@ -48,7 +52,7 @@ dependencies {
     implementation(project(":js:js.frontend"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-api-impl-base"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":kotlin-scripting-compiler"))
     implementation(project(":kotlin-scripting-common"))
     implementation(project(":kotlin-assignment-compiler-plugin.k2"))
@@ -70,8 +74,9 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(project(":analysis:analysis-internal-utils"))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
-    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(kotlinTest("junit5"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -87,6 +92,8 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(libs.lincheck)
     testImplementation(libs.junit.jupiter.params)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 sourceSets {
@@ -116,6 +123,8 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
+
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first since some LL tests are complementary for the surface tests
             mustRunAfter(":analysis:analysis-api-fir:test")

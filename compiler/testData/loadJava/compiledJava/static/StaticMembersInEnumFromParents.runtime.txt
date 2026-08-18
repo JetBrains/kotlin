@@ -1,0 +1,41 @@
+package test
+
+public/*package*/ interface Parent1 {
+
+    // Static members
+    public const final val a: kotlin.Int
+    public const final val b: kotlin.Int
+}
+
+public/*package*/ interface Parent2 {
+
+    // Static members
+    public const final val d: kotlin.Int
+    public const final val e: kotlin.Int
+}
+
+public/*package*/ final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEnum!>, test.Parent1, test.Parent2 {
+    enum entry ENTRY
+
+    private constructor StaticMembersInEnum()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ test.StaticMembersInEnum!): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.StaticMembersInEnum!>!
+
+    // Static members
+    public const final override /*1*/ /*fake_override*/ val a: kotlin.Int
+    public final var b: kotlin.Int
+    public final var c: kotlin.Int
+    public final var d: kotlin.Int
+    public const final override /*1*/ /*fake_override*/ val e: kotlin.Int
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.StaticMembersInEnum>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.StaticMembersInEnum>
+    public open fun foo(): kotlin.Unit
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.StaticMembersInEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<test.StaticMembersInEnum>
+}

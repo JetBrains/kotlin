@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.mavenCentral
-import org.gradle.kotlin.dsl.repositories
-
 rootProject.name = "native-build-tools"
 
 pluginManagement {
@@ -19,7 +16,6 @@ plugins {
     id("kotlin-bootstrap")
     id("jvm-toolchain-provisioning")
     id("develocity")
-    id("kotlin-daemon-config")
     id("cache-redirector")
 }
 

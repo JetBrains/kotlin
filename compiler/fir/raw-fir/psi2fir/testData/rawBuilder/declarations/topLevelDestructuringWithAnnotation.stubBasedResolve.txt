@@ -1,2 +1,2 @@
-FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] topLevelDestructuringWithAnnotation.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelDestructuringWithAnnotation.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: Pair>#(Int(0), Int(1))

@@ -147,9 +147,7 @@ class CachingTest {
                         compilationCache(cache)
                     }
                 }
-                val host =
-                    if (isRunningTestOnK2) BasicJvmScriptingHost(hostConfiguration)
-                    else BasicJvmScriptingHost.createLegacy(hostConfiguration)
+                val host = BasicJvmScriptingHost(hostConfiguration)
 
                 val scriptCompilationConfiguration = ScriptCompilationConfiguration {
                     updateClasspath(standardJars +outJar)
@@ -195,38 +193,38 @@ class CachingTest {
                 val cache = TestCompiledScriptJarsCache(cacheDir)
                 assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
-                val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
-                    jvm {
-                        baseClassLoader(URLClassLoader((standardJars + outJar).map { it.toURI().toURL() }.toTypedArray(), null))
-                        compilationCache(cache)
+                URLClassLoader((standardJars + outJar).map { it.toURI().toURL() }.toTypedArray(), null).use { dependenciesClassLoader ->
+                    val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                        jvm {
+                            baseClassLoader(dependenciesClassLoader)
+                            compilationCache(cache)
+                        }
                     }
-                }
-                val host =
-                    if (isRunningTestOnK2) BasicJvmScriptingHost(hostConfiguration)
-                    else BasicJvmScriptingHost.createLegacy(hostConfiguration)
+                    val host = BasicJvmScriptingHost(hostConfiguration)
 
-                val scriptCompilationConfiguration = ScriptCompilationConfiguration {
-                    updateClasspath(standardJars + outJar)
-                    this.hostConfiguration.update { hostConfiguration }
-                }
-                val scriptEvaluationConfiguration = ScriptEvaluationConfiguration {
-                    jvm {
-                        loadDependencies(false)
+                    val scriptCompilationConfiguration = ScriptCompilationConfiguration {
+                        updateClasspath(standardJars + outJar)
+                        this.hostConfiguration.update { hostConfiguration }
                     }
-                    this.hostConfiguration.update { hostConfiguration }
+                    val scriptEvaluationConfiguration = ScriptEvaluationConfiguration {
+                        jvm {
+                            loadDependencies(false)
+                        }
+                        this.hostConfiguration.update { hostConfiguration }
+                    }
+
+                    val script = "Dependency(42).v".toScriptSource()
+
+                    // Without the patch that fixes loadDependencies usage in kotlin.script.experimental.jvmhost.KJvmCompiledScriptLazilyLoadedFromClasspath.getClass
+                    // AND with hostConfiguration removed from scriptEvaluationConfiguration (essentially creating a misconfigured evaluator)
+                    // the first evaluation fails because it cannot find the class for dependency, but the second mistakingly succeed, because dependency is taken from the cache
+                    // (see #KT-50902 for details)
+                    val res0 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
+                    assertEquals(42, (res0 as? ResultValue.Value)?.value)
+
+                    val res1 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
+                    assertEquals(42, (res1 as? ResultValue.Value)?.value)
                 }
-
-                val script = "Dependency(42).v".toScriptSource()
-
-                // Without the patch that fixes loadDependencies usage in kotlin.script.experimental.jvmhost.KJvmCompiledScriptLazilyLoadedFromClasspath.getClass
-                // AND with hostConfiguration removed from scriptEvaluationConfiguration (essentially creating a misconfigured evaluator)
-                // the first evaluation fails because it cannot find the class for dependency, but the second mistakingly succeed, because dependency is taken from the cache
-                // (see #KT-50902 for details)
-                val res0 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
-                assertEquals(42, (res0 as? ResultValue.Value)?.value)
-
-                val res1 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
-                assertEquals(42, (res1 as? ResultValue.Value)?.value)
             }
         }
     }
@@ -266,9 +264,7 @@ class CachingTest {
                 compilationCache(cache)
             }
         }
-        val compiler =
-            if (isRunningTestOnK2) JvmScriptCompiler(myHostConfiguration)
-            else JvmScriptCompiler.createLegacy(myHostConfiguration)
+        val compiler = JvmScriptCompiler(myHostConfiguration)
         val evaluator = BasicJvmScriptEvaluator()
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
 

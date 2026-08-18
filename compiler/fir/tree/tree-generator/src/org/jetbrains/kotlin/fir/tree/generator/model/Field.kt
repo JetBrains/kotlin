@@ -100,6 +100,8 @@ class ListField(
     override var isMutable: Boolean = true
     override var isParameter: Boolean = false
 
+    var isAssignableList: Boolean = false
+
     override fun internalCopy(): Field {
         return ListField(
             name,
@@ -108,7 +110,9 @@ class ListField(
             withTransform,
             isChild,
             isMutableOrEmptyList
-        )
+        ).apply {
+            isAssignableList = this@ListField.isAssignableList
+        }
     }
 
     override fun substituteType(map: TypeParameterSubstitutionMap) {

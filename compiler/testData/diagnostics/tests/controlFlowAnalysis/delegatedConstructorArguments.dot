@@ -207,4 +207,11 @@ digraph delegatedConstructorArguments_kt {
     69 -> {70};
     70 -> {71} [color=green];
 
+    subgraph cluster_16 {
+        color=red
+        72 [label="Enter static <static of Test>" style="filled" fillcolor=red];
+        73 [label="Exit static <static of Test>" style="filled" fillcolor=red];
+    }
+    72 -> {73} [color=green];
+
 }

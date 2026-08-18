@@ -1,3 +1,4 @@
+// DUMP_IR
 operator fun Any.plusAssign(lambda: () -> Unit) {}
 
 operator fun Any.get(index: () -> Unit): Int = 42

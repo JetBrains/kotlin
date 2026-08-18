@@ -1,0 +1,224 @@
+Unary.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Unary, fqName=Unary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unary, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unary]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Unary.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=Unary.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Long]
+          VALUE_PARAMETER[fqName=Unary.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Double]
+          VALUE_PARAMETER[fqName=Unary.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Float]
+          VALUE_PARAMETER[fqName=Unary.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Boolean]
+          VALUE_PARAMETER[fqName=Unary.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=IntArray]
+
+
+WithMinus.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithMinus, fqName=WithMinus, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMinus, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+
+
+WithNested.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNested, fqName=WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNested, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+
+
+WithParentheses.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithParentheses, fqName=WithParentheses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithParentheses, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  PARENTHESIZED
+                    PREFIX_EXPRESSION
+                      OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+
+
+WithPlus.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithPlus, fqName=WithPlus, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPlus, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]

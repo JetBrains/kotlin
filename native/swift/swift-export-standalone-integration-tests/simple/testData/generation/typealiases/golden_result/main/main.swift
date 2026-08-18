@@ -111,7 +111,7 @@ public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase, main._OUTSIDE_PROTO {
 }
-@objc(_OUTSIDE_PROTO)
+@objc(_main_OUTSIDE_PROTO)
 public protocol _OUTSIDE_PROTO {
 }
 public protocol __OUTSIDE_PROTO: KotlinRuntimeSupport._KotlinBridgeable {
@@ -530,12 +530,15 @@ public func produce_closure() -> main.closure {
         return { return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return () }() }
     }()
 }
+@_documentation(visibility: internal)
 extension main.OUTSIDE_PROTO where Self : main.__OUTSIDE_PROTO {
 }
 extension main.OUTSIDE_PROTO {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO, main.__OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._OUTSIDE_PROTO {
 }
 extension ExportedKotlinPackages.typealiases.inner {

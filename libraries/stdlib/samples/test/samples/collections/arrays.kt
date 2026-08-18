@@ -20,10 +20,10 @@ import samples.*
 import kotlin.test.*
 
 
-@RunWith(Enclosed::class)
 class Arrays {
 
-    class Usage {
+    @Nested
+    inner class Usage {
 
         @Sample
         fun arrayOrEmpty() {
@@ -92,7 +92,8 @@ class Arrays {
         }
     }
 
-    class Transformations {
+    @Nested
+    inner class Transformations {
 
         @Sample
         fun associateArrayOfPrimitives() {
@@ -186,7 +187,8 @@ class Arrays {
         }
     }
 
-    class ContentOperations {
+    @Nested
+    inner class ContentOperations {
 
         @Sample
         fun contentToString() {
@@ -298,7 +300,8 @@ class Arrays {
         }
     }
 
-    class CopyOfOperations {
+    @Nested
+    inner class CopyOfOperations {
 
         @Sample
         fun copyOf() {
@@ -459,7 +462,8 @@ class Arrays {
         }
     }
 
-    class Sorting {
+    @Nested
+    inner class Sorting {
 
         @Sample
         fun sortArray() {
@@ -534,7 +538,8 @@ class Arrays {
 
     }
 
-    class Constructors {
+    @Nested
+    inner class Constructors {
         @Sample
         fun arrayOfSample() {
             val emptyArray = arrayOf<Any>()

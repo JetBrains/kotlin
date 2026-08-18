@@ -19,4 +19,8 @@ void _kotlin_swift_SwiftFlowIterator_init_initialize(void * __kt, void * flow);
 
 void __root___SwiftJob_setCallback(void *, void (^)(void));
 
+void * _Nullable _kotlin_swift_StateFlow_value_get(void * self);
+
+NSArray<NSValue *> * _kotlin_swift_SharedFlow_replayCache_get(void * self);
+
 NS_ASSUME_NONNULL_END

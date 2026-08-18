@@ -38,7 +38,7 @@ interface TargetableExternalStorage {
 abstract class KonanPropertiesLoader(
     override val target: KonanTarget,
     val properties: Properties,
-    private val dependenciesRoot: String?,
+    protected val dependenciesRoot: String?,
     private val host: KonanTarget = HostManager.host,
     private val progressCallback: ProgressCallback,
 ) : Configurables {

@@ -9,21 +9,22 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Warnings-as-errors: -Werror promotes warnings to error log level")
 class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
 
     @DisplayName("Without -Werror, deprecation warning stays at WARN level")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun warningIsLoggedAtWarnLevelWithoutWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun warningIsLoggedAtWarnLevelWithoutWerror(project: ProjectCreator) {
+        project {
             val module = module("deprecated-usage")
             module.compile {
                 assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
@@ -33,9 +34,10 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     }
 
     @DisplayName("With -Werror, deprecation warning is promoted to ERROR level")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun warningIsLoggedAtErrorLevelWithWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun warningIsLoggedAtErrorLevelWithWerror(project: ProjectCreator) {
+        project {
+            assumeTrue(this !is MetadataProject) { "Metadata always warns about a missing target platform, which -Werror turns into an aborting error" }
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[WERROR] = true
@@ -48,9 +50,10 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     }
 
     @DisplayName("With -Xwarning-level=DEPRECATION:warning and -Werror, deprecation warning stays at WARN level (not escalated)")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun fixedWarningIsNotEscalatedToErrorWithWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun fixedWarningIsNotEscalatedToErrorWithWerror(project: ProjectCreator) {
+        project {
+            assumeTrue(this !is MetadataProject) { "Metadata always warns about a missing target platform, which -Werror turns into an aborting error" }
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[WERROR] = true
@@ -64,9 +67,9 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     }
 
     @DisplayName("With -Xwarning-level=DEPRECATION:warning but no -Werror, deprecation warning still stays at WARN level")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun fixedWarningStaysAtWarnLevelWithoutWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun fixedWarningStaysAtWarnLevelWithoutWerror(project: ProjectCreator) {
+        project {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 @OptIn(ExperimentalCompilerArgument::class)
@@ -82,9 +85,9 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     // is not carried over when BTA converts applyArgumentStrings → toCompilerArguments().
     // Daemon mode round-trips via toArgumentStrings() so the daemon re-parses and sets explicitArguments.
     @DisplayName("KT-85813: With -Xcontext-parameters (redundant in LV 2.4+) and -Werror, warning is promoted to compilation error")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun missingWarningWithInProcessMode(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun missingWarningWithInProcessMode(project: ProjectCreator) {
+        project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xcontext-parameters"))

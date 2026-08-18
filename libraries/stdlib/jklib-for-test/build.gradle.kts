@@ -90,6 +90,7 @@ val copyMinimalSources = tasks.register("copyMinimalSources", Sync::class) {
             "kotlin/internal/Annotations.kt",
             "kotlin/internal/AnnotationsBuiltin.kt",
             "kotlin/internal/progressionUtil.kt",
+            "kotlin/internal/throwNoWhenBranchMatchedException.kt",
             "kotlin/concurrent/atomics/AtomicArrays.common.kt",
             "kotlin/concurrent/atomics/Atomics.common.kt",
             "kotlin/contextParameters/Context.kt",
@@ -134,6 +135,7 @@ val copyMinimalSources = tasks.register("copyMinimalSources", Sync::class) {
             "runtime/kotlin/jvm/internal/Lambda.kt",
             "runtime/kotlin/jvm/internal/FunctionBase.kt",
             "runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
+            "src/kotlin/internal/throwNoWhenBranchMatchedException.kt",
         )
         into("src/jvm")
     }

@@ -4,5 +4,12 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-final fun (context(kotlin/String))./foo(kotlin/Int) // /foo|foo(kotlin.String)(kotlin.Int){}[0]
-final fun (kotlin/String)./test() // /test|test@kotlin.String(){}[0]
+final class /Foo { // /Foo|null[0]
+    constructor <init>() // /Foo.<init>|<init>(){}[0]
+    final suspend fun (context(kotlin/String)).foo() // /Foo.foo|foo(kotlin.String)(){}[0]
+}
+final fun (context(kotlin/String))./bar(kotlin/IntArray...) // /bar|bar(kotlin.String)(kotlin.IntArray...){}[0]
+final suspend fun (context(/Foo))./baz() // /baz|baz(Foo)(){}[0]
+final suspend fun (context(kotlin/String), /Foo)./baz() // /baz|baz(kotlin.String)@Foo(){}[0]
+final fun (context(kotlin/String))./foo(kotlin/Int = ...) // /foo|foo(kotlin.String)(kotlin.Int){}[0]
+final fun (context(/Foo), kotlin/String)./test() // /test|test(Foo)@kotlin.String(){}[0]

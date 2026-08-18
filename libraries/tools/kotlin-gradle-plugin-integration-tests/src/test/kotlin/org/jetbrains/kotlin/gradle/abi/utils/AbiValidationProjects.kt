@@ -138,7 +138,7 @@ internal fun KGPBaseTest.jvmProject(
     project.configuration()
 }
 
-private fun KotlinMultiplatformExtension.androidLibrary(
+internal fun KotlinMultiplatformExtension.androidLibrary(
     action: KotlinMultiplatformAndroidLibraryTarget.() -> Unit
 ) {
     (this as ExtensionAware).extensions.findByType(

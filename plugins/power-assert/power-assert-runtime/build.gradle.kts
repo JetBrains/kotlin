@@ -117,9 +117,13 @@ kotlin {
             api(kotlinTest())
         }
         jvmTest.dependencies {
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 configureDefaultPublishing()

@@ -126,4 +126,16 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
+
+    compilerArgument {
+        name = "Xpurge-user-libs"
+        deprecatedName = "-purge_user_libs"
+        description = "Don't link unused libraries even if explicitly specified.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

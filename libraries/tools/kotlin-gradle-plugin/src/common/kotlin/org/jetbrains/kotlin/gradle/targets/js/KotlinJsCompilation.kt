@@ -13,7 +13,6 @@ import org.gradle.api.Action
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
@@ -21,12 +20,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.targetVersion
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.js.config.supportsEsModules
 import javax.inject.Inject
 
 open class KotlinJsCompilation @Inject internal constructor(
@@ -113,10 +113,8 @@ val KotlinJsCompilation.fileExtension: Provider<String>
         val isWasm = platformType == KotlinPlatformType.wasm
         return compilerOptions.options.moduleKind
             .orElse(
-                compilerOptions.options.target.map {
-                    if (it == K2JsArgumentConstants.ES_2015) {
-                        JsModuleKind.MODULE_ES
-                    } else JsModuleKind.MODULE_UMD
+                compilerOptions.options.targetVersion.map {
+                    if (it.supportsEsModules) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD
                 }
             )
             .map { moduleKind ->

@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
             testClass<AbstractJsKlibSyntheticAccessorTest> {
                 model()
             }
-            testClass<AbstractJsKlibSyntheticAccessorsBoxWithInlinedFunInKlibTest>(
+            testClass<AbstractJsKlibSyntheticAccessorsBoxTest>(
                 suiteTestClassName = "JsKlibSyntheticAccessorsBoxTestGenerated"
             ) {
                 model()
@@ -119,10 +119,6 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsTypeScriptExportWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
-                model(pattern = "^([^_](.+))\\.kt$")
-            }
-
             testClass<AbstractJsAnalysisApiTypeScriptExportTest> {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
@@ -144,9 +140,6 @@ fun main(args: Array<String>) {
             testClass<AbstractJsLineNumberTest> {
                 model()
             }
-            testClass<AbstractJsLineNumberWithInlinedFunInKlibTest> {
-                model()
-            }
         }
 
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
@@ -156,37 +149,19 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("boxInline")
             }
 
             testClass<AbstractFirJsLightTreeHeaderModeCodegenTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
-            testClass<AbstractJsCodegenBoxWithInlinedFunInKlibTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractJsCodegenBoxInlineWithInlinedFunInKlibTest> {
-                model("boxInline")
-            }
-
             testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
             }
 
-            testClass<AbstractJsCodegenInlineTest> {
-                model("boxInline")
-            }
-
-            testClass<AbstractJsCodegenInlineWithInlinedFunInKlibTest> {
-                model("boxInline")
-            }
-
-            testClass<AbstractJsCodegenSplittingWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenSplittingTest> {
                 model("box")
-            }
-
-            testClass<AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
 
@@ -198,27 +173,12 @@ fun main(args: Array<String>) {
                 model("boxWasmJsInterop")
             }
 
-            testClass<AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest> {
-                model("boxWasmJsInterop")
-            }
-
             testClass<AbstractJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
                 model("boxWasmJsInterop")
             }
 
             testClass<AbstractJsIrDeserializationCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractJsIrDeserializationCodegenBoxInlineTest> {
-                model("boxInline")
-            }
-
-            testClass<AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractJsIrDeserializationCodegenBoxInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
         }
@@ -228,15 +188,7 @@ fun main(args: Array<String>) {
                 model("stepping")
             }
 
-            testClass<AbstractJsSteppingWithInlinedFunInKlibTest> {
-                model("stepping")
-            }
-
             testClass<AbstractJsSteppingSplitTest> {
-                model("stepping")
-            }
-
-            testClass<AbstractJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("stepping")
             }
         }
@@ -280,28 +232,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithAnyBackend",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                )
-            }
-
-            testClass<AbstractJsDiagnosticWithIrInlinerTestBase>(suiteTestClassName = "JsDiagnosticsWithIrInlinerTestGenerated") {
-                model(
-                    relativeRootPath = "klibSerializationTests",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "testsWithAnyBackend",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "irInliner",
-                    pattern = "^([^_](.+))\\.kt$",
                 )
             }
         }

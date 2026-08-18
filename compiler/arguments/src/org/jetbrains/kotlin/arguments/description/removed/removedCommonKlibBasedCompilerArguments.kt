@@ -27,4 +27,15 @@ val removedCommonKlibBasedCompilerArguments by compilerArgumentsLevel(CompilerAr
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
+
+    compilerArgument {
+        name = "Xfake-override-validator"
+        description = "Enable the IR fake override validator.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

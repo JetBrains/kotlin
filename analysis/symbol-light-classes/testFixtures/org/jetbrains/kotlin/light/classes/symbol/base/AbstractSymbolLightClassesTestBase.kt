@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.opentest4j.TestAbortedException
 import java.nio.file.Path
 
 // Same as LightProjectDescriptor.TEST_MODULE_NAME
@@ -61,6 +62,77 @@ abstract class AbstractSymbolLightClassesTestBase(
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val ktFiles = mainModule.ktFiles
         doLightClassTest(ktFiles, mainModule, testServices)
+        runSupplementaryChecks(ktFiles, mainModule, testServices)
+    }
+
+    /**
+     * Light classes to be passed to the supplementary checks, or `null` if the test has no supplementary checks.
+     *
+     * @see runSupplementaryChecks
+     */
+    protected open fun supplementaryLightClasses(ktFiles: List<KtFile>): Collection<PsiClass>? = null
+
+    /**
+     * Slot for the declaration matching check, which is only meaningful for decompiled light classes.
+     *
+     * @see runSupplementaryChecks
+     */
+    protected open fun checkDeclarationMatching(ktFiles: List<KtFile>, testServices: TestServices) {}
+
+    /**
+     * Runs additional checks over the light classes of the already prepared module.
+     *
+     * Such checks used to be separate test classes over the same test data, which meant compiling, indexing, and decompiling the very same
+     * sources once per check.
+     *
+     * Failures are collected and reported together, so one broken check does not hide the others. [doLightClassTest] is deliberately not
+     * part of the aggregation: it is the only assertion that reports a test data file mismatch, and the test data manager relies on that
+     * exception reaching it unwrapped.
+     */
+    private fun runSupplementaryChecks(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
+        // Non-JVM light classes require `withMultiplatformLightClassSupport`, and the checks were never run for them
+        if (!configurator.defaultTargetPlatform.has<JvmPlatform>()) return
+        val lightClasses = supplementaryLightClasses(ktFiles) ?: return
+
+        val failures = mutableListOf<Throwable>()
+        collectFailure(failures) {
+            ignoreExceptionIfIgnoreDirectivePresent(module) {
+                checkLightClassesParenting(
+                    lightClasses = lightClasses,
+                    isTestAgainstCompiledCode = isTestAgainstCompiledCode,
+                    directives = module.testModule.directives,
+                    assertions = testServices.assertions,
+                )
+            }
+        }
+
+        collectFailure(failures) {
+            checkDeclarationMatching(ktFiles, testServices)
+        }
+
+        // Has to be the last one: the check repeatedly invalidates the global module or source state,
+        // so anything computed by the checks above would be stale afterwards
+        collectFailure(failures) {
+            checkLightClassesEquality(
+                lightClasses = lightClasses,
+                isTestAgainstCompiledCode = isTestAgainstCompiledCode,
+                assertions = testServices.assertions,
+            )
+        }
+
+        if (failures.isNotEmpty()) {
+            testServices.assertions.failAll(failures)
+        }
+    }
+
+    private inline fun collectFailure(failures: MutableList<Throwable>, action: () -> Unit) {
+        try {
+            action()
+        } catch (e: TestAbortedException) {
+            throw e
+        } catch (e: Throwable) {
+            failures += e
+        }
     }
 
     @OptIn(KaNonPublicApi::class)

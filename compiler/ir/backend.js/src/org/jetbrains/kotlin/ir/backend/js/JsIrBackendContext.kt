@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 import java.util.*
 
 class JsIrBackendContext(
-    val module: ModuleDescriptor,
+    val irModule: IrModuleFragment,
     override val irBuiltIns: IrBuiltIns,
     override val symbolTable: SymbolTable,
     override val configuration: CompilerConfiguration,
@@ -50,7 +49,7 @@ class JsIrBackendContext(
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
 
-    val polyfills = JsPolyfills()
+    val polyfills = JsPolyfills(configuration)
     val globalIrInterner = IrInterningService()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
@@ -76,10 +75,13 @@ class JsIrBackendContext(
 
     override val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
-    override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
-        DescriptorlessExternalPackageFragmentSymbol(),
-        FqName("kotlin")
-    )
+    override val bodilessBuiltInsPackageFragment: IrPackageFragment by lazy {
+        IrExternalPackageFragmentImpl(
+            DescriptorlessExternalPackageFragmentSymbol(),
+            FqName("kotlin"),
+            module = irBuiltIns.moduleFragment,
+        )
+    }
 
     val packageLevelJsModules = hashSetOf<IrFile>()
 

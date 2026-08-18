@@ -4,10 +4,8 @@ extension Swift.Int32 {
 }
 private extension Swift.Int32 {
 }
-///
 /// this is a documented extension
 /// (is it even possible? Printer don't actually care)
-///
 extension Swift.Int32 {
 }
 extension Swift.Int32 {

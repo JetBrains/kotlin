@@ -128,7 +128,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xadd-modules",
         argument = X_ADD_MODULES,
-        argumentValues = listOf(listOf("module1", "module2", "module3")),
+        argumentValues = listOf(listOf("module1", "module2", "module3"), listOf("module,comma")),
         argumentRawValues = listOf(listOf("module1", "module2", "module3").joinToString(",")),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xadd-modules=$value") },
@@ -187,7 +187,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "script-templates",
         argument = SCRIPT_TEMPLATES,
-        argumentValues = listOf(listOf("org.example.Template1", "org.example.Template2")),
+        argumentValues = listOf(listOf("org.example.Template1", "org.example.Template2"), listOf("org.example.Template,Comma")),
         argumentRawValues = listOf(listOf("org.example.Template1", "org.example.Template2").joinToString(",")),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-script-templates", value) },
@@ -352,7 +352,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xignored-annotations-for-bridges",
         argument = X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
-        argumentValues = listOf(listOf("com.example.MyAnnotation", "*")),
+        argumentValues = listOf(listOf("com.example.MyAnnotation", "*"), listOf("com.example.My,Annotation")),
         argumentRawValues = listOf(listOf("com.example.MyAnnotation", "*").joinToString(",")),
         skipBtaV1 = true,
         valueString = { value -> value?.joinToString(",") },
@@ -364,6 +364,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         argumentValues = listOf(
             listOf("key1=value1", "key2=value2"),
             listOf("optional="),
+            listOf("key=value,comma"),
         ),
         argumentRawValues = listOf(
             listOf("key1=value1", "key2=value2").joinToString(","),

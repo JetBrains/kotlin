@@ -67,8 +67,8 @@ public external fun vectorOf(f0: Int, f1: Int, f2: Int, f3: Int): Vector128
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class Vector128VarOf<T : Vector128>(rawPtr: NativePtr) : CVariable(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(size = 16, align = 16)
 }
 

@@ -7,7 +7,7 @@ public protocol MyInterface: KotlinRuntime.KotlinBase, optional_closure._MyInter
         arg: (() -> Swift.Void)?
     ) -> Swift.Void
 }
-@objc(_MyInterface)
+@objc(_optional_closure_MyInterface)
 public protocol _MyInterface {
 }
 public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {
@@ -63,6 +63,7 @@ public func produce_opt_closure(
         return { return optional_closure_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!) }
     }() }
 }
+@_documentation(visibility: internal)
 extension optional_closure.MyInterface where Self : optional_closure.__MyInterface {
     public func foo(
         arg: (() -> Swift.Void)?
@@ -78,7 +79,9 @@ extension optional_closure.MyInterface where Self : optional_closure.__MyInterfa
 }
 extension optional_closure.MyInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: optional_closure.MyInterface, optional_closure.__MyInterface where Wrapped : optional_closure._MyInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: optional_closure._MyInterface {
 }

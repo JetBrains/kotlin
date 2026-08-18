@@ -1,0 +1,65 @@
+FILE[kind=File[packageFqName=test]]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  CLASS[classId=test/Marker, fqName=test.Marker, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Marker, superNames=[]]
+    MODIFIER_LIST[annotation]
+  CLASS[classId=test/Targeted, fqName=test.Targeted, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Targeted, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Targeted]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Targeted.onParameter, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onParameter]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Marker]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Targeted.onProperty, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onProperty]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Marker]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Targeted.onGetter, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onGetter]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Marker]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Targeted.onEveryTarget, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onEveryTarget]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+              ANNOTATION_TARGET[useSiteTarget=CONSTRUCTOR_PARAMETER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Marker]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Marker]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Marker]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]

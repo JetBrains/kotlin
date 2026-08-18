@@ -35,8 +35,8 @@ interface KtDoubleColonExpression : KtExpression, KtResolvable {
         get() = doubleColonTokenReference.prevSibling
 
     @Deprecated(
-        "Use setDoubleColonReceiverExpression(newReceiverExpression) instead",
-        ReplaceWith(
+        message = "Use setDoubleColonReceiverExpression(newReceiverExpression) instead",
+        replaceWith = ReplaceWith(
             "this.setDoubleColonReceiverExpression(newReceiverExpression)",
             "org.jetbrains.kotlin.idea.base.psi.setDoubleColonReceiverExpression",
         ),

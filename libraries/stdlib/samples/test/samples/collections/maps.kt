@@ -4,10 +4,10 @@ import samples.*
 import kotlin.test.*
 import java.util.*
 
-@RunWith(Enclosed::class)
 class Maps {
 
-    class Instantiation {
+    @Nested
+    inner class Instantiation {
 
         @Sample
         fun mapFromPairs() {
@@ -84,7 +84,8 @@ class Maps {
     }
 
 
-    class Usage {
+    @Nested
+    inner class Usage {
 
         @Sample
         fun getOrElse() {
@@ -299,7 +300,8 @@ class Maps {
 
     }
 
-    class Filtering {
+    @Nested
+    inner class Filtering {
 
         @Sample
         fun filterKeys() {
@@ -396,7 +398,8 @@ class Maps {
         }
     }
 
-    class Transformations {
+    @Nested
+    inner class Transformations {
 
         @Sample
         fun mapKeys() {
@@ -466,7 +469,8 @@ class Maps {
         }
     }
 
-    class CoreApi {
+    @Nested
+    inner class CoreApi {
         @Sample
         fun size() {
             assertPrints(emptyMap<Int, Int>().size, "0")

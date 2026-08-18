@@ -60,9 +60,7 @@ class ScriptingHostTest {
     fun testSourceWithName() {
         val greeting = "Hello from script!"
         val output = captureOut {
-            val host =
-                if (isRunningTestOnK2) BasicJvmScriptingHost()
-                else BasicJvmScriptingHost.createLegacy()
+            val host = BasicJvmScriptingHost()
             host.evalWithTemplate<SimpleScript>(
                 "println(\"$greeting\")".toScriptSource("name"),
                 compilation = {
@@ -115,14 +113,13 @@ class ScriptingHostTest {
         val greeting = "Hello from script classes!"
         val outDir = Files.createTempDirectory("saveToClassesOut").toFile()
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-        val host =
-            if (isRunningTestOnK2) BasicJvmScriptingHost(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
-            else BasicJvmScriptingHost.createLegacy(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
+        val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
-        val classloader = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
-        val scriptClass = classloader.loadClass("SavedScript")
-        val output = captureOut {
-            scriptClass.newInstance()
+        val output = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader).use { classloader ->
+            val scriptClass = classloader.loadClass("SavedScript")
+            captureOut {
+                scriptClass.newInstance()
+            }
         }
         assertEquals(greeting, output)
     }
@@ -132,15 +129,14 @@ class ScriptingHostTest {
         val greeting = "Hello from script jar!"
         val outJar = Files.createTempFile("saveToJar", ".jar").toFile()
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-        val host =
-            if (isRunningTestOnK2) BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
-            else BasicJvmScriptingHost.createLegacy(evaluator = BasicJvmScriptJarGenerator(outJar))
+        val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
         Thread.sleep(100)
-        val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
-        val scriptClass = classloader.loadClass("SavedScript")
-        val output = captureOut {
-            scriptClass.newInstance()
+        val output = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader).use { classloader ->
+            val scriptClass = classloader.loadClass("SavedScript")
+            captureOut {
+                scriptClass.newInstance()
+            }
         }
         assertEquals(greeting, output)
     }
@@ -153,9 +149,8 @@ class ScriptingHostTest {
             updateClasspath(classpathFromClass<SimpleScriptTemplate>())
             updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
         }
-        val compiler =
-            if (isRunningTestOnK2) JvmScriptCompiler()
-            else JvmScriptCompiler.createLegacy()
+        val compiler = JvmScriptCompiler()
+
         val scriptName = "SavedRunnableScript"
         val compiledScript = runBlocking {
             compiler("println(\"$greeting\")".toScriptSource(name = "$scriptName.kts"), compilationConfiguration).throwOnFailure()
@@ -169,19 +164,20 @@ class ScriptingHostTest {
         Thread.sleep(100)
 
         val classpathFromJar = run {
-            val manifest = JarFile(outJar).manifest
+            val manifest = JarFile(outJar).use { it.manifest }
             manifest.mainAttributes.getValue("Class-Path").split(" ") // TODO: quoted paths
                 .map { File(it).toURI().toURL() }
         } + outJar.toURI().toURL()
 
         fun checkInvokeMain(baseClassLoader: ClassLoader?) {
-            val classloader = URLClassLoader(classpathFromJar.toTypedArray(), baseClassLoader)
-            val scriptClass = classloader.loadClass(scriptName)
-            val mainMethod = scriptClass.methods.find { it.name == "main" }
-            assertNotNull(mainMethod)
-            val output = captureOutAndErr {
-                mainMethod.invoke(null, emptyArray<String>())
-            }.toList().filterNot(String::isEmpty).joinToString("\n")
+            val output = URLClassLoader(classpathFromJar.toTypedArray(), baseClassLoader).use { classloader ->
+                val scriptClass = classloader.loadClass(scriptName)
+                val mainMethod = scriptClass.methods.find { it.name == "main" }
+                assertNotNull(mainMethod)
+                captureOutAndErr {
+                    mainMethod.invoke(null, emptyArray<String>())
+                }.toList().filterNot(String::isEmpty).joinToString("\n")
+            }
             assertEquals(greeting, output)
         }
 
@@ -806,9 +802,7 @@ class ScriptingHostTest {
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             compilerOptions(K2JVMCompilerArguments::jvmTarget.cliArgument, target)
         }
-        val compiler =
-            if (isRunningTestOnK2) JvmScriptCompiler()
-            else JvmScriptCompiler.createLegacy()
+        val compiler = JvmScriptCompiler()
         val compiledScript = runBlocking { compiler(script.toScriptSource(name = "SavedScript.kts"), compilationConfiguration) }
         assertTrue(compiledScript is ResultWithDiagnostics.Success)
 
@@ -839,9 +833,7 @@ class ScriptingHostTest {
     fun testCompiledScriptClassLoader() {
         val script = "val x = 1"
         val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-        val compiler =
-            if (isRunningTestOnK2) JvmScriptCompiler()
-            else JvmScriptCompiler.createLegacy()
+        val compiler = JvmScriptCompiler()
         val compiledScript = runBlocking {
             val res = compiler(script.toScriptSource(), scriptCompilationConfiguration).throwOnFailure()
             (res as ResultWithDiagnostics.Success<CompiledScript>).value
@@ -861,8 +853,8 @@ class ScriptingHostTest {
         assertNotNull(classAsResourceUrl)
         assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream.readBytes()
+        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().use { it.readBytes() }
+        val classAsResourceStreamData = classAssResourceStream.use { it.readBytes() }
 
         assertContentEquals(classAsResourceData, classAsResourceStreamData)
 
@@ -878,7 +870,7 @@ internal fun runScriptFromJar(jar: File): List<String> {
     val r = run {
         val process = processBuilder.start()
         process.waitFor(10, TimeUnit.SECONDS)
-        val out = process.inputStream.reader().readText()
+        val out = process.inputStream.reader().use { it.readText() }
         if (process.isAlive) {
             process.destroyForcibly()
             "Error: timeout, killing script process\n$out"
@@ -942,9 +934,7 @@ private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOu
     assertEquals(expectedOutput, output)
 }
 
-private fun makeScriptingHost(): BasicJvmScriptingHost =
-    if (isRunningTestOnK2) BasicJvmScriptingHost()
-    else BasicJvmScriptingHost.createLegacy()
+private fun makeScriptingHost(): BasicJvmScriptingHost = BasicJvmScriptingHost()
 
 internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTestImport() {
     updateClasspath(classpathFromClass<ScriptingHostTest>()) // the lambda below should be in the classpath

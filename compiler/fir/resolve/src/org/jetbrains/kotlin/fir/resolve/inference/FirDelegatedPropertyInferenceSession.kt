@@ -104,7 +104,7 @@ class FirDelegatedPropertyInferenceSession(
         }
     }
 
-    private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
+    private fun <T> T.isProvideDelegate(): Boolean where T : FirResolvable, T : FirStatement =
         isAnyOfDelegateOperators() && (this as FirResolvable).candidate()?.callInfo?.name == OperatorNameConventions.PROVIDE_DELEGATE
 
     fun completeSessionOrPostponeIfNonRoot(onCompletionResultsWriting: (ConeSubstitutor) -> Unit) {

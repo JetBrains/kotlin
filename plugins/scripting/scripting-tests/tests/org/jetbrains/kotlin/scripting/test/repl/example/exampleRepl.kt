@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal.WhatNextAfterOneLine
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
-import org.jetbrains.kotlin.scripting.test.testScriptDefinitionClasspath
+import org.jetbrains.kotlin.scripting.test.definitions.testScriptDefinitionClasspath
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import java.io.File
 import kotlin.script.experimental.api.*

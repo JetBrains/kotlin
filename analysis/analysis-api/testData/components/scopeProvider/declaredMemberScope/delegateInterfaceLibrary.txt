@@ -77,6 +77,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: getP
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -116,8 +117,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
-  javaGetterName: getP
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -200,6 +199,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: getBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -341,6 +341,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: setBar
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -352,8 +353,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
-  javaGetterName: getBar
-  javaSetterName: setBar
   isInline: false
   importableFqName: null
 
@@ -467,6 +466,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: getDoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -537,8 +537,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
-  javaGetterName: getDoo
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -587,6 +585,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -668,6 +667,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: getFoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -707,8 +707,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
-  javaGetterName: getFoo
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -822,6 +820,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: getZoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1025,6 +1024,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecation: null
+    javaMethodName: setZoo
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1036,8 +1036,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
-  javaGetterName: getZoo
-  javaSetterName: setZoo
   isInline: false
   importableFqName: null
 
@@ -1117,6 +1115,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: smth
   importableFqName: null
 
 KaConstructorSymbol:
@@ -1189,4 +1188,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
+  javaMethodName: null
   importableFqName: I

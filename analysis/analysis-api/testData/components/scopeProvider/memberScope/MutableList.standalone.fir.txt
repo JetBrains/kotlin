@@ -88,6 +88,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: add
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -215,6 +216,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: add
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -307,6 +309,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: remove
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -404,6 +407,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: addAll
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -539,6 +543,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: addAll
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -636,6 +641,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: removeAll
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -733,6 +739,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: retainAll
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -784,6 +791,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: clear
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -913,6 +921,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: set
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1005,6 +1014,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: removeAt
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1060,6 +1070,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listIterator
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1154,6 +1165,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listIterator
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1286,6 +1298,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: subList
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -1335,6 +1348,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.collections.MutableList
     getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecation: null
+    javaMethodName: getSize
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1378,8 +1392,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.collections.MutableList
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
-  javaGetterName: getSize
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -1432,6 +1444,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: isEmpty
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1521,6 +1534,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: contains
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1576,6 +1590,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: iterator
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1670,6 +1685,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: containsAll
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1759,6 +1775,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: get
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1848,6 +1865,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: indexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1937,6 +1955,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: lastIndexOf
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2023,6 +2042,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2070,6 +2090,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2117,6 +2138,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2167,6 +2189,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
+  javaMethodName: getFirst
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2217,4 +2240,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
+  javaMethodName: getLast
   importableFqName: null

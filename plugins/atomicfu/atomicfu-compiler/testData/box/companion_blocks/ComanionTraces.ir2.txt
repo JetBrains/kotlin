@@ -1,0 +1,83 @@
+FILE fqName:<root> fileName:/ComanionTraces.kt
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG value: CONST Int type=kotlin.Int value=42
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  CLASS CLASS name:TraceTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TraceTest
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1 visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:a1 type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG value: CONST Int type=kotlin.Int value=5
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a1> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1 visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a1> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.TraceTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a1 type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>.TraceTest' type=java.util.concurrent.atomic.AtomicInteger origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.TraceTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TraceTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:testCompanionTrace visibility:public modality:FINAL returnType:kotlin.Unit [companion]
+      BLOCK_BODY
+        VAR name:oldValue type:kotlin.Int [val]
+          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a1> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.TraceTest' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        VAR name:res type:kotlin.Boolean [val]
+          CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-a1> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.TraceTest' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG expect: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testCompanionTrace' type=kotlin.Int origin=null
+            ARG update: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+              ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testCompanionTrace' type=kotlin.Int origin=null
+              ARG other: CONST Int type=kotlin.Int value=10
+        VAR name:newValue type:kotlin.Int [val]
+          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a1> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.TraceTest' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'private final fun test (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:test visibility:private modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun testCompanionTrace (): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
+      CALL 'public final fun testExtensionTrace (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+  FUN name:testExtensionTrace visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:oldValue type:kotlin.Int [val]
+        TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      VAR name:res type:kotlin.Boolean [val]
+        CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Boolean origin=null
+          ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG expect: GET_VAR 'val oldValue: kotlin.Int declared in <root>.testExtensionTrace' type=kotlin.Int origin=null
+          ARG update: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+            ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.testExtensionTrace' type=kotlin.Int origin=null
+            ARG other: CONST Int type=kotlin.Int value=10
+      VAR name:newValue type:kotlin.Int [val]
+        TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null

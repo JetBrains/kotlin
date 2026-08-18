@@ -3,7 +3,7 @@ plugins {
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":core:descriptors.jvm"))
     compileOnly(intellijCore())
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:ir.backend.common")))
 }
 

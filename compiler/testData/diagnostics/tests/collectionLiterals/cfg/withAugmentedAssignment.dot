@@ -30,88 +30,95 @@ digraph withAugmentedAssignment_kt {
 
     subgraph cluster_3 {
         color=red
-        7 [label="Enter class Companion" style="filled" fillcolor=red];
+        7 [label="Enter function of" style="filled" fillcolor=red];
         subgraph cluster_4 {
             color=blue
-            8 [label="Enter function <init>" style="filled" fillcolor=red];
-            9 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            10 [label="Exit function <init>" style="filled" fillcolor=red];
+            8 [label="Enter block"];
+            subgraph cluster_5 {
+                color=blue
+                9 [label="Function call arguments enter"];
+                10 [label="Function call arguments exit"];
+            }
+            11 [label="Function call enter: R|/A.A|()"];
+            12 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+            13 [label="Jump: ^of R|/A.A|()"];
+            14 [label="Stub" style="filled" fillcolor=gray];
+            15 [label="Exit block" style="filled" fillcolor=gray];
         }
-        11 [label="Exit class Companion" style="filled" fillcolor=red];
+        16 [label="Exit function of" style="filled" fillcolor=red];
     }
-    7 -> {8} [color=green];
-    7 -> {11} [style=dotted];
-    7 -> {8} [style=dashed];
+    7 -> {8};
     8 -> {9};
     9 -> {10};
-    10 -> {11} [color=green];
-
-    subgraph cluster_5 {
-        color=red
-        12 [label="Enter function of" style="filled" fillcolor=red];
-        subgraph cluster_6 {
-            color=blue
-            13 [label="Enter block"];
-            subgraph cluster_7 {
-                color=blue
-                14 [label="Function call arguments enter"];
-                15 [label="Function call arguments exit"];
-            }
-            16 [label="Function call enter: R|/A.A|()"];
-            17 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
-            18 [label="Jump: ^of R|/A.A|()"];
-            19 [label="Stub" style="filled" fillcolor=gray];
-            20 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        21 [label="Exit function of" style="filled" fillcolor=red];
-    }
+    10 -> {11};
+    11 -> {12};
     12 -> {13};
-    13 -> {14};
-    14 -> {15};
-    15 -> {16};
-    16 -> {17};
+    13 -> {16};
+    13 -> {14} [style=dotted];
+    14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
+
+    subgraph cluster_6 {
+        color=red
+        17 [label="Enter function plusAssign" style="filled" fillcolor=red];
+        subgraph cluster_7 {
+            color=blue
+            18 [label="Enter block"];
+            19 [label="Exit block"];
+        }
+        20 [label="Exit function plusAssign" style="filled" fillcolor=red];
+    }
     17 -> {18};
-    18 -> {21};
-    18 -> {19} [style=dotted];
-    19 -> {20} [style=dotted];
-    20 -> {21} [style=dotted];
+    18 -> {19};
+    19 -> {20};
 
     subgraph cluster_8 {
         color=red
-        22 [label="Enter function plusAssign" style="filled" fillcolor=red];
+        21 [label="Enter static <static of A>" style="filled" fillcolor=red];
         subgraph cluster_9 {
             color=blue
-            23 [label="Enter block"];
-            24 [label="Exit block"];
+            22 [label="Enter class Companion" style="filled" fillcolor=red];
+            subgraph cluster_10 {
+                color=blue
+                23 [label="Enter function <init>" style="filled" fillcolor=red];
+                24 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                25 [label="Exit function <init>" style="filled" fillcolor=red];
+            }
+            26 [label="Exit class Companion" style="filled" fillcolor=red];
         }
-        25 [label="Exit function plusAssign" style="filled" fillcolor=red];
+        27 [label="Exit static <static of A>" style="filled" fillcolor=red];
     }
-    22 -> {23};
+    21 -> {22} [color=green];
+    21 -> {27} [style=dotted];
+    21 -> {22} [style=dashed];
+    22 -> {23} [color=green];
+    22 -> {26} [style=dotted];
+    22 -> {23} [style=dashed];
     23 -> {24};
     24 -> {25};
+    25 -> {26} [color=green];
+    26 -> {27} [color=green];
 
-    subgraph cluster_10 {
+    subgraph cluster_11 {
         color=red
-        26 [label="Enter function test" style="filled" fillcolor=red];
-        subgraph cluster_11 {
+        28 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_12 {
             color=blue
-            27 [label="Enter block"];
-            28 [label="Access variable R|<local>/a|"];
-            subgraph cluster_12 {
+            29 [label="Enter block"];
+            30 [label="Access variable R|<local>/a|"];
+            subgraph cluster_13 {
                 color=blue
-                29 [label="Function call arguments enter"];
-                30 [label="Function call arguments exit"];
+                31 [label="Function call arguments enter"];
+                32 [label="Function call arguments exit"];
             }
-            31 [label="Function call enter: Q|A.Companion|.R|/A.Companion.of|()"];
-            32 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
-            33 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
-            34 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
-            35 [label="Exit block"];
+            33 [label="Function call enter: Q|A.Companion|.R|/A.Companion.of|()"];
+            34 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
+            35 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
+            36 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
+            37 [label="Exit block"];
         }
-        36 [label="Exit function test" style="filled" fillcolor=red];
+        38 [label="Exit function test" style="filled" fillcolor=red];
     }
-    26 -> {27};
-    27 -> {28};
     28 -> {29};
     29 -> {30};
     30 -> {31};
@@ -120,29 +127,29 @@ digraph withAugmentedAssignment_kt {
     33 -> {34};
     34 -> {35};
     35 -> {36};
-
-    subgraph cluster_13 {
-        color=red
-        37 [label="Enter function ref" style="filled" fillcolor=red];
-        subgraph cluster_14 {
-            color=blue
-            38 [label="Enter block"];
-            39 [label="Access variable R|<local>/a|"];
-            subgraph cluster_15 {
-                color=blue
-                40 [label="Function call arguments enter"];
-                41 [label="Function call arguments exit"];
-            }
-            42 [label="Function call enter: Q|A.Companion|.R|/A.Companion.of|()"];
-            43 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
-            44 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
-            45 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
-            46 [label="Exit block"];
-        }
-        47 [label="Exit function ref" style="filled" fillcolor=red];
-    }
+    36 -> {37};
     37 -> {38};
-    38 -> {39};
+
+    subgraph cluster_14 {
+        color=red
+        39 [label="Enter function ref" style="filled" fillcolor=red];
+        subgraph cluster_15 {
+            color=blue
+            40 [label="Enter block"];
+            41 [label="Access variable R|<local>/a|"];
+            subgraph cluster_16 {
+                color=blue
+                42 [label="Function call arguments enter"];
+                43 [label="Function call arguments exit"];
+            }
+            44 [label="Function call enter: Q|A.Companion|.R|/A.Companion.of|()"];
+            45 [label="Function call exit: Q|A.Companion|.R|/A.Companion.of|()" style="filled" fillcolor=yellow];
+            46 [label="Function call enter: R|<local>/a|.R|/A.plusAssign|(...)"];
+            47 [label="Function call exit: R|<local>/a|.R|/A.plusAssign|(...)" style="filled" fillcolor=yellow];
+            48 [label="Exit block"];
+        }
+        49 [label="Exit function ref" style="filled" fillcolor=red];
+    }
     39 -> {40};
     40 -> {41};
     41 -> {42};
@@ -151,5 +158,7 @@ digraph withAugmentedAssignment_kt {
     44 -> {45};
     45 -> {46};
     46 -> {47};
+    47 -> {48};
+    48 -> {49};
 
 }

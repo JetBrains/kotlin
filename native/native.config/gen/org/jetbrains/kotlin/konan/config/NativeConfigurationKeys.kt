@@ -29,9 +29,6 @@ object NativeConfigurationKeys {
     val DEBUG = CompilerConfigurationKey.create<Boolean>("DEBUG")
 
     @JvmField
-    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("FAKE_OVERRIDE_VALIDATOR")
-
-    @JvmField
     val EMIT_LAZY_OBJC_HEADER_FILE = CompilerConfigurationKey.create<String>("EMIT_LAZY_OBJC_HEADER_FILE")
 
     @JvmField
@@ -171,9 +168,6 @@ object NativeConfigurationKeys {
     val KONAN_PRODUCED_ARTIFACT_KIND = CompilerConfigurationKey.create<CompilerOutputKind>("KONAN_PRODUCED_ARTIFACT_KIND")
 
     @JvmField
-    val KONAN_PURGE_USER_LIBS = CompilerConfigurationKey.create<Boolean>("KONAN_PURGE_USER_LIBS")
-
-    @JvmField
     val RUNTIME_FILE = CompilerConfigurationKey.create<String>("RUNTIME_FILE")
 
     // Klibs processed in the same manner as source files.
@@ -287,10 +281,6 @@ var CompilerConfiguration.checkDependencies: Boolean
 var CompilerConfiguration.debug: Boolean
     get() = getBoolean(NativeConfigurationKeys.DEBUG)
     set(value) { put(NativeConfigurationKeys.DEBUG, value) }
-
-var CompilerConfiguration.fakeOverrideValidator: Boolean
-    get() = getBoolean(NativeConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)
-    set(value) { put(NativeConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, value) }
 
 var CompilerConfiguration.emitLazyObjcHeaderFile: String?
     get() = get(NativeConfigurationKeys.EMIT_LAZY_OBJC_HEADER_FILE)
@@ -455,10 +445,6 @@ var CompilerConfiguration.konanPrintFiles: Boolean
 var CompilerConfiguration.konanProducedArtifactKind: CompilerOutputKind?
     get() = get(NativeConfigurationKeys.KONAN_PRODUCED_ARTIFACT_KIND)
     set(value) { put(NativeConfigurationKeys.KONAN_PRODUCED_ARTIFACT_KIND, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.konanPurgeUserLibs: Boolean
-    get() = getBoolean(NativeConfigurationKeys.KONAN_PURGE_USER_LIBS)
-    set(value) { put(NativeConfigurationKeys.KONAN_PURGE_USER_LIBS, value) }
 
 var CompilerConfiguration.runtimeFile: String?
     get() = get(NativeConfigurationKeys.RUNTIME_FILE)

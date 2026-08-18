@@ -118,23 +118,29 @@ fun C(items: List<String>, %composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%1463567948: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "invalid source info at 1: 'CN(item)12@440L7,13@468L16:Test.kt'")
-    val %dirty = %changed
-    if (%changed and 0b0110 == 0) {
-      %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
-    }
-    if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %dirty, -1, <>)
+  val lambda%1463567948: Function3<String, Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "invalid source info at 1: 'CN(item)12@440L7,13@468L16:Test.kt'")
+          val %dirty = %changed
+          if (%changed and 0b0110 == 0) {
+            %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
+          }
+          if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            A(item, %composer, 0b1110 and %dirty)
+            A(Wrapper(item), %composer, Wrapper.%stable)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      A(item, %composer, 0b1110 and %dirty)
-      A(Wrapper(item), %composer, Wrapper.%stable)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
 }

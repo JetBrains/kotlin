@@ -1,6 +1,7 @@
 KtNameReferenceExpression(137,152): 'MyRestrictedApi'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyRestrictedApi

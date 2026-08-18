@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
@@ -58,6 +54,9 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
+        // We can deserialize only functions from other modules
+        if (function.getPackageFragment() !is IrExternalPackageFragment) return null
+
         val deserializedContainerSource = function.containerSource
         check(deserializedContainerSource is KlibDeserializedContainerSource) {
             "Cannot deserialize inline function from a non-Kotlin library: ${function.render()}\nFunction source: " +
@@ -71,14 +70,17 @@ class NonLinkingIrInlineFunctionDeserializer(
                     inlinableFunctionsIr = inlinableFunctionsIr,
                     detachedSymbolTable = detachedSymbolTable,
                     irInterner = irInterner,
-                    irBuiltIns = irBuiltIns,
+                    irFactory = irBuiltIns.irFactory,
+                    anyNType = irBuiltIns.anyNType,
+                    unitType = irBuiltIns.unitType,
+                    nothingType = irBuiltIns.nothingType,
                 )
             }
         } ?: return null
 
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
         // Inside the module deserializer "functionSignature" will be mapped to erased copy of inline function and this copy will be returned.
-        val originalFunctionModule = modules.getOrPut(library) { IrModuleFragmentImpl(function.module) }
+        val originalFunctionModule = modules.getOrPut(library) { function.moduleFragment }
         val deserializedFunction: IrSimpleFunction =
             moduleDeserializer.deserializeInlineFunction(functionSignature, function.getPackageFragment(), originalFunctionModule)
                 ?: return null
@@ -90,7 +92,10 @@ class NonLinkingIrInlineFunctionDeserializer(
         inlinableFunctionsIr: KlibIrComponent,
         detachedSymbolTable: SymbolTable,
         private val irInterner: IrInterningService,
-        irBuiltIns: IrBuiltIns,
+        irFactory: IrFactory,
+        anyNType: IrType,
+        unitType: IrType,
+        nothingType: IrType,
     ) {
         private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(inlinableFunctionsIr, 0))
 
@@ -107,7 +112,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             },
             symbol = IrFileSymbolImpl(),
             packageFqName = FqName("<uninitialized>"),
-            module = IrModuleFragmentImpl(ErrorModuleDescriptor)
+            module = IrErrorModuleFragment
         ).symbol
 
         private val symbolDeserializer = IrSymbolDeserializer(
@@ -128,15 +133,15 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         private val fileEntryDeserializer = FileEntryDeserializer(irInterner)
         private val declarationDeserializer = IrDeclarationDeserializer(
-            unitType = irBuiltIns.unitType,
-            nothingType = irBuiltIns.nothingType,
+            unitType = unitType,
+            nothingType = nothingType,
             symbolTable = detachedSymbolTable,
-            irFactory = irBuiltIns.irFactory,
+            irFactory = irFactory,
             libraryFile = fileReader,
             parent = dummyFileSymbol.owner,
             settings = IrDeserializationSettings(
                 deserializeFunctionBodies = DeserializeFunctionBodies.ONLY_INLINE,
-                nullableAnyAsAnnotationConstructorCallType = irBuiltIns.anyNType,
+                nullableAnyAsAnnotationConstructorCallType = anyNType,
             ),
             symbolDeserializer = symbolDeserializer,
             onDeserializedClass = { _, _ -> },

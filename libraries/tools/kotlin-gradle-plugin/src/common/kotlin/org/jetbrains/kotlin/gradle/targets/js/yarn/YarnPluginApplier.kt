@@ -122,15 +122,6 @@ internal class YarnPluginApplier(
             nodeJs.env
         ).disallowChanges()
 
-        @Suppress("DEPRECATION_ERROR")
-        project.tasks.register(
-            platformDisambiguate.extensionName(
-                "yarn" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
-                prefix = null
-            ),
-            org.jetbrains.kotlin.gradle.tasks.CleanDataTask::class.java
-        ) {}
-
         yarnRootExtension.lockFileDirectoryProperty.convention(
             project.objects.directoryProperty().fileValue(lockFileDirectory(project.rootDir))
         )

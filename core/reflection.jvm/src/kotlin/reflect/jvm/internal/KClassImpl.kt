@@ -419,6 +419,7 @@ internal class KClassImpl<T : Any>(
             result as List<KClass<out T>>
         }
 
+        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
         internal val inlineClassUnderlyingType: KType? by lazy(PUBLICATION) {
             val kmClass = kmClass
             when {
@@ -429,7 +430,8 @@ internal class KClassImpl<T : Any>(
                 else -> {
                     val underlyingProperty = kmClass.properties.single {
                         it.name == kmClass.inlineClassUnderlyingPropertyName &&
-                                it.contextParameters.isEmpty() && it.receiverParameterType == null
+                                it.contextParameters.isEmpty() && it.receiverParameterType == null &&
+                                !it.isStatic
                     }
                     underlyingProperty.returnType.toKType(jClass.safeClassLoader, typeParameterTable)
                 }
@@ -439,6 +441,7 @@ internal class KClassImpl<T : Any>(
         // TODO: KT-85727 Reflection: support collections and their subclasses in the new implementation
         val isComplicatedBuiltinSubclass: Boolean by lazy(PUBLICATION) {
             Iterable::class.java.isAssignableFrom(jClass) ||
+                    Iterator::class.java.isAssignableFrom(jClass) ||
                     Map::class.java.isAssignableFrom(jClass) ||
                     CharSequence::class.java.isAssignableFrom(jClass) ||
                     Number::class.java.isAssignableFrom(jClass)
@@ -454,6 +457,8 @@ internal class KClassImpl<T : Any>(
 
         private val fakeOverrideMembersByName: ConcurrentHashMap<String, MembersJavaSignatureMap>
                 by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        val additionalFunctions: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::getAdditionalFunctions)
 
         fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> =
             declaredMembersByName.getOrPut(name) { computeDeclaredMembersByName(name) }
@@ -601,7 +606,8 @@ internal class KClassImpl<T : Any>(
         get() = kmClass?.isFunInterface == true
 
     override val isValue: Boolean
-        get() = kmClass?.isValue == true
+        get() = kmClass?.isValue
+            ?: (!jClass.isInterface && !jClass.isAnnotation && !jClass.isEnum && ValhallaValueClassLoader.loadIsValue(jClass))
 
     internal val isJvmInlineValue: Boolean
         get() = isValue && inlineClassUnderlyingPropertyName != null

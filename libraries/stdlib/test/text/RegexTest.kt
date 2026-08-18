@@ -335,7 +335,7 @@ class RegexTest {
         val regex = "(\\d)(\\w)".toRegex()
 
         assertNull(regex.matchEntire("1a 2b"))
-        assertNotNull(regex.matchEntire("3c")) { m ->
+        assertNotNull(regex.matchEntire("3c")).let { m ->
             assertEquals("3c", m.value)
             assertEquals(3, m.groups.size)
             assertEquals(listOf("3c", "3", "c"), m.groups.map { it!!.value })

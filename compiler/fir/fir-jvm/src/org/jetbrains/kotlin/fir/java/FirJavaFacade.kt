@@ -9,6 +9,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.JavaPsiRecordUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -203,6 +204,10 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 
             if (javaClass.isRecord) {
                 this.isJavaRecord = true
+            }
+
+            if (session.languageVersionSettings.isValhallaSupportEnabled() && javaClass.isValue) {
+                this.isJavaValueClass = true
             }
 
             if (javaClass is VirtualFileBoundJavaClass) {
@@ -499,28 +504,31 @@ private fun convertJavaFieldToFir(
     val returnType = javaField.type
     val fakeSource = javaField.toSourceElement()?.fakeElement(KtFakeSourceElementKind.Enhancement)
     return when {
-        javaField.isEnumEntry -> buildEnumEntry {
-            source = javaField.toSourceElement()
-            this.moduleData = moduleData
-            symbol = FirEnumEntrySymbol(fieldId)
-            name = fieldName
-            status = FirResolvedDeclarationStatusImpl(
-                javaField.visibility,
-                javaField.modality,
-                javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
-            ).apply {
-                isStatic = javaField.isStatic
+        javaField.isEnumEntry -> {
+            // Deferred to avoid re-entering the in-flight ClassId while FirJavaClass.declarations is materialized (KT-74097).
+            val lazyAnnotations = FirLazyJavaAnnotationList(javaField, moduleData)
+            buildEnumEntry {
+                source = javaField.toSourceElement()
+                this.moduleData = moduleData
+                symbol = FirEnumEntrySymbol(fieldId)
+                name = fieldName
+                status = FirResolvedDeclarationStatusImpl(
+                    javaField.visibility,
+                    javaField.modality,
+                    javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
+                ).apply {
+                    isStatic = javaField.isStatic
+                }
+                isLocal = false
+                returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
+                    .resolveIfJavaType(session, javaTypeParameterStack, fakeSource, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                origin = javaOrigin(javaField.isFromSource)
+                deprecationsProvider = FirJavaLazyDeprecationsProvider(lazyAnnotations, session)
+            }.apply {
+                replaceAnnotations(lazyAnnotations)
+                containingClassForStaticMemberAttr = classId.toLookupTag()
             }
-            isLocal = false
-            returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
-                .resolveIfJavaType(session, javaTypeParameterStack, fakeSource, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            origin = javaOrigin(javaField.isFromSource)
-        }.apply {
-            containingClassForStaticMemberAttr = classId.toLookupTag()
-            // TODO: check if this works properly with annotations that take the enum class as an argument
-            setAnnotationsFromJava(session, fakeSource, javaField)
-            replaceDeprecationsProvider(annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true))
         }
         else -> buildJavaField {
             this.containingClassSymbol = containingClassSymbol
@@ -734,7 +742,7 @@ private fun isCanonicalRecordConstructorForSource(constructor: JavaConstructor, 
     return params.zip(components).all { [param, component] -> param.name == component.name }
 }
 
-private fun FqName.topLevelName() = asString().substringBefore(".")
+private fun FqName.topLevelName(): String = asString().substringBefore(".")
 
 internal fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
     return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)

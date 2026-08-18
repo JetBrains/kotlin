@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreAudioTypes CoreFoundation CoreFoundationBase C
 language = Objective-C
 package = platform.AudioToolbox
 modules = AudioToolbox AudioUnit
+apiNotesSwiftName = true
 
 compilerOpts = -framework AudioToolbox
 linkerOpts = -framework AudioToolbox

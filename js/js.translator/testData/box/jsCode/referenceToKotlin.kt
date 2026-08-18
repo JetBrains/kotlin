@@ -1,3 +1,5 @@
+// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization
+// LANGUAGE: -IrCrossModuleInlinerBeforeKlibSerialization
 // KJS_WITH_FULL_RUNTIME
 external fun p(m: String): String
 

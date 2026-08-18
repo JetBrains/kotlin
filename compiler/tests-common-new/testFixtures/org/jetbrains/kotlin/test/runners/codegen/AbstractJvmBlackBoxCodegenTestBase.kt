@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -15,14 +14,14 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
 import org.jetbrains.kotlin.test.services.jvm.JdkKindBoxTestChecker
 import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.testFederation.AffectedByJvm
 
-abstract class AbstractJvmBlackBoxCodegenTestBase(
-    val parser: FirParser,
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+@AffectedByJvm
+abstract class AbstractJvmBlackBoxCodegenTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         setupJvmPipelineSteps(parser)

@@ -5,6 +5,14 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.config.ValhallaSupportMode.ALL_VALUES
+import org.jetbrains.kotlin.config.ValhallaSupportMode.NONE
+import org.jetbrains.kotlin.config.ValhallaSupportMode.PRIMITIVES
+import org.jetbrains.kotlin.config.ValhallaSupportMode.PRIMITIVES_AND_FULL_VALUE_CLASSES
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
+
 /**
  * Controls that declarations are compiled to and behave as Project Valhalla value classes, selected via `-Xvalhalla-support`.
  *
@@ -30,6 +38,23 @@ enum class ValhallaSupportMode(val description: String) {
         @JvmStatic
         fun fromStringOrNull(string: String?): ValhallaSupportMode? = entries.find { it.description == string }
     }
+}
+
+fun ValueClassRepresentation<*>?.isKotlinValhallaValueClass(languageVersionSettings: LanguageVersionSettings): Boolean = when (this) {
+    is InlineClassRepresentation<*> -> when (languageVersionSettings.valhallaSupportMode) {
+        NONE, PRIMITIVES, PRIMITIVES_AND_FULL_VALUE_CLASSES, null -> false
+        ALL_VALUES -> true
+    }
+    is FullValueClassRepresentation<*> -> when (languageVersionSettings.valhallaSupportMode) {
+        NONE, PRIMITIVES, null -> false
+        PRIMITIVES_AND_FULL_VALUE_CLASSES, ALL_VALUES -> true
+    }
+    null -> false
+}
+
+fun LanguageVersionSettings.isValhallaSupportEnabled(): Boolean = when (valhallaSupportMode) {
+    NONE, null -> false
+    else -> true
 }
 
 val LanguageVersionSettings.valhallaSupportMode: ValhallaSupportMode?

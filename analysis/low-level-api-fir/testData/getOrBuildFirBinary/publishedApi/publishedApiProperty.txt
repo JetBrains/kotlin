@@ -1,6 +1,7 @@
 KT element: KtProperty
 KT element text:
-@kotlin.PublishedApi internal val published: kotlin.String /* compiled code */
+@kotlin.PublishedApi
+internal val published: kotlin.String /* compiled code */
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

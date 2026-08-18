@@ -4,12 +4,16 @@
 package org.jetbrains.kotlin.testFederation
 
 enum class Domain {
-    Compiler,
+    CompilerInfrastructure,
+    Frontend,
+    CommonBackend,
+    Jvm,
     Wasm,
     Js,
     Native,
     CoreLibs,
     AnalysisApi,
+    BuildToolsApi,
     SwiftExport,
     CompilerPlugins,
     Gradle,

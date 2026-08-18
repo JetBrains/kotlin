@@ -1,0 +1,2 @@
+@kotlin.jvm.JvmName(name = "a b c")
+fun foo()

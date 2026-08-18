@@ -64,3 +64,4 @@
 
 # Other
 -dontwarn java.lang.invoke.MethodHandle
+-dontwarn kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt # Warning: ...: can't find referenced class kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt

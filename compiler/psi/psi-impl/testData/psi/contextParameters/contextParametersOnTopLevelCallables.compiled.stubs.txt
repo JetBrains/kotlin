@@ -38,6 +38,12 @@ ContextParametersOnTopLevelCallablesKt.class:
     PROPERTY[fqName=property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
       origin: Facade(className=ContextParametersOnTopLevelCallablesKt, jvmClassName=null)
       MODIFIER_LIST[public]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+          valueArguments: [ ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=MyAnnotation]
         CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -47,12 +53,6 @@ ContextParametersOnTopLevelCallablesKt.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-          valueArguments: [ ]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
@@ -69,6 +69,12 @@ ContextParametersOnTopLevelCallablesKt.class:
     PROPERTY[fqName=propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
       origin: Facade(className=ContextParametersOnTopLevelCallablesKt, jvmClassName=null)
       MODIFIER_LIST[public]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+          valueArguments: [ ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=MyAnnotation]
         CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -78,12 +84,6 @@ ContextParametersOnTopLevelCallablesKt.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-          valueArguments: [ ]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
@@ -109,6 +109,12 @@ ContextParametersOnTopLevelCallablesKt.class:
     FUN[fqName=function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
       origin: Facade(className=ContextParametersOnTopLevelCallablesKt, jvmClassName=null)
       MODIFIER_LIST[public]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+          valueArguments: [ ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=MyAnnotation]
         CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -118,12 +124,6 @@ ContextParametersOnTopLevelCallablesKt.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-          valueArguments: [ ]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE

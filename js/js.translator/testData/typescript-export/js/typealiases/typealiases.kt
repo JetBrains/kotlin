@@ -20,6 +20,9 @@ open class SomeClass(val value: String)
 @JsExport
 class GenericClass<T>(val value: T) {
   inner class Inner<S>
+
+  @JsExport.Ignore
+  typealias IgnoredOne  = SomeClass
 }
 
 @JsExport

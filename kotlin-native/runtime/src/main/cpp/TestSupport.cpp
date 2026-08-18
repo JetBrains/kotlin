@@ -6,15 +6,15 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "AllocatorTestSupport.hpp"
+#include "alloc/AllocatorTestSupport.hpp"
 #include "ExternalRCRef.hpp"
-#include "GC.hpp"
-#include "GlobalData.hpp"
-#include "GlobalsRegistry.hpp"
-#include "ObjectOps.hpp"
+#include "gc/GC.hpp"
+#include "mm/GlobalData.hpp"
+#include "mm/GlobalsRegistry.hpp"
+#include "mm/ObjectOps.hpp"
 #include "TestSupport.hpp"
-#include "ThreadData.hpp"
-#include "ThreadState.hpp"
+#include "mm/ThreadData.hpp"
+#include "mm/ThreadState.hpp"
 #include "ObjectTestSupport.hpp"
 
 using namespace kotlin;

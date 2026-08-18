@@ -66,11 +66,14 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (declaration.classKind != ClassKind.CLASS || !declaration.symbol.isInlineOrValue) {
+        if (!declaration.symbol.isInlineOrValue) {
+            return
+        }
+        val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
+        if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && supportsFullValueClasses)) {
             return
         }
 
-        val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
         val valueModifierPrefix = if (supportsFullValueClasses) "@JvmInline value" else "Value"
         val isFullValueClass = declaration.symbol.isFullValueClass
 
@@ -89,11 +92,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 valueModifierPrefix,
             )
         }
-
-        if (declaration.contextParameters.isNotEmpty() && LanguageFeature.ContextReceivers.isEnabled()) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS)
-        }
-
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
@@ -215,9 +213,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             isFullValueClass -> "final value"
             else -> "@JvmInline value"
         }
-        if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
+        if (declaration.classKind == ClassKind.OBJECT) {
+            // A value object has no primary constructor, and nothing is required from it.
+        } else if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
             if (isFullValueClass) {
-                if (primaryConstructorParametersByName.isEmpty() && (!isFullValueClass || declaration.isFinal)) {
+                if (primaryConstructorParametersByName.isEmpty() && declaration.isFinal) {
                     reporter.reportOn(
                         primaryConstructor.source,
                         FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR,
@@ -335,7 +335,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
     }
 
-    private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?) =
+    private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?): Boolean =
         name == parameter?.name && source?.kind is KtFakeSourceElementKind
 
     private fun FirValueParameterSymbol.isNotFinalReadOnly(primaryConstructorProperty: FirPropertySymbol?): Boolean {

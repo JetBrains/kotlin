@@ -47,4 +47,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib-jvm-minimal-for-test"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: clone
   importableFqName: null

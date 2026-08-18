@@ -1,0 +1,48 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] callInitializers.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun compute(): R|kotlin/Int| {
+        ^compute Int(0)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun sum([ResolvedTo(BODY_RESOLVE)] left: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] right: R|kotlin/Int|): R|kotlin/Int| {
+        ^sum R|<local>/left|.R|kotlin/Int.plus|(R|<local>/right|)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val call: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val callWithArguments: R|kotlin/Int| = R|/sum|(Int(1), Int(2))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val callWithNamedArguments: R|kotlin/Int| = R|/sum|(Int(3), Int(4))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val nestedCall: R|kotlin/Int| = R|/sum|(R|/compute|(), R|/sum|(Int(5), Int(6)))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val qualifiedCall: R|kotlin/String| = Int(7).R|kotlin/Int.toString|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] val parenthesizedCall: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val doublyParenthesizedCall: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val callWithParenthesizedArguments: R|kotlin/Int| = R|/sum|(Int(11), Int(12))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val inferredCall: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] fun expressionBodyCall(): R|kotlin/Int| {
+        ^expressionBodyCall R|/compute|()
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun inferredExpressionBodyCall(): R|kotlin/Int| {
+        ^inferredExpressionBodyCall R|/sum|(R|/compute|(), Int(8))
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun expressionBodyParenthesizedCall(): R|kotlin/Int| {
+        ^expressionBodyParenthesizedCall R|/compute|()
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val getterCall: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ R|/compute|()
+        }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withCallDefault([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] class WithConstructorCallDefault : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructorCallDefault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithConstructorCallDefault.value] value: R|kotlin/Int| = R|/sum|(Int(9), Int(10))): R|WithConstructorCallDefault| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructorCallDefault] get(): R|kotlin/Int|
+
+    }

@@ -239,6 +239,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithParameterKt]]
                     REFERENCE_EXPRESSION[referencedName=Bar]
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
+                    OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
@@ -331,6 +334,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithParameterKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

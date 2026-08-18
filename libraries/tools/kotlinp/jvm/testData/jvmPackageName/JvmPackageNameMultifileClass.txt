@@ -1,0 +1,98 @@
+// j1/K1.class
+// ------------------------------------------
+multi-file class {
+  // j1/K1__K1_AKt
+  // j1/K1__K1_BKt
+  // j1/K1__K1_CKt
+}
+// j1/K1__K1_AKt.class
+// ------------------------------------------
+package {
+  // facade: j1/K1
+
+  // signature: f1()V
+  public final fun f1(): kotlin/Unit
+
+  // module name: test-module
+}
+// j1/K1__K1_BKt.class
+// ------------------------------------------
+package {
+  // facade: j1/K1
+
+  // field: v2:Lkotlin/Unit;
+  // getter: getV2()Lkotlin/Unit;
+  public final val v2: kotlin/Unit
+    public final get
+
+  // module name: test-module
+}
+// j1/K1__K1_CKt.class
+// ------------------------------------------
+package {
+  // facade: j1/K1
+
+  public typealias T3 = kotlin/collections/List<kotlin/String> /* = kotlin/collections/List<kotlin/String> */
+
+  // module name: test-module
+}
+// j2/K2.class
+// ------------------------------------------
+multi-file class {
+  // j2/K2__K2_AKt
+}
+// j3/K2.class
+// ------------------------------------------
+multi-file class {
+  // j3/K2__K2_BKt
+}
+// k2/K2.class
+// ------------------------------------------
+multi-file class {
+  // k2/K2__K2_CKt
+}
+// j2/K2__K2_AKt.class
+// ------------------------------------------
+package {
+  // facade: j2/K2
+
+  // signature: f1()V
+  public final fun f1(): kotlin/Unit
+
+  // module name: test-module
+}
+// j3/K2__K2_BKt.class
+// ------------------------------------------
+package {
+  // facade: j3/K2
+
+  // field: v2:Lkotlin/Unit;
+  // getter: getV2()Lkotlin/Unit;
+  public final val v2: kotlin/Unit
+    public final get
+
+  // module name: test-module
+}
+// k2/K2__K2_CKt.class
+// ------------------------------------------
+package {
+  // facade: k2/K2
+
+  public typealias T3 = kotlin/collections/List<kotlin/String> /* = kotlin/collections/List<kotlin/String> */
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package k1 {
+    j1/K1__K1_AKt (j1/K1)
+    j1/K1__K1_BKt (j1/K1)
+    j1/K1__K1_CKt (j1/K1)
+  }
+  package k2 {
+    k2/K2__K2_CKt (k2/K2)
+    j2/K2__K2_AKt (j2/K2)
+    j3/K2__K2_BKt (j3/K2)
+  }
+}

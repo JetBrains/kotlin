@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractLoadCompiledJsKotlinTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+abstract class AbstractLoadCompiledJsKotlinTest : AbstractKotlinCompilerJsTest(TargetBackend.JS_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForJsTest()
 

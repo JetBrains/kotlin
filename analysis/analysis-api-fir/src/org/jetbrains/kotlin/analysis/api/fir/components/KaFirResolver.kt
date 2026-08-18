@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolu
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionQualifierCanBeRemovedImpl
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionUsedImpl
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirEmptySubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -2333,9 +2334,9 @@ internal class KaFirResolver(
     private fun FirCollectionLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
         val firSymbol = arrayOfSymbol.firSymbol
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
-        val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaSubstitutor.Empty(token)
+        val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaFirEmptySubstitutor(token)
 
-        val elementType = resolvedType.arrayElementType() ?: return KaSubstitutor.Empty(token)
+        val elementType = resolvedType.arrayElementType() ?: return KaFirEmptySubstitutor(token)
         val coneSubstitutor = substitutorByMap(mapOf(typeParameter.symbol to elementType), rootModuleSession)
         return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
     }
@@ -2463,7 +2464,6 @@ internal class KaFirResolver(
                 realPsi?.parent as? KtLabeledExpression ?: realPsi as? KtExpression
             is FirWhenSubjectExpression ->
                 // The subject variable is not processed here as we don't have KtExpression to represent it.
-                // K1 creates a fake expression in this case.
                 whenSubject?.findSourceKtExpressionForCallArgument()
             // FirBlock is a fake container for desugared expressions like `++index` or `++list[0]`
             is FirBlock -> psi as? KtExpression

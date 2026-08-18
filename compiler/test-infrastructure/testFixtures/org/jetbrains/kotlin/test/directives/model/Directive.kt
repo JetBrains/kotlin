@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.directives.model
 
-import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.test.util.joinToArrayString
 
 // --------------------------- Directive declaration ---------------------------
 
@@ -107,11 +107,11 @@ class RegisteredDirectivesImpl(
     }
 }
 
-class ComposedRegisteredDirectives(
+class ComposedRegisteredDirectives private constructor(
     private val containers: List<RegisteredDirectives>
 ) : RegisteredDirectives() {
     companion object {
-        operator fun invoke(vararg containers: RegisteredDirectives): RegisteredDirectives {
+        operator fun invoke(containers: Iterable<RegisteredDirectives>): RegisteredDirectives {
             val notEmptyContainers = containers.filterNot { it.isEmpty() }
             return when (notEmptyContainers.size) {
                 0 -> Empty
@@ -119,6 +119,8 @@ class ComposedRegisteredDirectives(
                 else -> ComposedRegisteredDirectives(notEmptyContainers)
             }
         }
+
+        operator fun invoke(vararg containers: RegisteredDirectives): RegisteredDirectives = invoke(containers.asIterable())
     }
 
     override fun contains(directive: Directive): Boolean {

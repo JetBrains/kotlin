@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// WASM_IGNORE_FOR: mode=multi-module
 // WITH_COROUTINES
 // WITH_STDLIB
 // MODULE: lib

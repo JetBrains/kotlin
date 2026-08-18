@@ -224,7 +224,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     }
 }
 
-internal fun CompilerConfiguration.report(
+fun CompilerConfiguration.report(
     severity: ScriptDiagnostic.Severity,
     message: String,
     compilerMessageLocation: CompilerMessageLocation?,

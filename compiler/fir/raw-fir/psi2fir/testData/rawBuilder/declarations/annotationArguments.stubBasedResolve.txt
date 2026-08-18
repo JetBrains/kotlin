@@ -1,126 +1,126 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
-    @<ERROR TYPE REF: Symbol not found for Arrays>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithArrays : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithArrays] constructor(): R|WithArrays| {
+    @R|test/Arrays|[Types](ia = <collectionLiteralCall>(Int(1), Int(2), Int(3)) [evaluated = <collectionLiteralCall>(Int(1), Int(2), Int(3))], la = <collectionLiteralCall>(Long(1)) [evaluated = <collectionLiteralCall>(Long(1))], fa = <collectionLiteralCall>() [evaluated = <collectionLiteralCall>()], da = <collectionLiteralCall>(Double(2.2)) [evaluated = <collectionLiteralCall>(Double(2.2))], ca = <collectionLiteralCall>(Char(a)) [evaluated = <collectionLiteralCall>(Char(a))], ba = <collectionLiteralCall>(Boolean(true), Boolean(false)) [evaluated = <collectionLiteralCall>(Boolean(true), Boolean(false))]) public final [ResolvedTo(BODY_RESOLVE)] class WithArrays : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithArrays] constructor(): R|test/WithArrays| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Arrays>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithExplicitArrays : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithExplicitArrays] constructor(): R|WithExplicitArrays| {
+    @R|test/Arrays|[Types](ia = <collectionLiteralCall>(Int(1), Int(2), Int(3)) [evaluated = <collectionLiteralCall>(Int(1), Int(2), Int(3))], la = <collectionLiteralCall>(Long(1)) [evaluated = <collectionLiteralCall>(Long(1))], fa = <collectionLiteralCall>() [evaluated = <collectionLiteralCall>()], da = <collectionLiteralCall>(Double(2.2)) [evaluated = <collectionLiteralCall>(Double(2.2))], ca = <collectionLiteralCall>(Char(a)) [evaluated = <collectionLiteralCall>(Char(a))], ba = <collectionLiteralCall>(Boolean(true), Boolean(false)) [evaluated = <collectionLiteralCall>(Boolean(true), Boolean(false))]) public final [ResolvedTo(BODY_RESOLVE)] class WithExplicitArrays : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithExplicitArrays] constructor(): R|test/WithExplicitArrays| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for ClassLiteral>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithClassLiteral : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithClassLiteral] constructor(): R|WithClassLiteral| {
+    @R|test/ClassLiteral|[Types](c1 = <getClass>(Q|test/WithClassLiteral|) [evaluated = <getClass>(Q|test/WithClassLiteral|)], c2 = <getClass>(Q|kotlin/Boolean|) [evaluated = <getClass>(Q|kotlin/Boolean|)]) public final [ResolvedTo(BODY_RESOLVE)] class WithClassLiteral : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithClassLiteral] constructor(): R|test/WithClassLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for EnumLiteral>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithEnumLiteral : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumLiteral] constructor(): R|WithEnumLiteral| {
+    @R|test/EnumLiteral|[Types](e1 = R|test/E.E1| [evaluated = R|test/E.E1|], e2 = Q|test/E|.R|test/E.E2| [evaluated = Q|test/E|.R|test/E.E2|], e3 = Q|test/E|.R|test/E.E2| [evaluated = Q|test/E|.R|test/E.E2|]) public final [ResolvedTo(BODY_RESOLVE)] class WithEnumLiteral : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumLiteral] constructor(): R|test/WithEnumLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for VarArg>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class OneVararg : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OneVararg] constructor(): R|OneVararg| {
+    @R|test/VarArg|[Types](v = vararg(Int(1)) [evaluated = vararg(Int(1))]) public final [ResolvedTo(BODY_RESOLVE)] class OneVararg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OneVararg] constructor(): R|test/OneVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for VarArg>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class TwoVararg : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TwoVararg] constructor(): R|TwoVararg| {
+    @R|test/VarArg|[Types](v = vararg(Int(1), Int(2)) [evaluated = vararg(Int(1), Int(2))]) public final [ResolvedTo(BODY_RESOLVE)] class TwoVararg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TwoVararg] constructor(): R|test/TwoVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for VarArg>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class ThreeVararg : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ThreeVararg] constructor(): R|ThreeVararg| {
+    @R|test/VarArg|[Types](v = vararg(Int(1), Int(2), Q|test/VarArg|.R|test/VarArg.Companion.CONSTANT|) [evaluated = vararg(Int(1), Int(2), Int(3))]) public final [ResolvedTo(BODY_RESOLVE)] class ThreeVararg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ThreeVararg] constructor(): R|test/ThreeVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for VarArg>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class SpreadVararg : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SpreadVararg] constructor(): R|SpreadVararg| {
+    @R|test/VarArg|[Types](v = vararg(*<collectionLiteralCall>(Int(1), Int(2), Q|test/VarArg|.R|test/VarArg.Companion.CONSTANT|, Int(4))) [evaluated = vararg(Int(1), Int(2), Int(3), Int(4))]) public final [ResolvedTo(BODY_RESOLVE)] class SpreadVararg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SpreadVararg] constructor(): R|test/SpreadVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Outer>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithNested : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithNested] constructor(): R|WithNested| {
+    @R|test/Outer|[Types](some = String(value) [evaluated = String(value)], nested = R|test/Nested.Nested|(Int(0), String(nested value)) [evaluated = R|test/Nested.Nested|(Int(0), String(nested value))]) public final [ResolvedTo(BODY_RESOLVE)] class WithNested : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithNested] constructor(): R|test/WithNested| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Outer>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithQualifiedNested : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithQualifiedNested] constructor(): R|WithQualifiedNested| {
+    @R|test/Outer|[Types](some = String(value) [evaluated = String(value)], nested = Q|test|.R|test/Nested.Nested|(Int(1), String(nested value)) [evaluated = R|test/Nested.Nested|(Int(1), String(nested value))]) public final [ResolvedTo(BODY_RESOLVE)] class WithQualifiedNested : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithQualifiedNested] constructor(): R|test/WithQualifiedNested| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1| [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Sum : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sum] constructor(): R|Sum| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Negative : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Negative] constructor(): R|Negative| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Negative2 : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Negative2] constructor(): R|Negative2| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Positive : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Positive] constructor(): R|Positive| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithSimple : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithSimple] constructor(): R|WithSimple| {
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.plus|(Q|test/Simple|.R|test/Simple.Companion.CONST2|) [evaluated = Int(3)]) public final [ResolvedTo(BODY_RESOLVE)] class Sum : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sum] constructor(): R|test/Sum| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithNamedSimple : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithNamedSimple] constructor(): R|WithNamedSimple| {
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.unaryMinus|() [evaluated = Int(-1)]) public final [ResolvedTo(BODY_RESOLVE)] class Negative : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Negative] constructor(): R|test/Negative| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithSimpleOperations : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithSimpleOperations] constructor(): R|WithSimpleOperations| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithConversionCall : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|() [evaluated = Int(-1)]) public final [ResolvedTo(BODY_RESOLVE)] class Negative2 : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Negative2] constructor(): R|test/Negative2| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|ConversionCallConsumer|[Types](b = Int(12).R|kotlin/Int.toByte|() [evaluated = Byte(12)]) public final [ResolvedTo(BODY_RESOLVE)] class WithResolvedConversionCall : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|() [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] class Positive : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Positive] constructor(): R|test/Positive| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|test/Simple|[Types](i = Int(12) [evaluated = Int(12)], l = Long(12) [evaluated = Long(12)], b = Byte(12) [evaluated = Byte(12)], d = Double(3.3) [evaluated = Double(3.3)], f = Float(3.3) [evaluated = Float(3.3)], c = Char(a) [evaluated = Char(a)], b1 = Boolean(true) [evaluated = Boolean(true)], b2 = Boolean(false) [evaluated = Boolean(false)]) public final [ResolvedTo(BODY_RESOLVE)] class WithSimple : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithSimple] constructor(): R|test/WithSimple| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|test/Simple|[Types](i = Int(12) [evaluated = Int(12)], l = Long(12) [evaluated = Long(12)], b = Byte(12) [evaluated = Byte(12)], d = Double(3.3) [evaluated = Double(3.3)], f = Float(3.3) [evaluated = Float(3.3)], c = Char(a) [evaluated = Char(a)], b1 = Boolean(true) [evaluated = Boolean(true)], b2 = Boolean(false) [evaluated = Boolean(false)]) public final [ResolvedTo(BODY_RESOLVE)] class WithNamedSimple : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithNamedSimple] constructor(): R|test/WithNamedSimple| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|test/Simple|[Types](i = Int(12).R|kotlin/Int.div|(Int(6)) [evaluated = Int(2)], l = Long(12).R|kotlin/Long.rem|(Long(5)) [evaluated = Long(2)], b = Byte(12) [evaluated = Byte(12)], d = Double(3.3).R|kotlin/Double.minus|(Double(3.0)) [evaluated = Double(0.2999999999999998)], f = Float(3.3).R|kotlin/Float.times|(Float(2.0)) [evaluated = Float(6.6)], c = Char(a) [evaluated = Char(a)], b1 = Boolean(true) && Boolean(false) [evaluated = Boolean(false)], b2 = Boolean(false) || Boolean(true) [evaluated = Boolean(true)]) public final [ResolvedTo(BODY_RESOLVE)] class WithSimpleOperations : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithSimpleOperations] constructor(): R|test/WithSimpleOperations| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|test/Simple|[Types](i = Int(12).R|kotlin/Int.toByte|() [evaluated = Int(12)]) public final [ResolvedTo(BODY_RESOLVE)] class WithConversionCall : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConversionCall] constructor(): R|test/WithConversionCall| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|test/ConversionCallConsumer|[Types](b = Int(12).R|kotlin/Int.toByte|() [evaluated = Byte(12)]) public final [ResolvedTo(BODY_RESOLVE)] class WithResolvedConversionCall : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithResolvedConversionCall] constructor(): R|test/WithResolvedConversionCall| {
             super<R|kotlin/Any|>()
         }
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] annotation class ConversionCallConsumer : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConversionCallConsumer] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/ConversionCallConsumer.b] b: R|kotlin/Byte|): R|ConversionCallConsumer| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConversionCallConsumer] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/ConversionCallConsumer.b] b: R|kotlin/Byte|): R|test/ConversionCallConsumer| {
             super<R|kotlin/Any|>()
         }
 
@@ -128,45 +128,225 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConversionCallConsumer] get(): R|kotlin/Byte|
 
     }
-    @<ERROR TYPE REF: Symbol not found for StringLiteral>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteral : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteral] constructor(): R|WithStringLiteral| {
+    @R|test/StringLiteral|[Types](s1 = String(some) [evaluated = String(some)], s2 = String() [evaluated = String()], s3 = <strcat>(String(H), R|test/CONSTANT|) [evaluated = String(H0)]) public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteral : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteral] constructor(): R|test/WithStringLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for StringLiteral>[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithStringLiteralConcat : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithStringLiteralConcat] constructor(): R|WithStringLiteralConcat| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @<ERROR TYPE REF: Symbol not found for StringLiteral>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithStringInterpolationPrefix : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|WithStringInterpolationPrefix| {
+    @R|test/StringLiteral|[Types](s1 = <strcat>(String(some), String(1)) [evaluated = String(some1)], s2 = String().R|kotlin/String.plus|(R|test/CONSTANT|).R|kotlin/String.plus|(String(2)) [evaluated = String(02)], s3 = <strcat>(<strcat>(R|test/CONSTANT|), String(3)) [evaluated = String(03)]) public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteralConcat : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteralConcat] constructor(): R|test/WithStringLiteralConcat| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for InvalidArguments>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class LongStringTemplateEntryWithTwoExpressions : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|LongStringTemplateEntryWithTwoExpressions| {
+    @R|test/StringLiteral|[Types](s1 = <strcat>(R|test/CONSTANT|) [evaluated = String(0)], s2 = <strcat>(R|test/CONSTANT|) [evaluated = String(0)], s3 = <strcat>(R|test/CONSTANT|) [evaluated = String(0)]) public final [ResolvedTo(BODY_RESOLVE)] class WithStringInterpolationPrefix : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|test/WithStringInterpolationPrefix| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|test/InvalidArguments|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class LongStringTemplateEntryWithTwoExpressions : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|test/LongStringTemplateEntryWithTwoExpressions| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @R|kotlin/Deprecated|[Types](message = String(Deprecated) [evaluated = String(Deprecated)], replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))) [evaluated = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass)))], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final [ResolvedTo(BODY_RESOLVE)] class Another : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Another] constructor(): R|Another| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Another] constructor(): R|test/Another| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Arrays>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithIncorrectArguments : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithIncorrectArguments] constructor(): R|WithIncorrectArguments| {
+    @R|test/Arrays|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithIncorrectArguments : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithIncorrectArguments] constructor(): R|test/WithIncorrectArguments| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @R|kotlin/Deprecated|[Types](message = String(Deprecated) [evaluated = String(Deprecated)], replaceWith = Q|kotlin|.R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))) [evaluated = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass)))], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
             super<R|kotlin/Any|>()
         }
 
     }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Arrays : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Arrays.ia] ia: R|kotlin/IntArray|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Arrays.la] la: R|kotlin/LongArray|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Arrays.fa] fa: R|kotlin/FloatArray|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Arrays.da] da: R|kotlin/DoubleArray|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Arrays.ca] ca: R|kotlin/CharArray|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Arrays.ba] ba: R|kotlin/BooleanArray|): R|test/Arrays| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val ia: R|kotlin/IntArray| = R|<local>/ia|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] get(): R|kotlin/IntArray|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val la: R|kotlin/LongArray| = R|<local>/la|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] get(): R|kotlin/LongArray|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val fa: R|kotlin/FloatArray| = R|<local>/fa|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] get(): R|kotlin/FloatArray|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val da: R|kotlin/DoubleArray| = R|<local>/da|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] get(): R|kotlin/DoubleArray|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val ca: R|kotlin/CharArray| = R|<local>/ca|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] get(): R|kotlin/CharArray|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val ba: R|kotlin/BooleanArray| = R|<local>/ba|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arrays] get(): R|kotlin/BooleanArray|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class ClassLiteral : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassLiteral] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/ClassLiteral.c1] c1: R|kotlin/reflect/KClass<*>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/ClassLiteral.c2] c2: R|kotlin/reflect/KClass<*>|): R|test/ClassLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val c1: R|kotlin/reflect/KClass<*>| = R|<local>/c1|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassLiteral] get(): R|kotlin/reflect/KClass<*>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val c2: R|kotlin/reflect/KClass<*>| = R|<local>/c2|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassLiteral] get(): R|kotlin/reflect/KClass<*>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|test/E| {
+            super<R|kotlin/Enum<test/E>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] enum entry E1: R|test/E|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] enum entry E2: R|test/E|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class EnumLiteral : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumLiteral] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/EnumLiteral.e1] e1: R|test/E|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/EnumLiteral.e2] e2: R|test/E|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/EnumLiteral.e3] e3: R|test/E|): R|test/EnumLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val e1: R|test/E| = R|<local>/e1|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumLiteral] get(): R|test/E|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val e2: R|test/E| = R|<local>/e2|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumLiteral] get(): R|test/E|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val e3: R|test/E| = R|<local>/e3|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumLiteral] get(): R|test/E|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class VarArg : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=VarArg] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/VarArg.v] vararg v: R|kotlin/IntArray|): R|test/VarArg| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val v: R|kotlin/IntArray| = R|<local>/v|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=VarArg] get(): R|kotlin/IntArray|
+
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|test/VarArg.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(3)] val CONSTANT: R|kotlin/Int| = Int(3)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Nested : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Nested.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Nested.s] s: R|kotlin/String|): R|test/Nested| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Outer : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Outer.some] some: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Outer.nested] nested: R|test/Nested|): R|test/Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val some: R|kotlin/String| = R|<local>/some|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val nested: R|test/Nested| = R|<local>/nested|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] get(): R|test/Nested|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.i, EvaluatedValue=Int(0)] i: R|kotlin/Int| = Int(0), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.l, EvaluatedValue=Long(0)] l: R|kotlin/Long| = Long(0), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.b, EvaluatedValue=Byte(0)] b: R|kotlin/Byte| = Byte(0), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.d, EvaluatedValue=Double(0.0)] d: R|kotlin/Double| = Double(0.0), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.f, EvaluatedValue=Float(0.0)] f: R|kotlin/Float| = Float(0.0), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.c, EvaluatedValue=Char( )] c: R|kotlin/Char| = Char( ), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.b1, EvaluatedValue=Boolean(false)] b1: R|kotlin/Boolean| = Boolean(false), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Simple.b2, EvaluatedValue=Boolean(false)] b2: R|kotlin/Boolean| = Boolean(false)): R|test/Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val l: R|kotlin/Long| = R|<local>/l|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Long|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Byte| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Byte|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val d: R|kotlin/Double| = R|<local>/d|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Double|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val f: R|kotlin/Float| = R|<local>/f|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Float|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val c: R|kotlin/Char| = R|<local>/c|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Char|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b1: R|kotlin/Boolean| = R|<local>/b1|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b2: R|kotlin/Boolean| = R|<local>/b2|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Boolean|
+
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|test/Simple.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val CONST1: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val CONST2: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class StringLiteral : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=StringLiteral] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/StringLiteral.s1] s1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/StringLiteral.s2] s2: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/StringLiteral.s3] s3: R|kotlin/String|): R|test/StringLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s1: R|kotlin/String| = R|<local>/s1|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=StringLiteral] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s2: R|kotlin/String| = R|<local>/s2|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=StringLiteral] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s3: R|kotlin/String| = R|<local>/s3|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=StringLiteral] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class InvalidArguments : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InvalidArguments] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/InvalidArguments.s] s: R|kotlin/String|): R|test/InvalidArguments| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InvalidArguments] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val CONSTANT: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

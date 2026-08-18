@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
+import org.jetbrains.kotlin.testFederation.AffectedByCompilerInfrastructure
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Specific incremental scenarios with local classes in KMP - K2")
-@AffectedByCompiler
+@AffectedByCompilerInfrastructure
+@AffectedByBuildToolsApi
 class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
     /**
@@ -27,7 +29,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            enableUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
+            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @Disabled("Broken, see KT-59153")
@@ -158,12 +162,15 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
 @MppGradlePluginTests
 @DisplayName("Scenarios with multi-step incremental compilation in KMP - K2")
-@AffectedByCompiler
+@AffectedByCompilerInfrastructure
+@AffectedByBuildToolsApi
 class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             // it's more convenient to set up the test project using common sourceset
-            enableUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
+            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Inline cycle with monotonous expansion")

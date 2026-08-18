@@ -16,7 +16,7 @@
 
 package kotlin.jdk8.collections.test
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.*
 import java.util.function.*
 

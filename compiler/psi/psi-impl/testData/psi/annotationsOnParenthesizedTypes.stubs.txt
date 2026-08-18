@@ -60,6 +60,9 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=A]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       FUN[fqName=AnnotationsOnParenthesizedTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -73,6 +76,9 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=A]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       FUN[fqName=AnnotationsOnParenthesizedTypes.returnArgument, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -89,6 +95,9 @@ FILE[kind=File[packageFqName=<root>]]
                             REFERENCE_EXPRESSION[referencedName=A]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -103,6 +112,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaParameter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -120,6 +132,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaReturnValue, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -133,6 +148,9 @@ FILE[kind=File[packageFqName=<root>]]
                         REFERENCE_EXPRESSION[referencedName=A]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -150,6 +168,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaTypeWithNullableReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -168,6 +189,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]

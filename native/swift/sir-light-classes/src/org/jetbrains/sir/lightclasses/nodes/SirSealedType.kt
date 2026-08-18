@@ -77,7 +77,7 @@ internal fun createSirSealedTypeFunctions(
     }
 }
 
-private class SirSealedTypeEnum(
+internal class SirSealedTypeEnum(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
 ) : SirEnum(), SirFromKtSymbol<KaNamedClassSymbol> {
@@ -165,7 +165,7 @@ private class SirSealedTypeEnum(
     }
 }
 
-private class SirSealedTypeStruct(
+internal class SirSealedTypeStruct(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
     private val declaration: SirScopeDefiningDeclaration,
@@ -204,7 +204,7 @@ private class SirSealedTypeStruct(
     }
 }
 
-private sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaNamedClassSymbol> {
+internal sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaNamedClassSymbol> {
 
     protected abstract val sealedType: SirSealedTypeEnum
     override val returnType: SirType get() = SirNominalType(sealedType)
@@ -278,7 +278,7 @@ private val KaClassSymbol?.isSealed: Boolean
             (this.classKind != KaClassKind.INTERFACE || this.typeParameters.isEmpty())
 
 private val SirDeclaration.propagatedAttributes: List<SirAttribute>
-    get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }
+    get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI || it is SirAttribute.Documentation }
 
 context(_: SirSession, _: KaSession)
 private fun createUniqueCaseNames(

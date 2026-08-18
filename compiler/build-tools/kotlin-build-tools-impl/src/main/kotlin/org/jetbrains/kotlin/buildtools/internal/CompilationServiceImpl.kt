@@ -72,7 +72,7 @@ internal object CompilationServiceImpl : CompilationService {
         return ClasspathEntrySnapshotImpl(
             ClasspathEntrySnapshotter.snapshot(
                 classpathEntry,
-                ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses),
+                ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses, expandTypeAliases = false),
                 DoNothingBuildMetricsReporter
             )
         )
@@ -207,7 +207,7 @@ internal object CompilationServiceImpl : CompilationService {
                         outputDirs = options.outputDirs,
                         classpathChanges = classpathChanges,
                         kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                        icFeatures = icFeatures
+                        icFeatures = icFeatures,
                     )
                 }
 

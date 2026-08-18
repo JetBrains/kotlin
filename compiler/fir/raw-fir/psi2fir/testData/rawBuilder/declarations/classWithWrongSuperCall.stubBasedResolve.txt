@@ -1,11 +1,11 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] classWithWrongSuperCall.kt
-    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+    public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] init: R|A.() -> kotlin/Unit|): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/String| = LAZY_EXPRESSION
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/String|
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String()
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object B : R|A| {

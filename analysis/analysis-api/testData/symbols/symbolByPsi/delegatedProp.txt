@@ -69,6 +69,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DelegatedPropKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getDelegatedProp
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -206,6 +207,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DelegatedPropKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setDelegatedProp
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -213,7 +215,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: DelegatedPropKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getDelegatedProp
-  javaSetterName: setDelegatedProp
   isInline: false
   importableFqName: delegatedProp

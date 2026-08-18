@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.isClassType
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -40,6 +39,9 @@ internal class TypeExporter(
      */
     private val currentlyProcessedTypes = hashSetOf<KaType>()
 
+    private val anyOrUnknown: ExportedType
+        get() = if (config.useUnknownInsteadAny) Primitive.Unknown else Primitive.Any
+
     context(_: KaSession)
     internal fun exportType(type: KaType, inlineClassesShouldBeUnboxed: Boolean = false): ExportedType {
         val abbreviation = type.abbreviation
@@ -54,11 +56,8 @@ internal class TypeExporter(
 
     context(_: KaSession)
     private fun exportTypeOrAlias(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
-        if (config.exportUntypedAsUnknown && (type is KaDynamicType || type.isAnyType))
-            return Primitive.Unknown
-
         if (type is KaDynamicType || type in currentlyProcessedTypes)
-            return Primitive.Any
+            return anyOrUnknown
 
         if (type !is KaClassType && type !is KaTypeParameterType)
             @OptIn(KaExperimentalApi::class)
@@ -79,42 +78,42 @@ internal class TypeExporter(
     internal fun exportSpecializedArrayWithElementType(type: KaType): ExportedType = with(type) {
         when {
             isMarkedNullable -> Array(exportType(type))
-            isByteType -> Primitive.ByteArray
-            isShortType -> Primitive.ShortArray
-            isIntType -> Primitive.IntArray
-            isFloatType -> Primitive.FloatArray
-            isDoubleType -> Primitive.DoubleArray
-            isLongType -> if (config.compileLongAsBigInt) Primitive.LongArray else ErrorType("LongArray")
-            isBooleanType -> ErrorType("BooleanArray")
-            isCharType -> ErrorType("CharArray")
+            classId == KaStandardTypeClassIds.BYTE -> Primitive.ByteArray
+            classId == KaStandardTypeClassIds.SHORT -> Primitive.ShortArray
+            classId == KaStandardTypeClassIds.INT -> Primitive.IntArray
+            classId == KaStandardTypeClassIds.FLOAT -> Primitive.FloatArray
+            classId == KaStandardTypeClassIds.DOUBLE -> Primitive.DoubleArray
+            classId == KaStandardTypeClassIds.LONG -> if (config.compileLongAsBigInt) Primitive.LongArray else ErrorType("LongArray")
+            classId == KaStandardTypeClassIds.BOOLEAN -> ErrorType("BooleanArray")
+            classId == KaStandardTypeClassIds.CHAR -> ErrorType("CharArray")
             else -> Array(exportType(type))
         }
     }
 
     context(_: KaSession)
     private fun exportSimpleNonNullableType(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
-        if (type.isBooleanType)
+        if (type.classId == KaStandardTypeClassIds.BOOLEAN)
             return Primitive.Boolean
-        if (type.isLongType || type.isULongType)
+        if (type.classId == KaStandardTypeClassIds.LONG || type.classId == StandardClassIds.ULong)
             return if (config.compileLongAsBigInt) Primitive.BigInt else ErrorType("Long")
-        if (type.isPrimitive && !type.isCharType)
+        if (type.classId in KaStandardTypeClassIds.PRIMITIVES && type.classId != KaStandardTypeClassIds.CHAR)
             return Primitive.Number
-        if (type.isStringType)
+        if (type.classId == KaStandardTypeClassIds.STRING)
             return Primitive.String
-        if (type.isAnyType)
-            return Primitive.Any
-        if (type.isUnitType)
+        if (type.classId == KaStandardTypeClassIds.ANY)
+            return anyOrUnknown
+        if (type.classId == KaStandardTypeClassIds.UNIT)
             return Primitive.Unit
-        if (type.isNothingType)
+        if (type.classId == KaStandardTypeClassIds.NOTHING)
             return Primitive.Nothing
         type.arrayElementType?.let {
-            return if (type.isClassType(StandardClassIds.Array)) {
+            return if (type.classId == StandardClassIds.Array) {
                 Array(exportType(it))
             } else {
                 exportSpecializedArrayWithElementType(it)
             }
         }
-        if (type.isClassType(StandardClassIds.Throwable))
+        if (type.classId == StandardClassIds.Throwable)
             return Primitive.Throwable
         if (type is KaFunctionType && !type.isKFunctionType && !type.isKSuspendFunctionType) {
             return if (type.isSuspend && !config.exportableSuspendLambdas) {
@@ -193,12 +192,12 @@ internal class TypeExporter(
                 val exportedSupertype = if (isImplicitlyExported && superTypeApproximator != null) {
                     val transitiveExportedTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(type)
                     if (transitiveExportedTypes.isEmpty()) {
-                        Primitive.Any
+                        anyOrUnknown
                     } else {
                         transitiveExportedTypes.foldMap({ exportType(it) }, ExportedType::IntersectionType)
                     }
                 } else {
-                    Primitive.Any
+                    anyOrUnknown
                 }
 
                 val classType = ClassType(
@@ -209,8 +208,7 @@ internal class TypeExporter(
 
                 when (symbol.classKind) {
                     KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> TypeOf(classType)
-                    KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
-                    KaClassKind.ANNOTATION_CLASS -> ErrorType("Annotation classes are not supported")
+                    KaClassKind.CLASS, KaClassKind.ANNOTATION_CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
                     KaClassKind.ANONYMOUS_OBJECT -> ErrorType("Anonymous objects are not supported")
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
             }
@@ -241,6 +239,6 @@ internal class TypeExporter(
     context(_: KaSession)
     fun exportTypeArgument(typeArgument: KaTypeProjection): ExportedType = when (typeArgument) {
         is KaTypeArgumentWithVariance -> exportType(typeArgument.type)
-        is KaStarTypeProjection -> Primitive.Any
+        is KaStarTypeProjection -> Primitive.Any // We keep `any` as the supertype; otherwise, the code won’t compile when the upper bound is something other than Any.
     }
 }

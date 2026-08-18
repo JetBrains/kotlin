@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.testFederation
 
 import java.io.Serializable
 
-sealed class SmokeTestConfig: Serializable {
+sealed class SmokeTestConfig : Serializable {
     /**
      * Never execute this task in 'Smoke Test' mode. These tests shall be skipped instead.
      * This can be used if a task is known for not containing any useful smoke tests, or its execution might cause issues

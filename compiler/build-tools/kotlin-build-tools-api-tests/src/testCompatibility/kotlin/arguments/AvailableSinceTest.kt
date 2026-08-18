@@ -235,6 +235,9 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES.availableSinceVersion) {
                         this[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES] = false
                     }
+                    trySet(JvmClasspathSnapshottingOperation.EXPAND_TYPE_ALIASES.availableSinceVersion) {
+                        this[JvmClasspathSnapshottingOperation.EXPAND_TYPE_ALIASES] = true
+                    }
                 }
             }
         }
@@ -492,6 +495,7 @@ class AvailableSinceTest : BaseCompilationTest() {
         "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation",
         "org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation",
         "org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration",
+        "org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation",
         "org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation",
         "org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration",
         "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",

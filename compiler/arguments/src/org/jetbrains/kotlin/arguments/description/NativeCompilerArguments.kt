@@ -65,10 +65,12 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         shortName = "trw"
         description = "Produce a worker runner for unit tests.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Use '-generate-test-runner' ('-tr')"
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -457,16 +459,6 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
     }
 
     compilerArgument {
-        name = "Xfake-override-validator"
-        description = "Enable the IR fake override validator.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xframework-import-header"
         compilerName = "frameworkImportHeaders"
         description = "Add an additional header import to the framework header.".asReleaseDependent()
@@ -607,17 +599,6 @@ The default value is 1.""".asReleaseDependent()
         description = "Print files.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
         affectsCompilationOutcome = false
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xpurge-user-libs"
-        deprecatedName = "-purge_user_libs"
-        description = "Don't link unused libraries even if explicitly specified.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,

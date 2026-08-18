@@ -19,6 +19,6 @@ publishing {
     }
 
     repositories {
-        maven { setUrl("${rootProject.buildDir}/repo") }
+        maven { setUrl("${rootProject.rootDir}/build/repo") }
     }
 }

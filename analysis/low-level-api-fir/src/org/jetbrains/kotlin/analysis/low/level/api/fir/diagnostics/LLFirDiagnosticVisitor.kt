@@ -114,7 +114,7 @@ internal open class LLFirDiagnosticVisitor(
      * File and class checkers may report diagnostics on top-level declarations and class members, such as conflicting overload errors.
      * Because we are collecting diagnostics for each structure element separately, this visitor will not visit these nested declarations by
      * default, as the file/class and its nested declarations are different structure elements. Instead, all diagnostics produced during the
-     * visitor run will be committed at the end (see [FileStructureElementDiagnosticsCollector.collectForStructureElement]).
+     * visitor run will be committed at the end (see [collectForStructureElement]).
      *
      * Skipping nested declarations circumvents error suppression with `@Suppress` on top-level declarations and class members. This is
      * because suppression usually works as such: When a diagnostic is first reported on an element `E`, it is "pending". Once element `E`

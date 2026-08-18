@@ -1,6 +1,5 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3,2.4
-// ^ Fixed in 2.5 by KT-87445
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native,Wasm-JS:2.3,2.4
+// ^ Fixed in 2.5 by KT-87445 (Native) and KT-87447 (Wasm)
 // ISSUE: KT-87625
 
 fun checkNotEqual(x: Any, y: Any) {

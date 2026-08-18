@@ -37,6 +37,10 @@ internal val FirSession.nullableSymbolProvider: FirSymbolProvider? by FirSession
  * Re-entrant probes for an in-flight [ClassId] return `null`/`false` to break the
  * `FirJavaClass.declarations` PUBLICATION-lazy cycle (KT-74097): symbol-provider lookup
  * materialises declarations, which calls back into model resolution, which probes here again.
+ * Java member annotations are deferred (`FirLazyJavaAnnotationList`), but the class's own
+ * annotations are read from inside that lazy by type-parameter bound enhancement (default
+ * qualifier extraction), and the guard equally bounds probes that carry no annotation at all
+ * (const-field values, `@Target` lookups, supertype and type-argument `ClassId`s).
  * See [JavaCycleBreakerTest].
  *
  * Tied to session (a re-entrant probe can arrive through a different per-file context wrapping
@@ -64,7 +68,7 @@ internal fun FirSession.registerJavaModelInFlightResolutionsIfAbsent() {
  * cycle break).
  *
  * Resolution-time only; must not be called from cache-population code (`JavaClassCache`,
- * `LeanJavaClassFinder.indexFile`, `JavaSupertypeGraph`-population).
+ * `LeanJavaClassFinder.indexFile`).
  */
 internal fun FirSession.cycleSafeClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? {
     val inFlight = javaModelInFlightResolutions?.classIds

@@ -38,6 +38,15 @@ sealed class WrappedException(
         }
     }
 
+    class FromTestPipeline(
+        cause: Throwable,
+        override val failedModule: TestModule?,
+    ) : WrappedException(cause, 0, 0) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromTestPipeline(newCause, failedModule)
+        }
+    }
+
     class FromGroupingFacade(
         cause: Throwable,
         val facade: AbstractGroupingStageTestFacade<*, *>,

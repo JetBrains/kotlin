@@ -1,0 +1,1 @@
+var isValid: kotlin.Boolean

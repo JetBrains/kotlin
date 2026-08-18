@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetterCopy
 import org.jetbrains.kotlin.sir.builder.buildSetterCopy
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionBuilder
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
@@ -87,18 +88,21 @@ internal abstract class SirAbstractVariableFromKtSymbol(
             it.parent = this@SirAbstractVariableFromKtSymbol
         }
     }
-    override val setter: SirSetter? by lazy {
+    override val setter: SirSetter? by lazyWithSessions {
         (ktSymbol as? KaPropertySymbol)
-            ?.takeIf { it.setter?.visibility == KaSymbolVisibility.PUBLIC }
+            ?.takeIf { it.setter?.sirAvailability()?.visibility == SirVisibility.PUBLIC }
             ?.takeUnless { it.setter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN }
             ?.let {
                 it.setter?.let { SirSetterFromKtSymbol(it, sirSession) }
                     ?: if (!it.isVal) DefaultSetter(it, sirSession) else null
             }
-            ?.apply { parent = this@SirAbstractVariableFromKtSymbol }
+            ?.apply { parent = this@SirAbstractVariableFromKtSymbol } as SirSetter?
     }
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
+    override val documentation: String? by lazyWithSessions {
+        translateDocumentation(kdocElements)
     }
 
     override var parent: SirDeclarationParent
@@ -114,6 +118,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
                 add(SirAttribute.NonOverride)
             }
             replaceOrAddPropagatedUnavailability { type.unavailableTypes }
+            addDocumentationVisibility(kdocElements)
         }
     }
 
@@ -232,7 +237,7 @@ internal abstract class SirAbstractGetter(
                     add(proxy.createDirectDispatchForwardBridge("<get-$propName>", forwardCall))
                 }
                 if (variable.accessorNeedsReverseBridge()) {
-                    val tryPrefix = if (errorType != SirType.never) "try! " else ""
+                    val tryPrefix = if (errorType != SirType.never) "try " else ""
                     val swiftName = variable.name
                     addAll(
                         proxy.createReverseSirBridges(
@@ -272,7 +277,7 @@ internal class SirGetterFromKtSymbol(
     sirSession: SirSession,
 ) : SirAbstractGetter(sirSession), SirFromKtSymbol<KaPropertyGetterSymbol> {
     override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
-    override val documentation: String? by lazy { ktSymbol.documentation() }
+    override val documentation: String? get() = null
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 }
@@ -378,7 +383,7 @@ internal class SirSetterFromKtSymbol(
     sirSession: SirSession,
 ) : SirAbstractSetter(sirSession), SirFromKtSymbol<KaPropertySetterSymbol> {
     override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
-    override val documentation: String? by lazy { ktSymbol.documentation() }
+    override val documentation: String? get() = null
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 }
 
@@ -413,7 +418,7 @@ context(_: KaSession, _: SirSession)
 private fun SirVariable.reverseBridgeTargetClassFqName(): String =
     kaSymbolOrNull<KaVariableSymbol>()
         ?.containingSymbol
-        ?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
+        ?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.render() }
         ?: ""
 
 context(_: KaSession, sirSession: SirSession)

@@ -13,7 +13,6 @@
 #include "std_support/Atomic.hpp"
 #include "Types.h"
 #include "ObjCExport.h"
-#include "KotlinBase.h"
 
 using namespace kotlin;
 

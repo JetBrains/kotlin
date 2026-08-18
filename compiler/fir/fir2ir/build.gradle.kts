@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationDomains
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -5,7 +9,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
     id("require-explicit-types")
 }
 
@@ -80,6 +84,9 @@ fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
     useJUnitPlatform {
         configureJUnit()
     }
+
+    @OptIn(DelicateTestFederationApi::class)
+    testFederationDomains = listOf(Domain.Jvm)
 }
 
 projectTests {
@@ -92,20 +99,27 @@ projectTests {
     testData(project(":compiler").isolated, "testData/writeSignature")
     testData(project(":compiler").isolated, "testData/writeFlags")
     testData(project(":compiler:tests-spec").isolated, "testData/codegen")
-    testTask(
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
-    ) {
+
+    val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
+    testTask(defineJDKEnvVariables = environment) {
         configure()
     }
 
-    testTask("aggregateTests", skipInLocalBuild = true) {
+    testTask(
+        "aggregateTests",
+        defineJDKEnvVariables = environment,
+        skipInLocalBuild = true,
+    ) {
         configure {
             excludeTags("FirPsiCodegenTest")
         }
-
     }
 
-    testTask("nightlyTests", skipInLocalBuild = true) {
+    testTask(
+        "nightlyTests",
+        defineJDKEnvVariables = environment,
+        skipInLocalBuild = true,
+    ) {
         configure {
             includeTags("FirPsiCodegenTest")
         }

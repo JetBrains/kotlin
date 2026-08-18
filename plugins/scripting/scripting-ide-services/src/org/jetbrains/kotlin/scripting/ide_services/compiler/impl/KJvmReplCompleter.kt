@@ -2,6 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -45,6 +47,7 @@ import java.io.File
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun getKJvmCompletion(
     ktScript: KtFile,
     bindingContext: BindingContext,
@@ -68,6 +71,7 @@ fun getKJvmCompletion(
 // is converted to
 //   import java.ABCDEF
 // and it makes token after dot (for which reference variants are looked) discoverable in PSI
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun prepareCodeForCompletion(code: String, cursor: Int) =
     code.substring(0, cursor) + KJvmReplCompleter.INSERTED_STRING + code.substring(cursor)
 
@@ -370,6 +374,7 @@ private class KJvmReplCompleter(
     private class VisibilityFilter(
         private val inDescriptor: DeclarationDescriptor
     ) : (DeclarationDescriptor) -> Boolean {
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun invoke(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is TypeParameterDescriptor) return isTypeParameterVisible(descriptor)
 

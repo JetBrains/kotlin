@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Fou
 language = Objective-C
 package = platform.TVServices
 modules = TVServices
+apiNotesSwiftName = true
 
 compilerOpts = -framework TVServices
 linkerOpts = -framework TVServices

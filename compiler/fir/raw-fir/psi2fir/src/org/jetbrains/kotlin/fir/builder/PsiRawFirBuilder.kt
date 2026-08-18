@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -2860,16 +2859,12 @@ open class PsiRawFirBuilder(
             // 2. `(suspend @A () -> Int)?` is a nullable suspend function type, but the modifier list is on the child KtNullableType
             //
             // `getModifierList()` only returns the first one, so we have to get all modifier list children.
-            @Suppress("DEPRECATION") // KT-78356
-            fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
-                getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
-
-            val allModifierLists = mutableListOf<KtModifierList>(*getAllModifierLists())
+            val allModifierLists = allModifierLists.toMutableList()
 
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 when (this) {
                     is KtNullableType -> {
-                        allModifierLists += getAllModifierLists()
+                        allModifierLists += this.allModifierLists
                         this.innerType.unwrapNullable()
                     }
                     else -> this
@@ -3063,7 +3058,9 @@ open class PsiRawFirBuilder(
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
                     val isForLoopBlock =
                         firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
-                    if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
+                    val isIncrementOrDecrement = firStatement is FirBlock
+                            && firStatement.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+                    if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty() || isIncrementOrDecrement) {
                         statements += firStatement
                     } else {
                         statements += firStatement.statements
@@ -3954,22 +3951,23 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList) = buildDanglingModifierList {
-            this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
-            diagnostic = ConeDanglingModifierOnTopLevel
-            symbol = FirDanglingModifierSymbol()
-            withContainerSymbol(symbol) {
-                for (annotationEntry in modifierList.annotationEntries) {
-                    annotations += annotationEntry.convert<FirAnnotation>()
-                }
+        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList): FirDanglingModifierList =
+            buildDanglingModifierList {
+                this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                diagnostic = ConeDanglingModifierOnTopLevel
+                symbol = FirDanglingModifierSymbol()
+                withContainerSymbol(symbol) {
+                    for (annotationEntry in modifierList.annotationEntries) {
+                        annotations += annotationEntry.convert<FirAnnotation>()
+                    }
 
-                contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
+                    contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
+                }
+            }.apply {
+                containingClassAttr = currentDispatchReceiverType()?.lookupTag
             }
-        }.apply {
-            containingClassAttr = currentDispatchReceiverType()?.lookupTag
-        }
     }
 }
 

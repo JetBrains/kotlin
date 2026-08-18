@@ -35,6 +35,11 @@ private fun syntheticClassVisibility(javaClass: Class<*>): Int {
 private fun isPublicAbi(javaClass: Class<*>): Boolean =
     metadataExtraInt(javaClass) and PUBLIC_ABI_FLAG != 0
 
+private inline fun privateLambdaInline(): Class<*> {
+    val lambda = @JvmSerializableLambda { "OK" }
+    return lambda::class.java
+}
+
 fun box(): String {
     val lambda = @JvmSerializableLambda { "OK" }
 
@@ -52,6 +57,14 @@ fun box(): String {
     }
     if (!isPublicAbi(fooInline())) {
         return "Fail: expected escaped lambda to be public ABI"
+    }
+
+    visibility = syntheticClassVisibility(privateLambdaInline())
+    if (visibility != LOCAL_VISIBILITY) {
+        return "Fail: expected LOCAL visibility (5) for non-escaped lambda in private inline function, got $visibility"
+    }
+    if (isPublicAbi(privateLambdaInline())) {
+        return "Fail: expected non-escaped (private inline function) lambda to NOT be public ABI"
     }
 
     return lambda()

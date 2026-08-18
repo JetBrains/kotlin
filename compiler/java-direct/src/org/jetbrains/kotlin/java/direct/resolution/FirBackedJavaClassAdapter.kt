@@ -113,8 +113,12 @@ internal class FirBackedJavaClassAdapter(
         get() = false
     override val isFinal: Boolean
         get() = false
+
     override val visibility: Visibility
-        get() = Visibilities.Public
+        get() {
+            val fir = firRegularClass ?: return Visibilities.Public
+            return if (fir is FirJavaClass) fir.nonEnhancedVisibility else fir.status.visibility
+        }
 
     /**
      * Resolved supertype chain, mirroring `FirJavaElementFinder.resolveSupertypesOnAir`: prefer
@@ -173,6 +177,8 @@ internal class FirBackedJavaClassAdapter(
     override val isEnum: Boolean
         get() = false
     override val isRecord: Boolean
+        get() = false
+    override val isValue: Boolean
         get() = false
     override val isSealed: Boolean
         get() = false

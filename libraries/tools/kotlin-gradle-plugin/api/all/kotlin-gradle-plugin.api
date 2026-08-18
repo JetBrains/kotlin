@@ -622,12 +622,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinOnlyTargetConfigu
 	public fun <init> (Z)V
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinPluginInMultipleProjectsHolderKt {
-	public static final field MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING Ljava/lang/String;
-	public static final field MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO Ljava/lang/String;
-	public static final field MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING Ljava/lang/String;
-}
-
 public class org/jetbrains/kotlin/gradle/plugin/KotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -1413,7 +1407,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyT
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/file/ProjectLayout;)V
 	protected final fun getParentLibrariesIndexFiles ()Lorg/gradle/api/provider/SetProperty;
 	protected final fun getTransformedLibrariesIndexFile ()Lorg/gradle/api/file/RegularFileProperty;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun transformMetadata ()V
 }
 
@@ -1421,6 +1415,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyTran
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$Companion;
+	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -1429,6 +1425,22 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier :
 	public fun getModuleId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+	public static final synthetic fun write$Self (Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/MppDependencyProjectStructureMetadataExtractor {
@@ -1471,7 +1483,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTa
 	protected final fun getFatFrameworksDir ()Ljava/io/File;
 	public final fun getInputFrameworkFiles ()Ljava/util/Collection;
 	public final fun getOutputDir ()Ljava/io/File;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun setBaseName (Lorg/gradle/api/provider/Provider;)V
 	public final fun setBuildType (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)V
 	public final fun setOutputDir (Ljava/io/File;)V
@@ -5869,7 +5881,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected final fun getMultiModuleICSettings ()Lorg/jetbrains/kotlin/daemon/common/MultiModuleICSettings;
 	public fun getNormalizedKotlinDaemonJvmArguments ()Lorg/gradle/api/provider/Provider;
 	protected fun makeIncrementalCompilationFeatures ()Lorg/jetbrains/kotlin/incremental/IncrementalCompilationFeatures;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun setIncremental (Z)V
 	protected fun skipCondition ()Z
 }
@@ -5927,7 +5939,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeComp
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService {
+public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService {
 	public final fun getAllHeadersDirs ()Ljava/util/Set;
 	public final fun getBaseKlibName ()Ljava/lang/String;
 	public final fun getCompilerOpts ()Ljava/util/List;
@@ -5957,20 +5969,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public abstract fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public final fun getSettings ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings;
 	public final fun processInterop ()V
-}
-
-public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
-	public static final field NAME_SUFFIX Ljava/lang/String;
-	public fun <init> ()V
-	public final fun exec ()V
-	public final fun getCleanableStoreProvider ()Lorg/gradle/api/provider/Provider;
-	public final fun getTimeToLiveInDays ()J
-	public final fun setCleanableStoreProvider (Lorg/gradle/api/provider/Provider;)V
-	public final fun setTimeToLiveInDays (J)V
-}
-
-public final class org/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion {
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/tasks/CompilerPluginOptions : org/jetbrains/kotlin/gradle/plugin/CompilerPluginConfig {
@@ -6145,7 +6144,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile : org/jetb
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile$ClasspathSnapshotProperties {
 	public fun <init> ()V
 	public abstract fun getClasspathSnapshot ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getClasspathSnapshotDir ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompileCommon : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile, org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
@@ -6181,7 +6179,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinCompilerPluginData$In
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile, org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompileTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/K2MultiplatformCompilationTask {
+public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile, org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompileTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/K2MultiplatformCompilationTask {
 	public final fun compile ()V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
@@ -6210,6 +6208,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public final fun getShortModuleName ()Ljava/lang/String;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
 	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments;ZZ)V
 }
@@ -6249,7 +6248,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun isStaticFramework ()Z
 	public final fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public final fun kotlinOptions (Lorg/gradle/api/Action;)V
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public fun setCompilerPluginClasspath (Lorg/gradle/api/file/FileCollection;)V
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
 	public fun toolOptions (Lkotlin/jvm/functions/Function1;)V
@@ -6288,7 +6287,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/TasksUtilsKt {
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckPomTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	protected final fun execute ()V
 	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
@@ -6303,7 +6302,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningT
 	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getSignatory ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/GeneratePgpKeys : org/gradle/api/DefaultTask {
@@ -6313,16 +6312,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/GeneratePgpKe
 	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
-}
-
-public final class org/jetbrains/kotlin/gradle/tasks/publishing/HelpersKt$addPomValidationHelpers$1$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/tasks/publishing/HelpersKt$addSigningValidationHelpers$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/UploadPgpKeyTask : org/gradle/api/DefaultTask {
@@ -6488,6 +6477,10 @@ public final class org/jetbrains/kotlin/gradle/utils/PropertyDelegate {
 public final class org/jetbrains/kotlin/gradle/utils/ProviderApiUtilsKt$sam$i$java_util_concurrent_Callable$0 : java/util/concurrent/Callable {
 	public fun <init> (Lkotlin/jvm/functions/Function0;)V
 	public final synthetic fun call ()Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/gradle/utils/ReflectionUtilsKt {
+	public static final field MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/utils/ResourceUtilsKt {

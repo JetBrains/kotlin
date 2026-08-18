@@ -9,10 +9,7 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsFunction.Modifier
-import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.parser.AbortParsingException
 import org.jetbrains.kotlin.js.parser.CodePosition
 import org.jetbrains.kotlin.js.parser.ErrorReporter
@@ -130,7 +127,7 @@ internal class JsAstMapperVisitor(
             ctx.variableDeclaration().forEach {
                 add(visitNode<JsVars.JsVar>(it))
             }
-        }.applyLocation(ctx)
+        }.applyLocation(ctx).applyComments(ctx)
     }
 
     override fun visitSingleVariableDeclaration(ctx: JavaScriptParser.SingleVariableDeclarationContext): JsVars.JsVar {

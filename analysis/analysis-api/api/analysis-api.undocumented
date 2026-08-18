@@ -48,7 +48,6 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeBuilder
 org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultType
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
 org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand
@@ -66,7 +65,6 @@ org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.computeExitPointSnapshot(List<KtExpression>)
-org.jetbrains.kotlin.analysis.api.contracts.description.KaContractCallsInPlaceContractEffectDeclaration.occurrencesRange
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractCallsInPlaceContractEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration.condition
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration.effect
@@ -78,6 +76,7 @@ org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractHoldsInEffectDeclaration.condition
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractHoldsInEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsSpecificValueEffectDeclaration.value
+org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsParameterEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsResultOfEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation.AND
@@ -587,7 +586,6 @@ org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.render(KaSession, KaSy
 org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderAnnotationApplication(KaSession, KaAnnotation)
 org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderForSubstitutionOverrideUnwrappingTest(KaSession, KaSymbol)
 org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderType(KaSession, KaType)
-org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol.compilerVisibility
 org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer((KaSession) -> S?)
 org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerDelegator(KaSymbolPointer<T>, KaSession.(T) -> R?)
 org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier.name

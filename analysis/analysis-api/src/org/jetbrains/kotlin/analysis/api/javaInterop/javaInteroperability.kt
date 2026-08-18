@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
@@ -93,4 +94,34 @@ public val KaCallableSymbol.containingJvmClassName: String?
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.javaInteroperabilityComponent.containingJvmClassName(this)
+    }
+
+/**
+ * The visible Java method name for the given [KaFunctionSymbol].
+ * The behavior is unspecified for modules other than the JVM.
+ *
+ * The endpoint supports:
+ * - Mangling due to [KaSymbolVisibility.INTERNAL][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility.INTERNAL] modifier
+ * - [JvmName]
+ *
+ * The name is `null` when the symbol has no method that can be referenced from Java:
+ * - [KaConstructorSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol]: constructors are neither renamed by [JvmName]
+ *   nor mangled, so there is no name to compute
+ * - [KaSamConstructorSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol] and
+ *   [KaAnonymousFunctionSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol]: there is no addressable JVM method
+ * - [KaSymbolLocation.LOCAL][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation.LOCAL] declarations: their JVM names are invented
+ *   during lowering and cannot be reconstructed from a symbol
+ * - Property accessors of a property without a name, of a `const` property, or of a property with a [JvmField] backing field, as no
+ *   accessor method is generated in these cases
+ * - The computed name is not a valid Java identifier, such as for an escaped Kotlin name like `a b c`, as such a method cannot be
+ *   referenced from Java code
+ * - The name is mangled because of value classes: the suffix is either a hash of the signature, as in `classFunInParameter-5lyY9Q4`,
+ *   or `impl` for a member of a value class, as in `funWithoutParameters-impl`, and the endpoint computes neither
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaFunctionSymbol.javaMethodName: String?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.javaInteroperabilityComponent.javaMethodName(this)
     }

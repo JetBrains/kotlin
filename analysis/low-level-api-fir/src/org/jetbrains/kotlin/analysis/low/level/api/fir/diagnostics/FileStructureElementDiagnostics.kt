@@ -1,15 +1,24 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
 
+/**
+ * Diagnostics of a single [FileStructureElement][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement],
+ * computed lazily and separately per checker kind.
+ *
+ * Suppressed diagnostics are collected together with the reported ones and are distinguished by [LLDiagnostic.isSuppressed], so there is
+ * no need for a separate collection pass to get them.
+ *
+ * The returned sequences are lazy: a checker kind allowed by the [DiagnosticCheckerFilter] is only run once the consumer reaches its
+ * diagnostics.
+ */
 internal class FileStructureElementDiagnostics(private val retriever: FileStructureElementDiagnosticRetriever) {
     private val diagnosticByDefaultCheckers: FileStructureElementDiagnosticList by lazy {
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
@@ -23,29 +32,37 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS)
     }
 
-    fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =
-        SmartList<KtPsiDiagnostic>().apply {
-            if (filter.runDefaultCheckers) {
-                addAll(diagnosticByDefaultCheckers.diagnosticsFor(element))
-            }
-            if (filter.runExtraCheckers) {
-                addAll(diagnosticByExtraCheckers.diagnosticsFor(element))
-            }
-            if (filter.runExperimentalCheckers) {
-                addAll(diagnosticByExperimentalCheckers.diagnosticsFor(element))
-            }
-        }
-
-
-    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<KtPsiDiagnostic>) -> Unit) {
+    /**
+     * All diagnostics of the structure element, in no particular order.
+     */
+    fun diagnostics(filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> = sequence {
         if (filter.runDefaultCheckers) {
-            diagnosticByDefaultCheckers.forEach(action)
+            yieldAll(diagnosticByDefaultCheckers.diagnostics())
         }
+
         if (filter.runExtraCheckers) {
-            diagnosticByExtraCheckers.forEach(action)
+            yieldAll(diagnosticByExtraCheckers.diagnostics())
         }
+
         if (filter.runExperimentalCheckers) {
-            diagnosticByExperimentalCheckers.forEach(action)
+            yieldAll(diagnosticByExperimentalCheckers.diagnostics())
+        }
+    }
+
+    /**
+     * Diagnostics reported on [element] itself, but not on its children.
+     */
+    fun directDiagnostics(filter: DiagnosticCheckerFilter, element: PsiElement): Sequence<LLDiagnostic> = sequence {
+        if (filter.runDefaultCheckers) {
+            yieldAll(diagnosticByDefaultCheckers.directDiagnostics(element))
+        }
+
+        if (filter.runExtraCheckers) {
+            yieldAll(diagnosticByExtraCheckers.directDiagnostics(element))
+        }
+
+        if (filter.runExperimentalCheckers) {
+            yieldAll(diagnosticByExperimentalCheckers.directDiagnostics(element))
         }
     }
 }

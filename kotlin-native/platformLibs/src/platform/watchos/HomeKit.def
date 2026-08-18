@@ -2,6 +2,7 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText Core
 language = Objective-C
 package = platform.HomeKit
 modules = HomeKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework HomeKit
 linkerOpts = -framework HomeKit

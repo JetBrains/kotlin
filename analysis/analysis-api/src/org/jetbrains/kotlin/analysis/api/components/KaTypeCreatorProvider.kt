@@ -114,6 +114,7 @@ public interface KaTypeCreatorProvider : KaSessionComponent {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
     replaceWith = ReplaceWith("typeCreator", "org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -140,6 +141,7 @@ public val typeCreator: KaTypeCreator
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
     replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -171,6 +173,7 @@ public fun <T : KaClassType> T.copy(init: KaClassTypeBuilder.() -> Unit): KaClas
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
     replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -202,6 +205,7 @@ public fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualCl
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
     replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -233,6 +237,7 @@ public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFuncti
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
     replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

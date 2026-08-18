@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ALLOW_KOTLIN_PACKAGE
-// SKIP_JAVAC
 package kotlin.sub
 
 @Deprecated("", ReplaceWith(""))

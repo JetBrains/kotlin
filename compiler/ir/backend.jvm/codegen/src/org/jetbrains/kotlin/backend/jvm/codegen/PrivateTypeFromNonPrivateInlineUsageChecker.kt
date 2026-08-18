@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -62,11 +62,11 @@ internal class PrivateTypeFromNonPrivateInlineUsageChecker(
     }
 
     private fun checkType(type: Type) {
-        // `JvmBackendClassResolver.resolveToClassDescriptors` doesn't work for classes with '$' in the name (where '$' is a part of the
-        // name, not the outer-inner separator), but those are so rare, especially in Kotlin sources, that we won't care about them here.
-        for (classDescriptor in context.state.jvmBackendClassResolver.resolveToClassDescriptors(type)) {
-            if (DescriptorVisibilities.isPrivate(classDescriptor.visibility)) {
-                result.add(classDescriptor.classId ?: ClassId(FqName.ROOT, SpecialNames.NO_NAME_PROVIDED))
+        // `JvmBackendClassResolver.resolveToClasses` doesn't work for classes with '$' in the name (where '$' is a part of the name, not
+        // the outer-inner separator), but those are so rare, especially in Kotlin sources, that we won't care about them here.
+        for (irClass in context.state.jvmBackendClassResolver.resolveToClasses(type)) {
+            if (DescriptorVisibilities.isPrivate(irClass.visibility)) {
+                result.add(irClass.classId ?: ClassId(FqName.ROOT, SpecialNames.NO_NAME_PROVIDED))
             }
         }
     }

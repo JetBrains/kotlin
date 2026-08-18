@@ -64,6 +64,7 @@ FILE[kind=File[packageFqName=<root>]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
+        NULL[kind=NULL, value=null]
       FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -78,6 +79,7 @@ FILE[kind=File[packageFqName=<root>]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=T]
+        NULL[kind=NULL, value=null]
       FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -95,6 +97,9 @@ FILE[kind=File[packageFqName=<root>]]
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -110,6 +115,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaParameter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -128,6 +134,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReturnValue, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -142,6 +151,9 @@ FILE[kind=File[packageFqName=<root>]]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -160,6 +172,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaTypeWithNullableReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -178,6 +193,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
         TYPE_REFERENCE
           MODIFIER_LIST[]

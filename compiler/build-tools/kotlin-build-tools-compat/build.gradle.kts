@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
 
     testCompileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
 }
 
 publish()

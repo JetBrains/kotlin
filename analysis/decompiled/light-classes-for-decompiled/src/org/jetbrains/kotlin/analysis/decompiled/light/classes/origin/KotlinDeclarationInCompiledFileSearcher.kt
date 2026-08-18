@@ -10,7 +10,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -68,7 +67,9 @@ class KotlinDeclarationInCompiledFileSearcher {
                 ?: classOrObject
         }
 
-        val regularDeclarations = container.declarations
+        // A compiled annotation class declares its properties as parameters of its primary constructor
+        val foldedProperties = (container as? KtClassOrObject)?.primaryConstructorParameters?.filter(KtParameter::hasValOrVar).orEmpty()
+        val regularDeclarations = foldedProperties + container.declarations
 
         @OptIn(KtExperimentalApi::class)
         val staticDeclarations: List<KtDeclaration> = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
@@ -193,11 +194,18 @@ class KotlinDeclarationInCompiledFileSearcher {
                     val containingClass = member.containingClass
                     matchesAny(getterName, names, declaration) && propertyMatcher(declaration, false) ||
                             matchesAny(setterName, names, declaration) && propertyMatcher(declaration, true) ||
-                            getterName == null && setterName == null && matchesAny(declarationName, names, declaration) &&
-                            (containingClass?.isRecord == true || containingClass?.isAnnotationType == true) &&
+                            getterName == null && setterName == null && (containingClass?.isRecord == true) &&
+                            matchesAny(declarationName, names, declaration) &&
                             propertyMatcher(declaration, false)
                 }
             }
+
+            // The accessor of an annotation property takes no arguments and its name is unique within the annotation,
+            // so there is nothing to match beyond the name itself
+            is KtParameter -> setter != true &&
+                    member.containingClass?.isAnnotationType == true &&
+                    matchesAny(declarationName, names, declaration)
+
             else -> false
         }
     }
@@ -436,7 +444,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         insideAnnotation: Boolean = false,
     ): Boolean {
         val qualifiedName =
-            getQualifiedName(ktTypeRef.typeElement, ktTypeRef.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
+            getQualifiedName(ktTypeRef.typeElement, ktTypeRef.allModifierLists.any { it.hasSuspendModifier() }) ?: return false
         return if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
             qualifiedName == StandardNames.FqNames.array.asString() ||
                     varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, varArgs = false, insideAnnotation = insideAnnotation)

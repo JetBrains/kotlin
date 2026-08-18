@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.isJavaValueClass
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -18,9 +19,8 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.ValhallaSupportMode
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.valhallaSupportMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -82,19 +82,21 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
         visibility === DescriptorVisibilities.LOCAL -> Opcodes.ACC_PUBLIC
         else -> getVisibilityAccessFlag()
     }
+    val isIdentity = isValhallaSupportEnabled(context) &&
+            !isInterface &&
+            !isAnnotationClass &&
+            !isKotlinValhallaValueClass(context.config.languageVersionSettings) &&
+            !isJavaValueClass
     return visibility or
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
             innerAccessFlagsForModalityAndKind() or
             (if (isInner) 0 else Opcodes.ACC_STATIC) or
-            (if (!isValhallaSupportEnabled(context) || isInterface || isAnnotationClass) 0 else Opcodes.ACC_SUPER)
+            (if (isIdentity) ACC_IDENTITY else 0)
 }
 
 
 private fun isValhallaSupportEnabled(context: JvmBackendContext): Boolean =
-    when (context.configuration.languageVersionSettings.valhallaSupportMode) {
-        ValhallaSupportMode.NONE, null -> false
-        else -> true
-    }
+    context.configuration.languageVersionSettings.isValhallaSupportEnabled()
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     when (kind) {

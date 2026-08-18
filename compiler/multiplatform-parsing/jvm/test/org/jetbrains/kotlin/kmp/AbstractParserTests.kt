@@ -21,8 +21,7 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
         >(), Disposable {
 
     init {
-        // TODO: Remove it once KT-81457 is fixed
-        System.setProperty("ide.enable.implicit.blocking.context", "false")
+        System.setProperty("ide.can.use.coroutines.fork", "false")
     }
 
     protected val disposable = Disposer.newDisposable("Disposable for `${javaClass.simpleName}`")

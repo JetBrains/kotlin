@@ -127,5 +127,5 @@ private fun FirAnnotation.tryExpandClassId(session: FirSession): ClassId? {
     }
 }
 
-private fun FirAnnotation.extractContextParameterCount() =
+private fun FirAnnotation.extractContextParameterCount(): Int? =
     (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirLiteralExpression)?.value as? Int

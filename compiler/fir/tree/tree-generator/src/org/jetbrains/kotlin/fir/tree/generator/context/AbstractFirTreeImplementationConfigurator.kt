@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.fir.tree.generator.standardTypes
 import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
 
@@ -26,5 +27,11 @@ abstract class AbstractFirTreeImplementationConfigurator :
 
     protected fun ImplementationContext.noSource() {
         defaultNull("source", withGetter = true)
+    }
+
+    protected fun ImplementationContext.useAssignableList(vararg fields: String) {
+        for (field in fields) {
+            (implementation[field] as ListField).isAssignableList = true
+        }
     }
 }

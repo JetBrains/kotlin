@@ -66,6 +66,7 @@ FUNCTION:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: plus
   importableFqName: null
 CAN_BE_OPERATOR:
   false

@@ -7,4 +7,8 @@ package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-data object DataFramePlugin : GeneratedDeclarationKey()
+sealed interface DataFramePlugin {
+    companion object : DataFramePlugin, GeneratedDeclarationKey()
+}
+
+data object DataFrameScope : DataFramePlugin, GeneratedDeclarationKey()

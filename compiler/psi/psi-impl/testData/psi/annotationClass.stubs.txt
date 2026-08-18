@@ -16,3 +16,5 @@ FILE[kind=File[packageFqName=test.a]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=a]

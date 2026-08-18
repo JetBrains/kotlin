@@ -17,6 +17,7 @@ where advanced options include:
   -Xwasm-enable-array-range-checks
                              Turn on range checks for array access functions.
   -Xwasm-enable-asserts      Turn on asserts.
+  -Xwasm-enable-tail-calls   Emit WebAssembly tail call instructions (return_call / return_call_indirect).
   -Xwasm-generate-closed-world-multimodule
                              Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module
   -Xwasm-generate-dwarf      Generate DWARF debug information.
@@ -37,7 +38,6 @@ where advanced options include:
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xcache-directory=<path>   Path to the cache directory.
-  -Xfake-override-validator  Enable the IR fake override validator.
   -Xfriend-modules=<path>    Paths to friend modules.
   -Xfriend-modules-disabled  Disable internal declaration export.
   -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
@@ -149,6 +149,7 @@ where advanced options include:
                              It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
   -Xenable-incremental-compilation
                              Enable incremental compilation.
+  -Xequality-bounds          Enable experimental support for `@EqualityBound` annotations in `equals` operators.
   -Xescaping-functions=<+|-><fq.name>
                              Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.

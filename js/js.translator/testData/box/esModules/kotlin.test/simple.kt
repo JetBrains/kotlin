@@ -4,7 +4,7 @@
 // ES_MODULES
 
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
-// ^ @Suppress("INVISIBLE_MEMBER") in _common.kt
+// ^ @Suppress("INVISIBLE_REFERENCE") in _common.kt
 
 // FILE: test.kt
 import common.call

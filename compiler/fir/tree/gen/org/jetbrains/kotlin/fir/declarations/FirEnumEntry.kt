@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.enumEntry]
  */
-abstract class FirEnumEntry : FirVariable() {
+abstract class FirEnumEntry : FirVariable(), FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
@@ -47,6 +48,7 @@ abstract class FirEnumEntry : FirVariable() {
     abstract override val setter: FirPropertyAccessor?
     abstract override val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotation>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirEnumEntrySymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -75,6 +77,8 @@ abstract class FirEnumEntry : FirVariable() {
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntry
 

@@ -1,0 +1,16 @@
+package test
+
+public final class A</*0*/ in I> {
+    /*primary*/ public constructor A</*0*/ in I>()
+    private final var bar: I
+        private final fun `<get-bar>`(): I
+        private final fun `<set-bar>`(/*0*/ I): kotlin.Unit
+    private final val foo: I
+        private final fun `<get-foo>`(): I
+    private final val val_with_accessors: I
+        private final fun `<get-val_with_accessors>`(): I
+    private final var var_with_accessors: I
+        private final fun `<get-var_with_accessors>`(): I
+        private final fun `<set-var_with_accessors>`(/*0*/ I): kotlin.Unit
+    private final fun bas(): I
+}

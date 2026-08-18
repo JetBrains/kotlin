@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.overrides
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Contract
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Result
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFromJava
+import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -41,22 +43,28 @@ class IrJavaIncompatibilityRulesOverridabilityCondition : IrExternalOverridabili
     ): Boolean {
         val originalSuperMember = superMember.original as? IrSimpleFunction ?: return false
         val originalSubMember = subMember.original as? IrSimpleFunction ?: return false
-        if (!originalSubMember.dispatchReceiverParameter!!.type.getClass()!!.isFromJava()) return false
-        require(originalSubMember.parameters.size == originalSuperMember.parameters.size) {
+        if (!originalSubMember.isStatic) {
+            // For non-static methods, return false if Sub is not from Java, because Kotlin will create bridges and this check is not relevant.
+            // For statics, bridges are never created.
+            val originalSubDispatchReceiverType = originalSubMember.dispatchReceiverParameter!!.type
+            if (!originalSubDispatchReceiverType.getClass()!!.isFromJava()) return false
+        }
+        val originalSubMemberParameters = originalSubMember.nonDispatchParameters
+        val originalSuperMemberParameters = originalSuperMember.nonDispatchParameters
+        require(originalSubMemberParameters.size == originalSuperMemberParameters.size) {
             "External overridability condition with CONFLICTS_ONLY should not be run with different value parameters size: " +
                     "subMember=${originalSubMember.render()} superMember=${originalSuperMember.render()}"
         }
-
-        return originalSubMember.nonDispatchParameters.any { param ->
-            isJvmParameterTypePrimitive(originalSuperMember, param.indexInParameters) != isJvmParameterTypePrimitive(originalSubMember, param.indexInParameters)
+        return originalSubMemberParameters.zip(originalSuperMemberParameters).any { [subParam, superParam] ->
+            isJvmParameterTypePrimitive(originalSuperMember, superParam) != isJvmParameterTypePrimitive(originalSubMember, subParam)
         }
     }
 
-    private fun isJvmParameterTypePrimitive(function: IrSimpleFunction, index: Int): Boolean {
+    private fun isJvmParameterTypePrimitive(function: IrSimpleFunction, param: IrValueParameter): Boolean {
         // K1's JavaIncompatibilityRulesOverridabilityCondition also performs an extra check in isPrimitiveCompareTo.
         // It is not needed here as long as we're not using IrFakeOverrideBuilder to build overrides for lazy IR,
         // in particular for built-in classes (however this may change in KT-64352).
-        val type = function.parameters[index].type
+        val type = param.type
         return type.isPrimitiveType() && !type.hasAnnotation(StandardClassIds.Annotations.FlexibleNullability)
                 && !type.hasAnnotation(StandardClassIds.Annotations.EnhancedNullability)
                 && !MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(function)

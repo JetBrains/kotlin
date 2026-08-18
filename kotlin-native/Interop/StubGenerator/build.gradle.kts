@@ -12,7 +12,7 @@ plugins {
     application
     id("native-dependencies")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 application {

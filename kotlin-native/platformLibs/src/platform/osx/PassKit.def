@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.PassKit
 
 modules = PassKit
+apiNotesSwiftName = true
 compilerOpts = -framework PassKit
 linkerOpts = -framework PassKit

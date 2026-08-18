@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_JAVAC
 
 // Two type-import-on-demand declarations bring the same simple name `Widget` into scope from
 // different on-demand targets (JLS 7.5.2):

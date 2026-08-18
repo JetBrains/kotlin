@@ -25,9 +25,6 @@ class KaBaseContractCallsInPlaceContractEffectDeclaration(
 
     override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
 
-    @Deprecated("Use 'invocationKind' instead", level = DeprecationLevel.HIDDEN)
-    override val occurrencesRange: EventOccurrencesRange get() = withValidityAssertion { backingOccurrencesRange }
-
     override val invocationKind: KaContractInvocationKind get() = withValidityAssertion { backingInvocationKind }
 
     override fun hashCode(): Int = Objects.hashCode(backingValueParameterReference, backingInvocationKind)
@@ -108,6 +105,23 @@ class KaBaseContractReturnsResultOfEffectDeclaration(
     override fun equals(other: Any?): Boolean {
         return this === other ||
                 other is KaBaseContractReturnsResultOfEffectDeclaration &&
+                other.backingValueParameterReference == backingValueParameterReference
+    }
+}
+
+@KaImplementationDetail
+class KaBaseContractReturnsParameterEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractReturnsParameterEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
+
+    override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    override fun hashCode(): Int = backingValueParameterReference.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaBaseContractReturnsParameterEffectDeclaration &&
                 other.backingValueParameterReference == backingValueParameterReference
     }
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.renderAsSwiftSourceLine
@@ -43,7 +44,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         if (kotlinFqName != null && session.isFqNameSupported(kotlinFqName)) return null
 
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
-        val kotlinFqName = kotlinFqName?.asString() ?: ""
+        val kotlinFqName = kotlinFqName?.render() ?: ""
         return SirTypeBindingBridge(
             name = swiftFqName,
             kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")",
@@ -86,13 +87,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
             errorParameter = run {
                 isAsync.ifTrue {
-                    Bridge.AsOptionalWrapper(
-                        Bridge.AsObject(
-                            swiftType = KotlinRuntimeModule.kotlinBase.nominalType(),
-                            kotlinType = KotlinType.KotlinObject,
-                            cType = CType.Object
-                        )
-                    )
+                    Bridge.AsOptionalWrapper(Bridge.AsError())
                 } ?: errorParameter?.let {
                     Bridge.AsOutError
                 }
@@ -316,8 +311,7 @@ private class BridgeFunctionDescriptor(
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
             add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer, argumentOverrides, useDirectDispatch))
-            val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
-            add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
+            add("try KotlinRuntimeSupport.raiseKotlinError(${errorParameter.name})")
             resultTransformer?.let { add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))) }
         } else {
             val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer, argumentOverrides, useDirectDispatch)
@@ -391,9 +385,9 @@ private class BridgeFunctionDescriptor(
         return listOf(
             SirReverseFunctionBridge(
                 name = cBridgeName,
-                kotlinFunctionBridge = createReverseKotlinBridge(cLevelParams, cBridgeName, swiftBridgeName, targetClassFqName, targetMethodName),
-                swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall, swiftDeprecation),
-                cDeclarationBridge = createReverseCBridge(cLevelParams, swiftBridgeName)
+                kotlinFunctionBridge = createReverseKotlinBridge(cLevelParams, cBridgeName, swiftBridgeName, targetClassFqName, targetMethodName, errorParameter),
+                swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall, swiftDeprecation, errorParameter),
+                cDeclarationBridge = createReverseCBridge(cLevelParams, swiftBridgeName, errorParameter)
             )
         )
     }
@@ -542,19 +536,11 @@ private class BridgeFunctionDescriptor(
     private fun createReverseCBridge(
         cLevelParams: List<BridgedParameter>,
         swiftBridgeName: String,
+        errorParameter: BridgedParameter.InOut?,
     ): CFunctionBridge {
-        val returnCType = returnType.cType
-        val cDecl = returnCType.render(buildString {
-            append(swiftBridgeName)
-            append("(")
-            cLevelParams.joinTo(this) {
-                it.bridge.cType.render(it.name.cIdentifier)
-            }
-            append(")")
-        }) + ";"
-        val cLines = listOf(cDecl)
-
-        return CFunctionBridge(cLines, listOf(foundationHeader, stdintHeader))
+        val cParams = (cLevelParams + listOfNotNull(errorParameter)).joinToString { it.bridge.cType.render(it.name.cIdentifier) }
+        val cDecl = returnType.cType.render("$swiftBridgeName($cParams)") + ";"
+        return CFunctionBridge(listOf(cDecl), listOf(foundationHeader, stdintHeader))
     }
 
     context(session: SirSession)
@@ -563,54 +549,75 @@ private class BridgeFunctionDescriptor(
         swiftBridgeName: String,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
         swiftDeprecation: SirAttribute.Available?,
+        errorParameter: BridgedParameter.InOut?,
     ): SwiftFunctionBridge {
-        val swiftLines = buildList {
-            val swiftCParams = cLevelParams.joinToString {
-                "_ ${it.name.swiftIdentifier}: ${it.bridge.cType.toSwiftTypeName()}"
-            }
-            val swiftReturnType = returnType.cType.toSwiftTypeName()
-            swiftDeprecation?.let { add(it.renderAsSwiftSourceLine()) }
-            add("@_cdecl(\"${swiftBridgeName}\")")
-            add("package func ${swiftBridgeName}($swiftCParams) -> $swiftReturnType {")
+        val swiftCParams = (cLevelParams + listOfNotNull(errorParameter))
+            .joinToString { "_ ${it.name.swiftIdentifier}: ${it.bridge.cType.toSwiftTypeName()}" }
 
-            val selfBridge = selfParameter
-            val selfConversion = if (selfBridge != null) {
-                val bridge = selfBridge.bridge
-                require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
-                bridge.inSwiftSources.kotlinToSwift(typeNamer, selfBridge.name.swiftIdentifier)
-            } else {
-                "" // no self
-            }
+        val reverseReturn = if (errorParameter != null) reverseThrowingReturn(returnType.cType) else returnType.cType.toSwiftTypeName() to null
+        val swiftReturnType = reverseReturn.first
+        val catchDefaultValue = reverseReturn.second
 
-            val convertedParamExprs = parameters.map { param ->
-                val bridge = param.bridge
-                require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-                bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
-            }.let { exprs ->
-                val contextParamCount = contextParameters.size
-                if (contextParamCount == 0) return@let exprs
-                buildList {
-                    add(exprs.takeLast(contextParamCount).joinToString(prefix = "(", postfix = ")"))
-                    addAll(exprs.dropLast(contextParamCount))
-                }
-            }
-
-            if (selfBridge != null) {
-                val forceUnwrap = if (selfBridge.bridge is Bridge.AsObject) "!" else "" // Swift infers T? from T! here for objects
-                add("    let _self = $selfConversion$forceUnwrap")
-            }
-            val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
-            val swiftReturnTypeName = typeNamer.swiftFqName(returnType.swiftType)
-            add("    let _result: $swiftReturnTypeName = $callExpr")
-
-            val returnBridge = returnType
-            require(returnBridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-            val resultLine = returnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_result")
-            add("    return $resultLine")
-            add("}")
+        val selfBridge = selfParameter
+        val selfConversion = if (selfBridge != null) {
+            val bridge = selfBridge.bridge
+            require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
+            bridge.inSwiftSources.kotlinToSwift(typeNamer, selfBridge.name.swiftIdentifier)
+        } else {
+            "" // no self
         }
 
-        return SwiftFunctionBridge(swiftLines)
+        val convertedParamExprs = parameters.map { param ->
+            val bridge = param.bridge
+            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
+            bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
+        }.let { exprs ->
+            val contextParamCount = contextParameters.size
+            if (contextParamCount == 0) return@let exprs
+            buildList {
+                add(exprs.takeLast(contextParamCount).joinToString(prefix = "(", postfix = ")"))
+                addAll(exprs.dropLast(contextParamCount))
+            }
+        }
+        val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
+        val swiftReturnTypeName = typeNamer.swiftFqName(returnType.swiftType)
+
+        val returnBridge = returnType
+        require(returnBridge is BidirectionalBridge) { "Return type bridge must be bidirectional" }
+        val resultLine = returnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_result")
+
+        val selfDeclaration = selfBridge?.let {
+            val forceUnwrap = if (it.bridge is Bridge.AsObject) "!" else "" // Swift infers T? from T! here for objects
+            "\n    let _self = $selfConversion$forceUnwrap"
+        }.orEmpty()
+
+        val callBody = if (errorParameter != null) {
+            """
+            |    do {
+            |        let _result: $swiftReturnTypeName = $callExpr
+            |        return $resultLine
+            |    } catch {
+            |        ${errorParameter.name.swiftIdentifier}.pointee = KotlinRuntimeSupport.kotlinThrowableRCRef(for: error)
+            |        return $catchDefaultValue
+            |    }
+            """.trimMargin()
+        } else {
+            """
+            |    let _result: $swiftReturnTypeName = $callExpr
+            |    return $resultLine
+            """.trimMargin()
+        }
+
+        val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
+
+        val swiftSource = """
+            |$deprecationPrefix@_cdecl("$swiftBridgeName")
+            |package func $swiftBridgeName($swiftCParams) -> $swiftReturnType {$selfDeclaration
+            |$callBody
+            |}
+        """.trimMargin()
+
+        return SwiftFunctionBridge(swiftSource.lines())
     }
 
     context(session: SirSession)
@@ -619,51 +626,88 @@ private class BridgeFunctionDescriptor(
         cBridgeName: String,
         swiftBridgeName: String,
         targetClassFqName: String,
-        targetMethodName: String
+        targetMethodName: String,
+        errorParameter: BridgedParameter.InOut?,
     ): KotlinFunctionBridge {
-        val kotlinLines = buildList {
-            add("@${importAnnotationFqName.substringAfterLast('.')}(\"${swiftBridgeName}\")")
-            val importParams = cLevelParams.joinToString {
-                "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}"
+        val importAnnotation = importAnnotationFqName.substringAfterLast('.')
+        val reverseBridgeAnnotation = reverseBridgeAnnotationFqName.substringAfterLast('.')
+
+        val importParams = (cLevelParams.map { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" } +
+                listOfNotNull(errorParameter?.let { "${it.name.kotlinIdentifier}: kotlinx.cinterop.CPointer<${it.bridge.kotlinType.repr}>" }))
+            .joinToString()
+        val returnRepr = returnType.kotlinType.repr
+
+        val trampolineParams = cLevelParams.joinToString { param ->
+            "${param.name.kotlinIdentifier}: ${param.bridge.kotlinReverseParameterTypeFqName(typeNamer)}"
+        }
+        val trampolineReturnType = typeNamer.kotlinFqName(returnType.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+
+        val shadowDeclarations = mutableListOf<String>()
+        val callArgs = cLevelParams.map { param ->
+            val bridge = param.bridge
+            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
+            val paramName = param.name.kotlinIdentifier
+            val shadowedName = "__${param.name}".kotlinIdentifier
+            val converted = bridge.inKotlinSources.kotlinToSwift(typeNamer, paramName)
+            if (converted != paramName) {
+                shadowDeclarations.add("val $shadowedName = $converted")
+                shadowedName
+            } else {
+                paramName
             }
-            val returnRepr = returnType.kotlinType.repr
-            add("internal external fun ${swiftBridgeName}($importParams): $returnRepr")
-            add("")
-
-            add("@${reverseBridgeAnnotationFqName.substringAfterLast('.')}($targetClassFqName::class, \"$targetMethodName\")")
-
-            val trampolineParams = cLevelParams.joinToString { param ->
-                "${param.name.kotlinIdentifier}: ${param.bridge.kotlinReverseParameterTypeFqName(typeNamer)}"
-            }
-            val trampolineReturnType = typeNamer.kotlinFqName(returnType.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
-            add("public fun $cBridgeName($trampolineParams): $trampolineReturnType {")
-
-            val callArgs = cLevelParams.joinToString { param ->
-                val bridge = param.bridge
-                require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-                val paramName = param.name.kotlinIdentifier
-                val shadowedName = "__${param.name}".kotlinIdentifier
-                val converted = bridge.inKotlinSources.kotlinToSwift(typeNamer, paramName)
-                if (converted != paramName) {
-                    add("    val $shadowedName = $converted")
-                    shadowedName
-                } else {
-                    paramName
-                }
-            }
-
-            val returnBridge = returnType
-            require(returnBridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-            add("    val _result = $swiftBridgeName($callArgs)")
-            add("    return ${returnBridge.inKotlinSources.swiftToKotlin(typeNamer, "_result")}")
-
-            add("}")
         }
 
+        val returnBridge = returnType
+        require(returnBridge is BidirectionalBridge) { "Return type bridge must be bidirectional" }
+        val resultConversion = returnBridge.inKotlinSources.swiftToKotlin(typeNamer, "_result")
+
+        val functionBody = if (errorParameter != null) {
+            val outErrorName = errorParameter.name.kotlinIdentifier
+            val callArgsWithOutError = (callArgs + "$outErrorName.ptr").joinToString()
+            (shadowDeclarations + """
+                |return kotlinx.cinterop.memScoped {
+                |    val $outErrorName = alloc<${errorParameter.bridge.kotlinType.repr}>()
+                |    val _result = $swiftBridgeName($callArgsWithOutError)
+                |    throwErrorFromReverseBridge($outErrorName.value)
+                |    $resultConversion
+                |}
+            """.trimMargin()).joinToString("\n")
+        } else {
+            (shadowDeclarations + listOf(
+                "val _result = $swiftBridgeName(${callArgs.joinToString()})",
+                "return $resultConversion",
+            )).joinToString("\n")
+        }
+
+        val kotlinSource = """
+            |@$importAnnotation("$swiftBridgeName")
+            |internal external fun $swiftBridgeName($importParams): $returnRepr
+            |
+            |@$reverseBridgeAnnotation($targetClassFqName::class, "$targetMethodName")
+            |public fun $cBridgeName($trampolineParams): $trampolineReturnType {
+            |${functionBody.prependIndent("    ")}
+            |}
+        """.trimMargin()
+
         return KotlinFunctionBridge(
-            kotlinLines,
+            kotlinSource.lines(),
             listOf(reverseBridgeAnnotationFqName, importAnnotationFqName, cinterop)
         )
+    }
+
+    private companion object {
+        fun reverseThrowingReturn(cType: CType): Pair<String, String> {
+            val base = (cType as? CType.NullabilityAnnotated)?.wrapped ?: cType
+            return when (base) {
+                CType.Bool -> cType.toSwiftTypeName() to "false"
+                CType.Int8, CType.Int16, CType.Int32, CType.Int64,
+                CType.UInt8, CType.UInt16, CType.UInt32, CType.UInt64,
+                    -> cType.toSwiftTypeName() to "0"
+                CType.Float, CType.Double -> cType.toSwiftTypeName() to "0"
+                CType.NSString -> cType.toSwiftTypeName() to "\"\""
+                else -> cType.nullable.toSwiftTypeName() to "nil"
+            }
+        }
     }
 }
 

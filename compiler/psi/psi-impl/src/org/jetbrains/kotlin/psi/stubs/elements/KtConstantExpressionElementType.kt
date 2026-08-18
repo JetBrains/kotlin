@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
-import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantExpressionStubImpl
 import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
 import org.jetbrains.kotlin.psi.utils.toConstantValueKind
@@ -25,14 +23,6 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         KtConstantExpression::class.java,
         KotlinConstantExpressionStub::class.java,
     ) {
-
-    override fun shouldCreateStub(node: ASTNode): Boolean {
-        if (!StubUtils.isDeclaredInsideValueArgument(node)) {
-            return false
-        }
-
-        return super.shouldCreateStub(node)
-    }
 
     override fun createStub(psi: KtConstantExpression, parentStub: StubElement<*>?): KotlinConstantExpressionStubImpl {
         val elementType = psi.node.elementType as? KtConstantExpressionElementType
@@ -67,16 +57,16 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
 
     companion object {
         @Deprecated(
-            "Use ConstantValueKind.toConstantExpressionElementType() instead",
-            ReplaceWith("kind.toConstantExpressionElementType()", "org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType")
+            message = "Use ConstantValueKind.toConstantExpressionElementType() instead",
+            replaceWith = ReplaceWith("kind.toConstantExpressionElementType()", "org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType"),
         )
         fun kindToConstantElementType(kind: ConstantValueKind): KtConstantExpressionElementType {
             return kind.toConstantExpressionElementType() as KtConstantExpressionElementType
         }
 
         @Deprecated(
-            "Use KtConstantExpressionElementType.toConstantValueKind() instead",
-            ReplaceWith("elementType.toConstantValueKind()", "org.jetbrains.kotlin.psi.utils.toConstantValueKind")
+            message = "Use KtConstantExpressionElementType.toConstantValueKind() instead",
+            replaceWith = ReplaceWith("elementType.toConstantValueKind()", "org.jetbrains.kotlin.psi.utils.toConstantValueKind"),
         )
         private fun constantElementTypeToKind(elementType: KtConstantExpressionElementType): ConstantValueKind {
             return elementType.toConstantValueKind()

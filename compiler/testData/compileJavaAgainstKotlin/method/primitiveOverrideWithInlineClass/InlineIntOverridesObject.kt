@@ -2,6 +2,13 @@
 // KT-64909
 // LANGUAGE: +InlineClasses
 
+// FILE: InlineIntOverridesObject.java
+package test;
+
+class JExtendsKFooZ extends KFooZ {
+}
+
+// FILE: InlineIntOverridesObject.kt
 package test
 
 inline class Z(val value: Int)

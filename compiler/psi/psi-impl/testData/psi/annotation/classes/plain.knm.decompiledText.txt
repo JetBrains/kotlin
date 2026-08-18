@@ -1,0 +1,26 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public final annotation class Empty public constructor() : kotlin.Annotation {
+}
+
+public final annotation class Single public constructor(
+    public final val value: kotlin.String,
+) : kotlin.Annotation {
+}
+
+public final annotation class Defaults public constructor(
+    public final val int: kotlin.Int = 1,
+
+    public final val string: kotlin.String = "s",
+
+    public final val array: kotlin.IntArray = [1, 2],
+) : kotlin.Annotation {
+}
+
+public final annotation class Varargs public constructor(
+    public final vararg val values: kotlin.String,
+) : kotlin.Annotation {
+}

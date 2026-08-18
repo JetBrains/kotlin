@@ -24,10 +24,6 @@ internal interface SwiftExportTaskParameters {
 
     @get:Input
     @get:Optional
-    val renderDocComments: Property<Boolean>
-
-    @get:Input
-    @get:Optional
     val swiftExportSettings: MapProperty<String, String>
 
     @get:Input

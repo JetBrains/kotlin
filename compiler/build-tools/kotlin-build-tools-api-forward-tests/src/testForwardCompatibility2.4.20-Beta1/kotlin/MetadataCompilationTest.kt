@@ -26,7 +26,7 @@ class MetadataCompilationTest : BaseCompilationTest() {
             val module = moduleWithCommonSource()
             module.compile {
                 assertIsUnpackedMetadataKlib()
-                assertKnmFileCount(packageFqName = "", expectedCount = 1)
+                assertKnmFileCount(expectedCount = 1)
             }
         }
     }
@@ -67,7 +67,7 @@ class MetadataCompilationTest : BaseCompilationTest() {
             val consumer = module("basic-multimodule-project/module-2", dependencies = listOf(library))
             consumer.compile {
                 assertIsUnpackedMetadataKlib()
-                assertKnmFileCount(packageFqName = "", expectedCount = 2)
+                assertKnmFileCount(expectedCount = 2)
             }
         }
     }

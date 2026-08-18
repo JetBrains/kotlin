@@ -249,6 +249,20 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xfake-override-validator",
+        description = "Enable the IR fake override validator.",
+        removedVersion = "2.5.0",
+    )
+    var fakeOverrideValidator: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xklib-normalize-absolute-path",
         description = "Normalize absolute paths in klibs.",
         deprecatedVersion = "2.4.20",
@@ -332,6 +346,21 @@ It has no effect when -language-version is 2.0 or higher.""",
         removedVersion = "2.4.20",
     )
     var lightDebugDeprecated: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xpurge-user-libs",
+        deprecatedName = "--purge_user_libs",
+        description = "Don't link unused libraries even if explicitly specified.",
+        removedVersion = "2.5.0",
+    )
+    var purgeUserLibs: Boolean = false
         set(value) {
             field = value
         }

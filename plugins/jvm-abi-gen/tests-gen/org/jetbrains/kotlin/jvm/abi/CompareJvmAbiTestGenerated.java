@@ -254,4 +254,10 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
   public void testTopLevelPrivateMembers() {
     runTest("plugins/jvm-abi-gen/testData/compare/topLevelPrivateMembers/");
   }
+
+  @Test
+  @TestMetadata("valueClassLoadableDescriptors")
+  public void testValueClassLoadableDescriptors() {
+    runTest("plugins/jvm-abi-gen/testData/compare/valueClassLoadableDescriptors/");
+  }
 }

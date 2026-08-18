@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.diagnostics.warning2
 import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_CONFIG_IS_MISSING
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.UNKNOWN_PLUGIN_OPTION
@@ -35,6 +37,14 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXI
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_NOT_CALLED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
@@ -62,6 +72,15 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
     val NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED by error0<KtAnnotationEntry>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST by error0<KtAnnotationEntry>()
+
+    val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
+    val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
+    val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
+    val BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE by error0<KtAnnotationEntry>()
+    val BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS by error0<KtAnnotationEntry>()
+    val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
+    val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
+    val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -119,6 +138,40 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST,
             "Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated)."
+        )
+        map.put(
+            BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION,
+            "'@Builder' will ignore the initializing expression entirely. To use the initializing expression as a default, add '@Builder.Default'."
+        )
+        map.put(
+            BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION,
+            "'@Builder.Default' requires an initializing expression (' = something;')."
+        )
+        map.put(
+            BUILDER_DEFAULT_AND_SINGULAR_MIXED,
+            "'@Builder.Default' and '@Singular' cannot be mixed."
+        )
+        map.put(
+            BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE,
+            "'@Builder' infers the builder class name from the function's return type. " +
+                    "Specify the return type explicitly, or name the builder class with '@Builder(builderClassName = \"...\")'."
+        )
+        map.put(
+            BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,
+            "'@Builder' is not supported on a declaration with an extension receiver or context parameters."
+        )
+        map.put(
+            SINGULAR_REQUIRES_EXPLICIT_NAME,
+            "The singular must be specified explicitly (e.g. @Singular(\"task\")) because auto singularization is disabled."
+        )
+        map.put(
+            CANNOT_SINGULARIZE_NAME,
+            "Cannot singularize this name; specify the singular explicitly (e.g. @Singular(\"sheep\"))."
+        )
+        map.put(
+            UNSUPPORTED_SINGULAR_TYPE,
+            "Lombok does not know how to create the singular-form builder methods for type ''{0}''; these methods will not be generated.",
+            RENDER_TYPE,
         )
     }
 }

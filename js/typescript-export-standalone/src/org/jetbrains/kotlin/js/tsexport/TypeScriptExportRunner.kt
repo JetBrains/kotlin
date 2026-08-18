@@ -14,10 +14,16 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
+import org.jetbrains.kotlin.library.jsOutputName
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibLoaderErrorReporterCallback
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.io.File
+import java.nio.file.Path
 
 public data class TypeScriptExportConfig(
     public val targetPlatform: TargetPlatform,
@@ -26,7 +32,7 @@ public data class TypeScriptExportConfig(
     public val implementableInterfaces: Boolean,
     public val exportableSuspendLambdas: Boolean,
     public val dataClassCopyRespectsConstructorVisibility: Boolean,
-    public val exportUntypedAsUnknown: Boolean,
+    public val useUnknownInsteadAny: Boolean,
 )
 
 public typealias InputModule = KlibInputModule<TypeScriptModuleConfig>
@@ -45,10 +51,13 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
     }
 
     val kaModules = createKaModulesForStandaloneAnalysis(klibs, config.targetPlatform)
-    val generator = ExportModelGenerator(config)
-    val exportModel = analyze(kaModules.useSiteModule) {
-        generator.generateExport(kaModules)
+    val exportModel = kaModules.use { kaModules ->
+        val generator = ExportModelGenerator(config)
+        analyze(kaModules.useSiteModule) {
+            generator.generateExport(kaModules)
+        }
     }
+
     val artifacts = TsArtifactProducer.generateArtifacts(exportModel, config.artifactConfiguration.granularity)
     config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()
     return when (config.artifactConfiguration.tsCompilationStrategy) {
@@ -74,6 +83,16 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
             }
         }
     }
+}
+
+public fun createTypeScriptExportInputModule(
+    klibPath: Path,
+    errorReporter: KlibLoaderErrorReporterCallback,
+): KlibInputModule<TypeScriptModuleConfig> {
+    val result = KlibLoader { libraryPaths(klibPath.toString()) }.load()
+    result.reportLoadingProblemsIfAny(errorReporter)
+    val library = result.librariesStdlibFirst.single()
+    return KlibInputModule(library.uniqueName, klibPath, TypeScriptModuleConfig(outputName = library.jsOutputName))
 }
 
 private fun writeMergedTsFile(
@@ -107,4 +126,3 @@ internal data class FileArtifactKey(
     val packageFqName: FqName,
     val fileName: String,
 )
-

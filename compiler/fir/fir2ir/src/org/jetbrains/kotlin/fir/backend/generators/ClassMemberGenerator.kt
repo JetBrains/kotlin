@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
@@ -31,19 +32,14 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -101,10 +97,15 @@ internal class ClassMemberGenerator(
                 }
             }
 
-            // For full value class primary constructors with a non-Any superclass,
-            // move field-from-parameter initializations before the delegating super call.
+            // Move field-from-parameter initializations before the delegating super call for full value class primary
+            // constructors that must assign their fields before `super(...)`: those with a non-Any (value class) superclass,
+            // and — under Project Valhalla (JVM) — every full value class, since its strict fields (JEP 401) must be definitely
+            // assigned before `super()` even when it extends `Any`. Non-Valhalla backends (e.g. JS/ES6, where `this` may not be
+            // used before `super()`) keep the plain order for `Any`-extending value classes.
             @OptIn(UnsafeDuringIrConstructionAPI::class)
-            if (!configuration.skipBodies && irPrimaryConstructor != null && irClass.isFullValueClass && irClass.superClass != null && irClass.isFinalClass) {
+            if (!configuration.skipBodies && irPrimaryConstructor != null && irClass.isFullValueClass && irClass.isFinalClass &&
+                (irClass.superClass != null || irClass.isValhallaFullValueClass())
+            ) {
                 moveFieldFromParameterInitsBeforeSuperCall(irPrimaryConstructor, irClass)
             }
 
@@ -387,6 +388,12 @@ internal class ClassMemberGenerator(
             }
         }
     }
+
+    // A full value class is compiled as a Project Valhalla value class (with strict instance fields) starting from the mode that
+    // enables full value classes. The mode is JVM-only, so this is `false` on other backends. Inline value classes are handled
+    // separately in JvmInlineClassLowering.
+    private fun IrClass.isValhallaFullValueClass(): Boolean =
+        isFullValueClass && valueClassRepresentation.isKotlinValhallaValueClass(configuration.languageVersionSettings)
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun moveFieldFromParameterInitsBeforeSuperCall(irConstructor: IrConstructor, irClass: IrClass) {

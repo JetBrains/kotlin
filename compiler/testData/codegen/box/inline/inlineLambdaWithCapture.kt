@@ -2,7 +2,7 @@
 package foo
 import kotlin.test.*
 
-// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul;Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul;Unit$getInstance
 
 data class Result(var value: Int = 0, var invocationCount: Int = 0)
 
@@ -25,7 +25,7 @@ internal inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
 // FILE: main.kt
 package foo
 import kotlin.test.*
-// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul;Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul;Unit$getInstance
 // CHECK_BREAKS_COUNT: function=maxBySquare count=0
 // CHECK_LABELS_COUNT: function=maxBySquare name=$l$block count=0
 internal fun maxBySquare(a: Array<Int>, r: Result): Result {

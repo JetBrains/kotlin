@@ -115,6 +115,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: bar
   importableFqName: bar
 
 KaKotlinPropertySymbol:
@@ -264,6 +265,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DuplicatedContextParameterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getFoo
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -299,7 +301,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: DuplicatedContextParameterKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getFoo
-  javaSetterName: null
   isInline: false
   importableFqName: foo

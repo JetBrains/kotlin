@@ -47,7 +47,6 @@ plugins {
     id("kotlin-bootstrap")
     id("develocity")
     id("jvm-toolchain-provisioning")
-    id("kotlin-daemon-config")
     id("cache-redirector")
 }
 
@@ -104,11 +103,16 @@ dependencyResolutionManagement {
         }
     }
     repositories {
+        val composeRuntimeSnapshotVersions = Properties().apply {
+            file("plugins/compose/compose-runtime-snapshot-versions.toml").inputStream().use { load(it) }
+        }
+
         intellijRepository(buildProperties.versionsProperty("intellijSdk").get())
         intellijDependencies()
         kotlinDependencies()
         teamcityRepository()
         googleAndroidRepository()
+        composeRuntimeSnapshotVersions.getProperty("snapshot-id")?.let { androidxSnapshotRepository(it.trim('"')) }
         gradleLibsReleases()
         gradlePluginPortalRepository()
         litmuskt()
@@ -116,7 +120,6 @@ dependencyResolutionManagement {
         mozillaReleases()
         kotlinFileDependenciesJsc()
         githubRelease("WasmEdge", "WasmEdge", revisionPrefix = "", groupAlias = "org.wasmedge")
-        githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
         githubCommit("webassembly", "testsuite")
         githubRelease("webassembly", "wabt", revisionPrefix = "")
         githubTag("google", "breakpad")
@@ -125,6 +128,7 @@ dependencyResolutionManagement {
         yarnDistributions()
         binaryenDistributions()
         d8Distributions()
+        wasmtimeDistributions()
         androidRepository()
         androidSystemImages()
         val mirrorRepo: String? = settings.providers.systemProperty("maven.repository.mirror").orNull
@@ -173,6 +177,7 @@ include(
     ":compiler:frontend",
     ":compiler:frontend.common",
     ":compiler:frontend.common-psi",
+    ":compiler:frontend.common-psi:feature-to-flag-map-generator",
     ":compiler:frontend.java",
     ":compiler:frontend:cfg",
     ":kotlin-compiler-runner-unshaded",
@@ -200,12 +205,10 @@ include(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:java-direct",
-    ":compiler:javac-wrapper",
     ":compiler:cli:cli-arguments-generator",
     ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-jvm",
-    ":compiler:cli-jvm:javac-integration",
     ":compiler:cli-js",
     ":compiler:cli-jklib",
     ":compiler:cli-metadata",
@@ -431,6 +434,7 @@ include(
     ":kotlin-scripting-compiler-impl-embeddable",
     ":plugins:scripting:test-script-definition",
     ":plugins:scripting:scripting-tests",
+    ":plugins:scripting:scripting-tests:runtime",
     ":kotlin-scripting-dependencies",
     ":kotlin-scripting-dependencies-maven",
     ":kotlin-scripting-dependencies-maven-all",
@@ -517,7 +521,6 @@ include(
     ":compiler:fir:fir-js",
     ":compiler:fir:fir-native",
     ":compiler:fir:modularized-tests",
-    ":compiler:fir:dump",
     ":compiler:fir:checkers",
     ":compiler:fir:checkers:checkers.jvm",
     ":compiler:fir:checkers:checkers.js",
@@ -617,6 +620,7 @@ include(
     ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-test-framework-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
@@ -628,6 +632,7 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-surface",
     ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
     ":prepare:analysis-api:kotlin-analysis-api-implementation",
+    ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
@@ -706,8 +711,9 @@ include(
     ":analysis:low-level-api-fir",
     ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
     ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
-    ":analysis:analysis-api-fir:analysis-api-fir-generator",
     ":analysis:analysis-api-fir",
+    ":analysis:analysis-api-fir-diagnostics",
+    ":analysis:analysis-api-fir-diagnostics:analysis-api-fir-diagnostics-generator",
     ":analysis:analysis-api",
     ":analysis:analysis-api-impl-base",
     ":analysis:analysis-api-platform-interface",
@@ -799,7 +805,6 @@ project(":kotlin-preloader").projectDir = File("$rootDir/compiler/preloader")
 project(":kotlin-build-common").projectDir = File("$rootDir/build-common")
 project(":compiler:cli-base").projectDir = File("$rootDir/compiler/cli/cli-base")
 project(":compiler:cli-jvm").projectDir = File("$rootDir/compiler/cli/cli-jvm")
-project(":compiler:cli-jvm:javac-integration").projectDir = File("$rootDir/compiler/cli/cli-jvm/javac-integration")
 project(":compiler:cli-js").projectDir = File("$rootDir/compiler/cli/cli-js")
 project(":compiler:cli-metadata").projectDir = File("$rootDir/compiler/cli/cli-metadata")
 project(":compiler:cli-jklib").projectDir = File("$rootDir/compiler/cli/cli-jklib")
@@ -1063,5 +1068,3 @@ if (buildProperties.isKotlinNativeEnabled.get()) {
     include(":native:native.tests:cli-tests")
     include(":kotlin-native:tools:minidump-analyzer")
 }
-
-include("compiler:test-security-manager")

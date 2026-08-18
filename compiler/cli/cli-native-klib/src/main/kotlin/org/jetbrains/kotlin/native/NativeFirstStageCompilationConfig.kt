@@ -27,10 +27,10 @@ import java.util.Properties
 import kotlin.io.path.Path
 import kotlin.io.path.name
 
-class NativeFirstStageCompilationConfig(
+class NativeFirstStageCompilationConfig private constructor(
     override val configuration: CompilerConfiguration,
     override val target: KonanTarget,
-    val loadedKlibs: LoadedNativeKlibs,
+    override val loadedKlibs: LoadedNativeKlibs,
 ) : NativeCompilationConfig {
 
     override val moduleId: String
@@ -43,6 +43,24 @@ class NativeFirstStageCompilationConfig(
 
     fun withConfiguration(newConfiguration: CompilerConfiguration): NativeFirstStageCompilationConfig {
         return NativeFirstStageCompilationConfig(newConfiguration, target, loadedKlibs)
+    }
+
+    companion object {
+        operator fun invoke(configuration: CompilerConfiguration): NativeFirstStageCompilationConfig {
+            val targetName = configuration.konanTarget
+            val target = if (targetName != null) {
+                KonanTarget.predefinedTargets[targetName]
+                    ?: error("Unknown target: $targetName")
+            } else {
+                HostManager.host
+            }
+
+            return NativeFirstStageCompilationConfig(
+                configuration = configuration,
+                target = target,
+                loadedKlibs = loadNativeKlibs(configuration, target),
+            )
+        }
     }
 }
 
@@ -68,20 +86,4 @@ class NativeFirstStagePhaseContext(
     fun withConfiguration(newConfiguration: CompilerConfiguration): NativeFirstStagePhaseContext {
         return NativeFirstStagePhaseContext(config.withConfiguration(newConfiguration))
     }
-}
-
-internal fun createFirstStageCompilationConfig(configuration: CompilerConfiguration): NativeFirstStageCompilationConfig {
-    val targetName = configuration.konanTarget
-    val target = if (targetName != null) {
-        KonanTarget.predefinedTargets[targetName]
-            ?: error("Unknown target: $targetName")
-    } else {
-        HostManager.host
-    }
-
-    return NativeFirstStageCompilationConfig(
-        configuration = configuration,
-        target = target,
-        loadedKlibs = loadNativeKlibs(configuration, target),
-    )
 }

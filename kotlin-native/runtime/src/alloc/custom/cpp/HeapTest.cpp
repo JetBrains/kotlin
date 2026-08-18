@@ -12,6 +12,7 @@
 
 #include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
+#include "gc/GCTestSupport.hpp"
 #include "Heap.hpp"
 #include "SingleObjectPage.hpp"
 
@@ -26,16 +27,16 @@ using SingleObjectPage = typename kotlin::alloc::SingleObjectPage;
 
 inline constexpr int MIN_BLOCK_SIZE = 2;
 
-void mark(void* obj) {
-    reinterpret_cast<uint64_t*>(obj)[0] = 1;
+void mark(kotlin::alloc::CustomHeapObject& obj) {
+    ASSERT_TRUE(kotlin::gc::test_support::tryMark(obj.object()));
 }
 
-size_t installType(uint8_t* obj, TypeInfo* typeInfo) {
+kotlin::alloc::CustomHeapObject& installType(uint8_t* obj, TypeInfo* typeInfo) {
     auto descriptor = kotlin::alloc::CustomHeapObject::descriptorFrom(typeInfo);
     auto& heapObject = *descriptor.construct(obj);
     ObjHeader* object = heapObject.object();
     object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
-    return descriptor.size();
+    return heapObject;
 }
 
 TEST_F(CustomAllocatorTest, HeapReuseFixedBlockPages) {
@@ -51,9 +52,7 @@ TEST_F(CustomAllocatorTest, HeapReuseFixedBlockPages) {
     FixedBlockPage* pages[MAX];
     for (int blocks = MIN; blocks < MAX; ++blocks) {
         pages[blocks] = heap.GetFixedBlockPage(blocks, finalizerQueue());
-        uint8_t* obj = pages[blocks]->TryAllocate();
-        size_t size = installType(obj, &fakeTypes[blocks]);
-        EXPECT_EQ(size, static_cast<size_t>(blocks * 8));
+        auto& obj = installType(pages[blocks]->TryAllocate(), &fakeTypes[blocks]);
         mark(obj); // to make the page survive a sweep
     }
     heap.PrepareForGC();
@@ -68,13 +67,11 @@ TEST_F(CustomAllocatorTest, HeapReuseNextFitPages) {
     Heap heap;
     const uint32_t BLOCKSIZE = FixedBlockPage::MAX_BLOCK_SIZE + 42;
     NextFitPage* page = heap.GetNextFitPage(BLOCKSIZE, finalizerQueue());
-    uint8_t* obj = page->TryAllocate(BLOCKSIZE);
     TypeInfo fakeType{};
     fakeType.typeInfo_ = &fakeType;
     fakeType.instanceSize_ = 8 * (BLOCKSIZE - 1);
     fakeType.flags_ = 0;
-    size_t size = installType(obj, &fakeType);
-    EXPECT_EQ(size, static_cast<size_t>(BLOCKSIZE * 8));
+    auto& obj = installType(page->TryAllocate(BLOCKSIZE), &fakeType);
     mark(obj); // to make the page survive a sweep
     heap.PrepareForGC();
     heap.Sweep(gcHandle());

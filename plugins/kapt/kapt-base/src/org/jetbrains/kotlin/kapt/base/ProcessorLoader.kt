@@ -98,8 +98,10 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
         for (file in classpath) {
             when {
                 file.isDirectory -> {
-                    file.resolve(serviceFile).takeIf { it.isFile }?.let {
-                        processSingleInput(it.inputStream())
+                    file.resolve(serviceFile).takeIf { it.isFile }?.let { serviceFileInDir ->
+                        serviceFileInDir.inputStream().use {
+                            processSingleInput(it)
+                        }
                     }
                 }
                 file.isFile && file.extension.equals("jar", ignoreCase = true) -> {

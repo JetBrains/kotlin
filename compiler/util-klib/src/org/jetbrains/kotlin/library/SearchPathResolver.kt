@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.library
 
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
@@ -254,7 +255,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_NATIVE_STDLIB_NAME }
                 .map { RequiredUnresolvedLibrary(it.absolutePath) }
                 .map { resolve(it) }
-                .onEach { it.isImplicitlyLoadedFromKotlinNativeDistribution = true }
+                .onEach {
+                    it.isFromKotlinNativeDistribution = true
+                    // NOTE: Unlike KlibLoader, the KLIB resolver does not distinguish between "from Kotlin/Native distribution" and
+                    // "implicitly loaded". Let's just keep it as it for now.
+                    it.isImplicitlyLoadedFromKotlinNativeDistribution = true
+                }
         } else emptySequence()
 
     override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L> {
@@ -263,6 +269,9 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
         if (!noStdLib) {
             val library = resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME))
+            library.isFromKotlinNativeDistribution = true
+            // NOTE: Unlike KlibLoader, the KLIB resolver does not distinguish between "from Kotlin/Native distribution" and
+            // "implicitly loaded". Let's just keep it as it for now.
             library.isImplicitlyLoadedFromKotlinNativeDistribution = true
             result.add(library)
         }

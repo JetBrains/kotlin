@@ -1,0 +1,269 @@
+// MODULE: lib
+// FILE: lib.kt
+
+interface Modifier {
+  companion object Companion : Modifier {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}
+
+interface TestContainer {
+  @Composable
+  @FunctionKeyMeta(key = 1269968359, startOffset = 859, endOffset = 902)
+  abstract fun layout(content: Function2<Composer, Int, Unit>, /* var */ $composer: Composer?, $changed: Int)
+
+}
+
+interface TestValue {
+  class ComposeDefaultImpls {
+    @Composable
+    companion fun compose$default(/* var */ modifier: Modifier?, $this$: TestValue, /* var */ $composer: Composer?, $changed: Int, $default: Int) {
+      var modifier: Modifier? = modifier
+      var $composer: Composer? = $composer
+      { // BLOCK
+        $composer = $composer.startRestartGroup(key = -1498183236)
+        sourceInformation(composer = $composer, sourceInformation = "C(compose$default):lib.kt")
+      }
+      val $dirty: Int = $changed
+      when {
+        EQEQ(arg0 = $default.and(other = 1), arg1 = 0).not() -> $dirty = $dirty.or(other = 6)
+        EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+          when {
+            EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = modifier)
+            else -> $composer.changedInstance(value = modifier)
+          } -> 4
+          else -> 2
+        })
+      }
+      when {
+        EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+          when {
+            EQEQ(arg0 = $changed.and(other = 64), arg1 = 0) -> $composer.changed(value = $this$)
+            else -> $composer.changedInstance(value = $this$)
+          } -> 32
+          else -> 16
+        })
+      }
+      when {
+        $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+          when {
+            EQEQ(arg0 = $default.and(other = 1), arg1 = 0).not() -> modifier = Companion
+          }
+          when {
+            isTraceInProgress() -> traceEventStart(key = -1498183236, dirty1 = $dirty, dirty2 = -1, info = "TestValue.ComposeDefaultImpls.compose$default (lib.kt:-1)")
+          }
+          $this$.compose(modifier = modifier /*as Modifier */, $composer = $composer, $changed = 14.and(other = $dirty).or(other = 112.and(other = $dirty)))
+          when {
+            isTraceInProgress() -> traceEventEnd()
+          }
+        }
+        else -> $composer.skipToGroupEnd()
+      }
+      { // BLOCK
+        { // BLOCK
+          val tmp_0: ScopeUpdateScope? = $composer.endRestartGroup()
+          when {
+            EQEQ(arg0 = tmp_0, arg1 = null) -> null
+            else -> tmp_0.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+              return compose$default(modifier = modifier, $this$ = $this$, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)), $default = $default)
+            }
+)
+          }
+        }
+      }
+    }
+
+  }
+
+  @Composable
+  @FunctionKeyMeta(key = 568107671, startOffset = 948, endOffset = 990)
+  abstract fun compose(modifier: Modifier, /* var */ $composer: Composer?, $changed: Int)
+
+  @Composable
+  @FunctionKeyMeta(key = -353834169, startOffset = 1012, endOffset = 1124)
+  fun compose(container: TestContainer, /* var */ $composer: Composer?, $changed: Int) {
+    var $composer: Composer? = $composer
+    { // BLOCK
+      $composer.startReplaceGroup(key = -353834169)
+      sourceInformation(composer = $composer, sourceInformation = "C(compose)31@1077L41,31@1070L48:lib.kt")
+    }
+    when {
+      isTraceInProgress() -> traceEventStart(key = -353834169, dirty1 = $changed, dirty2 = -1, info = "TestValue.compose (lib.kt:30)")
+    }
+    container.layout(content = run<Function2<Composer, Int, Unit>>(block = local inline fun <anonymous>(): Function2<Composer, Int, Unit> {
+      val tmp_1: ComposableLambda = rememberComposableLambda(key = -696932450, tracked = true, block =       @Composable
+      @FunctionKeyMeta(key = -696932450, startOffset = 1077, endOffset = 1118)
+local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        sourceInformation(composer = $composer, sourceInformation = "C32@1091L17:lib.kt")
+        when {
+          $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+            when {
+              isTraceInProgress() -> traceEventStart(key = -696932450, dirty1 = $changed, dirty2 = -1, info = "TestValue.compose.<anonymous> (lib.kt:32)")
+            }
+            compose$default(modifier = Companion, $this$ = <this>, $composer = $composer, $changed = 6, $default = 0)
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+          }
+          else -> $composer.skipToGroupEnd()
+        }
+      }
+, $composer = $composer, $changed = 54)
+      return remember<Function2<Composer, Int, Unit>>(key1 = tmp_1, calculation = local inline fun <anonymous>(): Function2<Composer, Int, Unit> {
+        return tmp_1::invoke
+      }
+, $composer = $composer, $changed = 0)
+    }
+), $composer = $composer, $changed = 6.or(other = 112.and(other = $changed.shl(bitCount = 3))))
+    when {
+      isTraceInProgress() -> traceEventEnd()
+    }
+    $composer.endReplaceGroup()
+  }
+
+}
+
+// MODULE: main
+// FILE: main.kt
+
+val TestValueImpl$stableprop: Int
+  field = 0
+
+val TestContainerImpl$stableprop: Int
+  field = 0
+
+@StabilityInferred(parameters = 1)
+class TestContainerImpl : TestContainer {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @Composable
+  @ComposableInferredTarget(scheme = "[0[0]]")
+  @FunctionKeyMeta(key = -1474425943, startOffset = 296, endOffset = 365)
+  override fun layout(content: Function2<Composer, Int, Unit>, /* var */ $composer: Composer?, $changed: Int) {
+    var $composer: Composer? = $composer
+    { // BLOCK
+      $composer = $composer.startRestartGroup(key = -1474425943)
+      sourceInformation(composer = $composer, sourceInformation = "C(layout)50@350L9:main.kt")
+    }
+    val $dirty: Int = $changed
+    when {
+      EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+        $composer.changedInstance(value = content) -> 4
+        else -> 2
+      })
+    }
+    when {
+      $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+        when {
+          isTraceInProgress() -> traceEventStart(key = -1474425943, dirty1 = $dirty, dirty2 = -1, info = "TestContainerImpl.layout (main.kt:49)")
+        }
+        content.invoke(p1 = $composer, p2 = 14.and(other = $dirty))
+        when {
+          isTraceInProgress() -> traceEventEnd()
+        }
+      }
+      else -> $composer.skipToGroupEnd()
+    }
+    { // BLOCK
+      val tmp_0: TestContainerImpl = <this>
+      { // BLOCK
+        val tmp_1: ScopeUpdateScope? = $composer.endRestartGroup()
+        when {
+          EQEQ(arg0 = tmp_1, arg1 = null) -> null
+          else -> tmp_1.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+            return tmp_0.layout(content = content, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+          }
+)
+        }
+      }
+    }
+  }
+
+}
+
+@StabilityInferred(parameters = 1)
+class TestValueImpl : TestValue {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @Composable
+  @FunctionKeyMeta(key = 984679673, startOffset = 182, endOffset = 221)
+  override fun compose(modifier: Modifier, /* var */ $composer: Composer?, $changed: Int) {
+    var $composer: Composer? = $composer
+    { // BLOCK
+      $composer.startReplaceGroup(key = 984679673)
+      sourceInformation(composer = $composer, sourceInformation = "C(compose):main.kt")
+    }
+    when {
+      isTraceInProgress() -> traceEventStart(key = 984679673, dirty1 = $changed, dirty2 = -1, info = "TestValueImpl.compose (main.kt:43)")
+    }
+    when {
+      isTraceInProgress() -> traceEventEnd()
+    }
+    $composer.endReplaceGroup()
+  }
+
+}
+
+@Deprecated(message = "Synthetic declaration generated by the Compose compiler. Please do not use.", level = DeprecationLevel.HIDDEN)
+fun TestContainerImpl$stableprop_getter(): Int {
+  return #TestContainerImpl$stable
+}
+
+@Deprecated(message = "Synthetic declaration generated by the Compose compiler. Please do not use.", level = DeprecationLevel.HIDDEN)
+fun TestValueImpl$stableprop_getter(): Int {
+  return #TestValueImpl$stable
+}
+
+@Composable
+@FunctionKeyMeta(key = 650608964, startOffset = 381, endOffset = 443)
+fun App(/* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = 650608964)
+    sourceInformation(composer = $composer, sourceInformation = "C(App)56@413L28:main.kt")
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed, arg1 = 0).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = 650608964, dirty1 = $changed, dirty2 = -1, info = "App (main.kt:55)")
+      }
+      TestValueImpl().compose(container = TestContainerImpl(), $composer = $composer, $changed = 0)
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_2: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_2, arg1 = null) -> null
+        else -> tmp_2.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return App($composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+fun box(): String {
+  return "OK"
+}
+

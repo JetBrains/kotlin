@@ -81,6 +81,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: add
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -166,6 +167,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: ExplicitlyIgnorable
+  javaMethodName: removeAt
   importableFqName: null
 
 KaConstructorSymbol:
@@ -199,4 +201,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: JavaClass

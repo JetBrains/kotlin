@@ -89,4 +89,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of common"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: Foo
   importableFqName: test.Foo

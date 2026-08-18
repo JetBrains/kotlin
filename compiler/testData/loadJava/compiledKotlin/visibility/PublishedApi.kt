@@ -1,6 +1,5 @@
 // RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES: LazyPublishedApiEffectiveVisibilityKey
 // NO_CHECK_SOURCE_VS_BINARY
-// SKIP_IN_RUNTIME_TEST
 
 package test
 

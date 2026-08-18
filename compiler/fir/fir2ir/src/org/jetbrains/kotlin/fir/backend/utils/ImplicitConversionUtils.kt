@@ -38,7 +38,6 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
         }
     }
 
-    @OptIn(Fir2IrImplicitCastInserter.NoConversionsExpected::class)
     val expressionWithCast = with(c.implicitCastInserter) {
         if (forReceiver) {
             insertCastForReceiver(valueType, expectedType)

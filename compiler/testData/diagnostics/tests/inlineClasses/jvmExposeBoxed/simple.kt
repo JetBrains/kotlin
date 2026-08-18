@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_JAVAC
 // WITH_STDLIB
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 
@@ -168,6 +167,37 @@ fun withLocal() {
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS, USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
     fun local() {}
 }
+
+<!JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME!>@JvmExposeBoxed("jvmName")<!>
+fun canBeReplacedWithJvmName() {}
+
+@JvmInline
+value class ICInt(val i: Int) {
+    fun toInt(): Int = i
+}
+
+@get:JvmExposeBoxed val ICInt.extPropValAnnotated: Int
+    get() = this.toInt()
+
+@set:JvmExposeBoxed var ICInt.extPropVarAnnotated: Int
+    get() = this.toInt()
+    set(value) {}
+
+val ICInt.extPropValAnnotatedGetItself: Int
+    @JvmExposeBoxed get() = this.toInt()
+
+var ICInt.extPropVarAnnotatedSetItself: Int
+    get() = this.toInt()
+    @JvmExposeBoxed set(value) {}
+
+context(ic: ICInt)
+val ctxPropValAnnotatedGetItself: Int
+    @JvmExposeBoxed get() = ic.toInt()
+
+context(ic: ICInt)
+var ctxPropVarAnnotatedSetItself: Int
+    get() = ic.toInt()
+    @JvmExposeBoxed set(value) {}
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, annotationUseSiteTargetPropertyGetter,
 annotationUseSiteTargetPropertySetter, classDeclaration, classReference, companionObject, funWithExtensionReceiver,

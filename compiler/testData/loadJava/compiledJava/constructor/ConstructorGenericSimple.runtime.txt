@@ -1,0 +1,5 @@
+package test
+
+public open class ConstructorGenericSimple {
+    public constructor ConstructorGenericSimple</*0*/ P : kotlin.Any!>(/*0*/ P!)
+}

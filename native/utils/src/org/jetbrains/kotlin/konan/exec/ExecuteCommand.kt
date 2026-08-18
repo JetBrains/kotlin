@@ -32,6 +32,11 @@ open class Command(
      * See [ProcessBuilder.directory].
      */
     val workingDirectory: File? = null,
+    /**
+     * Extra environment variables for the spawned process, merged into the inherited environment (values here win).
+     * See [ProcessBuilder.environment].
+     */
+    val environment: Map<String, String> = emptyMap(),
 ) {
 
     constructor(tool: String) : this(listOf(tool)) 
@@ -67,6 +72,7 @@ open class Command(
         val builder = ProcessBuilder(command)
 
         workingDirectory?.let { builder.directory(it) }
+        builder.environment().putAll(environment)
         builder.redirectOutput(Redirect.INHERIT)
         if (redirectInputFile == null) {
             builder.redirectInput(Redirect.INHERIT)
@@ -105,6 +111,7 @@ open class Command(
             val builder = ProcessBuilder(command)
 
             workingDirectory?.let { builder.directory(it) }
+            builder.environment().putAll(environment)
             if (redirectInputFile == null) {
                 builder.redirectInput(Redirect.INHERIT)
             } else {

@@ -16,10 +16,10 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Prints an ABI dump for JVM from [Builder.inputFiles] into the provided via [AbiValidationToolchain.dumpJvmAbiToStringOperationBuilder] appendable.
- * It is possible to pass class-files or jar files in [Builder.inputFiles].
+ * Prints an ABI dump for the JVM from [Builder.inputFiles] into the appendable provided via [AbiValidationToolchain.dumpJvmAbiToStringOperationBuilder].
+ * It is possible to pass class files or JAR files in [Builder.inputFiles].
  *
- * To control which declarations are passed to the dump, the option [DumpJvmAbiToStringOperation.PATTERN_FILTERS] could be used. By default, no filters will be applied.
+ * To control which declarations are passed to the dump, the [DumpJvmAbiToStringOperation.PATTERN_FILTERS] option can be used. By default, no filters are applied.
  *
  * @since 2.4.0
  */
@@ -44,7 +44,7 @@ public interface DumpJvmAbiToStringOperation : BuildOperation<Unit> {
         public fun filtersBuilder(): AbiFilters.Builder
 
         /**
-         * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+         * Gets the value for the option specified by [key] if it was previously [set] or if it has a default value.
          *
          * @return the previously set value for an option
          * @throws IllegalStateException if the option was not set and has no default value
@@ -54,7 +54,7 @@ public interface DumpJvmAbiToStringOperation : BuildOperation<Unit> {
         public operator fun <V> get(key: Option<V>): V
 
         /**
-         * Set the [value] for option specified by [key], overriding any previous value for that option.
+         * Sets the [value] for the option specified by [key], overriding any previous value for that option.
          *
          * @since 2.4.0
          */
@@ -70,7 +70,7 @@ public interface DumpJvmAbiToStringOperation : BuildOperation<Unit> {
 
     public companion object {
         /**
-         * Set of filtering rules that restrict ABI declarations included in a dump.
+         * A set of filtering rules that restrict the ABI declarations included in a dump.
          * See [AbiFilters] for details.
          *
          * @since 2.4.0
@@ -80,7 +80,7 @@ public interface DumpJvmAbiToStringOperation : BuildOperation<Unit> {
     }
 
     /**
-     * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+     * Gets the value for option specified by [key] if it was previously [set] or if it has a default value.
      *
      * @return the previously set value for an option
      * @throws IllegalStateException if the option was not set and has no default value

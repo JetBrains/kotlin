@@ -25,6 +25,12 @@ internal class AntlrJsCommentsCollector(private val tokenStream: CommonTokenStre
         ctx.collectCommentsAfterNode()
     }
 
+    override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext) {
+        ctx.collectCommentsBeforeNode()
+        visitChildren(ctx)
+        ctx.collectCommentsAfterNode()
+    }
+
     override fun visitSingleExpression(ctx: JavaScriptParser.SingleExpressionContext) {
         ctx.collectCommentsBeforeNode()
         visitChildren(ctx)

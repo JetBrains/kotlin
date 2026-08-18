@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.MessageUI
 modules = MessageUI
+apiNotesSwiftName = true
 
 compilerOpts = -framework MessageUI
 linkerOpts = -framework MessageUI

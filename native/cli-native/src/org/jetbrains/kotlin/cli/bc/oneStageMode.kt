@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraries
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.Path
@@ -30,9 +31,10 @@ internal fun prepareKlibArgumentsForOneStage(
     intermediateKlibPath: String
 ): K2NativeCompilerArguments {
     val klibArgs = original.copyOf()
-    // Override produce and output as we should produce an intermediate KLib
+    // Override produce, output and includes as we should produce an intermediate KLib
     klibArgs.produce = "library"
     klibArgs.outputName = intermediateKlibPath
+    klibArgs.includes = emptyArray()
     return klibArgs
 }
 
@@ -49,7 +51,10 @@ internal fun adjustConfigurationForSecondStage(
     // We need to remove this flag, as it would otherwise override header written previously.
     // Unfortunately, there is no way to remove the flag, so empty string is put instead
     configuration.emitLazyObjcHeaderFile?.let { configuration.emitLazyObjcHeaderFile = "" }
-    configuration.konanIncludedLibraries += listOf(intermediateKLib.absolutePathString())
+
+    val intermediateKlibPath = intermediateKLib.absolutePathString()
+    configuration.konanIncludedLibraries += intermediateKlibPath
+    configuration.konanLibraries += intermediateKlibPath
 }
 
 internal fun createIntermediateKlib(): Path =

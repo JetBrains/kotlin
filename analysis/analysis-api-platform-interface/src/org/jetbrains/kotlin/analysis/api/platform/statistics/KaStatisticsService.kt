@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  * the process. For example, IntelliJ gathers and exports metrics data *locally* to a file, while Standalone does not set up any publishing
  * whatsoever.
  *
- * Statistics collection is only implemented for the K2 backend. In the K1 backend, [getInstance] will always return `null`.
- *
  * ### Usage
  *
  * When the Analysis API is used on top of IntelliJ and statistics collection is enabled, the `logs` folder will contain CSV and JSON files

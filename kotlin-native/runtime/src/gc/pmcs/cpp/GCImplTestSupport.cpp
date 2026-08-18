@@ -5,6 +5,10 @@
 
 #include "GCImplTestSupport.hpp"
 
+#include "gc/GCTestSupport.hpp"
+#include "alloc/Allocator.hpp"
+#include "ObjectData.hpp"
+
 using namespace kotlin;
 
 void gc::test_support::reconfigureGCParallelism(
@@ -16,4 +20,8 @@ void gc::test_support::reconfigureGCParallelism(
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
     gc.mark_.reset(maxParallelism, mutatorsCooperate, [&gc] { gc.auxThreads_.stopThreads(); });
     gc.auxThreads_.startThreads(auxGCThreads);
+}
+
+bool gc::test_support::tryMark(ObjHeader* object) noexcept {
+    return alloc::objectDataForObject(object).tryMark();
 }

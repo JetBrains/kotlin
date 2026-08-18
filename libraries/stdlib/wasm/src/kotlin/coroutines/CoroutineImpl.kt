@@ -28,9 +28,6 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
 
-    // Remove after bootstrap.
-    // By now bootstrap uses older symbols resolver that does not
-    // resolve CoroutineImpl to CoroutineImplStateMachine/StackSwitching
     @Suppress("UNCHECKED_CAST")
     override fun resumeWith(result: Result<T>) {
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
@@ -41,6 +42,7 @@ abstract class DescriptorVisibility protected constructor() {
      *
      * Also it's important that implementation that take receiver into account do aware about these special values.
      */
+    @ObsoleteDescriptorBasedAPI
     abstract fun isVisible(
         receiver: ReceiverValue?,
         what: DeclarationDescriptorWithVisibility,

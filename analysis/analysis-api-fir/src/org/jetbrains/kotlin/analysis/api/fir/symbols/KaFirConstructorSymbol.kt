@@ -72,10 +72,6 @@ internal class KaFirConstructorSymbol private constructor(
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion { computeCompilerVisibility().asKaSymbolVisibility }
 
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { computeCompilerVisibility() }
-
     private fun computeCompilerVisibility(): Visibility {
         val backingPsi = backingPsi
         if (backingPsi != null) {

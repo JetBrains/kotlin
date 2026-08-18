@@ -148,6 +148,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.expressionType", "org.jetbrains.kotlin.analysis.api.expressions.expressionType"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -201,6 +202,7 @@ public val KtDeclaration.returnType: KaType
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.functionType", "org.jetbrains.kotlin.analysis.api.expressions.functionType"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -216,6 +218,7 @@ public val KtFunction.functionType: KaType
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.expectedType", "org.jetbrains.kotlin.analysis.api.expressions.expectedType"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -251,6 +254,7 @@ public val PsiElement.expectedType: KaType?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.isDefinitelyNull", "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNull"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -265,6 +269,7 @@ public val KtExpression.isDefinitelyNull: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.isDefinitelyNotNull", "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNotNull"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

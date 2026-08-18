@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -22,7 +22,7 @@ internal class Runtime(
 ) {
     val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
-    val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
+    val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmFunction> = HashMap()
 
     private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
             LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")

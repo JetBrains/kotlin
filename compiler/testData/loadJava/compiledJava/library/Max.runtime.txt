@@ -1,0 +1,6 @@
+package test
+
+public open class Max {
+    public constructor Max()
+    public open fun </*0*/ T : kotlin.Any!> max(/*0*/ (kotlin.collections.MutableCollection<out T!>..kotlin.collections.Collection<T!>?)): T! where T : kotlin.Comparable<T!>!
+}

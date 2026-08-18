@@ -16,8 +16,6 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -267,13 +265,13 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         @Suppress("DuplicatedCode")
         run {
             assertEquals(6, consumableConfigurations.size)
-            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName<Jar>("jsJar"))
-            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName<Jar>("jsJar"))
-            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName<Jar>("wasmJsJar"))
-            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName<Jar>("wasmWasiJar"))
+            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName("jsJar") as Jar)
+            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName("jsJar") as Jar)
+            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName("wasmJsJar") as Jar)
+            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName("wasmWasiJar") as Jar)
         }
-        val compileKlibTask = project.tasks.getByName<KotlinNativeCompile>("compileKotlinLinuxX64")
-        val cinteropProcessTask = project.tasks.getByName<CInteropProcess>("cinteropDummyLinuxX64")
+        val compileKlibTask = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
+        val cinteropProcessTask = project.tasks.getByName("cinteropDummyLinuxX64") as CInteropProcess
         consumableConfigurations.assertProducerTasks("linuxX64ApiElements", compileKlibTask, cinteropProcessTask)
         consumableConfigurations.assertProducerTasks("linuxX64CInteropApiElements", cinteropProcessTask)
     }
@@ -286,28 +284,28 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         @Suppress("DuplicatedCode")
         run {
             assertEquals(6, consumableConfigurations.size)
-            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName<Jar>("jsJar"))
-            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName<Jar>("jsJar"))
-            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName<Jar>("wasmJsJar"))
-            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName<Jar>("wasmWasiJar"))
+            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName("jsJar") as Jar)
+            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName("jsJar") as Jar)
+            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName("wasmJsJar") as Jar)
+            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName("wasmWasiJar") as Jar)
         }
-        val jsCompileTask = project.tasks.getByName<Kotlin2JsCompile>("compileKotlinJs")
+        val jsCompileTask = project.tasks.getByName("compileKotlinJs") as Kotlin2JsCompile
         consumableConfigurations.assertSecondaryKlibVariantProducerTasks("jsApiElements", jsCompileTask)
         consumableConfigurations.assertSecondaryKlibVariantProducerTasks("jsRuntimeElements", jsCompileTask)
 
-        val wasmJsCompileTask = project.tasks.getByName<Kotlin2JsCompile>("compileKotlinWasmJs")
+        val wasmJsCompileTask = project.tasks.getByName("compileKotlinWasmJs") as Kotlin2JsCompile
         consumableConfigurations.assertSecondaryKlibVariantProducerTasks("wasmJsApiElements", wasmJsCompileTask)
 
-        val wasmWasiCompileTask = project.tasks.getByName<Kotlin2JsCompile>("compileKotlinWasmWasi")
+        val wasmWasiCompileTask = project.tasks.getByName("compileKotlinWasmWasi") as Kotlin2JsCompile
         consumableConfigurations.assertSecondaryKlibVariantProducerTasks("wasmWasiApiElements", wasmWasiCompileTask)
 
-        val compiledKlibPackagingTask = project.tasks.getByName<Zip>("linuxX64Klib")
-        val cinteropKlibPackagingTask = project.tasks.getByName<Zip>("linuxX64Cinterop-dummyKlib")
+        val compiledKlibPackagingTask = project.tasks.getByName("linuxX64Klib") as Zip
+        val cinteropKlibPackagingTask = project.tasks.getByName("linuxX64Cinterop-dummyKlib") as Zip
         consumableConfigurations.assertProducerTasks("linuxX64ApiElements", compiledKlibPackagingTask, cinteropKlibPackagingTask)
         consumableConfigurations.assertProducerTasks("linuxX64CInteropApiElements", cinteropKlibPackagingTask)
 
-        val compileKlibTask = project.tasks.getByName<KotlinNativeCompile>("compileKotlinLinuxX64")
-        val cinteropProcessTask = project.tasks.getByName<CInteropProcess>("cinteropDummyLinuxX64")
+        val compileKlibTask = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
+        val cinteropProcessTask = project.tasks.getByName("cinteropDummyLinuxX64") as CInteropProcess
         consumableConfigurations.assertSecondaryKlibVariantProducerTasks("linuxX64ApiElements", compileKlibTask, cinteropProcessTask)
         consumableConfigurations.assertSecondaryKlibVariantProducerTasks("linuxX64CInteropApiElements", cinteropProcessTask)
 

@@ -322,11 +322,6 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         return frameMap
     }
 
-    private fun wrapInlineClassesForExposedFunctions(function: IrFunction, parameter: IrValueParameter): TypeMappingMode =
-        if (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && parameter.type.isInlineClassType())
-            TypeMappingMode.DEFAULT.wrapInlineClassesMode()
-        else TypeMappingMode.DEFAULT
-
     private fun generateParameterAnnotations(
         irFunction: IrFunction,
         mv: MethodVisitor,
@@ -394,6 +389,15 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
 private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
     origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER
+
+// `@JvmExposeBoxed` exposes boxed inline classes, so they occupy Object slot.
+internal fun isBoxedParameterOfExposedFunction(function: IrFunction, parameter: IrValueParameter): Boolean =
+    function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && parameter.type.isInlineClassType()
+
+internal fun wrapInlineClassesForExposedFunctions(function: IrFunction, parameter: IrValueParameter): TypeMappingMode =
+    if (isBoxedParameterOfExposedFunction(function, parameter))
+        TypeMappingMode.DEFAULT.wrapInlineClassesMode()
+    else TypeMappingMode.DEFAULT
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     for (parameter in irFunction.parameters) {

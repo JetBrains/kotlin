@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolution.*
+import org.jetbrains.kotlin.resolution.KtResolvable
 
 /**
  * Attempts to resolve a symbol for the given [KtResolvable].

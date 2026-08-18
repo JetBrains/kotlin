@@ -1,0 +1,29 @@
+Module: lib
+FILE: first.kt
+    package lib
+
+    private sealed class SealedClass : R|kotlin/Any| {
+        protected constructor(): R|lib/SealedClass|
+
+        public final class Implementation : R|lib/SealedClass| {
+            public constructor(): R|lib/SealedClass.Implementation|
+
+        }
+
+    }
+    public final fun myFunc(): R|kotlin/Unit| {
+    }
+Module: main
+FILE: main.kt
+    package main
+
+    public final class App : R|kotlin/Any| {
+        public constructor(): R|main/App| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun run(): R|kotlin/Unit| {
+            R|lib/myFunc|()
+        }
+
+    }

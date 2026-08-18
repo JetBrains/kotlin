@@ -935,7 +935,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 CommonCompilerArguments::languageVersion.cliArgument,
                 LanguageVersion.KOTLIN_2_2.versionString,
                 CommonCompilerArguments::nestedTypeAliases.cliArgument,
-            )
+            ),
+            checkKotlinOutput = {},
         )
         compileKotlin(
             "source.kt", tmpdir, listOf(library),

@@ -30,6 +30,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Use WebAssembly Stack Switching proposal for compiling Kotlin Coroutines"
     )
 
+    val ENABLE_TAIL_CALLS by directive(
+        description = "Emit WebAssembly tail call instructions (return_call / return_call_indirect)"
+    )
+
     @OptIn(SensitiveDirectiveAPI::class)
     val WASM_IGNORE_FOR by valueDirective(
         description = """
@@ -116,5 +120,9 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
             Don't added helper files to prevent linking issues.
         """.trimIndent(),
         applicability = DirectiveApplicability.Global,
+    )
+
+    val WASM_STANDALONE by directive(
+        description = "Don't group this test with any other"
     )
 }

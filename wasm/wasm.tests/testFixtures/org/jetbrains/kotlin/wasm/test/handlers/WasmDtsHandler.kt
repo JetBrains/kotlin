@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 
 class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
@@ -24,10 +25,10 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
 
         val referenceDtsFile = module.files.first().originalFile.parentFile
             .resolve("index.d.mts")
-            .run { takeIf { it.exists() } ?: error("'${path}' doesn't exist") }
+            .run { takeIf { it.exists() } ?: testInfraError("'${path}' doesn't exist") }
 
         val generatedDts = info.compilation.compilerResult.dts
-            ?: error("Can't find generated .d.ts file")
+            ?: testInfraError("Can't find generated .d.ts file")
 
         TestDataAssertions.assertEqualsToFile(referenceDtsFile, generatedDts)
     }

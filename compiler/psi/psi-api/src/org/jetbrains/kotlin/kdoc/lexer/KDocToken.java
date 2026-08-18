@@ -21,6 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtToken;
 
 public class KDocToken extends KtToken {
+    @kotlin.Deprecated(
+            message = "Use the 'KDocToken(String, int)' constructor instead"
+    )
     @Deprecated
     public KDocToken(@NotNull @NonNls String debugName) {
         super(debugName);

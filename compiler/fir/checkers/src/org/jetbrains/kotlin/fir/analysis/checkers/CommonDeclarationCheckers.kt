@@ -114,6 +114,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirNotImplementedOverrideChecker,
         FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
         FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
+        FirEqualityBoundOverrideChecker.Regular,
+        FirEqualityBoundOverrideChecker.ForExpect,
         FirThrowableSubclassChecker,
         FirOpenMemberChecker,
         FirClassVarianceChecker,
@@ -224,7 +226,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirValueParameterDefaultValueTypeMismatchChecker,
         FirMissingDependencyClassForParameterChecker,
         FirDestructuringParameterChecker,
-        FirEqualityBoundAnnotationApplicabilityChecker,
+        FirExplicitEqualityBoundAnnotationChecker,
     )
 
     override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(

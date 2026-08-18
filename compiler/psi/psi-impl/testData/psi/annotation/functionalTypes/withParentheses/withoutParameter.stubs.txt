@@ -194,6 +194,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

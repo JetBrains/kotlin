@@ -58,6 +58,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaAnonymousFunctionSymbol:
@@ -120,6 +121,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -224,6 +226,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: AccessorsAllowedKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getProp
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -423,6 +426,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: AccessorsAllowedKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setProp
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -430,8 +434,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AccessorsAllowedKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getProp
-  javaSetterName: setProp
   isInline: false
   importableFqName: prop
 
@@ -539,6 +541,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: Status.Error
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Status.Error
 
 KaNamedClassSymbol:
@@ -669,6 +672,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -773,6 +777,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: AccessorsAllowedKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: isError
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -839,8 +844,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AccessorsAllowedKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: isError
-  javaSetterName: null
   isInline: false
   importableFqName: isError
 
@@ -904,6 +907,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -1016,6 +1020,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: AccessorsAllowedKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: isContextError
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1051,7 +1056,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AccessorsAllowedKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: isContextError
-  javaSetterName: null
   isInline: false
   importableFqName: isContextError

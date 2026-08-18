@@ -9,17 +9,51 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
+import org.jetbrains.kotlin.java.direct.resolution.resolveInheritedInnerClassToClassId
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
 class JavaParsingClassFinderTest : JavaParsingTestBase() {
+
+    /**
+     * Drives the production inherited-nested-class path
+     * ([resolveInheritedInnerClassToClassId]) for [containingClassId] as indexed by [finder].
+     *
+     * The containing class's *own* [JavaClassOverAst.resolutionContext] is used, so the walk runs
+     * on the same `FirSession` the finder registered its cycle guards and direct-supertype cache
+     * on, and each hierarchy level is resolved against its own file's import scope.
+     *
+     * Only [containingClass]'s *own* supertypes are reachable here: these unit tests run on a
+     * session without a `FirSymbolProvider`, and deeper levels are expanded through
+     * `directSupertypeClassIds`, whose source arm reads the materialised `classifier` and
+     * therefore needs one. Transitive (grandparent) inheritance is covered end-to-end by
+     * `compiler/testData/diagnostics/tests/jvm/javaDirect/qualifiedInheritedNestedClassInOwnImplementsClause.kt`.
+     */
+    private fun resolveInheritedNestedClass(
+        finder: JavaClassFinderOverAstImpl,
+        containingClassId: ClassId,
+        simpleName: String,
+    ): ClassId? {
+        val containingClass = finder.findClass(JavaClassFinder.Request(containingClassId))
+        assertTrue(containingClass is JavaClassOverAst, "Expected to find source class $containingClassId")
+        containingClass as JavaClassOverAst
+        return with(containingClass.resolutionContext) {
+            resolveInheritedInnerClassToClassId(simpleName, containingClass)
+        }
+    }
 
     @Test
     fun testKnownClassNamesInPackage(@TempDir tempDir: Path) {
@@ -49,28 +83,28 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         )
 
         // Create JavaClassFinder with this source root
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Test package with classes - should return class names
         val comExampleClasses = finder.knownClassNamesInPackage(FqName("com.example"))
-        assert(comExampleClasses.size == 2) { "Expected 2 classes in com.example, got ${comExampleClasses.size}" }
-        assert("ClassA" in comExampleClasses) { "Expected ClassA in com.example" }
-        assert("ClassB" in comExampleClasses) { "Expected ClassB in com.example" }
+        assertEquals(2, comExampleClasses.size)
+        assertTrue("ClassA" in comExampleClasses, "Expected ClassA in com.example")
+        assertTrue("ClassB" in comExampleClasses, "Expected ClassB in com.example")
 
         val testClasses = finder.knownClassNamesInPackage(FqName("test"))
-        assert(testClasses.size == 1) { "Expected 1 class in test, got ${testClasses.size}" }
-        assert("ClassC" in testClasses) { "Expected ClassC in test" }
+        assertEquals(1, testClasses.size)
+        assertTrue("ClassC" in testClasses, "Expected ClassC in test")
 
         // Test package NOT in our index - should return empty set (not null)
         val kotlinPackageClasses = finder.knownClassNamesInPackage(FqName("kotlin"))
-        assert(kotlinPackageClasses.isEmpty()) { "Expected empty set for package kotlin, got $kotlinPackageClasses" }
+        assertTrue(kotlinPackageClasses.isEmpty(), "Expected empty set for package kotlin, got $kotlinPackageClasses")
 
         val javaLangClasses = finder.knownClassNamesInPackage(FqName("java.lang"))
-        assert(javaLangClasses.isEmpty()) { "Expected empty set for package java.lang, got $javaLangClasses" }
+        assertTrue(javaLangClasses.isEmpty(), "Expected empty set for package java.lang, got $javaLangClasses")
 
         // Test non-existent package - should also return empty set
         val nonExistentClasses = finder.knownClassNamesInPackage(FqName("does.not.exist"))
-        assert(nonExistentClasses.isEmpty()) { "Expected empty set for non-existent package" }
+        assertTrue(nonExistentClasses.isEmpty(), "Expected empty set for non-existent package")
     }
 
     @Test
@@ -86,7 +120,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toFile()))
 
         // Try to find example.Hello
         val classId = ClassId(
@@ -96,9 +130,9 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         val request = JavaClassFinder.Request(classId)
         val javaClass = finder.findClass(request)
 
-        assert(javaClass != null) { "Expected to find example.Hello class" }
-        assert(javaClass?.name?.asString() == "Hello") { "Expected class name 'Hello', got ${javaClass?.name?.asString()}" }
-        assert(javaClass?.fqName?.asString() == "example.Hello") { "Expected fqName 'example.Hello', got ${javaClass?.fqName?.asString()}" }
+        assertNotNull(javaClass, "Expected to find example.Hello class")
+        assertEquals("Hello", javaClass.name.asString())
+        assertEquals("example.Hello", javaClass.fqName?.asString())
     }
 
     @Test
@@ -138,40 +172,38 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         )
 
         // Create class finder with tempDir as source root
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Verify NotNull.java is indexed
         val annotationPackageClasses = finder.knownClassNamesInPackage(FqName("org.jetbrains.annotations"))
-        assert("NotNull" in annotationPackageClasses) {
+        assertTrue(
+            "NotNull" in annotationPackageClasses,
             "NotNull should be in org.jetbrains.annotations, found: $annotationPackageClasses"
-        }
+        )
 
         // Verify we can find the annotation class
         val notNullClassId = ClassId(FqName("org.jetbrains.annotations"), Name.identifier("NotNull"))
         val notNullClass = finder.findClass(JavaClassFinder.Request(notNullClassId))
-        assert(notNullClass != null) { "Should find NotNull class" }
-        assert(notNullClass!!.isAnnotationType) { "NotNull should be an annotation type" }
+        assertNotNull(notNullClass, "Should find NotNull class")
+        assertTrue(notNullClass.isAnnotationType, "NotNull should be an annotation type")
 
         // Check that NotNull has @Target annotation with TYPE_USE
         val allAnnotations = notNullClass.annotations.toList()
-        assert(allAnnotations.isNotEmpty()) {
-            "NotNull should have annotations, but found none"
-        }
+        assertTrue(allAnnotations.isNotEmpty(), "NotNull should have annotations, but found none")
 
         val targetAnnotation = allAnnotations.find {
             val classId = it.classId
             classId?.shortClassName?.asString() == "Target" ||
                     classId?.asSingleFqName()?.asString() == "java.lang.annotation.Target"
         }
-        assert(targetAnnotation != null) {
-            "NotNull should have @Target annotation, found: ${allAnnotations.map { it.classId }}"
-        }
+        assertNotNull(targetAnnotation, "NotNull should have @Target annotation, found: ${allAnnotations.map { it.classId }}")
     }
 
     @Test
     fun testInheritedInnerClassResolutionCrossFile(@TempDir tempDir: Path) {
         // Cross-file version: all classes in the same package, separate files.
-        // The class finder indexes all files so cross-file resolution works via collectInheritedInnerClasses.
+        // The class finder indexes all files, so the real inherited-nested-class walk resolves
+        // `CopyBuilder` through SimpleFunctionDescriptor -> FunctionDescriptor across files.
         val pkgDir = tempDir.resolve("test")
         pkgDir.toFile().mkdirs()
 
@@ -203,47 +235,29 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
-        // Verify inherited inner class detection works cross-file
         val simpleDescId = ClassId(FqName("test"), Name.identifier("SimpleFunctionDescriptor"))
-        val inherited = finder.collectInheritedInnerClasses(simpleDescId)
-        assert("CopyBuilder" in inherited) {
-            "Expected CopyBuilder in inherited inner classes of SimpleFunctionDescriptor, got ${inherited.keys}"
-        }
-
-        // Verify the inner class is found via the class finder's resolution
-        val copyBuilderId = inherited["CopyBuilder"]!!.first()
-        assert(copyBuilderId.asString() == "test/FunctionDescriptor.CopyBuilder") {
-            "Expected CopyBuilder to be from FunctionDescriptor, got $copyBuilderId"
-        }
+        val copyBuilderId = resolveInheritedNestedClass(finder, simpleDescId, "CopyBuilder")
+        assertEquals("test/FunctionDescriptor.CopyBuilder", copyBuilderId?.asString())
     }
 
     @Test
     fun testInheritedInnerClassCrossPackage(@TempDir tempDir: Path) {
-        // Reproduces the UserDataKey issue: CallableDescriptor (in package "base") declares
-        // inner interface UserDataKey. FunctionDescriptor (in "base") extends CallableDescriptor.
-        // FunctionDescriptorImpl (in "base.impl") implements FunctionDescriptor via star import.
-        // Code in FunctionDescriptorImpl should be able to see UserDataKey through inheritance.
+        // Reproduces the UserDataKey issue: FunctionDescriptor (in package "base") declares inner
+        // interface UserDataKey. FunctionDescriptorImpl (in "base.impl") implements
+        // FunctionDescriptor via a star import, so the supertype reference has to be resolved
+        // against FunctionDescriptorImpl's *own* file imports rather than the caller's.
         val basePkgDir = tempDir.resolve("base")
         basePkgDir.toFile().mkdirs()
         val implPkgDir = tempDir.resolve("base/impl")
         implPkgDir.toFile().mkdirs()
 
-        basePkgDir.resolve("CallableDescriptor.java").writeText(
-            """
-            package base;
-            public interface CallableDescriptor {
-                interface UserDataKey<V> {}
-            }
-        """.trimIndent()
-        )
-
         basePkgDir.resolve("FunctionDescriptor.java").writeText(
             """
             package base;
-            public interface FunctionDescriptor extends CallableDescriptor {
-                // UserDataKey inherited from CallableDescriptor
+            public interface FunctionDescriptor {
+                interface UserDataKey<V> {}
             }
         """.trimIndent()
         )
@@ -253,60 +267,21 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
             package base.impl;
             import base.*;
             public abstract class FunctionDescriptorImpl implements FunctionDescriptor {
-                // UserDataKey should be accessible through FunctionDescriptor -> CallableDescriptor
+                // UserDataKey should be accessible through the star-imported FunctionDescriptor
             }
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
-        // Verify inherited inner class detection works cross-package
+        // Verify inherited inner class resolution works cross-package (star import in impl)
         val funcDescImplId = ClassId(FqName("base.impl"), Name.identifier("FunctionDescriptorImpl"))
-        val inherited = finder.collectInheritedInnerClasses(funcDescImplId)
-        assert("UserDataKey" in inherited) {
-            "Expected UserDataKey in inherited inner classes of FunctionDescriptorImpl, got ${inherited.keys}"
-        }
-
-        val userDataKeyId = inherited["UserDataKey"]!!.first()
-        assert(userDataKeyId.asString() == "base/CallableDescriptor.UserDataKey") {
-            "Expected UserDataKey to be from CallableDescriptor, got $userDataKeyId"
-        }
+        val userDataKeyId = resolveInheritedNestedClass(finder, funcDescImplId, "UserDataKey")
+        assertEquals("base/FunctionDescriptor.UserDataKey", userDataKeyId?.asString())
     }
 
     @Test
-    fun testGetDirectSupertypesUsesCache(@TempDir tempDir: Path) {
-        val pkgDir = tempDir.resolve("test")
-        pkgDir.toFile().mkdirs()
-        pkgDir.resolve("Base.java").writeText(
-            """
-            package test;
-            public class Base {}
-        """.trimIndent()
-        )
-        pkgDir.resolve("Derived.java").writeText(
-            """
-            package test;
-            public class Derived extends Base {}
-        """.trimIndent()
-        )
-
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
-
-        // Access the class to populate cache (small files are already cached)
-        val derivedId = ClassId(FqName("test"), Name.identifier("Derived"))
-        val derivedClass = finder.findClass(JavaClassFinder.Request(derivedId))
-        assert(derivedClass != null) { "Expected to find Derived class" }
-
-        // getDirectSupertypes should use the cached class, not reparse
-        val baseId = ClassId(FqName("test"), Name.identifier("Base"))
-        val supertypes = finder.getDirectSupertypes(derivedId)
-        assert(supertypes.contains(baseId)) {
-            "Expected supertypes to contain Base, got $supertypes"
-        }
-    }
-
-    @Test
-    fun testCollectInheritedInnerClassesUsesCache(@TempDir tempDir: Path) {
+    fun testInheritedNestedClassesFromCrossFileSuperclass(@TempDir tempDir: Path) {
         val pkgDir = tempDir.resolve("test")
         pkgDir.toFile().mkdirs()
         pkgDir.resolve("Parent.java").writeText(
@@ -325,18 +300,13 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
-        // Access both classes to populate cache
-        val parentId = ClassId(FqName("test"), Name.identifier("Parent"))
         val childId = ClassId(FqName("test"), Name.identifier("Child"))
-        finder.findClass(JavaClassFinder.Request(parentId))
-        finder.findClass(JavaClassFinder.Request(childId))
-
-        // collectInheritedInnerClasses should work using cached data
-        val inherited = finder.collectInheritedInnerClasses(childId)
-        assert("InnerA" in inherited) { "Expected InnerA in inherited classes, got ${inherited.keys}" }
-        assert("InnerB" in inherited) { "Expected InnerB in inherited classes, got ${inherited.keys}" }
+        for (innerName in listOf("InnerA", "InnerB")) {
+            val resolved = resolveInheritedNestedClass(finder, childId, innerName)
+            assertEquals(ClassId(FqName("test"), FqName("Parent.$innerName"), isLocal = false), resolved)
+        }
     }
 
     @Test
@@ -354,27 +324,27 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // First lookup: Outer
         val outerId = ClassId(FqName("pkg"), Name.identifier("Outer"))
         val outer1 = finder.findClass(JavaClassFinder.Request(outerId))
-        assert(outer1 != null) { "Expected to find pkg.Outer" }
+        assertNotNull(outer1, "Expected to find pkg.Outer")
 
         // Second lookup: same ClassId — must be the exact same instance
         val outer2 = finder.findClass(JavaClassFinder.Request(outerId))
-        assert(outer1 === outer2) { "Repeated findClass must return the same JavaClassOverAst instance" }
+        assertSame(outer1, outer2, "Repeated findClass must return the same JavaClassOverAst instance")
 
         // Lookup via inner class: navigating Outer.Inner should reference the same Outer
         val innerId = ClassId(FqName("pkg"), FqName("Outer.Inner"), isLocal = false)
         val inner = finder.findClass(JavaClassFinder.Request(innerId))
-        assert(inner != null) { "Expected to find pkg.Outer.Inner" }
-        assert(inner!!.outerClass === outer1) { "Inner class's outerClass must be the same Outer instance" }
+        assertNotNull(inner, "Expected to find pkg.Outer.Inner")
+        assertSame(outer1, inner.outerClass, "Inner class's outerClass must be the same Outer instance")
 
         // Type parameters on both references must be object-identical
         val tp1 = (outer1 as JavaClassOverAst).typeParameters.single()
         val tp2 = (outer2 as JavaClassOverAst).typeParameters.single()
-        assert(tp1 === tp2) { "Type parameter instances must be identical (===) across lookups" }
+        assertSame(tp1, tp2, "Type parameter instances must be identical (===) across lookups")
     }
 
     @Test
@@ -411,7 +381,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         val subId = ClassId(FqName("pkg"), Name.identifier("Sub"))
         val sub = finder.findClass(JavaClassFinder.Request(subId)) as JavaClassOverAst
@@ -422,90 +392,91 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         // The simple name "Conflict" should resolve to Base.Conflict (inherited inner),
         // not to the top-level pkg.Conflict.
         val classifier = fieldType.classifier
-        assert(classifier != null) { "Conflict should resolve locally" }
+        assertNotNull(classifier, "Conflict should resolve locally")
         // Inner class's outer class must be Base
         val outerClass = (classifier as? JavaClassOverAst)?.outerClass
-        assert(outerClass != null && outerClass.name.asString() == "Base") {
-            "Expected Conflict to resolve to Base.Conflict (inner class), " +
-                    "but outerClass=${outerClass?.name}"
-        }
+        assertNotNull(outerClass, "Expected Conflict to resolve to Base.Conflict (inner class), but it has no outer class")
+        assertEquals("Base", outerClass.name.asString(), "Expected Conflict to resolve to Base.Conflict (inner class)")
     }
 
     @Test
-    fun testDiamondInheritanceInnerClasses(@TempDir tempDir: Path) {
+    fun testInheritedNestedClassAcrossMultipleDirectSupertypes(@TempDir tempDir: Path) {
+        // Several direct supertypes at the same level: the walk must pick the single ancestor that
+        // declares the nested class, and decline (null) when two unrelated ancestors declare it —
+        // neither shadows the other, so the simple name is ambiguous (JLS 8.5).
         val pkgDir = tempDir.resolve("pkg")
         pkgDir.toFile().mkdirs()
 
-        pkgDir.resolve("A.java").writeText(
+        pkgDir.resolve("Left.java").writeText(
             """
             package pkg;
-            public class A {
-                public static class Inner {}
+            public interface Left {
+                class Inner {}
             }
         """.trimIndent()
         )
 
-        pkgDir.resolve("B.java").writeText(
+        pkgDir.resolve("Right.java").writeText(
             """
             package pkg;
-            public class B extends A {}
+            public interface Right {}
         """.trimIndent()
         )
 
-        pkgDir.resolve("C.java").writeText(
+        pkgDir.resolve("AlsoInner.java").writeText(
             """
             package pkg;
-            public class C extends A {}
-        """.trimIndent()
-        )
-
-        pkgDir.resolve("D.java").writeText(
-            """
-            package pkg;
-            public class D extends B {
-                // Also implements C via the diamond — but Java single inheritance means we
-                // can only extend one class. We test the B→A path here; the inherited inner
-                // class collector should still find A.Inner exactly once.
+            public interface AlsoInner {
+                class Inner {}
             }
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        pkgDir.resolve("Single.java").writeText(
+            """
+            package pkg;
+            public class Single implements Left, Right {}
+        """.trimIndent()
+        )
 
-        // Force D to be loaded so its supertype graph is built
-        val dId = ClassId(FqName("pkg"), Name.identifier("D"))
-        val dClass = finder.findClass(JavaClassFinder.Request(dId))
-        assert(dClass != null) { "Expected to find pkg.D" }
+        pkgDir.resolve("Ambiguous.java").writeText(
+            """
+            package pkg;
+            public class Ambiguous implements Left, AlsoInner {}
+        """.trimIndent()
+        )
 
-        // D inherits Inner from A (via B)
-        val inherited = finder.collectInheritedInnerClasses(dId)
-        assert("Inner" in inherited) {
-            "Expected inherited inner class 'Inner' from A, got keys: ${inherited.keys}"
-        }
-        val innerClassIds = inherited["Inner"]!!
-        assert(innerClassIds.size == 1) {
-            "Expected exactly 1 ClassId for Inner (A.Inner), got $innerClassIds"
-        }
-        val innerId = innerClassIds.single()
-        assert(innerId == ClassId(FqName("pkg"), FqName("A.Inner"), isLocal = false)) {
-            "Expected pkg.A.Inner, got $innerId"
-        }
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+
+        val singleId = ClassId(FqName("pkg"), Name.identifier("Single"))
+        val resolved = resolveInheritedNestedClass(finder, singleId, "Inner")
+        assertEquals(ClassId(FqName("pkg"), FqName("Left.Inner"), isLocal = false), resolved)
+
+        val ambiguousId = ClassId(FqName("pkg"), Name.identifier("Ambiguous"))
+        val ambiguous = resolveInheritedNestedClass(finder, ambiguousId, "Inner")
+        assertNull(ambiguous, "Inner is declared by two unrelated ancestors, so it must stay unresolved (JLS 8.5)")
     }
 
     @Test
-    fun testGetDirectSupertypesDoesNotTruncateQualifiedGenericSupertype(@TempDir tempDir: Path) {
+    fun testQualifiedGenericSupertypeIsNotTruncatedWhenResolvingInheritedNestedClass(@TempDir tempDir: Path) {
         // Regression test for a `substringBefore('<')` truncation bug: `extends B<String>.C` was
         // mis-parsed as if it extended plain `B` (silently dropping `.C`), because the raw-text
         // resolver cut the reference at the first '<' *before* checking whether it was dotted, and
         // "B" alone (post-truncation) has no dot, so it was wrongly treated as a same-package,
         // non-qualified simple name.
+        //
+        // Asserted positively through the nested class `N` that `Derived` inherits: it is only
+        // reachable if the supertype resolved to `a.B.C`. Under the truncation bug the ancestor
+        // would be `a.B`, which has no `N`, and the resolution would silently yield null.
         val pkgDir = tempDir.resolve("a")
         pkgDir.toFile().mkdirs()
         pkgDir.resolve("B.java").writeText(
             """
             package a;
             public class B<T> {
-                public static class C {}
+                public static class C {
+                    public static class N {}
+                }
             }
         """.trimIndent()
         )
@@ -516,15 +487,15 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
         val derivedId = ClassId(FqName("a"), Name.identifier("Derived"))
-        finder.findClass(JavaClassFinder.Request(derivedId))
 
-        val supertypes = finder.getDirectSupertypes(derivedId)
-        val wrongTruncatedId = ClassId(FqName("a"), Name.identifier("B"))
-        assert(wrongTruncatedId !in supertypes) {
-            "Expected 'extends B<String>.C' to NOT be truncated to plain 'B', got supertypes $supertypes"
-        }
+        val resolved = resolveInheritedNestedClass(finder, derivedId, "N")
+        assertEquals(
+            ClassId(FqName("a"), FqName("B.C.N"), isLocal = false),
+            resolved,
+            "Expected 'extends B<String>.C' to keep the qualified nested supertype, so that N resolves to a.B.C.N"
+        )
     }
 
     @Test
@@ -543,19 +514,20 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
         val targetId = ClassId(FqName("pkg"), Name.identifier("Target"))
         val direct = finder.findClass(JavaClassFinder.Request(targetId))
-        assert(direct != null) { "Expected to find pkg.Target" }
+        assertNotNull(direct, "Expected to find pkg.Target")
 
         val tree = parseJavaToLightTree("package pkg;\nclass Dummy {}", 0)
         val context = JavaResolutionContext.create(tree, createDummyFirSessionForTests(), classFinder = finder)
         val viaAdapter = with(context) { classifierAdapterFor(targetId) }
 
-        assert(viaAdapter === direct) {
-            "Expected classifierAdapterFor to route the source-backed ClassId to the canonical " +
-                    "JavaClassOverAst instance, got a different object: $viaAdapter"
-        }
+        assertSame(
+            direct,
+            viaAdapter,
+            "Expected classifierAdapterFor to route the source-backed ClassId to the canonical JavaClassOverAst instance"
+        )
     }
 
     @Test
@@ -571,19 +543,20 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // knownClassNamesInPackage should expose only "Main", not "Helper"
         val knownNames = finder.knownClassNamesInPackage(FqName("pkg"))
-        assert("Main" in knownNames) { "Expected Main in known names, got $knownNames" }
-        assert("Helper" !in knownNames) {
+        assertTrue("Main" in knownNames, "Expected Main in known names, got $knownNames")
+        assertFalse(
+            "Helper" in knownNames,
             "Helper is a non-canonical class (in Main.java) and must NOT appear in knownClassNamesInPackage, got $knownNames"
-        }
+        )
 
         // But Helper should still be findable by direct ClassId lookup
         val helperId = ClassId(FqName("pkg"), Name.identifier("Helper"))
         val helper = finder.findClass(JavaClassFinder.Request(helperId))
-        assert(helper != null) { "Expected to find pkg.Helper by direct ClassId lookup" }
-        assert(helper!!.name.asString() == "Helper") { "Expected name 'Helper', got ${helper.name}" }
+        assertNotNull(helper, "Expected to find pkg.Helper by direct ClassId lookup")
+        assertEquals("Helper", helper.name.asString())
     }
 }

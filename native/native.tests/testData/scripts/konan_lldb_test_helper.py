@@ -17,6 +17,7 @@ SINGLE_STEP_TIMEOUT_SECONDS = 60
 TOTAL_STEPPING_TIMEOUT_SECONDS = 300
 MAX_STEP_COMMANDS = 10000
 
+
 def _describe_process_state(process):
     lines = []
     for thread in process:
@@ -24,6 +25,28 @@ def _describe_process_state(process):
         for frame in thread:
             lines.append("    " + str(frame))
     return "\n".join(lines)
+
+
+def _count_breakpoint_locations(target):
+    locations = 0
+    for index in range(target.GetNumBreakpoints()):
+        locations += target.GetBreakpointAtIndex(index).GetNumLocations()
+    return locations
+
+
+def _normalize_breakpoint_command(command):
+    normalized_command = command.strip()
+    if not normalized_command:
+        raise AssertionError("expected non-empty arguments")
+
+    if normalized_command.startswith(("b ", "br ", "breakpoint ")):
+        raise AssertionError("expected breakpoint arguments without b/br/breakpoint")
+
+    if normalized_command.startswith("-"):
+        return f"breakpoint set {normalized_command}"
+
+    return f"b {normalized_command}"
+
 
 @lldb.command()
 def step_through_current_frame(debugger, command, ctx, result, internal_dict):
@@ -92,3 +115,47 @@ def step_through_current_frame(debugger, command, ctx, result, internal_dict):
         step = "//step " + "\u001f".join((file_path, str(line_number), function_name))
         steps.append(step)
         result.AppendMessage(step)
+
+
+@lldb.command("limited_output_break")
+def limited_output_break(debugger, command, ctx, result, internal_dict):
+    """Set a breakpoint and report only whether or not at least one breakpoint was created"""
+    target = debugger.GetSelectedTarget()
+    before_location_count = _count_breakpoint_locations(target)
+
+    command_result = lldb.SBCommandReturnObject()
+    debugger.GetCommandInterpreter().HandleCommand(_normalize_breakpoint_command(command), command_result)
+
+    if not command_result.Succeeded():
+        error = command_result.GetError().strip()
+        output = command_result.GetOutput().strip()
+        raise AssertionError(error or output or "breakpoint command failed")
+
+    after_location_count = _count_breakpoint_locations(target)
+    if after_location_count > before_location_count:
+        result.AppendMessage("breakpoint(s) set")
+    else:
+        result.AppendMessage("no breakpoints set")
+
+
+@lldb.command()
+def get_native_func_type(debugger, command, ctx, result, internal_dict):
+    """Return the compiler-visible type of a function resolved by its full symbol name"""
+    symbol_name = command.strip()
+    if not symbol_name:
+        raise AssertionError("get_native_func_type expects a function name")
+
+    target = debugger.GetSelectedTarget()
+    matches = target.FindFunctions(symbol_name, lldb.eFunctionNameTypeFull)
+    if matches.GetSize() != 1:
+        raise AssertionError(f"Expected exactly 1 match for {symbol_name!r}, got {matches.GetSize()}")
+
+    function = matches.GetContextAtIndex(0).GetFunction()
+    if not function.IsValid():
+        raise AssertionError(f"Matched context for {symbol_name!r} does not contain a function")
+
+    func_type = function.GetType()
+    if not func_type.IsValid():
+        raise AssertionError(f"Failed to resolve function type for {symbol_name!r}")
+
+    result.AppendMessage(func_type.GetDisplayTypeName())

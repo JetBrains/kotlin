@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpression.JsExpressionHasArguments
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 
-// Replaces box(unbox(value)) and unbox(box(value)) with value
-class BoxingUnboxingElimination(private val root: JsBlock) {
-    private var changed = false
-
-    fun apply(): Boolean {
+/**
+ * Replaces `box(unbox(value))` and `unbox(box(value))` with value
+ */
+internal class BoxingUnboxingElimination(private val root: JsBlock) : FunctionPostProcessorStep() {
+    override fun apply() {
         val visitor = object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsInvocation, ctx: JsContext<JsNode>) {
                 super.endVisit(x, ctx)
@@ -43,10 +43,6 @@ class BoxingUnboxingElimination(private val root: JsBlock) {
                 tryEliminate(x, ctx)
             }
 
-            override fun endVisit(x: JsArrayAccess, ctx: JsContext<*>) {
-                super.endVisit(x, ctx)
-            }
-
             override fun visit(x: JsFunction, ctx: JsContext<JsNode>) = false
 
             private fun tryEliminate(expression: JsExpression, ctx: JsContext<JsNode>) {
@@ -58,7 +54,7 @@ class BoxingUnboxingElimination(private val root: JsBlock) {
 
                 if (firstArg.isInlineClassBoxing != expression.isInlineClassBoxing) {
                     ctx.replaceMe(firstArg.arguments.first())
-                    changed = true
+                    hasChanges = true
                 }
             }
 
@@ -71,7 +67,5 @@ class BoxingUnboxingElimination(private val root: JsBlock) {
         }
 
         visitor.accept(root)
-
-        return changed
     }
 }

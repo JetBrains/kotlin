@@ -85,6 +85,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: and
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -174,6 +175,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -263,6 +265,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -352,6 +355,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -441,6 +445,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -530,6 +535,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -619,6 +625,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: compareTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -666,6 +673,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: dec
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -755,6 +763,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: div
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -844,6 +853,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: div
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -933,6 +943,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: div
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1022,6 +1033,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: div
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1111,6 +1123,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: div
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1200,6 +1213,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: div
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1289,6 +1303,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1336,6 +1351,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: inc
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1386,6 +1402,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: inv
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1475,6 +1492,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: minus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1564,6 +1582,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: minus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1653,6 +1672,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: minus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1742,6 +1762,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: minus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1831,6 +1852,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: minus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1920,6 +1942,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: minus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2009,6 +2032,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: or
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2098,6 +2122,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: plus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2187,6 +2212,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: plus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2276,6 +2302,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: plus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2365,6 +2392,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: plus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2454,6 +2482,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: plus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2543,6 +2572,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: plus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2629,6 +2659,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2715,6 +2746,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2801,6 +2833,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2887,6 +2920,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeTo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2978,6 +3012,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeUntil
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3069,6 +3104,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeUntil
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3160,6 +3196,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeUntil
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3251,6 +3288,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rangeUntil
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3342,6 +3380,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rem
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3433,6 +3472,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rem
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3524,6 +3564,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rem
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3615,6 +3656,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rem
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3706,6 +3748,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rem
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3797,6 +3840,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: rem
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3886,6 +3930,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: shl
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -3975,6 +4020,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: shr
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4064,6 +4110,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: times
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4153,6 +4200,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: times
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4242,6 +4290,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: times
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4331,6 +4380,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: times
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4420,6 +4470,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: times
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4509,6 +4560,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: times
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4559,6 +4611,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toByte
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4609,6 +4662,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toChar
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4659,6 +4713,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toDouble
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4709,6 +4764,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toFloat
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4759,6 +4815,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toInt
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4809,6 +4866,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toLong
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4859,6 +4917,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toShort
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4909,6 +4968,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -4959,6 +5019,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: unaryMinus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5009,6 +5070,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: unaryPlus
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5098,6 +5160,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: ushr
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5187,6 +5250,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: xor
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -5234,6 +5298,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -5301,4 +5366,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: kotlin.Int
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
+  javaMethodName: null
   importableFqName: kotlin.Int

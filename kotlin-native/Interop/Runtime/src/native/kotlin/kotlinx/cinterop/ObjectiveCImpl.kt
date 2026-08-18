@@ -93,15 +93,15 @@ external internal fun unwrapKotlinObjectHolderImpl(ptr: NativePtr): Any
 
 @ExperimentalForeignApi
 public class ObjCObjectVar<T>(rawPtr: NativePtr) : CVariable(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
 @ExperimentalForeignApi
 public class ObjCNotImplementedVar<T : Any?>(rawPtr: NativePtr) : CVariable(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 

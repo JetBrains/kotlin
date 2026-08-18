@@ -2,6 +2,7 @@ depends = CFCGTypes Contacts CoreFoundation CoreFoundationBase CoreGraphics Foun
 language = Objective-C
 package = platform.PassKit
 modules = PassKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework PassKit
 linkerOpts = -framework PassKit

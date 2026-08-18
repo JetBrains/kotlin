@@ -9,7 +9,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Runner for Swift Export (for embedding purpose)"
@@ -38,6 +38,7 @@ dependencies {
     embedded(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-base")) { isTransitive = false }
     embedded(project(lowLevelApiFir)) { isTransitive = false }
+    embedded(project(":analysis:light-classes-base")) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }
     embedded(project(":analysis:decompiled:decompiler-native")) { isTransitive = false }

@@ -1,0 +1,9 @@
+expect val name: kotlin.String
+
+expect open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+expect open fun hashCode(): kotlin.Int
+
+expect open fun toString(): kotlin.String
+
+expect constructor(name: kotlin.String)

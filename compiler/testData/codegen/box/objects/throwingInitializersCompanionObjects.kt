@@ -1,0 +1,125 @@
+// ISSUE: KT-87009
+// WASM_STANDALONE
+// ^^^ in a grouped run, test classes are placed in a sub-package, so the NoClassDefFoundError message (built from KClass.qualifiedName) would differ. See KT-88074
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// FULL_JDK
+
+package foo
+
+class C {
+    companion object {
+        val never: Nothing = run { throw IllegalStateException("C.never") }
+    }
+}
+
+open class Parent {
+    companion object {
+        val never: Nothing = run { throw IllegalStateException("Parent.never") }
+    }
+}
+
+class Child : Parent() {
+    companion object {
+        val normal = 42
+    }
+}
+
+class MyError(message: String) : Error(message)
+
+class ThrowsMyErrorWithCompanion {
+    companion object {
+        val never: Nothing = run { throw MyError("ThrowsMyErrorWithCompanion.never") }
+    }
+}
+
+fun box(): String {
+    @Suppress("INVISIBLE_REFERENCE")
+    try {
+        C()
+        return "FAIL 1.1: should throw"
+    } catch (e: ExceptionInInitializerError) {
+        val cause = e.cause
+        if (cause !is IllegalStateException) return "FAIL 1.2: cause must be IllegalStateException, was ${cause?.let { it::class }}"
+        if (cause.message != "C.never") return "FAIL 1.3: message must be 'C.never', was '${cause.message}'"
+        if (e.message != null) return "FAIL 1.4: message must be null, got ${e.message}"
+    }
+
+    @Suppress("INVISIBLE_REFERENCE")
+    try {
+        C()
+        return "FAIL 2.1: should throw"
+    } catch (e: NoClassDefFoundError) {
+        if (BACKEND_UNDER_TEST != "ANDROID") {
+            val expectedMessage = when (BACKEND_UNDER_TEST) {
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class C"
+                else -> "Could not initialize class foo.C"
+            }
+            if (e.message != expectedMessage) return "FAIL 2.2: message must be '$expectedMessage', was '${e.message}'"
+        }
+    }
+
+    @Suppress("INVISIBLE_REFERENCE")
+    val childEIIE = try {
+        Child()
+        return "FAIL 3.1: should throw"
+    } catch (e: ExceptionInInitializerError) {
+        val cause = e.cause
+        if (cause !is IllegalStateException) return "FAIL 3.2: cause must be IllegalStateException, was ${cause?.let { it::class }}"
+        if (cause.message != "Parent.never") return "FAIL 3.3: message must be 'Parent.never', was '${cause.message}'"
+        if (e.message != null) return "FAIL 3.4: message must be null, got ${e.message}"
+        e
+    }
+
+    @Suppress("INVISIBLE_REFERENCE")
+    try {
+        Child()
+        return "FAIL 4.1: should throw"
+    } catch (e: NoClassDefFoundError) {
+        if (BACKEND_UNDER_TEST != "ANDROID") {
+            val expectedMessage = when (BACKEND_UNDER_TEST) {
+                "NATIVE" -> "Could not initialize class foo.Parent"
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class Child"
+                else -> "Could not initialize class foo.Child"
+            }
+            if (e.message != expectedMessage) return "FAIL 4.2: message must be '$expectedMessage', was '${e.message}'"
+        }
+    }
+
+    @Suppress("INVISIBLE_REFERENCE")
+    try {
+        Parent()
+        return "FAIL 5.1: should throw"
+    } catch (e: NoClassDefFoundError) {
+        if (BACKEND_UNDER_TEST != "ANDROID") {
+            val expectedMessage = when (BACKEND_UNDER_TEST) {
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class Parent"
+                else -> "Could not initialize class foo.Parent"
+            }
+            if (e.message != expectedMessage) return "FAIL 5.2: message must be '$expectedMessage', was '${e.message}'"
+        }
+    }
+
+    try {
+        ThrowsMyErrorWithCompanion()
+        return "FAIL 8.1: should throw"
+    } catch (e: MyError) {
+        if (e.cause != null) return "FAIL 8.2: cause must be null, got ${e.cause}"
+        if (e.message != "ThrowsMyErrorWithCompanion.never") return "FAIL 8.3: message must be 'ThrowsMyErrorWithCompanion.never', was '${e.message}'"
+    }
+
+    @Suppress("INVISIBLE_REFERENCE")
+    try {
+        ThrowsMyErrorWithCompanion()
+        return "FAIL 9.1: should throw"
+    } catch (e: NoClassDefFoundError) {
+        if (BACKEND_UNDER_TEST != "ANDROID") {
+            val expectedMessage = when (BACKEND_UNDER_TEST) {
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class ThrowsMyErrorWithCompanion"
+                else -> "Could not initialize class foo.ThrowsMyErrorWithCompanion"
+            }
+            if (e.message != expectedMessage) return "FAIL 9.2: message must be '$expectedMessage', was '${e.message}'"
+        }
+    }
+
+    return "OK"
+}

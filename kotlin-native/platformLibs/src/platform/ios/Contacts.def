@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Secur
 language = Objective-C
 package = platform.Contacts
 modules = Contacts
+apiNotesSwiftName = true
 
 compilerOpts = -framework Contacts
 linkerOpts = -framework Contacts

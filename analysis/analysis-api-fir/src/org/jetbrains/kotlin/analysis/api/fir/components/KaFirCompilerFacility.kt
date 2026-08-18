@@ -278,7 +278,13 @@ internal class KaFirCompilerFacility(
                 // Do not check dependency files – even though there might be errors, it's OK as long as they don't affect the main file.
                 // This is important for the code evaluation scenario, as people may modify code while debugging.
                 // The downside is that we can get unexpected exceptions from the backend (that we wrap into KaCompilationResult.Failure).
+                //
+                // The chunk file might belong to another module than the use-site one (e.g., a code fragment which was moved to a different
+                // dangling file module), so the module-agnostic 'LLResolutionFacade' is used here instead of the Analysis API endpoints.
                 val diagnostics = mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+                    .filter { !it.isSuppressed }
+                    .map { it.diagnostic }
+
                 val errors = computeErrors(diagnostics.filterIsInstance<KtDiagnostic>().toList(), options.allowedErrorFilter)
                 if (errors.isNotEmpty()) {
                     return KaCompilationResult.Failure(errors)
@@ -438,7 +444,7 @@ internal class KaFirCompilerFacility(
      *
      * @param originalMainFile The unmodified [KtFile] for the main file.
      * @param originalMainFirFile The [FirFile] representing the [originalMainFile].
-     * @param target The compilation target.
+     * @param actualizer The provider of implementation counterparts for common modules.
      */
     private inner class CompilationChunkRegistrar(
         private val originalMainFile: KtFile,
@@ -1095,7 +1101,7 @@ internal class KaFirCompilerFacility(
             visibilityConverter = FirJvmVisibilityConverter,
             kotlinBuiltIns = DefaultBuiltIns.Instance,
             typeSystemContextProvider = ::JvmIrTypeSystemContext,
-            specialAnnotationsProvider = JvmIrSpecialAnnotationSymbolProvider(),
+            createSpecialAnnotationsProvider = ::JvmIrSpecialAnnotationSymbolProvider,
             extraActualDeclarationExtractorsInitializer = {
                 error(
                     "extraActualDeclarationExtractorsInitializer should never be called, because outputs is a list of a single element. " +

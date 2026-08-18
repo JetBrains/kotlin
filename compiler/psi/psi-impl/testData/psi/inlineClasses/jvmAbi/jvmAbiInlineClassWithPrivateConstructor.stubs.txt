@@ -1,0 +1,48 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/ThreadLocalDelegate, fqName=ThreadLocalDelegate, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ThreadLocalDelegate, superNames=[]]
+    MODIFIER_LIST[value]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=JvmInline]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ThreadLocalDelegate]
+      MODIFIER_LIST[private]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=ThreadLocalDelegate.threadLocal, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=threadLocal]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ThreadLocal]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=T]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/ThreadLocalDelegate.Companion, fqName=ThreadLocalDelegate.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+          FUN[fqName=ThreadLocalDelegate.Companion.create, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=create]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ThreadLocalDelegate]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ThreadLocalDelegate]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=ThreadLocal]
+                    VALUE_ARGUMENT_LIST

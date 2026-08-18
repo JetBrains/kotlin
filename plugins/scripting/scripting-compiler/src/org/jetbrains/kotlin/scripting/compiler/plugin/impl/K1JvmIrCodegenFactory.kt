@@ -20,26 +20,29 @@ import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
-import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
@@ -104,7 +107,7 @@ class K1JvmIrCodegenFactory(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     @K1Deprecation
-    fun convertToIr(
+    private fun convertToIr(
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         module: ModuleDescriptor,
@@ -268,7 +271,7 @@ private class DescriptorMetadataSerializer(
         }
     }
 
-    override fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File?): Pair<MessageLite, JvmStringTable>? {
+    override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
         val localDelegatedProperties = irClass.localDelegatedProperties
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
             serializerExtension.localDelegatedProperties.put(
@@ -633,97 +636,14 @@ private class JvmSignatureSerializerImpl(stringTable: StringTable) : JvmSignatur
     }
 }
 
-/**
- * [ExpectSymbolTransformer] replaces `expect` symbols in expressions with `actual` symbols. An `actual` symbol must be provided by
- * overriding [getActualClass], [getActualProperty], [getActualConstructor], and [getActualFunction].
- */
-@OptIn(ObsoleteDescriptorBasedAPI::class, UnsafeDuringIrConstructionAPI::class)
-abstract class ExpectSymbolTransformer : IrVisitorVoid() {
-
-    protected abstract fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol?
-
-    protected data class ActualPropertyResult(
-        val propertySymbol: IrPropertySymbol,
-        val getterSymbol: IrSimpleFunctionSymbol?,
-        val setterSymbol: IrSimpleFunctionSymbol?,
-    )
-
-    protected abstract fun getActualProperty(descriptor: PropertyDescriptor): ActualPropertyResult?
-
-    protected abstract fun getActualConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol?
-
-    protected abstract fun getActualFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol?
-
-    /**
-     * [isTargetDeclaration] can be overridden to customize if an element referring to [declaration] should be transformed. This check
-     * precedes [getActualClass], [getActualProperty], and so on.
-     */
-    protected open fun isTargetDeclaration(declaration: IrDeclaration): Boolean = declaration.isExpect
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildren(this, null)
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall) {
-        super.visitConstructorCall(expression)
-        if (!isTargetDeclaration(expression.symbol.owner)) return
-
-        expression.symbol = getActualConstructor(expression.symbol.descriptor) ?: return
-    }
-
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-        super.visitDelegatingConstructorCall(expression)
-        if (!isTargetDeclaration(expression.symbol.owner)) return
-
-        expression.symbol = getActualConstructor(expression.symbol.descriptor) ?: return
-    }
-
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
-        super.visitEnumConstructorCall(expression)
-        if (!isTargetDeclaration(expression.symbol.owner)) return
-
-        expression.symbol = getActualConstructor(expression.symbol.descriptor) ?: return
-    }
-
-    override fun visitCall(expression: IrCall) {
-        super.visitCall(expression)
-        if (!isTargetDeclaration(expression.symbol.owner)) return
-
-        expression.symbol = getActualFunction(expression.symbol.descriptor) ?: return
-    }
-
-    override fun visitPropertyReference(expression: IrPropertyReference) {
-        super.visitPropertyReference(expression)
-        if (!isTargetDeclaration(expression.symbol.owner)) return
-
-        (val newSymbol = propertySymbol, val newGetter = getterSymbol, val newSetter = setterSymbol) = getActualProperty(expression.symbol.descriptor)
-            ?: return
-        expression.symbol = newSymbol
-        expression.getter = newGetter
-        expression.setter = newSetter
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference) {
-        super.visitFunctionReference(expression)
-        if (!isTargetDeclaration(expression.symbol.owner)) return
-
-        expression.symbol = getActualFunction(expression.symbol.descriptor) ?: return
-    }
-
-    override fun visitClassReference(expression: IrClassReference) {
-        super.visitClassReference(expression)
-        val oldSymbol = expression.symbol as? IrClassSymbol ?: return
-        if (!isTargetDeclaration(oldSymbol.owner)) return
-
-        expression.symbol = getActualClass(oldSymbol.descriptor) ?: return
-    }
-}
-
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun KotlinTypeMapperBase.mapClass(classifier: ClassifierDescriptor): Type {
     this as IrTypeMapper
     return when (classifier) {
-        is ClassDescriptor -> mapClass(context.referenceClass(classifier).owner)
-        is TypeParameterDescriptor -> mapType(context.referenceTypeParameter(classifier).defaultType)
+        is ClassDescriptor ->
+            mapClass(context.symbolTable.lazyWrapper.descriptorExtension.referenceClass(classifier).owner)
+        is TypeParameterDescriptor ->
+            mapType(context.symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(classifier).defaultType)
         else -> error("Unknown descriptor: $classifier")
     }
 }

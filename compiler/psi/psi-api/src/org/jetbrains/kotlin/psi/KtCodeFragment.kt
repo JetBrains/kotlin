@@ -144,7 +144,11 @@ abstract class KtCodeFragment(
         }
     }
 
-    @Deprecated("Use 'addImportsFromString()w' instead", ReplaceWith("addImportsFromString(import)"), level = DeprecationLevel.WARNING)
+    @Deprecated(
+        message = "Use 'addImportsFromString()w' instead",
+        replaceWith = ReplaceWith("addImportsFromString(import)"),
+        level = DeprecationLevel.WARNING,
+    )
     fun addImport(import: String) {
         addImportsFromString(import)
     }

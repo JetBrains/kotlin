@@ -302,7 +302,7 @@ private class SourceAttribute(private val data: FirTypeRefSource) : ConeAttribut
 
     override fun isSubtypeOf(other: SourceAttribute?): Boolean = true
 
-    override fun toString() = "SourceAttribute: $data"
+    override fun toString(): String = "SourceAttribute: $data"
 
     override val key: KClass<out SourceAttribute>
         get() = SourceAttribute::class

@@ -332,7 +332,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
         // todo: cache classloader?
-        val classLoader = URLClassLoader(config.compilerFullClasspath.map { it.toURI().toURL() }.toTypedArray())
+        val classLoader = URLClassLoader(config.compilerFullClasspath.map { it.toURI().toURL() }.toTypedArray(), null)
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
         val compiler = Class.forName(config.compilerClassName, true, classLoader)

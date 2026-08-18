@@ -19,6 +19,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MixOfRegularAndStaticCompani
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=regular2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=regular2]
     TYPE_REFERENCE
       USER_TYPE
@@ -28,6 +29,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MixOfRegularAndStaticCompani
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=r2]
   FUN[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
     TYPE_REFERENCE
       USER_TYPE
@@ -43,6 +46,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MixOfRegularAndStaticCompani
         REFERENCE_EXPRESSION[referencedName=Long]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2L]
   FUN[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
     MODIFIER_LIST[companion]
     TYPE_REFERENCE

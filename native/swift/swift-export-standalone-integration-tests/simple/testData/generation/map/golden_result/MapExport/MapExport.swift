@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 
 public protocol Bar: KotlinRuntime.KotlinBase, MapExport._Bar {
 }
-@objc(_Bar)
+@objc(_MapExport_Bar)
 public protocol _Bar {
 }
 public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
@@ -65,11 +65,14 @@ public func testStarMap(
 ) -> [Swift.AnyHashable: any KotlinRuntimeSupport._KotlinBridgeable] {
     return __root___testStarMap__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m) as! Swift.Dictionary<Swift.AnyHashable,any KotlinRuntimeSupport._KotlinBridgeable>
 }
+@_documentation(visibility: internal)
 extension MapExport.Bar where Self : MapExport.__Bar {
 }
 extension MapExport.Bar {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: MapExport.Bar, MapExport.__Bar where Wrapped : MapExport._Bar {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: MapExport._Bar {
 }

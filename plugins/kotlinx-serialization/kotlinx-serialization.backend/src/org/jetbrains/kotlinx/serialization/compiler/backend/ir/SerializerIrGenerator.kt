@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
@@ -61,7 +62,7 @@ open class SerializerIrGenerator(
 
     protected val generatedSerialDescPropertyDescriptor = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD
-    ) { true }?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
+    ) { true }?.takeIf { it.isFromPlugin() }
 
     protected val irAnySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
@@ -295,7 +296,7 @@ open class SerializerIrGenerator(
             })
             +irInvoke(writeSelfFunction.symbol, args, typeArgs)
         } else {
-            val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
+            val propertyByParamReplacer: (IrValueParameterSymbol) -> IrExpression? =
                 createPropertyByParamReplacer(serializableIrClass, serializableProperties, objectToSerialize)
 
             val thisSymbol = serializableIrClass.thisReceiver!!.symbol
@@ -530,8 +531,8 @@ open class SerializerIrGenerator(
             val ctorDeclaration = serializableIrClass.primaryConstructorOrFail
             val ctor: IrConstructorSymbol = ctorDeclaration.symbol
 
-            val variableByParamReplacer: (ValueParameterDescriptor) -> IrExpression? = { vpd ->
-                val propertyDescriptor = serializableIrClass.properties.find { it.name == vpd.name }
+            val variableByParamReplacer: (IrValueParameterSymbol) -> IrExpression? = { vpd ->
+                val propertyDescriptor = serializableIrClass.properties.find { it.name == vpd.owner.name }
                 if (propertyDescriptor != null) {
                     val serializable = serialPropertiesMap[propertyDescriptor]
                     (serializable ?: transientsPropertiesMap[propertyDescriptor])?.get()
@@ -614,17 +615,16 @@ open class SerializerIrGenerator(
         val prop = generatedSerialDescPropertyDescriptor?.let { generateSerializableClassProperty(it); true } ?: false
         if (prop)
             generateSerialDesc()
-        val withFir = compilerContext.afterK2
-        val save = irClass.findPluginGeneratedMethod(SAVE, withFir)?.let { generateSave(it); true } ?: false
-        val load = irClass.findPluginGeneratedMethod(LOAD, withFir)?.let { generateLoad(it); true } ?: false
-        irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier, withFir)
+        val save = irClass.findPluginGeneratedMethod(SAVE)?.let { generateSave(it); true } ?: false
+        val load = irClass.findPluginGeneratedMethod(LOAD)?.let { generateLoad(it); true } ?: false
+        irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier)
             ?.let { generateChildSerializersGetter(it) }
-        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier, withFir)
+        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier)
             ?.let { generateTypeParamsSerializersGetter(it) }
         if (!prop && (save || load))
             generateSerialDesc()
         if (serializableIrClass.typeParameters.isNotEmpty()) {
-            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin(withFir) }?.let {
+            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin() }?.let {
                 generateGenericFieldsAndConstructor(it.owner)
             }
         }
@@ -647,7 +647,7 @@ open class SerializerIrGenerator(
                 else -> SerializerIrGenerator(irClass, context)
             }
             generator.generate()
-            if (irClass.isFromPlugin(context.afterK2)) {
+            if (irClass.isFromPlugin()) {
                 // replace origin only for plugin generated serializers
                 irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
             }

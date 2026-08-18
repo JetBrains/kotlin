@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.AdSupport
 modules = AdSupport
+apiNotesSwiftName = true
 
 compilerOpts = -framework AdSupport
 linkerOpts = -framework AdSupport

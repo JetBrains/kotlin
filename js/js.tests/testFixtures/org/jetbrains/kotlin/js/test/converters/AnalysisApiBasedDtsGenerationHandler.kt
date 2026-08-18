@@ -8,17 +8,14 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
+import org.jetbrains.kotlin.js.tsexport.createTypeScriptExportInputModule
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
-import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
@@ -57,7 +54,7 @@ class AnalysisApiBasedDtsGenerationHandler(testServices: TestServices) : KlibArt
                 compileLongAsBigInt = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives,
                 implementableInterfaces = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay),
                 exportableSuspendLambdas = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas),
-                exportUntypedAsUnknown = JsEnvironmentConfigurationDirectives.EXPORT_UNTYPED_AS_UNKNOWN in module.directives,
+                useUnknownInsteadAny = JsEnvironmentConfigurationDirectives.EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY in module.directives,
                 dataClassCopyRespectsConstructorVisibility = configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility),
             )
             val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
@@ -80,12 +77,8 @@ class AnalysisApiBasedDtsGenerationHandler(testServices: TestServices) : KlibArt
         }
     }
 
-    private fun createInputModule(libraryPath: String): KlibInputModule<TypeScriptModuleConfig> {
-        val result = KlibLoader { libraryPaths(libraryPath) }.load()
-        result.reportLoadingProblemsIfAny { _, message -> testServices.assertions.fail { message } }
-        val library = result.librariesStdlibFirst[0]
-        return KlibInputModule(library.uniqueName, Path(libraryPath), TypeScriptModuleConfig(outputName = library.jsOutputName))
-    }
+    private fun createInputModule(libraryPath: String): KlibInputModule<TypeScriptModuleConfig> =
+        createTypeScriptExportInputModule(Path(libraryPath)) { _, message -> testServices.assertions.fail { message } }
 
     private fun createInputModule(testModule: TestModule): KlibInputModule<TypeScriptModuleConfig> {
         val klib = testServices.artifactsProvider.getArtifact(testModule, ArtifactKinds.KLib).outputFile

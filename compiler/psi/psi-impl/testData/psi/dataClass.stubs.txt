@@ -21,3 +21,4 @@ FILE[kind=File[packageFqName=a.b.c]]
     CLASS_BODY
       FUN[fqName=a.b.c.DataClass.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]

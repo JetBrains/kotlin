@@ -1,4 +1,6 @@
 // KIND: STANDALONE_LLDB
+// INPUT_DATA_FILE: standalone_lldb_stepping.in
+// OUTPUT_DATA_FILE: standalone_lldb_stepping.out
 
 import kotlin.test.*
 

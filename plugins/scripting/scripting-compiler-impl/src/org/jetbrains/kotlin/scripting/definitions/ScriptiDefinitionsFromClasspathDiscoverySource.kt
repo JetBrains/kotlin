@@ -63,8 +63,12 @@ private fun scriptTemplatesDiscoverySequence(
             try {
                 when {
                     dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
-                        JarFile(dep).use { jar ->
-                            if (jar.getJarEntry(SCRIPT_DEFINITION_MARKERS_PATH) != null) {
+                        // the jar is closed before yielding the definitions, otherwise it would be kept open
+                        // for as long as the consumer holds the iterator, and leaked completely if the sequence
+                        // is abandoned before the exhaustion
+                        val definitions = JarFile(dep).use { jar ->
+                            if (jar.getJarEntry(SCRIPT_DEFINITION_MARKERS_PATH) == null) emptyList()
+                            else {
                                 val definitionNames = jar.entries().asSequence().mapNotNull {
                                     if (it.isDirectory || !it.name.startsWith(SCRIPT_DEFINITION_MARKERS_PATH)) null
                                     else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH).removeSuffix(
@@ -86,11 +90,10 @@ private fun scriptTemplatesDiscoverySequence(
                                         "Configure scripting: unable to find script definitions [${notFoundClasses.joinToString(", ")}]"
                                     )
                                 }
-                                loadedDefinitions.forEach {
-                                    yield(it)
-                                }
+                                loadedDefinitions
                             }
                         }
+                        yieldAll(definitions)
                     }
                     dep.isDirectory -> {
                         defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
@@ -264,7 +267,9 @@ private fun List<String>.partitionLoadJarDefinitions(
     hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter,
 ): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, hostConfiguration, messageReporter) { definitionName ->
-    jar.getJarEntry("${definitionName.replace('.', '/')}.class")?.let { jar.getInputStream(it).readBytes() }
+    jar.getJarEntry("${definitionName.replace('.', '/')}.class")?.let { entry ->
+        jar.getInputStream(entry).use { it.readBytes() }
+    }
 }
 
 private fun List<String>.partitionLoadDirDefinitions(

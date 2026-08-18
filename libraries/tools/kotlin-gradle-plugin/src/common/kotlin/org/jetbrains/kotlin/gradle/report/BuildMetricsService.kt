@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CopyOnWriteArrayList
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
@@ -86,6 +87,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
     private val processedMessages = ConcurrentHashMap<Long, Boolean>()
+
+    private val closeActions = CopyOnWriteArrayList<() -> Unit>().also {
+        it.add(::closeBuildReportService)
+    }
 
     open fun addTask(
         taskPath: String,
@@ -151,7 +156,17 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         return buildOperation
     }
 
+    internal fun addOnCloseAction(action: () -> Unit) {
+        closeActions.add(action)
+    }
+
     override fun close() {
+        closeActions.forEach {
+            it()
+        }
+    }
+
+    private fun closeBuildReportService() {
         buildReportService.close(buildOperationRecords, failureMessages.toList(), parameters.toBuildReportParameters())
     }
 
@@ -220,7 +235,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         @Synchronized
         private fun registerIfAbsentImpl(
             project: Project,
-            buildOperationListenerManager: BuildOperationListenerManager
+            buildOperationListenerManager: BuildOperationListenerManager,
         ): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
@@ -263,7 +278,12 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {
                 subscribeForTaskEvents(project, it)
-                buildOperationListenerManager.addListener(it.get())
+
+                val buildService = it.get()
+                buildService.addOnCloseAction {
+                    buildOperationListenerManager.removeListener(buildService)
+                }
+                buildOperationListenerManager.addListener(buildService)
             }
 
         }

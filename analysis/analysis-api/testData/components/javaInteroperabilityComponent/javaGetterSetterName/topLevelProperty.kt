@@ -1,1 +1,0 @@
-<expr>var x: String = "foo"</expr>

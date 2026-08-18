@@ -411,6 +411,9 @@ private fun processCLib(
             warn("The package value `$oldValue` specified in .def file is overridden with explicit $newValue")
     }
     def.manifestAddendProperties[KLIB_PROPERTY_INTEROP] = "true"
+    if (cinteropArguments.headerMode) {
+        def.manifestAddendProperties[KLIB_PROPERTY_HEADER] = "true"
+    }
     if (stubIrOutput is StubIrDriver.Result.Metadata) {
         def.manifestAddendProperties[KLIB_PROPERTY_IR_PROVIDER] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
     }

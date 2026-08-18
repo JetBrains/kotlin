@@ -1008,9 +1008,8 @@ class FirCallCompletionResultsWriterTransformer(
         candidate: Candidate,
     ): List<FirTypeProjection> {
         val typeArguments = computeTypeArgumentTypes(candidate)
-            .mapIndexed { index, typeFromFinalSubstitutor ->
+            .mapIndexed { index, type ->
                 val argument = access.typeArguments.getOrNull(index)
-                val type = typeFromFinalSubstitutor.storeNonFlexibleCounterpartInAttributeIfNecessary(argument)
                 val sourceForTypeArgument = argument?.source
                     ?: access.calleeReference.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeArgument)
                 when (argument) {
@@ -1055,26 +1054,6 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
         } else typeArguments
-    }
-
-    /**
-     * @see ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
-     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] cannot be disabled
-     */
-    private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(
-        argument: FirTypeProjection?,
-    ): ConeKotlinType {
-        if (this !is ConeFlexibleType) return this
-        if (argument !is FirTypeProjectionWithVariance) return this
-        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible)) return this
-
-        return withAttributes(
-            attributes.add(
-                ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-                    argument.typeRef.coneType.fullyExpandedType(),
-                )
-            )
-        )
     }
 
     private fun computeTypeArgumentTypes(

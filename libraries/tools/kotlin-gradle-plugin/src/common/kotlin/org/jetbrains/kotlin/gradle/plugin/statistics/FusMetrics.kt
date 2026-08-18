@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.withType
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.ANALYSIS_LPS
+import org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION_LPS
+import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.MODULE_ES
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -29,19 +28,15 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
-import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.Library
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinDefaultJsTestLocation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
-import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
-import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.statistics.metrics.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal sealed interface FusMetrics
@@ -137,7 +132,10 @@ internal object CompilerArgumentMetrics : FusMetrics {
         }
     }
 
-    private fun <Args : CommonCompilerArguments> StatisticsValuesConsumer.reportPluginsFromListIfUsed(args: Args, pluginPatterns: List<Pair<BooleanMetrics, String>>) {
+    private fun <Args : CommonCompilerArguments> StatisticsValuesConsumer.reportPluginsFromListIfUsed(
+        args: Args,
+        pluginPatterns: List<Pair<BooleanMetrics, String>>,
+    ) {
         val pluginJars = args.pluginClasspaths.map { it.replace("\\", "/").split("/").last() }
         for (pluginPattern in pluginPatterns) {
             if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
@@ -280,6 +278,9 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         separateKmpCompilationEnabled: Boolean,
         firRunnerEnabled: Boolean, // jvm only as of 2.2.20
         executionPolicy: KotlinCompilerExecutionStrategy,
+        // both are null for anything that is not a multiplatform Kotlin/JVM compilation
+        kmpJvmClasspathMetadataEnabled: Boolean?,
+        kmpJvmUnsafeOptimizationsEnabled: Boolean?,
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -298,6 +299,12 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         }
         if (firRunnerEnabled) {
             metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
+        }
+        kmpJvmClasspathMetadataEnabled?.also {
+            metricsContainer.report(BooleanMetrics.KMP_JVM_CLASSPATH_METADATA_ENABLED, it)
+        }
+        kmpJvmUnsafeOptimizationsEnabled?.also {
+            metricsContainer.report(BooleanMetrics.KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED, it)
         }
         metricsContainer.report(StringListMetrics.KOTLIN_COMPILER_EXECUTION_POLICY, executionPolicy.propertyValue)
     }
@@ -387,6 +394,30 @@ internal object KotlinJsIrTargetMetrics : FusMetrics {
                 !isBrowserConfigured && !isNodejsConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "none")
             }
         }
+    }
+}
+
+internal object KotlinJsBrowserTestMetrics : FusMetrics {
+
+    internal fun collectMetrics(project: Project, jdBrowserRunners: Collection<KotlinBrowserTestRunnerDsl>) {
+        jdBrowserRunners.forEach { jdBrowserRunner ->
+            collectMetrics(project, jdBrowserRunner)
+        }
+    }
+
+    internal fun collectMetrics(project: Project, jdBrowserRunner: KotlinBrowserTestRunnerDsl) {
+        project.addConfigurationMetrics { metricContainer ->
+            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, jdBrowserRunner.getBrowserKind().browserName)
+            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, jdBrowserRunner.optionsChangedFromDefaults())
+        }
+    }
+
+    private fun KotlinBrowserTestRunnerDsl.optionsChangedFromDefaults(): List<String> = buildList {
+        if (testsLocation.get() !is KotlinDefaultJsTestLocation) add("testsLocation")
+        if (headless.get() != KotlinJsBrowserTestImpl.DEFAULT_HEADLESS) add("headless")
+        if (launchArgs.get().isNotEmpty()) add("launchArgs")
+        if (launchEnvironmentVariables.get().isNotEmpty()) add("launchEnvironmentVariables")
+        if (customBrowserExecutable.isPresent) add("customBrowserExecutable")
     }
 }
 
@@ -482,7 +513,7 @@ internal object KotlinSourceSetMetrics : FusMetrics {
     }
 
     private suspend fun Project.reportSourceSetSourcesUsage(
-        sourceSetNameToMetricMap: Map<String, BooleanMetrics>
+        sourceSetNameToMetricMap: Map<String, BooleanMetrics>,
     ) {
         project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
             val metric = sourceSetNameToMetricMap[sourceSet.name]
@@ -497,7 +528,7 @@ internal object KotlinSourceSetMetrics : FusMetrics {
     }
 
     private suspend fun Project.reportSourceSetDependenciesUsage(
-        sourceSetNameToMetricMap: Map<String, BooleanMetrics>
+        sourceSetNameToMetricMap: Map<String, BooleanMetrics>,
     ) {
         project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
             val metric = sourceSetNameToMetricMap[sourceSet.name]

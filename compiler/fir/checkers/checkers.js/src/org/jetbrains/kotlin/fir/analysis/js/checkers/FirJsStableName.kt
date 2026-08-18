@@ -75,7 +75,7 @@ internal data class FirJsStableName(
 }
 
 context(context: CheckerContext)
-internal fun Collection<FirJsStableName>.collectNameClashesWith(name: FirJsStableName) = mapNotNull { next ->
+internal fun Collection<FirJsStableName>.collectNameClashesWith(name: FirJsStableName): List<FirJsStableName> = mapNotNull { next ->
     next.takeIf {
         next.clashesWith(name)
     }

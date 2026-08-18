@@ -55,7 +55,7 @@ class TestLazyScheme {
     }
 
     @Test
-    fun canUpdateResult() {
+    fun canUpdateResultThroughUnificationWithClosedBindings() {
         val lazyScheme = LazyScheme(schemeOf("[0, [1], [2]:[0, [2], [1]]"))
         val bindings = lazyScheme.bindings
         val a = bindings.closed("a")
@@ -65,6 +65,30 @@ class TestLazyScheme {
         bindings.unify(lazyScheme.parameters[0].target, b)
         bindings.unify(lazyScheme.parameters[1].target, c)
         assertEquals(schemeOf("[a, [b], [c]:[a, [c], [b]]]"), lazyScheme.toScheme())
+    }
+
+    @Test
+    fun canUpdateResultThroughUnificationWithConstrainedOpenBindings() {
+        val lazyScheme = LazyScheme(schemeOf("[0, [1], [2]:[0, [2], [1]]"))
+        val bindings = lazyScheme.bindings
+        val a = bindings.open(allowedTokens = setOf("U", "V"))
+        val b = bindings.open(allowedTokens = setOf("W", "X"))
+        val c = bindings.open(allowedTokens = setOf("Y", "Z"))
+        bindings.unify(lazyScheme.target, a)
+        bindings.unify(lazyScheme.parameters[0].target, b)
+        bindings.unify(lazyScheme.parameters[1].target, c)
+        assertEquals(
+            "[" +
+                    "Open(0, allowedTokens = {U, V}), " +
+                    "[Open(2, allowedTokens = {W, X})], [Open(1, allowedTokens = {Y, Z})]" +
+                    ": " +
+                    "[" +
+                    "Open(0, allowedTokens = {U, V}), " +
+                    "[Open(1, allowedTokens = {Y, Z})], [Open(2, allowedTokens = {W, X})]" +
+                    "]" +
+                    "]",
+            lazyScheme.toScheme().toString()
+        )
     }
 
     @Test

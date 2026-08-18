@@ -15,7 +15,7 @@
 public final class ComposableSingletons%TestKt {
   public <init>()V
   public final getLambda%505024483%test_module()Lkotlin/jvm/functions/Function3;
-  private final static lambda_505024483%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static _get_lambda_505024483_%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   static <clinit>()V
   public final static LComposableSingletons%TestKt; INSTANCE
   private static Lkotlin/jvm/functions/Function3; lambda%505024483

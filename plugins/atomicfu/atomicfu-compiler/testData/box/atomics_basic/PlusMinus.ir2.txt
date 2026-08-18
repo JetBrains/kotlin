@@ -1,0 +1,228 @@
+FILE fqName:<root> fileName:/PlusMinus.kt
+  CLASS CLASS name:PM modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.PM
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:i$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:i$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-i$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:i$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-i$volatile> (): kotlin.Int declared in <root>.PM'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:i$volatile type:kotlin.Int visibility:private declared in <root>.PM' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.PM declared in <root>.PM.<get-i$volatile>' type=<root>.PM origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-i$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:i$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-i$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.PM'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:i$volatile type:kotlin.Int visibility:private declared in <root>.PM' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.PM declared in <root>.PM.<set-i$volatile>' type=<root>.PM origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.PM.<set-i$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Long type=kotlin.Long value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-l$volatile> visibility:private modality:FINAL returnType:kotlin.Long
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-l$volatile> (): kotlin.Long declared in <root>.PM'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private declared in <root>.PM' type=kotlin.Long origin=null
+              receiver: GET_VAR '<this>: <root>.PM declared in <root>.PM.<get-l$volatile>' type=<root>.PM origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-l$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.PM'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private declared in <root>.PM' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.PM declared in <root>.PM.<set-l$volatile>' type=<root>.PM origin=null
+              value: GET_VAR 'value: kotlin.Long declared in <root>.PM.<set-l$volatile>' type=kotlin.Long origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:iArray visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:iArray type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-iArray> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:iArray visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-iArray> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.PM'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:iArray type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              receiver: GET_VAR '<this>: <root>.PM declared in <root>.PM.<get-iArray>' type=<root>.PM origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lArray visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:lArray type:java.util.concurrent.atomic.AtomicLongArray visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicLongArray' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lArray> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLongArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lArray visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-lArray> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.PM'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lArray type:java.util.concurrent.atomic.AtomicLongArray visibility:private [final] declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              receiver: GET_VAR '<this>: <root>.PM declared in <root>.PM.<get-lArray>' type=<root>.PM origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:i$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:i$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="i$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-i$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:i$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-i$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.PM'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:i$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:l$volatile$FU type:java.util.concurrent.atomic.AtomicLongFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="l$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-l$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLongFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.PM'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile$FU type:java.util.concurrent.atomic.AtomicLongFieldUpdater visibility:private [final,static] declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.PM [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PM modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:arrays visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+      BLOCK_BODY
+        CALL 'public final fun getAndAdd (i: kotlin.Int, delta: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-iArray> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG delta: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=3
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-iArray> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun getAndAdd (i: kotlin.Int, delta: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-iArray> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG delta: CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=-1
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-iArray> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun getAndAdd (i: kotlin.Int, delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+          ARG <this>: CALL 'private final fun <get-lArray> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG delta: CONST Long type=kotlin.Long value=42
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=42
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-lArray> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun getAndAdd (i: kotlin.Int, delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+          ARG <this>: CALL 'private final fun <get-lArray> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG delta: CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
+            ARG <this>: CONST Long type=kotlin.Long value=10
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=32
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-lArray> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.PM declared in <root>.PM.arrays' type=<root>.PM origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=0
+    FUN name:scalars visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PM
+      BLOCK_BODY
+        CALL 'public final fun getAndAdd (obj: kotlin.Any, delta: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-i$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG delta: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=3
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-i$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun getAndAdd (obj: kotlin.Any, delta: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-i$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG delta: CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=-1
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-i$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun getAndAdd (obj: kotlin.Any, delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG delta: CONST Long type=kotlin.Long value=42
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=42
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun getAndAdd (obj: kotlin.Any, delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+          ARG delta: CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
+            ARG <this>: CONST Long type=kotlin.Long value=10
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=32
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.PM' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.PM declared in <root>.PM.scalars' type=<root>.PM origin=IMPLICIT_ARGUMENT
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:testClass type:<root>.PM [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PM' type=<root>.PM origin=null
+      CALL 'public final fun scalars (): kotlin.Unit declared in <root>.PM' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.PM declared in <root>.box' type=<root>.PM origin=null
+      CALL 'public final fun arrays (): kotlin.Unit declared in <root>.PM' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.PM declared in <root>.box' type=<root>.PM origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

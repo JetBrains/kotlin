@@ -10,7 +10,7 @@
 
 #include "ExtraObjectDataFactory.hpp"
 #include "FinalizerHooksTestSupport.hpp"
-#include "MarkAndSweepUtils.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
 #include "ObjectFactory.hpp"
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectTestSupport.hpp"

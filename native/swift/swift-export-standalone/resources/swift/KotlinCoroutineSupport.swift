@@ -49,7 +49,7 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
 }
 
 package func withKotlinContinuation<T>(
-    _ fn: (@escaping (T) -> Void, @escaping (KotlinRuntime.KotlinBase?) -> Void, KotlinTask) -> Void
+    _ fn: (@escaping (T) -> Void, @escaping (Error?) -> Void, KotlinTask) -> Void
 ) async throws -> T {
     try await withUnsafeCurrentTask { currentTask in
         let cancellation = KotlinTask(currentTask!)
@@ -57,8 +57,8 @@ package func withKotlinContinuation<T>(
         return try await withTaskCancellationHandler {
             return try await withUnsafeThrowingContinuation { nativeContinuation in
                 let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }
-                let exception: (KotlinRuntime.KotlinBase?) -> Void = { error in
-                    nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                let exception: (Error?) -> Void = { error in
+                    nativeContinuation.resume(throwing: error ?? CancellationError())
                 }
                 fn(continuation, exception, cancellation)
             }
@@ -100,21 +100,36 @@ public protocol KotlinTypedFlow<Element> {
     associatedtype Element
 
     var _flow: any KotlinFlow { get }
+    var _conformsTo: ((AnyClass?) -> Bool) { get }
 }
 
 extension KotlinTypedFlow {
     public var wrapped: any KotlinFlow { _flow }
 
     public func asAsyncSequence() -> KotlinFlowSequence<Element> {
-        KotlinFlowSequence(_flow)
+        KotlinFlowSequence(_flow, _conformsTo)
     }
 }
 
 public struct _KotlinTypedFlowImpl<Element>: KotlinTypedFlow {
     public let _flow: any KotlinFlow
+    public let _conformsTo: ((AnyClass?) -> Bool)
 
-    public init(_ flow: any KotlinFlow) {
+    private init(_ flow: any KotlinFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
         self._flow = flow
+        self._conformsTo = conformsTo
+    }
+
+    public static func create<ElementType>(
+        _ flow: any KotlinFlow,
+        _ type: ElementType.Type
+    ) -> any KotlinTypedFlow<Element> {
+        switch flow {
+        case let flow as KotlinSharedFlow:
+            _KotlinTypedSharedFlowImpl<Element>.create(flow, type)
+        default:
+            _KotlinTypedFlowImpl<Element>(flow, { wrapperClass in wrapperClass is ElementType })
+        }
     }
 }
 
@@ -127,14 +142,37 @@ public protocol KotlinTypedSharedFlow<Element>: KotlinTypedFlow { }
 extension KotlinTypedSharedFlow {
     public var wrapped: any KotlinSharedFlow { _flow as! (any KotlinSharedFlow) }
 
-    public var replayCache: [Element] { wrapped.replayCache as! [Element] }
+    public var replayCache: [Element] {
+        let replayCache = _kotlin_swift_SharedFlow_replayCache_get(_flow.__externalRCRef())
+        return replayCache.map {
+            $0.pointerValue.flatMap {
+                KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: _conformsTo)
+            } as! Element
+        }
+    }
 }
 
 public struct _KotlinTypedSharedFlowImpl<Element>: KotlinTypedSharedFlow {
     public let _flow: any KotlinFlow
+    public let _conformsTo: ((AnyClass?) -> Bool)
 
-    public init(_ flow: any KotlinSharedFlow) {
+    private init(_ flow: any KotlinSharedFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
         self._flow = flow
+        self._conformsTo = conformsTo
+    }
+
+    public static func create<ElementType>(
+        _ flow: any KotlinSharedFlow,
+        _ type: ElementType.Type
+    ) -> any KotlinTypedSharedFlow<Element> {
+        switch flow {
+        case let flow as KotlinStateFlow:
+            _KotlinTypedStateFlowImpl<Element>.create(flow, type)
+        case let flow as KotlinMutableSharedFlow:
+            _KotlinTypedMutableSharedFlowImpl<Element>.create(flow, type)
+        default:
+            _KotlinTypedSharedFlowImpl<Element>(flow, { wrapperClass in wrapperClass is ElementType })
+        }
     }
 }
 
@@ -169,9 +207,23 @@ extension KotlinTypedMutableSharedFlow {
 
 public struct _KotlinTypedMutableSharedFlowImpl<Element>: KotlinTypedMutableSharedFlow {
     public let _flow: any KotlinFlow
+    public let _conformsTo: ((AnyClass?) -> Bool)
 
-    public init(_ flow: any KotlinMutableSharedFlow) {
+    private init(_ flow: any KotlinMutableSharedFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
         self._flow = flow
+        self._conformsTo = conformsTo
+    }
+
+    public static func create<ElementType>(
+        _ flow: any KotlinMutableSharedFlow,
+        _ type: ElementType.Type
+    ) -> any KotlinTypedMutableSharedFlow<Element> {
+        switch flow {
+        case let flow as KotlinMutableStateFlow:
+            _KotlinTypedMutableStateFlowImpl<Element>.create(flow, type)
+        default:
+            _KotlinTypedMutableSharedFlowImpl<Element>(flow, { wrapperClass in wrapperClass is ElementType })
+        }
     }
 }
 
@@ -184,14 +236,33 @@ public protocol KotlinTypedStateFlow<Element>: KotlinTypedSharedFlow { }
 extension KotlinTypedStateFlow {
     public var wrapped: any KotlinStateFlow { _flow as! (any KotlinStateFlow) }
 
-    public var value: Element { wrapped.value as! Element }
+    public var value: Element {
+        let value = _kotlin_swift_StateFlow_value_get(_flow.__externalRCRef())
+        return value.flatMap {
+            KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: _conformsTo)
+        } as! Element
+    }
 }
 
 public struct _KotlinTypedStateFlowImpl<Element>: KotlinTypedStateFlow {
     public let _flow: any KotlinFlow
+    public let _conformsTo: ((AnyClass?) -> Bool)
 
-    public init(_ flow: any KotlinStateFlow) {
+    private init(_ flow: any KotlinStateFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
         self._flow = flow
+        self._conformsTo = conformsTo
+    }
+
+    public static func create<ElementType>(
+        _ flow: any KotlinStateFlow,
+        _ type: ElementType.Type
+    ) -> any KotlinTypedStateFlow<Element> {
+        switch flow {
+        case let flow as KotlinMutableStateFlow:
+            _KotlinTypedMutableStateFlowImpl<Element>.create(flow, type)
+        default:
+            _KotlinTypedStateFlowImpl<Element>(flow, { wrapperClass in wrapperClass is ElementType })
+        }
     }
 }
 
@@ -206,7 +277,12 @@ extension KotlinTypedMutableStateFlow {
     public var wrapped: any KotlinMutableStateFlow { _flow as! (any KotlinMutableStateFlow) }
 
     public var value: Element {
-        get { wrapped.value as! Element }
+        get {
+            let value = _kotlin_swift_StateFlow_value_get(_flow.__externalRCRef())
+            return value.flatMap {
+                KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: _conformsTo)
+            } as! Element
+        }
         nonmutating set { wrapped.value = newValue as! (any KotlinRuntimeSupport._KotlinBridgeable)? }
     }
 
@@ -220,18 +296,29 @@ extension KotlinTypedMutableStateFlow {
 
 public struct _KotlinTypedMutableStateFlowImpl<Element>: KotlinTypedMutableStateFlow {
     public let _flow: any KotlinFlow
+    public let _conformsTo: ((AnyClass?) -> Bool)
 
-    public init(_ flow: any KotlinMutableStateFlow) {
+    private init(_ flow: any KotlinMutableStateFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
         self._flow = flow
+        self._conformsTo = conformsTo
+    }
+
+    public static func create<ElementType>(
+        _ flow: any KotlinMutableStateFlow,
+        _ type: ElementType.Type
+    ) -> any KotlinTypedMutableStateFlow<Element> {
+        _KotlinTypedMutableStateFlowImpl<Element>(flow, { wrapperClass in wrapperClass is ElementType })
     }
 }
 
 /// An async sequence type for kotlinx.coroutines.flow.Flow
 public struct KotlinFlowSequence<Element>: AsyncSequence {
     private let flow: any KotlinFlow
+    private let conformsTo: ((AnyClass?) -> Bool)
 
-    fileprivate init(_ flow: any KotlinFlow) {
+    fileprivate init(_ flow: any KotlinFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
         self.flow = flow
+        self.conformsTo = conformsTo
     }
 
     public final class Iterator: AsyncIteratorProtocol {
@@ -239,8 +326,8 @@ public struct KotlinFlowSequence<Element>: AsyncSequence {
 
         private let iterator: KotlinFlowIterator<Element>
 
-        fileprivate init(_ flow: some KotlinFlow) {
-            iterator = KotlinFlowIterator(flow)
+        fileprivate init(_ flow: some KotlinFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
+            iterator = KotlinFlowIterator(flow, conformsTo)
         }
 
         deinit {
@@ -253,7 +340,7 @@ public struct KotlinFlowSequence<Element>: AsyncSequence {
     }
 
     public func makeAsyncIterator() -> Iterator {
-        Iterator(flow)
+        Iterator(flow, conformsTo)
     }
 }
 
@@ -265,24 +352,23 @@ public struct KotlinFlowSequence<Element>: AsyncSequence {
 internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, AsyncIteratorProtocol {
     public typealias Failure = any Error
 
-    fileprivate init(_ flow: some KotlinFlow) {
+    private let conformsTo: ((AnyClass?) -> Bool)
+
+    fileprivate init(_ flow: some KotlinFlow, _ conformsTo: @escaping ((AnyClass?) -> Bool)) {
+        self.conformsTo = conformsTo
         let __kt = _kotlin_swift_SwiftFlowIterator_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         _kotlin_swift_SwiftFlowIterator_init_initialize(__kt, flow.__externalRCRef())
     }
 
-    package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-        options: KotlinRuntime.KotlinBaseConstructionOptions
-    ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-    }
-
     public func next() async throws -> Element? {
+        let conformsTo = self.conformsTo
         let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
             let _continuation: (Bool, UnsafeMutableRawPointer?) -> Int32 = { arg0, arg1 in
                 if arg0 {
-                    let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
+                    let element = arg1.flatMap {
+                        KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: conformsTo)
+                    } as! Element
                     continuation(.some(element))
                 } else {
                     continuation(.none)
@@ -290,7 +376,7 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
                 return 0
             }
             let _exception: (UnsafeMutableRawPointer?) -> Int32 = { arg0 in
-                exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
+                exception(arg0.map { KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: $0)!) });
                 return 0
             }
             let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), _continuation, _exception, cancellation.__externalRCRef())
@@ -302,8 +388,8 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
 /// This function provides source compatibility with KMP-NativeCoroutines during the migration to Swift Export.
 /// It should be replaced with a call to `asAsyncSequence()` once you have fully migrated to Swift Export.
 @available(*, deprecated, message: "Use `asAsyncSequence()` from Swift Export")
-public func asyncSequence<T>(
-    for flow: any KotlinTypedFlow<T>
-) -> KotlinFlowSequence<T> {
+public func asyncSequence<Element>(
+    for flow: any KotlinTypedFlow<Element>
+) -> KotlinFlowSequence<Element> {
     return flow.asAsyncSequence()
 }

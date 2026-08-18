@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -15,6 +15,7 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-platform-interface"))
     api(project(":compiler:resolution.common.jvm"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:backend"))
@@ -31,7 +32,7 @@ dependencies {
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
-    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(kotlinTest("junit5"))
     testFixturesImplementation(project(":analysis:analysis-api"))
     testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
@@ -50,6 +51,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(project(":compiler:psi:psi-utils"))
 }
 
 sourceSets {

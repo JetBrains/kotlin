@@ -183,6 +183,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValidDeclarationsKt]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=open]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       CLASS_INITIALIZER
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=open]
@@ -251,6 +252,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValidDeclarationsKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=private]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUN[fqName=bar, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
     MODIFIER_LIST[private]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=inline]
@@ -259,5 +261,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValidDeclarationsKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=inline]
     VALUE_PARAMETER_LIST
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
     VALUE_PARAMETER_LIST

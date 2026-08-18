@@ -13,12 +13,11 @@ group = "org.jetbrains.kotlin"
 kotlin {
     jvmToolchain(17)
 
-    coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    coreLibrariesVersion = embeddedKotlinVersion
+    compilerVersion = embeddedKotlinVersion
 
     compilerOptions {
-        compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
-        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
-        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+        allWarningsAsErrors = true
     }
 }
 
@@ -26,9 +25,23 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+
     testFixturesImplementation(libs.jgit)
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+listOf(
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "TestFixtures",
+).forEach { confName ->
+    project.configurations.named(confName) {
+        resolutionStrategy {
+            eachDependency {
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(embeddedKotlinVersion)
+            }
+        }
+    }
 }

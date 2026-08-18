@@ -1,6 +1,7 @@
 KT element: KtClass
 KT element text:
-@kotlin.MustUseReturnValues public final class Marked public constructor() {
+@kotlin.MustUseReturnValues
+public final class Marked public constructor() {
     public final var prop: kotlin.String /* compiled code */
         public final get() { /* compiled code */ }
         public final set(value: kotlin.String) { /* compiled code */ }

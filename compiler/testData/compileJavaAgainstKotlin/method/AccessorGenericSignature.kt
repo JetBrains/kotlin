@@ -1,3 +1,11 @@
+// FILE: AccessorGenericSignature.java
+package test;
+
+public class AccessorGenericSignature {
+    private final BadClass b = new BadClass();
+}
+
+// FILE: AccessorGenericSignature.kt
 package test
 
 import java.util.ArrayList

@@ -1,0 +1,5 @@
+package test
+
+public open class MyException {
+    /*primary*/ public constructor MyException(/*0*/ kotlin.String?, /*1*/ kotlin.Throwable?)
+}

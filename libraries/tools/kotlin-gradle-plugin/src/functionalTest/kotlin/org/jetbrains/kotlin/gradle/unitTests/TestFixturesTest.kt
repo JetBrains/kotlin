@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
 import org.gradle.api.tasks.testing.Test as TestTask
-import org.gradle.kotlin.dsl.repositories
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
@@ -86,13 +83,13 @@ class TestFixturesTest {
                 jvm()
             }
 
-            dependencies {
-                "testFixturesApi"("example:A:1.0.0")
-                "jvmTestFixturesApi"("example:B:1.0.0")
-                "testFixturesImplementation"("example:C:1.0.0")
-                "jvmTestFixturesImplementation"("example:D:1.0.0")
-                "testFixturesCompileOnly"("example:E:1.0.0")
-                "jvmTestFixturesCompileOnly"("example:F:1.0.0")
+            with(dependencies) {
+                add("testFixturesApi", "example:A:1.0.0")
+                add("jvmTestFixturesApi", "example:B:1.0.0")
+                add("testFixturesImplementation", "example:C:1.0.0")
+                add("jvmTestFixturesImplementation", "example:D:1.0.0")
+                add("testFixturesCompileOnly", "example:E:1.0.0")
+                add("jvmTestFixturesCompileOnly", "example:F:1.0.0")
             }
         }
 
@@ -108,7 +105,7 @@ class TestFixturesTest {
         )
 
         project.configurations
-            .getByName(project.javaSourceSets["testFixtures"].compileClasspathConfigurationName)
+            .getByName(project.javaSourceSets.getByName("testFixtures").compileClasspathConfigurationName)
             .assertDependenciesPresent(expectedDeps)
 
         project.configurations
@@ -127,13 +124,13 @@ class TestFixturesTest {
                 jvm()
             }
 
-            dependencies {
-                "testFixturesApi"("example:A:1.0.0")
-                "jvmTestFixturesApi"("example:B:1.0.0")
-                "testFixturesImplementation"("example:C:1.0.0")
-                "jvmTestFixturesImplementation"("example:D:1.0.0")
-                "testFixturesRuntimeOnly"("example:E:1.0.0")
-                "jvmTestFixturesRuntimeOnly"("example:F:1.0.0")
+            with(dependencies) {
+                add("testFixturesApi", "example:A:1.0.0")
+                add("jvmTestFixturesApi", "example:B:1.0.0")
+                add("testFixturesImplementation", "example:C:1.0.0")
+                add("jvmTestFixturesImplementation", "example:D:1.0.0")
+                add("testFixturesRuntimeOnly", "example:E:1.0.0")
+                add("jvmTestFixturesRuntimeOnly", "example:F:1.0.0")
             }
         }
 
@@ -149,7 +146,7 @@ class TestFixturesTest {
         )
 
         project.configurations
-            .getByName(project.javaSourceSets["testFixtures"].runtimeClasspathConfigurationName)
+            .getByName(project.javaSourceSets.getByName("testFixtures").runtimeClasspathConfigurationName)
             .assertDependenciesPresent(expectedDeps)
 
         project.configurations
@@ -168,13 +165,13 @@ class TestFixturesTest {
                 jvm()
             }
 
-            dependencies {
-                "testFixturesApi"("example:A:1.0.0")
-                "jvmTestFixturesApi"("example:B:1.0.0")
-                "testFixturesImplementation"("example:C:1.0.0")
-                "jvmTestFixturesImplementation"("example:D:1.0.0")
-                "testFixturesRuntimeOnly"("example:E:1.0.0")
-                "jvmTestFixturesRuntimeOnly"("example:F:1.0.0")
+            with(dependencies) {
+                add("testFixturesApi", "example:A:1.0.0")
+                add("jvmTestFixturesApi", "example:B:1.0.0")
+                add("testFixturesImplementation", "example:C:1.0.0")
+                add("jvmTestFixturesImplementation", "example:D:1.0.0")
+                add("testFixturesRuntimeOnly", "example:E:1.0.0")
+                add("jvmTestFixturesRuntimeOnly", "example:F:1.0.0")
             }
         }
 
@@ -186,7 +183,7 @@ class TestFixturesTest {
         )
 
         project.configurations
-            .getByName(project.javaSourceSets["testFixtures"].apiElementsConfigurationName)
+            .getByName(project.javaSourceSets.getByName("testFixtures").apiElementsConfigurationName)
             .assertDependenciesPresent(expectedDeps, shouldIncludeProjectDependencies = false)
     }
 
@@ -199,13 +196,13 @@ class TestFixturesTest {
                 jvm()
             }
 
-            dependencies {
-                "testFixturesApi"("example:A:1.0.0")
-                "jvmTestFixturesApi"("example:B:1.0.0")
-                "testFixturesImplementation"("example:C:1.0.0")
-                "jvmTestFixturesImplementation"("example:D:1.0.0")
-                "testFixturesRuntimeOnly"("example:E:1.0.0")
-                "jvmTestFixturesRuntimeOnly"("example:F:1.0.0")
+            with(dependencies) {
+                add("testFixturesApi", "example:A:1.0.0")
+                add("jvmTestFixturesApi", "example:B:1.0.0")
+                add("testFixturesImplementation", "example:C:1.0.0")
+                add("jvmTestFixturesImplementation", "example:D:1.0.0")
+                add("testFixturesRuntimeOnly", "example:E:1.0.0")
+                add("jvmTestFixturesRuntimeOnly", "example:F:1.0.0")
             }
         }
 
@@ -221,7 +218,7 @@ class TestFixturesTest {
         )
 
         project.configurations
-            .getByName(project.javaSourceSets["testFixtures"].runtimeElementsConfigurationName)
+            .getByName(project.javaSourceSets.getByName("testFixtures").runtimeElementsConfigurationName)
             .assertDependenciesPresent(expectedDeps)
     }
 
@@ -234,9 +231,9 @@ class TestFixturesTest {
                 jvm()
             }
 
-            dependencies {
-                "testFixturesApi"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-                "jvmTestFixturesApi"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+            with(dependencies) {
+                add("testFixturesApi", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+                add("jvmTestFixturesApi", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
             }
         }
 
@@ -256,7 +253,7 @@ class TestFixturesTest {
 
     private fun testNoDuplicatedResourcesInClasspath(project: ProjectInternal, targetPrefix: String? = null) = with(project) {
         plugins.apply("java-test-fixtures")
-        repositories {
+        with(repositories) {
             kotlinBuildDeps()
             mavenCentralCacheRedirector()
         }

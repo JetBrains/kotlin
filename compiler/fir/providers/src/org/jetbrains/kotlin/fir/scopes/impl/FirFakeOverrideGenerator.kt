@@ -514,7 +514,7 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
         newModality: Modality? = modality,
-    ) = when {
+    ): FirPropertyAccessor? = when {
         annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
                 origin == FirDeclarationOrigin.Delegated ||
                 origin is FirDeclarationOrigin.SubstitutionOverride ||
@@ -544,7 +544,7 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
         newModality: Modality? = modality,
-    ) = when (this) {
+    ): FirPropertyAccessor = when (this) {
         is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
             source = newSource,
             moduleData = moduleData,

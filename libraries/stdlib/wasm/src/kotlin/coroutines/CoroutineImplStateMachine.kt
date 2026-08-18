@@ -12,6 +12,8 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmCoroutineMode
 
 
+// remove after bootstrap
+// CoroutineImpl will be used
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
 internal abstract class CoroutineImplStateMachine(resultContinuation: Continuation<Any?>?) : CoroutineImpl<Any?, Any?>(resultContinuation) {

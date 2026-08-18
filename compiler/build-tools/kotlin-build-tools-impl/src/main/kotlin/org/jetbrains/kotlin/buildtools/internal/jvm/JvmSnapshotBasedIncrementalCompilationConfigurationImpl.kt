@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.internal.*
 import java.nio.file.Path
 
 @Suppress("DEPRECATION_ERROR")
-internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress("DEPRECATION") private constructor(
+internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private constructor(
     workingDirectory: Path,
     sourcesChanges: SourcesChanges,
     dependenciesSnapshotFiles: List<Path>,
@@ -55,7 +55,6 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
 
     override fun toBuilder(): Builder = deepCopy()
 
-    @Suppress("DEPRECATION")
     override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationConfigurationImpl =
         JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
             workingDirectory,
@@ -217,7 +216,7 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.toOptions(): Ha
             override val dependenciesSnapshotFiles: List<Path>
                 get() = this@toOptions.dependenciesSnapshotFiles
 
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             override val shrunkClasspathSnapshot: Path
                 get() = this@toOptions.shrunkClasspathSnapshot
 

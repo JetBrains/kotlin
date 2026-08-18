@@ -11,10 +11,10 @@
 #include "gtest/gtest.h"
 
 #include "GCImplTestSupport.hpp"
-#include "GlobalData.hpp"
-#include "SafePoint.hpp"
+#include "mm/GlobalData.hpp"
+#include "mm/SafePoint.hpp"
 #include "TestSupport.hpp"
-#include "TracingGCTest.hpp"
+#include "gc/TracingGCTest.hpp"
 
 using namespace kotlin;
 

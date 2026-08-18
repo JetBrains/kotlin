@@ -108,6 +108,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaLibraryModule "Library library"
     deprecation: null
+    javaMethodName: getExtension
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -178,7 +179,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaLibraryModule "Library library"
   deprecation: null
-  javaGetterName: getExtension
-  javaSetterName: null
   isInline: true
   importableFqName: MyClass.Companion.extension

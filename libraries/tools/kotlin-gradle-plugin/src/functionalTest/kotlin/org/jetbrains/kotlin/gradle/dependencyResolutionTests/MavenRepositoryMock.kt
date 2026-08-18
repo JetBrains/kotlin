@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.utils.targets
@@ -39,7 +38,11 @@ class MavenRepositoryMock {
     }
 
     fun applyToProject(project: Project, repositoryDir: File) {
-        project.allprojects { it.repositories.maven(repositoryDir) }
+        project.allprojects {
+            it.repositories.maven { repository ->
+                repository.setUrl(repositoryDir)
+            }
+        }
         val targets = project.kotlinExtension.targets.toList()
         declaredModules.values.forEach { module -> module.publishAsMockedLibrary(repositoryDir, targets) }
     }

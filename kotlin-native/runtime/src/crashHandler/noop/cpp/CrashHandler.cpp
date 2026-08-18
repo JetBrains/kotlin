@@ -1,4 +1,4 @@
-#include "../../common/cpp/CrashHandler.hpp"
+#include "CrashHandler.hpp"
 
 namespace kotlin {
     void crashHandlerInit() noexcept { }

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(78,85): 'static1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var static1: kotlin.Boolean

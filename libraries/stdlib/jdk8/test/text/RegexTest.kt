@@ -16,7 +16,7 @@
 
 package kotlin.text.test
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.*
 
 class RegexTest {

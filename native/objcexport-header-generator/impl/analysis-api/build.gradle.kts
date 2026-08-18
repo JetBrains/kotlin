@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -46,6 +46,8 @@ projectTests {
         "test",
         allowUnsafe = true, // KT-85212
     ) {
+        // Ideally, it should be marked as affected by AnalysisApi instead.
+        // But this would be cumbersome and the tests are very fast, so let's keep things simple:
         smokeTestConfig = SmokeTestConfig.RunAllTests
     }
 }

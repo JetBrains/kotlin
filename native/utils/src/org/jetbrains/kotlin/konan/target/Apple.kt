@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.util.InternalServer
 import org.jetbrains.kotlin.konan.util.ProgressCallback
 import java.util.Properties
+import java.io.File
 
 class AppleConfigurablesImpl(
     target: KonanTarget,
@@ -53,27 +54,51 @@ class AppleConfigurablesImpl(
 
     override val dependencies
         get() = super.dependencies +
-                if (InternalServer.isAvailable) listOf(
+                if (InternalServer.isAvailable && !useProvisionedXcode) listOf(
                     sdkDependency,
                     toolchainDependency,
                     xcodeAddonDependency
                 ) else emptyList()
 
+    // Opt-in (set at build time via -Xoverride-konan-properties=useProvisionedXcode=true): resolve the Apple
+    // toolchain/sysroot from a whole Xcode provisioned under $dependenciesRoot/xcode_<version>_<build>.
+    private val useProvisionedXcode: Boolean
+        get() = properties.getProperty("useProvisionedXcode") == "true"
+
     private val xcodePartsProvider by lazy {
-        if (InternalServer.isAvailable) {
-            XcodePartsProvider.InternalServer
-        } else {
-            val xcode = Xcode.findCurrent()
-
-            if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
-                properties.getProperty("minimalXcodeVersion")?.let(XcodeVersion::parse)?.let { minimalXcodeVersion ->
-                    val currentXcodeVersion = xcode.version
-                    checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)
-                }
-            }
-
-            XcodePartsProvider.Local(xcode)
+        when {
+            useProvisionedXcode -> XcodePartsProvider.Local(provisionedXcode())
+            InternalServer.isAvailable -> XcodePartsProvider.InternalServer
+            else -> XcodePartsProvider.Local(currentXcodeCheckingVersion())
         }
+    }
+
+    // The whole Xcode selected by useProvisionedXcode: a [CurrentXcode] rooted at the provisioned Xcode.app under
+    // $dependenciesRoot/xcode_<version>_<build> (via DEVELOPER_DIR), so its toolchain/SDKs are queried from that
+    // specific Xcode rather than the system selection.
+    private fun provisionedXcode(): Xcode {
+        val version = properties.getProperty("xcodeVersion")
+            ?: error("useProvisionedXcode is set but 'xcodeVersion' is missing from konan.properties")
+        val build = properties.getProperty("xcodeBuild")
+            ?: error("useProvisionedXcode is set but 'xcodeBuild' is missing from konan.properties")
+        val root = dependenciesRoot
+            ?: error("useProvisionedXcode is set but the dependencies root is not configured")
+        val xcodeApp = File(root).resolve("xcode_${version}_${build}")
+        // If the build side has already snapshotted the provisioned Xcode into Xcode.xcodeOverride (done inside a
+        // Gradle ValueSource, so configuration-cache-safe), reuse it rather than resolving the toolchain/SDKs live
+        // via xcrun — which at configuration time would break the configuration cache. In the compiler process the
+        // override is unset, so we resolve the provisioned Xcode directly (xcrun at execution time is fine).
+        return Xcode.xcodeOverride ?: InstalledXcode(developerDir = xcodeApp.resolve("Contents/Developer").path)
+    }
+
+    private fun currentXcodeCheckingVersion(): Xcode {
+        val xcode = Xcode.findCurrent()
+        if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
+            properties.getProperty("minimalXcodeVersion")?.let(XcodeVersion::parse)?.let { minimalXcodeVersion ->
+                checkXcodeVersion(minimalXcodeVersion, xcode.version)
+            }
+        }
+        return xcode
     }
 
     private fun checkXcodeVersion(minimalVersion: XcodeVersion, currentVersion: XcodeVersion) {

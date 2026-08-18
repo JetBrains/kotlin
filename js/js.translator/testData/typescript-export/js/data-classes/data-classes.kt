@@ -109,3 +109,11 @@ data class WithIgnoredPrimaryAndHiddenCopyWithoutSecondary @JsExport.Ignore cons
 @JsExport
 fun createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value: Int = 1): WithIgnoredPrimaryAndHiddenCopyWithoutSecondary =
     WithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value, -1)
+
+
+@JsExport
+@ConsistentCopyVisibility // KT-86771
+data class OnlyExportSupported @JsExport.Ignore constructor(
+    val text: String,
+    @JsExport.Ignore val value: Long
+)

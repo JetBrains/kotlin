@@ -60,13 +60,13 @@ public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase, main._InterfaceW
 }
 public protocol Job: KotlinRuntime.KotlinBase, main._Job {
 }
-@objc(_CompletableJob)
+@objc(_main_CompletableJob)
 public protocol _CompletableJob: main._Job {
 }
-@objc(_InterfaceWithFactory)
+@objc(_main_InterfaceWithFactory)
 public protocol _InterfaceWithFactory {
 }
-@objc(_Job)
+@objc(_main_Job)
 public protocol _Job {
 }
 public protocol __CompletableJob: KotlinRuntimeSupport._KotlinBridgeable, main.__Job {
@@ -144,20 +144,20 @@ public func enumWithFactory(
     return main.EnumWithFactory(__externalRCRefUnsafe: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x), options: .asBestFittingWrapper)
 }
 public func interfaceWithFactory() -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory()) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory(), conformsTo: main.InterfaceWithFactory.Type.self) as! any main.InterfaceWithFactory
 }
 public func interfaceWithFactory(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef())) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()), conformsTo: main.InterfaceWithFactory.Type.self) as! any main.InterfaceWithFactory
 }
 public func job() -> main.TCJ {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job()) as! any main.CompletableJob
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job(), conformsTo: main.CompletableJob.Type.self) as! any main.CompletableJob
 }
 public func job(
     parent: (any main.Job)?
 ) -> any main.CompletableJob {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent.map { it in it.__externalRCRef() } ?? nil)) as! any main.CompletableJob
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent.map { it in it.__externalRCRef() } ?? nil), conformsTo: main.CompletableJob.Type.self) as! any main.CompletableJob
 }
 public func objectWithFactory() -> main.ObjectWithFactory {
     return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory())
@@ -167,28 +167,37 @@ public func utcOffset(
 ) -> main.UtcOffset {
     return main.UtcOffset.__createClassWrapper(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
+@_documentation(visibility: internal)
 extension main.CompletableJob where Self : main.__CompletableJob {
 }
 extension main.CompletableJob {
 }
+@_documentation(visibility: internal)
 extension main.InterfaceWithFactory where Self : main.__InterfaceWithFactory {
 }
 extension main.InterfaceWithFactory {
 }
+@_documentation(visibility: internal)
 extension main.Job where Self : main.__Job {
 }
 extension main.Job {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Job, main.__Job where Wrapped : main._Job {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.CompletableJob, main.__CompletableJob where Wrapped : main._CompletableJob {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory, main.__InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Job {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._CompletableJob {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFactory {
 }
 extension ExportedKotlinPackages.test.factory {

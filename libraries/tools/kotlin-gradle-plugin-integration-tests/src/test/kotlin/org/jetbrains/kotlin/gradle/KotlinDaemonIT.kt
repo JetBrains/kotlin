@@ -42,7 +42,11 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     @DisplayName("Kotlin daemon is reused in multiproject")
     @GradleTest
     fun testDaemonMultiproject(gradleVersion: GradleVersion) {
-        project("multiprojectWithDependency", gradleVersion) {
+        project(
+            "multiprojectWithDependency",
+            gradleVersion,
+            kotlinDaemonIdleTimeout = null,
+        ) {
             gradleProperties.append(
                 "\nkotlin.compiler.execution.strategy=daemon"
             )
@@ -76,7 +80,11 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     @DisplayName("Client file is deleted on exit")
     @GradleTest
     fun testClientFileIsDeletedOnExit(gradleVersion: GradleVersion) {
-        project("kotlinProject", gradleVersion) {
+        project(
+            "kotlinProject",
+            gradleVersion,
+            kotlinDaemonIdleTimeout = null,
+        ) {
             build("assemble") {
                 val regex = "(?m)($CREATED_CLIENT_FILE_PREFIX|$EXISTING_CLIENT_FILE_PREFIX)(.+)$".toRegex()
                 val clientFiles = regex.findAll(output).map { Paths.get(it.groupValues[2]) }.toList()

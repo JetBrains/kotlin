@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFounda
 language = Objective-C
 package = platform.CoreMedia
 modules = CoreMedia
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreMedia
 linkerOpts = -framework CoreMedia

@@ -68,6 +68,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: ClassC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: ClassC
 
 KaConstructorSymbol:
@@ -101,6 +102,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: ClassC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: ClassC
 
 KaClassInitializerSymbol:
@@ -268,6 +270,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -340,6 +343,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: bar
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -476,6 +480,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ClassC
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getBaz
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -617,6 +622,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ClassC
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setBaz
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -628,8 +634,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: ClassC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getBaz
-  javaSetterName: setBaz
   isInline: false
   importableFqName: null
 
@@ -738,6 +742,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ExternalDeclarationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getProp
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -773,8 +778,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: ExternalDeclarationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getProp
-  javaSetterName: null
   isInline: false
   importableFqName: prop
 
@@ -1025,6 +1028,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: NotExternalC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: NotExternalC
 
 KaConstructorSymbol:
@@ -1058,6 +1062,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: NotExternalC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: NotExternalC
 
 KaNamedClassSymbol:
@@ -1139,6 +1144,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: fooI
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -1314,6 +1320,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ExternalDeclarationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPropWithExternalGetter
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1349,8 +1356,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: ExternalDeclarationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPropWithExternalGetter
-  javaSetterName: null
   isInline: false
   importableFqName: propWithExternalGetter
 
@@ -1425,6 +1430,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ExternalDeclarationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPropWithExternalAccessors
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1562,6 +1568,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ExternalDeclarationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setPropWithExternalAccessors
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1569,7 +1576,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: ExternalDeclarationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPropWithExternalAccessors
-  javaSetterName: setPropWithExternalAccessors
   isInline: false
   importableFqName: propWithExternalAccessors

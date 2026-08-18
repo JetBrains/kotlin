@@ -1,0 +1,84 @@
+class KtSubCustomAccessor : BaseJava {
+  constructor() /* primary */ {
+    super/*BaseJava*/()
+    /* <init>() */
+
+  }
+
+  var foo: String
+    get(): String {
+      return "custom_getter"
+    }
+    set(value: String) {
+    }
+
+}
+
+class KtSubGeneric : BaseJavaGeneric<String> {
+  var genericField: String
+    field = "generic_shadow"
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*BaseJavaGeneric*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+class KtSubProtected : BaseJava {
+  protected var bar: Int
+    field = 100
+    protected get
+    protected set
+
+  constructor() /* primary */ {
+    super/*BaseJava*/()
+    /* <init>() */
+
+  }
+
+}
+
+class KtSubVal : BaseJava {
+  val foo: String
+    field = "kt_sub_val_foo"
+    get
+
+  constructor() /* primary */ {
+    super/*BaseJava*/()
+    /* <init>() */
+
+  }
+
+}
+
+class KtSubVar : BaseJava {
+  var foo: String
+    field = "kt_sub_var_foo"
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*BaseJava*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun test(subVar: KtSubVar, subVal: KtSubVal, subCustom: KtSubCustomAccessor, subGeneric: KtSubGeneric, base: BaseJava) {
+  subVar.<get-foo>() /*~> Unit */
+  subVal.<get-foo>() /*~> Unit */
+  subCustom.<get-foo>() /*~> Unit */
+  subGeneric.<get-genericField>() /*~> Unit */
+  base(super<BaseJava>).#foo /*~> Unit */
+}
+
+val BaseJava.foo: String
+  get(): String {
+    return "extension_foo"
+  }
+

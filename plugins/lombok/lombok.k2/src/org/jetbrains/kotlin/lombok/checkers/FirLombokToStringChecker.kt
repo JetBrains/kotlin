@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.isToString
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
+import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 
 object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     private val functionNames = setOf(TO_STRING_NAME)
@@ -33,7 +33,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
         val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
         var hasConflict = false
         declaredMemberScope.processFunctionsByName(TO_STRING_NAME) {
-            hasConflict = hasConflict || it.isRelevantForConflictsCheck && !it.origin.isToString && it.valueParameterSymbols.isEmpty()
+            hasConflict = hasConflict || !it.hasReceiverOrContextParameters && !it.origin.isToString && it.valueParameterSymbols.isEmpty()
         }
         if (hasConflict) {
             /**

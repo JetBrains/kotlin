@@ -31,18 +31,18 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Planet] enum entry MERCURY: R|Planet| = LAZY_EXPRESSION
         public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Planet] enum entry VENERA: R|Planet| = LAZY_EXPRESSION
         public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Planet] enum entry EARTH: R|Planet| = LAZY_EXPRESSION
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val g: R|kotlin/Double| = LAZY_EXPRESSION
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Planet] get(): R|kotlin/Double|
+        public final [ResolvedTo(BODY_RESOLVE)] val g: R|kotlin/Double| = this@R|/Planet.Companion|.R|/Planet.Companion.G|.R|kotlin/Double.times|(this@R|/Planet|.R|/Planet.m|).R|kotlin/Double.div|(this@R|/Planet|.R|/Planet.r|.R|kotlin/Double.times|(this@R|/Planet|.R|/Planet.r|))
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Planet] get(): R|kotlin/Double|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] fun sayHello(): R|kotlin/Unit|
 
-        public final companion [ResolvedTo(ANNOTATION_ARGUMENTS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|Planet.Companion| {
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(CONTRACTS)] val G: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Companion] get(): <implicit>
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(6.67E-11)] val G: R|kotlin/Double| = Double(6.67E-11)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
         }
 
@@ -56,9 +56,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
-        private [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PseudoInsn] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/PseudoInsn.signature] signature: R|kotlin/String| = LAZY_EXPRESSION): R|PseudoInsn| {
-            LAZY_super<R|kotlin/Enum<PseudoInsn>|>
+    public final [ResolvedTo(BODY_RESOLVE)] enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/PseudoInsn.signature] signature: R|kotlin/String| = String(()V)): R|PseudoInsn| {
+            super<R|kotlin/Enum<PseudoInsn>|>()
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val signature: R|kotlin/String| = R|<local>/signature|

@@ -291,7 +291,7 @@ class DispatchReceiverMemberScopeTowerLevel(
         }
     }
 
-    private fun getOriginalReceiverExpressionIfStableSmartCast() =
+    private fun getOriginalReceiverExpressionIfStableSmartCast(): FirExpression? =
         (dispatchReceiverValue.receiverExpression as? FirSmartCastExpression)
             ?.takeIf { it.isStable }
             ?.originalExpression

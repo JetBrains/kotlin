@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("klibIrInliner")
 @Tag("atomicfu-native")
-@EnforcedHostTarget()
-@UseExtTestCaseGroupProvider()
+@EnforcedHostTarget
+@UseExtTestCaseGroupProvider
 public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNativeCodegenBoxTest {
   private void run(String fileName) {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/box/" + fileName);
@@ -40,8 +40,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Atomic_extensions {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/" + fileName);
@@ -80,6 +80,12 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
     @TestMetadata("ExtensionsTest.kt")
     public void testExtensionsTest() {
       run("ExtensionsTest.kt");
+    }
+
+    @Test
+    @TestMetadata("InlineExtensionProperties.kt")
+    public void testInlineExtensionProperties() {
+      run("InlineExtensionProperties.kt");
     }
 
     @Test
@@ -124,8 +130,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Atomics_basic {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/" + fileName);
@@ -244,8 +250,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Companion_blocks {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks/" + fileName);
@@ -285,6 +291,12 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");
     }
+
+    @Test
+    @TestMetadata("InlineExtensionProperties.kt")
+    public void testInlineExtensionProperties() {
+      run("InlineExtensionProperties.kt");
+    }
   }
 
   @Nested
@@ -292,8 +304,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Context_parameters {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters/" + fileName);
@@ -316,8 +328,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Delegated {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/delegated/" + fileName);
@@ -346,8 +358,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Locks {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/" + fileName);
@@ -376,8 +388,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Top_level {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/" + fileName);
@@ -406,8 +418,8 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
   @Tag("atomicfu-native")
-  @EnforcedHostTarget()
-  @UseExtTestCaseGroupProvider()
+  @EnforcedHostTarget
+  @UseExtTestCaseGroupProvider
   public class Trace {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/trace/" + fileName);

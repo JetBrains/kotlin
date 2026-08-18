@@ -7,7 +7,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
@@ -37,34 +37,6 @@ val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplRe
     extendsFrom(buildToolsApiImpl.get())
 }
 
-val jsStdlibImpl = configurations.dependencyScope("jsStdlibImpl")
-val jsStdlibImplResolvable = configurations.resolvable("jsStdlibImplResolvable") {
-    extendsFrom(jsStdlibImpl.get())
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
-        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "js")
-    }
-}
-
-val wasmStdlibImpl = configurations.dependencyScope("wasmStdlibImpl")
-val wasmStdlibImplResolvable = configurations.resolvable("wasmStdlibImplResolvable") {
-    extendsFrom(wasmStdlibImpl.get())
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
-        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
-        attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "js")
-    }
-}
-
-val metadataStdlibImpl = configurations.dependencyScope("metadataStdlibImpl")
-val metadataStdlibImplResolvable = configurations.resolvable("metadataStdlibImplResolvable") {
-    extendsFrom(metadataStdlibImpl.get())
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
-        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "common")
-    }
-}
-
 val scriptingCompilerPlugin = configurations.dependencyScope("scriptingCompilerPlugin")
 val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingCompilerPluginResolvable") {
     extendsFrom(scriptingCompilerPlugin.get())
@@ -79,6 +51,70 @@ val unpackedResourcesResolvable = configurations.resolvable("unpackedResourcesRe
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
     }
 }
+
+class PlatformDefinition(
+    val name: String,
+    val attributesAction: AttributeContainer.() -> Unit,
+    val classpathProperty: String,
+) {
+    fun getOrCreateConfiguration(version: String = ""): Configuration {
+        val baseName = "$name$platformStdLibSuffix$version"
+        val configurationsExist = baseName in configurations.names
+        val resolvableConfiguration = if (configurationsExist) {
+            configurations.named("$baseName$resolvableSuffix")
+        } else {
+            val platformStdlib = configurations.dependencyScope(baseName)
+            val platformStdlibResolvable = configurations.resolvable("$baseName$resolvableSuffix") {
+                extendsFrom(platformStdlib.get())
+                attributes(attributesAction)
+            }
+            project.dependencies {
+                if (version.isEmpty()) {
+                    platformStdlib(project(":kotlin-stdlib"))
+                } else {
+                    platformStdlib("org.jetbrains.kotlin:kotlin-stdlib:$version")
+                }
+            }
+            platformStdlibResolvable
+        }
+        return resolvableConfiguration.get()
+    }
+
+    fun addClasspathProperty(test: Test, version: String = "") {
+        test.addClasspathProperty(getOrCreateConfiguration(version), classpathProperty)
+    }
+}
+
+val platformStdLibSuffix = "StdlibImpl"
+val resolvableSuffix = "Resolvable"
+
+val platforms = listOf(
+    PlatformDefinition(
+        "js",
+        {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+            attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "js")
+        },
+        "kotlin.build-tools-api.test.jsStdlibClasspath",
+    ),
+    PlatformDefinition(
+        "wasm",
+        {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+            attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
+            attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "js")
+        },
+        "kotlin.build-tools-api.test.wasmStdlibClasspath",
+    ),
+    PlatformDefinition(
+        "metadata",
+        {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+            attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "common")
+        },
+        "kotlin.build-tools-api.test.metadataStdlibClasspath"
+    )
+)
 
 dependencies {
     api(kotlinStdlib())
@@ -104,9 +140,6 @@ dependencies {
     unpackedResources(project(":compiler:build-tools:kotlin-build-tools-api-tests")) {
         isTransitive = false
     }
-    jsStdlibImpl(project(":kotlin-stdlib"))
-    wasmStdlibImpl(project(":kotlin-stdlib"))
-    metadataStdlibImpl(project(":kotlin-stdlib"))
 }
 
 kotlin {
@@ -120,22 +153,21 @@ kotlin {
 
 val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-    BuildToolsVersion(KotlinToolingVersion(2, 1, 20, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 20, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 0, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 10, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, "RC")),
 )
 
 val compatibilityTestsExcludedVersions = listOf(
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, "Beta1")),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 20, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 0, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 1, 21, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 1, 10, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 1, 0, null)),
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
@@ -143,9 +175,6 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
 }
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
-val JS_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
-val WASM_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmStdlibClasspath"
-val METADATA_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.metadataStdlibClasspath"
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
@@ -204,30 +233,23 @@ val businessLogicTestSuits = setOf(
     "testAbiValidation",
     "testRestrictedArguments",
     "testClasspathMetadata",
+    "testBuildSession",
 )
-
-fun JvmTestSuite.addStdLibClasspaths() {
-    targets.all {
-        testTask.configure {
-            addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSPATH_PROPERTY)
-            addClasspathProperty(wasmStdlibImplResolvable.get(), WASM_STDLIB_CLASSSPATH_PROPERTY)
-            addClasspathProperty(metadataStdlibImplResolvable.get(), METADATA_STDLIB_CLASSSPATH_PROPERTY)
-        }
-    }
-}
 
 fun JvmTestSuite.addSnapshotBuildToolsImpl() {
     targets.all {
+        platforms.forEach { platform -> platform.getOrCreateConfiguration() }
         testTask.configure {
             addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
+            platforms.forEach { platform ->
+                platform.addClasspathProperty(this)
+            }
         }
     }
-    addStdLibClasspaths()
 }
 
 fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
     val baseName = "buildToolsApiImpl$version"
-    val resolvableSuffix = "Resolvable"
     val configurationsExist = baseName in configurations.names
     val resolvableConfiguration = if (configurationsExist) {
         configurations.named("$baseName$resolvableSuffix")
@@ -245,11 +267,14 @@ fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
     }
 
     targets.all {
+        platforms.forEach { platform -> platform.getOrCreateConfiguration(version) }
         testTask.configure {
             addClasspathProperty(resolvableConfiguration.get(), COMPILER_CLASSPATH_PROPERTY)
+            platforms.forEach { platform ->
+                platform.addClasspathProperty(this, version)
+            }
         }
     }
-    addStdLibClasspaths()
 }
 
 testing {
@@ -258,12 +283,9 @@ testing {
             register<JvmTestSuite>(suit)
         }
 
-        var configuredIdeaSourceSets = false
         for (implVersion in compatibilityTestsVersions) {
             register<JvmTestSuite>("testCompatibility${implVersion}") {
-                if (!kotlinBuildProperties.isInIdeaSync.get() || !configuredIdeaSourceSets) {
-                    sources.configureCompatibilitySourceDirectories("testCompatibility")
-                }
+                sources.configureCompatibilitySourceDirectories("testCompatibility")
                 if (implVersion.isCurrent) {
                     addSnapshotBuildToolsImpl()
                 } else {
@@ -282,7 +304,6 @@ testing {
                     }
                 }
             }
-            configuredIdeaSourceSets = true
         }
 
         withType<JvmTestSuite>().configureEach configureSuit@{
@@ -292,7 +313,6 @@ testing {
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {

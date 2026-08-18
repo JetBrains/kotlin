@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.component.ComponentWithCoordinates
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -25,19 +24,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.originalVariantNameFromPublished
 
+@Serializable
 internal class TargetPublicationCoordinates(
-    @get:Nested
     val rootPublicationCoordinates: GAV,
-    @get:Nested
-    val targetPublicationCoordinates: GAV
-): KotlinShareableDataAsSecondaryVariant {
+    val targetPublicationCoordinates: GAV,
+) : KotlinShareableDataAsSecondaryVariant {
+    @Serializable
     internal class GAV(
-        @get:Input
         val group: String,
-        @get:Input
         val artifactId: String,
-        @get:Input
-        val version: String
+        val version: String,
     )
 }
 
@@ -84,15 +80,15 @@ private suspend fun Project.exportForPomDependenciesRewriter(target: KotlinTarge
                     rootPublicationCoordinates = rootComponent.gavCoordinates,
                     targetPublicationCoordinates = targetComponent.gavCoordinates
                 )
-            })
+            }, TargetPublicationCoordinates.serializer())
         }
     }
 }
 
 internal fun KotlinSecondaryVariantsDataSharing.consumeTargetPublicationCoordinates(
-    from: Configuration
+    from: Configuration,
 ): KotlinProjectSharedDataProvider<TargetPublicationCoordinates> = consume(
     key = PROJECT_DATA_SHARING_KEY,
     incomingConfiguration = from,
-    clazz = TargetPublicationCoordinates::class.java
+    serializer = TargetPublicationCoordinates.serializer()
 )

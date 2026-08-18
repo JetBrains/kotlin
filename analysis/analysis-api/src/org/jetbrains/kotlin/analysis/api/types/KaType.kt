@@ -94,7 +94,7 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN,
     )
     @Suppress("DEPRECATION_ERROR")
     public val nullability: KaTypeNullability
@@ -177,7 +177,7 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
  */
 @Deprecated(
     "See KDocs for `KaType.nullability` for the migration guide",
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.HIDDEN
 )
 public enum class KaTypeNullability(public val isNullable: Boolean) {
     /**
@@ -198,7 +198,7 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
     public companion object {
         @Deprecated(
             "See KDocs for `KaType.nullability` for the migration guide",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
         )
         @Suppress("DEPRECATION_ERROR")
         public fun create(isNullable: Boolean): KaTypeNullability = if (isNullable) NULLABLE else NON_NULLABLE
@@ -475,7 +475,7 @@ public abstract class KaDefinitelyNotNullType : KaType {
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
     )
     @Suppress("DEPRECATION_ERROR")
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }

@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.backend.common.isRestrictedSuspensionFunction
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -85,16 +84,13 @@ internal class NativeSuspendFunctionsLowering(
 
                 return if (!expression.isSuspend || expression !in tailSuspendCalls)
                     shortCut
-                else irBuilder.at(expression).irReturn(
-                        irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
-                )
+                else irBuilder.at(expression).irReturn(shortCut)
             }
         })
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
-            if (function.descriptor.isRestrictedSuspendFunction() || function.isRestrictedSuspensionInvokeMethod) {
+            if (function.isRestrictedSuspensionFunction() || function.isRestrictedSuspensionInvokeMethod) {
                 symbols.restrictedContinuationImpl
             } else {
                 symbols.continuationImpl

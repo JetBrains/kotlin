@@ -1,0 +1,22 @@
+Anno.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Anno public constructor(
+      public final val first: MyEnum = MyEnum.Entry2,
+
+      public final val second: kotlin.reflect.KClass<*> = MyEnum::class,
+
+      public final val third: kotlin.Int = 3,
+  ) : kotlin.Annotation {
+  }
+
+MyEnum.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final enum class MyEnum private constructor() : kotlin.Enum<MyEnum> {
+      Entry1,
+
+      Entry2;
+  }

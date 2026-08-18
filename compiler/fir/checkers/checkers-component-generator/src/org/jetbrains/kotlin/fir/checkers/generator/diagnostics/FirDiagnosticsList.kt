@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -140,10 +141,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reference")
             parameter<String?>("operator")
-            parameter<ConeKotlinType?>("receiverType")
+            parameter<ConeReceiverInfo?>("receiverType")
         }
         val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("candidate")
+            parameter<String?>("operator")
         }
         val INACCESSIBLE_OUTER_CLASS_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("symbol")
@@ -217,6 +219,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
         val ROOT_IDE_PACKAGE_DEPRECATED by warning<PsiElement>(PositioningStrategy.DEFAULT)
+
+        val SMARTCAST_TO_TYPE_VARIABLE by error<PsiElement>()
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
@@ -533,6 +537,44 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
     }
 
+    val EQUALITY_BOUND by object : DiagnosticGroup("EqualityBound") {
+        val UNRESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression>()
+        val AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression> {
+            parameter<List<ConeKotlinType>>("candidates")
+        }
+        val EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED by error<KtExpression> {
+            parameter<ConeKotlinType>("expandedType")
+        }
+        val EQUALITY_BOUND_MISMATCH_ON_INHERITANCE by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
+        val EQUALITY_BOUND_MISMATCH_BY_DELEGATION by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("delegateDeclaration")
+            parameter<FirCallableSymbol<*>>("baseDeclaration")
+        }
+        val INHERITED_INTERSECTION_EQUALITY_BOUND by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("declaration")
+            parameter<ConeKotlinType>("candidates")
+        }
+        val EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS by error<KtExpression> {
+            parameter<ConeKotlinType>("equalityBoundType")
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<String>("leftIsEqualityBound")
+            parameter<String>("rightIsEqualityBound")
+        }
+        val EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<ConeKotlinType>("leftEqualityBound")
+            parameter<ConeKotlinType>("rightEqualityBound")
+        }
+    }
+
     val OPT_IN by object : DiagnosticGroup("OptIn") {
         val OPT_IN_USAGE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ClassId>("optInMarkerClassId")
@@ -760,7 +802,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("prefix")
         }
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
-        val VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS by error<KtDeclaration>(PositioningStrategy.CONTEXT_KEYWORD)
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
@@ -1743,6 +1784,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         // Callables
         val EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES by expectActualIncompatibilityError

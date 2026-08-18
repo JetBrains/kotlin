@@ -14,11 +14,22 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingCollectingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.StandardClassIds
 
+/**
+ * Used only for separate compilation mode (HMPP) only!
+ *
+ * This function goes over all resolved references to all classes and top-level callables in the non-leaf
+ * sources and references them from the leaf (platform) symbol provider, so the
+ * [FirCommonDeclarationsMappingCollectingSymbolProvider] could record the mapping between the platform and
+ * common dependency in case this declaration was not searched from the platform session before.
+ */
 fun referenceAllCommonDependencies(outputs: List<SingleModuleFrontendOutput>) {
     val platformSession = outputs.last().session
     if (!platformSession.languageVersionSettings.hmppProvidersEnabled) return
@@ -30,7 +41,23 @@ fun referenceAllCommonDependencies(outputs: List<SingleModuleFrontendOutput>) {
             file.accept(visitor)
         }
     }
+
+    for (id in builtinTopLevelCallables) {
+        platformSession.symbolProvider.getTopLevelCallableSymbols(id.packageName, id.callableName)
+    }
 }
+
+/*
+ * FIR2IR could inject calls to some functions from the stdlib during conversion
+ * (e.g. call to `kotlin.internal.throwNoWhenBranchMatchedException()` for when expressions).
+ * And it references it using the symbol provider of the converted module. If the reference
+ * doesn't happen also during conversion of the leaf module (e.g. there is no `when` expression
+ * in the platform code), the corresponding `FirCommonDeclarationsMappingSymbolProvider` wouldn't
+ * record this function and so IR actualizer wouldn't actualize it.
+ */
+private val builtinTopLevelCallables: List<CallableId> = listOf(
+    StandardClassIds.Callables.throwNoWhenBranchMatchedException
+)
 
 private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
     override fun visitElement(element: FirElement) {

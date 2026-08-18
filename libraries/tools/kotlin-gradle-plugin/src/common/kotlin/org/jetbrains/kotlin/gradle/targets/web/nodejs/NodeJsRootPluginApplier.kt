@@ -292,15 +292,6 @@ internal class NodeJsRootPluginApplier(
             listOf(npm.storePackageLockTaskProvider)
         ).disallowChanges()
 
-        @Suppress("DEPRECATION_ERROR")
-        project.tasks.register(
-            platformDisambiguate.extensionName(
-                "node" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
-                prefix = null,
-            ),
-            org.jetbrains.kotlin.gradle.tasks.CleanDataTask::class.java
-        ) {}
-
         beforePackageManager(project)
 
         val propertiesProvider = PropertiesProvider.Companion(project)

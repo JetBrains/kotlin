@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 _Bool MyInterface_bar__reverse_swift(void * self);
 
+_Bool MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift(void * self, void * receiver);
+
 NSString * MyInterface_foo_get__reverse_swift(void * self);
 
 _Bool MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
@@ -36,6 +38,12 @@ NSString * MyImplementation_internalProp_get(void * self);
 _Bool MyImplementation_internalProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
 
 _Bool MyInterface_bar(void * self);
+
+_Bool MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass__(void * self, void * receiver);
+
+_Bool MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass__(void * self, void * receiver);
+
+_Bool MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool__(void * self, void * receiver, _Bool value);
 
 NSString * MyInterface_foo_get(void * self);
 

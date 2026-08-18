@@ -251,4 +251,5 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: test
   importableFqName: null

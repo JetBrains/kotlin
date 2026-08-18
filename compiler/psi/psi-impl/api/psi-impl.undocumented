@@ -13,7 +13,6 @@ org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType
 org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType:constructor()
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType:constructor()
-org.jetbrains.kotlin.psi.impl.KotlinElementTypeProviderImpl
 org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator
 org.jetbrains.kotlin.psi.psiUtil.StringTemplateExpressionManipulator
 org.jetbrains.kotlin.psi.stubs.StubUtils
@@ -22,7 +21,6 @@ org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText()
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId(StubOutputStream, ClassId?)
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText(String?)
-org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation.INLINE_CLASS
 org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationUseSiteTargetElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType:constructor(String)
@@ -34,8 +32,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType.Companio
 org.jetbrains.kotlin.psi.stubs.elements.KtContextReceiverElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectListElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtEnumEntrySuperClassReferenceExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
@@ -63,12 +59,11 @@ org.jetbrains.kotlin.psi.stubs.elements.KtScriptElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtScriptInitializerElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtSecondaryConstructorElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtStringInterpolationPrefixElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_TARGET
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BACKING_FIELD
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BINARY_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BLOCK_CODE_FRAGMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BOOLEAN_CONSTANT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CALL_EXPRESSION
@@ -110,7 +105,12 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:MODIFIER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:NULL
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:NULLABLE_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OBJECT_DECLARATION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OBJECT_LITERAL
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OPERATION_REFERENCE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PACKAGE_DIRECTIVE
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PARENTHESIZED
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:POSTFIX_EXPRESSION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PREFIX_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PRIMARY_CONSTRUCTOR
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PROPERTY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PROPERTY_ACCESSOR
@@ -211,6 +211,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.IS_NULL
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.NOT
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.PARAMETER_REFERENCE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.RETURNS
+org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.RETURNS_PARAMETER
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.RETURNS_RESULT_OF
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.deserialize(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
@@ -237,9 +238,8 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:constructor(StubElement<?>, StringRef, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:isClassRef()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement<?>, IStubElementType<?, ?>)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement<?>, IElementType)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl

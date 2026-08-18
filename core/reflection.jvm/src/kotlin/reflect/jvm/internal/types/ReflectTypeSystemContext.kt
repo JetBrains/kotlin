@@ -196,6 +196,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
             is KClass<*> -> supertypes.map { it as KotlinTypeMarker }
             is KTypeParameter -> upperBounds.map { it as KotlinTypeMarker }
             is CapturedKTypeConstructor -> supertypes.map { it as KotlinTypeMarker }
+            is ErrorTypeParameter -> emptyList()
             else -> error("Unsupported type constructor: $this (${this::class.java.name})")
         }
     }

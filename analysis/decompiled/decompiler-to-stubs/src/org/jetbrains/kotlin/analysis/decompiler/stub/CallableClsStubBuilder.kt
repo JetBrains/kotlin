@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -19,10 +20,9 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -41,7 +41,6 @@ fun createPackageDeclarationsStubs(
     createTypeAliasesStubs(parentStub, outerContext, protoContainer, packageProto.typeAliasList)
 }
 
-@OptIn(KtExperimentalApi::class)
 fun createDeclarationsStubs(
     parentStub: StubElement<out PsiElement>,
     outerContext: ClsStubBuilderContext,
@@ -49,7 +48,7 @@ fun createDeclarationsStubs(
     functionProtos: List<ProtoBuf.Function>,
     propertyProtos: List<ProtoBuf.Property>,
 ) {
-    val isInsideClassBody = parentStub.elementType == KtStubElementTypes.CLASS_BODY
+    val isInsideClassBody = parentStub.elementType == KtNodeTypes.CLASS_BODY
     var currentCompanionBlockBody: StubElement<out PsiElement>? = null
     fun wrapIntoCompanionBlockOnDemand(
         flags: Int,
@@ -103,13 +102,13 @@ fun createDeclarationsStubs(
 private fun buildCompanionBlockWithBody(parentStub: StubElement<out PsiElement>): StubElement<out PsiElement> {
     val companionBlockStub = KotlinPlaceHolderStubImpl<KtCompanionBlock>(
         parentStub,
-        KtStubElementTypes.COMPANION_BLOCK,
+        KtNodeTypes.COMPANION_BLOCK,
     )
 
     // Parser treats companion keyword as a modifier, so we need to create a modifier list stub for it
     createModifierListStub(companionBlockStub, listOf(KtTokens.COMPANION_KEYWORD), ProtoBuf.ReturnValueStatus.UNSPECIFIED)
 
-    return KotlinPlaceHolderStubImpl<KtClassBody>(companionBlockStub, KtStubElementTypes.CLASS_BODY)
+    return KotlinPlaceHolderStubImpl<KtClassBody>(companionBlockStub, KtNodeTypes.CLASS_BODY)
 }
 
 fun createTypeAliasesStubs(
@@ -129,9 +128,10 @@ fun createConstructorStub(
     parentStub: StubElement<out PsiElement>,
     constructorProto: ProtoBuf.Constructor,
     outerContext: ClsStubBuilderContext,
-    protoContainer: ProtoContainer
+    protoContainer: ProtoContainer,
+    foldedProperties: Map<Name, ProtoBuf.Property>,
 ) {
-    ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto).build()
+    ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto, foldedProperties).build()
 }
 
 /**
@@ -184,12 +184,19 @@ abstract class CallableClsStubBuilder(
         }
     }
 
+    /**
+     * Creates the modifier list of the declaration with its [annotations] and context parameters.
+     *
+     * The annotations are created first, as this is the order they are printed in and the decompiled text
+     * has to be reparsable into the very same stub tree.
+     */
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
         additionalModifiers: List<KtModifierKeywordToken>,
         returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
-    ): KotlinModifierListStubImpl {
+        annotations: List<AnnotationWithTarget>,
+    ) {
         val modifierListStub = createModifierListStubForDeclaration(
             callableStub,
             flags,
@@ -198,8 +205,8 @@ abstract class CallableClsStubBuilder(
             returnValueStatus = returnValueStatus,
         )
 
+        createTargetedAnnotationStubs(annotations, modifierListStub)
         createContextParameterStubs(modifierListStub)
-        return modifierListStub
     }
 
     protected fun createContextParameterStubs(modifierListStub: KotlinModifierListStubImpl) {
@@ -211,7 +218,7 @@ abstract class CallableClsStubBuilder(
 
         val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             modifierListStub,
-            KtStubElementTypes.CONTEXT_PARAMETER_LIST,
+            KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
         typeStubBuilder.createValueParameterStubs(
@@ -272,7 +279,11 @@ private class FunctionClsStubBuilder(
 
     override fun createModifierListStub() {
         val flags = functionProto.flags
-        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+        val annotations = c.components.annotationLoader.loadCallableAnnotations(
+            protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
+        )
+
+        createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = buildList {
                 add(VISIBILITY)
@@ -292,12 +303,8 @@ private class FunctionClsStubBuilder(
             },
             additionalModifiers = if (functionProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
+            annotations = annotations.map { AnnotationWithTarget(it, target = null) },
         )
-
-        val annotations = c.components.annotationLoader.loadCallableAnnotations(
-            protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
-        )
-        createAnnotationStubs(annotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -361,27 +368,6 @@ private class PropertyClsStubBuilder(
 
     override fun createModifierListStub() {
         val flags = propertyProto.flags
-        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
-            flags = flags,
-            flagsToTranslate = buildList {
-                add(VISIBILITY)
-                add(LATEINIT)
-                add(EXTERNAL_PROPERTY)
-                add(EXPECT_PROPERTY)
-                if (!isVar) {
-                    add(CONST)
-                }
-
-                if (isTopLevel) {
-                    add(STATIC_PROPERTY)
-                } else if (!Flags.IS_CONST[flags]) {
-                    add(MODALITY)
-                }
-            },
-            additionalModifiers = if (propertyProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
-            returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
-        )
-
         val propertyAnnotations =
             c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
         val backingFieldAnnotations =
@@ -395,7 +381,17 @@ private class PropertyClsStubBuilder(
             delegateFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
         }
 
-        createTargetedAnnotationStubs(allAnnotations, modifierListStubImpl)
+        createModifierListStubForCallableDeclaration(
+            flags = flags,
+            flagsToTranslate = propertyFlagsToTranslate(
+                isVar = isVar,
+                isTopLevel = isTopLevel,
+                isConst = Flags.IS_CONST[flags],
+            ),
+            additionalModifiers = if (propertyProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
+            annotations = allAnnotations,
+        )
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -424,17 +420,32 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createCallableSpecialParts() {
-        val propertyStub = callableStub as KotlinPropertyStub
+        val propertyStub = callableStub as KotlinPropertyStubImpl
         if (propertyStub.hasInitializer && !propertyStub.hasDelegate) {
-            KotlinNameReferenceExpressionStubImpl(
-                callableStub,
-                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
-                false,
-            )
+            createInitializerStub(propertyStub)
         }
 
         createGetterStubsIfNeeded(callableStub)
         createSetterStubsIfNeeded(callableStub)
+    }
+
+    /**
+     * The initializer of a compiled property is the value the metadata holds, and an initializer is a stubbed position,
+     * so the very same subtree an annotation argument gets is built here and printed from by the decompiler.
+     *
+     * A value with no source form keeps the [COMPILED_DEFAULT_INITIALIZER] placeholder, a plain reference.
+     */
+    private fun createInitializerStub(propertyStub: KotlinPropertyStubImpl) {
+        val value = propertyStub.constantInitializer
+        if (value != null && value.isRepresentableAsStub()) {
+            createValueStub(propertyStub, value, containerClassId = (protoContainer as? ProtoContainer.Class)?.classId)
+        } else {
+            KotlinNameReferenceExpressionStubImpl(
+                propertyStub,
+                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
+                false,
+            )
+        }
     }
 
     private fun createGetterStubsIfNeeded(callableStub: StubElement<*>) {
@@ -475,7 +486,7 @@ private class PropertyClsStubBuilder(
 
         // Getter with a body expect to have a value parameter list
         if (isNotDefault) {
-            KotlinPlaceHolderStubImpl<KtParameterList>(getterStub, KtStubElementTypes.VALUE_PARAMETER_LIST)
+            KotlinPlaceHolderStubImpl<KtParameterList>(getterStub, KtNodeTypes.VALUE_PARAMETER_LIST)
         }
     }
 
@@ -580,7 +591,8 @@ private class ConstructorClsStubBuilder(
     parent: StubElement<out PsiElement>,
     outerContext: ClsStubBuilderContext,
     protoContainer: ProtoContainer,
-    private val constructorProto: ProtoBuf.Constructor
+    private val constructorProto: ProtoBuf.Constructor,
+    private val foldedProperties: Map<Name, ProtoBuf.Property>,
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, emptyList()) {
     override val receiverType: ProtoBuf.Type?
         get() = null
@@ -601,22 +613,28 @@ private class ConstructorClsStubBuilder(
         get() = constructorProto
 
     override fun createValueParameterList() {
-        typeStubBuilder.createValueParameterListStub(callableStub, constructorProto, constructorProto.valueParameterList, protoContainer)
+        typeStubBuilder.createValueParameterListStub(
+            callableStub,
+            constructorProto,
+            constructorProto.valueParameterList,
+            protoContainer,
+            foldedProperties = foldedProperties,
+        )
     }
 
     override fun createModifierListStub() {
         val flags = constructorProto.flags
-        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+        val annotations = c.components.annotationLoader.loadCallableAnnotations(
+            protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
+        )
+
+        createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY),
             additionalModifiers = emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
+            annotations = annotations.map { AnnotationWithTarget(it, target = null) },
         )
-
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
-            protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
-        )
-        createAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -643,4 +661,3 @@ private class ConstructorClsStubBuilder(
             )
     }
 }
-

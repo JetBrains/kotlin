@@ -1,0 +1,8 @@
+Resulting Content Scope Structure:
+Module LIBRARY:
+IntersectionScope
+    KaFirJvmLibraryRestrictionScope
+    ParentTraversalLibrarySearchScope
+
+Module MAIN:
+FileScope: main.kt

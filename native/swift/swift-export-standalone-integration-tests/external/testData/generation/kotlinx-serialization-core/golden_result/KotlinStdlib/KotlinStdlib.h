@@ -29,7 +29,19 @@ NSString * _Nullable kotlin_Throwable_message_get__reverse_swift(void * self);
 
 NSString * kotlin_Throwable_toString__reverse_swift(void * self);
 
+int8_t kotlin_collections_ByteIterator_nextByte__reverse_swift(void * self);
+
 uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
+
+_Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(void * self, void * elements);
+
+_Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
+
+_Bool kotlin_collections_Collection_isEmpty__reverse_swift(void * self);
+
+void * kotlin_collections_Collection_iterator__reverse_swift(void * self);
+
+int32_t kotlin_collections_Collection_size_get__reverse_swift(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
 
@@ -90,6 +102,14 @@ _Bool kotlin_Boolean_or__TypesOfArguments__Swift_Bool__(void * self, _Bool other
 NSString * kotlin_Boolean_toString(void * self);
 
 _Bool kotlin_Boolean_xor__TypesOfArguments__Swift_Bool__(void * self, _Bool other);
+
+int8_t kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void * kotlin_ByteArray_iterator(void * self);
+
+_Bool kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(void * self, int32_t index, int8_t value);
+
+int32_t kotlin_ByteArray_size_get(void * self);
 
 int8_t kotlin_Byte_Companion_MAX_VALUE_get(void * self);
 
@@ -1503,9 +1523,23 @@ uint16_t kotlin_UShort_toUShort(void * self);
 
 uint16_t kotlin_UShort_xor__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
 
+int8_t kotlin_collections_ByteIterator_next(void * self);
+
+int8_t kotlin_collections_ByteIterator_nextByte(void * self);
+
 uint16_t kotlin_collections_CharIterator_next(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar(void * self);
+
+_Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable element);
+
+_Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(void * self, void * elements);
+
+_Bool kotlin_collections_Collection_isEmpty(void * self);
+
+void * kotlin_collections_Collection_iterator(void * self);
+
+int32_t kotlin_collections_Collection_size_get(void * self);
 
 int32_t kotlin_collections_IntIterator_next(void * self);
 

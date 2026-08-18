@@ -22,7 +22,7 @@ fun outerFun() {
     fun () {}
     fun B.() {}
 
-    @a fun () {}
+    <!RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED!>@a<!> fun () {}
     fun @a A.() {}
 }
 

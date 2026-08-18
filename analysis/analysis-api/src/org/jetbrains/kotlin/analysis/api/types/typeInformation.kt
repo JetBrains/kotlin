@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
@@ -52,7 +54,6 @@ public val KaType.functionTypeFamily: KaFunctionTypeFamily?
 /**
  * Whether the [KaType] is a [kotlin.Function] type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isFunctionType: Boolean
     get() {
@@ -63,7 +64,6 @@ public val KaType.isFunctionType: Boolean
 /**
  * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isKFunctionType: Boolean
     get() {
@@ -75,7 +75,6 @@ public val KaType.isKFunctionType: Boolean
  * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
  * type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isSuspendFunctionType: Boolean
     get() {
@@ -86,7 +85,6 @@ public val KaType.isSuspendFunctionType: Boolean
 /**
  * Whether the [KaType] is a `KSuspendFunction` type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isKSuspendFunctionType: Boolean
     get() {
@@ -154,172 +152,291 @@ public val KaType.hasFlexibleNullability: Boolean
 /**
  * Whether the [KaType] is a [Unit] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.UNIT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUnitType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUnitType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.UNIT
 
 /**
  * Whether the [KaType] is an [Int] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.INT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isIntType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isIntType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.INT
 
 /**
  * Whether the [KaType] is a [Long] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.LONG",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isLongType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isLongType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.LONG
 
 /**
  * Whether the [KaType] is a [Short] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.SHORT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isShortType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isShortType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.SHORT
 
 /**
  * Whether the [KaType] is a [Byte] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.BYTE",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isByteType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isByteType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.BYTE
 
 /**
  * Whether the [KaType] is a [Float] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.FLOAT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isFloatType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isFloatType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.FLOAT
 
 /**
  * Whether the [KaType] is a [Double] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.DOUBLE",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isDoubleType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isDoubleType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.DOUBLE
 
 /**
  * Whether the [KaType] is a [Char] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.CHAR",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isCharType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isCharType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.CHAR
 
 /**
  * Whether the [KaType] is a [Boolean] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.BOOLEAN",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isBooleanType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isBooleanType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.BOOLEAN
 
 /**
  * Whether the [KaType] is a [String] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.STRING",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isStringType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isStringType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.STRING
 
 /**
  * Whether the [KaType] is a [CharSequence] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.CHAR_SEQUENCE",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isCharSequenceType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isCharSequenceType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.CHAR_SEQUENCE
 
 /**
  * Whether the [KaType] is an [Any] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.ANY",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isAnyType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isAnyType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.ANY
 
 /**
  * Whether the [KaType] is a [Nothing] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.NOTHING",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isNothingType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isNothingType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.NOTHING
 
 /**
  * Whether the [KaType] is a [UInt] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.UInt",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUIntType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUIntType(this)
-    }
+    get() = classId == StandardClassIds.UInt
 
 /**
  * Whether the [KaType] is a [ULong] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.ULong",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isULongType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isULongType(this)
-    }
+    get() = classId == StandardClassIds.ULong
 
 /**
  * Whether the [KaType] is a [UShort] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.UShort",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUShortType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUShortType(this)
-    }
+    get() = classId == StandardClassIds.UShort
 
 /**
  * Whether the [KaType] is a [UByte] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.UByte",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUByteType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUByteType(this)
-    }
+    get() = classId == StandardClassIds.UByte
 
 /**
  * The class symbol backing the given [KaType], if available.
@@ -383,12 +500,19 @@ public val KaType.isNestedArray: Boolean
 /**
  * Whether the [KaType] is a primitive type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId in KaStandardTypeClassIds.PRIMITIVES",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isPrimitive: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isPrimitive(this)
-    }
+    get() = classId in KaStandardTypeClassIds.PRIMITIVES
 
 /**
  * The default initializer for the given [KaType], or `null` if the type is neither nullable, a primitive, nor a string.
@@ -410,4 +534,14 @@ public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.typeInformationProvider.builtinFunctionTypeFamilies()
+    }
+
+/**
+ * The [ClassId] provided the type exposes any (it is the case for [KaClassType]).
+ */
+context(session: KaSession)
+public val KaType.classId: ClassId?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.typeInformationProvider.classId(this)
     }

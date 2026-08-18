@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
+    private val integerDivisionCheck =
+        context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsIntegerDivisionCheck)
 
     private fun buildInt(v: Int) = JsIrBuilder.buildInt(irBuiltIns.intType, v)
 
@@ -231,11 +235,17 @@ class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : 
         }
     }
 
-    private fun transformDiv(call: IrFunctionAccessExpression) =
-        irBinaryOp(call, symbols.jsDiv, toInt32 = BinaryOp(call).result.isInt())
+    private fun transformDiv(call: IrFunctionAccessExpression) = BinaryOp(call).run {
+        val isInt = result.isInt()
+        if (integerDivisionCheck && isInt) irCall(call, symbols.jsIdiv)
+        else irBinaryOp(call, symbols.jsDiv, toInt32 = isInt)
+    }
 
-    private fun transformRem(call: IrFunctionAccessExpression) =
-        irBinaryOp(call, symbols.jsMod, toInt32 = BinaryOp(call).result.isInt())
+    private fun transformRem(call: IrFunctionAccessExpression) = BinaryOp(call).run {
+        val isInt = result.isInt()
+        if (integerDivisionCheck && isInt) irCall(call, symbols.jsIrem)
+        else irBinaryOp(call, symbols.jsMod, toInt32 = isInt)
+    }
 
     private fun transformIntIncrement(call: IrFunctionAccessExpression) =
         transformCrement(call, symbols.jsPlus) { buildInt(1) }

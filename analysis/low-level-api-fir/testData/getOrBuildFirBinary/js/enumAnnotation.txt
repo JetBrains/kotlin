@@ -1,7 +1,8 @@
 KT element: KtClass
 KT element text:
 public final enum class Enum private constructor() : kotlin.Enum<Enum> {
-    @Y ENTRY;
+    @Y
+    ENTRY;
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

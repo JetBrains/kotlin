@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: -FullValueClasses
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 
 <!UNSUPPORTED_FEATURE!>value<!> class Final constructor(val value1: String, val value2: String)
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final2 constructor(val value1: String)

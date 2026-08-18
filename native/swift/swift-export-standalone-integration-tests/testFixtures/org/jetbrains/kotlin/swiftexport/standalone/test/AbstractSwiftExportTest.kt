@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -22,8 +23,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 import java.nio.file.Path
@@ -44,6 +49,26 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
     var minOSVersion: String? = null
+
+    /**
+     * Single target gate for all Swift Export suites: skips (does not fail) the test when its `testTarget`
+     * is not allowed by the [EnabledOnNativeTargets] annotation on the test class. Suites with no annotation
+     * are unconstrained.
+     */
+    @BeforeEach
+    fun assumeTestTargetEnabled(testInfo: TestInfo) {
+        val annotation = testInfo.testClass.get().getAnnotation(EnabledOnNativeTargets::class.java) ?: return
+        val unknownTargets = annotation.targets.filterNot(KonanTarget.predefinedTargets::containsKey)
+        check(unknownTargets.isEmpty()) {
+            "Unknown native targets in ${annotation.annotationClass.simpleName}: $unknownTargets"
+        }
+
+        val testTarget = targets.testTarget
+        val enabled = testTarget.family in annotation.families || testTarget.name in annotation.targets
+        Assumptions.assumeTrue(enabled) {
+            "Ignored: test target '${testTarget.name}' is not enabled by ${annotation.annotationClass.simpleName}"
+        }
+    }
 
     /**
      * Additional options appended verbatim to every `swiftc` invocation made by the test harness. Tests that
@@ -84,11 +109,25 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         extraSwiftCompilerOptions = extraSwiftCompilerOptions +
             discoveredModuleMaps.flatMap { listOf("-Xcc", "-fmodule-map-file=${it.absolutePath}") }
 
+        val hiddenModules = (originalTestCase.rootModules + originalTestCase.modules).filter { it.hiddenFromSwiftExport() }
+        assertTrue(hiddenModules.none { it in originalTestCase.rootModules }) {
+            "A root module cannot be hidden from Swift Export: " +
+                    hiddenModules.filter { it in originalTestCase.rootModules }.map { it.name }
+        }
+        assertTrue(hiddenModules.none { it.shouldBeExportedToSwift() }) {
+            "Module is marked both EXPORT_TO_SWIFT and HIDE_FROM_SWIFT_EXPORT: " +
+                    hiddenModules.filter { it.shouldBeExportedToSwift() }.map { it.name }
+        }
+
         val inputModuleByTestModule = (originalTestCase.rootModules + originalTestCase.modules + givenModules).associateWith {
             createInputModule(
                 testModule = it,
                 originalTestCase = originalTestCase,
-                shouldBeFullyExported = it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it)
+                exportMode = when {
+                    it.hiddenFromSwiftExport() -> SwiftModuleExportMode.Excluded
+                    it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it) -> SwiftModuleExportMode.Full
+                    else -> SwiftModuleExportMode.Transitive
+                }
             )
         }
         val modulesToExport = inputModuleByTestModule.values.toSet()
@@ -98,8 +137,6 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
-            errorTypeStrategy = ErrorTypeStrategy.Fail,
-            unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType,
         )
 
         // run swift export
@@ -143,7 +180,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     private fun createInputModule(
         testModule: TestModule,
         originalTestCase: TestCase,
-        shouldBeFullyExported: Boolean
+        exportMode: SwiftModuleExportMode,
     ): InputModule {
         val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
         // Whether a module is a cinterop re-export container is detected by Swift Export from the klib
@@ -153,7 +190,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             SwiftModuleConfig(
                 rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
                 unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
-                shouldBeFullyExported = shouldBeFullyExported,
+                exportMode = exportMode,
             )
         )
     }
@@ -309,7 +346,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                     "-opt-in",
                     "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
-                    "-Xdisable-ir-checkers=IrFieldVisibilityChecker", // triggered by kotlinx.coroutines 1.9.0
+                    "-Xdisable-ir-checkers=IrFieldVisibilityChecker,IrTypeParameterScopeChecker", // triggered by kotlinx.coroutines 1.9.0
                     "-XXLanguage:+CompanionBlocks", // needed by companionBlocksAndExtensions test
                     "-XXLanguage:+CompanionExtensions", // needed by companionBlocksAndExtensions test
                 )

@@ -1,0 +1,25 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public final annotation class Marker public constructor() : kotlin.Annotation {
+}
+
+public final annotation class Targeted public constructor(
+    @param:test.Marker
+    @property:test.Marker
+    public final val onParameter: kotlin.Int,
+
+    @property:test.Marker
+    public final val onProperty: kotlin.Int,
+
+    @get:test.Marker
+    public final val onGetter: kotlin.Int,
+
+    @param:test.Marker
+    @property:test.Marker
+    @get:test.Marker
+    public final val onEveryTarget: kotlin.Int,
+) : kotlin.Annotation {
+}

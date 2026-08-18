@@ -64,7 +64,7 @@ internal class PlainClassListSnapshotter(
                         clazz.classInfo.kotlinClassHeader!!,
                         clazz.contents,
                     )
-                    snapshotKotlinClass(clazz, settings.granularity, kotlinClassInfo)
+                    snapshotKotlinClass(clazz, settings, kotlinClassInfo)
                 }
                 else -> metrics.measure(SNAPSHOT_JAVA_CLASSES) {
                     snapshotJavaClass(clazz, settings.granularity)
@@ -182,7 +182,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
                     classFileWithContents.classInfo.kotlinClassHeader!!,
                     extraInfo = extraInfo
                 )
-                snapshotKotlinClass(classFileWithContents, settings.granularity, kotlinClassInfo)
+                snapshotKotlinClass(classFileWithContents, settings, kotlinClassInfo)
             }
         } else {
             metrics.measure(SNAPSHOT_JAVA_CLASSES) {

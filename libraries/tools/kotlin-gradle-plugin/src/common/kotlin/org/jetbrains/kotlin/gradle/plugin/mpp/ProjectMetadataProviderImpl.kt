@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.internal.KotlinShareableDataAsSecondaryVariant
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
-import java.io.File
 
 private typealias SourceSetName = String
 
@@ -82,8 +80,6 @@ internal fun GenerateProjectStructureMetadata.addMetadataSourceSetsToOutput(proj
         generateTask.coordinatesOfProjectDependencies.set(dependencies)
     }
 }
-
-internal data class SourceSetToClassDirMap(val map: Map<String, File>) : KotlinShareableDataAsSecondaryVariant
 
 internal suspend fun KotlinMultiplatformExtension.kotlinMetadataCompilations() = awaitMetadataTarget()
     .awaitMetadataCompilationsCreated()

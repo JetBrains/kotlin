@@ -2,6 +2,7 @@ depends = AVFAudio ApplicationServices AudioToolbox CFCGTypes CFNetwork CoreAudi
 language = Objective-C
 package = platform.AVFoundation
 modules = AVFoundation
+apiNotesSwiftName = true
 
 compilerOpts = -framework AVFoundation
 linkerOpts = -framework AVFoundation

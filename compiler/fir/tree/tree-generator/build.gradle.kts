@@ -6,8 +6,6 @@ plugins {
     application
 }
 
-configurations.runtimeOnly.get().extendsFrom(configurations.compileOnly.get())
-
 dependencies {
     implementation(project(":generators"))
     implementation(project(":generators:tree-generator-common"))
@@ -15,8 +13,7 @@ dependencies {
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:cones"))
 
-    compileOnly(intellijCore())
-
+    implementation(intellijCore())
     runtimeOnly(intellijJDom())
 }
 

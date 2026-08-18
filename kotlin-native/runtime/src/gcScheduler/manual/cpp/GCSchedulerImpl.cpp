@@ -6,8 +6,8 @@
 #include "GCSchedulerImpl.hpp"
 
 #include "CallsChecker.hpp"
-#include "GC.hpp"
-#include "GlobalData.hpp"
+#include "gc/GC.hpp"
+#include "mm/GlobalData.hpp"
 
 using namespace kotlin;
 

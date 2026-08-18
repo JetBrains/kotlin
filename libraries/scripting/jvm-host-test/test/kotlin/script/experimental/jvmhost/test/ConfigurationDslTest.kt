@@ -66,9 +66,7 @@ class ConfigurationDslTest {
         val script = "@file:MyTestAnnotation1\nann1+ann12".toScriptSource()
 
         val compiledScript = runBlocking {
-            val compiler =
-                if (isRunningTestOnK2) JvmScriptCompiler()
-                else JvmScriptCompiler.createLegacy()
+            val compiler = JvmScriptCompiler()
             compiler.invoke(script, baseConfig).valueOrThrow()
         }
         val finalConfig = compiledScript.compilationConfiguration
@@ -131,9 +129,7 @@ class ConfigurationDslTest {
         val script = "val x = 1".toScriptSource()
 
         val evalRes = runBlocking {
-            val compiler =
-                if (isRunningTestOnK2) JvmScriptCompiler()
-                else JvmScriptCompiler.createLegacy()
+            val compiler = JvmScriptCompiler()
             compiler.invoke(script, ScriptCompilationConfiguration()).onSuccess {
                 BasicJvmScriptEvaluator().invoke(it, ScriptEvaluationConfiguration())
             }.valueOrThrow()

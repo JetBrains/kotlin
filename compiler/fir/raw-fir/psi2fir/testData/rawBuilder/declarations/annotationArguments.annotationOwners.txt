@@ -1,110 +1,110 @@
 @Arrays(<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <collectionLiteralCall>(Long(1)), <collectionLiteralCall>(), <collectionLiteralCall>(Double(2.2)), <collectionLiteralCall>(Char(a)), <collectionLiteralCall>(Boolean(true), Boolean(false)))
-owner -> FirRegularClassSymbol WithArrays
-context -> FirRegularClassSymbol WithArrays
+owner -> FirRegularClassSymbol test/WithArrays
+context -> FirRegularClassSymbol test/WithArrays
 
 @Arrays(intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), longArrayOf#(Long(1)), floatArrayOf#(), doubleArrayOf#(Double(2.2)), charArrayOf#(Char(a)), booleanArrayOf#(Boolean(true), Boolean(false)))
-owner -> FirRegularClassSymbol WithExplicitArrays
-context -> FirRegularClassSymbol WithExplicitArrays
+owner -> FirRegularClassSymbol test/WithExplicitArrays
+context -> FirRegularClassSymbol test/WithExplicitArrays
 
 @ClassLiteral(<getClass>(WithClassLiteral#), <getClass>(Boolean#))
-owner -> FirRegularClassSymbol WithClassLiteral
-context -> FirRegularClassSymbol WithClassLiteral
+owner -> FirRegularClassSymbol test/WithClassLiteral
+context -> FirRegularClassSymbol test/WithClassLiteral
 
 @EnumLiteral(E1#, E#.E2#, e3 = test#.E#.E2#)
-owner -> FirRegularClassSymbol WithEnumLiteral
-context -> FirRegularClassSymbol WithEnumLiteral
+owner -> FirRegularClassSymbol test/WithEnumLiteral
+context -> FirRegularClassSymbol test/WithEnumLiteral
 
 @VarArg(IntegerLiteral(1))
-owner -> FirRegularClassSymbol OneVararg
-context -> FirRegularClassSymbol OneVararg
+owner -> FirRegularClassSymbol test/OneVararg
+context -> FirRegularClassSymbol test/OneVararg
 
 @VarArg(IntegerLiteral(1), IntegerLiteral(2))
-owner -> FirRegularClassSymbol TwoVararg
-context -> FirRegularClassSymbol TwoVararg
+owner -> FirRegularClassSymbol test/TwoVararg
+context -> FirRegularClassSymbol test/TwoVararg
 
 @VarArg(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#)
-owner -> FirRegularClassSymbol ThreeVararg
-context -> FirRegularClassSymbol ThreeVararg
+owner -> FirRegularClassSymbol test/ThreeVararg
+context -> FirRegularClassSymbol test/ThreeVararg
 
 @VarArg(*<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4)))
-owner -> FirRegularClassSymbol SpreadVararg
-context -> FirRegularClassSymbol SpreadVararg
+owner -> FirRegularClassSymbol test/SpreadVararg
+context -> FirRegularClassSymbol test/SpreadVararg
 
 @Outer(String(value), nested = Nested#(IntegerLiteral(0), String(nested value)))
-owner -> FirRegularClassSymbol WithNested
-context -> FirRegularClassSymbol WithNested
+owner -> FirRegularClassSymbol test/WithNested
+context -> FirRegularClassSymbol test/WithNested
 
-@Outer(String(value), foo#.Nested#(IntegerLiteral(1), String(nested value)))
-owner -> FirRegularClassSymbol WithQualifiedNested
-context -> FirRegularClassSymbol WithQualifiedNested
+@Outer(String(value), test#.Nested#(IntegerLiteral(1), String(nested value)))
+owner -> FirRegularClassSymbol test/WithQualifiedNested
+context -> FirRegularClassSymbol test/WithQualifiedNested
 
 @Simple(test#.Simple#.Companion#.CONST1#)
-owner -> FirRegularClassSymbol Qualified
-context -> FirRegularClassSymbol Qualified
+owner -> FirRegularClassSymbol test/Qualified
+context -> FirRegularClassSymbol test/Qualified
 
 @Simple(test#.Simple#.Companion#.CONST1#.plus#(Simple#.CONST2#))
-owner -> FirRegularClassSymbol Sum
-context -> FirRegularClassSymbol Sum
+owner -> FirRegularClassSymbol test/Sum
+context -> FirRegularClassSymbol test/Sum
 
 @Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#())
-owner -> FirRegularClassSymbol Negative
-context -> FirRegularClassSymbol Negative
+owner -> FirRegularClassSymbol test/Negative
+context -> FirRegularClassSymbol test/Negative
 
 @Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#().unaryMinus#().unaryMinus#())
-owner -> FirRegularClassSymbol Negative2
-context -> FirRegularClassSymbol Negative2
+owner -> FirRegularClassSymbol test/Negative2
+context -> FirRegularClassSymbol test/Negative2
 
 @Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#().unaryMinus#())
-owner -> FirRegularClassSymbol Positive
-context -> FirRegularClassSymbol Positive
+owner -> FirRegularClassSymbol test/Positive
+context -> FirRegularClassSymbol test/Positive
 
 @Simple(IntegerLiteral(12), Long(12), IntegerLiteral(12), Double(3.3), Float(3.3), Char(a), Boolean(true), Boolean(false))
-owner -> FirRegularClassSymbol WithSimple
-context -> FirRegularClassSymbol WithSimple
+owner -> FirRegularClassSymbol test/WithSimple
+context -> FirRegularClassSymbol test/WithSimple
 
 @Simple(IntegerLiteral(12), Long(12), IntegerLiteral(12), d = Double(3.3), f = Float(3.3), c = Char(a), b1 = Boolean(true), b2 = Boolean(false))
-owner -> FirRegularClassSymbol WithNamedSimple
-context -> FirRegularClassSymbol WithNamedSimple
+owner -> FirRegularClassSymbol test/WithNamedSimple
+context -> FirRegularClassSymbol test/WithNamedSimple
 
 @Simple(IntegerLiteral(12).div#(IntegerLiteral(6)), Long(12).rem#(Long(5)), IntegerLiteral(12), Double(3.3).minus#(Double(3.0)), Float(3.3).times#(Float(2.0)), Char(a), Boolean(true) && Boolean(false), Boolean(false) || Boolean(true))
-owner -> FirRegularClassSymbol WithSimpleOperations
-context -> FirRegularClassSymbol WithSimpleOperations
+owner -> FirRegularClassSymbol test/WithSimpleOperations
+context -> FirRegularClassSymbol test/WithSimpleOperations
 
 @Simple(IntegerLiteral(12).toByte#())
-owner -> FirRegularClassSymbol WithConversionCall
-context -> FirRegularClassSymbol WithConversionCall
+owner -> FirRegularClassSymbol test/WithConversionCall
+context -> FirRegularClassSymbol test/WithConversionCall
 
 @ConversionCallConsumer(IntegerLiteral(12).toByte#())
-owner -> FirRegularClassSymbol WithResolvedConversionCall
-context -> FirRegularClassSymbol WithResolvedConversionCall
+owner -> FirRegularClassSymbol test/WithResolvedConversionCall
+context -> FirRegularClassSymbol test/WithResolvedConversionCall
 
 @StringLiteral(String(some), String(), <strcat>(String(H), CONSTANT#))
-owner -> FirRegularClassSymbol WithStringLiteral
-context -> FirRegularClassSymbol WithStringLiteral
+owner -> FirRegularClassSymbol test/WithStringLiteral
+context -> FirRegularClassSymbol test/WithStringLiteral
 
 @StringLiteral(<strcat>(String(some), String(1)), String().plus#(CONSTANT#).plus#(String(2)), <strcat>(<strcat>(CONSTANT#), String(3)))
-owner -> FirRegularClassSymbol WithStringLiteralConcat
-context -> FirRegularClassSymbol WithStringLiteralConcat
+owner -> FirRegularClassSymbol test/WithStringLiteralConcat
+context -> FirRegularClassSymbol test/WithStringLiteralConcat
 
 @StringLiteral(<strcat>(CONSTANT#), <strcat>(CONSTANT#), <strcat>(CONSTANT#))
-owner -> FirRegularClassSymbol WithStringInterpolationPrefix
-context -> FirRegularClassSymbol WithStringInterpolationPrefix
+owner -> FirRegularClassSymbol test/WithStringInterpolationPrefix
+context -> FirRegularClassSymbol test/WithStringInterpolationPrefix
 
 @InvalidArguments(<strcat>(CONSTANT#, fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
     ^ Unit
 }
 ))
-owner -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
-context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
+owner -> FirRegularClassSymbol test/LongStringTemplateEntryWithTwoExpressions
+context -> FirRegularClassSymbol test/LongStringTemplateEntryWithTwoExpressions
 
 @Deprecated(String(Deprecated), ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), DeprecationLevel#.HIDDEN#)
-owner -> FirRegularClassSymbol Another
-context -> FirRegularClassSymbol Another
+owner -> FirRegularClassSymbol test/Another
+context -> FirRegularClassSymbol test/Another
 
 @Arrays(<collectionLiteralCall>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
-owner -> FirRegularClassSymbol WithIncorrectArguments
-context -> FirRegularClassSymbol WithIncorrectArguments
+owner -> FirRegularClassSymbol test/WithIncorrectArguments
+context -> FirRegularClassSymbol test/WithIncorrectArguments
 
 @kotlin.Deprecated(String(Deprecated), kotlin#.ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), level = kotlin#.DeprecationLevel#.HIDDEN#)
-owner -> FirRegularClassSymbol Qualified
-context -> FirRegularClassSymbol Qualified
+owner -> FirRegularClassSymbol test/Qualified
+context -> FirRegularClassSymbol test/Qualified

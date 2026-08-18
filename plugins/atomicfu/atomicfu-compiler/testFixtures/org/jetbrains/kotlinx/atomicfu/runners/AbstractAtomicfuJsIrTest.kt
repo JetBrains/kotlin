@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrDumps
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
 import org.jetbrains.kotlin.test.services.TestServices
@@ -29,22 +28,7 @@ open class AbstractAtomicfuJsTest(
             useConfigurators(::AtomicfuEnvironmentConfigurator)
             useCustomRuntimeClasspathProviders(::AtomicfuJsRuntimeClasspathProvider)
         }
-    }
-}
-
-open class AbstractAtomicfuJsWithInlinedFunInKlibTest : AbstractAtomicfuJsTest(
-    testGroupOutputDirPrefix = "box/atomicfuWithInlinedFunInKlib"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
+        builder.setupDefaultDirectivesForIrDumps()
     }
 }
 

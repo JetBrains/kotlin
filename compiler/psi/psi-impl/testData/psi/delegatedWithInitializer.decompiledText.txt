@@ -3,9 +3,9 @@
 
 public final class MyClass public constructor() {
     public companion object {
-        public const val token: kotlin.String = COMPILED_CODE /* compiled code */
+        public const val token: kotlin.String = "token"
     }
 
-    public final val token: kotlin.String by COMPILED_CODE /* compiled code */
+    public final val token: kotlin.String by COMPILED_CODE
         public final get() { /* compiled code */ }
 }

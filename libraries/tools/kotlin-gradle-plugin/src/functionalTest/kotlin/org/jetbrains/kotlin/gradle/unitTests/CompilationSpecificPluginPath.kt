@@ -2,7 +2,7 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("FunctionName", "DuplicatedCode")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -138,7 +138,7 @@ internal class CompilationSpecificPluginPath {
     }
 
     @Test
-    fun `native plugin configuration should not be transitive`() {
+    fun `native plugin configuration should be transitive`() {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm()
@@ -150,7 +150,7 @@ internal class CompilationSpecificPluginPath {
             .configurations
             .getByName(pluginClassPathConfiguration("linuxX64", "main"))
 
-        assertFalse(nativeConfig.isTransitive)
+        assertTrue(nativeConfig.isTransitive)
     }
 
     @Test

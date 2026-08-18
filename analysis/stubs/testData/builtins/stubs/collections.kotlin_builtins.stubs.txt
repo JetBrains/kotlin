@@ -756,7 +756,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.Map.getOrDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getOrDefault]
         MODIFIER_LIST[public open MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -764,6 +764,12 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=PlatformDependent]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
@@ -1579,7 +1585,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.MutableMap.remove, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public open IgnorableReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1587,6 +1593,12 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=PlatformDependent]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE

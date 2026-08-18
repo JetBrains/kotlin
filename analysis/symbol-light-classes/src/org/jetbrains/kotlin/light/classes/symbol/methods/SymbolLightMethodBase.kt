@@ -14,19 +14,15 @@ import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -113,20 +109,6 @@ internal abstract class SymbolLightMethodBase(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
-
-    protected fun computeJvmMethodName(
-        symbol: KaCallableSymbol,
-        defaultName: String,
-    ): String {
-        symbol.getJvmNameFromAnnotation()?.let { return it }
-
-        if (containingClass is KtLightClassForFacade) return defaultName
-        val sourceModule = ktModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
-
-        if (symbol.hasPublishedApiAnnotation()) return defaultName
-        if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
-        return mangleInternalName(defaultName, sourceModule.stableModuleName ?: sourceModule.name)
-    }
 
     protected fun computeJvmExposeBoxedMethodName(
         symbol: KaCallableSymbol,

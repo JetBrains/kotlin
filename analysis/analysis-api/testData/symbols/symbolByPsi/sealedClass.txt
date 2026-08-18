@@ -43,6 +43,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -124,6 +125,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -171,6 +173,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -218,6 +221,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateFunction
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -265,6 +269,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalFunction$main
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -346,6 +351,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -487,6 +493,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -498,8 +505,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getVariable
-  javaSetterName: setVariable
   isInline: false
   importableFqName: null
 
@@ -582,6 +587,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -723,6 +729,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setPrivateVariable
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -734,8 +741,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateVariable
-  javaSetterName: setPrivateVariable
   isInline: false
   importableFqName: null
 
@@ -818,6 +823,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getInternalVariable$main
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -959,6 +965,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setInternalVariable$main
     importableFqName: null
   typeParameters: []
   visibility: INTERNAL
@@ -970,8 +977,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getInternalVariable
-  javaSetterName: setInternalVariable
   isInline: false
   importableFqName: null
 
@@ -1311,6 +1316,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: SealedClassWithExplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: SealedClassWithExplicitConstructor
 
 KaConstructorSymbol:
@@ -1344,6 +1350,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: SealedClassWithExplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: SealedClassWithExplicitConstructor
 
 KaNamedClassSymbol:

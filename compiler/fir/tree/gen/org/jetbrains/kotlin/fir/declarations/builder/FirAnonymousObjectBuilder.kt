@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -39,6 +40,7 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
     override val superTypeRefs: MutableList<FirTypeRef> = []
     override val declarations: MutableList<FirDeclaration> = []
     override val annotations: MutableList<FirAnnotation> = []
+    override var staticControlFlowGraphReference: FirControlFlowGraphReference? = null
     lateinit var symbol: FirAnonymousObjectSymbol
 
     override fun build(): FirAnonymousObject {
@@ -56,6 +58,7 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
             superTypeRefs,
             declarations,
             annotations.toMutableOrEmpty(),
+            staticControlFlowGraphReference,
             symbol,
         )
     }

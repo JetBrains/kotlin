@@ -1,13 +1,15 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(conflictingTypealiases.Bar::class, "_Bar")
-@file:kotlin.native.internal.objc.BindClassToObjCName(conflictingTypealiases.Foo::class, "_Foo")
+@file:kotlin.native.internal.objc.BindClassToObjCName(conflictingTypealiases.Bar::class, "_ExportedKotlinPackages_conflictingTypealiases_Bar")
+@file:kotlin.native.internal.objc.BindClassToObjCName(conflictingTypealiases.Foo::class, "_ExportedKotlinPackages_conflictingTypealiases_Foo")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.jetbrains.kotlin.internal.Foo::class, "_ExportedKotlinPackages_org_jetbrains_kotlin_internal_Foo")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.jetbrains.kotlin.internal.`❤️s Kotlin`::class, "_ExportedKotlinPackages_org_jetbrains_kotlin_internal_u2764_️s_u20_Kotlin")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ClassC::class, "10edge_cases6ClassCC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Baz::class, "_Baz")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Baz::class, "_edge_cases_Baz")
 @file:kotlin.native.internal.objc.BindClassToObjCName(conflictingTypealiases.Bar.Conflict::class, "10edge_cases59_ExportedKotlinPackages_conflictingTypealiases_Bar_ConflictC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(conflictingTypealiases.Foo.Conflict::class, "10edge_cases59_ExportedKotlinPackages_conflictingTypealiases_Foo_ConflictC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceA::class, "_InterfaceA")
-@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceB::class, "_InterfaceB")
-@file:kotlin.native.internal.objc.BindClassToObjCName(SomeInterface::class, "_SomeInterface")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceA::class, "_edge_cases_InterfaceA")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceB::class, "_edge_cases_InterfaceB")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SomeInterface::class, "_edge_cases_SomeInterface")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

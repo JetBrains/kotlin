@@ -35,8 +35,38 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       PROPERTY[fqName=Graph.mutableEdges, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=mutableEdges]
         MODIFIER_LIST[private]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=ArrayList]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Edge]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=V]
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=E]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=Graph.mutableVertices, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=mutableVertices]
         MODIFIER_LIST[private]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=HashSet]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Vertex]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=V]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=Graph.edges, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=edges]
         TYPE_REFERENCE
           USER_TYPE
@@ -106,6 +136,15 @@ FILE[kind=File[packageFqName=<root>]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=V]
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=edges]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=filter]
+              LAMBDA_ARGUMENT[isSpread=false]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=map]
+            LAMBDA_ARGUMENT[isSpread=false]
       FUN[fqName=Graph.dfs, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dfs]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=handler]

@@ -3152,6 +3152,7 @@ public abstract interface class kotlin/contracts/ContractBuilder {
 	public abstract fun returns ()Lkotlin/contracts/Returns;
 	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
 	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
+	public abstract fun returnsParameter (Ljava/lang/Object;)V
 	public abstract fun returnsResultOf (Lkotlin/Function;)V
 }
 
@@ -3429,6 +3430,10 @@ public final class kotlin/internal/PlatformImplementationsKt {
 public final class kotlin/internal/ProgressionUtilKt {
 	public static final fun getProgressionLastElement (III)I
 	public static final fun getProgressionLastElement (JJJ)J
+}
+
+public final class kotlin/internal/ThrowNoWhenBranchMatchedExceptionKt {
+	public static final fun throwNoWhenBranchMatchedException (Ljava/lang/Object;)Ljava/lang/Void;
 }
 
 public final class kotlin/internal/UProgressionUtilKt {

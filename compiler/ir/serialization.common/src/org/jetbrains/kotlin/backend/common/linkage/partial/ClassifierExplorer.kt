@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Usable
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -68,17 +65,6 @@ internal class ClassifierExplorer(
         owner.classifierLinkageStatusCache?.let { result ->
             // Already explored and registered symbol.
             return result
-        }
-
-        (owner as? IrLazyClassBase)?.takeUnless { it.isK2 }?.let { lazyIrClass ->
-            val isEffectivelyMissingClassifier =
-                /* Lazy IR declaration is present but wraps a special "not found" class descriptor. */
-                lazyIrClass.descriptor is NotFoundClasses.MockClassDescriptor
-                        /* The outermost class containing the lazy IR declaration is private, which normally should not happen
-                         * because the declaration is exported from the module. */
-                        || lazyIrClass.isEffectivelyMissingLazyIrDeclaration()
-
-            if (isEffectivelyMissingClassifier) return registerUnusable(MissingClassifier(this))
         }
 
         if (!visitedSymbols.add(this)) {

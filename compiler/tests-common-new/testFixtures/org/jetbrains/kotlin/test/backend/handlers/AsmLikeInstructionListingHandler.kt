@@ -31,7 +31,10 @@ import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceFieldVisitor
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 
-class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+class AsmLikeInstructionListingHandler(
+    testServices: TestServices,
+    private val renderAllMethodBodies: Boolean = false,
+) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         const val DUMP_EXTENSION = "asm.txt"
         const val INLINE_SCOPES_DUMP_EXTENSION = "asm.scopes.txt"
@@ -133,7 +136,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         }
 
         methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
-            val showBytecode = showBytecodeForTheseMethods.contains(it.name)
+            val showBytecode = renderAllMethodBodies || showBytecodeForTheseMethods.contains(it.name)
             renderMethod(it, showBytecode, showLocalVariables, renderAnnotations).withMargin()
         }
 

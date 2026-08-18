@@ -50,48 +50,53 @@ digraph initBlock_kt {
 
     subgraph cluster_5 {
         color=red
-        14 [label="Enter class Bar" style="filled" fillcolor=red];
-        subgraph cluster_6 {
-            color=blue
-            15 [label="Enter function <init>" style="filled" fillcolor=red];
-            16 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            17 [label="Exit function <init>" style="filled" fillcolor=red];
-        }
-        subgraph cluster_7 {
-            color=blue
-            18 [label="Enter init block" style="filled" fillcolor=red];
-            subgraph cluster_8 {
-                color=blue
-                19 [label="Enter block"];
-                20 [label="Enter variable declaration: lval x: R|kotlin/Int|"];
-                21 [label="Const: Int(1)"];
-                22 [label="Exit variable declaration: lval x: R|kotlin/Int|"];
-                subgraph cluster_9 {
-                    color=blue
-                    23 [label="Function call arguments enter"];
-                    24 [label="Function call arguments exit"];
-                }
-                25 [label="Function call enter: R|java/lang/Exception.Exception|()"];
-                26 [label="Function call exit: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                27 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                28 [label="Stub" style="filled" fillcolor=gray];
-                29 [label="Enter variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
-                30 [label="Const: Int(2)" style="filled" fillcolor=gray];
-                31 [label="Exit variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
-                32 [label="Exit block" style="filled" fillcolor=gray];
-            }
-            33 [label="Exit init block" style="filled" fillcolor=gray];
-        }
-        34 [label="Exit class Bar" style="filled" fillcolor=gray];
+        14 [label="Enter static <static of Foo>" style="filled" fillcolor=red];
+        15 [label="Exit static <static of Foo>" style="filled" fillcolor=red];
     }
     14 -> {15} [color=green];
-    14 -> {34} [style=dotted];
-    14 -> {15 18} [style=dashed];
-    15 -> {16};
-    16 -> {17};
-    17 -> {18} [color=green];
+
+    subgraph cluster_6 {
+        color=red
+        16 [label="Enter class Bar" style="filled" fillcolor=red];
+        subgraph cluster_7 {
+            color=blue
+            17 [label="Enter function <init>" style="filled" fillcolor=red];
+            18 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            19 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        subgraph cluster_8 {
+            color=blue
+            20 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_9 {
+                color=blue
+                21 [label="Enter block"];
+                22 [label="Enter variable declaration: lval x: R|kotlin/Int|"];
+                23 [label="Const: Int(1)"];
+                24 [label="Exit variable declaration: lval x: R|kotlin/Int|"];
+                subgraph cluster_10 {
+                    color=blue
+                    25 [label="Function call arguments enter"];
+                    26 [label="Function call arguments exit"];
+                }
+                27 [label="Function call enter: R|java/lang/Exception.Exception|()"];
+                28 [label="Function call exit: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                29 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                30 [label="Stub" style="filled" fillcolor=gray];
+                31 [label="Enter variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
+                32 [label="Const: Int(2)" style="filled" fillcolor=gray];
+                33 [label="Exit variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
+                34 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            35 [label="Exit init block" style="filled" fillcolor=gray];
+        }
+        36 [label="Exit class Bar" style="filled" fillcolor=gray];
+    }
+    16 -> {17} [color=green];
+    16 -> {36} [style=dotted];
+    16 -> {17 20} [style=dashed];
+    17 -> {18};
     18 -> {19};
-    19 -> {20};
+    19 -> {20} [color=green];
     20 -> {21};
     21 -> {22};
     22 -> {23};
@@ -99,12 +104,21 @@ digraph initBlock_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {28} [style=dotted];
-    28 -> {29} [style=dotted];
+    27 -> {28};
+    28 -> {29};
     29 -> {30} [style=dotted];
     30 -> {31} [style=dotted];
     31 -> {32} [style=dotted];
     32 -> {33} [style=dotted];
-    33 -> {34} [color=green style=dotted];
+    33 -> {34} [style=dotted];
+    34 -> {35} [style=dotted];
+    35 -> {36} [color=green style=dotted];
+
+    subgraph cluster_11 {
+        color=red
+        37 [label="Enter static <static of Bar>" style="filled" fillcolor=red];
+        38 [label="Exit static <static of Bar>" style="filled" fillcolor=red];
+    }
+    37 -> {38} [color=green];
 
 }

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationCom
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtensionBase
@@ -185,8 +184,7 @@ abstract class MetadataLegacySerializerPhaseBase(
                     serializeClasses(nestedClasses, classSerializer)
                 }
 
-                val file = session.firProvider.getFirClassifierContainerFileIfAny(klass.symbol)
-                val classProto = classSerializer.classProto(klass, file)
+                val classProto = classSerializer.classProto(klass)
                 proto.addClass_(classProto.build())
             }
         }

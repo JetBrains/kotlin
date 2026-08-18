@@ -69,7 +69,9 @@ internal fun forAllMatchingFilesInDirectory(baseDir: File, namePattern: String, 
     if (patternStart < 0) {
         // assuming a single file
         baseDir.resolve(namePattern).takeIf { it.exists() && it.isFile }?.let { file ->
-            body(file.relativeToOrSelf(baseDir).path.toUniversalSeparator(), file.inputStream())
+            file.inputStream().use { stream ->
+                body(file.relativeToOrSelf(baseDir).path.toUniversalSeparator(), stream)
+            }
         }
     } else {
         val patternDirStart = namePattern.lastIndexOfAny(pathSeparatorChars, patternStart)
@@ -79,7 +81,9 @@ internal fun forAllMatchingFilesInDirectory(baseDir: File, namePattern: String, 
             root.walkTopDown().filter {
                 re.matches(it.relativeToOrSelf(root).path)
             }.forEach { file ->
-                body(file.relativeToOrSelf(baseDir).path.toUniversalSeparator(), file.inputStream())
+                file.inputStream().use { stream ->
+                    body(file.relativeToOrSelf(baseDir).path.toUniversalSeparator(), stream)
+                }
             }
         }
     }

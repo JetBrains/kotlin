@@ -607,16 +607,21 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         version: GradleVersion,
     ) {
         // Bare template build script should not see KGP
-        project(bareTemplate, version) {
-            buildScriptInjection {
-                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+        // UnknownPluginException serialVersionUID has changed in Gradle 9.7 causing 'local class incompatible' error on older
+        // Gradle versions
+        if (version >= GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+            project(bareTemplate, version) {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                }
+                assertIsInstance<UnknownPluginException>(
+                    catchBuildFailures<UnknownPluginException>().buildAndReturn(
+                        "help",
+                    ).unwrap().single()
+                )
             }
-            assertIsInstance<UnknownPluginException>(
-                catchBuildFailures<UnknownPluginException>().buildAndReturn(
-                    "help",
-                ).unwrap().single()
-            )
         }
+
         // But if we inject KGP everything should work
         project(bareTemplate, version) {
             addKgpToBuildScriptCompilationClasspath()

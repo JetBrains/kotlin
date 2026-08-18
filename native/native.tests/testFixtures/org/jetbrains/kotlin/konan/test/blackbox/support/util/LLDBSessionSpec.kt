@@ -68,6 +68,35 @@ abstract class LLDBSessionSpec {
         private val IGNORED_LLDB_WARNINGS = listOf(
             "warning: could not execute support code to read Objective-C class data in the process.",
         )
+
+        fun replaceUnstableIds(lldbOutput: String): String {
+            val executablePathRegexp = Regex("""('\S+\.kexe' \(\S+\))|("\S+\.kexe")""")
+            val lldbScriptPath = Regex("""(\S+/konan_lldb.py)""")
+            val testHelperImportLine = Regex("""\(lldb\) command script import \S+/konan_lldb_test_helper\.py\r?\n""")
+            val processIdRegex = Regex("""Process \d+""")
+            val memoryAddressRegex = Regex("""0x[0-9a-fA-F]+""")
+            val valueId = Regex("""([^\s@]+)@[A-Za-z0-9]+""")
+            val nonKotlinFrames = Regex("""(.*frame #\d+: <frame pc>.*\.kexe`kfun:#main.*\n)(?:.*frame #\d+: <frame pc>.*\n)+""")
+            val breakpointOffset = Regex("""(Breakpoint .* \+ )\d+( at)""")
+            val inlineBreakpointOffset = Regex("""(\+ )\d+( \[inlined])""")
+            val angledInlineBreakpointOffset = Regex("""<\+\d+>( \[inlined])""")
+            val targetStoppedLine = Regex("""Target \d+: .* stopped\.\n""")
+            val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
+
+            return lldbOutput
+                .replace(executablePathRegexp, "<path to executable>")
+                .replace(lldbScriptPath, "<path to lldb script>")
+                .replace(testHelperImportLine, "")
+                .replace(processIdRegex, "Process <process id>")
+                .replace(memoryAddressRegex, "<memory address>")
+                .replace(valueId, "$1<value id>")
+                .replace(nonKotlinFrames, "$1")
+                .replace(inlineBreakpointOffset, "+ <breakpoint offset>$2")
+                .replace(angledInlineBreakpointOffset, "<breakpoint offset>$1")
+                .replace(breakpointOffset, "$1<breakpoint offset>$2")
+                .replace(targetStoppedLine, "")
+                .replace(setFormatLine, "")
+        }
     }
 }
 

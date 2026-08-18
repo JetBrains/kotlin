@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents a JavaScript catch clause.
@@ -80,7 +80,7 @@ public class JsCatch extends SourceInfoAwareJsNode {
         JsBlock bodyCopy = AstUtil.deepCopy(body);
         JsParameter paramCopy = AstUtil.deepCopy(param);
 
-        return new JsCatch(scopeCopy, bodyCopy, paramCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsCatch(scopeCopy, bodyCopy, paramCopy), this);
     }
 
     private JsCatch(JsCatchScope scope, JsBlock body, JsParameter param) {

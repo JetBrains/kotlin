@@ -1,3 +1,5 @@
+// WASM_IGNORE_FOR: os=windows mode=multi-module runner=org.jetbrains.kotlin.wasm.test.WasmJsCodegenCoroutinesStackSwitchingMultiModuleTestGenerated
+// ^^^ KT-88235
 // WITH_STDLIB
 // WITH_COROUTINES
 

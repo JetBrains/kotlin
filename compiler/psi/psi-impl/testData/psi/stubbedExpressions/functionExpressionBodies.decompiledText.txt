@@ -1,0 +1,31 @@
+FunctionExpressionBodiesKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public const val constant: kotlin.Int = 1
+
+  public fun int(): kotlin.Int { /* compiled code */ }
+
+  public fun string(): kotlin.String { /* compiled code */ }
+
+  public fun negative(): kotlin.Int { /* compiled code */ }
+
+  public fun reference(): kotlin.Int { /* compiled code */ }
+
+  public fun qualified(): kotlin.Int { /* compiled code */ }
+
+  public fun inferred(): kotlin.Int { /* compiled code */ }
+
+  public fun <T> generic(value: T): T { /* compiled code */ }
+
+WithMember.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final class WithMember public constructor() {
+      public final fun member(): kotlin.Int { /* compiled code */ }
+  }

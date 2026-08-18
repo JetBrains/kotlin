@@ -89,6 +89,16 @@ class Holder<T>(val xs: Array<T>) {
     fun headOrNull(): T? = if (xs.isNotEmpty()) xs[0] else null
 }
 
+class HolderConstrained<T: Any>(val xs: Array<T>)
+
+val Holder<String>.extProp: Int get() = TODO()
+
+val bar: Holder<String> get() = TODO()
+
+var baz: Holder<String>
+    get() = TODO()
+    set(value) = TODO()
+
 // Make sure arrays appear in both public signatures and bodies.
 fun takeAndReturn(a: Array<String>): Array<String> = a
 

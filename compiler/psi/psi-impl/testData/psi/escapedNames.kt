@@ -32,3 +32,8 @@ enum class `Enum Class` {
     @`Annotation Class`
     `Enum Entry`;
 }
+
+annotation class `Annotation Class With Arguments`(val `parameter name`: `Enum Class`)
+
+@`Annotation Class With Arguments`(`Enum Class`.`Enum Entry`)
+class `Annotated Class`

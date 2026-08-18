@@ -1,4 +1,101 @@
 FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:z visibility:public modality:FINAL [var]
+      FUN name:<get-z> visibility:public modality:FINAL returnType:T of <root>.A.<get-z>
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.C<T of <root>.A.<get-z>>
+        correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-z> <T> (<this>: <root>.C<T of <root>.A.<get-z>>): T of <root>.A.<get-z> declared in <root>.A'
+            CALL 'public final fun <get-x> (): T of <root>.C declared in <root>.C' type=T of <root>.A.<get-z> origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>(index:1): <root>.C<T of <root>.A.<get-z>> declared in <root>.A.<get-z>' type=<root>.C<T of <root>.A.<get-z>> origin=IMPLICIT_ARGUMENT
+      FUN name:<set-z> visibility:public modality:FINAL returnType:kotlin.Unit
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.C<T of <root>.A.<set-z>>
+        VALUE_PARAMETER kind:Regular name:v index:2 type:T of <root>.A.<set-z>
+        correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          CALL 'public final fun <set-x> (<set-?>: T of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+            ARG <this>: GET_VAR '<this>(index:1): <root>.C<T of <root>.A.<set-z>> declared in <root>.A.<set-z>' type=<root>.C<T of <root>.A.<set-z>> origin=IMPLICIT_ARGUMENT
+            ARG <set-?>: GET_VAR 'v: T of <root>.A.<set-z> declared in <root>.A.<set-z>' type=T of <root>.A.<set-z> origin=null
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    CLASS CLASS name:N modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B.N
+      CONSTRUCTOR visibility:public returnType:<root>.B.N [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:N modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      PROPERTY name:z visibility:public modality:FINAL [var]
+        FUN name:<get-z> visibility:public modality:FINAL returnType:T of <root>.B.N.<get-z>
+          TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B.N
+          VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.C<T of <root>.B.N.<get-z>>
+          correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [var]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-z> <T> (<this>: <root>.C<T of <root>.B.N.<get-z>>): T of <root>.B.N.<get-z> declared in <root>.B.N'
+              CALL 'public final fun <get-x> (): T of <root>.C declared in <root>.C' type=T of <root>.B.N.<get-z> origin=GET_PROPERTY
+                ARG <this>: GET_VAR '<this>(index:1): <root>.C<T of <root>.B.N.<get-z>> declared in <root>.B.N.<get-z>' type=<root>.C<T of <root>.B.N.<get-z>> origin=IMPLICIT_ARGUMENT
+        FUN name:<set-z> visibility:public modality:FINAL returnType:kotlin.Unit
+          TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B.N
+          VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.C<T of <root>.B.N.<set-z>>
+          VALUE_PARAMETER kind:Regular name:v index:2 type:T of <root>.B.N.<set-z>
+          correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [var]
+          BLOCK_BODY
+            CALL 'public final fun <set-x> (<set-?>: T of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+              ARG <this>: GET_VAR '<this>(index:1): <root>.C<T of <root>.B.N.<set-z>> declared in <root>.B.N.<set-z>' type=<root>.C<T of <root>.B.N.<set-z>> origin=IMPLICIT_ARGUMENT
+              ARG <set-?>: GET_VAR 'v: T of <root>.B.N.<set-z> declared in <root>.B.N.<set-z>' type=T of <root>.B.N.<set-z> origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C<T of <root>.C>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -39,6 +136,67 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Pair<X of <root>.Pair, Y of <root>.Pair>
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:x visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:X of <root>.Pair visibility:private
+        EXPRESSION_BODY
+          GET_VAR 'x: X of <root>.Pair declared in <root>.Pair.<init>' type=X of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:X of <root>.Pair
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<X of <root>.Pair, Y of <root>.Pair>
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): X of <root>.Pair declared in <root>.Pair'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:X of <root>.Pair visibility:private' type=X of <root>.Pair origin=null
+              receiver: GET_VAR '<this>: <root>.Pair<X of <root>.Pair, Y of <root>.Pair> declared in <root>.Pair.<get-x>' type=<root>.Pair<X of <root>.Pair, Y of <root>.Pair> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<X of <root>.Pair, Y of <root>.Pair>
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:X of <root>.Pair
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:X of <root>.Pair visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Pair<X of <root>.Pair, Y of <root>.Pair> declared in <root>.Pair.<set-x>' type=<root>.Pair<X of <root>.Pair, Y of <root>.Pair> origin=null
+            value: GET_VAR '<set-?>: X of <root>.Pair declared in <root>.Pair.<set-x>' type=X of <root>.Pair origin=null
+    PROPERTY name:y visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:y type:Y of <root>.Pair visibility:private
+        EXPRESSION_BODY
+          GET_VAR 'y: Y of <root>.Pair declared in <root>.Pair.<init>' type=Y of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL returnType:Y of <root>.Pair
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<X of <root>.Pair, Y of <root>.Pair>
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): Y of <root>.Pair declared in <root>.Pair'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:Y of <root>.Pair visibility:private' type=Y of <root>.Pair origin=null
+              receiver: GET_VAR '<this>: <root>.Pair<X of <root>.Pair, Y of <root>.Pair> declared in <root>.Pair.<get-y>' type=<root>.Pair<X of <root>.Pair, Y of <root>.Pair> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Pair<X of <root>.Pair, Y of <root>.Pair>
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:Y of <root>.Pair
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:Y of <root>.Pair visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Pair<X of <root>.Pair, Y of <root>.Pair> declared in <root>.Pair.<set-y>' type=<root>.Pair<X of <root>.Pair, Y of <root>.Pair> origin=null
+            value: GET_VAR '<set-?>: Y of <root>.Pair declared in <root>.Pair.<set-y>' type=Y of <root>.Pair origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Pair<X of <root>.Pair, Y of <root>.Pair> [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:X of <root>.Pair
+      VALUE_PARAMETER kind:Regular name:y index:1 type:Y of <root>.Pair
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Pair modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -47,6 +205,15 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
           ARG 1: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.C) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
             TYPE_ARG (of class) T: kotlin.String
             ARG x: CONST String type=kotlin.String value="abc"
+      CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG p: PROPERTY_REFERENCE 'public final first: X of <root>.<get-first> declared in <root>' field=null getter='public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>' setter='public final fun <set-first> <X, Y> (<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>, v: X of <root>.<set-first>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+          TYPE_ARG 1: kotlin.String
+          TYPE_ARG 2: kotlin.String
+          ARG 1: CONSTRUCTOR_CALL 'public constructor <init> (x: X of <root>.Pair, y: Y of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.String, kotlin.String> origin=null
+            TYPE_ARG (of class) X: kotlin.String
+            TYPE_ARG (of class) Y: kotlin.String
+            ARG x: CONST String type=kotlin.String value="abc"
+            ARG y: CONST String type=kotlin.String value="def"
   FUN name:test2 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -58,9 +225,39 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
           TYPE_ARG 1: kotlin.String
           ARG 1: TYPE_OP type=<root>.C<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.C<kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=<root>.Pair<kotlin.String, kotlin.String> origin=CAST typeOperand=<root>.Pair<kotlin.String, kotlin.String>
+          TYPE_OP type=<root>.C<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.C<kotlin.String>
+            GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+      CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG p: PROPERTY_REFERENCE 'public final first: X of <root>.<get-first> declared in <root>' field=null getter='public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>' setter='public final fun <set-first> <X, Y> (<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>, v: X of <root>.<set-first>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+          TYPE_ARG 1: kotlin.String
+          TYPE_ARG 2: kotlin.String
+          ARG 1: TYPE_OP type=<root>.Pair<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.Pair<kotlin.String, kotlin.String>
+            GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
   FUN name:use visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:p index:0 type:kotlin.reflect.KMutableProperty<kotlin.String>
     BLOCK_BODY
+  PROPERTY name:first visibility:public modality:FINAL [var]
+    FUN name:<get-first> visibility:public modality:FINAL returnType:X of <root>.<get-first>
+      TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>
+      correspondingProperty: PROPERTY name:first visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>'
+          CALL 'public final fun <get-x> (): X of <root>.Pair declared in <root>.Pair' type=X of <root>.<get-first> origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>> declared in <root>.<get-first>' type=<root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>> origin=IMPLICIT_ARGUMENT
+    FUN name:<set-first> visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>
+      VALUE_PARAMETER kind:Regular name:v index:1 type:X of <root>.<set-first>
+      correspondingProperty: PROPERTY name:first visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        CALL 'public final fun <set-x> (<set-?>: X of <root>.Pair): kotlin.Unit declared in <root>.Pair' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>> declared in <root>.<set-first>' type=<root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>> origin=IMPLICIT_ARGUMENT
+          ARG <set-?>: GET_VAR 'v: X of <root>.<set-first> declared in <root>.<set-first>' type=X of <root>.<set-first> origin=null
   PROPERTY name:y visibility:public modality:FINAL [var]
     FUN name:<get-y> visibility:public modality:FINAL returnType:T of <root>.<get-y>
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

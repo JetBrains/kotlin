@@ -92,7 +92,7 @@ private class OriginalProjectionTypeAttribute(val data: ConeTypeProjection) : Co
         return true
     }
 
-    override fun toString() = "OriginalProjectionTypeAttribute: $data"
+    override fun toString(): String = "OriginalProjectionTypeAttribute: $data"
 
     override val key: KClass<out OriginalProjectionTypeAttribute>
         get() = OriginalProjectionTypeAttribute::class

@@ -4,7 +4,8 @@ Ann.class:
 
   package test
 
-  @kotlin.annotation.Target public final annotation class Ann public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPEALIAS])
+  public final annotation class Ann public constructor() : kotlin.Annotation {
   }
 
 DependencyKt.class:
@@ -59,7 +60,8 @@ TypeAliases.class:
 
       public typealias B = (dependency.A) -> kotlin.Unit
 
-      @test.Ann private typealias Parametrized<E, F> = kotlin.collections.Map<E, F>
+      @test.Ann
+      private typealias Parametrized<E, F> = kotlin.collections.Map<E, F>
   }
 
 TypeAliasesKt.class:

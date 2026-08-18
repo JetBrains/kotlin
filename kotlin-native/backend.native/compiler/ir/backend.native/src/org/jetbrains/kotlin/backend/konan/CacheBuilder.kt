@@ -72,7 +72,11 @@ class CacheBuilder(
             && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
+    // Note: The order of libraries is not important here.
     private val allLibraries by lazy { config.resolvedLibraries.getFullList() }
+
+    // Note: It's not totally clear, but likely the libraries in `uniqueNameToLibrary` should be in the reverse topo-order.
+    // TODO(KT-61096): Use RTO of libraries here after switching to KlibLoader.
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
@@ -156,6 +160,8 @@ class CacheBuilder(
         val icedLibraries = mutableListOf<KotlinLibrary>()
         val lastRebuiltArchives = mutableListOf<Path>()
 
+        // Note: The libraries should be in the reverse topo-order here!
+        // TODO(KT-61096): Use RTO of libraries here after switching to KlibLoader.
         allLibraries.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
             if (config.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
@@ -560,7 +566,7 @@ class CacheBuilder(
             konanLibraryToAddToCache = libraryPath
             konanNoDefaultLibs = true
             konanNoStdlib = true
-            konanLibraries = libraries
+            konanLibraries = libraries + libraryPath
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
                 konanFriendLibraries = config.friendModuleFiles.map { it.absolutePathString() }

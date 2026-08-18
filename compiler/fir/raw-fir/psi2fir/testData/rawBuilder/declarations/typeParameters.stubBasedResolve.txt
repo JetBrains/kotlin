@@ -18,7 +18,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameters.kt
             super<R|AbstractList<kotlin/Int>|>()
         }
 
-        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun get([ResolvedTo(ANNOTATION_ARGUMENTS)] index: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: R|kotlin/Int|): R|kotlin/Int| {
+            ^get Int(42)
+        }
 
         public open override infix [ResolvedTo(ANNOTATION_ARGUMENTS)] fun concat([ResolvedTo(ANNOTATION_ARGUMENTS)] other: R|List<kotlin/Int>|): R|List<kotlin/Int>| { LAZY_BLOCK }
 

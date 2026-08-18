@@ -5,55 +5,52 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
-import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedWarningGradleProperties
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PluginLoadedInMultipleProjectsError
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.test.assertEquals
 
 @DisplayName("Different Gradle classloaders warning")
 @MppGradlePluginTests
 class DifferentClassloadersIT : KGPBaseTest() {
 
-    @DisplayName("Different classloaders message is not displayed")
+    @DisplayName("Different classloaders error is not thrown")
     @GradleTest
-    fun testDifferentClassloadersNotDisplayed(gradleVersion: GradleVersion) {
+    fun testDifferentClassloadersNotThrown(gradleVersion: GradleVersion) {
         project(
             "differentClassloaders",
             gradleVersion,
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("publish", "-PmppProjectDependency=true") {
-                assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-                assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
+                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
             }
         }
     }
 
-    @DisplayName("Different classloader message is displayed on different plugin versions")
+    @DisplayName("Different classloader error is thrown on different plugin versions")
     @GradleTest
-    fun testDetectingDifferentClassLoaders(gradleVersion: GradleVersion) {
+    fun testDetectingDifferentClassLoadersError(gradleVersion: GradleVersion) {
         project(
             "differentClassloaders",
             gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             setupDifferentClassloadersProject()
 
             // after enabling isolated projects support by default we should not fail the build
-            build("publish", "-PmppProjectDependency=true") {
-                assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            buildAndFail("publish", "-PmppProjectDependency=true") {
+                assertHasPluginLoadedInMultipleProjectsErrorDiagnostics()
             }
         }
     }
 
-    @DisplayName("KT-50598: Different classloaders message can be disabled")
+    @DisplayName("KT-50598: Different classloaders error can be disabled")
     @GradleTest
-    fun differentClassloadersWarningCanBeDisabled(gradleVersion: GradleVersion) {
+    fun differentClassloadersErrorCanBeDisabled(gradleVersion: GradleVersion) {
         project(
             "differentClassloaders",
             gradleVersion,
@@ -62,26 +59,42 @@ class DifferentClassloadersIT : KGPBaseTest() {
         ) {
             setupDifferentClassloadersProject()
 
-            fun checkThatWarningIsShown() {
+            fun checkThatErrorIsThrown() {
                 build("-PmppProjectDependency=true") {
-                    assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-
-                    val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
-                        .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
-
-                    assertEquals(setOf(":mpp-lib", ":jvm-app"), specificProjectsReported)
+                    assertHasPluginLoadedInMultipleProjectsErrorDiagnostics()
                 }
             }
 
-            checkThatWarningIsShown()
+            checkThatErrorIsThrown()
 
-            // check that the message is also printed on subsequent builds
-            checkThatWarningIsShown()
+            // check that the error is also thrown on subsequent builds
+            checkThatErrorIsThrown()
 
             // Test the flag that turns off the warnings
             build("-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true") {
-                assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-                assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
+                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
+                assertHasDiagnostic(
+                    DeprecatedWarningGradleProperties,
+                    withSubstring = "kotlin.pluginLoadedInMultipleProjects.ignore",
+                )
+            }
+        }
+    }
+
+    // Included builds have their own classpaths, completely independent of the main build,
+    // so multiple plugin detection between main build and included builds is not possible.
+    @DisplayName("Different classloader detection does not reach into included builds")
+    @GradleTest
+    fun noDetectionInIncludedBuilds(gradleVersion: GradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            setupIncludedBuild()
+
+            build("publish", "-PmppProjectDependency=true") {
+                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
             }
         }
     }
@@ -98,17 +111,38 @@ class DifferentClassloadersIT : KGPBaseTest() {
                 "id \"org.jetbrains.kotlin.multiplatform\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
+        subProject("mpp-lib-two").buildGradle.modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.multiplatform\"",
+                "id \"org.jetbrains.kotlin.multiplatform\" version \"${TestVersions.Kotlin.CURRENT}\""
+            )
+        }
         subProject("jvm-app").buildGradle.modify {
             it.checkedReplace(
                 "id \"org.jetbrains.kotlin.jvm\"",
                 "id \"org.jetbrains.kotlin.jvm\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
+    }
 
-        // Also include another project via a composite build:
-        includeOtherProjectAsIncludedBuild("allopenPluginsDsl", "pluginsDsl")
+    private fun TestProject.setupIncludedBuild() {
+        includeOtherProjectAsIncludedBuild("allopenPluginsDsl", "pluginsDsl") {
+            buildGradle.modify {
+                it.checkedReplace(
+                    "id 'org.jetbrains.kotlin.jvm'",
+                    "id 'org.jetbrains.kotlin.jvm' version \"${TestVersions.Kotlin.CURRENT}\""
+                )
+            }
+        }
         buildGradle.appendText(
             "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"allopenPluginsDsl\").task(\":assemble\"))"
+        )
+    }
+
+    private fun BuildResult.assertHasPluginLoadedInMultipleProjectsErrorDiagnostics() {
+        assertHasDiagnostic(
+            PluginLoadedInMultipleProjectsError,
+            withSubstring = "- ':jvm-app', ':mpp-lib', ':mpp-lib-two' (version ${TestVersions.Kotlin.CURRENT})\n"
         )
     }
 }

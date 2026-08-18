@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
+
 package org.jetbrains.kotlin.utils.addToStdlib
 
 import org.jetbrains.kotlin.utils.IDEAPlatforms
@@ -12,6 +14,10 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.AbstractMap
 import kotlin.collections.AbstractSet
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.ExperimentalExtendedContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.reflect.KMutableProperty0
 
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
@@ -244,10 +250,29 @@ inline fun <T, R> Iterable<T>.same(extractor: (T) -> R): Boolean {
     return true
 }
 
-inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null
-inline fun <R> runUnless(condition: Boolean, block: () -> R): R? = if (condition) null else block()
+inline fun <R> runIf(condition: Boolean, block: () -> R): R? {
+    contract {
+        condition.holdsIn(block)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (condition) block() else null
+}
 
-inline fun <A : B, B> A.butIf(condition: Boolean, block: (A) -> B): B = if (condition) block(this) else this
+inline fun <R> runUnless(condition: Boolean, block: () -> R): R? {
+    contract {
+        (!condition).holdsIn(block)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (condition) null else block()
+}
+
+inline fun <A : B, B> A.butIf(condition: Boolean, block: (A) -> B): B {
+    contract {
+        condition.holdsIn(block)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (condition) block(this) else this
+}
 
 inline fun <T, R> Collection<T>.foldMap(transform: (T) -> R, operation: (R, R) -> R): R {
     val iterator = iterator()
@@ -288,15 +313,30 @@ fun <K, V> Map<K, V>.compactIfPossible(): Map<K, V> =
         else -> this
     }
 
-inline fun <T, R : T> R.applyIf(`if`: Boolean, body: R.() -> T): T =
-    if (`if`) body() else this
+inline fun <T, R : T> R.applyIf(`if`: Boolean, body: R.() -> T): T {
+    contract {
+        `if`.holdsIn(body)
+        callsInPlace(body, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (`if`) body() else this
+}
 
 
-inline fun <T> Boolean.ifTrue(body: () -> T?): T? =
-    if (this) body() else null
+inline fun <T> Boolean.ifTrue(body: () -> T?): T? {
+    contract {
+        this@ifTrue.holdsIn(body)
+        callsInPlace(body, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (this) body() else null
+}
 
-inline fun <T> Boolean.ifFalse(body: () -> T?): T? =
-    if (!this) body() else null
+inline fun <T> Boolean.ifFalse(body: () -> T?): T? {
+    contract {
+        (!this@ifFalse).holdsIn(body)
+        callsInPlace(body, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (!this) body() else null
+}
 
 inline fun <T, K> List<T>.flatGroupBy(keySelector: (T) -> Collection<K>): Map<K, List<T>> {
     return flatGroupBy(keySelector, keyTransformer = { it }, valueTransformer = { it })

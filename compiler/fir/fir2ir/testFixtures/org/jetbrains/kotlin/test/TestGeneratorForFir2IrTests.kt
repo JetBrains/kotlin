@@ -14,46 +14,45 @@ import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrSourceRange
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrTextTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
     val testRoot = args[0]
-    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
-    val k1BoxTestDir = listOf("multiplatform/k1")
-    val k2BoxTestDir = listOf("multiplatform/k2")
-    val excludedScriptDirs = listOf("script")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testRoot, testDataRoot = "compiler/testData/codegen") {
-            testClass<AbstractFirPsiCustomScriptCodegenTest> {
-                model("customScript", pattern = "^(.*)$")
-            }
-            testClass<AbstractFirLightTreeCustomScriptCodegenTest> {
-                model("customScript", pattern = "^(.*)$")
-            }
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
-                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
-                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("box")
+                model("boxJvm")
             }
 
-            testClass<AbstractValhallaBlackBoxSmokeTest> {
-                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
-                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            testClass<AbstractValhallaPrimitivesBlackBoxSmokeTest> {
+                model("box")
+                model("boxJvm")
+            }
+
+            testClass<AbstractValhallaPrimitivesAndFullValueClassesBlackBoxSmokeTest> {
+                model("box")
+                model("boxJvm")
+            }
+
+            testClass<AbstractValhallaAllValuesBlackBoxSmokeTest> {
+                model("box")
+                model("boxJvm")
             }
 
             testClass<AbstractFirLightTreeHeaderModeCodegenTest> {
-                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
-                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("box")
+                model("boxJvm")
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxJvm", excludeDirs = k1BoxTestDir)
+                model("box")
+                model("boxJvm")
             }
             testClass<AbstractJvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
-                model("box/${k2BoxTestDir.first()}")
-                model("boxJvm/${k2BoxTestDir.first()}")
+                model("box/multiplatform/k2")
+                model("boxJvm/multiplatform/k2")
             }
 
             testClass<AbstractReflectionLegacyImplementationTest> {
@@ -83,14 +82,6 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
-            }
-
-            testClass<AbstractComposeLikeFirLightTreeBlackBoxCodegenTest> {
-                model("codegen/composeLike")
-            }
-
-            testClass<AbstractComposeLikeFirLightTreeBytecodeTextTest> {
-                model("codegen/composeLikeBytecodeText")
             }
 
             testClass<AbstractFirLightTreeSteppingTest> {
@@ -127,10 +118,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirLightTreeAsmLikeInstructionListingTest> {
                 model("codegen/asmLike")
-            }
-
-            testClass<AbstractFirScriptCodegenTest> {
-                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractWriteSignatureTest> {
@@ -184,4 +171,3 @@ fun main(args: Array<String>) {
         }
     }
 }
-

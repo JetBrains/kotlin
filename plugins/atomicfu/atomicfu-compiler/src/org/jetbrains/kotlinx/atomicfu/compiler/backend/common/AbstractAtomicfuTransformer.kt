@@ -343,24 +343,47 @@ abstract class AbstractAtomicfuTransformer(
          * The following functions will be generated:
          * on JVM:
          * ```
-         * fun foo$atomicfu$AtomicFieldUpdater(atomicHandler: j.u.c.a.AtomicIntegerFieldUpdater, obj: Any?, arg: Int)
-         * fun foo$atomicfu$BoxedAtomic(atomicHandler: j.u.c.a.AtomicInteger, arg: Int)
-         * fun foo$atomicfu$AtomicArray(atomicHandler: j.u.c.a.AtomicIntegerArray, index: Int, arg: Int)
+         * fun foo$atomicfu$AtomicFieldUpdater$Int(atomicHandler: j.u.c.a.AtomicIntegerFieldUpdater, obj: Any?, arg: Int)
+         * fun foo$atomicfu$BoxedAtomic$Int(atomicHandler: j.u.c.a.AtomicInteger, arg: Int)
+         * fun foo$atomicfu$AtomicArray$Int(atomicHandler: j.u.c.a.AtomicIntegerArray, index: Int, arg: Int)
          * ```
          * On Native:
          * ```
-         * fun foo$atomicfu$PropRef(atomicHandler: () -> KMutableProperty<Int>, arg: Int)
-         * fun foo$atomicfu$AtomicArray(atomicHandler: kotlin.concurrent.AtomicIntArray, index: Int, arg: Int)
+         * fun foo$atomicfu$PropRef$Int(atomicHandler: () -> KMutableProperty<Int>, arg: Int)
+         * fun foo$atomicfu$AtomicArray$Int(atomicHandler: kotlin.concurrent.AtomicIntArray, index: Int, arg: Int)
          * ```
+         *
+         * This function also transforms getters and setters for inline extension properties.
+         * In this case, function names like `<get-bar>` and `<set-bar>` are mangled to
+         * `getBar$atomicfu$HANDLER_NAME$TYPE` and `setBar$atomicfu$HANDLER_NAME$TYPE`.
          */
         private fun IrDeclarationContainer.transformAllAtomicExtensions() {
-            declarations.filter { it is IrFunction && it.isAtomicExtension() }.forEach { atomicExtension ->
-                atomicExtension as IrFunction
-                declarations.addAll(transformedExtensionsForAllAtomicHandlers(atomicExtension))
+            val atomicExtensions = declarations.filter { declaration ->
+                declaration is IrFunction && declaration.isAtomicExtension() ||
+                        declaration is IrProperty && declaration.hasAtomicAccessors()
+            }
+            atomicExtensions.forEach { atomicExtension ->
+                when (atomicExtension) {
+                    is IrFunction -> {
+                        declarations.addAll(transformedExtensionsForAllAtomicHandlers(atomicExtension))
+                    }
+                    is IrProperty -> {
+                        declarations.addAll(atomicExtension.atomicAccessors().flatMap {
+                            transformedExtensionsForAllAtomicHandlers(it)
+                        })
+                    }
+                    else -> error("Unexpected atomic extension declaration: ${atomicExtension.render()}")
+                }
                 // the original atomic extension is removed
                 declarations.remove(atomicExtension)
             }
         }
+
+        private fun IrProperty.hasAtomicAccessors(): Boolean =
+            getter?.isAtomicExtension() == true || setter?.isAtomicExtension() == true
+
+        private fun IrProperty.atomicAccessors(): List<IrSimpleFunction> =
+            listOfNotNull(getter, setter).filter { it.isAtomicExtension() }
 
         abstract fun transformedExtensionsForAllAtomicHandlers(atomicExtension: IrFunction): List<IrSimpleFunction>
 
@@ -912,8 +935,16 @@ abstract class AbstractAtomicfuTransformer(
         symbol.owner.correspondingPropertySymbol?.owner
             ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol" + CONSTRAINTS_MESSAGE)
 
-    private fun mangleAtomicExtension(name: String, atomicHandlerType: AtomicHandlerType, valueType: IrType) =
-        name + "$" + ATOMICFU + "$" + atomicHandlerType + "$" + if (valueType.isPrimitiveType()) valueType.classFqName?.shortName() else "Any"
+    private fun mangleAtomicExtension(name: String, atomicHandlerType: AtomicHandlerType, valueType: IrType): String {
+        val normalizedName = if ((name.startsWith("<get-") || name.startsWith("<set-")) && name.endsWith('>')) {
+            val prefix = name.substring(1, 4) // get | set
+            val suffix = name.substring(5, name.length - 1)
+            prefix + suffix.replaceFirstChar { it.uppercase() }
+        } else {
+            name
+        }
+        return normalizedName + "$" + ATOMICFU + "$" + atomicHandlerType + "$" + if (valueType.isPrimitiveType()) valueType.classFqName?.shortName() else "Any"
+    }
 
     internal fun IrValueParameter.capture(): IrGetValue = IrGetValueImpl(startOffset, endOffset, symbol.owner.type, symbol)
 }

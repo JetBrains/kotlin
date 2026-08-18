@@ -85,3 +85,23 @@ private class BooleanFlagToModifier(
 ) : FlagsToModifiers() {
     override fun getModifiers(flags: Int): KtModifierKeywordToken? = if (flagField.get(flags)) ktModifierKeywordToken else null
 }
+
+internal fun propertyFlagsToTranslate(
+    isVar: Boolean,
+    isTopLevel: Boolean,
+    isConst: Boolean,
+): List<FlagsToModifiers> = buildList {
+    add(VISIBILITY)
+    add(LATEINIT)
+    add(EXTERNAL_PROPERTY)
+    add(EXPECT_PROPERTY)
+    if (!isVar) {
+        add(CONST)
+    }
+
+    if (isTopLevel) {
+        add(STATIC_PROPERTY)
+    } else if (!isConst) {
+        add(MODALITY)
+    }
+}

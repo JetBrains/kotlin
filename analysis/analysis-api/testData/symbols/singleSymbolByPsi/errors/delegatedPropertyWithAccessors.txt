@@ -79,6 +79,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getLazyProp
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -231,6 +232,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setLazyProp
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -238,7 +240,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getLazyProp
-  javaSetterName: setLazyProp
   isInline: false
   importableFqName: lazyProp

@@ -76,8 +76,15 @@ class PackageFacadeKotlinClassSnapshot(
     override val classId: ClassId,
     override val classAbiHash: Long,
     override val classMemberLevelSnapshot: KotlinClassInfo?,
-    val packageMemberNames: Set<String>
+    val packageMemberNames: Set<String>,
+    val typeAliases: List<TypeAliasSnapshot>?
 ) : KotlinClassSnapshot()
+
+/** Snapshot of a Kotlin type alias: its own [ClassId] and the [ClassId] of the class it expands to. */
+data class TypeAliasSnapshot(
+    val aliasClassId: ClassId,
+    val expandedClassId: ClassId
+)
 
 /**
  * [KotlinClassSnapshot] where class kind == [MULTIFILE_CLASS].

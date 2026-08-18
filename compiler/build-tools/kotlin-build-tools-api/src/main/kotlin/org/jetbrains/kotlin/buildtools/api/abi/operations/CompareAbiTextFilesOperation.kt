@@ -12,7 +12,7 @@ import java.nio.file.Path
 /**
  * Compares two files line-by-line and writes the comparison result into the [Appendable] provided via [org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain.compareAbiTextFilesOperationBuilder].
  *
- * If files are equal, nothing is written to diff.
+ * If the contents of the files are the same, nothing is written to the diff.
  *
  * @since 2.4.0
  */

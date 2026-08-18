@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
 class KotlinScriptStubImpl(
     parent: StubElement<*>?,
     private val fqNameRef: StringRef,
     override val isReplSnippet: Boolean,
-) : KotlinStubBaseImpl<KtScript>(parent, KtStubElementTypes.SCRIPT), KotlinScriptStub {
+) : KotlinStubBaseImpl<KtScript>(parent, KtNodeTypes.SCRIPT), KotlinScriptStub {
     override fun getName(): String = fqName.shortName().asString()
     override val fqName: FqName get() = FqName(fqNameRef.string)
 

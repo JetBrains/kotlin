@@ -21,7 +21,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testImplementation(projectTests(":kotlin-scripting-compiler"))
+    testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(project(":kotlin-scripting-common"))
     testImplementation(project(":kotlin-scripting-jvm"))
     testRuntimeOnly(project(":kotlin-scripting-compiler"))

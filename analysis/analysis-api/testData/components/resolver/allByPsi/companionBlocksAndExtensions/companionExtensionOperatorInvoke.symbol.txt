@@ -7,6 +7,7 @@ KtPackageDirective(51,63): 'package test'
 KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -39,6 +40,7 @@ KtUserType(97,98): 'C'
 KtNameReferenceExpression(97,98): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -68,6 +70,7 @@ KtCallExpression(130,133): 'C()'
 KtNameReferenceExpression(130,131): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -85,6 +88,7 @@ KtDotQualifiedExpression(138,148): 'C.invoke()'
 KtNameReferenceExpression(138,139): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -99,6 +103,7 @@ KtCallExpression(140,148): 'invoke()'
 KtNameReferenceExpression(140,146): 'invoke'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit

@@ -2,7 +2,8 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @test.Simple public final class Negative public constructor() {
+  @test.Simple(i = -1)
+  public final class Negative public constructor() {
   }
 
 0_test.knm:
@@ -11,40 +12,44 @@
 
   package test
 
-  public final annotation class Simple public constructor(i: kotlin.Int) : kotlin.Annotation {
+  public final annotation class Simple public constructor(
+      public final val i: kotlin.Int,
+  ) : kotlin.Annotation {
       public companion object {
-          public const val CONST1: kotlin.Int = COMPILED_CODE /* compiled code */
+          public const val CONST1: kotlin.Int = 1
 
-          public const val CONST2: kotlin.Int = COMPILED_CODE /* compiled code */
+          public const val CONST2: kotlin.Int = 2
       }
-
-      public final val i: kotlin.Int /* compiled code */
   }
 
 1_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @test.Simple public final class Negative2 public constructor() {
+  @test.Simple(i = -1)
+  public final class Negative2 public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @test.Simple public final class Positive public constructor() {
+  @test.Simple(i = 1)
+  public final class Positive public constructor() {
   }
 
 3_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @test.Simple public final class Qualified public constructor() {
+  @test.Simple(i = 1)
+  public final class Qualified public constructor() {
   }
 
 4_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @test.Simple public final class Sum public constructor() {
+  @test.Simple(i = 3)
+  public final class Sum public constructor() {
   }

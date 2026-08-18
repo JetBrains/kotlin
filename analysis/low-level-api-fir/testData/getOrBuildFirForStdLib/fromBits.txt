@@ -1,4 +1,8 @@
 KT element: KtNamedFunction
+KT element text:
+@kotlin.SinceKotlin(version = "1.2")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Double.Companion.fromBits(bits: kotlin.Long): kotlin.Double { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 

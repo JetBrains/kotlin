@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -76,7 +76,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     // TODO: this doesn't support stret.
     fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable =
-            LlvmCallable(objcMsgSend.llvm, functionType)
+            LlvmFunction.Declaration(objcMsgSend.llvm, functionType)
 }
 
 internal const val OBJC_RETAIN_AUTORELEASED_RETURN_VALUE = "llvm.objc.retainAutoreleasedReturnValue"

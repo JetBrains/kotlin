@@ -141,9 +141,27 @@ public class FirIdeNormalAnalysisSourceLikeModuleMemberScopeTestGenerated extend
   }
 
   @Test
+  @TestMetadata("jvmNameCommon.kt")
+  public void testJvmNameCommon() {
+    run("jvmNameCommon.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmNameJvm.kt")
+  public void testJvmNameJvm() {
+    run("jvmNameJvm.kt");
+  }
+
+  @Test
   @TestMetadata("kotlin.Function2.kt")
   public void testKotlin_Function2() {
     run("kotlin.Function2.kt");
+  }
+
+  @Test
+  @TestMetadata("Metadata.kt")
+  public void testMetadata() {
+    run("Metadata.kt");
   }
 
   @Test

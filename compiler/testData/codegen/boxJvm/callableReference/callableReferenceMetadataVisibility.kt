@@ -35,6 +35,11 @@ private fun syntheticClassVisibility(javaClass: Class<*>): Int {
 private fun isPublicAbi(javaClass: Class<*>): Boolean =
     metadataExtraInt(javaClass) and PUBLIC_ABI_FLAG != 0
 
+private inline fun privateFooInline(): Class<*> {
+    val callableReferenceInInline = ::foo
+    return callableReferenceInInline::class.java
+}
+
 fun box(): String {
     val callableReference = ::foo
 
@@ -43,7 +48,7 @@ fun box(): String {
         return "Fail: expected LOCAL visibility (5) for non-escaped callable reference, got $visibility"
     }
     if (isPublicAbi(callableReference::class.java)) {
-        return "Fail: expected non-escaped callable reference to not be public ABI"
+        return "Fail: expected non-escaped callable reference to NOT be public ABI"
     }
 
     visibility = syntheticClassVisibility(fooInline())
@@ -53,6 +58,15 @@ fun box(): String {
     if (!isPublicAbi(fooInline())) {
         return "Fail: expected escaped callable reference to be public ABI"
     }
+
+    visibility = syntheticClassVisibility(privateFooInline())
+    if (visibility != LOCAL_VISIBILITY) { // Callable Refs are still promoted to PUBLIC
+        return "Fail: expected LOCAL visibility (5) for non-escaped callable reference in private inline function, got $visibility"
+    }
+    if (isPublicAbi(privateFooInline())) {
+        return "Fail: expected non-escaped (private inline function) callable reference to NOT be public ABI"
+    }
+
 
     return callableReference()
 }

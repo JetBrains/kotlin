@@ -3,12 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
 @file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -102,7 +100,7 @@ class KotlinJsIrCompilationTest {
         }
 
         fun assertHasSharedNpmToolingDir(targetName: String, expected: Boolean) {
-            val target = project.multiplatformExtension.targets.getByName<KotlinJsIrTarget>(targetName)
+            val target = project.multiplatformExtension.targets.getByName(targetName) as KotlinJsIrTarget
             val compilations = target.compilations
             assertAll(
                 compilations.map { compilation ->

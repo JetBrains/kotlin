@@ -2,14 +2,14 @@ public abstract interface Test /* Test*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Test.Companion Companion;
 
-  public static final int y;
+  public static final int y = 2 /* initializer type: int */ /* constant value 2 */;
 
   public abstract void bar();//  bar()
 
   public static final class Companion /* Test.Companion*/ {
     private static final int x;
 
-    public static final int y;
+    public static final int y = 2 /* initializer type: int */ /* constant value 2 */;
 
     private  Companion();//  .ctor()
 

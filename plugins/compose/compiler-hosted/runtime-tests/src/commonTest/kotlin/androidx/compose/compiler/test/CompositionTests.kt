@@ -554,6 +554,19 @@ class CompositionTests {
         advance()
         assertEquals(true, result.value)
     }
+
+    /**
+     * This is a regression test against a bug that caused miscompilation of cross-module calls to
+     * getters and setters. For more details, see https://issuetracker.google.com/issues/537617330.
+     */
+    @Test
+    @OptIn(InternalComposeApi::class)
+    fun testComposableTypeRemappingOfExternalGetter() = compositionTest {
+        compose {
+            val movableContent = MovableContent<Unit> {}
+            movableContent.content
+        }
+    }
 }
 
 @Composable

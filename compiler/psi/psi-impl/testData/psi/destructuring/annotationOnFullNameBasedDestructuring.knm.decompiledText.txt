@@ -17,6 +17,7 @@ public final data class Box public constructor(first: kotlin.String) {
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-public final annotation class Ann public constructor(x: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-    public final val x: kotlin.String /* compiled code */
+public final annotation class Ann public constructor(
+    public final val x: kotlin.String = "",
+) : kotlin.Annotation {
 }

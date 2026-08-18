@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.addBoundValueAtOverride
 import org.jetbrains.kotlin.backend.common.customNameInReflection
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irFlag
@@ -99,51 +97,11 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
 
     override fun generateExtraMethods(functionReferenceClass: IrClass, reference: IrRichFunctionReference) {
         if (reference.reflectionTargetSymbol == null) return
-        fun addOverrideInner(name: String, value: IrBuilderWithScope.(IrFunction) -> IrExpression) {
-            val overridden = functionReferenceClass.superTypes.mapNotNull { superType ->
-                superType.getClass()
-                        ?.declarations
-                        ?.filterIsInstance<IrSimpleFunction>()
-                        ?.singleOrNull { it.name.asString() == name }
-                        ?.symbol
-            }
-            require(overridden.isNotEmpty())
-            val function = functionReferenceClass.addFunction {
-                startOffset = SYNTHETIC_OFFSET
-                endOffset = SYNTHETIC_OFFSET
-                this.name = Name.identifier(name)
-                modality = Modality.FINAL
-                returnType = overridden[0].owner.returnType
-            }
-            function.parameters += function.createDispatchReceiverParameterWithClassParent()
-            overridden[0].owner.parameters
-                    .filter { it.kind == IrParameterKind.Regular }
-                    .forEach { function.parameters += it.copyTo(function) }
-            function.overriddenSymbols += overridden
-            function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +irReturn(value(function))
-            }
-        }
 
         val fields = functionReferenceClass.fields.toList()
         if (fields.isEmpty()) return
 
-        addOverrideInner("boundValueAt") { function -> irBoundValueAt(function, fields) }
-    }
-
-    private fun IrBuilderWithScope.irBoundValueAt(function: IrFunction, fields: List<IrField>): IrExpression {
-        val dispatchReceiver = function.dispatchReceiverParameter!!
-        fun boundValue(field: IrField) = irGetField(irGet(dispatchReceiver), field)
-
-        if (fields.size == 1) {
-            return boundValue(fields[0])
-        }
-
-        val indexParameter = function.parameters.single { it.kind == IrParameterKind.Regular }
-        val branches = (0..<fields.lastIndex).map { index ->
-            irBranch(irEquals(irGet(indexParameter), irInt(index)), boundValue(fields[index]))
-        } + irElseBranch(boundValue(fields.last()))
-        return irWhen(context.irBuiltIns.anyNType, branches)
+        context.addBoundValueAtOverride(functionReferenceClass, fields)
     }
 
     private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {

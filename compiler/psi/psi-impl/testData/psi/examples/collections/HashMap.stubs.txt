@@ -15,6 +15,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
+        DOT_QUALIFIED_EXPRESSION
+          PARENTHESIZED
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=equals]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
   CLASS[classId=/IHashable, fqName=IHashable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IHashable, superNames=[IEquality]]
     MODIFIER_LIST[open]
     SUPER_TYPE_LIST
@@ -29,6 +35,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             REFERENCE_EXPRESSION[referencedName=Integer]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          DOT_QUALIFIED_EXPRESSION
+            PARENTHESIZED
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=hashCode]
+              VALUE_ARGUMENT_LIST
   CLASS[classId=/IMap, fqName=IMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IMap, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
@@ -102,6 +113,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=HashableWrapper]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=HashableWrapper]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
   CLASS[classId=/IHashingStrategy, fqName=IHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IHashingStrategy, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
@@ -161,6 +176,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=a]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=equals]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                REFERENCE_EXPRESSION[referencedName=b]
       FUN[fqName=DefaultHashingStrategy.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -171,6 +193,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Integer]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=a]
+          REFERENCE_EXPRESSION[referencedName=hashCode]
   CLASS[classId=/JavaObjectHashingStrategy, fqName=JavaObjectHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaObjectHashingStrategy, superNames=[IHashingStrategy]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
@@ -199,6 +224,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=hashable]
+              VALUE_ARGUMENT_LIST
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=equals]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                REFERENCE_EXPRESSION[referencedName=b]
       FUN[fqName=JavaObjectHashingStrategy.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -209,6 +245,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Integer]
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=hashable]
+              VALUE_ARGUMENT_LIST
+          REFERENCE_EXPRESSION[referencedName=hashCode]
   CLASS[classId=/HashMap, fqName=HashMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=HashMap, superNames=[IMap]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
@@ -241,6 +284,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=hashable]
+              VALUE_ARGUMENT_LIST
+          REFERENCE_EXPRESSION[referencedName=hashCode]
       FUN[fqName=HashMap.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[private]
           ANNOTATION
@@ -258,6 +308,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+        BINARY_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=hashable]
+              VALUE_ARGUMENT_LIST
+          OPERATION_REFERENCE[operationToken=EQEQ, referencedName===]
+          REFERENCE_EXPRESSION[referencedName=b]
   CLASS[classId=/StrategyHashMap, fqName=StrategyHashMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=StrategyHashMap, superNames=[IMap]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]

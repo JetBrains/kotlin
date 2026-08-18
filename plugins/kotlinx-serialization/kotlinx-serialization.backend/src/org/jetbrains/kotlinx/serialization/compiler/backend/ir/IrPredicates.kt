@@ -7,14 +7,11 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -70,9 +67,9 @@ internal val IrClass.isInternallySerializableObject: Boolean
     get() = kind == ClassKind.OBJECT && hasSerializableOrMetaAnnotationWithoutArgs()
 
 
-internal fun IrClass.findPluginGeneratedMethod(name: String, afterK2: Boolean): IrSimpleFunction? {
+internal fun IrClass.findPluginGeneratedMethod(name: String): IrSimpleFunction? {
     return this.functions.find {
-        it.name.asString() == name && it.isFromPlugin(afterK2)
+        it.name.asString() == name && it.isFromPlugin()
     }
 }
 
@@ -202,14 +199,8 @@ fun IrClass.getSuperClassNotAny(): IrClass? {
     return if (parentClass.defaultType.isAny()) null else parentClass
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-internal fun IrDeclaration.isFromPlugin(afterK2: Boolean): Boolean =
-    if (afterK2) {
-        this.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey)
-    } else {
-        // old FE doesn't specify custom origin
-        (this.descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
-    }
+internal fun IrDeclaration.isFromPlugin(): Boolean =
+    this.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey)
 
 internal fun IrConstructor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/

@@ -1,0 +1,72 @@
+public final class A : java/lang/Object {
+    public final static A INSTANCE
+
+    static void <clinit>() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    private void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final static java.lang.String access$funE$funF() {
+        LABEL (L0)
+        LINENUMBER (5)
+          INVOKESTATIC (A, funE$funF, ()Ljava/lang/String;)
+          ARETURN
+    }
+
+    public final java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funB() {
+        LABEL (L0)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L1)
+        LINENUMBER (11)
+          LDC (A.funB body)
+          ARETURN
+        LABEL (L2)
+    }
+
+    public final int funD() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funE() {
+        LABEL (L0)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L1)
+        LINENUMBER (30)
+          INVOKESTATIC (A, access$funE$funF, ()Ljava/lang/String;)
+          ARETURN
+        LABEL (L2)
+    }
+
+    private final static java.lang.String funE$funF() {
+        LABEL (L0)
+        LINENUMBER (29)
+          LDC (funF body)
+          ARETURN
+    }
+
+    public final boolean isNotNull(java.lang.Object value) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

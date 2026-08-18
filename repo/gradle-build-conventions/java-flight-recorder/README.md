@@ -2,7 +2,7 @@
 
 This convention plugin enables JFR recording for test execution.
 
-It's mainly used in `test-inputs-check-v2`, but since JFR is also a profiler, it may be useful without the undeclared inputs check. Because
+It's mainly used in `test-inputs-check`, but since JFR is also a profiler, it may be useful without the undeclared inputs check. Because
 of that, it's implemented as a separate convention.
 
 ## Usage

@@ -161,10 +161,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(externalPackageFragment) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("symbol", "packageFqName")
-            additionalImports(
-                ArbitraryImportable(Packages.descriptors, "ModuleDescriptor"),
-            )
+            implementation.constructorParameterOrderOverride = listOf("symbol", "packageFqName", "module")
             defaultWithErrorOnSet("startOffset", undefinedOffset())
             defaultWithErrorOnSet("endOffset", undefinedOffset())
         }

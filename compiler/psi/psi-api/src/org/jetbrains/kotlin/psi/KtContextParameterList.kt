@@ -41,7 +41,10 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
      *
      * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
      */
-    @Deprecated("Use 'contextParameters' instead", ReplaceWith("contextParameters"))
+    @Deprecated(
+        message = "Use 'contextParameters' instead",
+        replaceWith = ReplaceWith("contextParameters"),
+    )
     fun contextParameters(): List<KtParameter> = contextParameters
 
     /**

@@ -6,7 +6,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -53,7 +53,11 @@ dependencies {
     implementation(project(":kotlinx-metadata-klib"))
     compileOnly(project(":kotlin-metadata")) // Only to fix IDE reporting unresolved references (KTI-3323).
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
+}
+
+projectTests {
+    testTask()
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

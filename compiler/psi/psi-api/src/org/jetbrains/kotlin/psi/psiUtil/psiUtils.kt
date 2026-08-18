@@ -92,7 +92,16 @@ fun KtBinaryExpression.tryFlattenStringConcatenationArguments(): List<KtStringTe
  * The method returns `'a', 'b', 'c'` if [fullFidelity] is `false` (default)
  * But returns `'a', 'b', '+'(1), 'c', '+'(0)` and hidden tokens in between (whitespaces or comments) otherwise.
  * This is used when a full-fidelity tree structure is needed (see usages).
+ *
+ * [fullFidelity] also dictates how the tree is traversed. The full-fidelity mode has to walk the AST children as it reports
+ * whitespaces and comments as well. Otherwise, only the operands matter, so they are requested via [KtBinaryExpression.getLeft] and
+ * [KtBinaryExpression.getRight], which are able to answer from the stub tree. This way a stub-based string concatenation
+ * (an annotation argument, in practice) doesn't have to load the AST at all.
+ *
+ * The only behavioral difference between the two modes is a `KtBinaryExpression` which has both operands **and** an unexpected child
+ * such as a [PsiErrorElement]: the full-fidelity mode bails out, while the operand-based one folds the concatenation.
  */
+// The operation reference might be absent in inconsistent PSI
 @KtImplementationDetail
 private fun KtBinaryExpression.tryFlattenStringConcatenation(fullFidelity: Boolean): List<PsiElement>? {
     // Optimization: don't allocate anything if the root expression doesn't match the string concatenation folding pattern
@@ -104,10 +113,20 @@ private fun KtBinaryExpression.tryFlattenStringConcatenation(fullFidelity: Boole
     while (true) {
         when (val node = input.removeLastOrNull() ?: break) {
             is KtBinaryExpression -> {
-                var child = node.firstChild
-                while (child != null) {
-                    input.add(child)
-                    child = child.nextSibling
+                if (fullFidelity) {
+                    var child = node.firstChild
+                    while (child != null) {
+                        input.add(child)
+                        child = child.nextSibling
+                    }
+                } else {
+                    if (node.operationTokenOrNull != PLUS) {
+                        return null
+                    }
+
+                    // The operands are added in the direct order as they are taken from the end of the stack
+                    input.add(node.left ?: return null)
+                    input.add(node.right ?: return null)
                 }
             }
             is KtStringTemplateExpression -> {
@@ -544,8 +563,8 @@ fun PsiElement.getElementTextWithContext(): String = org.jetbrains.kotlin.utils.
 fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosticUtils.atLocation(this)}"
 
 @Deprecated(
-    "Use file.replaceFileAnnotationList(annotationList) instead",
-    ReplaceWith(
+    message = "Use file.replaceFileAnnotationList(annotationList) instead",
+    replaceWith = ReplaceWith(
         "file.replaceFileAnnotationList(annotationList)",
         "org.jetbrains.kotlin.idea.base.psi.replaceFileAnnotationList",
     ),
@@ -560,8 +579,8 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 @Deprecated(
-    "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
-    ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
+    message = "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
+    replaceWith = ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
 )
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)

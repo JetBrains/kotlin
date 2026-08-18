@@ -1,0 +1,11 @@
+package test
+
+public/*package*/ open class AnnotatedTypeInFun {
+    public/*package*/ constructor AnnotatedTypeInFun()
+    public/*package*/ open fun foo(/*0*/ kotlin.String!, /*1*/ kotlin.String!): kotlin.Unit
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = ...) public final annotation class Anno : kotlin.Annotation {
+        public final val value: kotlin.String
+            public final fun `<get-value>`(): kotlin.String
+    }
+}

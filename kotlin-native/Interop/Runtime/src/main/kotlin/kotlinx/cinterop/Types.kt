@@ -244,7 +244,7 @@ public abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
      * @param align the alignments in bytes that is enough for this data type.
      * It may be greater than actually required for simplicity.
      */
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
     public open class Type(public val size: Long, public val align: Int) {
 
         init {
@@ -254,11 +254,11 @@ public abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
     }
 }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalForeignApi
 public inline fun <reified T : CVariable> sizeOf(): Long = typeOf<T>().size
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalForeignApi
 public inline fun <reified T : CVariable> alignOf(): Int = typeOf<T>().align
 
@@ -280,8 +280,8 @@ public inline fun <reified T : CVariable> CStructVar.arrayMemberAt(offset: Long)
  */
 @ExperimentalForeignApi
 public abstract class CStructVar(rawPtr: NativePtr) : CVariable(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public open class Type(size: Long, align: Int) : CVariable.Type(size, align)
 }
 
@@ -291,8 +291,8 @@ public abstract class CStructVar(rawPtr: NativePtr) : CVariable(rawPtr) {
 @ExperimentalForeignApi
 public sealed class CPrimitiveVar(rawPtr: NativePtr) : CVariable(rawPtr) {
     // aligning by size is obviously enough
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public open class Type(size: Int) : CVariable.Type(size.toLong(), align = size)
 }
 
@@ -310,88 +310,88 @@ public abstract class CEnumVar(rawPtr: NativePtr) : CPrimitiveVar(rawPtr)
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class BooleanVarOf<T : Boolean>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(1)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class ByteVarOf<T : Byte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(1)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class ShortVarOf<T : Short>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(2)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class IntVarOf<T : Int>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(4)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class LongVarOf<T : Long>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(8)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class UByteVarOf<T : UByte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(1)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class UShortVarOf<T : UShort>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(2)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class UIntVarOf<T : UInt>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(4)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class ULongVarOf<T : ULong>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(8)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class FloatVarOf<T : Float>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(4)
 }
 
 @ExperimentalForeignApi
 @Suppress("FINAL_UPPER_BOUND")
 public class DoubleVarOf<T : Double>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : Type(8)
 }
 
@@ -502,8 +502,8 @@ public var <T : Double> DoubleVarOf<T>.value: T
 
 @ExperimentalForeignApi
 public class CPointerVarOf<T : CPointer<*>>(rawPtr: NativePtr) : CVariable(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 

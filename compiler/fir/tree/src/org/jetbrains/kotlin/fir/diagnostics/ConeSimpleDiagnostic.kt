@@ -129,6 +129,11 @@ object ConeCannotResolveEqualityBoundType : ConeDiagnostic {
     override val reason: String get() = "Cannot resolve argument of 'EqualityBound'"
 }
 
+object ConeSmartcastToTypeVariable : ConeDiagnostic {
+    override val reason: String
+        get() = "Type variable survived until DFA"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,
