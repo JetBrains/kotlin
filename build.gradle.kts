@@ -290,7 +290,7 @@ tasks {
     }
 
     // === Build: JvmCodegenTests ===
-    val jvmCodegenTest = testLifecycleTask("jvmCodegenTest") {
+    testLifecycleTask("jvmCodegenTest") {
         dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
@@ -383,18 +383,12 @@ tasks {
         dependsOn(":native:native.tests:klib-ir-inliner:check")
     }
 
-    // === Build: CompilerFrontendTests ===
-    val compilerFrontendTest = testLifecycleTask("compilerFrontendTest") {
+    // === Build: FirCompilerTests ===
+    testLifecycleTask("compilerFrontendTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
-    }
-
-    // === TO BE DELETED === Build: FirCompilerTests ===
-    testLifecycleTask("firCompilerTest") {
-        dependsOn(compilerFrontendTest)
-        dependsOn(jvmCodegenTest)
     }
 
     // === Build: FirCompilerNightlyTests ===
