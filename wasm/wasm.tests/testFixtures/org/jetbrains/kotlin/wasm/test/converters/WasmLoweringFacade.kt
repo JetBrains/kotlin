@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.*
-import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmMultiModuleBackendIrGenerationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmWholeWorldBackendIrGenerationPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.configuration.useNewExceptionHandling
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
@@ -104,29 +102,29 @@ class WasmLoweringFacade(
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
-        val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
-
-        val compiler = if (configuration.wasmGenerateClosedWorldMultimodule) {
-            WholeWorldMultiModuleCompiler(configuration, irFactory)
-        } else {
-            WholeWorldCompiler(configuration, irFactory)
-        }
-
-        val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
-        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!.loweredIr
+        val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)
+            ?: return processErrorFromCliPhase(configuration, testServices)
+        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)
+            ?: return processErrorFromCliPhase(configuration, testServices)
 
         if (configuration.diagnosticsCollector.hasErrors) {
             return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
         }
 
-        val parameters = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-            configuration.dce = false
-            compiler.compileIr(loweredIr)
+        val backendIrGenerationPhase = if (configuration.wasmGenerateClosedWorldMultimodule) {
+            WasmMultiModuleBackendIrGenerationPipelinePhase
+        } else {
+            WasmWholeWorldBackendIrGenerationPipelinePhase
         }
+
+        configuration.dce = false
+        val parameters = backendIrGenerationPhase.executePhaseIsolatedWithActions(loweredIr)?.backendIr
+            ?: return processErrorFromCliPhase(configuration, testServices)
         val compilationSet = makeCompilationSet(parameters)
 
         configuration.dce = true
-        val dceParameters = compiler.compileIr(loweredIr)
+        val dceParameters = backendIrGenerationPhase.executePhaseIsolatedWithActions(loweredIr)?.backendIr
+            ?: return processErrorFromCliPhase(configuration, testServices)
         val dceCompilationSet = makeCompilationSet(dceParameters)
 
         val runOptimiser = WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives
