@@ -1,16 +1,8 @@
 [versions]
 
 gradlePlugin-kotlin = "2.4.0"
-# See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
-gradlePlugin-android = "7.3.1"
 
 kotlinx-coroutines = "1.7.3"
-kotlinx-serialization = "1.6.0"
-kotlinx-bcv = "0.17.0"
-
-ktor = "2.3.11"
-
-javaDiffUtils = "4.12"
 
 ## Analysis
 kotlin-compiler-k2 = "2.5.0-dev-3229"
@@ -23,9 +15,6 @@ intellij-platform = "261.24374.151"
 
 ## HTML
 jsoup = "1.16.1"
-freemarker = "2.3.32"
-korlibs-template = "4.0.10"
-kotlinx-html = "0.9.1"
 
 ## Markdown
 jetbrains-markdown = "0.7.3"
@@ -33,23 +22,6 @@ jetbrains-markdown = "0.7.3"
 ## JSON
 # jackson 2.15.3 is the latest version, which works correctly with Kotlin API/Language 1.4 and Gradle 7.6.3+
 jackson = "2.15.3"
-
-## Maven
-apacheMaven-core = "3.5.0"
-apacheMaven-artifact = "3.8.5"
-apacheMaven-archiver = "2.5"
-apacheMaven-pluginTools = "3.5.2"
-
-## CLI
-kotlinx-cli = "0.3.6"
-
-## NPM | Frontend
-node = "20.16.0"
-
-## Publishing
-gradlePlugin-shadow = "8.3.0"
-gradlePlugin-gradlePluginPublish = "2.1.1"
-gradlePlugin-gradleNode = "7.1.0"
 
 ## Gradle Develocity
 # versions should be kept in sync with `build-settings-logic/settings.gradle.kts`
@@ -59,41 +31,24 @@ gradlePlugin-gradle-foojayToolchains = "0.10.0"
 
 ## Test
 junit = "5.9.3"
-kotest = "5.6.2"
-eclipse-jgit = "5.13.3.202401111512-r" # jgit 6.X requires Java 11 to run
 
 [libraries]
 
 # There should be no version in `kotlin-*` dependencies,
 # so that the version will be automatically provided by `coreLibrariesVersion` used in KGP
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
-kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 
 #### Kotlin Libs ####
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinxSerialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlinx-serialization" }
-kotlinxSerialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
-
-## Ktor
-ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
-
-ktorServer-core = { group = "io.ktor", name = "ktor-server-core" }
-ktorServer-cio = { group = "io.ktor", name = "ktor-server-cio" }
 
 #### Gradle plugins ####
 # The Maven coordinates of Gradle plugins that are either used in convention plugins, or in Dokka subprojects
 gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradlePlugin-kotlin" }
-gradlePlugin-kotlin-klibCommonizerApi = { module = "org.jetbrains.kotlin:kotlin-klib-commonizer-api", version.ref = "gradlePlugin-kotlin" }
-gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android" }
-gradlePlugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "gradlePlugin-shadow" }
-gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
 gradlePlugin-gradle-customUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradlePlugin-gradle-customUserData" }
 gradlePlugin-gradle-develocity = { module = "com.gradle:develocity-gradle-plugin", version.ref = "gradlePlugin-gradle-develocity" }
 gradlePlugin-gradle-foojayToolchains = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradlePlugin-gradle-foojayToolchains" }
 
-gradlePlugin-androidApi = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android" }
 
 ###### K2 analysis ######
 kotlin-compiler-k2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler-k2" }
@@ -120,59 +75,18 @@ intellij-platform-syntax-util = { module = "com.jetbrains.intellij.platform:synt
 # on the `java-psi(-impl)` classpath; they now live in the platform `core` module.
 intellij-platform-core = { module = "com.jetbrains.intellij.platform:core", version.ref = "intellij-platform" }
 intellij-util= { module = "com.jetbrains.intellij.platform:util", version.ref = "intellij-platform" }
-intellij-util-base= { module = "com.jetbrains.intellij.platform:util-base", version.ref = "intellij-platform" }
 
 #### HTML ####
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
-freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
-kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
-
-# for korlibs-template: the package was renamed and the library's source was moved, but the artifact name is still old,
-# so there's a mismatch. might change in the future, follow https://github.com/korlibs/korge/issues/1836 for updates
-korlibs-template = { module = "com.soywiz.korlibs.korte:korte-jvm", version.ref = "korlibs-template" }
 
 #### Markdown ####
 jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrains-markdown" }
 
 #### Jackson ####
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
-jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 
-#### Apache Maven ####
-apacheMaven-archiver = { module = "org.apache.maven:maven-archiver", version.ref = "apacheMaven-archiver" }
-apacheMaven-core = { module = "org.apache.maven:maven-core", version.ref = "apacheMaven-core" }
-apacheMaven-pluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version.ref = "apacheMaven-pluginTools" }
-apacheMaven-pluginApi = { module = "org.apache.maven:maven-plugin-api", version.ref = "apacheMaven-core" }
-apacheMaven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "apacheMaven-artifact" }
-
-#### Diff Utils ####
-javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "javaDiffUtils" }
-
-#### CLI #####
-kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli-jvm", version.ref = "kotlinx-cli" }
-
 #### Test dependencies  ####
-eclipse-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "eclipse-jgit" }
-
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
-junit-jupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 
-kotest-bom = { module = "io.kotest:kotest-bom", version.ref = "kotest" }
-kotest-datatest = { module = "io.kotest:kotest-framework-datatest" }
-kotest-junit5Runner = { module = "io.kotest:kotest-runner-junit5" }
-kotest-assertionsCore = { module = "io.kotest:kotest-assertions-core" }
-kotest-assertionsJson = { module = "io.kotest:kotest-assertions-json" }
-kotest-property = { module = "io.kotest:kotest-property" }
-
-[plugins]
-# Gradle Plugins that are applied directly to subprojects
-# (Before defining plugins here, first consider creating convention plugins instead,
-# and define the Maven coordinates above to be used in build-logic/build.gradle.kts)
-
-kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
-kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "gradlePlugin-kotlin" }
-gradleNode = { id = "com.github.node-gradle.node", version.ref = "gradlePlugin-gradleNode" }
-shadow = { id = "com.gradleup.shadow", version.ref = "gradlePlugin-shadow" }
-gradlePluginPublish = { id = "com.gradle.plugin-publish", version.ref = "gradlePlugin-gradlePluginPublish" }
