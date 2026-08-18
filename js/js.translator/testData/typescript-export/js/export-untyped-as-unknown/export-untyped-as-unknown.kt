@@ -49,3 +49,15 @@ fun consumeImplicitlyExported(value: ImplicitlyExported) {}
 
 @JsExport
 fun produceImplicitlyExported(): ImplicitlyExported = ImplicitlyExported()
+
+@JsExport
+fun transformUntyped(block: (Any) -> dynamic): (Any) -> dynamic = block
+
+@JsExport
+interface ExportedBound
+
+@JsExport
+class BoundedBox<T : ExportedBound, U, V>(val value: T, val payload: U)
+
+@JsExport
+fun produceStarProjectedBox(): BoundedBox<*, Any, Any?> = error("Not called")
