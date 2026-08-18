@@ -203,7 +203,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                     "     external interface $kotlinName: JsAny\\n" +
                     "     companion val $kotlinName.MEMBER: $kotlinName get() = ...\\n" +
                     "\\n" +
-                    "Details: https://youtrack.jetbrains.com/issue/KT-76462"
+                    "Read more: https://kotl.in/e4vlc5"
 
                 append(
                     """
