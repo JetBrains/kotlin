@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.js.config.outputDir
@@ -88,11 +89,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
         val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
-        val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
-
-        val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo.deserializer, allModules, context)
-        }
+        val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
+        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!.loweredIr
 
         val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
             compiler.compileIr(loweredIr)
