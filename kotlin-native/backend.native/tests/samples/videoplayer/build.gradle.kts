@@ -27,23 +27,26 @@ kotlin {
                     KonanTarget.MACOS_X64 -> linkerOpts("-L/opt/local/lib", "-L/usr/local/lib")
                     KonanTarget.LINUX_X64 -> linkerOpts("-L/usr/lib/x86_64-linux-gnu", "-L/usr/lib64")
                     KonanTarget.MINGW_X64 -> linkerOpts("-L${mingwPath.resolve("lib")}")
+                    else -> throw GradleException("Target ${konanTarget.name} is not supported in the videoplayer sample.")
                 }
             }
         }
 
         compilations["main"].cinterops {
-            val ffmpeg = create("ffmpeg") {
+            create("ffmpeg") {
                 when (konanTarget) {
                     KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/ffmpeg")
                     KonanTarget.MINGW_X64 -> includeDirs(mingwPath.resolve("include"))
+                    else -> throw GradleException("Target ${konanTarget.name} is not supported in the videoplayer sample.")
                 }
             }
-            val sdl = create("sdl") {
+            create("sdl") {
                 when (konanTarget) {
                     KonanTarget.MACOS_X64 -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
                     KonanTarget.LINUX_X64 -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")
                     KonanTarget.MINGW_X64 -> includeDirs(mingwPath.resolve("include/SDL2"))
+                    else -> throw GradleException("Target ${konanTarget.name} is not supported in the videoplayer sample.")
                 }
             }
         }

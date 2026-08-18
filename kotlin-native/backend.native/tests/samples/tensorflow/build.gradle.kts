@@ -33,7 +33,7 @@ kotlin {
             }
         }
         compilations["main"].cinterops {
-            val tensorflow = create("tensorflow") {
+            create("tensorflow") {
                 includeDirs(tensorflowHome.resolve("include"))
             }
         }
