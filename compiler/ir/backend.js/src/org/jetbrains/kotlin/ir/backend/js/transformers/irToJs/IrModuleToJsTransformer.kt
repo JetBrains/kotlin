@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelToJsStatements
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedModule
@@ -52,8 +53,24 @@ val IrModuleFragment.safeName: String
 
 private typealias JsIrModules = JsArtifactProducer.ArtifactModules<JsIrModule>
 
-class CompilerResult(val outputs: Map<TranslationMode, CompilationOutputs>) : Map<TranslationMode, CompilationOutputs> by outputs {
+class CompilerResult(
+    val outputs: Map<TranslationMode, CompilationOutputs>,
+    val rebuiltModules: Map<TranslationMode, List<String>> = emptyMap(),
+) : Map<TranslationMode, CompilationOutputs> by outputs {
     constructor(outputs: Iterable<CompilationOutputs>) : this(outputs.associateBy { it.artifactConfiguration.translationMode })
+
+    companion object {
+        operator fun invoke(buildResults: Iterable<JsExecutableProducer.BuildResult>) : CompilerResult {
+            val outputs = mutableMapOf<TranslationMode, CompilationOutputs>()
+            val rebuiltModules = mutableMapOf<TranslationMode, List<String>>()
+            for ((compilationOut, buildModules) in buildResults) {
+                val translationMode = compilationOut.artifactConfiguration.translationMode
+                outputs[translationMode] = compilationOut
+                rebuiltModules[translationMode] = buildModules
+            }
+            return CompilerResult(outputs, rebuiltModules)
+        }
+    }
 }
 
 fun generateProxyIrModuleWith(
