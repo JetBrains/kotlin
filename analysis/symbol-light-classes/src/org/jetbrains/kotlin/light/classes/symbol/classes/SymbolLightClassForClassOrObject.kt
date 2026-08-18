@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -68,7 +67,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         isKotlinValueClass = classSymbol.isInline
     }
 
-    @OptIn(KaImplementationDetail::class)
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KaModule,
@@ -102,7 +100,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
+                annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
                 annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
             ),
         )
@@ -181,7 +179,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     }
 
     private fun isEnumEntriesDisabled(): Boolean {
-        return (ktModule as? KaSourceModule)
+        return (useSiteModule as? KaSourceModule)
             ?.languageVersionSettings
             ?.supportsFeature(LanguageFeature.EnumEntries) != true
     }
@@ -372,8 +370,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        classSymbolPointer = symbolPointer,
+        ktModule = useSiteModule,
         manager = manager,
         isKotlinValueClass = isKotlinValueClass,
     )

@@ -34,7 +34,7 @@ internal class SymbolLightFieldForEnumEntry(
     containingClass: SymbolLightClassForClassOrObject,
 ) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
     internal inline fun <T> withEnumEntrySymbol(crossinline action: context(KaSession) (KaEnumEntrySymbol) -> T): T =
-        analyzeForLightClasses(ktModule) {
+        analyzeForLightClasses(useSiteModule) {
             action(enumEntry.symbol)
         }
 
@@ -45,8 +45,8 @@ internal class SymbolLightFieldForEnumEntry(
             modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = analyzeForLightClasses(ktModule) {
+                    ktModule = useSiteModule,
+                    annotatedSymbolPointer = analyzeForLightClasses(useSiteModule) {
                         enumEntry.symbol.createPointer()
                     },
                 )
@@ -69,7 +69,7 @@ internal class SymbolLightFieldForEnumEntry(
             SymbolLightClassForEnumEntry(
                 enumConstant = this@SymbolLightFieldForEnumEntry,
                 enumClass = containingClass,
-                ktModule = ktModule,
+                useSiteModule = useSiteModule,
             )
         }
     }

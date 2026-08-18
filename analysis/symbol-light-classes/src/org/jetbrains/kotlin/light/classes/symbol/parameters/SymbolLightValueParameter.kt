@@ -13,7 +13,7 @@ internal open class SymbolLightValueParameter(
     parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
-    override fun isDeclaredAsVararg(): Boolean = parameterSymbolPointer.withSymbol(ktModule) {
+    override fun isDeclaredAsVararg(): Boolean = symbolPointer.withSymbol(useSiteModule) {
         (it as KaValueParameterSymbol).isVararg
     }
 

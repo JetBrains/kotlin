@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClassBase,
-    ktModule: KaModule,
-) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
+    override val useSiteModule: KaModule,
+) : SymbolLightClassBase(enumConstant.manager), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
     override fun getBaseClassReference(): PsiJavaCodeReferenceElement = SymbolLightPsiJavaCodeReferenceElementWithNoReference(
@@ -45,7 +45,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun isInQualifiedNew(): Boolean = false
 
-    override fun copy() = SymbolLightClassForEnumEntry(enumConstant, enumClass, ktModule)
+    override fun copy() = SymbolLightClassForEnumEntry(enumConstant, enumClass, useSiteModule)
 
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightClassForEnumEntry && other.enumConstant == enumConstant

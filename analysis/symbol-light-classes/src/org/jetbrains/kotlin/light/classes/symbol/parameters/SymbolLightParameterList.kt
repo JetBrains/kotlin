@@ -37,7 +37,7 @@ internal class SymbolLightParameterList(
     private val clsDelegate: PsiParameterList by lazyPub {
         val builder = LightParameterListBuilder(manager, language)
 
-        correspondingCallablePointer?.withSymbol(parent.ktModule) { callable ->
+        correspondingCallablePointer?.withSymbol(parent.useSiteModule) { callable ->
             for (parameterSymbol in callable.contextParameters) {
                 builder.addParameter(SymbolLightContextParameter(parameterSymbol, parent))
             }

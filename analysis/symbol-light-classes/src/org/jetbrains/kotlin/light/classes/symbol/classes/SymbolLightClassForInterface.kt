@@ -64,7 +64,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean = true
 
     override fun copy(): SymbolLightClassForInterface =
-        SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+        SymbolLightClassForInterface(classOrObjectDeclaration, symbolPointer, useSiteModule, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
         withClassSymbol { classSymbol ->

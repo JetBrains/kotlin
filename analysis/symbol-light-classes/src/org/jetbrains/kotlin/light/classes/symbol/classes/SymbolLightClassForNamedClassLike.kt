@@ -37,8 +37,8 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        symbolPointer = classSymbolPointer,
+        useSiteModule = ktModule,
         manager = manager
     )
 
@@ -124,11 +124,11 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
 
     internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            GranularModifiersBox.computeVisibilityForClass(ktModule, classSymbolPointer, isTopLevel)
+            GranularModifiersBox.computeVisibilityForClass(useSiteModule, symbolPointer, isTopLevel)
         }
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
-            GranularModifiersBox.computeSimpleModality(ktModule, classSymbolPointer)
+            GranularModifiersBox.computeSimpleModality(useSiteModule, symbolPointer)
         }
 
         PsiModifier.STATIC -> {
