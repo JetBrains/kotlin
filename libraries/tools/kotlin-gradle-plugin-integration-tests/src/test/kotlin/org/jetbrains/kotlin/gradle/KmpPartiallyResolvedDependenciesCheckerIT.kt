@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
+import org.jetbrains.kotlin.gradle.testbase.suppressAgpWarningIsProperty
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
@@ -228,7 +229,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
             include(producer, "producer")
         }
 
-        consumer.build("compileKotlinLinuxArm64") {
+        consumer.build("compileKotlinLinuxArm64", buildOptions = buildOpions.suppressAgpWarningIsProperty(gradleVersion)) {
             assertOutputDoesNotContain("Configuration 'jvmCompileClasspath' was resolved during configuration time")
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }

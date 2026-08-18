@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
-import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
@@ -43,7 +42,9 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
@@ -77,6 +78,7 @@ class ComposeIT : KGPBaseTest() {
 
         project1.build(
             "assembleDebug",
+            buildOptions = project1.buildOptions.suppressAgpWarningIsProperty(gradleVersion)
         ) {
             assertTasksExecuted(":compileDebugKotlin")
         }
@@ -192,7 +194,9 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             buildGradle.modify { originalBuildScript ->
                 """
@@ -548,7 +552,7 @@ class ComposeIT : KGPBaseTest() {
                 androidVersion = agpVersion,
                 buildCacheEnabled = true,
                 configurationCache = ENABLED
-            ),
+            ).suppressAgpWarningIsProperty(gradleVersion),
             enableGradleDaemonMemoryLimitInMb = 1024
         ) {
             buildScriptInjection {
@@ -653,6 +657,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()

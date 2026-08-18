@@ -85,7 +85,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleAndroidTest")
@@ -102,7 +102,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidIcepickProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://clojars.org/repo/")
@@ -122,7 +122,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidParcelizeProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
@@ -176,11 +176,10 @@ class KotlinAndroidIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        disabledOnWindowsWhenAgpVersionIsLowerThan(agpVersion, "7.4.0", "Lint leaves opened file descriptors")
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
@@ -245,7 +244,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             subProject("Lib").buildGradle.modify {
@@ -308,7 +307,7 @@ class KotlinAndroidIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
         ) {
             val buildSrcDir = projectPath.resolve("buildSrc").also { it.createDirectory() }
             buildSrcDir.resolve("build.gradle.kts").writeText(

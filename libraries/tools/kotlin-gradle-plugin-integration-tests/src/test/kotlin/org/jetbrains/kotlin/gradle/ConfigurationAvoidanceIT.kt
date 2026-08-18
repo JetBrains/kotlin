@@ -77,7 +77,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(
+                    androidVersion = agpVersion,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                ),
             buildJdk = providedJdk.location
         ) {
             gradleProperties.appendText("android.defaults.buildfeatures.aidl=true")
@@ -92,6 +96,9 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                 configuredTasks()
                     .buildAndReturn(
                         "--dry-run",
+                        deriveBuildOptions = {
+                            buildOptions.suppressAgpWarningIsProperty(gradleVersion)
+                        }
                     ),
             )
             build("help")

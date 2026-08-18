@@ -689,7 +689,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             "android".fullProjectName,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = providedJdk.location
         ) {
             buildGradle.appendText(
