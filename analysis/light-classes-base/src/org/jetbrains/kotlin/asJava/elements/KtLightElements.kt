@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiElement {
-    val kotlinOrigin: T?
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiElement, KaElementJavaView {
+    override val kotlinOrigin: T?
 
     /**
      * KtLightModifierList by default retrieves annotation from the relevant KtElement or from clsDelegate

@@ -10,31 +10,30 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightReferenceListBuilder
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeThrowsList
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
-import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
-import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
-import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForDefaultImplsReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameter
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
+@OptIn(KaImplementationDetail::class)
 internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private constructor(
-    protected val functionSymbolPointer: KaSymbolPointer<FType>,
+    override val symbolPointer: KaSymbolPointer<FType>,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
@@ -47,7 +46,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
-) {
+), KaSymbolJavaView<FType> {
     internal constructor(
         functionSymbol: FType,
         lightMemberOrigin: LightMemberOrigin?,
@@ -56,7 +55,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         isJvmExposedBoxed: Boolean,
         valueParameterPickMask: BitSet? = null,
     ) : this(
-        functionSymbolPointer = kotlin.run {
+        symbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             functionSymbol.createPointer() as KaSymbolPointer<FType>
         },
@@ -70,7 +69,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     )
 
     protected inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (FType) -> T): T =
-        functionSymbolPointer.withSymbol(ktModule, action)
+        symbolPointer.withSymbol(useSiteModule, action)
 
     protected open fun createValueParameter(parameterSymbol: KaValueParameterSymbol, parameterIndex: Int): PsiParameter =
         SymbolLightValueParameter(parameterSymbol = parameterSymbol, containingMethod = this)
@@ -78,7 +77,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
             parent = this@SymbolLightMethod,
-            correspondingCallablePointer = functionSymbolPointer,
+            correspondingCallablePointer = symbolPointer,
         ) { builder ->
             if (this@SymbolLightMethod.containingClass is SymbolLightClassForInterfaceDefaultImpls) {
                 builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightMethod))
@@ -96,7 +95,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
                     builder.addParameter(
                         @Suppress("UNCHECKED_CAST")
                         SymbolLightSuspendContinuationParameter(
-                            functionSymbolPointer = functionSymbolPointer as KaSymbolPointer<KaNamedFunctionSymbol>,
+                            functionSymbolPointer = symbolPointer as KaSymbolPointer<KaNamedFunctionSymbol>,
                             containingMethod = this@SymbolLightMethod,
                         )
                     )
@@ -128,7 +127,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         }
     }
 
-    override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: functionSymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: symbolPointer.isValid(useSiteModule)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
@@ -140,7 +139,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
             other::class != this::class ||
             (other as SymbolLightMethod<*>).methodIndex != methodIndex ||
             other.isJvmExposedBoxed != isJvmExposedBoxed ||
-            other.ktModule != ktModule ||
+            other.useSiteModule != useSiteModule ||
             other.valueParameterPickMask != valueParameterPickMask
         ) return false
 
@@ -149,7 +148,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         }
 
         return containingClass == other.containingClass &&
-                compareSymbolPointers(functionSymbolPointer, other.functionSymbolPointer)
+                compareSymbolPointers(symbolPointer, other.symbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()

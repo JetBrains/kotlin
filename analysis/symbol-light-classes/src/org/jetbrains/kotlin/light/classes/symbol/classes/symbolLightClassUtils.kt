@@ -629,7 +629,7 @@ internal fun createInnerClasses(
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {
-            createLightClassNoCache(it, ktModule = containingClass.ktModule, manager)
+            createLightClassNoCache(it, ktModule = containingClass.useSiteModule, manager)
         }
     }
 

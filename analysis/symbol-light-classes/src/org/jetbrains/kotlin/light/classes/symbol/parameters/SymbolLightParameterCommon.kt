@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
@@ -23,22 +24,23 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
+@OptIn(KaImplementationDetail::class)
 internal abstract class SymbolLightParameterCommon(
-    protected val parameterSymbolPointer: KaSymbolPointer<KaParameterSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaParameterSymbol>,
     containingMethod: SymbolLightMethodBase,
     override val kotlinOrigin: KtParameter?,
-) : SymbolLightParameterBase(containingMethod) {
+) : SymbolLightParameterBase(containingMethod), KaSymbolJavaView<KaParameterSymbol> {
     internal constructor(
         parameterSymbol: KaParameterSymbol,
         containingMethod: SymbolLightMethodBase,
     ) : this(
-        parameterSymbolPointer = parameterSymbol.createPointer(),
+        symbolPointer = parameterSymbol.createPointer(),
         containingMethod = containingMethod,
         kotlinOrigin = parameterSymbol.sourcePsiSafe(),
     )
 
     private val _name: String by lazyPub {
-        parameterSymbolPointer.withSymbol(ktModule) {
+        symbolPointer.withSymbol(useSiteModule) {
             it.name.asString()
         }
     }
@@ -48,8 +50,8 @@ internal abstract class SymbolLightParameterCommon(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = parameterSymbolPointer,
+                    ktModule = useSiteModule,
+                    annotatedSymbolPointer = symbolPointer,
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
@@ -75,7 +77,7 @@ internal abstract class SymbolLightParameterCommon(
                 (!method.containingClass.isEnum || method.name != StandardNames.ENUM_VALUE_OF.identifier)
 
         return if (nullabilityApplicable) {
-            parameterSymbolPointer.withSymbol(ktModule) { getRequiredNullabilityAnnotation(it.returnType) }
+            symbolPointer.withSymbol(useSiteModule) { getRequiredNullabilityAnnotation(it.returnType) }
         } else {
             NullabilityAnnotation.NOT_REQUIRED
         }
@@ -97,7 +99,7 @@ internal abstract class SymbolLightParameterCommon(
     }
 
     private val _type by lazyPub {
-        val convertedType = parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol -> computeType(parameterSymbol) }
+        val convertedType = symbolPointer.withSymbol(useSiteModule) { parameterSymbol -> computeType(parameterSymbol) }
 
         if (isDeclaredAsVararg()) {
             if (isVarArgs) {
@@ -116,7 +118,7 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other::class != this::class || (other as SymbolLightParameterCommon).ktModule != ktModule) {
+        if (other == null || other::class != this::class || (other as SymbolLightParameterCommon).useSiteModule != useSiteModule) {
             return false
         }
 
@@ -124,9 +126,9 @@ internal abstract class SymbolLightParameterCommon(
             return kotlinOrigin == other.kotlinOrigin
         }
 
-        return compareSymbolPointers(parameterSymbolPointer, other.parameterSymbolPointer)
+        return compareSymbolPointers(symbolPointer, other.symbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: _name.hashCode()
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: parameterSymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: symbolPointer.isValid(useSiteModule)
 }

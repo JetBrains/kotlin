@@ -498,7 +498,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      */
     override fun getResolutionScope(file: FakeFileForLightClass): GlobalSearchScope {
         val analysisScopesForContextModules = file.classes.mapNotNullTo(mutableSetOf()) { lightClass ->
-            (lightClass as? SymbolLightClassBase)?.ktModule
+            (lightClass as? SymbolLightClassBase)?.useSiteModule
         }.map { module ->
             analyzeForLightClasses(module) {
                 analysisScope
