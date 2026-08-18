@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
-import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
 import org.jetbrains.kotlin.js.config.icCacheDirectory
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.util.PhaseType
@@ -39,12 +38,8 @@ abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifa
         configuration.reportLog("Cache directory: $cacheDirectory")
 
         if (cacheDirectory != null) {
-            val preparedCachesArtifact = icCachePreparationPhase.executePhaseIsolatedWithActions(input) ?: return null
-            val [_, _, cacheGuard, _] = preparedCachesArtifact
-            val backendIr = incrementalBuildingPhase.executePhaseIsolatedWithActions(preparedCachesArtifact)
-            return cacheGuard.tryAcquireAndRelease {
-                backendIr?.let { compileIntermediate(it, configuration) }
-            }
+            val backendIr = compileToBackendIncrementally(input)
+            return backendIr?.let { compileIntermediate(it, configuration) }
         } else {
             configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             val backendIr = compileToBackendIrNonIncrementally(input)
@@ -52,7 +47,13 @@ abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifa
         }
     }
 
-    // Do not inline this function - make sure that BackendIr may be collected after intermediate output is built
+    // Do not inline this function - make sure that WebIncrementalCachePipelineArtifact is garbage-collected after intermediate output is built
+    private fun compileToBackendIncrementally(input: ConfigurationPipelineArtifact): IntermediateOutput? {
+        val preparedCachesArtifact = icCachePreparationPhase.executePhaseIsolatedWithActions(input) ?: return null
+        return incrementalBuildingPhase.executePhaseIsolatedWithActions(preparedCachesArtifact)
+    }
+
+    // Do not inline this function - make sure that WebLoadedIrPipelineArtifact is garbage-collected after intermediate output is built
     private fun compileToBackendIrNonIncrementally(input: ConfigurationPipelineArtifact): IntermediateOutput? {
         val loadedKlibArtifact = klibLoadingPhase.executePhaseIsolatedWithActions(input) ?: return null
         return compileNonIncrementally(loadedKlibArtifact)
