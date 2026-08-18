@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.metadata.jvm.JvmMetadataVersion
 import kotlin.metadata.jvm.KotlinModuleMetadata
+import kotlin.metadata.jvm.UnstableMetadataApi
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
@@ -81,7 +82,7 @@ class DifferentVersionsTest {
         assertIs<KotlinClassMetadata.Class>(KotlinClassMetadata.readLenient(md))
     }
 
-    @Suppress("OPT_IN_USAGE")
+    @OptIn(UnstableMetadataApi::class)
     @Test
     fun readModuleMetadataStrictSemanticsFlag() {
         val path = "META-INF/kotlin-stdlib.kotlin_module"
