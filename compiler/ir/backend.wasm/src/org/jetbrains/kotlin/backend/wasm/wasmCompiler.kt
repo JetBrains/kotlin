@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
@@ -28,8 +26,6 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.generateDts
@@ -80,31 +76,6 @@ data class LoweredIrWithExtraArtifacts(
     val typeScriptFragment: TypeScriptFragment?,
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
-
-fun linkIr(irModuleInfo: IrModuleInfo, configuration: CompilerConfiguration): Pair<List<IrModuleFragment>, WasmBackendContext> {
-    (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val irLinker = deserializer) = irModuleInfo
-
-    val context = WasmBackendContext(
-        irBuiltIns = irBuiltIns,
-        symbolTable = symbolTable,
-        irModuleFragment = moduleFragment,
-        configuration = configuration,
-    )
-
-    // Create stubs
-    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-
-    // Sort dependencies after IR linkage.
-    val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
-
-    val allModules = sortedModuleDependencies.all
-    allModules.forEach { it.patchDeclarationParents() }
-
-    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
-    irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
-    irLinker.clear()
-    return allModules to context
-}
 
 fun compileToLoweredIr(
     configuration: CompilerConfiguration,
