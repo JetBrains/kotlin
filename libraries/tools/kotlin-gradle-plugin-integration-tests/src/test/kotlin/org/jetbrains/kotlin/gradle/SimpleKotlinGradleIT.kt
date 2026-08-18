@@ -96,7 +96,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
-                assertOutputContains("The feature \"break continue in inline lambdas\" is only available since language version 2.2")
+                assertOutputContains("The feature \"explicit context arguments\" is only available since language version 2.5")
             }
         }
     }
