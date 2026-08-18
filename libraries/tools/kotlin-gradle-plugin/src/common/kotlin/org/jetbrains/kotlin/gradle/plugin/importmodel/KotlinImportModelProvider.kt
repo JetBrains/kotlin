@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.internal.resolve.ModuleVersionResolveException
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -46,7 +47,6 @@ internal class KotlinImportModelProvider(
     fun compilationUnit(id: CompilationUnitId): CompilationUnitModel {
         val compilation = compilation(id)
         val compileTask = compilation.compileTaskProvider.get() as KotlinCompile
-        val compileAction = gradleAction(compileTask.path)
         return compilationUnitModel {
             this.id = KotlinImportModelIds.COMPILATION_UNIT
             parameters = CompilationUnitModelKt.parameters { compilationUnitId = id }
@@ -54,7 +54,7 @@ internal class KotlinImportModelProvider(
             platform = CompilationUnitModel.Platform.PLATFORM_JVM
             isTest = compilation.name == KotlinCompilation.TEST_COMPILATION_NAME
             sourceRoots += sourceRoots(compilation)
-            outputs += output(compileTask, compileAction)
+            outputs += compilationOutputs(compileTask)
         }
     }
 
@@ -101,6 +101,25 @@ internal class KotlinImportModelProvider(
                     targetCompilationUnitId = compilationUnitId(associatedCompilation.name)
                 }
             }
+    }
+
+    private fun compilationOutputs(compileTask: KotlinCompile): List<CompilationUnitModel.Output> {
+        val producingAction = gradleAction(compileTask.path)
+        val paths = buildList {
+            add(compileTask.destinationDirectory.get().asFile.toPath())
+            if (compileTask.runViaBuildToolsApi.getOrElse(false) && compileTask.generateCompilerRefIndex.getOrElse(false)) {
+                add(compileTask.taskBuildCacheableOutputDirectory.get().dir(DATA_PATH).asFile.toPath())
+            }
+        }
+        return paths
+            .distinct()
+            .map { path ->
+                CompilationUnitModelKt.output {
+                    this.path = project.relativeProjectPath(path)
+                    producingActions += producingAction
+                }
+            }
+            .sortedBy(CompilationUnitModel.Output::getPath)
     }
 
     private fun ResolvedArtifactResult.toBinaryDependency(): BinaryDependency? = when (val component = id.componentIdentifier) {
@@ -161,13 +180,6 @@ internal class KotlinImportModelProvider(
             )
             .sortedWith(compareBy(SourceRoot::getPath).thenBy(SourceRoot::getKindValue))
             .distinctBy(SourceRoot::getPath)
-    }
-
-    private fun output(compileTask: KotlinCompile, producingAction: Action): CompilationUnitModel.Output = CompilationUnitModelKt.output {
-        path = project.projectDir.toPath()
-            .relativize(compileTask.destinationDirectory.get().asFile.toPath())
-            .invariantSeparatorsPathString
-        producingActions += producingAction
     }
 
     private fun gradleAction(taskPath: String): Action = action {

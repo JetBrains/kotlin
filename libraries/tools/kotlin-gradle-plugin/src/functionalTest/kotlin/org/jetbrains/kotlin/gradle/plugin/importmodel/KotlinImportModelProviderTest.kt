@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
@@ -23,6 +24,8 @@ class KotlinImportModelProviderTest {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     fun `produces stable main and test JVM models`() {
         val project = buildProjectWithJvm {
+            extraProperties.set("kotlin.compiler.runViaBuildToolsApi", true)
+            extraProperties.set("kotlin.compiler.generateCompilerRefIndex", true)
             kotlinJvmExtension.target.compilations.create("deploy")
             val generateMainSources = tasks.register("generateMainSources") {
                 it.outputs.dir(layout.projectDirectory.dir("src/main/generated-kotlin"))
@@ -31,10 +34,6 @@ class KotlinImportModelProviderTest {
         }
         project.evaluate()
         val provider = KotlinImportModelProvider(project)
-        val mainOutput = project.layout.buildDirectory.dir("classes/kotlin/main").get().asFile
-        val testOutput = project.layout.buildDirectory.dir("classes/kotlin/test").get().asFile
-        assertFalse(mainOutput.exists())
-        assertFalse(testOutput.exists())
 
         val base = provider.baseInformation()
         assertEquals(KotlinImportModelIds.BASE, base.id)
@@ -52,14 +51,52 @@ class KotlinImportModelProviderTest {
             mainId,
             "main",
             false,
-            listOf(output("build/classes/kotlin/main", ":compileKotlin")),
+            listOf(
+                output("build/classes/kotlin/main", ":compileKotlin"),
+                output("build/kotlin/compileKotlin/cacheable/cri", ":compileKotlin"),
+            ),
         )
         assertCompilationUnit(
             provider.compilationUnit(testId),
             testId,
             "test",
             true,
+            listOf(
+                output("build/classes/kotlin/test", ":compileTestKotlin"),
+                output("build/kotlin/compileTestKotlin/cacheable/cri", ":compileTestKotlin"),
+            ),
+        )
+        listOf(
+            "classes/kotlin/main",
+            "kotlin/compileKotlin/cacheable/cri",
+            "classes/kotlin/test",
+            "kotlin/compileTestKotlin/cacheable/cri",
+        ).forEach { relativePath ->
+            assertFalse(project.layout.buildDirectory.dir(relativePath).get().asFile.exists())
+        }
+    }
+
+    @Test
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun `does not declare CRI outputs when Build Tools API is disabled`() {
+        val project = buildProjectWithJvm {
+            extraProperties.set("kotlin.compiler.runViaBuildToolsApi", false)
+            extraProperties.set("kotlin.compiler.generateCompilerRefIndex", true)
+        }
+        project.evaluate()
+        val provider = KotlinImportModelProvider(project)
+
+        val compilationUnits = provider.projectInformation().compilationUnitIdsList.associateBy { compilationUnitId ->
+            provider.compilationUnit(compilationUnitId).name
+        }
+
+        assertEquals(
+            listOf(output("build/classes/kotlin/main", ":compileKotlin")),
+            provider.compilationUnit(compilationUnits.getValue("main")).outputsList,
+        )
+        assertEquals(
             listOf(output("build/classes/kotlin/test", ":compileTestKotlin")),
+            provider.compilationUnit(compilationUnits.getValue("test")).outputsList,
         )
     }
 

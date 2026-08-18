@@ -39,6 +39,8 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 // The diagnostic dump task reads live project state
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                runViaBuildToolsApi = true,
+                generateCompilerRefIndex = true,
             ),
         ) {
             buildScriptInjection {
@@ -53,7 +55,14 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
             }
             build("dumpKotlinImportModels") {
                 assertTasksExecuted(":dumpKotlinImportModels")
-                assertTasksAreNotInTaskGraph(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
+                assertTasksAreNotInTaskGraph(
+                    ":compileJava",
+                    ":compileKotlin",
+                    ":compileTestJava",
+                    ":compileTestKotlin",
+                    ":compileDeployJava",
+                    ":compileDeployKotlin",
+                )
             }
             val firstIds = assertDump()
             val staleFile = projectPath.resolve("build/kotlin-import-models/unexpected.json").toFile().also { it.writeText("stale") }
@@ -105,7 +114,10 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
             units.first().sourceRootsList,
         )
         assertEquals(
-            listOf(output("build/classes/kotlin/main", ":compileKotlin")),
+            listOf(
+                output("build/classes/kotlin/main", ":compileKotlin"),
+                output("build/kotlin/compileKotlin/cacheable/cri", ":compileKotlin"),
+            ),
             units.first().outputsList,
         )
         assertEquals(
@@ -113,7 +125,10 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
             units.last().sourceRootsList,
         )
         assertEquals(
-            listOf(output("build/classes/kotlin/test", ":compileTestKotlin")),
+            listOf(
+                output("build/classes/kotlin/test", ":compileTestKotlin"),
+                output("build/kotlin/compileTestKotlin/cacheable/cri", ":compileTestKotlin"),
+            ),
             units.last().outputsList,
         )
         return project.compilationUnitIdsList

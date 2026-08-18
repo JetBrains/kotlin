@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.importmodels.proto.action as actionModel
 import org.jetbrains.kotlin.importmodels.proto.ActionKt.gradleTask as gradleTaskModel
 import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import java.io.Serializable
+import kotlin.io.path.exists
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -33,6 +34,8 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.ENABLED,
+                runViaBuildToolsApi = true,
+                generateCompilerRefIndex = true,
             ),
         ) {
             buildScriptInjection {
@@ -82,7 +85,10 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(CompilationUnitModel.Platform.PLATFORM_JVM, units.first().platform)
             assertFalse(units.first().isTest)
             assertEquals(
-                listOf(output("build/classes/kotlin/main", ":compileKotlin")),
+                listOf(
+                    output("build/classes/kotlin/main", ":compileKotlin"),
+                    output("build/kotlin/compileKotlin/cacheable/cri", ":compileKotlin"),
+                ),
                 units.first().outputsList,
             )
             assertEquals(
@@ -99,7 +105,10 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             )
             assertTrue(units.last().isTest)
             assertEquals(
-                listOf(output("build/classes/kotlin/test", ":compileTestKotlin")),
+                listOf(
+                    output("build/classes/kotlin/test", ":compileTestKotlin"),
+                    output("build/kotlin/compileTestKotlin/cacheable/cri", ":compileTestKotlin"),
+                ),
                 units.last().outputsList,
             )
             assertEquals(
@@ -107,7 +116,10 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 units.last().sourceRootsList,
             )
             assertEquals(project.compilationUnitIdsList, second.project.model.unpack(ProjectModel::class.java).compilationUnitIdsList)
+            assertEquals(first.compilationUnits, second.compilationUnits)
             assertEquals(first.dependencies, second.dependencies)
+            assertFalse(projectPath.resolve("build/classes/kotlin/main").exists())
+            assertFalse(projectPath.resolve("build/kotlin/compileKotlin/cacheable/cri").exists())
         }
     }
 }
