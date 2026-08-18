@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.incremental
 
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.backend.wasm.*
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICMultimodule
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICSingleModule
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICWholeWorld
 import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.create
@@ -270,13 +273,8 @@ abstract class WasmAbstractInvalidationTest(
                     verifyCacheUpdateStats(stepId, preparedIcCachesArtifact.dirtyFileLastStats, testInfo + removedModulesInfo)
                 }
 
-                val [parametersList] = incrementalBuildingPhase.executePhase(preparedIcCachesArtifact)!!
-
-                parametersList.forEach { parameters ->
-                    val linkedModule = linkWasmIr(parameters)
-                    val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
-                    writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
-                }
+                val intermediateArtifact = incrementalBuildingPhase.executePhase(preparedIcCachesArtifact)!!
+                WasmBinaryGenerationPipelinePhase.executePhase(intermediateArtifact)
             }
 
             when (wasmCompilationMode) {
