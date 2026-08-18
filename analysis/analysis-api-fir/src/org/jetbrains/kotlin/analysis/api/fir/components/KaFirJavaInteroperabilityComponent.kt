@@ -306,57 +306,39 @@ internal class KaFirJavaInteroperabilityComponent(
     }
 
     override fun asPsiClass(classSymbol: KaClassSymbol): PsiClass? = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClass(classSymbol)
-        }
+        lightClassBridge.getLightClass(classSymbol, session = analysisSession)
     }
 
     override fun asFacadePsiClass(fileSymbol: KaFileSymbol): PsiClass? = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightFacade(fileSymbol)
-        }
+        lightClassBridge.getLightFacade(fileSymbol, session = analysisSession)
     }
 
     override fun asFacadePsiClass(scriptSymbol: KaScriptSymbol): PsiClass? = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightFacade(scriptSymbol)
-        }
+        lightClassBridge.getLightFacade(scriptSymbol, session = analysisSession)
     }
 
     override fun asPsiMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod> = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClassMethods(functionSymbol)
-        }
+        lightClassBridge.getLightClassMethods(functionSymbol, session = analysisSession)
     }
 
     override fun asPsiTypeParameters(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter> = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClassTypeParameter(typeParameterSymbol)
-        }
+        lightClassBridge.getLightClassTypeParameter(typeParameterSymbol, session = analysisSession)
     }
 
     override fun asPsiParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter> = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClassParameters(parameterSymbol)
-        }
+        lightClassBridge.getLightClassParameters(parameterSymbol, session = analysisSession)
     }
 
     override fun asPsiField(backingFieldSymbol: KaBackingFieldSymbol): PsiField? = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClassBackingField(backingFieldSymbol)
-        }
+        lightClassBridge.getLightClassBackingField(backingFieldSymbol, session = analysisSession)
     }
 
     override fun asPsiField(classSymbol: KaClassSymbol): PsiField? = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClassBackingField(classSymbol)
-        }
+        lightClassBridge.getLightClassBackingField(classSymbol, session = analysisSession)
     }
 
     override fun asPsiField(enumEntrySymbol: KaEnumEntrySymbol): PsiEnumConstant? = withValidityAssertion {
-        context(analysisSession) {
-            lightClassBridge.getLightClassBackingField(enumEntrySymbol) as? PsiEnumConstant
-        }
+        lightClassBridge.getLightClassBackingField(enumEntrySymbol, session = analysisSession) as? PsiEnumConstant
     }
 
     override fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol? = psiClass.withPsiValidityAssertion {

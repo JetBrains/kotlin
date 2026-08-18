@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
-import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
-import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiMethods
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
@@ -36,10 +33,8 @@ import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightMethodForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
@@ -47,11 +42,11 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
+import org.jetbrains.kotlin.light.classes.symbol.utils.LightClassMemberUtils
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
 import org.jetbrains.kotlin.name.ClassId
@@ -59,7 +54,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.time.Duration
@@ -458,22 +452,22 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     context(session: KaSession)
     override fun getLightClassParameters(
         parameterSymbol: KaParameterSymbol,
-    ): List<PsiParameter> = LightClassElementUtils.getLightClassParameters(parameterSymbol)
+    ): List<PsiParameter> = LightClassMemberUtils.getLightClassParameters(parameterSymbol)
 
     context(session: KaSession)
     override fun getLightClassTypeParameter(
         typeParameterSymbol: KaTypeParameterSymbol,
-    ): List<PsiTypeParameter> = LightClassElementUtils.getLightClassTypeParameter(typeParameterSymbol)
+    ): List<PsiTypeParameter> = LightClassMemberUtils.getLightClassTypeParameter(typeParameterSymbol)
 
     context(session: KaSession)
     override fun getLightClassBackingField(
         declarationSymbol: KaSymbol,
-    ): PsiField? = LightClassElementUtils.getLightClassBackingField(declarationSymbol)
+    ): PsiField? = LightClassMemberUtils.getLightClassBackingField(declarationSymbol)
 
     context(session: KaSession)
     override fun getLightClassMethods(
         functionSymbol: KaFunctionSymbol,
-    ): List<PsiMethod> = LightClassElementUtils.getLightClassMethods(functionSymbol)
+    ): List<PsiMethod> = LightClassMemberUtils.getLightClassMethods(functionSymbol)
 
     //endregion
 
