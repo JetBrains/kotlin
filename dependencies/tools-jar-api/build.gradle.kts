@@ -34,13 +34,6 @@ val toolsJarStubs = tasks.register("toolsJarStubs") {
         "com/sun/tools/javac" // javac is used in KAPT
     )
 
-    val includedNonExportedClasses = listOf(
-        // some jdi classes are used in debugger tests
-        "com/sun/tools/jdi/SocketAttachingConnector",
-        "com/sun/tools/jdi/GenericAttachingConnector",
-        "com/sun/tools/jdi/ConnectorImpl"
-    )
-
     doLast {
         val outputDirectoryFile = outDir.get().asFile
         outputDirectoryFile.deleteRecursively()
@@ -62,9 +55,7 @@ val toolsJarStubs = tasks.register("toolsJarStubs") {
                             interfaces: Array<out String>?
                         ) {
                             val isPublic = access and ACC_PUBLIC != 0
-                            if ((isPublic && includedNonExportedPackages.any { name?.startsWith(it) == true }) ||
-                                name in includedNonExportedClasses
-                            ) {
+                            if (isPublic && includedNonExportedPackages.any { name?.startsWith(it) == true }) {
                                 isExported = true
                             }
 

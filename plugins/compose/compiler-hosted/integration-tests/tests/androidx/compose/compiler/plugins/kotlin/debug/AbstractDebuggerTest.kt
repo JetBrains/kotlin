@@ -25,6 +25,7 @@ import androidx.compose.compiler.plugins.kotlin.debug.clientserver.TestProxy
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import com.intellij.util.SystemProperties
 import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.Bootstrap
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.connect.AttachingConnector
 import com.sun.jdi.event.*
@@ -100,8 +101,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         private const val DEBUG_ADDRESS = "127.0.0.1"
 
         private fun attachDebugger(port: Int): VirtualMachine {
-            val c = Class.forName("com.sun.tools.jdi.SocketAttachingConnector")
-            val connector = c.getDeclaredConstructor().newInstance() as AttachingConnector
+            val connector = getAttachingConnector()
             return connector.attach(
                 connector.defaultArguments().apply {
                     getValue("port").setValue("$port")
@@ -320,3 +320,9 @@ private val RUNNER_SOURCES = """
                 override fun clear() {}
             }
 """.trimIndent()
+
+private fun getAttachingConnector(): AttachingConnector =
+    Bootstrap.virtualMachineManager()
+        .attachingConnectors()
+        .firstOrNull { it.name() == "com.sun.jdi.SocketAttach" }
+        ?: error("JDI socket attaching connector is not available")
