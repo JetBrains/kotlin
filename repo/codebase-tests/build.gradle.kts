@@ -60,7 +60,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
 }
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSize = 128.MiB) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSize = testMaxHeapSizeTiny) {
         dependsOn(":dist")
         dependsOn(":compileAll")
         workingDir = rootDir

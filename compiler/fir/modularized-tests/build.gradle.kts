@@ -55,8 +55,8 @@ optInToK1Deprecation()
 
 projectTests {
     testTask(
-        minHeapSize = 8.GiB,
-        maxHeapSize = 8.GiB,
+        minHeapSize = testMaxHeapSizeHuge,
+        maxHeapSize = testMaxHeapSizeHuge,
         reservedCodeCacheSize = 512.MiB,
         javaLauncher = JdkMajorVersion.JDK_1_8
     ) {
