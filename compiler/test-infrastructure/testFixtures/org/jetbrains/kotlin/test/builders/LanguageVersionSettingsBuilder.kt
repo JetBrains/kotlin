@@ -146,6 +146,10 @@ class LanguageVersionSettingsBuilder {
             }
         }
 
+        if (LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS in directives) {
+            specificFeatures[LanguageFeature.JvmInlineScopesNumbers] = LanguageFeature.State.ENABLED
+        }
+
         if (LanguageSettingsDirectives.PROGRESSIVE_MODE in directives) {
             for (feature in LanguageFeature.entries.filter { it.actuallyEnabledInProgressiveMode }) {
                 if (feature.sinceVersion!! <= languageVersion) continue

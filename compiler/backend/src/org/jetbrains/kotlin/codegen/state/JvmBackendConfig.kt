@@ -108,6 +108,11 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val wrapContinuationForTailCallFunctions: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.WrapContinuationForTailCallFunctions)
 
+    // The new inline variables scheme: inline marker variables carry inline scope numbers
+    // instead of the old `$iv` suffix depth scheme. Used for Android inline functions debugging.
+    val useInlineScopesNumbers: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineScopesNumbers)
+
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
             configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INDY)
