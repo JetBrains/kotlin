@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
+import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.LoadedIrPipelineArtifact
@@ -115,6 +116,17 @@ data class WebIncrementalCachePipelineArtifact<M : ModuleArtifact>(
     val artifacts: List<M>,
     val dirtyFileLastStats: KotlinSourceFileMap<EnumSet<DirtyFileState>>,
     val cacheGuard: IncrementalCacheGuard,
+    override val configuration: CompilerConfiguration,
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
+
+data class WasmIntermediatePipelineArtifact(
+    val backendIr: List<WasmIrModuleConfiguration>,
+    val cacheGuard: IncrementalCacheGuard?,
     override val configuration: CompilerConfiguration,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)

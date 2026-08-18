@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WasmIntermediatePipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.codegen.ModelTarget
@@ -22,6 +25,8 @@ import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.PlatformDependentICContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.isBoolean
@@ -245,11 +250,6 @@ abstract class WasmAbstractInvalidationTest(
         ) {
             configuration.icCacheDirectory = cacheDir.absolutePath
             val wasmCompilationMode = configuration.wasmCompilationMode()
-            val icCachePreparationPhase = when (wasmCompilationMode) {
-                WasmCompilationMode.MULTI_MODULE -> WasmMultiModuleIncrementalCachePreparationPipelinePhaseForTesting
-                WasmCompilationMode.SINGLE_MODULE -> WasmSingleModuleIncrementalCachePreparationPipelinePhaseForTesting
-                WasmCompilationMode.REGULAR -> WasmWholeWorldIncrementalCachePreparationPipelinePhaseForTesting
-            }
             configuration.artifactConfigurations = listOf(
                 WebArtifactConfiguration.fromFlags(
                     configuration,
@@ -259,26 +259,39 @@ abstract class WasmAbstractInvalidationTest(
                 )!!,
             )
 
-            val preparedIcCachesArtifact =
-                icCachePreparationPhase.executePhase(ConfigurationPipelineArtifact(configuration, rootDisposable))!!
-            val [icCaches, dirtyFileLastStats, _, _] =
-                preparedIcCachesArtifact
+            fun <M : ModuleArtifact, C : PlatformDependentICContext<M, *, *, *>> runPipeline(
+                icCachePreparationPhase: WasmIncrementalCachePreparationPipelinePhase<M, C>,
+                incrementalBuildingPhase: PipelinePhase<WebIncrementalCachePipelineArtifact<M>, WasmIntermediatePipelineArtifact>,
+            ) {
+                val preparedIcCachesArtifact =
+                    icCachePreparationPhase.executePhase(ConfigurationPipelineArtifact(configuration, rootDisposable))!!
 
-            if (wasmCompilationMode != WasmCompilationMode.SINGLE_MODULE) {
-                verifyCacheUpdateStats(stepId, dirtyFileLastStats, testInfo + removedModulesInfo)
+                if (wasmCompilationMode != WasmCompilationMode.SINGLE_MODULE) {
+                    verifyCacheUpdateStats(stepId, preparedIcCachesArtifact.dirtyFileLastStats, testInfo + removedModulesInfo)
+                }
+
+                val [parametersList] = incrementalBuildingPhase.executePhase(preparedIcCachesArtifact)!!
+
+                parametersList.forEach { parameters ->
+                    val linkedModule = linkWasmIr(parameters)
+                    val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
+                    writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
+                }
             }
 
-            val fragmentCompiler = when (wasmCompilationMode) {
-                WasmCompilationMode.MULTI_MODULE -> ::compileIncrementallyMultimodule
-                WasmCompilationMode.SINGLE_MODULE -> ::compileIncrementallySingleModule
-                WasmCompilationMode.REGULAR -> ::compileIncrementallyWholeWorld
-            }
-            val parametersList = fragmentCompiler(icCaches, configuration)
-
-            parametersList.forEach { parameters ->
-                val linkedModule = linkWasmIr(parameters)
-                val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
-                writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
+            when (wasmCompilationMode) {
+                WasmCompilationMode.MULTI_MODULE -> runPipeline(
+                    WasmMultiModuleIncrementalCachePreparationPipelinePhaseForTesting,
+                    WasmMultiModuleIncrementalBuildingPhase,
+                )
+                WasmCompilationMode.SINGLE_MODULE -> runPipeline(
+                    WasmSingleModuleIncrementalCachePreparationPipelinePhaseForTesting,
+                    WasmSingleModuleIncrementalBuildingPhase,
+                )
+                WasmCompilationMode.REGULAR -> runPipeline(
+                    WasmWholeWorldIncrementalCachePreparationPipelinePhaseForTesting,
+                    WasmWholeWorldIncrementalBuildingPhase,
+                )
             }
         }
 

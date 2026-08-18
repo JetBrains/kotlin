@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.ic.*
+import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WasmIntermediatePipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePreparationPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -21,10 +23,8 @@ object WasmSingleModuleBackendPipelinePhase : WasmBackendPipelinePhase<
     override val icCachePreparationPhase: WebIncrementalCachePreparationPipelinePhase<WasmModuleArtifactSingleModule, *>
         get() = WasmSingleModuleIncrementalCachePreparationPipelinePhase
 
-    override fun compileIncrementally(
-        icCaches: List<WasmModuleArtifactSingleModule>,
-        configuration: CompilerConfiguration
-    ): List<WasmIrModuleConfiguration> = compileIncrementallySingleModule(icCaches, configuration)
+    override val incrementalBuildingPhase: PipelinePhase<WebIncrementalCachePipelineArtifact<WasmModuleArtifactSingleModule>, WasmIntermediatePipelineArtifact>
+        get() = WasmSingleModuleIncrementalBuildingPhase
 
     override fun createNonIncrementalCompiler(
         configuration: CompilerConfiguration,

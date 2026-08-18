@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
@@ -29,6 +26,7 @@ abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifa
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) where TFragments : IrICProgramFragments,
         Output : WebBackendPipelineArtifact,
+        IntermediateOutput : PipelineArtifact,
         TFileArtifact : SrcFileArtifact,
         TModuleArtifact : ModuleArtifact,
         TBackendContext : JsCommonBackendContext {
@@ -42,16 +40,9 @@ abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifa
         configuration.reportLog("Cache directory: $cacheDirectory")
 
         if (cacheDirectory != null) {
-            val [icCaches, _, cacheGuard, configuration] = icCachePreparationPhase.executePhaseIsolatedWithActions(input) ?: return null
-            // We use one cache directory for both caches: JS AST and JS code.
-            // This guard MUST be unlocked after a successful preparing icCaches (see prepareIcCaches()).
-            // Do not use IncrementalCacheGuard::acquire() - it may drop an entire cache here, and
-            // it breaks the logic from JsExecutableProducer(), therefore use IncrementalCacheGuard::tryAcquire() instead
-            // TODO: One day, when we will lower IR and produce JS AST per module,
-            //      think about using different directories for JS AST and JS code.
-            val backendIr = cacheGuard.tryAcquireAndRelease {
-                compileIncrementally(icCaches, configuration)
-            }
+            val preparedCachesArtifact = icCachePreparationPhase.executePhaseIsolatedWithActions(input) ?: return null
+            val [_, _, cacheGuard, _] = preparedCachesArtifact
+            val backendIr = incrementalBuildingPhase.executePhaseIsolatedWithActions(preparedCachesArtifact)
             return cacheGuard.tryAcquireAndRelease {
                 backendIr?.let { compileIntermediate(it, configuration) }
             }
@@ -65,12 +56,9 @@ abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifa
 
     protected abstract val icCachePreparationPhase: WebIncrementalCachePreparationPipelinePhase<TModuleArtifact, *>
 
-    protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
+    protected abstract val incrementalBuildingPhase: PipelinePhase<WebIncrementalCachePipelineArtifact<TModuleArtifact>, IntermediateOutput>
 
-    abstract fun compileIncrementally(
-        icCaches: List<TModuleArtifact>,
-        configuration: CompilerConfiguration,
-    ): IntermediateOutput?
+    protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
     abstract fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): IntermediateOutput?
 
