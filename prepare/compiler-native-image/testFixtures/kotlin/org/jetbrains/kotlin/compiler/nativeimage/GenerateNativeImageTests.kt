@@ -33,5 +33,13 @@ fun main(args: Array<String>) {
                 model("")
             }
         }
+        testGroup(testsRoot = args[0], testDataRoot = "prepare/compiler-native-image/testData/projects/dynamicPlugins") {
+            testClass<AbstractNativeImageDynamicPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractNativeImageDynamicLegacyPluginBoxTest> {
+                model("")
+            }
+        }
     }
 }

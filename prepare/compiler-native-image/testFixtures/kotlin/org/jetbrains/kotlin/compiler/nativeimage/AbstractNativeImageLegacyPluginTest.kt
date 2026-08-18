@@ -13,6 +13,7 @@ import java.io.File
  * Test plugins with `-Xplugin` + `-P plugin:<id>:<option>` flags
  */
 abstract class AbstractNativeImageLegacyPluginTest : AbstractNativeImageCodegenTest() {
+    protected val pluginsBuildClasspath: List<File> by lazy { ForTestCompileRuntime.kotlinNativeImagePluginsClasspathForTests() }
     protected val pluginsRuntimeClasspath: List<File> by lazy { ForTestCompileRuntime.kotlinNativeImagePluginsRuntimeForTests() }
 
     private val kotlinHome: File by lazy { ForTestCompileRuntime.distKotlincForTests() }
@@ -25,8 +26,16 @@ abstract class AbstractNativeImageLegacyPluginTest : AbstractNativeImageCodegenT
     ): List<String> = buildList {
         addAll(super.buildCompilerArgs(boxFile, outDir, directives, withFullJdk))
         for ([pluginId, jarName, options] in directives.pluginSpecs()) {
-            val jar = kotlinHome.resolve("lib").resolve(jarName).absolutePath
-            add("-Xplugin=$jar")
+            val jar = kotlinHome.resolve("lib").resolve(jarName)
+            val pluginClasspath = when {
+                jar.exists() -> jar.absolutePath
+                else -> {
+                    val nameRegex = jarName.toRegex()
+                    pluginsBuildClasspath.firstOrNull { it.name.contains(nameRegex) }
+                        ?: error("Plugin jar $jarName not found")
+                }
+            }
+            add("-Xplugin=$pluginClasspath")
             for (option in options) {
                 add("-P")
                 add("plugin:${pluginId}:$option")
@@ -38,7 +47,8 @@ abstract class AbstractNativeImageLegacyPluginTest : AbstractNativeImageCodegenT
     }
 
     override fun buildClasspath(withReflect: Boolean, withFullJdk: Boolean): List<File> =
-        super.buildClasspath(withReflect, withFullJdk) + pluginsRuntimeClasspath
+        super.buildClasspath(withReflect, withFullJdk) + pluginsBuildClasspath + pluginsRuntimeClasspath
 
-    override fun runtimeClasspath(withReflect: Boolean): List<File> = super.runtimeClasspath(withReflect) + pluginsRuntimeClasspath
+    override fun runtimeClasspath(withReflect: Boolean): List<File> =
+        super.runtimeClasspath(withReflect) + pluginsRuntimeClasspath
 }

@@ -20,3 +20,5 @@ abstract class AbstractNativeImagePluginBoxTest : AbstractNativeImagePluginTest(
         jvmArgs = listOf("-Dkotlinc.test.allow.testonly.language.features=true"),
     )
 }
+
+abstract class AbstractNativeImageDynamicPluginBoxTest : AbstractNativeImagePluginBoxTest()

@@ -271,6 +271,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static List<File> kotlinNativeImagePluginsClasspathForTests() {
+        return getFilesFromProperty(KOTLIN_NATIVE_IMAGE_PLUGINS_CLASSPATH);
+    }
+
+    @NotNull
     public static List<File> kotlinCompilerEmbeddableClasspathForTests() {
         return getFilesFromProperty(KOTLIN_COMPILER_EMBEDDABLE_CLASSPATH);
     }

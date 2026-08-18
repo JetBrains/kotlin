@@ -1,10 +1,7 @@
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.internal.os.OperatingSystem
-import org.gradle.kotlin.dsl.javaToolchains
-import org.gradle.kotlin.dsl.register
 import java.util.regex.Pattern.quote
-import kotlin.io.path.exists
 
 description = "Kotlin Compiler (Native Image)"
 
@@ -24,89 +21,31 @@ val nativeImageClasspath = configurations.create("nativeImageClasspath") {
     isCanBeResolved = true
 }
 
+val pluginsBuildClasspath = configurations.create("pluginsBuildClasspath") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
 val pluginsRuntime = configurations.create("pluginsRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val bundledCompilerPlugins = mutableListOf<BundledCompilerPluginInfo>()
-
 dependencies {
     nativeImageClasspath(project(":kotlin-compiler-embeddable", configuration = "runtimeElements"))
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlinx.serialization",
-        registrarFqName = "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginOptions",
-        jarPrefixes = listOf("kotlin-serialization-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.allopen",
-        registrarFqName = "org.jetbrains.kotlin.allopen.AllOpenComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor",
-        jarPrefixes = listOf("allopen-compiler-plugin", "kotlin-allopen-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-allopen-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.noarg",
-        registrarFqName = "org.jetbrains.kotlin.noarg.NoArgComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor",
-        jarPrefixes = listOf("noarg-compiler-plugin", "kotlin-noarg-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-noarg-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.samWithReceiver",
-        registrarFqName = "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor",
-        jarPrefixes = listOf("sam-with-receiver-compiler-plugin", "kotlin-sam-with-receiver-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-sam-with-receiver-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.assignment",
-        registrarFqName = "org.jetbrains.kotlin.assignment.plugin.AssignmentComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor",
-        jarPrefixes = listOf("assignment-compiler-plugin", "kotlin-assignment-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-assignment-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.lombok",
-        registrarFqName = "org.jetbrains.kotlin.lombok.LombokComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.lombok.LombokCommandLineProcessor",
-        jarPrefixes = listOf("lombok-compiler-plugin", "kotlin-lombok-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-lombok-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.powerassert",
-        registrarFqName = "org.jetbrains.kotlin.powerassert.PowerAssertCompilerPluginRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.powerassert.PowerAssertCommandLineProcessor",
-        jarPrefixes = listOf("power-assert-compiler-plugin", "kotlin-power-assert-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-power-assert-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "androidx.compose.compiler.plugins.kotlin",
-        registrarFqName = "androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar",
-        commandLineProcessorFqName = "androidx.compose.compiler.plugins.kotlin.ComposeCommandLineProcessor",
-        jarPrefixes = listOf("compose-compiler-plugin", "kotlin-compose-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":plugins:compose-compiler-plugin:compiler"))
-    }
+    // Bundled plugins
+    nativeImageClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":kotlin-allopen-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":kotlin-noarg-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":kotlin-sam-with-receiver-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":kotlin-assignment-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":kotlin-lombok-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":kotlin-power-assert-compiler-plugin.embeddable"))
+    nativeImageClasspath(project(":plugins:compose-compiler-plugin:compiler"))
 
     // Tests
+    pluginsBuildClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable"))
+
     pluginsRuntime(libs.kotlinx.serialization.core)
     pluginsRuntime(composeRuntime())
     pluginsRuntime(composeRuntimeDesktop())
@@ -114,6 +53,7 @@ dependencies {
     pluginsRuntime(composeRuntimeAnnotationsJs())
     pluginsRuntime(composeRuntimeAnnotationsJvm())
     pluginsRuntime(libs.androidx.collections)
+    pluginsRuntime(libs.dataframe.core.dev)
 
     testFixturesApi(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
@@ -130,14 +70,16 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-val graalLauncher = javaToolchains.launcherFor {
-    languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_25_0.targetName))
-    vendor.set(JvmVendorSpec.GRAAL_VM)
-}
+val dynamicPluginsEnabled = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.dynamic-plugins", false)
+    .get()
+
+val graalLauncher = getNativeImageToolchainLauncherFor(JdkMajorVersion.JDK_25_0)
 
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project.isolated, "testData/projects/box")
+    testData(project.isolated, "testData/projects/dynamicPlugins")
 
     testGenerator(
         "org.jetbrains.kotlin.compiler.nativeimage.GenerateNativeImageTestsKt",
@@ -165,8 +107,12 @@ projectTests {
         include("**/NativeImageBoxTestGenerated.class")
         include("**/NativeImagePluginBoxTestGenerated.class")
         include("**/NativeImageLegacyPluginBoxTestGenerated.class")
+        if (dynamicPluginsEnabled) {
+            include("**/NativeImageDynamicPluginBoxTestGenerated.class")
+            include("**/NativeImageDynamicLegacyPluginBoxTestGenerated.class")
+        }
         useNativeImageDist()
-        usePluginsRuntime()
+        usePlugins()
     }
 
     nativeImageTestTask("generateReachabilityMetadataBox") {
@@ -180,7 +126,7 @@ projectTests {
             "false",
         )
         useReachabilityMetadataResources()
-        usePluginsRuntime()
+        usePlugins()
     }
 
     withJvmStdlibAndReflect()
@@ -195,46 +141,44 @@ tasks.test {
 
 val currentOs = OperatingSystem.current()
 
-val generateBundledPluginsInfo = tasks.register("generateBundledPluginsInfo") {
-    description = "Generates the bundled compiler plugins list consumed by BundledCompilerPlugins at runtime"
-
-    val resources = layout.projectDirectory.dir("resources")
-    val outputFile = resources.file("META-INF/org/jetbrains/kotlin/bundled-compiler-plugins.txt")
-    val pluginLines = bundledCompilerPlugins.map { plugin ->
-        listOf(
-            plugin.pluginId,
-            plugin.registrarFqName,
-            plugin.commandLineProcessorFqName.orEmpty(),
-            plugin.jarPrefixes.joinToString(","),
-        ).joinToString(";")
-    }
-    inputs.property("pluginLines", pluginLines)
-    inputs.dir(resources)
-        .withNormalizer(ClasspathNormalizer::class)
-        .withPropertyName("resourcesDir")
-    outputs.file(outputFile)
-    doLast {
-        val bundledPluginsInfo = buildString {
-            appendLine("# Generated by the 'generateBundledPluginsInfo' Gradle task. Do not edit by hand.")
-            appendLine("# Format: pluginId;registrarFqName;commandLineProcessorFqName;jarPrefixes(comma-separated)")
-            for (line in pluginLines) {
-                appendLine(line)
-            }
-        }
-        outputFile.asFile.parentFile.mkdirs()
-        outputFile.asFile.writeText(bundledPluginsInfo)
-    }
-}
-
 val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     description = "Build a native image of the kotlin-compiler-embeddable"
 
     val launcher = graalLauncher
     val resources = layout.projectDirectory.dir("resources")
+    val preservedPackagesFile = layout.projectDirectory.file("preserved-packages.txt")
     val classpathFiles = files(nativeImageClasspath, resources)
+
+    val basicNativeArgs = listOf(
+        "-J-Xmx8g",
+        "-Os",
+        "-H:+AddAllCharsets",
+        "-H:+UnlockExperimentalVMOptions",
+        "-H:+AllowJRTFileSystem",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.io=ALL-UNNAMED",
+        "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+        "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+        "--add-opens", "java.desktop/javax.swing=ALL-UNNAMED",
+    )
+
+    val dynamicPluginsNativeArgs = if (dynamicPluginsEnabled) listOf(
+        "-H:+RuntimeClassLoading",
+        *providers.fileContents(preservedPackagesFile)
+            .asText.get()
+            .trim()
+            .lineSequence()
+            .map { "-H:Preserve=package=$it" }
+            .toList().toTypedArray(),
+    ) else emptyList()
+
+    val nativeArgs = basicNativeArgs + dynamicPluginsNativeArgs
+
     inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile })
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
+
+    inputs.property("nativeArgs", nativeArgs)
 
     val isWindows = currentOs.isWindows
     val mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
@@ -246,24 +190,11 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     outputs.file(executableFile)
 
     doFirst {
-        val javaHome = launcher.get().executablePath.asFile.toPath().parent.parent
-
-        val nativeImageName = if (isWindows) "native-image.exe" else "native-image"
-        val nativeImageBin = javaHome.resolve("lib/svm/bin/$nativeImageName")
-        if (!nativeImageBin.exists()) {
-            throw GradleException("native-image not found at ${nativeImageBin.toAbsolutePath()} (JAVA_HOME=${javaHome.toAbsolutePath()})")
-        }
+        val nativeImageExecutable = launcher.get().resolveNativeImageExecutable(isWindows)
         val fullClasspath = classpathFiles.joinToString(File.pathSeparator) { it.absolutePath }
         commandLine(
-            nativeImageBin,
-            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-            "--add-opens", "java.base/java.io=ALL-UNNAMED",
-            "--add-opens", "java.base/java.nio=ALL-UNNAMED",
-            "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
-            "--add-opens", "java.desktop/javax.swing=ALL-UNNAMED",
-            "-H:+AddAllCharsets",
-            "-H:+UnlockExperimentalVMOptions",
-            "-H:+AllowJRTFileSystem",
+            nativeImageExecutable,
+            *nativeArgs.toTypedArray(),
             "-cp", fullClasspath,
             "-o", outputFile.get().asFile.absolutePath,
             mainClass,
@@ -315,7 +246,7 @@ val nativeImageArchiveBaseName = run {
         currentOs.isMacOsX -> "macos"
         else -> "linux"
     }
-    val arch = when (val osArch = System.getProperty("os.arch")) {
+    val arch = when (val osArch = providers.systemProperty("os.arch").get()) {
         "aarch64", "arm64" -> "aarch64"
         "x86_64", "amd64" -> "x86_64"
         else -> error("Unsupported native-image host architecture: $osArch")
@@ -352,7 +283,7 @@ val kotlincNativeImageChecksum = tasks.register<Checksum>("kotlincNativeImageChe
     checksumAlgorithm.set(Checksum.Algorithm.SHA256)
 }
 
-val kotlincNativeImageArtifacts = tasks.register<Sync>("kotlincNativeImageArtifacts") {
+tasks.register<Sync>("kotlincNativeImageArtifacts") {
     description = "Assembles artifacts for the native image distribution"
     duplicatesStrategy = DuplicatesStrategy.FAIL
     val archiveBaseName = nativeImageArchiveBaseName
@@ -378,11 +309,15 @@ fun Test.useNativeImageDist() {
 }
 
 @OptIn(KotlinCompilerDistUsage::class)
-fun Test.usePluginsRuntime() {
+fun Test.usePlugins() {
     withDist()
     addClasspathProperty(
         pluginsRuntime,
         "kotlin.native-image.plugins-runtime.classpath",
+    )
+    addClasspathProperty(
+        pluginsBuildClasspath,
+        "kotlin.native-image.plugins-build.classpath",
     )
 }
 
@@ -396,28 +331,3 @@ fun Test.useReachabilityMetadataResources() {
         "kotlin.native-image.resources.path",
     )
 }
-
-data class BundledCompilerPluginInfo(
-    val pluginId: String,
-    val registrarFqName: String,
-    val commandLineProcessorFqName: String?,
-    val jarPrefixes: List<String>,
-)
-
-fun DependencyHandlerScope.bundledCompilerPlugin(
-    pluginId: String,
-    registrarFqName: String,
-    commandLineProcessorFqName: String?,
-    jarPrefixes: List<String>,
-    dependency: DependencyHandlerScope.() -> Unit
-) {
-    val pluginInfo = BundledCompilerPluginInfo(
-        pluginId = pluginId,
-        registrarFqName = registrarFqName,
-        commandLineProcessorFqName = commandLineProcessorFqName,
-        jarPrefixes = jarPrefixes,
-    )
-    bundledCompilerPlugins += pluginInfo
-    dependency()
-}
-

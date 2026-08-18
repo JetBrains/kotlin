@@ -145,6 +145,16 @@ fun Project.getToolchainLauncherFor(
     }
 }
 
+fun Project.getNativeImageToolchainLauncherFor(
+    jdkVersion: JdkMajorVersion,
+): Provider<JavaLauncher> {
+    val service = project.extensions.getByType<JavaToolchainService>()
+    return service.launcherFor {
+        this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+        this.nativeImageCapable.set(true)
+    }
+}
+
 fun Project.getToolchainJdkHomeFor(jdkVersion: JdkMajorVersion): Provider<String> {
     return getToolchainLauncherFor(jdkVersion).map {
         it.metadata.installationPath.asFile.absolutePath

@@ -422,12 +422,36 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension",
+      "fields": [
+        {
+          "name": "Companion"
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter",
       "methods": [
         {
           "name": "getExtensions",
           "parameterTypes": [
             "org.jetbrains.kotlin.config.CompilerConfiguration"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.CliDiagnosticReportingKt",
+      "methods": [
+        {
+          "name": "report$default",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.CompilerConfiguration",
+            "org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory",
+            "java.lang.String",
+            "org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation",
+            "int",
+            "java.lang.Object"
           ]
         }
       ]
@@ -616,6 +640,131 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ],
+      "fields": [
+        {
+          "name": "Companion"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey$Companion",
+      "methods": [
+        {
+          "name": "create",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CliOption",
+      "allDeclaredConstructors": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor",
+      "methods": [
+        {
+          "name": "appendList",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.CompilerConfiguration",
+            "org.jetbrains.kotlin.config.CompilerConfigurationKey",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar$ExtensionStorage",
+      "methods": [
+        {
+          "name": "registerExtension",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.extensions.ExtensionPointDescriptor",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.FirExtensionRegistrarConfigurationUtilKt",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryDslKt",
+      "methods": [
+        {
+          "name": "errorWithoutSource",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer"
+          ]
+        },
+        {
+          "name": "warningWithoutSource",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMapKt",
+      "methods": [
+        {
+          "name": "KtDiagnosticFactoryToRendererMap",
+          "parameterTypes": [
+            "java.lang.String",
+            "kotlin.jvm.functions.Function1"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension"
     },
     {
@@ -690,6 +839,29 @@
         {
           "name": "<init>",
           "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.name.ClassId",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.name.FqName",
+            "org.jetbrains.kotlin.name.Name"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.name.FqName",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
         }
       ]
     },
@@ -1682,6 +1854,15 @@
             "long",
             "java.lang.Object"
           ]
+        }
+      ]
+    },
+    {
+      "type": "sun.net.www.protocol.jar.Handler",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
         }
       ]
     },

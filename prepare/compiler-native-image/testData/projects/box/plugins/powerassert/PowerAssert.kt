@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: power-assert-compiler-plugin.jar function=kotlin.assert
+// COMPILER_PLUGIN: org.jetbrains.kotlin.powerassert power-assert-compiler-plugin.jar function=kotlin.assert
 // ASSERTIONS_MODE: always-enable
 
 fun a(): Int = 1
