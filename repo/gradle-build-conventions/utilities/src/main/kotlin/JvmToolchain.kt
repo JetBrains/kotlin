@@ -145,6 +145,17 @@ fun Project.getToolchainLauncherFor(
     }
 }
 
+fun Project.getToolchainLauncherFor(
+    jdkVersion: JdkMajorVersion,
+    vendor: JvmVendorSpec,
+): Provider<JavaLauncher> {
+    val service = project.extensions.getByType<JavaToolchainService>()
+    return service.launcherFor {
+        this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+        this.vendor.set(vendor)
+    }
+}
+
 fun Project.getToolchainJdkHomeFor(jdkVersion: JdkMajorVersion): Provider<String> {
     return getToolchainLauncherFor(jdkVersion).map {
         it.metadata.installationPath.asFile.absolutePath

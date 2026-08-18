@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: assignment-compiler-plugin.jar annotation=ValueContainer
+// COMPILER_PLUGIN: org.jetbrains.kotlin.assignment assignment-compiler-plugin.jar annotation=ValueContainer
 
 annotation class ValueContainer
 

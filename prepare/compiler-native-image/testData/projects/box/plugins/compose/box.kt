@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: compose-compiler-plugin.jar generateFunctionKeyMetaAnnotations=true
+// COMPILER_PLUGIN: androidx.compose.compiler.plugins.kotlin compose-compiler-plugin.jar generateFunctionKeyMetaAnnotations=true
 // FULL_JDK
 
 import androidx.compose.runtime.Composable
