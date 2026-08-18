@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
+import org.jetbrains.kotlin.light.classes.symbol.utils.NullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.asAnnotationQualifier
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: Lazy<NullabilityAnnotation>) : AdditionalAnnotationsProvider {
