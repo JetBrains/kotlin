@@ -156,7 +156,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonCompilerArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonToolArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
+  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+) : CommonToolArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     ArgumentsCommonCompilerArguments,
     ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonToolArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+  internal val argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
 ) : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()

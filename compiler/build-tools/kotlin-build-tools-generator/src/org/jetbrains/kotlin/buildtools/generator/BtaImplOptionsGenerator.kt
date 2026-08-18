@@ -21,6 +21,8 @@ import kotlin.contracts.contract
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
+private const val ARGUMENT_PARSE_DIAGNOSTICS_CLASS = "ArgumentParseDiagnostics"
+
 internal data class CompatLayerConfig(
     /**
      * The Kotlin version of the currently running build.
@@ -84,6 +86,7 @@ internal class BtaImplOptionsGenerator(
                     if (!generateCompatLayer) {
                         addSuperclassConstructorParameter("argumentValidationErrors")
                         addSuperclassConstructorParameter("restrictedArgViolations")
+                        addSuperclassConstructorParameter("argumentParseDiagnostics")
                     }
                 } else {
                     property(
@@ -144,8 +147,9 @@ internal class BtaImplOptionsGenerator(
                     function("deepCopy") {
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
-                        val constructorArgs =
-                            if (!generateCompatLayer) "argumentValidationErrors.toSet(), restrictedArgViolations.toList()" else ""
+                        val constructorArgs = if (!generateCompatLayer) {
+                            "argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()"
+                        } else ""
                         addStatement(
                             "return %T($constructorArgs).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
                             ClassName(targetPackage, implClassName)
@@ -223,6 +227,12 @@ internal class BtaImplOptionsGenerator(
                         )
                 )
                     .defaultValue("%M()", MemberName("kotlin.collections", "emptyList"))
+                    .build()
+            )
+
+            addParameter(
+                ParameterSpec.builder("argumentParseDiagnostics", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
+                    .defaultValue("%T()", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
                     .build()
             )
         }
@@ -800,6 +810,12 @@ internal class BtaImplOptionsGenerator(
                     .getter(FunSpec.getterBuilder().addStatement("return _argumentValidationErrors").build())
                     .build()
             )
+            addProperty(
+                PropertySpec.builder("argumentParseDiagnostics", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
+                    .addModifiers(KModifier.INTERNAL)
+                    .initializer("argumentParseDiagnostics")
+                    .build()
+            )
             function("collectRestrictedArgViolations") {
                 addModifiers(KModifier.INTERNAL, KModifier.OPEN)
                 addParameter("compilerArgs", rootCompilerArgsClass)
@@ -1021,6 +1037,9 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
                 "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
                 MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
             )
+            // has to run before the values are applied, so that values previously set through the typed argument API
+            // are still observable
+            addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
         } else {
             addStatement(
                 "%M(compilerArgs.errors)?.let { throw %M(it) }",

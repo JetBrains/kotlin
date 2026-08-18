@@ -63,7 +63,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal class JsArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
+  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     JsCompilerArguments,
     JsCompilerArguments.Builder,
     JsCompilerKlibArguments,
@@ -130,7 +131,7 @@ internal class JsArgumentsImpl(
     optionsMap[key.id] = `value`
   }
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JsArgumentsImpl = deepCopy()
 
@@ -235,6 +236,7 @@ internal class JsArgumentsImpl(
     val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }
 

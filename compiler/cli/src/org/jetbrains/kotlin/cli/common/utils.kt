@@ -136,7 +136,7 @@ fun CompilerConfiguration.reportCompilationException(e: CompilationException) {
 /**
  * Returns a warning message and status if the argument is deprecated or removed, null otherwise.
  */
-internal fun ArgumentField.generateLifecycleWarning(forExtraHelp: Boolean): Pair<String, ArgumentLifecycleStatus>? {
+fun ArgumentField.generateLifecycleWarning(forExtraHelp: Boolean): Pair<String, ArgumentLifecycleStatus>? {
     val status = status
     if (status == ArgumentLifecycleStatus.REGULAR ||
         // Don't report a diagnostic about future deprecation/removing

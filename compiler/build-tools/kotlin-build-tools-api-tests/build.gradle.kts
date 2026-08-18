@@ -194,6 +194,7 @@ val businessLogicTestSuits = setOf(
     "testInternalInputsTracker",
     "testAbiValidation",
     "testRestrictedArguments",
+    "testArgumentParsingWarnings",
     "testClasspathMetadata",
     "testBuildSession",
 )

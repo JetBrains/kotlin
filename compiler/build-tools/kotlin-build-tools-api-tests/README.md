@@ -22,6 +22,9 @@ The module defines test suites using the `jvm-test-suite` plugin.
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testEscapableCharacters` to run them
 * Restricted arguments: verifies that arguments not supported via `applyArgumentStrings` (e.g. `-Xbuild-file`, `-d`) are properly rejected
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testRestrictedArguments` to run them
+* Argument parsing warnings: verifies that warnings produced while parsing compiler arguments (duplicated arguments, unknown `-X` flags,
+  deprecated and removed arguments) are reported through the `KotlinLogger`
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testArgumentParsingWarnings` to run them
 * Classpath metadata: verifies the experimental incremental compilation feature for KMP projects targeting the JVM
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testClasspathMetadata` to run them
 * Example: provides examples of the DSL usage. Excluded from the `check` task
@@ -57,4 +60,3 @@ The incremental compilation tests written using the scenario DSL are subject to 
 avoid boilerplate.
 
 Please refer to the example test [class](src/testExample/kotlin/ExampleIncrementalScenarioTest.kt) for more information
-

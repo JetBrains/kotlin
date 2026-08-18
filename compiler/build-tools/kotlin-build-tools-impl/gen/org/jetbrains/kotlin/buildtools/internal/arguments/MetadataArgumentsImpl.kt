@@ -51,7 +51,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal class MetadataArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
+  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     MetadataArguments,
     MetadataArguments.Builder,
     DeepCopyable<MetadataArgumentsImpl> {
@@ -84,7 +85,7 @@ internal class MetadataArgumentsImpl(
     optionsMap[key.id] = `value`
   }
 
-  override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): MetadataArgumentsImpl = deepCopy()
 
@@ -141,6 +142,7 @@ internal class MetadataArgumentsImpl(
     val compilerArgs: K2MetadataCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2MetadataCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }
 

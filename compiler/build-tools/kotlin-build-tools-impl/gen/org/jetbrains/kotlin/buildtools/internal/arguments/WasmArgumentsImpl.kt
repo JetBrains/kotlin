@@ -61,7 +61,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal class WasmArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
+  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     WasmCompilerArguments,
     WasmCompilerArguments.Builder,
     WasmCompilerKlibArguments,
@@ -128,7 +129,7 @@ internal class WasmArgumentsImpl(
     optionsMap[key.id] = `value`
   }
 
-  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): WasmArgumentsImpl = deepCopy()
 
@@ -230,6 +231,7 @@ internal class WasmArgumentsImpl(
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
     applyCompilerArguments(compilerArgs)
   }
 

@@ -52,7 +52,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonKlibBasedArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
+  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     CommonKlibBasedArguments,
     CommonKlibBasedArguments.Builder,
     CommonKlibBasedArgumentsKlibArguments,

@@ -10,8 +10,13 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.arguments.Argument
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
+import org.jetbrains.kotlin.cli.common.generateLifecycleWarning
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import java.nio.file.Path
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -34,6 +39,29 @@ internal fun CommonToolArgumentsImpl.hasValidationErrors(): Boolean =
 internal fun CommonToolArgumentsImpl.reportValidationErrors(logger: KotlinLogger) {
     for (error in argumentValidationErrors) {
         logger.error(error)
+    }
+}
+
+/**
+ * Replays the warnings that the CLI compiler would produce while parsing its arguments (like, for example,
+ * an argument passed multiple times, an unknown argument, a deprecated argument name, a removed argument) onto [collector].
+ *
+ * The compiler cannot report them itself here: the arguments instance it receives is rebuilt from the Build Tools API
+ * argument model.
+ */
+internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
+    collector: MessageCollector,
+    finalArguments: CommonToolArguments,
+) {
+    if (argumentParseDiagnostics.isEmpty()) return
+    val arguments = argumentParseDiagnostics.buildReportableArguments(finalArguments) ?: return
+    collector.reportArgumentParseProblems(arguments)
+    // `REMOVED_CLI_ARG` is reported by the compiler out of `explicitArguments`, but a removed argument has no property
+    // on the arguments class, so it can never reach the compiler through the Build Tools API argument model.
+    for (field in arguments.explicitArguments.keys) {
+        if (field.status != ArgumentLifecycleStatus.REMOVED) continue
+        val message = field.generateLifecycleWarning(forExtraHelp = false)?.first ?: continue
+        collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
     }
 }
 
