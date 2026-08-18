@@ -1,12 +1,5 @@
 [versions]
 
-# To be compatible with Gradle 7.x we need to compile modules and Gradle Plugin with Kotlin Language/API version 1.4.
-# For this we use Kotlin BTA (Build Tools API) with the custom compiler version of 2.0.21,
-# which is the latest Kotlin compiler version, which supports Kotlin Language/API version 1.4.
-# The logic lives in build-logic/src/main/kotlin/dokkabuild/utils/gradleKotlinCompatibility.kt
-bta-kotlin-compiler = "2.0.21"
-bta-kotlin-language = "1.4"
-
 gradlePlugin-kotlin = "2.4.0"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "7.3.1"
@@ -118,6 +111,11 @@ kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-clas
 #### Java analysis ####
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
 intellij-java-psi-impl = { module = "com.jetbrains.intellij.java:java-psi-impl", version.ref = "intellij-platform" }
+# The `*-syntax` artifacts come in transitively via `java-psi(-impl)`, but they must also be declared
+# explicitly to win over the stripped copies bundled in `kotlin-compiler`, see plugin-base
+intellij-java-syntax = { module = "com.jetbrains.intellij.java:java-syntax", version.ref = "intellij-platform" }
+intellij-platform-syntax = { module = "com.jetbrains.intellij.platform:syntax", version.ref = "intellij-platform" }
+intellij-platform-syntax-util = { module = "com.jetbrains.intellij.platform:syntax-util", version.ref = "intellij-platform" }
 # Since intellij-platform 261, `com.intellij.psi.PsiElement` (and other core PSI API classes) are no longer
 # on the `java-psi(-impl)` classpath; they now live in the platform `core` module.
 intellij-platform-core = { module = "com.jetbrains.intellij.platform:core", version.ref = "intellij-platform" }

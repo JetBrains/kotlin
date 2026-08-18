@@ -2,96 +2,128 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
+import dokkabuild.utils.downloadLatestKotlinStdlibJvmSources
+import dokkabuild.utils.systemProperty
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
+
 plugins {
-    id("dokkabuild.base")
+    id("dokkabuild.kotlin-jvm")
+    id("dokkabuild.test-k2")
+    `java-test-fixtures`
     idea
 }
 
-val publishedIncludedBuilds = listOf("runner-cli", "dokka-gradle-plugin", "runner-maven-plugin")
-val gradlePluginIncludedBuilds = listOf("dokka-gradle-plugin")
+dependencies {
 
-addDependencyOnSameTasksOfIncludedBuilds("assemble", "build", "clean", "check")
-
-registerParentGroupTasks(
-    "publishing", taskNames = listOf(
-        "publishAllPublicationsToMavenCentralRepository",
-        "publishAllPublicationsToProjectLocalRepository",
-        "publishAllPublicationsToSnapshotRepository",
-        "publishAllPublicationsToSpaceDevRepository",
-        "publishAllPublicationsToSpaceTestRepository",
-        "publishToMavenLocal",
-    )
-) {
-    it.name in publishedIncludedBuilds
-}
-
-registerParentGroupTasks(
-    "gradle plugin", taskNames = listOf(
-        "publishPlugins",
-        "validatePlugins",
-    )
-) {
-    it.name in gradlePluginIncludedBuilds
-}
-
-registerParentGroupTasks(
-    "bcv", taskNames = listOf(
-        "apiDump",
-        "apiCheck",
-        "apiBuild",
-    )
-) {
-    it.name in publishedIncludedBuilds
-}
-
-registerParentGroupTasks(
-    "verification", taskNames = listOf(
-        "test",
-    )
-)
-
-tasks.register("integrationTest") {
-    group = "verification"
-    description = "Runs integration tests of this project. Might take a while and require additional setup."
-
-    dependsOn(includedBuildTasks("integrationTest") {
-        it.name == "dokka-integration-tests"
-    })
-}
-
-fun addDependencyOnSameTasksOfIncludedBuilds(vararg taskNames: String) {
-    taskNames.forEach { taskName ->
-        tasks.named(taskName) {
-            dependsOn(includedBuildTasks(taskName))
+    // Other
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.jsoup)
+    implementation(libs.freemarker)
+    implementation(libs.kotlinx.html)
+    implementation(libs.jackson.kotlin)
+    constraints {
+        implementation(libs.jackson.databind) {
+            because("CVE-2022-42003")
         }
     }
-}
 
-fun registerParentGroupTasks(
-    groupName: String,
-    taskNames: List<String>,
-    includedBuildFilter: (IncludedBuild) -> Boolean = { true }
-) = taskNames.forEach { taskName ->
-    tasks.register(taskName) {
-        group = groupName
-        description = "A parent task that calls tasks with the same name in all subprojects and included builds"
+    // Test only
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.junit.jupiterParams)
+/// markdown
+    implementation(libs.jsoup)
+    implementation(libs.jetbrains.markdown)
 
-        dependsOn(subprojectTasks(taskName), includedBuildTasks(taskName, includedBuildFilter))
+//Java
+    // This must be explicit so the full `java-psi` API takes precedence over
+    // stripped copies that may be present in compiler-related artifacts.
+
+    // this is a `hack` to include classes `intellij-java-psi-api` in shadowJar
+    // which are not present in `kotlin-compiler`
+    // should be `api` since we already have it in :analysis-java-psi
+    // it's harder to do it in the same as with `fastutil`
+    // as several intellij dependencies share the same packages like `org.intellij.core`
+    api(libs.intellij.java.psi.api) { isTransitive = false }
+
+    // The syntax artifacts are already available transitively via `java-psi(-impl)`, but `kotlin-compiler`
+    // bundles stripped copies of them: their Kotlin metadata is kept, while the static fields backing
+    // `const val`s and the synthetic `$annotations` methods holding `@JvmStatic` are pruned. Compiling against
+    // such a copy either fails outright (internal compiler error on `ReferenceParser.EAT_LAST_DOT`) or produces
+    // bytecode that doesn't match the real artifact used at runtime (`IncompatibleClassChangeError` for
+    // `SyntaxTokenTypes.WHITE_SPACE`) — see the vendored `JavaDocParser`. Declaring them explicitly puts them
+    // before `kotlin-compiler` on the compile classpath, which is the order the runtime classpath already has.
+    implementation(libs.intellij.java.syntax)
+    implementation(libs.intellij.platform.syntax)
+    implementation(libs.intellij.platform.syntax.util)
+
+    // We exclude `log4j` as it's not used in our codebase,
+    // and we do override intellij logger with NOOP logger
+    // `log4j` dependency triggers errors by dependency vulnerability checkers
+    implementation(libs.intellij.java.psi.impl) {
+        exclude("org.jetbrains.intellij.deps", "log4j")
     }
+    // Since intellij-platform 261, core PSI API classes such as `com.intellij.psi.PsiElement` are no longer
+    // on the `java-psi(-impl)` classpath. They're needed only at compile time here — at runtime they're
+    // provided by `kotlin-compiler` (which bundles the IntelliJ core).
+    compileOnly(libs.intellij.platform.core)
+    implementation(libs.intellij.util)
+    implementation(libs.jetbrains.markdown)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.jsoup)
+
+
+    // ----------- Analysis dependencies ----------------------------------------------------------------------------
+
+    listOf(
+        libs.kotlin.analysis.api.api,
+        libs.kotlin.analysis.api.standalone,
+    ).forEach {
+        implementation(it) {
+            isTransitive = false // see KTIJ-19820
+        }
+    }
+    listOf(
+        libs.kotlin.analysis.api.impl,
+        libs.kotlin.analysis.api.fir,
+        libs.kotlin.low.level.api.fir,
+        libs.kotlin.analysis.api.platform,
+        libs.kotlin.symbol.light.classes,
+        // provides `org.jetbrains.kotlin.analysis.decompiler.*` classes (e.g. ClsKotlinBinaryClassCache),
+        // which since 2.4.20-dev-5364 are no longer bundled in `kotlin-compiler`
+        libs.kotlin.compiler.k2.common,
+    ).forEach {
+        runtimeOnly(it) {
+            isTransitive = false // see KTIJ-19820
+        }
+    }
+    // copy-pasted from Analysis API https://github.com/JetBrains/kotlin/blob/a10042f9099e20a656dec3ecf1665eea340a3633/analysis/low-level-api-fir/build.gradle.kts#L37
+    runtimeOnly("com.github.ben-manes.caffeine:caffeine:2.9.3")
+
+    implementation(libs.kotlin.compiler.k2) {
+        isTransitive = false
+    }
+
+    // TODO [beresnev] get rid of it
+    compileOnly(libs.kotlinx.coroutines.core)
+
+    // to gain access to com.intellij.diagnostic.LoadingState in the compile time
+    compileOnly(libs.intellij.util.base)
 }
 
-fun subprojectTasks(taskName: String): List<String> =
-    subprojects
-        .filter { it.getTasksByName(taskName, false).isNotEmpty() }
-        .map { ":${it.path}:$taskName" }
+tasks.test {
+    maxHeapSize = "4G"
+}
 
 
-fun includedBuildTasks(taskName: String, filter: (IncludedBuild) -> Boolean = { true }): List<TaskReference> =
-    gradle.includedBuilds
-        .filter { it.name != "build-logic" && it.name != "build-settings-logic" }
-        .filter(filter)
-        .mapNotNull { it.task(":$taskName") }
-
+//region Download and unpack kotlin-stdlib, so EnumTemplatesTest can test synthetic enum functions.
+val kotlinStdlibSourcesDir = downloadLatestKotlinStdlibJvmSources(project)
+tasks.withType<Test>().configureEach {
+    systemProperty
+        .inputDirectory("kotlinStdlibSourcesDir", kotlinStdlibSourcesDir)
+        .withPathSensitivity(RELATIVE)
+}
+//endregion
 
 tasks.wrapper {
     doLast {
@@ -115,22 +147,6 @@ idea {
                 ".idea",
                 ".husky",
                 ".kotlin",
-                "dokka-integration-tests/.kotlin",
-                "dokka-runners/dokka-gradle-plugin/.kotlin",
-                "dokka-runners/runner-cli/.kotlin",
-                "dokka-runners/runner-maven-plugin/.kotlin",
-                "dokka-runners/dokka-gradle-plugin/src/testFunctional/resources/KotlinDslAccessorsTest/",
-
-                "dokka-integration-tests/gradle/src/testExampleProjects/expectedData",
-                "dokka-integration-tests/gradle/projects/it-android/expectedData",
-                "dokka-integration-tests/gradle/projects/it-multiplatform-android-jvm/expectedData",
-                "dokka-integration-tests/gradle/projects/it-android-compose/expectedData",
-                "dokka-integration-tests/gradle/projects/it-kotlin-multiplatform/expectedData",
-                "dokka-integration-tests/gradle/projects/it-android-kotlin-jvm-builtin/expectedData",
-                "dokka-integration-tests/gradle/projects/it-android-kotlin-mp-builtin/expectedData",
-
-                "examples/gradle/dokka-versioning-multimodule-example/previousDocVersions/",
-                "examples/gradle-v2/versioning-multimodule-example/docs/previousDocVersions/",
             )
         )
     }
