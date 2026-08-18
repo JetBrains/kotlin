@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
@@ -52,7 +54,7 @@ internal class KotlinImportModelProvider(
             parameters = CompilationUnitModelKt.parameters { compilationUnitId = id }
             name = compilation.name
             platform = CompilationUnitModel.Platform.PLATFORM_JVM
-            isTest = compilation.name == KotlinCompilation.TEST_COMPILATION_NAME
+            purpose = compilation.importModelPurpose()
             sourceRoots += sourceRoots(compilation)
             outputs += compilationOutputs(compileTask)
         }
@@ -105,21 +107,34 @@ internal class KotlinImportModelProvider(
 
     private fun compilationOutputs(compileTask: KotlinCompile): List<CompilationUnitModel.Output> {
         val producingAction = gradleAction(compileTask.path)
-        val paths = buildList {
-            add(compileTask.destinationDirectory.get().asFile.toPath())
+        val outputs = buildList {
+            add(
+                compileTask.destinationDirectory.get().asFile.toPath() to
+                    CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES
+            )
             if (compileTask.runViaBuildToolsApi.getOrElse(false) && compileTask.generateCompilerRefIndex.getOrElse(false)) {
-                add(compileTask.taskBuildCacheableOutputDirectory.get().dir(DATA_PATH).asFile.toPath())
+                add(
+                    compileTask.taskBuildCacheableOutputDirectory.get().dir(DATA_PATH).asFile.toPath() to
+                        CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI
+                )
             }
         }
-        return paths
-            .distinct()
-            .map { path ->
+        return outputs
+            .distinctBy { (path, _) -> path }
+            .map { (path, kind) ->
                 CompilationUnitModelKt.output {
                     this.path = project.relativeProjectPath(path)
+                    this.kind = kind
                     producingActions += producingAction
                 }
             }
             .sortedBy(CompilationUnitModel.Output::getPath)
+    }
+
+    private fun KotlinCompilation<*>.importModelPurpose(): CompilationUnitModel.Purpose = when {
+        isMain() -> CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN
+        isTest() -> CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST
+        else -> error("Unsupported Kotlin import compilation purpose '$name' for project '${project.path}'")
     }
 
     private fun ResolvedArtifactResult.toBinaryDependency(): BinaryDependency? = when (val component = id.componentIdentifier) {

@@ -50,20 +50,20 @@ class KotlinImportModelProviderTest {
             provider.compilationUnit(mainId),
             mainId,
             "main",
-            false,
+            CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN,
             listOf(
-                output("build/classes/kotlin/main", ":compileKotlin"),
-                output("build/kotlin/compileKotlin/cacheable/cri", ":compileKotlin"),
+                output("build/classes/kotlin/main", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileKotlin"),
+                output("build/kotlin/compileKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileKotlin"),
             ),
         )
         assertCompilationUnit(
             provider.compilationUnit(testId),
             testId,
             "test",
-            true,
+            CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST,
             listOf(
-                output("build/classes/kotlin/test", ":compileTestKotlin"),
-                output("build/kotlin/compileTestKotlin/cacheable/cri", ":compileTestKotlin"),
+                output("build/classes/kotlin/test", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileTestKotlin"),
+                output("build/kotlin/compileTestKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileTestKotlin"),
             ),
         )
         listOf(
@@ -91,11 +91,11 @@ class KotlinImportModelProviderTest {
         }
 
         assertEquals(
-            listOf(output("build/classes/kotlin/main", ":compileKotlin")),
+            listOf(output("build/classes/kotlin/main", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileKotlin")),
             provider.compilationUnit(compilationUnits.getValue("main")).outputsList,
         )
         assertEquals(
-            listOf(output("build/classes/kotlin/test", ":compileTestKotlin")),
+            listOf(output("build/classes/kotlin/test", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileTestKotlin")),
             provider.compilationUnit(compilationUnits.getValue("test")).outputsList,
         )
     }
@@ -137,14 +137,14 @@ class KotlinImportModelProviderTest {
         model: CompilationUnitModel,
         expectedId: CompilationUnitId,
         expectedName: String,
-        expectedIsTest: Boolean,
+        expectedPurpose: CompilationUnitModel.Purpose,
         expectedOutputs: List<CompilationUnitModel.Output>,
     ) {
         assertEquals(KotlinImportModelIds.COMPILATION_UNIT, model.id)
         assertEquals(expectedId, model.parameters.compilationUnitId)
         assertEquals(expectedName, model.name)
         assertEquals(CompilationUnitModel.Platform.PLATFORM_JVM, model.platform)
-        assertEquals(expectedIsTest, model.isTest)
+        assertEquals(expectedPurpose, model.purpose)
         assertEquals(expectedOutputs, model.outputsList)
         assertEquals(
             when (expectedName) {
@@ -177,8 +177,13 @@ class KotlinImportModelProviderTest {
         gradleAction = ActionKt.gradleTask { this.taskPath = taskPath }
     }
 
-    private fun output(path: String, vararg producingTaskPaths: String): CompilationUnitModel.Output = CompilationUnitModelKt.output {
+    private fun output(
+        path: String,
+        kind: CompilationUnitModel.Output.Kind,
+        vararg producingTaskPaths: String,
+    ): CompilationUnitModel.Output = CompilationUnitModelKt.output {
         this.path = path
+        this.kind = kind
         producingActions += producingTaskPaths.map(::gradleAction)
     }
 }

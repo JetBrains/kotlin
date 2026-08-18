@@ -83,20 +83,34 @@ message CompilationUnitModel {
     PLATFORM_JVM = 1;
   }
 
+  enum Purpose {
+    COMPILATION_PURPOSE_UNSPECIFIED = 0;
+    COMPILATION_PURPOSE_MAIN = 1;
+    COMPILATION_PURPOSE_TEST = 2;
+    COMPILATION_PURPOSE_TEST_FIXTURES = 3;
+  }
+
   message Parameters {
     CompilationUnitId compilation_unit_id = 1;
   }
 
   message Output {
+    enum Kind {
+      OUTPUT_KIND_UNSPECIFIED = 0;
+      OUTPUT_KIND_CLASSES = 1;
+      OUTPUT_KIND_CRI = 2;
+    }
+
     string path = 1;
     repeated Action producing_actions = 2;
+    Kind kind = 3;
   }
 
   string id = 1;
   Parameters parameters = 2;
   string name = 3;
   Platform platform = 4;
-  bool is_test = 5;
+  Purpose purpose = 5;
   repeated Output outputs = 6;
   repeated SourceRoot source_roots = 7;
 }

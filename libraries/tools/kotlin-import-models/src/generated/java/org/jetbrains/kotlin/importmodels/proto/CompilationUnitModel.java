@@ -30,6 +30,7 @@ private static final long serialVersionUID = 0L;
     id_ = "";
     name_ = "";
     platform_ = 0;
+    purpose_ = 0;
     outputs_ = java.util.Collections.emptyList();
     sourceRoots_ = java.util.Collections.emptyList();
   }
@@ -162,6 +163,141 @@ private static final long serialVersionUID = 0L;
     }
 
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Platform)
+  }
+
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose}
+   */
+  public enum Purpose
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>COMPILATION_PURPOSE_UNSPECIFIED = 0;</code>
+     */
+    COMPILATION_PURPOSE_UNSPECIFIED(0),
+    /**
+     * <code>COMPILATION_PURPOSE_MAIN = 1;</code>
+     */
+    COMPILATION_PURPOSE_MAIN(1),
+    /**
+     * <code>COMPILATION_PURPOSE_TEST = 2;</code>
+     */
+    COMPILATION_PURPOSE_TEST(2),
+    /**
+     * <code>COMPILATION_PURPOSE_TEST_FIXTURES = 3;</code>
+     */
+    COMPILATION_PURPOSE_TEST_FIXTURES(3),
+    UNRECOGNIZED(-1),
+    ;
+
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 28,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        Purpose.class.getName());
+    }
+    /**
+     * <code>COMPILATION_PURPOSE_UNSPECIFIED = 0;</code>
+     */
+    public static final int COMPILATION_PURPOSE_UNSPECIFIED_VALUE = 0;
+    /**
+     * <code>COMPILATION_PURPOSE_MAIN = 1;</code>
+     */
+    public static final int COMPILATION_PURPOSE_MAIN_VALUE = 1;
+    /**
+     * <code>COMPILATION_PURPOSE_TEST = 2;</code>
+     */
+    public static final int COMPILATION_PURPOSE_TEST_VALUE = 2;
+    /**
+     * <code>COMPILATION_PURPOSE_TEST_FIXTURES = 3;</code>
+     */
+    public static final int COMPILATION_PURPOSE_TEST_FIXTURES_VALUE = 3;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Purpose valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static Purpose forNumber(int value) {
+      switch (value) {
+        case 0: return COMPILATION_PURPOSE_UNSPECIFIED;
+        case 1: return COMPILATION_PURPOSE_MAIN;
+        case 2: return COMPILATION_PURPOSE_TEST;
+        case 3: return COMPILATION_PURPOSE_TEST_FIXTURES;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Purpose>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Purpose> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Purpose>() {
+            public Purpose findValueByNumber(int number) {
+              return Purpose.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.getDescriptor().getEnumTypes().get(1);
+    }
+
+    private static final Purpose[] VALUES = values();
+
+    public static Purpose valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private Purpose(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose)
   }
 
   public interface ParametersOrBuilder extends
@@ -778,6 +914,22 @@ private static final long serialVersionUID = 0L;
      */
     org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder getProducingActionsOrBuilder(
         int index);
+
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+     * @return Whether the kind field is set.
+     */
+    boolean hasKind();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+     * @return The enum numeric value on the wire for kind.
+     */
+    int getKindValue();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+     * @return The kind.
+     */
+    org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind getKind();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output}
@@ -803,6 +955,7 @@ private static final long serialVersionUID = 0L;
     private Output() {
       path_ = "";
       producingActions_ = java.util.Collections.emptyList();
+      kind_ = 0;
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -816,6 +969,132 @@ private static final long serialVersionUID = 0L;
       return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Output_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.class, org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Builder.class);
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind}
+     */
+    public enum Kind
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>OUTPUT_KIND_UNSPECIFIED = 0;</code>
+       */
+      OUTPUT_KIND_UNSPECIFIED(0),
+      /**
+       * <code>OUTPUT_KIND_CLASSES = 1;</code>
+       */
+      OUTPUT_KIND_CLASSES(1),
+      /**
+       * <code>OUTPUT_KIND_CRI = 2;</code>
+       */
+      OUTPUT_KIND_CRI(2),
+      UNRECOGNIZED(-1),
+      ;
+
+      static {
+        com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+          com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+          /* major= */ 4,
+          /* minor= */ 28,
+          /* patch= */ 2,
+          /* suffix= */ "",
+          Kind.class.getName());
+      }
+      /**
+       * <code>OUTPUT_KIND_UNSPECIFIED = 0;</code>
+       */
+      public static final int OUTPUT_KIND_UNSPECIFIED_VALUE = 0;
+      /**
+       * <code>OUTPUT_KIND_CLASSES = 1;</code>
+       */
+      public static final int OUTPUT_KIND_CLASSES_VALUE = 1;
+      /**
+       * <code>OUTPUT_KIND_CRI = 2;</code>
+       */
+      public static final int OUTPUT_KIND_CRI_VALUE = 2;
+
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static Kind valueOf(int value) {
+        return forNumber(value);
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       */
+      public static Kind forNumber(int value) {
+        switch (value) {
+          case 0: return OUTPUT_KIND_UNSPECIFIED;
+          case 1: return OUTPUT_KIND_CLASSES;
+          case 2: return OUTPUT_KIND_CRI;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Kind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          Kind> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Kind>() {
+              public Kind findValueByNumber(int number) {
+                return Kind.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalStateException(
+              "Can't get the descriptor of an unrecognized enum value.");
+        }
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final Kind[] VALUES = values();
+
+      public static Kind valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private Kind(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind)
     }
 
     private int bitField0_;
@@ -907,6 +1186,31 @@ private static final long serialVersionUID = 0L;
       return producingActions_.get(index);
     }
 
+    public static final int KIND_FIELD_NUMBER = 3;
+    private int kind_ = 0;
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+     * @return Whether the kind field is set.
+     */
+    @java.lang.Override public boolean hasKind() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+     * @return The enum numeric value on the wire for kind.
+     */
+    @java.lang.Override public int getKindValue() {
+      return kind_;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+     * @return The kind.
+     */
+    @java.lang.Override public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind getKind() {
+      org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind result = org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind.forNumber(kind_);
+      return result == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind.UNRECOGNIZED : result;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -927,6 +1231,9 @@ private static final long serialVersionUID = 0L;
       for (int i = 0; i < producingActions_.size(); i++) {
         output.writeMessage(2, producingActions_.get(i));
       }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeEnum(3, kind_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -942,6 +1249,10 @@ private static final long serialVersionUID = 0L;
       for (int i = 0; i < producingActions_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, producingActions_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(3, kind_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -965,6 +1276,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!getProducingActionsList()
           .equals(other.getProducingActionsList())) return false;
+      if (hasKind() != other.hasKind()) return false;
+      if (hasKind()) {
+        if (kind_ != other.kind_) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -983,6 +1298,10 @@ private static final long serialVersionUID = 0L;
       if (getProducingActionsCount() > 0) {
         hash = (37 * hash) + PRODUCING_ACTIONS_FIELD_NUMBER;
         hash = (53 * hash) + getProducingActionsList().hashCode();
+      }
+      if (hasKind()) {
+        hash = (37 * hash) + KIND_FIELD_NUMBER;
+        hash = (53 * hash) + kind_;
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -1123,6 +1442,7 @@ private static final long serialVersionUID = 0L;
           producingActionsBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
+        kind_ = 0;
         return this;
       }
 
@@ -1174,6 +1494,10 @@ private static final long serialVersionUID = 0L;
           result.path_ = path_;
           to_bitField0_ |= 0x00000001;
         }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.kind_ = kind_;
+          to_bitField0_ |= 0x00000002;
+        }
         result.bitField0_ |= to_bitField0_;
       }
 
@@ -1220,6 +1544,9 @@ private static final long serialVersionUID = 0L;
             }
           }
         }
+        if (other.hasKind()) {
+          setKind(other.getKind());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -1264,6 +1591,11 @@ private static final long serialVersionUID = 0L;
                 }
                 break;
               } // case 18
+              case 24: {
+                kind_ = input.readEnum();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1600,6 +1932,66 @@ private static final long serialVersionUID = 0L;
         return producingActionsBuilder_;
       }
 
+      private int kind_ = 0;
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+       * @return Whether the kind field is set.
+       */
+      @java.lang.Override public boolean hasKind() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+       * @return The enum numeric value on the wire for kind.
+       */
+      @java.lang.Override public int getKindValue() {
+        return kind_;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+       * @param value The enum numeric value on the wire for kind to set.
+       * @return This builder for chaining.
+       */
+      public Builder setKindValue(int value) {
+        kind_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+       * @return The kind.
+       */
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind getKind() {
+        org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind result = org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind.forNumber(kind_);
+        return result == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind.UNRECOGNIZED : result;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+       * @param value The kind to set.
+       * @return This builder for chaining.
+       */
+      public Builder setKind(org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        kind_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearKind() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        kind_ = 0;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output)
     }
 
@@ -1797,23 +2189,29 @@ private static final long serialVersionUID = 0L;
     return result == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Platform.UNRECOGNIZED : result;
   }
 
-  public static final int IS_TEST_FIELD_NUMBER = 5;
-  private boolean isTest_ = false;
+  public static final int PURPOSE_FIELD_NUMBER = 5;
+  private int purpose_ = 0;
   /**
-   * <code>bool is_test = 5;</code>
-   * @return Whether the isTest field is set.
+   * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+   * @return Whether the purpose field is set.
    */
-  @java.lang.Override
-  public boolean hasIsTest() {
+  @java.lang.Override public boolean hasPurpose() {
     return ((bitField0_ & 0x00000010) != 0);
   }
   /**
-   * <code>bool is_test = 5;</code>
-   * @return The isTest.
+   * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+   * @return The enum numeric value on the wire for purpose.
    */
-  @java.lang.Override
-  public boolean getIsTest() {
-    return isTest_;
+  @java.lang.Override public int getPurposeValue() {
+    return purpose_;
+  }
+  /**
+   * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+   * @return The purpose.
+   */
+  @java.lang.Override public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose getPurpose() {
+    org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose result = org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose.forNumber(purpose_);
+    return result == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose.UNRECOGNIZED : result;
   }
 
   public static final int OUTPUTS_FIELD_NUMBER = 6;
@@ -1925,7 +2323,7 @@ private static final long serialVersionUID = 0L;
       output.writeEnum(4, platform_);
     }
     if (((bitField0_ & 0x00000010) != 0)) {
-      output.writeBool(5, isTest_);
+      output.writeEnum(5, purpose_);
     }
     for (int i = 0; i < outputs_.size(); i++) {
       output.writeMessage(6, outputs_.get(i));
@@ -1958,7 +2356,7 @@ private static final long serialVersionUID = 0L;
     }
     if (((bitField0_ & 0x00000010) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(5, isTest_);
+        .computeEnumSize(5, purpose_);
     }
     for (int i = 0; i < outputs_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
@@ -2002,10 +2400,9 @@ private static final long serialVersionUID = 0L;
     if (hasPlatform()) {
       if (platform_ != other.platform_) return false;
     }
-    if (hasIsTest() != other.hasIsTest()) return false;
-    if (hasIsTest()) {
-      if (getIsTest()
-          != other.getIsTest()) return false;
+    if (hasPurpose() != other.hasPurpose()) return false;
+    if (hasPurpose()) {
+      if (purpose_ != other.purpose_) return false;
     }
     if (!getOutputsList()
         .equals(other.getOutputsList())) return false;
@@ -2038,10 +2435,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + PLATFORM_FIELD_NUMBER;
       hash = (53 * hash) + platform_;
     }
-    if (hasIsTest()) {
-      hash = (37 * hash) + IS_TEST_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getIsTest());
+    if (hasPurpose()) {
+      hash = (37 * hash) + PURPOSE_FIELD_NUMBER;
+      hash = (53 * hash) + purpose_;
     }
     if (getOutputsCount() > 0) {
       hash = (37 * hash) + OUTPUTS_FIELD_NUMBER;
@@ -2198,7 +2594,7 @@ private static final long serialVersionUID = 0L;
       }
       name_ = "";
       platform_ = 0;
-      isTest_ = false;
+      purpose_ = 0;
       if (outputsBuilder_ == null) {
         outputs_ = java.util.Collections.emptyList();
       } else {
@@ -2288,7 +2684,7 @@ private static final long serialVersionUID = 0L;
         to_bitField0_ |= 0x00000008;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.isTest_ = isTest_;
+        result.purpose_ = purpose_;
         to_bitField0_ |= 0x00000010;
       }
       result.bitField0_ |= to_bitField0_;
@@ -2322,8 +2718,8 @@ private static final long serialVersionUID = 0L;
       if (other.hasPlatform()) {
         setPlatform(other.getPlatform());
       }
-      if (other.hasIsTest()) {
-        setIsTest(other.getIsTest());
+      if (other.hasPurpose()) {
+        setPurpose(other.getPurpose());
       }
       if (outputsBuilder_ == null) {
         if (!other.outputs_.isEmpty()) {
@@ -2426,7 +2822,7 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 32
             case 40: {
-              isTest_ = input.readBool();
+              purpose_ = input.readEnum();
               bitField0_ |= 0x00000010;
               break;
             } // case 40
@@ -2812,42 +3208,62 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private boolean isTest_ ;
+    private int purpose_ = 0;
     /**
-     * <code>bool is_test = 5;</code>
-     * @return Whether the isTest field is set.
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+     * @return Whether the purpose field is set.
      */
-    @java.lang.Override
-    public boolean hasIsTest() {
+    @java.lang.Override public boolean hasPurpose() {
       return ((bitField0_ & 0x00000010) != 0);
     }
     /**
-     * <code>bool is_test = 5;</code>
-     * @return The isTest.
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+     * @return The enum numeric value on the wire for purpose.
      */
-    @java.lang.Override
-    public boolean getIsTest() {
-      return isTest_;
+    @java.lang.Override public int getPurposeValue() {
+      return purpose_;
     }
     /**
-     * <code>bool is_test = 5;</code>
-     * @param value The isTest to set.
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+     * @param value The enum numeric value on the wire for purpose to set.
      * @return This builder for chaining.
      */
-    public Builder setIsTest(boolean value) {
-
-      isTest_ = value;
+    public Builder setPurposeValue(int value) {
+      purpose_ = value;
       bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
     /**
-     * <code>bool is_test = 5;</code>
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+     * @return The purpose.
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose getPurpose() {
+      org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose result = org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose.forNumber(purpose_);
+      return result == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+     * @param value The purpose to set.
      * @return This builder for chaining.
      */
-    public Builder clearIsTest() {
+    public Builder setPurpose(org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x00000010;
+      purpose_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPurpose() {
       bitField0_ = (bitField0_ & ~0x00000010);
-      isTest_ = false;
+      purpose_ = 0;
       onChanged();
       return this;
     }

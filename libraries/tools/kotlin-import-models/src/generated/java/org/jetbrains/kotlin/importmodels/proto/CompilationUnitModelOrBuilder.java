@@ -75,15 +75,20 @@ public interface CompilationUnitModelOrBuilder extends
   org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Platform getPlatform();
 
   /**
-   * <code>bool is_test = 5;</code>
-   * @return Whether the isTest field is set.
+   * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+   * @return Whether the purpose field is set.
    */
-  boolean hasIsTest();
+  boolean hasPurpose();
   /**
-   * <code>bool is_test = 5;</code>
-   * @return The isTest.
+   * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+   * @return The enum numeric value on the wire for purpose.
    */
-  boolean getIsTest();
+  int getPurposeValue();
+  /**
+   * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;</code>
+   * @return The purpose.
+   */
+  org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose getPurpose();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output outputs = 6;</code>

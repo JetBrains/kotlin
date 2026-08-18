@@ -171,72 +171,81 @@ public final class KotlinImportModels {
       "n\022S\n\rgradle_action\030\001 \001(\0132:.org.jetbrains" +
       ".kotlin.importmodels.proto.Action.Gradle" +
       "TaskH\000\032\037\n\nGradleTask\022\021\n\ttask_path\030\001 \001(\tB" +
-      "\023\n\021build_tool_action\"\236\005\n\024CompilationUnit" +
+      "\023\n\021build_tool_action\"\246\010\n\024CompilationUnit" +
       "Model\022\n\n\002id\030\001 \001(\t\022\\\n\nparameters\030\002 \001(\0132H." +
       "org.jetbrains.kotlin.importmodels.proto." +
       "CompilationUnitModel.Parameters\022\014\n\004name\030" +
       "\003 \001(\t\022X\n\010platform\030\004 \001(\0162F.org.jetbrains." +
       "kotlin.importmodels.proto.CompilationUni" +
-      "tModel.Platform\022\017\n\007is_test\030\005 \001(\010\022U\n\007outp" +
-      "uts\030\006 \003(\0132D.org.jetbrains.kotlin.importm" +
-      "odels.proto.CompilationUnitModel.Output\022" +
-      "I\n\014source_roots\030\007 \003(\01323.org.jetbrains.ko" +
-      "tlin.importmodels.proto.SourceRoot\032e\n\nPa" +
-      "rameters\022W\n\023compilation_unit_id\030\001 \001(\0132:." +
-      "org.jetbrains.kotlin.importmodels.proto." +
-      "CompilationUnitId\032b\n\006Output\022\014\n\004path\030\001 \001(" +
-      "\t\022J\n\021producing_actions\030\002 \003(\0132/.org.jetbr" +
-      "ains.kotlin.importmodels.proto.Action\"6\n" +
-      "\010Platform\022\030\n\024PLATFORM_UNSPECIFIED\020\000\022\020\n\014P" +
-      "LATFORM_JVM\020\001\"\376\001\n\026CompilerArgumentsModel" +
-      "\022\n\n\002id\030\001 \001(\t\022^\n\nparameters\030\002 \001(\0132J.org.j" +
+      "tModel.Platform\022V\n\007purpose\030\005 \001(\0162E.org.j" +
       "etbrains.kotlin.importmodels.proto.Compi" +
-      "lerArgumentsModel.Parameters\022\021\n\targument" +
-      "s\030\003 \003(\t\032e\n\nParameters\022W\n\023compilation_uni" +
-      "t_id\030\001 \001(\0132:.org.jetbrains.kotlin.import" +
-      "models.proto.CompilationUnitId\"B\n\020MavenC" +
-      "oordinates\022\r\n\005group\030\001 \001(\t\022\016\n\006module\030\002 \001(" +
-      "\t\022\017\n\007version\030\003 \001(\t\"y\n\020BinaryDependency\022N" +
-      "\n\013coordinates\030\001 \001(\01329.org.jetbrains.kotl" +
-      "in.importmodels.proto.MavenCoordinates\022\025" +
-      "\n\rartifact_path\030\002 \001(\t\"\246\013\n\021DependenciesMo" +
-      "del\022\n\n\002id\030\001 \001(\t\022Y\n\nparameters\030\002 \001(\0132E.or" +
-      "g.jetbrains.kotlin.importmodels.proto.De" +
-      "pendenciesModel.Parameters\022V\n\023binary_dep" +
-      "endencies\030\003 \003(\01329.org.jetbrains.kotlin.i" +
-      "mportmodels.proto.BinaryDependency\022f\n\027un" +
-      "resolved_dependencies\030\004 \003(\0132E.org.jetbra" +
+      "lationUnitModel.Purpose\022U\n\007outputs\030\006 \003(\013" +
+      "2D.org.jetbrains.kotlin.importmodels.pro" +
+      "to.CompilationUnitModel.Output\022I\n\014source" +
+      "_roots\030\007 \003(\01323.org.jetbrains.kotlin.impo" +
+      "rtmodels.proto.SourceRoot\032e\n\nParameters\022" +
+      "W\n\023compilation_unit_id\030\001 \001(\0132:.org.jetbr" +
+      "ains.kotlin.importmodels.proto.Compilati" +
+      "onUnitId\032\216\002\n\006Output\022\014\n\004path\030\001 \001(\t\022J\n\021pro" +
+      "ducing_actions\030\002 \003(\0132/.org.jetbrains.kot" +
+      "lin.importmodels.proto.Action\022W\n\004kind\030\003 " +
+      "\001(\0162I.org.jetbrains.kotlin.importmodels." +
+      "proto.CompilationUnitModel.Output.Kind\"Q" +
+      "\n\004Kind\022\033\n\027OUTPUT_KIND_UNSPECIFIED\020\000\022\027\n\023O" +
+      "UTPUT_KIND_CLASSES\020\001\022\023\n\017OUTPUT_KIND_CRI\020" +
+      "\002\"6\n\010Platform\022\030\n\024PLATFORM_UNSPECIFIED\020\000\022" +
+      "\020\n\014PLATFORM_JVM\020\001\"\221\001\n\007Purpose\022#\n\037COMPILA" +
+      "TION_PURPOSE_UNSPECIFIED\020\000\022\034\n\030COMPILATIO" +
+      "N_PURPOSE_MAIN\020\001\022\034\n\030COMPILATION_PURPOSE_" +
+      "TEST\020\002\022%\n!COMPILATION_PURPOSE_TEST_FIXTU" +
+      "RES\020\003\"\376\001\n\026CompilerArgumentsModel\022\n\n\002id\030\001" +
+      " \001(\t\022^\n\nparameters\030\002 \001(\0132J.org.jetbrains" +
+      ".kotlin.importmodels.proto.CompilerArgum" +
+      "entsModel.Parameters\022\021\n\targuments\030\003 \003(\t\032" +
+      "e\n\nParameters\022W\n\023compilation_unit_id\030\001 \001" +
+      "(\0132:.org.jetbrains.kotlin.importmodels.p" +
+      "roto.CompilationUnitId\"B\n\020MavenCoordinat" +
+      "es\022\r\n\005group\030\001 \001(\t\022\016\n\006module\030\002 \001(\t\022\017\n\007ver" +
+      "sion\030\003 \001(\t\"y\n\020BinaryDependency\022N\n\013coordi" +
+      "nates\030\001 \001(\01329.org.jetbrains.kotlin.impor" +
+      "tmodels.proto.MavenCoordinates\022\025\n\rartifa" +
+      "ct_path\030\002 \001(\t\"\246\013\n\021DependenciesModel\022\n\n\002i" +
+      "d\030\001 \001(\t\022Y\n\nparameters\030\002 \001(\0132E.org.jetbra" +
       "ins.kotlin.importmodels.proto.Dependenci" +
-      "esModel.Unresolved\022h\n\023source_dependencie" +
-      "s\030\005 \003(\0132K.org.jetbrains.kotlin.importmod" +
-      "els.proto.DependenciesModel.SourceDepend" +
-      "ency\032u\n\nUnresolved\022N\n\013coordinates\030\001 \001(\0132" +
-      "9.org.jetbrains.kotlin.importmodels.prot" +
-      "o.MavenCoordinates\022\027\n\017failure_message\030\002 " +
-      "\001(\t\032\321\001\n\020SourceDependency\022]\n\004kind\030\001 \001(\0162O" +
-      ".org.jetbrains.kotlin.importmodels.proto" +
-      ".DependenciesModel.SourceDependencyKind\022" +
-      "^\n\032target_compilation_unit_id\030\002 \001(\0132:.or" +
-      "g.jetbrains.kotlin.importmodels.proto.Co" +
-      "mpilationUnitId\032\215\002\n\nParameters\022W\n\023compil" +
-      "ation_unit_id\030\001 \001(\0132:.org.jetbrains.kotl" +
-      "in.importmodels.proto.CompilationUnitId\022" +
-      "O\n\005scope\030\002 \001(\0162@.org.jetbrains.kotlin.im" +
-      "portmodels.proto.DependenciesModel.Scope" +
-      "\022U\n\010coverage\030\003 \001(\0162C.org.jetbrains.kotli" +
-      "n.importmodels.proto.DependenciesModel.C" +
-      "overage\"e\n\005Scope\022 \n\034DEPENDENCY_SCOPE_UNS" +
-      "PECIFIED\020\000\022\034\n\030DEPENDENCY_SCOPE_COMPILE\020\001" +
-      "\022\034\n\030DEPENDENCY_SCOPE_RUNTIME\020\002\"k\n\010Covera" +
-      "ge\022#\n\037DEPENDENCY_COVERAGE_UNSPECIFIED\020\000\022" +
-      "\035\n\031DEPENDENCY_COVERAGE_LOCAL\020\001\022\033\n\027DEPEND" +
-      "ENCY_COVERAGE_ALL\020\002\"\320\001\n\024SourceDependency" +
-      "Kind\022&\n\"SOURCE_DEPENDENCY_KIND_UNSPECIFI" +
-      "ED\020\000\022\"\n\036SOURCE_DEPENDENCY_KIND_REGULAR\020\001" +
-      "\022!\n\035SOURCE_DEPENDENCY_KIND_FRIEND\020\002\022%\n!S" +
-      "OURCE_DEPENDENCY_KIND_DEPENDS_ON\020\003\022\"\n\036SO" +
-      "URCE_DEPENDENCY_KIND_VISIBLE\020\004B\002P\001b\010edit" +
-      "ionsp\350\007"
+      "esModel.Parameters\022V\n\023binary_dependencie" +
+      "s\030\003 \003(\01329.org.jetbrains.kotlin.importmod" +
+      "els.proto.BinaryDependency\022f\n\027unresolved" +
+      "_dependencies\030\004 \003(\0132E.org.jetbrains.kotl" +
+      "in.importmodels.proto.DependenciesModel." +
+      "Unresolved\022h\n\023source_dependencies\030\005 \003(\0132" +
+      "K.org.jetbrains.kotlin.importmodels.prot" +
+      "o.DependenciesModel.SourceDependency\032u\n\n" +
+      "Unresolved\022N\n\013coordinates\030\001 \001(\01329.org.je" +
+      "tbrains.kotlin.importmodels.proto.MavenC" +
+      "oordinates\022\027\n\017failure_message\030\002 \001(\t\032\321\001\n\020" +
+      "SourceDependency\022]\n\004kind\030\001 \001(\0162O.org.jet" +
+      "brains.kotlin.importmodels.proto.Depende" +
+      "nciesModel.SourceDependencyKind\022^\n\032targe" +
+      "t_compilation_unit_id\030\002 \001(\0132:.org.jetbra" +
+      "ins.kotlin.importmodels.proto.Compilatio" +
+      "nUnitId\032\215\002\n\nParameters\022W\n\023compilation_un" +
+      "it_id\030\001 \001(\0132:.org.jetbrains.kotlin.impor" +
+      "tmodels.proto.CompilationUnitId\022O\n\005scope" +
+      "\030\002 \001(\0162@.org.jetbrains.kotlin.importmode" +
+      "ls.proto.DependenciesModel.Scope\022U\n\010cove" +
+      "rage\030\003 \001(\0162C.org.jetbrains.kotlin.import" +
+      "models.proto.DependenciesModel.Coverage\"" +
+      "e\n\005Scope\022 \n\034DEPENDENCY_SCOPE_UNSPECIFIED" +
+      "\020\000\022\034\n\030DEPENDENCY_SCOPE_COMPILE\020\001\022\034\n\030DEPE" +
+      "NDENCY_SCOPE_RUNTIME\020\002\"k\n\010Coverage\022#\n\037DE" +
+      "PENDENCY_COVERAGE_UNSPECIFIED\020\000\022\035\n\031DEPEN" +
+      "DENCY_COVERAGE_LOCAL\020\001\022\033\n\027DEPENDENCY_COV" +
+      "ERAGE_ALL\020\002\"\320\001\n\024SourceDependencyKind\022&\n\"" +
+      "SOURCE_DEPENDENCY_KIND_UNSPECIFIED\020\000\022\"\n\036" +
+      "SOURCE_DEPENDENCY_KIND_REGULAR\020\001\022!\n\035SOUR" +
+      "CE_DEPENDENCY_KIND_FRIEND\020\002\022%\n!SOURCE_DE" +
+      "PENDENCY_KIND_DEPENDS_ON\020\003\022\"\n\036SOURCE_DEP" +
+      "ENDENCY_KIND_VISIBLE\020\004B\002P\001b\010editionsp\350\007"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -302,7 +311,7 @@ public final class KotlinImportModels {
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_descriptor,
-        new java.lang.String[] { "Id", "Parameters", "Name", "Platform", "IsTest", "Outputs", "SourceRoots", });
+        new java.lang.String[] { "Id", "Parameters", "Name", "Platform", "Purpose", "Outputs", "SourceRoots", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Parameters_descriptor =
       internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_descriptor.getNestedTypes().get(0);
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Parameters_fieldAccessorTable = new
@@ -314,7 +323,7 @@ public final class KotlinImportModels {
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Output_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Output_descriptor,
-        new java.lang.String[] { "Path", "ProducingActions", });
+        new java.lang.String[] { "Path", "ProducingActions", "Kind", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilerArgumentsModel_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilerArgumentsModel_fieldAccessorTable = new

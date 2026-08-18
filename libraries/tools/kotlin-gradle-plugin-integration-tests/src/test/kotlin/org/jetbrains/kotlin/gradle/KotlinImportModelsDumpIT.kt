@@ -83,6 +83,13 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         val dependencies = listOf("main", "test").map { name -> parseDependencies(root.resolve("dependencies/$name.json")) }
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
         assertEquals(listOf("main", "test"), units.map { it.name })
+        assertEquals(
+            listOf(
+                CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN,
+                CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST,
+            ),
+            units.map { it.purpose },
+        )
         assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
         assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
         assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
@@ -115,8 +122,8 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         )
         assertEquals(
             listOf(
-                output("build/classes/kotlin/main", ":compileKotlin"),
-                output("build/kotlin/compileKotlin/cacheable/cri", ":compileKotlin"),
+                output("build/classes/kotlin/main", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileKotlin"),
+                output("build/kotlin/compileKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileKotlin"),
             ),
             units.first().outputsList,
         )
@@ -126,8 +133,8 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         )
         assertEquals(
             listOf(
-                output("build/classes/kotlin/test", ":compileTestKotlin"),
-                output("build/kotlin/compileTestKotlin/cacheable/cri", ":compileTestKotlin"),
+                output("build/classes/kotlin/test", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileTestKotlin"),
+                output("build/kotlin/compileTestKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileTestKotlin"),
             ),
             units.last().outputsList,
         )
@@ -149,8 +156,13 @@ private fun gradleAction(taskPath: String): Action = actionModel {
     gradleAction = gradleTaskModel { this.taskPath = taskPath }
 }
 
-private fun output(path: String, vararg producingTaskPaths: String): CompilationUnitModel.Output = CompilationUnitModelKt.output {
+private fun output(
+    path: String,
+    kind: CompilationUnitModel.Output.Kind,
+    vararg producingTaskPaths: String,
+): CompilationUnitModel.Output = CompilationUnitModelKt.output {
     this.path = path
+    this.kind = kind
     producingActions += producingTaskPaths.map(::gradleAction)
 }
 

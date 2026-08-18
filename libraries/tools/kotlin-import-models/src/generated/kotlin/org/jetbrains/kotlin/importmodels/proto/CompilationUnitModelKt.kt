@@ -134,27 +134,34 @@ public object CompilationUnitModelKt {
     }
 
     /**
-     * `bool is_test = 5;`
+     * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;`
      */
-    public var isTest: kotlin.Boolean
-      @JvmName("getIsTest")
-      get() = _builder.isTest
-      @JvmName("setIsTest")
+    public var purpose: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose
+      @JvmName("getPurpose")
+      get() = _builder.purpose
+      @JvmName("setPurpose")
       set(value) {
-        _builder.isTest = value
+        _builder.purpose = value
+      }
+    public var purposeValue: kotlin.Int
+      @JvmName("getPurposeValue")
+      get() = _builder.purposeValue
+      @JvmName("setPurposeValue")
+      set(value) {
+        _builder.purposeValue = value
       }
     /**
-     * `bool is_test = 5;`
+     * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;`
      */
-    public fun clearIsTest() {
-      _builder.clearIsTest()
+    public fun clearPurpose() {
+      _builder.clearPurpose()
     }
     /**
-     * `bool is_test = 5;`
-     * @return Whether the isTest field is set.
+     * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Purpose purpose = 5;`
+     * @return Whether the purpose field is set.
      */
-    public fun hasIsTest(): kotlin.Boolean {
-      return _builder.hasIsTest()
+    public fun hasPurpose(): kotlin.Boolean {
+      return _builder.hasPurpose()
     }
 
     /**
@@ -467,6 +474,37 @@ public object CompilationUnitModelKt {
         _builder.clearProducingActions()
       }
 
+
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;`
+       */
+      public var kind: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind
+        @JvmName("getKind")
+        get() = _builder.kind
+        @JvmName("setKind")
+        set(value) {
+          _builder.kind = value
+        }
+      public var kindValue: kotlin.Int
+        @JvmName("getKindValue")
+        get() = _builder.kindValue
+        @JvmName("setKindValue")
+        set(value) {
+          _builder.kindValue = value
+        }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;`
+       */
+      public fun clearKind() {
+        _builder.clearKind()
+      }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Output.Kind kind = 3;`
+       * @return Whether the kind field is set.
+       */
+      public fun hasKind(): kotlin.Boolean {
+        return _builder.hasKind()
+      }
     }
   }
 }

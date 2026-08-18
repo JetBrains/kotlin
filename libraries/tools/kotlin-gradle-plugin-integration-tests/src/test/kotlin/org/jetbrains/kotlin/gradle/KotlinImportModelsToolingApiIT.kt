@@ -83,11 +83,11 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
             assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
             assertEquals(CompilationUnitModel.Platform.PLATFORM_JVM, units.first().platform)
-            assertFalse(units.first().isTest)
+            assertEquals(CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN, units.first().purpose)
             assertEquals(
                 listOf(
-                    output("build/classes/kotlin/main", ":compileKotlin"),
-                    output("build/kotlin/compileKotlin/cacheable/cri", ":compileKotlin"),
+                    output("build/classes/kotlin/main", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileKotlin"),
+                    output("build/kotlin/compileKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileKotlin"),
                 ),
                 units.first().outputsList,
             )
@@ -103,11 +103,11 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 ),
                 units.first().sourceRootsList,
             )
-            assertTrue(units.last().isTest)
+            assertEquals(CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST, units.last().purpose)
             assertEquals(
                 listOf(
-                    output("build/classes/kotlin/test", ":compileTestKotlin"),
-                    output("build/kotlin/compileTestKotlin/cacheable/cri", ":compileTestKotlin"),
+                    output("build/classes/kotlin/test", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileTestKotlin"),
+                    output("build/kotlin/compileTestKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileTestKotlin"),
                 ),
                 units.last().outputsList,
             )
@@ -140,8 +140,13 @@ private fun gradleAction(taskPath: String): Action = actionModel {
     gradleAction = gradleTaskModel { this.taskPath = taskPath }
 }
 
-private fun output(path: String, vararg producingTaskPaths: String): CompilationUnitModel.Output = CompilationUnitModelKt.output {
+private fun output(
+    path: String,
+    kind: CompilationUnitModel.Output.Kind,
+    vararg producingTaskPaths: String,
+): CompilationUnitModel.Output = CompilationUnitModelKt.output {
     this.path = path
+    this.kind = kind
     producingActions += producingTaskPaths.map(::gradleAction)
 }
 
