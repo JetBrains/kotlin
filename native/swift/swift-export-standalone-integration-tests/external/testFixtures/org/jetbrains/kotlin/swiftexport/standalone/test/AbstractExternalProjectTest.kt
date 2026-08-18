@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCoreKlibFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
@@ -20,19 +20,7 @@ import java.io.File
 
 // Uses external project klibs prebuilt for macos_arm64 only on the CI agents.
 @EnabledOnNativeTargets(targets = ["macos_arm64"])
-abstract class AbstractExternalProjectGenerationTest : AbstractSwiftExportWithBinaryCompilationTest(), SwiftExportValidator {
-
-    private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
-
-    override fun runCompiledTest(
-        testPathFull: File,
-        testCase: TestCase,
-        swiftExportOutputs: Set<SwiftExportModule>,
-        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
-        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
-    ) {
-        validateSwiftExportOutput(testPathFull, swiftExportOutputs)
-    }
+abstract class AbstractExternalProjectTest : AbstractSwiftExportTest() {
 
     @Test
     fun `full export of testLibraryA`() {
@@ -41,7 +29,7 @@ abstract class AbstractExternalProjectGenerationTest : AbstractSwiftExportWithBi
             targets.testTarget,
             "testLibraryA",
         )
-        validateFullLibraryDump(klibSettings, "testLibraryA_full_dump")
+        runTest(klibSettings, "testLibraryA_full_dump")
     }
 
     @Test
@@ -52,22 +40,47 @@ abstract class AbstractExternalProjectGenerationTest : AbstractSwiftExportWithBi
             "KotlinSerialization",
             "kotlinx.serialization",
         )
-        validateFullLibraryDump(klibSettings, "kotlinx-serialization-core")
+        runTest(klibSettings, "kotlinx-serialization-core")
     }
 
-    private fun validateFullLibraryDump(
+    private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
+
+    private fun runTest(
         klib: KlibExportSettings,
         goldenData: String,
-        validateKotlinBridge: Boolean = false,
     ) {
+        val klibs = mutableSetOf<KlibExportSettings>()
+        fun collectKlibs(klib: KlibExportSettings) {
+            klibs.add(klib)
+            klib.dependencies.forEach(::collectKlibs)
+        }
+        collectKlibs(klib)
+
+        val testPathFull = testDataDir.resolve(goldenData)
         val config = klib.createConfig(outputPath = tmpdir.toPath().resolve(klib.swiftModuleName))
-        val inputModule = klib.createInputModule(
-            SwiftModuleConfig(rootPackage = klib.rootPackage, exportMode = SwiftModuleExportMode.Full)
-        )
-        val result = runSwiftExport(setOf(inputModule), config).getOrThrow()
-        validateSwiftExportOutput(testDataDir.resolve(goldenData), result, validateKotlinBridge)
+        val modules = klibs.mapToSet {
+            val exportMode = if (it == klib) SwiftModuleExportMode.Full else SwiftModuleExportMode.Transitive
+            val config = SwiftModuleConfig(rootPackage = it.rootPackage, exportMode = exportMode)
+            it.createInputModule(config)
+        }
+
+        val swiftExportOutputs = runSwiftExport(modules, config).getOrThrow()
+
+        val testModules = mutableMapOf<KlibExportSettings, TestModule.Given>()
+        fun createTestModule(klib: KlibExportSettings): TestModule.Given = testModules.getOrPut(klib) {
+            val dependencies = klib.dependencies.mapToSet(::createTestModule)
+            TestModule.Given(klib.path.toFile(), dependencies)
+        }
+        createTestModule(klib)
+
+        runTest(testModules.values.toSet(), testPathFull, swiftExportOutputs)
     }
 
+    protected abstract fun runTest(
+        modules: Set<TestModule.Given>,
+        testPathFull: File,
+        swiftExportOutputs: Set<SwiftExportModule>,
+    )
 }
 
 private val testDataDir = ForTestCompileRuntime.transformTestDataPath("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
