@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
@@ -55,7 +54,8 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "android-dbflow".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://jitpack.io")
@@ -82,7 +82,8 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "android-realm".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
+                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion"))
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location,
         ) {
             build("assembleDebug") {
@@ -110,9 +111,9 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "android-databinding".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            // remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
-            buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else jdk11Info.javaHome
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
+            buildJdk = jdkVersion.location,
         ) {
             // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
             gradleProperties.appendText(
@@ -149,7 +150,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "androidx-navigation-safe-args".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             val safeArgsVersion = "2.5.3"
@@ -170,7 +171,9 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "android-databinding-androidX".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("kaptDebugKotlin") {
@@ -190,7 +193,8 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "mpp-android-kapt".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build(":shared:compileDebugKotlinAndroid") {

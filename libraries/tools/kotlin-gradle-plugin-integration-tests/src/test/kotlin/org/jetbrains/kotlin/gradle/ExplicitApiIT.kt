@@ -106,7 +106,7 @@ class ExplicitApiIT : KGPBaseTest() {
                 """.trimMargin()
                 )
             }
-            build(":compileDebugKotlin") {
+            build(":compileDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugKotlin")
                 assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
             }

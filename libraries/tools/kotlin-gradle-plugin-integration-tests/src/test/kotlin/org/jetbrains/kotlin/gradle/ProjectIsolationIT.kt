@@ -47,14 +47,14 @@ class ProjectIsolationIT : KGPBaseTest() {
     @GradleAndroidTest
     @AndroidGradlePluginTests
     fun testProjectIsolationAndroid(
-       gradleVersion: GradleVersion,
-       agpVersion: String,
-       jdkVersion: JdkVersions.ProvidedJdk
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
     ) {
         project(
             projectName = "AndroidIncrementalMultiModule",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
@@ -86,7 +86,7 @@ class ProjectIsolationIT : KGPBaseTest() {
         project(
             projectName = "kapt/android-databinding",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             gradleProperties.appendText(

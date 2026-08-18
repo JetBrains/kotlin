@@ -302,9 +302,12 @@ class UklibConsumptionIT : KGPBaseTest() {
         return project(
             "empty",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                androidVersion = androidVersion,
-            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions
+                .copy(
+                    androidVersion = androidVersion,
+                )
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+                .suppressAgpWarningIsProperty(gradleVersion)
         ) {
             if (androidVersion != null) addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()

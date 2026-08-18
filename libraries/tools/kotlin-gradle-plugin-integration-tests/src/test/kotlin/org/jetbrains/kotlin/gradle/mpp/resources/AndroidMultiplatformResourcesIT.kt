@@ -58,7 +58,9 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             "multiplatformResources/android",
             gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = androidVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             include(projectDependency, subprojectDependencyName)
             addPublishedProjectToRepositories(publishedResourcesProducer)

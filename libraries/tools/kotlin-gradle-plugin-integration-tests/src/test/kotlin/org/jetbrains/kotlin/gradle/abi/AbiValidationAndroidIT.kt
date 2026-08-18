@@ -24,7 +24,19 @@ class AbiValidationAndroidIT : KGPBaseTest() {
     ) {
         androidProject(gradleVersion, agpVersion, jdkVersion) {
             // skip lint as it shows the deprecation warning
-            build("check", "-x", "lintDebug") {
+            // Skip test due to the bug in 8.8: https://issuetracker.google.com/issues/363264994
+            val tasks = buildList {
+                add("check")
+                addAll(listOf("-x", "lintDebug"))
+                addAll(listOf("-x", "testDebugUnitTest"))
+                if (TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion) < TestVersions.AgpCompatibilityMatrix.AGP_90) {
+                    addAll(listOf("-x", "testReleaseUnitTest"))
+                }
+            }
+            build(
+                *tasks.toTypedArray(),
+                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
+            ) {
                 assertTasksAreNotInTaskGraph(":checkKotlinAbi")
             }
         }
@@ -40,10 +52,19 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             abiValidation()
 
             // create the reference dumps to check
-            build("updateKotlinAbi")
+            build("updateKotlinAbi", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
 
             // skip lint as it shows the deprecation warning
-            build("check", "-x", "lintDebug") {
+            // Skip test due to the bug in 8.8: https://issuetracker.google.com/issues/363264994
+            val tasks = buildList {
+                add("check")
+                addAll(listOf("-x", "lintDebug"))
+                addAll(listOf("-x", "testDebugUnitTest"))
+                if (TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion) < TestVersions.AgpCompatibilityMatrix.AGP_90) {
+                    addAll(listOf("-x", "testReleaseUnitTest"))
+                }
+            }
+            build(*tasks.toTypedArray()) {
                 assertTasksExecuted(":checkKotlinAbi")
             }
         }
@@ -59,7 +80,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         androidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
             abiValidation { }
 
-            build("updateKotlinAbi")
+            build("updateKotlinAbi", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
             assertFileExists(referenceJvmDumpFile())
             assertTrue(referenceJvmDumpFile().length() > 0)
 
@@ -84,7 +105,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
                 }
             }
 
-            build("updateKotlinAbi")
+            build("updateKotlinAbi", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
 
             val referenceMixedJvmDumpFile = referenceMixedJvmDumpFile()
             assertFileExists(referenceMixedJvmDumpFile)

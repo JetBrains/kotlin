@@ -27,6 +27,8 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         ignoreUnknownKeys = true
     }
 
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+
     // FIXME: Test standard publication with Android - KT-76700
 
     @GradleTest
@@ -143,7 +145,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
                     publishLibraryVariants("debug", "release")
                 }
             }
-        }.publish()
+        }.publish(deriveBuildOptions = { buildOptions.suppressAgpWarningIsProperty(gradleVersion) })
         assertEquals(
             GradleMetadata(
                 variants = rootVariantsSharedByAllPublications

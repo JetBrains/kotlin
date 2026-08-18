@@ -786,7 +786,9 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "base-kotlin-multiplatform-android-library",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             buildScriptInjection {
                 applyDefaultAndroidLibraryConfiguration()
@@ -929,7 +931,9 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         val producer = project(
             "empty",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location,
         ) {
             addKgpToBuildScriptCompilationClasspath()
@@ -966,7 +970,9 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location,
         ) {
             addKgpToBuildScriptCompilationClasspath()
@@ -1010,10 +1016,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
 
             resolveIdeDependencies(
-                buildOptions = buildOptions.suppressAgpWarningSinceGradle814(
-                    gradleVersion,
-                    AgpCompatibilityMatrix.fromVersion(agpVersion)
-                )
+                buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
             ) { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinStdlibDependencies,

@@ -14,12 +14,6 @@ import org.junit.jupiter.api.DisplayName
 @AndroidGradlePluginTests
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
 
-    fun buildOptions(gradleVersion: GradleVersion) = if (gradleVersion.version < TestVersions.Gradle.MAX_SUPPORTED) {
-        defaultBuildOptions.disableIsolatedProjects()
-    } else {
-        defaultBuildOptions
-    }
-
     @DisplayName("works in android plus kapt project")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -31,7 +25,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "kapt/android-dagger",
             gradleVersion,
-            buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             gradleProperties.append("\nkapt.incremental.apt=false")
@@ -56,7 +50,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "empty",
             gradleVersion,
-            buildOptions = buildOptions(gradleVersion).copy(
+            buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
                 enableLegacyAgpDsl = false,
             ),
@@ -83,7 +77,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             testConfigurationCacheOf(
@@ -104,7 +98,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             testConfigurationCacheOf(
