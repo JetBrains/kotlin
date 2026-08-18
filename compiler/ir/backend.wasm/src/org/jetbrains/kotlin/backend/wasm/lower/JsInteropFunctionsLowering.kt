@@ -741,7 +741,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun jsInteropNotNullTypeSignature(type: IrType): String {
         if (isExternalType(type)) {
-            return "Js"
+            return type.classFqName?.asString() ?: "Js"
         }
         require(type is IrSimpleType)
         if (type.isFunction()) {
