@@ -1,0 +1,563 @@
+FILE fqName:<root> fileName:/InlineExtensionProperties.kt
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG value: CONST Int type=kotlin.Int value=0
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:s visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:s type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CONST String type=kotlin.String value="TEST"
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-s> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-s> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:arr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:arr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG length: CONST Int type=kotlin.Int value=10
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-arr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:arr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-arr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:arr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:l visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:l type:java.util.concurrent.atomic.AtomicLong visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Long) declared in java.util.concurrent.atomic.AtomicLong' type=java.util.concurrent.atomic.AtomicLong origin=null
+          ARG value: CONST Long type=kotlin.Long value=9223372032559808513
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-l> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLong
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-l> (): java.util.concurrent.atomic.AtomicLong declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l type:java.util.concurrent.atomic.AtomicLong visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:b visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:b type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Boolean) declared in java.util.concurrent.atomic.AtomicBoolean' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+          ARG value: CONST Boolean type=kotlin.Boolean value=false
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicBoolean
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-b> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ma$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile type:kotlin.Int visibility:private declared in <root>.C' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ma$volatile>' type=<root>.C origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-ma$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile type:kotlin.Int visibility:private declared in <root>.C' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-ma$volatile>' type=<root>.C origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-ma$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="TEST"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ms$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-ms$volatile> (): kotlin.Any? declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile type:kotlin.Any? visibility:private declared in <root>.C' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ms$volatile>' type=<root>.C origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-ms$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-ms$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.C'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile type:kotlin.Any? visibility:private declared in <root>.C' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-ms$volatile>' type=<root>.C origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.C.<set-ms$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:marr visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:marr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-marr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:marr visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-marr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:marr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-marr>' type=<root>.C origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile type:kotlin.Long visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Long type=kotlin.Long value=9223372032559808513
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ml$volatile> visibility:private modality:FINAL returnType:kotlin.Long
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-ml$volatile> (): kotlin.Long declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile type:kotlin.Long visibility:private declared in <root>.C' type=kotlin.Long origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ml$volatile>' type=<root>.C origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-ml$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-ml$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.C'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile type:kotlin.Long visibility:private declared in <root>.C' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-ml$volatile>' type=<root>.C origin=null
+              value: GET_VAR 'value: kotlin.Long declared in <root>.C.<set-ml$volatile>' type=kotlin.Long origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=false
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-mb$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-mb$volatile> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile type:kotlin.Int visibility:private declared in <root>.C' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-mb$volatile>' type=<root>.C origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-mb$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-mb$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile type:kotlin.Int visibility:private declared in <root>.C' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-mb$volatile>' type=<root>.C origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-mb$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="ma$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ma$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="ms$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ms$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-ms$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.C' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile$FU type:java.util.concurrent.atomic.AtomicLongFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="ml$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ml$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLongFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-ml$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile$FU type:java.util.concurrent.atomic.AtomicLongFieldUpdater visibility:private [final,static] declared in <root>.C' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="mb$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-mb$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-mb$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:getSquared$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
+      VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun getSquared$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>.C'
+          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+            ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+            ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>.C'
+          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+            ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C.getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.C.getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+            ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C.getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.C.getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getSquared$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicInteger
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun getSquared$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger): kotlin.Int declared in <root>.C'
+          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+            ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicInteger declared in <root>.C.getSquared$atomicfu$BOXED_ATOMIC$Int' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicInteger declared in <root>.C.getSquared$atomicfu$BOXED_ATOMIC$Int' type=java.util.concurrent.atomic.AtomicInteger origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:memberTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Int type=kotlin.Int value=-10
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=10
+          ARG actual: CALL 'private final fun getAbs$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'private final fun getIsEmpty$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-ms$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=-100
+          ARG actual: CALL 'private final fun getScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+        CALL 'private final fun setScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG value: CONST Int type=kotlin.Int value=200
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=20
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+        CALL 'private final fun setScaledBy10$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-marr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG index$atomicfu: CONST Int type=kotlin.Int value=0
+          ARG value: CONST Int type=kotlin.Int value=300
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=30
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-marr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'private final fun getIsTrue$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-mb$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=1
+          ARG actual: CALL 'private final fun getLow$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-ml$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=400
+          ARG actual: CALL 'private final fun getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+            ARG handler$atomicfu: CALL 'private final fun <get-ma$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.C' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+  FUN ATOMICFU_GENERATED_FUNCTION name:getAbs$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerArray
+    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getAbs$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>'
+        CALL 'public final fun abs (n: kotlin.Int): kotlin.Int declared in kotlin.math' type=kotlin.Int origin=null
+          ARG n: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.getAbs$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getAbs$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getAbs$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    VALUE_PARAMETER kind:Regular name:obj$atomicfu index:1 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getAbs$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>'
+        CALL 'public final fun abs (n: kotlin.Int): kotlin.Int declared in kotlin.math' type=kotlin.Int origin=null
+          ARG n: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.getAbs$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.getAbs$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getAbs$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getAbs$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger): kotlin.Int declared in <root>'
+        CALL 'public final fun abs (n: kotlin.Int): kotlin.Int declared in kotlin.math' type=kotlin.Int origin=null
+          ARG n: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicInteger declared in <root>.getAbs$atomicfu$BOXED_ATOMIC$Int' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getIsEmpty$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicReferenceArray
+    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getIsEmpty$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int): kotlin.Boolean declared in <root>'
+        CALL 'public final fun isEmpty (<this>: kotlin.CharSequence): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
+          ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.getIsEmpty$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+              ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getIsEmpty$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getIsEmpty$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    VALUE_PARAMETER kind:Regular name:obj$atomicfu index:1 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getIsEmpty$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Boolean declared in <root>'
+        CALL 'public final fun isEmpty (<this>: kotlin.CharSequence): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
+          ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.getIsEmpty$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+              ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.getIsEmpty$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getIsEmpty$atomicfu$BOXED_ATOMIC$Any visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicReference
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getIsEmpty$atomicfu$BOXED_ATOMIC$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReference): kotlin.Boolean declared in <root>'
+        CALL 'public final fun isEmpty (<this>: kotlin.CharSequence): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
+          ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReference declared in <root>.getIsEmpty$atomicfu$BOXED_ATOMIC$Any' type=java.util.concurrent.atomic.AtomicReference origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerArray
+    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int): kotlin.Boolean declared in <root>'
+        TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+          CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+            ARG arg1: CONST Int type=kotlin.Int value=1
+  FUN ATOMICFU_GENERATED_FUNCTION name:getIsTrue$atomicfu$ATOMIC_FIELD_UPDATER$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    VALUE_PARAMETER kind:Regular name:obj$atomicfu index:1 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getIsTrue$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Boolean declared in <root>'
+        TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+          CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.getIsTrue$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.getIsTrue$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+            ARG arg1: CONST Int type=kotlin.Int value=1
+  FUN ATOMICFU_GENERATED_FUNCTION name:getIsTrue$atomicfu$BOXED_ATOMIC$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicBoolean
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getIsTrue$atomicfu$BOXED_ATOMIC$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicBoolean): kotlin.Boolean declared in <root>'
+        TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+          CALL 'public final fun get (): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicBoolean declared in <root>.getIsTrue$atomicfu$BOXED_ATOMIC$Boolean' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getLow$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicLongArray
+    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getLow$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>'
+        CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Long' type=kotlin.Int origin=null
+          ARG <this>: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.getLow$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getLow$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getLow$atomicfu$ATOMIC_FIELD_UPDATER$Long visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicLongFieldUpdater
+    VALUE_PARAMETER kind:Regular name:obj$atomicfu index:1 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getLow$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>'
+        CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Long' type=kotlin.Int origin=null
+          ARG <this>: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.getLow$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+              ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.getLow$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getLow$atomicfu$BOXED_ATOMIC$Long visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicLong
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getLow$atomicfu$BOXED_ATOMIC$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLong): kotlin.Int declared in <root>'
+        CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Long' type=kotlin.Int origin=null
+          ARG <this>: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLong declared in <root>.getLow$atomicfu$BOXED_ATOMIC$Long' type=java.util.concurrent.atomic.AtomicLong origin=null
+  FUN ATOMICFU_GENERATED_FUNCTION name:getScaledBy10$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerArray
+    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getScaledBy10$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>'
+        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+          ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.getScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+          ARG other: CONST Int type=kotlin.Int value=10
+  FUN ATOMICFU_GENERATED_FUNCTION name:getScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    VALUE_PARAMETER kind:Regular name:obj$atomicfu index:1 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?): kotlin.Int declared in <root>'
+        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+          ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.getScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.getScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+          ARG other: CONST Int type=kotlin.Int value=10
+  FUN ATOMICFU_GENERATED_FUNCTION name:getScaledBy10$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getScaledBy10$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger): kotlin.Int declared in <root>'
+        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+          ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicInteger declared in <root>.getScaledBy10$atomicfu$BOXED_ATOMIC$Int' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG other: CONST Int type=kotlin.Int value=10
+  FUN ATOMICFU_GENERATED_FUNCTION name:setScaledBy10$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerArray
+    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:value index:2 type:kotlin.Int
+    BLOCK_BODY
+      CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.setScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+        ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.setScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+        ARG newValue: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
+          ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.setScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+          ARG other: CONST Int type=kotlin.Int value=10
+  FUN ATOMICFU_GENERATED_FUNCTION name:setScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    VALUE_PARAMETER kind:Regular name:obj$atomicfu index:1 type:kotlin.Any?
+    VALUE_PARAMETER kind:Regular name:value index:2 type:kotlin.Int
+    BLOCK_BODY
+      CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.setScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+        ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.setScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+        ARG newValue: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
+          ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.setScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+          ARG other: CONST Int type=kotlin.Int value=10
+  FUN ATOMICFU_GENERATED_FUNCTION name:setScaledBy10$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+    VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+    BLOCK_BODY
+      CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicInteger declared in <root>.setScaledBy10$atomicfu$BOXED_ATOMIC$Int' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        ARG newValue: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
+          ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.setScaledBy10$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
+          ARG other: CONST Int type=kotlin.Int value=10
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun topLevelTest (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun memberTest (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:topLevelTest visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+        ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        ARG newValue: CONST Int type=kotlin.Int value=-10
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=10
+        ARG actual: CALL 'private final fun getAbs$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        ARG actual: CALL 'private final fun getIsEmpty$atomicfu$BOXED_ATOMIC$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReference): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-s> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=-100
+        ARG actual: CALL 'private final fun getScaledBy10$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'private final fun setScaledBy10$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG handler$atomicfu: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        ARG value: CONST Int type=kotlin.Int value=200
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=20
+        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'private final fun setScaledBy10$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG handler$atomicfu: CALL 'private final fun <get-arr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+        ARG index$atomicfu: CONST Int type=kotlin.Int value=0
+        ARG value: CONST Int type=kotlin.Int value=300
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=30
+        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-arr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        ARG actual: CALL 'private final fun getIsTrue$atomicfu$BOXED_ATOMIC$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicBoolean): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=1
+        ARG actual: CALL 'private final fun getLow$atomicfu$BOXED_ATOMIC$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLong): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-l> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
