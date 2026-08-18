@@ -31,6 +31,17 @@ tasks.withType<Test>().configureEach {
         inputs.files(jacocoAgentRuntimeResolver).withNormalizer(ClasspathNormalizer::class)
         outputs.upToDateWhen { jacocoDestFile.get().asFile.exists() }
 
+        // The test JVM itself also loads offline-instrumented KGP classes,
+        // so it needs the JaCoCo offline runtime too.
+        jvmArgumentProviders.add(CommandLineArgumentProvider {
+            listOf(
+                "-Xbootclasspath/a:${jacocoRuntimeJar.get().absolutePath}",
+                "-Djacoco-agent.destfile=${jacocoDestFile.get().asFile.absolutePath}",
+                "-Djacoco-agent.append=true",
+                "-Djacoco-agent.output=file",
+            )
+        })
+
         doFirst {
             // pass values to set up the classpath for integration tests to use offline instrumentation
             systemProperty("jacocoRuntimeJar", jacocoRuntimeJar.get().absolutePath)
