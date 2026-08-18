@@ -580,6 +580,96 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmSingleSymbolByPsiTestGenera
     }
 
     @Test
+    @TestMetadata("annotatedAnonymousFunWithParenthesesAndMultipleAnnotations.kt")
+    public void testAnnotatedAnonymousFunWithParenthesesAndMultipleAnnotations() {
+      run("annotatedAnonymousFunWithParenthesesAndMultipleAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedAnonymousFunction.kt")
+    public void testAnnotatedAnonymousFunction() {
+      run("annotatedAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedAnonymousFunctionWithLabel.kt")
+    public void testAnnotatedAnonymousFunctionWithLabel() {
+      run("annotatedAnonymousFunctionWithLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedAnonymousObject.kt")
+    public void testAnnotatedAnonymousObject() {
+      run("annotatedAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedAnonymousObjectWithParentheses.kt")
+    public void testAnnotatedAnonymousObjectWithParentheses() {
+      run("annotatedAnonymousObjectWithParentheses.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLabeledLambda.kt")
+    public void testAnnotatedLabeledLambda() {
+      run("annotatedLabeledLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLabeledLambdaWithParentheses.kt")
+    public void testAnnotatedLabeledLambdaWithParentheses() {
+      run("annotatedLabeledLambdaWithParentheses.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLambda.kt")
+    public void testAnnotatedLambda() {
+      run("annotatedLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLambdaWithParentheses1.kt")
+    public void testAnnotatedLambdaWithParentheses1() {
+      run("annotatedLambdaWithParentheses1.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLambdaWithParentheses2.kt")
+    public void testAnnotatedLambdaWithParentheses2() {
+      run("annotatedLambdaWithParentheses2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLambdaWithParenthesesAndMultipleAnnotations.kt")
+    public void testAnnotatedLambdaWithParenthesesAndMultipleAnnotations() {
+      run("annotatedLambdaWithParenthesesAndMultipleAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalClassWithLabel.kt")
+    public void testAnnotatedLocalClassWithLabel() {
+      run("annotatedLocalClassWithLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalFunctionWithLabel.kt")
+    public void testAnnotatedLocalFunctionWithLabel() {
+      run("annotatedLocalFunctionWithLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalTypealiasWithLabel.kt")
+    public void testAnnotatedLocalTypealiasWithLabel() {
+      run("annotatedLocalTypealiasWithLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalValWithLabel.kt")
+    public void testAnnotatedLocalValWithLabel() {
+      run("annotatedLocalValWithLabel.kt");
+    }
+
+    @Test
     @TestMetadata("annotationConstructorProperty_all.kt")
     public void testAnnotationConstructorProperty_all() {
       run("annotationConstructorProperty_all.kt");
@@ -637,6 +727,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmSingleSymbolByPsiTestGenera
     @TestMetadata("jvmName.kt")
     public void testJvmName() {
       run("jvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedAnnotatedFunctionLiteral.kt")
+    public void testMalformedAnnotatedFunctionLiteral() {
+      run("malformedAnnotatedFunctionLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedFunctionLiteralWithMultipleAnnotations.kt")
+    public void testMalformedFunctionLiteralWithMultipleAnnotations() {
+      run("malformedFunctionLiteralWithMultipleAnnotations.kt");
     }
 
     @Test

@@ -1,0 +1,23 @@
+KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
+  annotations: []
+  classId: null
+  expandedType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
+  name: MyAlias
+  origin: SOURCE
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(annotatedLocalTypealiasWithLabel.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null
