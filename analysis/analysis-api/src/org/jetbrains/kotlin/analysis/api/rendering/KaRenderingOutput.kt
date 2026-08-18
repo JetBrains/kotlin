@@ -24,6 +24,9 @@ public interface KaRenderingOutput {
     /** Appends [text] tagged with the given [attributes]. */
     public fun append(text: String, attributes: Set<KaTextAttribute>): KaRenderingOutput
 
+    /** Append a single space unless the last rendered character is a whitespace. */
+    public fun space(): KaRenderingOutput
+
     /** Increases the indentation level applied at the start of subsequent lines. */
     public fun indent(): KaRenderingOutput
 
@@ -61,12 +64,6 @@ public interface KaRenderingOutput {
 @KaExperimentalApi
 public fun KaRenderingOutput.append(text: String, vararg attributes: KaTextAttribute): KaRenderingOutput {
     return append(text, attributes.toSet())
-}
-
-/** Appends a single space. */
-@KaExperimentalApi
-public fun KaRenderingOutput.space(): KaRenderingOutput {
-    return append(" ", KaTextAttribute.Whitespace)
 }
 
 /**

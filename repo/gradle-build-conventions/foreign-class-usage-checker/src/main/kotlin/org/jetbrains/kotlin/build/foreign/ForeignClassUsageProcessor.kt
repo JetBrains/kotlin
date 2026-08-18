@@ -21,6 +21,7 @@ import kotlin.metadata.KmAnnotationArgument
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmClassifier
 import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmDeclarationContainer
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmPackage
 import kotlin.metadata.KmProperty
@@ -255,23 +256,27 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
         processJavaAnnotations(classNode.visibleAnnotations, classNode.invisibleAnnotations)
         kmClass.supertypes.forEach(::processKotlinType)
         kmClass.typeParameters.forEach(::processKotlinTypeParameter)
-        kmClass.typeAliases.forEach { processKotlinTypeAlias(it, packageName = null) }
+        kmClass.typeAliases.forEach { processKotlinTypeAlias(it, kmClass, classNode) }
         kmClass.constructors.forEach { processKotlinConstructor(it, classNode) }
         kmClass.functions.forEach { processKotlinFunction(it, classNode) }
         kmClass.properties.forEach { processKotlinProperty(it, classNode) }
     }
 
     private fun processKotlinPackage(kmPackage: KmPackage, classNode: ClassNode) {
-        val packageName = classNode.name.substringBeforeLast('/')
-
         kmPackage.functions.forEach { processKotlinFunction(it, classNode) }
         kmPackage.properties.forEach { processKotlinProperty(it, classNode) }
-        kmPackage.typeAliases.forEach { processKotlinTypeAlias(it, packageName) }
+        kmPackage.typeAliases.forEach { processKotlinTypeAlias(it, kmPackage, classNode) }
     }
 
-    private fun processKotlinTypeAlias(kmTypeAlias: KmTypeAlias, packageName: String?) {
-        if (packageName != null) {
-            visitedClassNames.add(packageName + "/" + kmTypeAlias.name)
+    private fun processKotlinTypeAlias(kmTypeAlias: KmTypeAlias, container: KmDeclarationContainer, containerNode: ClassNode) {
+        when (container) {
+            is KmPackage -> {
+                val packageName = containerNode.name.substringBeforeLast('/')
+                visitedClassNames.add(packageName + "/" + kmTypeAlias.name)
+            }
+            is KmClass -> {
+                visitedClassNames.add(containerNode.name + "$" + kmTypeAlias.name)
+            }
         }
 
         if (!kmTypeAlias.visibility.isPublicApi || hasNonPublicMarker(kmTypeAlias.annotations)) {

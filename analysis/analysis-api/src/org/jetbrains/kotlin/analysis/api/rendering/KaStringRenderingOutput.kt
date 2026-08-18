@@ -20,6 +20,15 @@ internal class KaStringRenderingOutput(private val indentationUnit: String) : Ka
         return this
     }
 
+    override fun space(): KaRenderingOutput {
+        if (builder.isNotEmpty() && builder.last().isWhitespace()) {
+            return this
+        }
+
+        append(" ", setOf(KaTextAttribute.Whitespace))
+        return this
+    }
+
     override fun indent(): KaRenderingOutput {
         indentLevel++
         return this
