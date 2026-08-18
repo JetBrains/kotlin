@@ -16,7 +16,7 @@ dependencies {
     jacocoAgentRuntime(jacocoAgentDependency.get()) { artifact { classifier = "runtime" } }
 }
 
-val kgpTestCoverageEnabled: Boolean = providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
+val kgpTestCoverageEnabled: Boolean = kotlinBuildProperties.kgpTestCoverageEnabled.get()
 
 tasks.withType<Test>().configureEach {
     systemProperty("kgp.jacoco.enabled", kgpTestCoverageEnabled)

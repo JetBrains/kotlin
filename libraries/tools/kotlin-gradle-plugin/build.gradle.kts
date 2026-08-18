@@ -833,7 +833,7 @@ jacoco {
     toolVersion = libs.versions.jacoco.get()
 }
 
-val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
+val testCoverageEnabled = kotlinBuildProperties.kgpTestCoverageEnabled.get()
 tasks.withType<Test>().configureEach {
     ignoreFailures = testCoverageEnabled
     extensions.configure<JacocoTaskExtension> {

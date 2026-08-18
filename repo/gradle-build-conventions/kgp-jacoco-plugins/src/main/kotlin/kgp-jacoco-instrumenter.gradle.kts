@@ -12,9 +12,6 @@ import org.gradle.kotlin.dsl.withType
 val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 val jacocoCliDependency = versionCatalog.findLibrary("jacoco-cli").get()
 
-val kgpTestCoverageEnabled: Boolean =
-    providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
-
 val jacocoCliClasspath = configurations.dependencyScope("jacocoCliClasspath")
 
 dependencies {
@@ -28,7 +25,7 @@ val jacocoCliClasspathResolver = configurations.resolvable(jacocoCliClasspath.na
     }
 }
 
-if (kgpTestCoverageEnabled) {
+if (kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
     // `mainSourceElements` (consumed by jacoco-report-aggregation for source discovery) doesn't
     // include the `common` source set by default — add it so it shows up in reports.
     plugins.withId("java") {
