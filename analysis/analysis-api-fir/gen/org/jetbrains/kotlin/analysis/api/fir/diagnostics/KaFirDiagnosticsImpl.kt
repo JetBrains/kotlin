@@ -5867,10 +5867,16 @@ internal class CompanionExtensionNullableReceiverImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionNullableReceiver
 
 internal class UnitReturnAsBreakImpl(
-    override val returnedInside: KaFunctionSymbol,
+    override val returnedTo: KaFunctionSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnitReturnAsBreak
+
+internal class MatchingTypeReturnAsBreakImpl(
+    override val returnedTo: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MatchingTypeReturnAsBreak
 
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,

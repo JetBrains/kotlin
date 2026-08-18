@@ -547,6 +547,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MATCHING_TYPE_RETURN_AS_BREAK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MEMBER_PROJECTED_OUT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
@@ -4095,6 +4096,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNIT_RETURN_AS_BREAK,
+            "`return` is used as break inside a call to {0}.",
+            DECLARATION_FQ_NAME,
+        )
+        map.put(
+            MATCHING_TYPE_RETURN_AS_BREAK,
             "`return` is used as break inside a call to {0}.",
             DECLARATION_FQ_NAME,
         )

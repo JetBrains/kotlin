@@ -1157,6 +1157,7 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Breaks using Unit return
     val UNIT_RETURN_AS_BREAK: KtDiagnosticFactory1<FirNamedFunctionSymbol> = KtDiagnosticFactory1("UNIT_RETURN_AS_BREAK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val MATCHING_TYPE_RETURN_AS_BREAK: KtDiagnosticFactory1<FirNamedFunctionSymbol> = KtDiagnosticFactory1("MATCHING_TYPE_RETURN_AS_BREAK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

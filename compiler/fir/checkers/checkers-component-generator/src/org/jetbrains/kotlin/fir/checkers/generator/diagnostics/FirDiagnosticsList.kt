@@ -2497,7 +2497,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val BREAKS_USING_UNIT_RETURN by object : DiagnosticGroup("Breaks using Unit return") {
         val UNIT_RETURN_AS_BREAK by warning<PsiElement> {
-            parameter<FirNamedFunctionSymbol>("returnedInside")
+            parameter<FirNamedFunctionSymbol>("returnedTo")
+        }
+        val MATCHING_TYPE_RETURN_AS_BREAK by warning<PsiElement> {
+            parameter<FirNamedFunctionSymbol>("returnedTo")
         }
     }
 }

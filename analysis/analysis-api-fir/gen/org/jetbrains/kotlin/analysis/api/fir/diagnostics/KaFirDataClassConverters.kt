@@ -5404,6 +5404,13 @@ private fun KaDiagnosticConverterBuilder.addConversions118() {
             token,
         )
     }
+    add(FirErrors.MATCHING_TYPE_RETURN_AS_BREAK) { firDiagnostic ->
+        MatchingTypeReturnAsBreakImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE) { firDiagnostic ->
         JsNoRuntimeForbiddenClassReferenceImpl(
             firDiagnostic as KtPsiDiagnostic,
