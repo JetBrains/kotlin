@@ -1,0 +1,4 @@
+org.jetbrains:annotations:13.0 => [compile]
+root project : => [jvmCompileClasspath]
+sample.gradle_8_14_5:kmp_native_jvm_android_kgp_snapshot_agp_8_13_2-jvm:1.0 => [jvmApiElements-published]
+sample.gradle_8_14_5:kmp_native_jvm_android_kgp_snapshot_agp_8_13_2:1.0 => [jvmApiElements-published]
