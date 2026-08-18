@@ -65,11 +65,8 @@ abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragmen
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
         val compiler = createNonIncrementalCompiler(configuration, irFactory, module)
 
-        val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(loadedIrArtifact)!!
-
-        val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(loadedIr.deserializer, allModules, context)
-        }
+        val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(loadedIrArtifact)!!
+        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!.loweredIr
 
         return configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
             WasmIntermediatePipelineArtifact(compiler.compileIr(loweredIr), null, configuration)
