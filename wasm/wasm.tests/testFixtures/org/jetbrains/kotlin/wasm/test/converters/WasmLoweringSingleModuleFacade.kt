@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.js.config.outputDir
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
@@ -58,6 +61,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm {
         require(inputArtifact is DeserializedFromKlibBackendInput<*>)
+        val cliInputArtifact = inputArtifact.cliArtifact as? WebLoadedIrPipelineArtifact
+            ?: testInfraError("WasmLoweringSingleModuleFacade expects WebLoadedIrPipelineArtifact")
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val moduleInfo = inputArtifact.moduleInfo
@@ -87,9 +92,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
         val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
-        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(moduleInfo, configuration)
-        }
+        val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
             compiler.lowerIr(moduleInfo, allModules, context)
