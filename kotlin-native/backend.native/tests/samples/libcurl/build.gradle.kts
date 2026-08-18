@@ -21,11 +21,12 @@ kotlin {
 
     hostTarget.apply {
         compilations["main"].cinterops {
-            val libcurl = create("libcurl") {
+            create("libcurl") {
                 when (konanTarget) {
                     KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
                     KonanTarget.MINGW_X64 -> includeDirs.headerFilterOnly(mingwPath.resolve("include"))
+                    else -> throw GradleException("Target ${konanTarget.name} is not supported in the libcurl sample.")
                 }
             }
         }
