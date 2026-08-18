@@ -46,10 +46,11 @@ internal class SymbolLightFieldForProperty private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
-    private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
-) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
+    override val symbolPointer: KaSymbolPointer<KaBackingFieldSymbol>,
+) : SymbolLightField<KaBackingFieldSymbol>(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
     internal constructor(
         propertySymbol: KaPropertySymbol,
+        backingFieldSymbol: KaBackingFieldSymbol,
         fieldName: String,
         containingClass: SymbolLightClassBase,
         lightMemberOrigin: LightMemberOrigin?,
@@ -61,7 +62,7 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
-        backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
+        symbolPointer = backingFieldSymbol.createPointer(),
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
@@ -211,9 +212,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 computer = ::computeModifiers,
             ),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
-                    SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = pointer)
-                } ?: EmptyAnnotationsProvider,
+                annotationsProvider = SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = (symbolPointer)),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {

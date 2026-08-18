@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
@@ -24,12 +23,11 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
-@OptIn(KaImplementationDetail::class)
 internal abstract class SymbolLightParameterCommon(
     override val symbolPointer: KaSymbolPointer<KaParameterSymbol>,
     containingMethod: SymbolLightMethodBase,
     override val kotlinOrigin: KtParameter?,
-) : SymbolLightParameterBase(containingMethod), KaSymbolJavaView<KaParameterSymbol> {
+) : SymbolLightParameterBase<KaParameterSymbol>(containingMethod) {
     internal constructor(
         parameterSymbol: KaParameterSymbol,
         containingMethod: SymbolLightMethodBase,

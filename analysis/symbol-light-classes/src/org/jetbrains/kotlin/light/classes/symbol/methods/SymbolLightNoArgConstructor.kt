@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
@@ -22,14 +23,14 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifi
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
-internal class SymbolLightNoArgConstructor(
+internal abstract class SymbolLightNoArgConstructorBase<out SType : KaSymbol>(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     private val visibility: String,
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
-    private val functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
-) : SymbolLightMethodBase(
+    private val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
+) : SymbolLightMethodBaseImpl<SType>(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
@@ -61,13 +62,13 @@ internal class SymbolLightNoArgConstructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(visibility),
-            annotationsBox = if (functionSymbolPointer == null) {
+            annotationsBox = if (constructorSymbolPointer == null) {
                 EmptyAnnotationsBox
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         useSiteModule = useSiteModule,
-                        annotatedSymbolPointer = functionSymbolPointer,
+                        annotatedSymbolPointer = constructorSymbolPointer,
                     ),
                     annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                     additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
@@ -85,7 +86,7 @@ internal class SymbolLightNoArgConstructor(
     override fun getReturnType(): PsiType? = null
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is SymbolLightNoArgConstructor &&
+        this === other || other is SymbolLightNoArgConstructorBase<*> &&
                 isJvmExposedBoxed == other.isJvmExposedBoxed &&
                 containingClass == other.containingClass
 
@@ -94,4 +95,38 @@ internal class SymbolLightNoArgConstructor(
     override fun isValid(): Boolean = super.isValid() && containingClass.isValid
 
     override fun isOverride(): Boolean = false
+}
+
+internal class SymbolLightNoArgConstructor(
+    lightMemberOrigin: LightMemberOrigin?,
+    containingClass: SymbolLightClassBase,
+    visibility: String,
+    methodIndex: Int,
+    isJvmExposedBoxed: Boolean,
+    override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>,
+) : SymbolLightNoArgConstructorBase<KaConstructorSymbol>(
+    lightMemberOrigin,
+    containingClass,
+    visibility,
+    methodIndex,
+    isJvmExposedBoxed,
+    constructorSymbolPointer = symbolPointer
+)
+
+internal class SymbolLightDefaultNoArgConstructor(
+    lightMemberOrigin: LightMemberOrigin?,
+    containingClass: SymbolLightClassBase,
+    visibility: String,
+    methodIndex: Int,
+    isJvmExposedBoxed: Boolean,
+) : SymbolLightNoArgConstructorBase<KaSymbol>(
+    lightMemberOrigin,
+    containingClass,
+    visibility,
+    methodIndex,
+    isJvmExposedBoxed,
+    constructorSymbolPointer = null
+) {
+    override val symbolPointer: KaSymbolPointer<KaSymbol>
+        get() = containingClass.symbolPointer
 }

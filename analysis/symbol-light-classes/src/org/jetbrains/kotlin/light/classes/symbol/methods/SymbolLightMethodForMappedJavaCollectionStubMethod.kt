@@ -11,6 +11,8 @@ import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightParameter
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.javadoc.PsiDocComment
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
@@ -53,14 +55,21 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     private val hasImplementation: Boolean,
     private val substituteObjectWith: PsiType?,
     private val providedSignature: MethodSignature?,
-) : SymbolLightMethodBase(lightMemberOrigin = null, containingClass, methodIndex = METHOD_INDEX_BASE, isJvmExposedBoxed = false),
-    SyntheticElement {
+) : SymbolLightMethodBaseImpl<KaNamedClassSymbol>(
+    lightMemberOrigin = null,
+    containingClass,
+    methodIndex = METHOD_INDEX_BASE,
+    isJvmExposedBoxed = false
+), SyntheticElement {
 
     init {
         if (!hasImplementation && isFinal) {
             error("Can't be final without an implementation")
         }
     }
+
+    override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>
+        get() = (containingClass as SymbolLightClassForClassOrObject).symbolPointer
 
     override fun getPresentation(): ItemPresentation? = javaMethod.presentation
     override fun getNavigationElement(): PsiElement = javaMethod.navigationElement

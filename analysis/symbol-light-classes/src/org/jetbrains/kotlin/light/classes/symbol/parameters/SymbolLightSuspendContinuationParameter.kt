@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
@@ -26,11 +25,10 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightSuspendContinuationParameter(
     override val symbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
-) : SymbolLightParameterBase(containingMethod), KaSymbolJavaView<KaNamedFunctionSymbol> {
+) : SymbolLightParameterBase<KaNamedFunctionSymbol>(containingMethod) {
     private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaNamedFunctionSymbol) -> T): T {
         return symbolPointer.withSymbol(useSiteModule, action)
     }

@@ -13,7 +13,6 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
-import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightAccessorMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
@@ -52,12 +50,12 @@ internal class SymbolLightAccessorMethod private constructor(
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean,
     isJvmExposedBoxed: Boolean,
-) : SymbolLightMethodBase(
+) : SymbolLightMethodBaseImpl<KaPropertyAccessorSymbol>(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
-), KaSymbolJavaView<KaPropertyAccessorSymbol> {
+) {
     private constructor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
         containingPropertySymbol: KaPropertySymbol,

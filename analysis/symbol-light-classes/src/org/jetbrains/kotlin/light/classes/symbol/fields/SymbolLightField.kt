@@ -9,20 +9,24 @@ import com.intellij.lang.Language
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-internal abstract class SymbolLightField protected constructor(
+@OptIn(KaImplementationDetail::class)
+internal abstract class SymbolLightField<SType : KaSymbol> protected constructor(
     containingClass: SymbolLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
-) : SymbolLightMemberBase<PsiField>(lightMemberOrigin, containingClass), KtLightField {
+) : SymbolLightMemberBase<PsiField>(lightMemberOrigin, containingClass), KtLightField, KaSymbolJavaView<SType> {
     override fun setInitializer(initializer: PsiExpression?) = cannotModify()
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =

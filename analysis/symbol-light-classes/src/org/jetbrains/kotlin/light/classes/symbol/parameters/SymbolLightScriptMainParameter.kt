@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScript
@@ -17,7 +19,9 @@ import org.jetbrains.kotlin.psi.KtParameter
 internal class SymbolLightScriptMainParameter(
     private val name: String,
     private val containingMethod: SymbolLightMethodForScript,
-) : SymbolLightParameterBase(containingMethod) {
+) : SymbolLightParameterBase<KaScriptSymbol>(containingMethod) {
+    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>
+        get() = containingMethod.symbolPointer
 
     override val kotlinOrigin: KtParameter? = null
     override fun getName(): String = name
@@ -37,7 +41,7 @@ internal class SymbolLightScriptMainParameter(
 
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
-            containingDeclaration = this,
+            containingDeclaration = this
         )
     }
 

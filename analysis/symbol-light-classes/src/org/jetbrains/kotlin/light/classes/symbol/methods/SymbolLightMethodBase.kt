@@ -12,6 +12,7 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
@@ -31,12 +33,18 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 
-internal abstract class SymbolLightMethodBase(
+/**
+ * Typealias to [SymbolLightMethodBaseImpl] that can be used to avoid constantly specifying the required type argument.
+ */
+internal typealias SymbolLightMethodBase = SymbolLightMethodBaseImpl<KaSymbol>
+
+@OptIn(KaImplementationDetail::class)
+internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     protected val methodIndex: Int,
     val isJvmExposedBoxed: Boolean,
-) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
+) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod, KaSymbolJavaView<SType> {
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null

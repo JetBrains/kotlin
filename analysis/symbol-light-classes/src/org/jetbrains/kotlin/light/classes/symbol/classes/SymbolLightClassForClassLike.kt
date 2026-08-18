@@ -15,7 +15,6 @@ import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -32,14 +31,12 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-@OptIn(KaImplementationDetail::class)
 internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> protected constructor(
     val classOrObjectDeclaration: KtClassOrObject?,
     override val symbolPointer: KaSymbolPointer<SType>,
     override val useSiteModule: KaModule,
     manager: PsiManager,
-) : SymbolLightClassBase(manager),
-    KaSymbolJavaView<SType>,
+) : SymbolLightClassBaseImpl<SType>(manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
