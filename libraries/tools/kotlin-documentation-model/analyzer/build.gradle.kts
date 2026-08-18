@@ -18,9 +18,6 @@ dependencies {
     // Other
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.jsoup)
-    implementation(libs.freemarker)
-    implementation(libs.kotlinx.html)
     implementation(libs.jackson.kotlin)
     constraints {
         implementation(libs.jackson.databind) {
@@ -68,10 +65,6 @@ dependencies {
     // provided by `kotlin-compiler` (which bundles the IntelliJ core).
     compileOnly(libs.intellij.platform.core)
     implementation(libs.intellij.util)
-    implementation(libs.jetbrains.markdown)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.jsoup)
-
 
     // ----------- Analysis dependencies ----------------------------------------------------------------------------
 
@@ -103,12 +96,6 @@ dependencies {
     implementation(libs.kotlin.compiler.k2) {
         isTransitive = false
     }
-
-    // TODO [beresnev] get rid of it
-    compileOnly(libs.kotlinx.coroutines.core)
-
-    // to gain access to com.intellij.diagnostic.LoadingState in the compile time
-    compileOnly(libs.intellij.util.base)
 }
 
 tasks.test {
