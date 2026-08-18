@@ -1,0 +1,2 @@
+@A(a = 42, c = "")
+object : MyInterface
