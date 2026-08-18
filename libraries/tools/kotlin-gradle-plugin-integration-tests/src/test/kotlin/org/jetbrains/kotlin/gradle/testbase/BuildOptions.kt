@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
@@ -524,5 +525,15 @@ fun BuildOptions.suppressAgpWarningIsProperty(
         )
     } else this
 }
+
+fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
+    currentGradleVersion: GradleVersion,
+    jdk: JdkVersions.ProvidedJdk
+): BuildOptions = if (currentGradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14) &&
+    jdk.version < JavaVersion.VERSION_17
+) {
+    // Gradle does not produce runtime warning in 'summary' mode, which still fails the build
+    copy(warningMode = WarningMode.None)
+} else this
 
 fun rerunTask(taskName: String) = arrayOf(taskName, "--rerun")
