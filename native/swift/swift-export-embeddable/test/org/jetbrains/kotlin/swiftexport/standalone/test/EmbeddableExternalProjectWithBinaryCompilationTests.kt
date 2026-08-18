@@ -13,4 +13,4 @@ import org.jetbrains.kotlin.test.TestMetadata
 @TestDataPath("\$PROJECT_ROOT")
 @UseExtTestCaseGroupProvider
 @Suppress("JUnitTestCaseWithNoTests")
-class EmbeddableExternalProjectGenerationTests : AbstractExternalProjectGenerationTest()
+class EmbeddableExternalProjectWithBinaryCompilationTests : AbstractExternalProjectWithBinaryCompilationTest()
