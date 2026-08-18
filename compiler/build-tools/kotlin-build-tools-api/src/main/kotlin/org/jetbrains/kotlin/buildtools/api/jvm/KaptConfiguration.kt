@@ -19,8 +19,7 @@ import java.nio.file.Path
  *
  * Usage example:
  * ```kotlin
- * val kaptConfiguration = jvmCompilationOperationBuilder
- *     .kaptCompilerPluginBuilder()
+ * val kaptConfiguration = kotlinToolchains.jvm.kaptCompilerPluginBuilder()
  *     .withAptPhase()
  *     .apply {
  *         this[KaptConfiguration.AptPhase.ANNOTATION_PROCESSORS] = listOf("com.example.MyProcessor")
