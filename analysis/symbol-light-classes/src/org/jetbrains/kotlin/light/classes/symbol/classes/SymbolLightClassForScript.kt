@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
@@ -25,12 +23,11 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtScript
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightClassForScript private constructor(
     override val script: KtScript,
     override val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
     override val useSiteModule: KaModule,
-) : KtLightClassForScript, SymbolLightClassBase(script.manager), KaSymbolJavaView<KaScriptSymbol> {
+) : KtLightClassForScript, SymbolLightClassBaseImpl<KaScriptSymbol>(script.manager) {
     internal constructor(
         script: KtScript,
         ktModule: KaModule,
@@ -42,23 +39,21 @@ internal class SymbolLightClassForScript private constructor(
         ktModule,
     )
 
-    private fun MutableList<PsiMethod>.addScriptDefaultMethods() {
+    private fun MutableList<PsiMethod>.addScriptDefaultMethods(scriptSymbol: KaScriptSymbol) {
+        val scriptSymbolPointer = scriptSymbol.createPointer()
+
         val defaultConstructor = SymbolLightMethodForScriptDefaultConstructor(
             script,
             this@SymbolLightClassForScript,
             METHOD_INDEX_FOR_DEFAULT_CTOR,
-            analyzeForLightClasses(this@SymbolLightClassForScript.useSiteModule) {
-                script.symbol.createPointer()
-            }
+            scriptSymbolPointer
         )
         add(defaultConstructor)
         val mainMethod = SymbolLightMethodForScriptMain(
             script,
             this@SymbolLightClassForScript,
             METHOD_INDEX_FOR_SCRIPT_MAIN,
-            analyzeForLightClasses(this@SymbolLightClassForScript.useSiteModule) {
-                script.symbol.createPointer()
-            }
+            scriptSymbolPointer
         )
         add(mainMethod)
     }
@@ -66,9 +61,8 @@ internal class SymbolLightClassForScript private constructor(
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         val result = mutableListOf<PsiMethod>()
 
-        result.addScriptDefaultMethods()
-
         symbolPointer.withSymbol(useSiteModule) { scriptSymbol ->
+            result.addScriptDefaultMethods(scriptSymbol)
             createMethods(this@SymbolLightClassForScript, scriptSymbol.declaredMemberScope.callables, result)
         }
         result

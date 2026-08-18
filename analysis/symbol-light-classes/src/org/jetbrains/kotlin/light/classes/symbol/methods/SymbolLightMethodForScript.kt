@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -22,17 +20,16 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightScriptMai
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-@OptIn(KaImplementationDetail::class)
 internal sealed class SymbolLightMethodForScript(
     private val ktScript: KtScript,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-) : SymbolLightMethodBase(
+) : SymbolLightMethodBaseImpl<KaScriptSymbol>(
     lightMemberOrigin = LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = false,
-), KaSymbolJavaView<KaScriptSymbol> {
+) {
     abstract override fun getName(): String
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, ktDeclaration = null, name)

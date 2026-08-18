@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForRepeatableAnnotationContainer
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
 internal class SymbolLightRepeatableAnnotationContainerMethod(
     private val annotationClassQualifier: String?,
-    containingClass: SymbolLightClassBase,
-) : SymbolLightMethodBase(
+    private val containingClass: SymbolLightClassForRepeatableAnnotationContainer,
+) : SymbolLightMethodBaseImpl<KaNamedClassSymbol>(
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = METHOD_INDEX_BASE,
@@ -60,4 +62,7 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
 
     override fun hashCode(): Int = containingClass.hashCode()
     override fun copy(): PsiElement = SymbolLightRepeatableAnnotationContainerMethod(annotationClassQualifier, containingClass)
+
+    override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>
+        get() = containingClass.symbolPointer
 }

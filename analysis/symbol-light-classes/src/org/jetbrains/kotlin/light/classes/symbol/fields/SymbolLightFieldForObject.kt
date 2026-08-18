@@ -11,7 +11,6 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifi
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightFieldForObject private constructor(
     containingClass: SymbolLightClassForClassLike<*>,
     private val name: String,
@@ -38,7 +36,7 @@ internal class SymbolLightFieldForObject private constructor(
     override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
     override val kotlinOrigin: KtObjectDeclaration?,
     private val isCompanion: Boolean,
-) : SymbolLightField(containingClass, lightMemberOrigin), KaSymbolJavaView<KaNamedClassSymbol> {
+) : SymbolLightField<KaNamedClassSymbol>(containingClass, lightMemberOrigin) {
     internal constructor(
         objectSymbol: KaNamedClassSymbol,
         name: String,

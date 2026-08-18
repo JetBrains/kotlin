@@ -482,8 +482,8 @@ internal fun createField(
     if (declaration.name.isSpecial) return null
     if (!hasBackingField(declaration)) return null
 
-    val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
     val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
+    val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
     return SymbolLightFieldForProperty(
         propertySymbol = declaration,
         backingFieldSymbol = backingFieldSymbol,
@@ -495,6 +495,8 @@ internal fun createField(
 }
 
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
+    // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
+    // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
     if (property is KaSyntheticJavaPropertySymbol) return false
 
     requireWithAttachment(

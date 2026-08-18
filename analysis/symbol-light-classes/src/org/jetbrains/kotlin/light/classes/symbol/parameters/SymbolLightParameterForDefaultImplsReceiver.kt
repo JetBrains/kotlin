@@ -10,6 +10,8 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
@@ -22,9 +24,9 @@ import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration: SymbolLightMethodBase) :
-    SymbolLightParameterBase(containingDeclaration) {
+    SymbolLightParameterBase<KaNamedClassSymbol>(containingDeclaration) {
     private val _type by lazyPub {
-        (method.containingClass.containingClass as SymbolLightClassForInterface).withClassSymbol {
+        containingInterface.withClassSymbol {
             val ktType = it.defaultType
             ktType.asPsiType(
                 containingDeclaration,
@@ -34,6 +36,9 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
             ) ?: nonExistentType()
         }
     }
+
+    private val containingInterface: SymbolLightClassForInterface
+        get() = method.containingClass.containingClass as SymbolLightClassForInterface
 
     override fun getNameIdentifier(): PsiIdentifier? = null
 
@@ -60,4 +65,7 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
 
     override val kotlinOrigin: KtParameter?
         get() = null
+
+    override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>
+        get() = containingInterface.symbolPointer
 }

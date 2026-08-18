@@ -8,17 +8,14 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.asJava.classes.cannotModify
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LightTypeElementWithParent
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -35,20 +32,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightFieldForEnumEntry(
     private val enumEntry: KtEnumEntry,
     private val enumEntryName: String,
     override val symbolPointer: KaSymbolPointer<KaEnumEntrySymbol>,
     containingClass: SymbolLightClassForClassOrObject,
-) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant,
-    KaSymbolJavaView<KaEnumEntrySymbol> {
+) : SymbolLightField<KaEnumEntrySymbol>(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
     internal inline fun <T> withEnumEntrySymbol(crossinline action: context(KaSession) (KaEnumEntrySymbol) -> T): T =
         symbolPointer.withSymbol(useSiteModule) {
             action(it)
         }
 
-    @OptIn(KaImplementationDetail::class)
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
@@ -77,14 +71,6 @@ internal class SymbolLightFieldForEnumEntry(
         hasBody.ifTrue {
             SymbolLightClassForEnumEntry(
                 enumConstant = this@SymbolLightFieldForEnumEntry,
-                symbolPointer = symbolPointer.withSymbol(useSiteModule) { enumEntrySymbol ->
-                    enumEntrySymbol.initializer?.createPointer() ?: errorWithAttachment("Light class for enum entry without initializer") {
-                        withEntry("KaSymbol", enumEntrySymbol) {
-                            KaDebugRenderer(renderExtra = true).render(useSiteSession, enumEntrySymbol)
-                        }
-                        withPsiEntry("PSI", enumEntry)
-                    }
-                },
                 enumClass = containingClass,
                 useSiteModule = useSiteModule,
             )

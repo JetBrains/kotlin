@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.JvmExposeBoxedAdditionalAnnotationsProvider
@@ -23,14 +22,14 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifi
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
-internal abstract class SymbolLightNoArgConstructorBase(
+internal abstract class SymbolLightNoArgConstructorBase<out SType : KaSymbol>(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     private val visibility: String,
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
     private val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
-) : SymbolLightMethodBase(
+) : SymbolLightMethodBaseImpl<SType>(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
@@ -77,7 +76,7 @@ internal abstract class SymbolLightNoArgConstructorBase(
     override fun getReturnType(): PsiType? = null
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is SymbolLightNoArgConstructorBase &&
+        this === other || other is SymbolLightNoArgConstructorBase<*> &&
                 isJvmExposedBoxed == other.isJvmExposedBoxed &&
                 containingClass == other.containingClass
 
@@ -88,7 +87,6 @@ internal abstract class SymbolLightNoArgConstructorBase(
     override fun isOverride(): Boolean = false
 }
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightNoArgConstructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
@@ -96,14 +94,14 @@ internal class SymbolLightNoArgConstructor(
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
     override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>,
-) : SymbolLightNoArgConstructorBase(
+) : SymbolLightNoArgConstructorBase<KaConstructorSymbol>(
     lightMemberOrigin,
     containingClass,
     visibility,
     methodIndex,
     isJvmExposedBoxed,
     constructorSymbolPointer = symbolPointer
-), KaSymbolJavaView<KaConstructorSymbol>
+)
 
 internal class SymbolLightDefaultNoArgConstructor(
     lightMemberOrigin: LightMemberOrigin?,
@@ -111,11 +109,14 @@ internal class SymbolLightDefaultNoArgConstructor(
     visibility: String,
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
-) : SymbolLightNoArgConstructorBase(
+) : SymbolLightNoArgConstructorBase<KaSymbol>(
     lightMemberOrigin,
     containingClass,
     visibility,
     methodIndex,
     isJvmExposedBoxed,
     constructorSymbolPointer = null
-)
+) {
+    override val symbolPointer: KaSymbolPointer<KaSymbol>
+        get() = containingClass.symbolPointer
+}

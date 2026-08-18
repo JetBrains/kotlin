@@ -9,7 +9,6 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
@@ -30,12 +29,11 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightParameterForReceiver private constructor(
     override val symbolPointer: KaSymbolPointer<KaReceiverParameterSymbol>,
     methodName: String,
     method: SymbolLightMethodBase,
-) : SymbolLightParameterBase(method), KaSymbolJavaView<KaReceiverParameterSymbol> {
+) : SymbolLightParameterBase<KaReceiverParameterSymbol>(method) {
     private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
         symbolPointer.withSymbol(useSiteModule, action)
 

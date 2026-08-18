@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import kotlinx.collections.immutable.persistentHashMapOf
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
-@OptIn(KaImplementationDetail::class)
 internal class SymbolLightFieldForProperty private constructor(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     private val fieldName: String,
@@ -49,7 +47,7 @@ internal class SymbolLightFieldForProperty private constructor(
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
     override val symbolPointer: KaSymbolPointer<KaBackingFieldSymbol>,
-) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware, KaSymbolJavaView<KaBackingFieldSymbol> {
+) : SymbolLightField<KaBackingFieldSymbol>(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
     internal constructor(
         propertySymbol: KaPropertySymbol,
         backingFieldSymbol: KaBackingFieldSymbol,
