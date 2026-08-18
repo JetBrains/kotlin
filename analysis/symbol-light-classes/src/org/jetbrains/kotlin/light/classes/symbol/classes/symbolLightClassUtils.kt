@@ -107,7 +107,7 @@ private fun lightClassForEnumEntryInitializer(enumEntrySymbol: KaEnumEntrySymbol
 
     val symbolLightClass =
         (enumEntrySymbol.containingDeclaration?.psi as? KtClassOrObject)?.toLightClass() as? SymbolLightClassForClassOrObject ?: return null
-    val enumEntryPsi = enumEntrySymbol.sourcePsiSafe<KtEnumEntry>()
+    val enumEntryPsi = enumEntrySymbol.realPsi as? KtEnumEntry
     val enumEntrySymbolPointer = enumEntrySymbol.createPointer()
     val targetField = symbolLightClass.ownFields.firstOrNull { psiField ->
         psiField is SymbolLightFieldForEnumEntry &&

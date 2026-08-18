@@ -26,7 +26,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         anonymousObjectDeclaration: KaAnonymousObjectSymbol,
         useSiteModule: KaModule,
     ) : this(
-        classOrObjectDeclaration = anonymousObjectDeclaration.sourcePsiSafe(),
+        classOrObjectDeclaration = anonymousObjectDeclaration.anchorPsi as? KtClassOrObject,
         classSymbolPointer = anonymousObjectDeclaration.createPointer(),
         useSiteModule = useSiteModule,
     )
