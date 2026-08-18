@@ -442,6 +442,8 @@ fun <T> TestProject.runBuildAction(
         enableOfflineMode = enableOfflineMode,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        kotlinDaemonIdleTimeout = kotlinDaemonIdleTimeout,
+        addHeapDumpOptions = addHeapDumpOptions,
         connectSubprocessVMToDebugger = enableGradleDebug.toBooleanFlag(),
         gradleVersion = gradleVersion,
         kotlinDaemonDebugPort = kotlinDaemonDebugPort,
