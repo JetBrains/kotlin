@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextBase
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
@@ -64,9 +65,7 @@ abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragmen
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
         val compiler = createNonIncrementalCompiler(configuration, irFactory, module)
 
-        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(loadedIr, configuration)
-        }
+        val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(loadedIrArtifact)!!
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
             compiler.lowerIr(loadedIr, allModules, context)
