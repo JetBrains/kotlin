@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -111,11 +112,8 @@ class WasmLoweringFacade(
             WholeWorldCompiler(configuration, irFactory)
         }
 
-        val [allModules, context] = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
-
-        val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo.deserializer, allModules, context)
-        }
+        val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
+        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!.loweredIr
 
         if (configuration.diagnosticsCollector.hasErrors) {
             return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
