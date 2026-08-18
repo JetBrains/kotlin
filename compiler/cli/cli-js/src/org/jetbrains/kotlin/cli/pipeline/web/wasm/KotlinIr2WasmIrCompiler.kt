@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.common.IrModuleInfo
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
@@ -41,7 +41,7 @@ private val IrModuleFragment.outputFileName
 abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC
     abstract fun lowerIr(
-        irModuleInfo: IrModuleInfo,
+        irLinker: KotlinIrLinker,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts
@@ -51,14 +51,14 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
 
 abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, private val noCrossFileOptimisations: Boolean) : WasmCompilerBase(configuration) {
     override fun lowerIr(
-        irModuleInfo: IrModuleInfo,
+        irLinker: KotlinIrLinker,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts {
         configuration.wasmDisableCrossFileOptimisations = noCrossFileOptimisations
         return compileToLoweredIr(
             configuration = configuration,
-            irLinker = irModuleInfo.deserializer,
+            irLinker = irLinker,
             allModules = allModules,
             context = context,
         )
@@ -108,14 +108,14 @@ class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, overri
 
 class SingleModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC, val isWasmStdlib: Boolean) : WasmCompilerBase(configuration) {
     override fun lowerIr(
-        irModuleInfo: IrModuleInfo,
+        irLinker: KotlinIrLinker,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts {
         configuration.wasmDisableCrossFileOptimisations = true
         return compileToLoweredIr(
             configuration = configuration,
-            irLinker = irModuleInfo.deserializer,
+            irLinker = irLinker,
             allModules = allModules,
             context = context,
         )
