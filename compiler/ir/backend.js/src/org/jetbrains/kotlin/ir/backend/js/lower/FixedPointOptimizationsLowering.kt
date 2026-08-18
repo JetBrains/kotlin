@@ -33,6 +33,7 @@ abstract class ChangeAwareBodyLoweringPass : BodyLoweringPass {
 
 class FixedPointOptimizationsLowering(context: JsIrOptimizationContext) : BodyLoweringPass {
     val loop: List<ChangeAwareBodyLoweringPass> = listOf(
+        WhileConditionFoldingLowering(context),
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
