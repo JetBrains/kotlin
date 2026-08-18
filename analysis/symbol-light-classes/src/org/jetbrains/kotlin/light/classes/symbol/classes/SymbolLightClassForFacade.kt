@@ -69,7 +69,7 @@ internal class SymbolLightClassForFacade(
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
-                        ktModule = this.useSiteModule,
+                        useSiteModule = this.useSiteModule,
                         annotatedSymbolPointer = analyzeForLightClasses(useSiteModule) {
                             firstFileInFacade.symbol.createPointer()
                         },

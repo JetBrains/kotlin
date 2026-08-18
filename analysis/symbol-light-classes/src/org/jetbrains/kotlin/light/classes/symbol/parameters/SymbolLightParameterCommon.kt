@@ -50,7 +50,7 @@ internal abstract class SymbolLightParameterCommon(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = useSiteModule,
+                    useSiteModule = useSiteModule,
                     annotatedSymbolPointer = symbolPointer,
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),

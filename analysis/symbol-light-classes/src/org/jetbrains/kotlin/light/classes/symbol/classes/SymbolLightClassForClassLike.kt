@@ -43,7 +43,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: SType,
         manager: PsiManager,
     ) : this(
@@ -52,7 +52,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
             @Suppress("UNCHECKED_CAST")
             classSymbol.createPointer() as KaSymbolPointer<SType>
         },
-        useSiteModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager,
     )
 
@@ -91,7 +91,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = symbolPointer,
-                ktModule = useSiteModule,
+                useSiteModule = useSiteModule,
                 ktDeclaration = classOrObjectDeclaration,
             )
         }

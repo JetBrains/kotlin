@@ -55,11 +55,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     val isKotlinValueClass: Boolean
 
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
     ) : super(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
         manager = manager,
     ) {
@@ -69,11 +69,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     constructor(
         classOrObject: KtClassOrObject,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
-        ktModule = ktModule,
+        classSymbolPointer = classOrObject.createSymbolPointer(useSiteModule),
+        useSiteModule = useSiteModule,
         manager = classOrObject.manager,
         isKotlinValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
     ) {
@@ -83,13 +83,13 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
         isKotlinValueClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager,
     ) {
         this.isKotlinValueClass = isKotlinValueClass
@@ -371,7 +371,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
-        ktModule = useSiteModule,
+        useSiteModule = useSiteModule,
         manager = manager,
         isKotlinValueClass = isKotlinValueClass,
     )

@@ -212,7 +212,7 @@ internal class SymbolLightFieldForProperty private constructor(
             ),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
-                    SymbolAnnotationsProvider(ktModule = useSiteModule, annotatedSymbolPointer = pointer)
+                    SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = pointer)
                 } ?: EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->

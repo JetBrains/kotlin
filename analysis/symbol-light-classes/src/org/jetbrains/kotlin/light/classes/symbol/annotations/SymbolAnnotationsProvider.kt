@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
-    private val ktModule: KaModule,
+    private val useSiteModule: KaModule,
     private val annotatedSymbolPointer: KaSymbolPointer<T>,
 ) : AnnotationsProvider {
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KaSession) (KaAnnotatedSymbol) -> T): T =
-        annotatedSymbolPointer.withSymbol(ktModule, action)
+        annotatedSymbolPointer.withSymbol(useSiteModule, action)
 
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
         val indices = mutableMapOf<ClassId, Int>()
@@ -28,7 +28,7 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
 
             // to preserve the initial annotations order
             val index = indices.merge(classId, 0) { old, _ -> old + 1 }!!
-            annotation.toDumbLightClassAnnotationApplication(index, ktModule)
+            annotation.toDumbLightClassAnnotationApplication(index, useSiteModule)
         }
     }
 
@@ -36,7 +36,7 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
         annotatedSymbol.annotations[classId].mapIndexedNotNull { index, annotation ->
             annotation.toLightClassAnnotationApplication(
                 index,
-                ktModule
+                useSiteModule
             )
         }
     }
@@ -47,7 +47,7 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
 
     override fun equals(other: Any?): Boolean = other === this ||
             other is SymbolAnnotationsProvider<*> &&
-            other.ktModule == ktModule &&
+            other.useSiteModule == useSiteModule &&
             annotatedSymbolPointer.pointsToTheSameSymbolAs(other.annotatedSymbolPointer)
 
     override fun hashCode(): Int = annotatedSymbolPointer.hashCode()

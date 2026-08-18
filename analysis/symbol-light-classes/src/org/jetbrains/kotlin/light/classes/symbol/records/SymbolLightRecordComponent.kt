@@ -79,7 +79,7 @@ internal class SymbolLightRecordComponent private constructor(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(ktModule = useSiteModule, annotatedSymbolPointer = backingFieldSymbolPointer),
+                annotationsProvider = SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = backingFieldSymbolPointer),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
         )
