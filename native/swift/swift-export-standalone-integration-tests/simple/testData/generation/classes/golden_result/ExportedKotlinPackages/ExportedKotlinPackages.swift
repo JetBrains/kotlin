@@ -1,3 +1,5 @@
+public enum intersection_overrides {
+}
 public enum namespace {
     public enum deeper {
     }
