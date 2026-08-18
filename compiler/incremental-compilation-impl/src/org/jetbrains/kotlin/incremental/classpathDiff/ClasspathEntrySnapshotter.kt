@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
 import java.io.Closeable
 import java.io.File
+import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
 
@@ -41,12 +42,7 @@ object ClasspathEntrySnapshotter {
     ): ClasspathEntrySnapshot {
         DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
             val classes = metrics.measure(LOAD_CLASSES_PATHS_ONLY) {
-                directoryOrJarReader.getUnixStyleRelativePaths(DEFAULT_CLASS_FILTER).map { unixStyleRelativePath ->
-                    ClassFileWithContentsProvider(
-                        classFile = ClassFile(classpathEntry, unixStyleRelativePath),
-                        contentsProvider = { directoryOrJarReader.readBytes(unixStyleRelativePath) }
-                    )
-                }
+                directoryOrJarReader.getClasses(classpathEntry, DEFAULT_CLASS_FILTER)
             }
             val snapshots = metrics.measure(SNAPSHOT_CLASSES) {
                 val classListSnapshotter: ClassListSnapshotter = if (settings.parseInlinedLocalClasses) {
@@ -56,10 +52,18 @@ object ClasspathEntrySnapshotter {
                 }
                 classListSnapshotter.snapshot()
             }
-            return ClasspathEntrySnapshot(
-                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
-            )
+            val classSnapshots = LinkedHashMap<String, ClassSnapshot>(mapCapacity(classes.size))
+            classes.indices.forEach { index ->
+                classSnapshots[classes[index].classFile.unixStyleRelativePath] = snapshots[index]
+            }
+            return ClasspathEntrySnapshot(classSnapshots)
         }
+    }
+
+    private fun mapCapacity(expectedSize: Int): Int = when {
+        expectedSize < 3 -> expectedSize + 1
+        expectedSize < Int.MAX_VALUE / 2 -> (expectedSize / 0.75f + 1).toInt()
+        else -> Int.MAX_VALUE
     }
 }
 
@@ -73,9 +77,10 @@ private sealed interface DirectoryOrJarReader : Closeable {
      * If a jar has duplicate entries, only unique paths are kept in the returned list (similar to the way the compiler selects the first
      * class if the classpath has duplicate classes).
      */
-    fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String>
-
-    fun readBytes(unixStyleRelativePath: String): ByteArray
+    fun getClasses(
+        classpathEntry: File,
+        filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean
+    ): List<ClassFileWithContentsProvider>
 
     companion object {
 
@@ -92,16 +97,21 @@ private sealed interface DirectoryOrJarReader : Closeable {
 
 private class DirectoryReader(private val directory: File) : DirectoryOrJarReader {
 
-    override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
+    override fun getClasses(
+        classpathEntry: File,
+        filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean
+    ): List<ClassFileWithContentsProvider> {
         return directory.walk()
-            .filter { filter.invoke(it.relativeTo(directory).invariantSeparatorsPath, it.isDirectory) }
-            .map { it.relativeTo(directory).invariantSeparatorsPath }
-            .sorted()
+            .mapNotNull { file ->
+                val relativePath = file.relativeTo(directory).invariantSeparatorsPath
+                if (filter.invoke(relativePath, file.isDirectory)) {
+                    ClassFileWithContentsProvider(ClassFile(classpathEntry, relativePath), file::readBytes)
+                } else {
+                    null
+                }
+            }
+            .sortedBy { it.classFile.unixStyleRelativePath }
             .toList()
-    }
-
-    override fun readBytes(unixStyleRelativePath: String): ByteArray {
-        return directory.resolve(unixStyleRelativePath).readBytes()
     }
 
     override fun close() {
@@ -118,19 +128,37 @@ private class JarReader(jar: File) : DirectoryOrJarReader {
     // Another option is to use `java.nio.file.FileSystem` API, but it seems to be slower than the other two.
     private val zipFile = ZipFile(jar)
 
-    override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
-        return zipFile.entries()
-            .asSequence()
-            .filter { filter.invoke(it.name, it.isDirectory) }
-            .mapTo(sortedSetOf()) { it.name } // Map to `Set` to de-duplicate entries
-            .toList()
-    }
+    override fun getClasses(
+        classpathEntry: File,
+        filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean
+    ): List<ClassFileWithContentsProvider> {
+        val entries = ArrayList<ZipEntry>(zipFile.size())
+        val entriesEnumeration = zipFile.entries()
+        while (entriesEnumeration.hasMoreElements()) {
+            val entry = entriesEnumeration.nextElement()
+            if (filter.invoke(entry.name, entry.isDirectory)) {
+                entries.add(entry)
+            }
+        }
+        // The sort is stable, so retaining the last duplicate matches ZipFile.getEntry(path) behavior used previously.
+        entries.sortBy { it.name }
 
-    override fun readBytes(unixStyleRelativePath: String): ByteArray {
-        return zipFile.getInputStream(zipFile.getEntry(unixStyleRelativePath)).use {
-            it.readBytes()
+        return buildList(entries.size) {
+            for (index in entries.indices) {
+                val entry = entries[index]
+                if (index == entries.lastIndex || entry.name != entries[index + 1].name) {
+                    add(
+                        ClassFileWithContentsProvider(
+                            ClassFile(classpathEntry, entry.name),
+                            contentsProvider = { readBytes(entry) }
+                        )
+                    )
+                }
+            }
         }
     }
+
+    private fun readBytes(entry: ZipEntry): ByteArray = zipFile.getInputStream(entry).use { it.readBytes() }
 
     override fun close() {
         zipFile.close()

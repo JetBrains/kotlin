@@ -15,6 +15,7 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:incremental-compilation-impl"))
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 

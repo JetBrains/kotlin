@@ -19,9 +19,55 @@ import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 private val testDataDir =
     ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
+
+class ClasspathEntrySnapshotterTest : ClasspathSnapshotTestCommon() {
+
+    @Test
+    fun testDirectoryAndJarSnapshotsMatch() {
+        val classBytes = File("$testDataDir/kotlin/testSimpleClass/classes/com/example/SimpleClass.class").readBytes()
+        val files = linkedMapOf(
+            "z/Simple.class" to classBytes,
+            "a/Simple.class" to classBytes,
+            "META-INF/Ignored.class" to classBytes,
+            "module-info.class" to classBytes,
+            "resource.txt" to byteArrayOf(),
+        )
+        val classesDirectory = File(tmpDir, "classes")
+        files.forEach { relativePath, contents ->
+            File(classesDirectory, relativePath).apply {
+                parentFile.mkdirs()
+                writeBytes(contents)
+            }
+        }
+        val classesJar = File(tmpDir, "classes.jar")
+        ZipOutputStream(classesJar.outputStream()).use { output ->
+            files.entries.reversed().forEach { entry ->
+                output.putNextEntry(ZipEntry(entry.key))
+                output.write(entry.value)
+                output.closeEntry()
+            }
+        }
+
+        val settings = ClasspathEntrySnapshotter.Settings(
+            granularity = ClassSnapshotGranularity.CLASS_LEVEL,
+            parseInlinedLocalClasses = false,
+            expandTypeAliases = false,
+        )
+        val directorySnapshot = ClasspathEntrySnapshotter.snapshot(classesDirectory, settings)
+        val jarSnapshot = ClasspathEntrySnapshotter.snapshot(classesJar, settings)
+
+        assertEquals(
+            directorySnapshot.classSnapshots.mapValues { it.value.toGson() },
+            jarSnapshot.classSnapshots.mapValues { it.value.toGson() },
+        )
+        assertEquals(listOf("a/Simple.class", "z/Simple.class"), jarSnapshot.classSnapshots.keys.toList())
+    }
+}
 
 class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
 
