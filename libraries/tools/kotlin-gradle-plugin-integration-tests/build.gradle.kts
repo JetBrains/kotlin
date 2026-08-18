@@ -529,6 +529,11 @@ tasks.withType<Test>().configureEach {
     // (e.g. .../configuration-cache-report.html) during test runs.
     systemProperty("junit.jupiter.tempdir.cleanup.mode.default", "on_success")
 
+    if (kotlinBuildProperties.isTeamcityBuild.get() && kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
+        // to avoid running all tests twice, use only latest gradle version
+        systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersions.last())
+    }
+
     testLogging {
         // set options for log level LIFECYCLE
         events("started", "passed", "skipped", "failed", "standardOut")
