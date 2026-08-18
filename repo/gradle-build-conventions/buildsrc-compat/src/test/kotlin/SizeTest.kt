@@ -5,6 +5,7 @@
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class SizeTest {
     @Test
@@ -36,5 +37,26 @@ class SizeTest {
         assertEquals(6_000L, (2.kilobytes * 3L).inWholeBytes)
         assertEquals(3_024L, (2.kilobytes + 1.KiB).inWholeBytes)
         assertEquals(976L, (2.kilobytes - 1.KiB).inWholeBytes)
+    }
+
+    @Test
+    fun `JVM size arguments are parsed`() {
+        assertEquals(1.KiB, Size.fromJvmArg("1k"))
+        assertEquals(256.MiB, Size.fromJvmArg("256M"))
+        assertEquals(4.GiB, Size.fromJvmArg("4g"))
+    }
+
+    @Test
+    fun `JVM size arguments are rendered`() {
+        assertEquals("1m", 1.MiB.toJvmArg())
+        assertEquals("4096m", 4.GiB.toJvmArg())
+        assertFailsWith<IllegalArgumentException> { 1.KiB.toJvmArg() }
+    }
+
+    @Test
+    fun `invalid JVM size arguments are rejected`() {
+        assertFailsWith<IllegalStateException> { Size.fromJvmArg("256") }
+        assertFailsWith<IllegalStateException> { Size.fromJvmArg("1t") }
+        assertFailsWith<IllegalStateException> { Size.fromJvmArg("-1g") }
     }
 }

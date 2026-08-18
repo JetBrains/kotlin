@@ -686,7 +686,7 @@ testing {
                     }
 
                     maxParallelForks = if (kotlinBuildProperties.isTeamcityBuild.get()) 2 else 8
-                    maxHeapSize = "4G" // KT-72460 to investigate why we need to change heap size
+                    maxHeapSize = testMaxHeapSizeLarge.toJvmArg() // KT-72460 to investigate why we need to change heap size
 
                     testLogging {
                         events("passed", "skipped", "failed")

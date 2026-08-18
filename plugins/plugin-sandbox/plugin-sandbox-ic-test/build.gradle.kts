@@ -44,7 +44,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(maxHeapSize = 3.GiB) {
+    testTask(maxHeapSize = testMaxHeapSizeLarge) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         wasmNodeJsKotlinBuild {
             setupNodeJs(nodejsVersion)

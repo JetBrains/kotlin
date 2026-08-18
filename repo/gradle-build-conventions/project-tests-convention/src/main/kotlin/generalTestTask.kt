@@ -69,17 +69,35 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     )
 }
 
+val testMaxHeapSizeTiny get() = 256.MiB
+val testMaxHeapSizeSmall get() = 1.GiB
+val testMaxHeapSizeMedium get() = 2.GiB
+val testMaxHeapSizeLarge get() = 4.GiB
+val testMaxHeapSizeHuge get() = 8.GiB
+
+internal val testDefaultMaxHeapSize = testMaxHeapSizeMedium
+internal val testDefaultMinHeapSize = 64.MiB
+internal val testDefaultMaxMetaspaceSize = 512.MiB
+internal val testDefaultReservedCodeCacheSize = 256.MiB
+internal val testDefaultGC = GarbageCollector.G1
+
 internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
-    maxHeapSize: Size? = null,
-    minHeapSize: Size? = null,
-    maxMetaspaceSize: Size = 512.MiB,
-    reservedCodeCacheSize: Size = 256.MiB,
-    garbageCollector: GarbageCollector = GarbageCollector.G1,
+    maxHeapSize: Size = testDefaultMaxHeapSize,
+    minHeapSize: Size = testDefaultMinHeapSize,
+    maxMetaspaceSize: Size = testDefaultMaxMetaspaceSize,
+    reservedCodeCacheSize: Size = testDefaultReservedCodeCacheSize,
+    garbageCollector: GarbageCollector = testDefaultGC,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
+
+    val properties = kotlinBuildProperties
+    val effectiveXmx = properties.testXmx.orElse(maxHeapSize)
+    val effectiveXms = properties.testXms.orElse(minHeapSize)
+    val effectiveGC = properties.testGarbageCollector.orElse(garbageCollector)
+
     project.dependencies {
         "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
     }
@@ -92,7 +110,8 @@ internal fun Project.createGeneralTestTask(
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
-        val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
+        val ideaHomeForTests =
+            this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
         jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
             property.set("idea.home.path")
             classpath.from(ideaHomeForTests)
@@ -134,7 +153,7 @@ internal fun Project.createGeneralTestTask(
         )
 
         jvmArgs(
-            when (garbageCollector) {
+            when (effectiveGC.get()) {
                 GarbageCollector.G1 -> "-XX:+UseG1GC"
                 GarbageCollector.Parallel -> "-XX:+UseParallelGC"
             },
@@ -147,23 +166,18 @@ internal fun Project.createGeneralTestTask(
             jvmArgs("-XX:NativeMemoryTracking=${nativeMemoryTracking.get()}")
         }
 
-        val junit5ParallelTestWorkers =
-            project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution
-                ?: minOf(Runtime.getRuntime().availableProcessors(), defaultMaxJunit5ParallelThreads)
-
-        val memoryPerTestProcess = totalMaxMemoryForTestsMb
-            .coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
-            .MiB
-
-        this.maxHeapSize = (maxHeapSize ?: memoryPerTestProcess - maxMetaspaceSize - reservedCodeCacheSize).toJvmArg()
-        this.minHeapSize = (minHeapSize ?: 64.MiB).toJvmArg()
+        this.maxHeapSize = effectiveXmx.get().toJvmArg()
+        this.minHeapSize = effectiveXms.get().toJvmArg()
 
         systemProperty("idea.is.unit.test", "true")
         systemProperty("idea.use.native.fs.for.win", false)
         systemProperty("java.awt.headless", "true")
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
-        systemProperty("kotlin.test.update.test.data", project.kotlinBuildProperties.booleanProperty("kotlin.test.update.test.data", false).get())
+        systemProperty(
+            "kotlin.test.update.test.data",
+            project.kotlinBuildProperties.booleanProperty("kotlin.test.update.test.data", false).get()
+        )
         systemProperty("cacheRedirectorEnabled", project.kotlinBuildProperties.isCacheRedirectorEnabled.get())
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
@@ -212,9 +226,6 @@ internal fun Project.createGeneralTestTask(
         body()
     }
 }
-
-private val defaultMaxMemoryPerTestWorkerMb = 1600
-private val defaultMaxJunit5ParallelThreads = 16
 
 private val Test.commandLineIncludePatterns: Set<String>
     get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns.orEmpty()
