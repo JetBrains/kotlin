@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,10 @@
 
 package kotlin.js.internal.longAsBigInt
 
+import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.*
+import kotlin.math.floor
 import kotlin.reflect.js.internal.PrimitiveKClassImpl
 
 /**
@@ -201,9 +203,49 @@ internal fun Long.highBits(): Int = (this shr 32).toInt()
 
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
 // TODO(KT-85540): remove the property after bootstrapping
 internal val longArrayClass = PrimitiveKClassImpl(js("BigInt64Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
 
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
 internal fun isLongArray(a: dynamic): Boolean = jsInstanceOf(a, js("BigInt64Array"))
+
+@InlineOnly
+private inline fun Long.asUint64(): BigInt =
+    BigInt.asUintN(Long.SIZE_BITS, unsafeCast<BigInt>())
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongToString(value: Long, base: Int): String =
+    value.asUint64().toString(checkRadix(base))
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongFromUnsignedSafeDouble(value: Double): ULong =
+    BigInt(floor(value)).unsafeCast<ULong>()
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongToDouble(value: Long): Double =
+    numberToDouble(value.asUint64())
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongDivide(v1: Long, v2: Long): Long {
+    if (v2 == 0L) throwDivByZero()
+    val a = v1.asUint64()
+    val b = v2.asUint64()
+    return BigInt.asIntN(Long.SIZE_BITS, a / b).unsafeCast<Long>()
+}
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal fun ulongRemainder(v1: Long, v2: Long): Long {
+    if (v2 == 0L) throwDivByZero()
+    val a = v1.asUint64()
+    val b = v2.asUint64()
+    return BigInt.asIntN(Long.SIZE_BITS, a % b).unsafeCast<Long>()
+}
