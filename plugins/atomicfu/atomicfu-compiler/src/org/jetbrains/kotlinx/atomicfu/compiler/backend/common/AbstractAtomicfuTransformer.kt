@@ -525,7 +525,7 @@ abstract class AbstractAtomicfuTransformer(
             }.deepCopyWithSymbols(parentFunction)
             val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
             val arguments = buildList {
-                parentFunction.firstNonLocalFunctionForLambdaParent.dispatchReceiverParameter?.let {
+                parentFunction.firstNonLocalFunctionForLambdaParent?.dispatchReceiverParameter?.let {
                     add(it.capture())
                 }
                 add(atomicHandlerReceiver)
@@ -736,13 +736,14 @@ abstract class AbstractAtomicfuTransformer(
                     symbol.owner.name.asString() == APPEND &&
                     symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
 
-        private val IrFunction.firstNonLocalFunctionForLambdaParent: IrFunction
+        // It may return null if there is no parent function, for example, if the function was called
+        // to initialize top-level property.
+        private val IrFunction.firstNonLocalFunctionForLambdaParent: IrFunction?
             get() {
                 if (this.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return this
                 return parents.filterIsInstance<IrFunction>().firstOrNull {
                     it.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 }
-                    ?: error("In the sequence of parents for the local function ${this.render()} no containing function was found" + CONSTRAINTS_MESSAGE)
             }
     }
 

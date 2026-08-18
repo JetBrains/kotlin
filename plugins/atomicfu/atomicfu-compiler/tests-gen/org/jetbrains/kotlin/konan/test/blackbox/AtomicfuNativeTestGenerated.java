@@ -399,6 +399,12 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("InvokeLoopFromInlineFun.kt")
+    public void testInvokeLoopFromInlineFun() {
+      run("InvokeLoopFromInlineFun.kt");
+    }
+
+    @Test
     @TestMetadata("TopLevelTest.kt")
     public void testTopLevelTest() {
       run("TopLevelTest.kt");
