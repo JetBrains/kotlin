@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import com.sun.jdi.*
+import com.sun.jdi.connect.AttachingConnector
 import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
-import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
@@ -186,7 +186,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     }
 
     private fun attachDebugger(port: Int): VirtualMachine {
-        val connector = SocketAttachingConnector()
+        val connector = getAttachingConnector()
         val virtualMachine = connector.attach(connector.defaultArguments().toMutableMap().apply {
             getValue("port").setValue("$port")
             getValue("hostname").setValue("127.0.0.1")
@@ -261,3 +261,9 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
 
 private fun isIndyLambda(location: Location): Boolean =
     "$\$Lambda$" in location.declaringType().name()
+
+private fun getAttachingConnector(): AttachingConnector =
+    Bootstrap.virtualMachineManager()
+        .attachingConnectors()
+        .firstOrNull { it.name() == "com.sun.jdi.SocketAttach" }
+        ?: error("JDI socket attaching connector is not available")
