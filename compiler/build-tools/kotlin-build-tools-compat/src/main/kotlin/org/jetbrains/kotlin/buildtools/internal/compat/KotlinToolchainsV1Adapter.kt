@@ -51,6 +51,15 @@ public class KotlinToolchainsV1Adapter(
             override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
                 return DiscoverScriptExtensionsOperationV1Adapter(compilationService, classpath)
             }
+
+            override fun kaptCompilerPluginBuilder(
+                kaptClasspath: List<Path>,
+                stubsOutputDir: Path,
+                sourcesOutputDir: Path,
+                annotationProcessorsClasspath: List<Path>
+            ): KaptConfiguration.Builder {
+                TODO("Not available in this version.")
+            }
         }
     }
 
@@ -223,15 +232,6 @@ private class JvmCompilationOperationV1Adapter private constructor(
         return JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
             workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot
         )
-    }
-
-    override fun kaptCompilerPluginBuilder(
-        kaptClasspath: List<Path>,
-        stubsOutputDir: Path,
-        sourcesOutputDir: Path,
-        annotationProcessorsClasspath: List<Path>
-    ): KaptConfiguration.Builder {
-        error("Not available in this version")
     }
 
     private operator fun <V> get(key: Option<V>): V = options[key]

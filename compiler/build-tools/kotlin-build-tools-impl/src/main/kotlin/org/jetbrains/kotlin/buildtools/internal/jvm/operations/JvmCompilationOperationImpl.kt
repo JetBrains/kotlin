@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -130,20 +127,6 @@ internal class JvmCompilationOperationImpl private constructor(
             sourcesChanges,
             dependenciesSnapshotFiles,
             shrunkClasspathSnapshot
-        )
-    }
-
-    override fun kaptCompilerPluginBuilder(
-        kaptClasspath: List<Path>,
-        stubsOutputDir: Path,
-        sourcesOutputDir: Path,
-        annotationProcessorsClasspath: List<Path>
-    ): KaptConfiguration.Builder {
-        return KaptConfigurationImpl(
-            kaptClasspath = kaptClasspath,
-            stubsOutputDir = stubsOutputDir,
-            sourcesOutputDir = sourcesOutputDir,
-            annotationProcessorsClasspath = annotationProcessorsClasspath
         )
     }
 
