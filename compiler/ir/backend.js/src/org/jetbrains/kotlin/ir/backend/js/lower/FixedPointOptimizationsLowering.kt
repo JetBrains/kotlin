@@ -25,6 +25,7 @@ interface ChangeAwareBodyLoweringPass : BodyLoweringPass {
 
 class FixedPointOptimizationsLowering(context: JsIrBackendContext) : BodyLoweringPass {
     val loop: List<ChangeAwareBodyLoweringPass> = listOf(
+        TemporaryVariableEliminationLowering(context),
         WhileConditionFoldingLowering(context),
     )
 
