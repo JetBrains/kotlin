@@ -21,6 +21,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("test-batches-convention")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
