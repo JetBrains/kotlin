@@ -119,7 +119,7 @@ public class KotlinModuleMetadata internal constructor(
          * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
          * It will throw an exception if the metadata version is greater than what kotlin-metadata-jvm understands.
          * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
-         * It is also the only method that allows metadata transformation and `KotlinClassMetadata.write` subsequent calls.
+         * It is also the only method that allows metadata transformation and `KotlinModuleMetadata.write` subsequent calls.
          *
          * @throws IllegalArgumentException if an error happened while parsing the given byte array,
          * which means that it is either not the content of a `.kotlin_module` file, or it has been corrupted.
@@ -138,7 +138,7 @@ public class KotlinModuleMetadata internal constructor(
          *
          * This method makes best effort to read unsupported metadata versions.
          * Keep in mind that this method will still throw an exception if metadata is changed in an unpredictable way.
-         * Because obtained metadata can be incomplete, its [KotlinClassMetadata.write] method will throw an exception.
+         * Because obtained metadata can be incomplete, its [KotlinModuleMetadata.write] method will throw an exception.
          * This method still cannot read metadata produced by pre-1.0 compilers.
          *
          * @throws IllegalArgumentException if an error happened while parsing the given byte array,
