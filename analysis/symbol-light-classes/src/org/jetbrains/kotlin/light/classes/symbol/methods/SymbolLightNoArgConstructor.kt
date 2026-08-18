@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.JvmExposeBoxedAdditionalAnnotationsProvider
@@ -21,13 +23,13 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifi
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
-internal class SymbolLightNoArgConstructor(
+internal abstract class SymbolLightNoArgConstructorBase(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     private val visibility: String,
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
-    private val functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
+    private val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
@@ -51,13 +53,13 @@ internal class SymbolLightNoArgConstructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(visibility),
-            annotationsBox = if (functionSymbolPointer == null) {
+            annotationsBox = if (constructorSymbolPointer == null) {
                 EmptyAnnotationsBox
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         useSiteModule = useSiteModule,
-                        annotatedSymbolPointer = functionSymbolPointer,
+                        annotatedSymbolPointer = constructorSymbolPointer,
                     ),
                     annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                     additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
@@ -75,7 +77,7 @@ internal class SymbolLightNoArgConstructor(
     override fun getReturnType(): PsiType? = null
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is SymbolLightNoArgConstructor &&
+        this === other || other is SymbolLightNoArgConstructorBase &&
                 isJvmExposedBoxed == other.isJvmExposedBoxed &&
                 containingClass == other.containingClass
 
@@ -85,3 +87,35 @@ internal class SymbolLightNoArgConstructor(
 
     override fun isOverride(): Boolean = false
 }
+
+@OptIn(KaImplementationDetail::class)
+internal class SymbolLightNoArgConstructor(
+    lightMemberOrigin: LightMemberOrigin?,
+    containingClass: SymbolLightClassBase,
+    visibility: String,
+    methodIndex: Int,
+    isJvmExposedBoxed: Boolean,
+    override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>,
+) : SymbolLightNoArgConstructorBase(
+    lightMemberOrigin,
+    containingClass,
+    visibility,
+    methodIndex,
+    isJvmExposedBoxed,
+    constructorSymbolPointer = symbolPointer
+), KaSymbolJavaView<KaConstructorSymbol>
+
+internal class SymbolLightDefaultNoArgConstructor(
+    lightMemberOrigin: LightMemberOrigin?,
+    containingClass: SymbolLightClassBase,
+    visibility: String,
+    methodIndex: Int,
+    isJvmExposedBoxed: Boolean,
+) : SymbolLightNoArgConstructorBase(
+    lightMemberOrigin,
+    containingClass,
+    visibility,
+    methodIndex,
+    isJvmExposedBoxed,
+    constructorSymbolPointer = null
+)

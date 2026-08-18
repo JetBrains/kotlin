@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -343,6 +345,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 SymbolLightFieldForEnumEntry(
                     enumEntry = enumEntry,
                     enumEntryName = name,
+                    symbolPointer = enumEntry.symbol.createPointer(),
                     containingClass = this@SymbolLightClassForClassOrObject,
                 )
             }
@@ -359,9 +362,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     override fun getRecordHeader(): PsiRecordHeader? = cachedValue {
         if (!isRecord) return@cachedValue null
 
+        val constructorPsi = (classOrObjectDeclaration as? KtClass)?.primaryConstructor
+        val constructorSymbolPointer = withClassSymbol { classSymbol ->
+            classSymbol.declaredMemberScope.constructors.singleOrNull { it.isPrimary }?.createPointer()
+        } ?: return@cachedValue null
         SymbolLightRecordHeader(
-            kotlinOrigin = (classOrObjectDeclaration as? KtClass)?.primaryConstructor,
+            kotlinOrigin = constructorPsi,
+            symbolPointer = constructorSymbolPointer,
             containingClass = this@SymbolLightClassForClassOrObject,
+            useSiteModule = useSiteModule
         )
     }
 

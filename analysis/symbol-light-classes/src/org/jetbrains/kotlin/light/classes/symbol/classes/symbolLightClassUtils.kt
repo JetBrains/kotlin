@@ -483,9 +483,10 @@ internal fun createField(
     if (!hasBackingField(declaration)) return null
 
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
-
+    val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
     return SymbolLightFieldForProperty(
         propertySymbol = declaration,
+        backingFieldSymbol = backingFieldSymbol,
         fieldName = fieldName,
         containingClass = lightClass,
         lightMemberOrigin = null,
@@ -494,7 +495,7 @@ internal fun createField(
 }
 
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
-    if (property is KaSyntheticJavaPropertySymbol) return true
+    if (property is KaSyntheticJavaPropertySymbol) return false
 
     requireWithAttachment(
         property is KaKotlinPropertySymbol,

@@ -46,13 +46,19 @@ internal class SymbolLightClassForScript private constructor(
         val defaultConstructor = SymbolLightMethodForScriptDefaultConstructor(
             script,
             this@SymbolLightClassForScript,
-            METHOD_INDEX_FOR_DEFAULT_CTOR
+            METHOD_INDEX_FOR_DEFAULT_CTOR,
+            analyzeForLightClasses(this@SymbolLightClassForScript.useSiteModule) {
+                script.symbol.createPointer()
+            }
         )
         add(defaultConstructor)
         val mainMethod = SymbolLightMethodForScriptMain(
             script,
             this@SymbolLightClassForScript,
-            METHOD_INDEX_FOR_SCRIPT_MAIN
+            METHOD_INDEX_FOR_SCRIPT_MAIN,
+            analyzeForLightClasses(this@SymbolLightClassForScript.useSiteModule) {
+                script.symbol.createPointer()
+            }
         )
         add(mainMethod)
     }

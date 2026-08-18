@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import kotlinx.collections.immutable.persistentHashMapOf
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightFieldForProperty private constructor(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     private val fieldName: String,
@@ -46,10 +48,11 @@ internal class SymbolLightFieldForProperty private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
-    private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
-) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
+    override val symbolPointer: KaSymbolPointer<KaBackingFieldSymbol>,
+) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware, KaSymbolJavaView<KaBackingFieldSymbol> {
     internal constructor(
         propertySymbol: KaPropertySymbol,
+        backingFieldSymbol: KaBackingFieldSymbol,
         fieldName: String,
         containingClass: SymbolLightClassBase,
         lightMemberOrigin: LightMemberOrigin?,
@@ -61,7 +64,7 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
-        backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
+        symbolPointer = backingFieldSymbol.createPointer(),
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
@@ -211,9 +214,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 computer = ::computeModifiers,
             ),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
-                    SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = pointer)
-                } ?: EmptyAnnotationsProvider,
+                annotationsProvider = SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = (symbolPointer)),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
