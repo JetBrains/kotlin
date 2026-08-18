@@ -121,7 +121,11 @@
 -dontprocesskotlinmetadata
 -keep class kotlin.Metadata
 -dontoptimize
--dontobfuscate
+
+# same as -dontobfuscate, but allows to filter attributes
+-keepnames class ** { *; }
+# strip local variable names to reduce distribution size
+-keepattributes !LocalVariableTable,!LocalVariableTypeTable,*
 
 -keep class org.fusesource.** { *; }
 -keep class com.sun.jna.** { *; }
