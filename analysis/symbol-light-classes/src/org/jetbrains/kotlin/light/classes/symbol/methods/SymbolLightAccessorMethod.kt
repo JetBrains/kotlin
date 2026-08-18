@@ -117,7 +117,7 @@ internal class SymbolLightAccessorMethod private constructor(
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = containingPropertySymbolPointer,
-                ktModule = useSiteModule,
+                useSiteModule = useSiteModule,
                 ktDeclaration = containingPropertyDeclaration,
             )
         }
@@ -190,7 +190,7 @@ internal class SymbolLightAccessorMethod private constructor(
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = useSiteModule,
+                    useSiteModule = useSiteModule,
                     annotatedSymbolPointer = symbolPointer,
                 ),
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(

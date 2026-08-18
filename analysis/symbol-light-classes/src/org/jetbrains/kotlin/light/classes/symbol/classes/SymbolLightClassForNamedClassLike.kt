@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KaNamedClassSymbol> {
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
     ) : super(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
         manager = manager,
     )
@@ -33,12 +33,12 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         symbolPointer = classSymbolPointer,
-        useSiteModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager
     )
 

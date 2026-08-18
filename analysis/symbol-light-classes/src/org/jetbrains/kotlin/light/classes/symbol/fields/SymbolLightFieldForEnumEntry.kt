@@ -45,7 +45,7 @@ internal class SymbolLightFieldForEnumEntry(
             modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = useSiteModule,
+                    useSiteModule = useSiteModule,
                     annotatedSymbolPointer = analyzeForLightClasses(useSiteModule) {
                         enumEntry.symbol.createPointer()
                     },

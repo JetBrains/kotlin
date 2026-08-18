@@ -56,7 +56,7 @@ internal class SymbolLightNoArgConstructor(
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
-                        ktModule = useSiteModule,
+                        useSiteModule = useSiteModule,
                         annotatedSymbolPointer = functionSymbolPointer,
                     ),
                     annotationFilter = jvmExposeBoxedAwareAnnotationFilter,

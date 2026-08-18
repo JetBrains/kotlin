@@ -59,7 +59,7 @@ internal class SymbolLightTypeParameter private constructor(
         kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
     )
 
-    override val useSiteModule: KaModule get() = parent.ktModule
+    override val useSiteModule: KaModule get() = parent.useSiteModule
 
     private inline fun <T> withTypeParameterSymbol(crossinline action: context(KaSession) (KaTypeParameterSymbol) -> T): T =
         symbolPointer.withSymbol(useSiteModule, action)

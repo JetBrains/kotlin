@@ -71,7 +71,7 @@ internal class SymbolLightConstructor private constructor(
             ),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = useSiteModule,
+                    useSiteModule = useSiteModule,
                     annotatedSymbolPointer = symbolPointer,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,

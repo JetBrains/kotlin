@@ -22,7 +22,7 @@ import javax.swing.Icon
 internal class SymbolLightTypeParameterList(
     internal val owner: PsiTypeParameterListOwner,
     private val symbolWithTypeParameterPointer: KaSymbolPointer<KaDeclarationSymbol>,
-    internal val ktModule: KaModule,
+    internal val useSiteModule: KaModule,
     private val ktDeclaration: KtTypeParameterListOwner?,
 ) : LightElement(owner.manager, KotlinLanguage.INSTANCE), PsiTypeParameterList {
     override fun accept(visitor: PsiElementVisitor) {
@@ -41,7 +41,7 @@ internal class SymbolLightTypeParameterList(
     ): Boolean = typeParameters.all { processor.execute(it, state) }
 
     private val _typeParameters: Collection<PsiTypeParameter> by lazyPub {
-        symbolWithTypeParameterPointer.withSymbol(ktModule) {
+        symbolWithTypeParameterPointer.withSymbol(useSiteModule) {
             val parentInterface =
                 (owner as? SymbolLightMethodBase)?.containingClass?.interfaceIfDefaultImpls
 
@@ -68,7 +68,7 @@ internal class SymbolLightTypeParameterList(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightTypeParameterList || other.ktModule != ktModule) return false
+        if (other !is SymbolLightTypeParameterList || other.useSiteModule != useSiteModule) return false
         if (ktDeclaration != null || other.ktDeclaration != null) {
             return other.ktDeclaration == ktDeclaration
         }

@@ -41,7 +41,7 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
         modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
         annotationsBox = GranularAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(
-                ktModule = useSiteModule,
+                useSiteModule = useSiteModule,
                 annotatedSymbolPointer = symbolPointer,
             ),
             additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
