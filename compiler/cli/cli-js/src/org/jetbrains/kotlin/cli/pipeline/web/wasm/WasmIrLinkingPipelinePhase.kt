@@ -42,7 +42,8 @@ object WasmIrLinkingPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, W
             allModules,
             context,
             modulesStructure.klibs.included?.isWasmStdlib == true,
-            configuration
+            loadedIr.deserializer,
+            configuration,
         )
     }
 }
