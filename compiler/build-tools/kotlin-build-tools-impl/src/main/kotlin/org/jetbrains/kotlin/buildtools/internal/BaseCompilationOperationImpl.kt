@@ -85,6 +85,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             return CompilationResult.COMPILATION_ERROR
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+        compilerArguments.reportArgumentParseWarnings(loggerAdapter, createAndPrepareCompilerArguments())
 
         return when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {

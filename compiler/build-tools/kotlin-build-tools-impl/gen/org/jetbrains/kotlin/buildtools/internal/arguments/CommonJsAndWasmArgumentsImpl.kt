@@ -67,7 +67,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonJsAndWasmArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonKlibBasedArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
+  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+) : CommonKlibBasedArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     CommonJsAndWasmArguments,
     CommonJsAndWasmArguments.Builder,
     CommonJsAndWasmCompilerKlibArguments,
