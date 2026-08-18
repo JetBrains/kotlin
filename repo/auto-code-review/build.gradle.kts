@@ -42,16 +42,16 @@ sourceSets {
 
 abstract class CodeReviewTask : JavaExec() {
     @get:Option(
-        "base",
-        "The base git revision to compare the sources against. For example, origin/master (default) or HEAD~2"
+        option = "base",
+        description = "The base git revision to compare the sources against. For example, origin/master (default) or HEAD~2"
     )
     @get:Input
     @get:Optional
     abstract val base: Property<String>
 
     @get:Option(
-        "output",
-        "The path to the output Markdown file"
+        option = "output",
+        description = "The path to the output Markdown file"
     )
     @get:OutputFile
     abstract val output: RegularFileProperty
