@@ -166,6 +166,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomInt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomIntRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomLong
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomLongRange
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameConcat
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGenerator
@@ -788,6 +789,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "GatherExplodeLists" -> GatherExplodeLists()
         "GatherValuesInto" -> GatherValuesInto()
         "GatherKeysInto" -> GatherKeysInto()
+        "DataFrameConcat" -> DataFrameConcat()
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
         "StringInvokeUntyped" -> StringInvokeUntyped()
