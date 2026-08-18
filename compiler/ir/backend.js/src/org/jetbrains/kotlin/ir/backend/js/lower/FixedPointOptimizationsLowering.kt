@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.WhileConditionFoldingLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrOptimizationContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 
@@ -23,8 +24,9 @@ interface ChangeAwareBodyLoweringPass : BodyLoweringPass {
     fun changeAwareLower(irBody: IrBody, container: IrDeclaration): Boolean
 }
 
-class FixedPointOptimizationsLowering(context: JsIrBackendContext) : BodyLoweringPass {
+class FixedPointOptimizationsLowering(context: JsIrOptimizationContext) : BodyLoweringPass {
     val loop: List<ChangeAwareBodyLoweringPass> = listOf(
+        TemporaryVariableEliminationLowering(context),
         WhileConditionFoldingLowering(context),
     )
 

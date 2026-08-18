@@ -6,7 +6,7 @@ var log = 0
 
 fun test(a: Int): Int {
     val tmp1: Int
-    log += if (true) {
+    log += if (a == 3) {
         tmp1 = 1
         tmp1
     } else {

@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JS_IR
 // CHECK_OPTIMIZED_JS
 // EXPECT_GENERATED_JS: function=init;foo;test1;test2;test3;test4;test5;test6;box expect=methodCall.optimized.js TARGET_BACKENDS=JS_IR_ES6
+// ENABLE_UNUSED_PROPERTY_DCE
 
 var log = ""
 

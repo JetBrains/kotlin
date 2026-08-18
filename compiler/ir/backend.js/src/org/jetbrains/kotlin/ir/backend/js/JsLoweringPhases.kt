@@ -221,7 +221,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::EscapedIdentifiersLowering,
     ::MainFunctionCallWrapperLowering,
     ::EffectAnalysisLowering,
-    ::FixedPointOptimizationsLowering,
     ::CleanupLowering,
     ::IrValidationAfterLoweringsSecondStagePhase,
 )
@@ -237,5 +236,5 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, I
     ::JsCleanupPurifiedLeftoverUsagesLowering,
     ::MoveCallableFactoriesToDeclarationsLowering,
     ::DeduplicateCallableReferenceFactoriesLowering,
-    ::WhileConditionFoldingLowering,
+    ::FixedPointOptimizationsLowering,
 )

@@ -4,14 +4,18 @@
 
 var global = 0
 
+fun effectful(x: Int): Int {
+    global = 100500
+    return x
+}
+
 fun test1(): Int {
     val tmp = global++
     return global
 }
 
 fun test2(): Int {
-    val tmp: Int
-    tmp = global++
+    val tmp: Int = global++
     return global
 }
 

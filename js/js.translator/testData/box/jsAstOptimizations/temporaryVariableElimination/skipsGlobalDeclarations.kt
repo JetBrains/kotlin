@@ -2,7 +2,7 @@
 // CHECK_OPTIMIZED_JS
 // EXPECT_GENERATED_JS: function=test;box expect=skipsGlobalDeclarations.optimized.js TARGET_BACKENDS=JS_IR_ES6
 
-var tmp: Int
+var tmp: Int = 0
 
 fun test(a: Int, b: Int, c: Int): Int {
     tmp = a + b

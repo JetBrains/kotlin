@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JS_IR
 // CHECK_OPTIMIZED_JS
 // EXPECT_GENERATED_JS: function=foo;box expect=nonSideEffect.optimized.js TARGET_BACKENDS=JS_IR_ES6
+// ENABLE_UNUSED_PROPERTY_DCE
 
 fun foo(x: Int): Int {
     return x

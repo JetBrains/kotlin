@@ -4,10 +4,10 @@ function se() {
   return _unary__edvuaz;
 }
 function box() {
-  var a = se();
-  var b = a;
+  var b = se();
   var result = b + b | 0;
   if (!(result === 2))
     return 'fail: ' + result;
   return 'OK';
 }
+

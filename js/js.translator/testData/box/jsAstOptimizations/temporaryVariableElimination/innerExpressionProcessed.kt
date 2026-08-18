@@ -2,10 +2,13 @@
 // CHECK_OPTIMIZED_JS
 // EXPECT_GENERATED_JS: function=box expect=innerExpressionProcessed.optimized.js TARGET_BACKENDS=JS_IR_ES6
 
+var used = 0
+
 fun box(): String {
-    var a = 2
-    var b = a
-    var c = 2 + b
+    val a = 2
+    val b = a
+    val c = 2 + b
+    used = c
 
     return "OK"
 }
