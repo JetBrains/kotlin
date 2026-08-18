@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
+import org.jetbrains.kotlin.light.classes.symbol.utils.invalidAccess
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 

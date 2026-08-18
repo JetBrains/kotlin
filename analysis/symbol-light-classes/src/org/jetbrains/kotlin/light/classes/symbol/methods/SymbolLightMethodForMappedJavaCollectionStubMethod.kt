@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.MethodAdditionalAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox

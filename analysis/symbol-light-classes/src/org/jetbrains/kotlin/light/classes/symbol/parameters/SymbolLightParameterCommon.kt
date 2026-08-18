@@ -21,6 +21,13 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.NullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.utils.getRequiredNullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.isValid
+import org.jetbrains.kotlin.light.classes.symbol.utils.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(

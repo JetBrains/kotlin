@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForRepeatableAnnotationContainer
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 
 internal class SymbolLightRepeatableAnnotationContainerMethod(
     private val annotationClassQualifier: String?,

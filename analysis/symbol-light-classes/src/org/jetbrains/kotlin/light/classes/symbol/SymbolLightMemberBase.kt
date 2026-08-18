@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.utils.basicIsEquivalentTo
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal abstract class SymbolLightMemberBase<T : PsiMember>(

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiNameValuePair
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 
 internal class SymbolLightLazyAnnotationParameterList(
     parent: SymbolLightAbstractAnnotation,

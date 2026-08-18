@@ -31,6 +31,21 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForName
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.utils.NullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.basicIsEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.canHaveNonPrivateField
+import org.jetbrains.kotlin.light.classes.symbol.utils.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
+import org.jetbrains.kotlin.light.classes.symbol.utils.createPsiExpression
+import org.jetbrains.kotlin.light.classes.symbol.utils.getRequiredNullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.isJvmField
+import org.jetbrains.kotlin.light.classes.symbol.utils.isOriginEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.utils.isValid
+import org.jetbrains.kotlin.light.classes.symbol.utils.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.utils.withElementFactorySafe
+import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
@@ -217,7 +232,9 @@ internal class SymbolLightFieldForProperty private constructor(
                     withPropertySymbol { propertySymbol ->
                         when {
                             propertySymbol.isDelegated -> NullabilityAnnotation.NON_NULLABLE
-                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
+                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(
+                                propertySymbol.returnType
+                            )
                             else -> NullabilityAnnotation.NOT_REQUIRED
                         }
                     }

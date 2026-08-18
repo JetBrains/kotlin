@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.SEALED_KEYWORD
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForMember
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*

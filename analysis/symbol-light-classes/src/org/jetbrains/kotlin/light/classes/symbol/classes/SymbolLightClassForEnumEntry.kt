@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
-import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.utils.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList

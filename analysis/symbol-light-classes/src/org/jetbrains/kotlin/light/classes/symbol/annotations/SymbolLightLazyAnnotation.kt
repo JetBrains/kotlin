@@ -9,7 +9,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.normalizedArguments
+import org.jetbrains.kotlin.light.classes.symbol.utils.normalizedArguments
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallElement

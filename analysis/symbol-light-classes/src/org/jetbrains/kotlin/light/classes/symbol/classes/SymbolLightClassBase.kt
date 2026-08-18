@@ -26,7 +26,11 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
+import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
+import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon

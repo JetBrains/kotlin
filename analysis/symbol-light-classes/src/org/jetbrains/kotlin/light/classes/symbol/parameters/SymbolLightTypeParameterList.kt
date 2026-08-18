@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.utils.basicIsEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.utils.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.utils.interfaceIfDefaultImpls
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import javax.swing.Icon
 

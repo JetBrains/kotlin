@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
+import org.jetbrains.kotlin.light.classes.symbol.utils.enumClassModality
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForClass
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 

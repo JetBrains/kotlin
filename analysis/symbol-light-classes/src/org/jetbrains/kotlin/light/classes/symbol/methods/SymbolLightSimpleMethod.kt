@@ -19,13 +19,18 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
+import org.jetbrains.kotlin.light.classes.symbol.utils.NullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
+import org.jetbrains.kotlin.light.classes.symbol.utils.getRequiredNullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.utils.isDefaultImplsForInterfaceWithTypeParameters
+import org.jetbrains.kotlin.light.classes.symbol.utils.nonExistentType
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -172,7 +177,9 @@ internal open class SymbolLightSimpleMethod protected constructor(
                                     }
                                     else -> {
                                         val returnType = functionSymbol.returnType
-                                        if (isVoidType(returnType)) NullabilityAnnotation.NOT_REQUIRED else getRequiredNullabilityAnnotation(returnType)
+                                        if (isVoidType(returnType)) NullabilityAnnotation.NOT_REQUIRED else getRequiredNullabilityAnnotation(
+                                            returnType
+                                        )
                                     }
                                 }
                             }

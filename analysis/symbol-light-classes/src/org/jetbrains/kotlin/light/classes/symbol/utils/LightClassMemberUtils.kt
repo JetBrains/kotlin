@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightMethodForDe
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
 import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration

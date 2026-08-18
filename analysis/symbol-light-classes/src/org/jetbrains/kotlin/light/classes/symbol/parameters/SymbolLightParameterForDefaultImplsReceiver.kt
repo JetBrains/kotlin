@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.utils.nonExistentType
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration: SymbolLightMethodBase) :

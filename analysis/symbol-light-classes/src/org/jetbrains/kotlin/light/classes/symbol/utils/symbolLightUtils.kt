@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.utils
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
@@ -308,9 +308,10 @@ internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForIn
 internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: Boolean
     get() = interfaceIfDefaultImpls?.hasTypeParameters() == true
 
-internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean = analyzeForLightClasses(ktModule) {
-    restoreSymbol() != null
-}
+internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean =
+    analyzeForLightClasses(ktModule) {
+        restoreSymbol() != null
+    }
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <T : KaSymbol> compareSymbolPointers(
@@ -321,7 +322,11 @@ internal inline fun <T : KaSymbol> compareSymbolPointers(
 internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
     ktModule: KaModule,
     crossinline action: context(KaSession) (T) -> R,
-): R = analyzeForLightClasses(ktModule) { action(restoreSymbolOrThrowIfDisposed(this@withSymbol)) }
+): R = analyzeForLightClasses(ktModule) {
+    action(
+        restoreSymbolOrThrowIfDisposed(this@withSymbol)
+    )
+}
 
 internal val KaPropertySymbol.isConstOrJvmField: Boolean get() = isConst || isJvmField
 internal val KaPropertySymbol.isJvmField: Boolean get() = backingFieldSymbol?.hasJvmFieldAnnotation() == true
