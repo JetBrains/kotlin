@@ -98,14 +98,14 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NAMED_COMPANION_IN_EXTERNAL_INTERFACE, "Named companions are not allowed inside external interfaces.")
         map.put(
             COMPANION_OBJECT_IN_EXTERNAL_INTERFACE,
-            """                              
-                Reading a companion object of an external interface currently produces an empty JS object.
+            """
+            Reading a companion object of an external interface currently produces an empty JS object.
             This will change in the future: it will produce the JS value that the interface  
             name refers to, and will fail at runtime if there is no such value.                          
                 - To keep the current behavior, annotate the interface with '@JsName("Object")'.             
                 - To emulate JavaScript IDLs without a companion object, use companion extensions.        
                                                                                                             
-            See https://youtrack.jetbrains.com/issue/KT-76462 for more details.
+            See https://kotl.in/e4vlc5 for more details.
             """.trimIndent()
         )
         map.put(UNSUPPORTED_REFLECTION_API, "{0}", TO_STRING)
