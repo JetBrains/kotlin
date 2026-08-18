@@ -395,6 +395,12 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
     }
 
     @Test
+    @TestMetadata("InvokeLoopFromInlineFun.kt")
+    public void testInvokeLoopFromInlineFun() {
+      run("InvokeLoopFromInlineFun.kt");
+    }
+
+    @Test
     @TestMetadata("TopLevelTest.kt")
     public void testTopLevelTest() {
       run("TopLevelTest.kt");
