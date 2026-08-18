@@ -322,10 +322,8 @@ object Aggregates : TemplateGroupBase() {
                 if (isFirst) {
                     firstKey = key
                     isFirst = false
-                } else {
-                    // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-                    val equal = firstKey?.equals(key) ?: (key == null)
-                    if (!equal) return false
+                } else if (firstKey != key) {
+                    return false
                 }
                 if (!iterator.hasNext()) break
                 element = iterator.next()
@@ -341,10 +339,8 @@ object Aggregates : TemplateGroupBase() {
                 val key = selector(this[i])
                 if (i == 0) {
                     firstKey = key
-                } else {
-                    // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-                    val equal = firstKey?.equals(key) ?: (key == null)
-                    if (!equal) return false
+                } else if (firstKey != key) {
+                    return false
                 }
             }
             return true
