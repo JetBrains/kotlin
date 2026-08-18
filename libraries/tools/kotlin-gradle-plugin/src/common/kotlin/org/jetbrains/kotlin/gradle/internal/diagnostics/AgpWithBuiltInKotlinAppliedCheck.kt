@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -39,9 +40,9 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
         // IncompatibleWithTheNewAgpDsl must not hide AgpWithBuiltInKotlinIsAlreadyApplied
         checkIfNewDslIsUsed(isKmpProject = false)
         reportKotlinAndroidDeprecation(
-            KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin(path),
+            KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin,
             agpVersionProvider,
-        )
+        ) { alreadyOnAgp9 -> invoke(path, alreadyOnAgp9) }
     }
 
     fun Project.runKmpAgpWithBuiltInKotlinIfAppliedCheck(
@@ -84,22 +85,24 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
         }
     }
 
-    internal fun Project.reportKotlinAndroidDeprecation(
-        diagnostic: ToolingDiagnostic,
+    internal fun <T : ToolingDiagnosticFactory> Project.reportKotlinAndroidDeprecation(
+        diagnosticFactory: T,
         agpVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default,
+        createDiagnostic: T.(alreadyOnAgp9: Boolean) -> ToolingDiagnostic,
     ) {
         val wasChecked = AtomicBoolean(false)
         androidPluginIds.forEach { agpPluginId ->
             plugins.withId(agpPluginId) {
                 if (!wasChecked.getAndSet(true)) {
                     val androidVersion = agpVersionProvider.get()
-                    if (androidVersion != null && androidVersion >= minimalBuiltInKotlinSupportedAgpVersion) {
-                        // Report deprecation with AGP 9.+ when Android deprecated Variants API is enabled
+                    if (androidVersion != null) {
+                        val alreadyOnAgp9 = androidVersion >= minimalBuiltInKotlinSupportedAgpVersion
+                        // Report deprecation when Android deprecated Variants API is enabled
                         // and built-in Kotlin support is disabled. Other cases related to AGP 9.+ change are covered
                         // by other diagnostics like 'KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl' or
                         // 'KotlinToolingDiagnostics.AgpWithBuiltInKotlinIsAlreadyApplied'.
                         // This diagnostic should be fired at the end of related diagnostics checks and only if the checks are passed.
-                        project.reportDiagnosticOncePerProject(diagnostic)
+                        project.reportDiagnosticOncePerProject(diagnosticFactory.createDiagnostic(alreadyOnAgp9))
                     }
                 }
             }

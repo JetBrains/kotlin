@@ -423,13 +423,13 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("No 'org.jetbrains.kotlin.android' plugin deprecation with AGP <9.0")
+    @DisplayName("'org.jetbrains.kotlin.android' plugin deprecation warning on AGP <9.0")
     @GradleAndroidTest
     @AndroidTestVersions(
         minVersion = TestVersions.AGP.AGP_811,
         maxVersion = TestVersions.AGP.AGP_811,
     )
-    fun testKotlinAndroidNoDeprecationDiagnostic(
+    fun testKotlinAndroidAGP8DeprecationDiagnostic(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -452,8 +452,8 @@ class KotlinAndroidIT : KGPBaseTest() {
                 }
             }
             build("help") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
                 assertNoDiagnostic(KotlinToolingDiagnostics.KotlinAndroidIsIncompatibleWithTheNewAgpDsl)
-                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
                 assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
             }
         }
