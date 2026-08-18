@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
+import org.jetbrains.kotlin.js.config.additionalExportedDeclarationNames
 import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
@@ -56,6 +57,7 @@ class AnalysisApiBasedDtsGenerationHandler(testServices: TestServices) : KlibArt
                 exportableSuspendLambdas = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas),
                 useUnknownInsteadAny = JsEnvironmentConfigurationDirectives.EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY in module.directives,
                 dataClassCopyRespectsConstructorVisibility = configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility),
+                additionalExportedDeclarationNames = configuration.additionalExportedDeclarationNames,
             )
             val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
             val regularDependencies = module.transitiveRegularDependencies(reverseOrder = true)

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
@@ -144,6 +145,11 @@ internal fun KaDeclarationSymbol.isEffectivelyExported(config: TypeScriptExportC
         return false
     }
     if (isExplicitlyExported() || (includingImplicitExport && isJsImplicitExport())) {
+        return true
+    }
+
+    @OptIn(KaIdeApi::class)
+    if (importableFqName in config.additionalExportedDeclarationNames) {
         return true
     }
 

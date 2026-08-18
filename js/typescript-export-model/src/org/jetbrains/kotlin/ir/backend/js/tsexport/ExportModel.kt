@@ -40,8 +40,13 @@ public sealed interface ExportedMember {
 }
 
 public sealed interface ExportedMemberName {
-    public class Identifier(override val value: String) : ExportedMemberName
-    public class SymbolReference(override val value: String) : ExportedMemberName
+    public class Identifier(override val value: String) : ExportedMemberName {
+        override fun toString(): String = value
+    }
+
+    public class SymbolReference(override val value: String) : ExportedMemberName {
+        override fun toString(): String = "[$value]"
+    }
 
     public val value: String
 

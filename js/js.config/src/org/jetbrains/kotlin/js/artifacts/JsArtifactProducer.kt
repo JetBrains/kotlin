@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,19 +38,21 @@ interface JsArtifactProducer<Module, File, Artifact, TestEnvironment> {
      *
      * Important: the main module should always go last.
      */
-    fun generateArtifacts(modules: List<Module>, granularity: JsGenerationGranularity): List<Artifact> = when (granularity) {
-        JsGenerationGranularity.WHOLE_PROGRAM, JsGenerationGranularity.PER_MODULE -> {
-            val mainModule = modules.last()
-            modules.map {
-                singleModuleToArtifact(it, mainModule)
+    fun generateArtifacts(modules: List<Module>, granularity: JsGenerationGranularity): List<Artifact> {
+        val mainModule = modules.lastOrNull() ?: return emptyList()
+        return when (granularity) {
+            JsGenerationGranularity.WHOLE_PROGRAM, JsGenerationGranularity.PER_MODULE -> {
+                modules.map {
+                    singleModuleToArtifact(it, mainModule)
+                }
             }
-        }
-        JsGenerationGranularity.PER_FILE -> {
-            val perFileGenerator = makePerFileGenerator(mainModule = modules.last())
-            buildList {
-                for ((mainModule, exportModule) in perFileGenerator.generatePerFileArtifacts(modules)) {
-                    add(mainModule)
-                    addIfNotNull(exportModule)
+            JsGenerationGranularity.PER_FILE -> {
+                val perFileGenerator = makePerFileGenerator(mainModule)
+                buildList {
+                    for ((mainModule, exportModule) in perFileGenerator.generatePerFileArtifacts(modules)) {
+                        add(mainModule)
+                        addIfNotNull(exportModule)
+                    }
                 }
             }
         }
