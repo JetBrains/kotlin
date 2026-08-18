@@ -5,8 +5,6 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.internal.impldep.com.google.common.hash.HashFunction
-import org.gradle.internal.impldep.com.google.common.hash.Hashing
 import org.gradle.testkit.runner.TaskOutcome.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -17,7 +15,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Disabled
-import java.util.*
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -136,53 +133,14 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                     )
                 }
 
-                val testReportFile = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
-                    "build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html"
-                } else {
-                    val prefix = if (targetName == "jvm") "" else "${targetName}Test."
-                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4) ||
-                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_6)
-                    ) {
-                        "${prefix}com.example.HelloTest"
-                    } else {
-                        "${prefix}com.example.HelloTest".hashTestPathSegment()
-                    }
-                    "build/reports/tests/${targetName}Test/${dirName}/index.html"
-                }
+                val testReportFile = testClassHtmlReport("${targetName}Test", "com.example.HelloTest", gradleVersion, targetName = targetName)
+                assertFileDoesNotContain(testReportFile, "secondTest")
 
-                assertFileInProjectDoesNotContain(testReportFile, "secondTest")
-
-                val integrationTestReportFile = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
-                    "build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html"
-                } else {
-                    val prefix = if (targetName == "jvm") "" else "${targetName}IntegrationTest."
-                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4) ||
-                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_6)
-                    ) {
-                        "${prefix}com.example.HelloIntegrationTest"
-                    } else {
-                        "${prefix}com.example.HelloIntegrationTest".hashTestPathSegment()
-                    }
-                    "build/reports/tests/${targetName}IntegrationTest/${dirName}/index.html"
-                }
-
-                assertFileInProjectContains(integrationTestReportFile, "test[$targetName]")
-                assertFileInProjectDoesNotContain(integrationTestReportFile, "secondTest")
-                assertFileInProjectDoesNotContain(integrationTestReportFile, "thirdTest")
+                val integrationTestReportFile = testClassHtmlReport("${targetName}IntegrationTest", "com.example.HelloIntegrationTest", gradleVersion, targetName = targetName)
+                assertFileContains(integrationTestReportFile, "test[$targetName]")
+                assertFileDoesNotContain(integrationTestReportFile, "secondTest")
+                assertFileDoesNotContain(integrationTestReportFile, "thirdTest")
             }
         }
-    }
-
-
-    // Adopted from Gradle
-    // platforms/software/testing-base/src/main/java/org/gradle/api/internal/tasks/testing/report/generic/GenericHtmlTestReportGenerator.java
-    // Caused by https://github.com/gradle/gradle/pull/37052
-    private fun String.hashTestPathSegment(): String {
-        val hashBytes = HASHER.hashUnencodedChars(this).asBytes()
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(hashBytes)
-    }
-
-    private companion object {
-        private val HASHER: HashFunction = Hashing.farmHashFingerprint64()
     }
 }
