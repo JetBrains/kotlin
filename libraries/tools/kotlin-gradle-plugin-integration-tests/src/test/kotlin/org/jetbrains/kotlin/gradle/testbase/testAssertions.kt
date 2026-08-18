@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import com.intellij.openapi.util.JDOMUtil
+import org.gradle.internal.impldep.com.google.common.hash.HashFunction
+import org.gradle.internal.impldep.com.google.common.hash.Hashing
+import org.gradle.util.GradleVersion
 import org.jdom.Content
 import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import java.nio.file.Path
+import java.util.Base64
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
@@ -132,3 +136,61 @@ internal fun readValidateAndCleanupTestResults(
 
 internal fun prettyPrintXml(uglyXml: String): String =
     JDOMUtil.write(JDOMUtil.load(uglyXml.reader()))
+
+private fun GradleProject.testResultsAndReportsDirs(
+    taskName: String,
+    subprojectName: String? = null,
+): Pair<Path, Path> {
+    val cleanTaskName = taskName.removePrefix(":")
+    val subproject: String? = when {
+        subprojectName != null -> subprojectName
+        cleanTaskName.contains(':') -> cleanTaskName.substringBeforeLast(':').replace(':', '/')
+        else -> null
+    }
+    val simpleTaskName: String = cleanTaskName.substringAfterLast(':')
+    val buildDirLocation = if (subproject != null) {
+        projectPath.resolve(subproject)
+    } else {
+        projectPath
+    }
+    val testResultsDir = buildDirLocation.resolve("build/test-results/$simpleTaskName")
+    val testReportsDir = buildDirLocation.resolve("build/reports/tests/$simpleTaskName")
+    return testResultsDir to testReportsDir
+}
+
+fun GradleProject.testClassHtmlReport(
+    taskName: String,
+    className: String,
+    gradleVersion: GradleVersion,
+    subprojectName: String? = null,
+    targetName: String? = null,
+): Path {
+    val testReportsDir = testResultsAndReportsDirs(taskName, subprojectName).second
+    val simpleTaskName = taskName.removePrefix(":").substringAfterLast(':')
+
+    val reportRelativePath = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+        "classes/$className.html"
+    } else {
+        val prefix = if (targetName == "jvm") "" else "$simpleTaskName."
+        val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4) ||
+            gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_6)
+        ) {
+            "$prefix$className"
+        } else {
+            "$prefix$className".hashTestPathSegment()
+        }
+        "$dirName/index.html"
+    }
+
+    return testReportsDir.resolve(reportRelativePath)
+}
+
+// Adopted from Gradle
+// platforms/software/testing-base/src/main/java/org/gradle/api/internal/tasks/testing/report/generic/GenericHtmlTestReportGenerator.java
+// Caused by https://github.com/gradle/gradle/pull/37052
+private fun String.hashTestPathSegment(): String {
+    val hashBytes = TEST_PATH_HASHER.hashUnencodedChars(this).asBytes()
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(hashBytes)
+}
+
+private val TEST_PATH_HASHER: HashFunction = Hashing.farmHashFingerprint64()
