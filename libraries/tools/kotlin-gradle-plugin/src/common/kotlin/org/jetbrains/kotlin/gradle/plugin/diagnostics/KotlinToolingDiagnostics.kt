@@ -2155,7 +2155,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object NonKmpAgpIsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(androidPluginId: String) = build {
+        operator fun invoke(androidPluginId: String, alreadyOnAgp9: Boolean) = build {
             val titleStep = title(
                 "The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugin: '$androidPluginId'"
             )
@@ -2167,7 +2167,16 @@ internal object KotlinToolingDiagnostics {
                         |The 'org.jetbrains.kotlin.multiplatform' plugin is not compatible with 'com.android.library' starting with Android Gradle Plugin 9.0.0.
                         """.trimMargin()
                     )
-                    .solution("Please use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.")
+                    .run {
+                        if (alreadyOnAgp9) {
+                            solution("Please use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.")
+                        } else {
+                            solution(
+                                "Please update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog) and " +
+                                        "use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'."
+                            )
+                        }
+                    }
             } else {
                 titleStep
                     .description(
@@ -2179,7 +2188,16 @@ internal object KotlinToolingDiagnostics {
                         |Read more: https://kotl.in/kmp-project-structure-migration
                         """.trimMargin()
                     )
-                    .solution("Please change the structure of your project and move the usage of '$androidPluginId' into a separate subproject.")
+                    .run {
+                        if (alreadyOnAgp9) {
+                            solution("Please change the structure of your project and move the usage of '$androidPluginId' into a separate subproject.")
+                        } else {
+                            solution(
+                                "Please update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog), change the " +
+                                        "structure of your project and move the usage of '$androidPluginId' into a separate subproject."
+                            )
+                        }
+                    }
             }
             solutionStep.documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
         }
@@ -2188,10 +2206,17 @@ internal object KotlinToolingDiagnostics {
     internal object DeprecatedKotlinAndroidPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(
             projectPath: String,
+            alreadyOnAgp9: Boolean,
         ) = build {
             title("Deprecated 'org.jetbrains.kotlin.android' plugin usage")
                 .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
-                .solution("Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.")
+                .run {
+                    if (alreadyOnAgp9) {
+                        solution("Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.")
+                    } else {
+                        solution("Update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog) and migrate to built-in Kotlin.")
+                    }
+                }
                 .documentationLink(URI("https://kotl.in/gradle/agp-built-in-kotlin"))
         }
     }
