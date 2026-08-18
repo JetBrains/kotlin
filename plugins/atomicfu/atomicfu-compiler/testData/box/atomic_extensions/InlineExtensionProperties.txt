@@ -1,0 +1,68 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'InlineExtensionProperties.kt'
+    private synthetic final static field ma$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field ma$volatile: int
+    private synthetic final field marr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field mb$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field mb$volatile: int
+    private synthetic final static field ml$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field ml$volatile: long
+    private synthetic final static field ms$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field ms$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getMa$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getMa$volatile(): int
+    private synthetic final method getMarr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static method getMb$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getMb$volatile(): int
+    private synthetic final static method getMl$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getMl$volatile(): long
+    private synthetic final static method getMs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getMs$volatile(): java.lang.Object
+    private synthetic final method getSquared$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): int
+    private synthetic final method getSquared$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object): int
+    private synthetic final method getSquared$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger): int
+    public final method memberTest(): void
+    private synthetic final method setMa$volatile(p0: int): void
+    private synthetic final method setMb$volatile(p0: int): void
+    private synthetic final method setMl$volatile(p0: long): void
+    private synthetic final method setMs$volatile(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class InlineExtensionPropertiesKt {
+    // source: 'InlineExtensionProperties.kt'
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static field arr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field b: java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static field l: java.util.concurrent.atomic.AtomicLong
+    private synthetic final static field s: java.util.concurrent.atomic.AtomicReference
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getA(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getAbs$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): int
+    private synthetic final static method getAbs$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object): int
+    private synthetic final static method getAbs$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger): int
+    private synthetic final static method getArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static method getB(): java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static method getIsEmpty$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): boolean
+    private synthetic final static method getIsEmpty$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object): boolean
+    private synthetic final static method getIsEmpty$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference): boolean
+    private synthetic final static method getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): boolean
+    private synthetic final static method getIsTrue$atomicfu$ATOMIC_FIELD_UPDATER$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object): boolean
+    private synthetic final static method getIsTrue$atomicfu$BOXED_ATOMIC$Boolean(p0: java.util.concurrent.atomic.AtomicBoolean): boolean
+    private synthetic final static method getL(): java.util.concurrent.atomic.AtomicLong
+    private synthetic final static method getLow$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int): int
+    private synthetic final static method getLow$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object): int
+    private synthetic final static method getLow$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong): int
+    private synthetic final static method getS(): java.util.concurrent.atomic.AtomicReference
+    private synthetic final static method getScaledBy10$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): int
+    private synthetic final static method getScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object): int
+    private synthetic final static method getScaledBy10$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger): int
+    private synthetic final static method setScaledBy10$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): void
+    private synthetic final static method setScaledBy10$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int): void
+    private synthetic final static method setScaledBy10$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int): void
+    public final static method topLevelTest(): void
+}
