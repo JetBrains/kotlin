@@ -91,6 +91,7 @@ Jvm:
     - "compiler/ir/backend.jvm"
     - "compiler/ir/serialization.jvm"
     - "compiler/tests-different-jdk"
+    - "core/compiler.common.jvm"
   fullyAffectedBy:
     - CoreLibs
     - CompilerInfrastructure
@@ -101,6 +102,8 @@ Wasm:
   include:
     - "compiler/ir/backend.wasm"
     - "wasm"
+    - "core/compiler.common.wasm"
+    - "core/compiler.common.web"
     - "js/js.translator/testData"
     - "js/js.sourcemap"
     - "js/typescript-export-model"
@@ -121,6 +124,8 @@ Js:
     - "compiler/ir/serialization.js"
     - "libraries/tools/analysis-api-based-klib-reader"
     - "libraries/tools/dukat"
+    - "core/compiler.common.js"
+    - "core/compiler.common.web"
   fullyAffectedBy:
     - CoreLibs
     - CompilerInfrastructure
@@ -132,6 +137,7 @@ Native:
     - "compiler/ir/backend.native"
     - "compiler/ir/ir.objcinterop"
     - "compiler/ir/serialization.native"
+    - "core/compiler.common.native"
     - "native"
     - "kotlin-native"
   exclude:
