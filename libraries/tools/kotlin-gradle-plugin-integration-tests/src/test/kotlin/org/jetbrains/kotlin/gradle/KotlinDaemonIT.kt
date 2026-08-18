@@ -138,7 +138,10 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         project(
             "jvmAndJsProject",
             gradleVersion,
-            buildJdk = jdk.location
+            buildJdk = jdk.location,
+            buildOptions = defaultBuildOptions
+                .suppressDeprecatedJdkWarningWithGradle814(gradleVersion, jdk)
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             build(":jsLib:assemble")
             build("jvmLib:assemble") {

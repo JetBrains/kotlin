@@ -28,7 +28,12 @@ internal class KotlinNativeIsolatedClassloaderIT : KGPBaseTest() {
          * We try to access it in the isolated classpath and ensure that it's not accessible there.
          */
         org.gradle.launcher.bootstrap.EntryPoint::class.java
-        nativeProject("compilerPlugins/pluginUsesJdkClass", gradleVersion, buildJdk = providedJdk.location) {
+        nativeProject(
+            "compilerPlugins/pluginUsesJdkClass",
+            gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.suppressDeprecatedJdkWarningWithGradle814(gradleVersion, providedJdk)
+        ) {
             build(":library:compileKotlinLinuxX64")
         }
     }
