@@ -61,7 +61,7 @@ class TestLifecycleTaskTest {
         fun main(args: Array<String>) {
             val actualText = generateTestLifecycleTasksDump(projectDir)
             if (expectFile.readText().sanitize() != actualText) {
-                expectFile.writeText(actualText)
+                expectFile.writeText(actualText + "\n")
                 println("Updated: ${expectFile.toUri().toURL()}")
             } else {
                 println("Up to date: ${expectFile.toUri().toURL()}")
