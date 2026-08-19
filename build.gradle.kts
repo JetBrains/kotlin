@@ -210,6 +210,7 @@ tasks {
         val excludedNativePrefixes = listOf(
             ":native",
             ":libraries:tools:analysis-api-based-klib-reader:testProject",
+            ":plugins:parcelize:parcelize-runtime",
             ":plugins:plugin-sandbox:plugin-annotations",
             ":kotlin-power-assert-runtime",
         )
