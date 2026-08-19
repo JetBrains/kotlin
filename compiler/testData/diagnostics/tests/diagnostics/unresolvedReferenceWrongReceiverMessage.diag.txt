@@ -1,9 +1,9 @@
-/unresolvedReferenceWrongReceiverMessage.kt:11:10: error: Candidate 'fun String.foo(): Unit' is inapplicable because of a receiver type mismatch.
+/unresolvedReferenceWrongReceiverMessage.kt:11:10: error: Candidate 'fun String.foo(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.
 
 /unresolvedReferenceWrongReceiverMessage.kt:12:10: error: None of the following candidates is applicable:
 
 fun String.bar(): Unit:
-  Candidate 'fun String.bar(): Unit' is inapplicable because of a receiver type mismatch.
+  Candidate 'fun String.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.
 
 fun Int.bar(): Unit:
-  Candidate 'fun Int.bar(): Unit' is inapplicable because of a receiver type mismatch.
+  Candidate 'fun Int.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.

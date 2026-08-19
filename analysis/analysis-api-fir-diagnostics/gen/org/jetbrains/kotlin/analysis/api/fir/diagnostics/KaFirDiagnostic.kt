@@ -479,6 +479,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
         public val candidate: KaSymbol
         public val operator: String?
+        public val actualType: KaType
     }
 
     @KaUnstableDiagnosticApi

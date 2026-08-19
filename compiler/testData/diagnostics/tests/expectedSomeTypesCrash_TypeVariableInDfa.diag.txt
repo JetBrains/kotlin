@@ -1,6 +1,6 @@
 /expectedSomeTypesCrash_TypeVariableInDfa.kt:11:5: error: Argument type mismatch: actual type is 'MutableList<Int>', but 'Number' was expected.
 
-/expectedSomeTypesCrash_TypeVariableInDfa.kt:11:10: error: Candidate 'fun Number.f(): Unit' is inapplicable because of a receiver type mismatch.
+/expectedSomeTypesCrash_TypeVariableInDfa.kt:11:10: error: Candidate 'fun Number.f(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MutableList<Int>'.
 
 /expectedSomeTypesCrash_TypeVariableInDfa.kt:13:5: error: Argument type mismatch: actual type is 'String', but 'Any?' was expected.
 

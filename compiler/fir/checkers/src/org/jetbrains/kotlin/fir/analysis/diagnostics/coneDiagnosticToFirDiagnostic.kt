@@ -614,7 +614,17 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
             FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType, session)
-        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, this.operatorToken, session)
+        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(
+            source,
+            this.candidateSymbol, this.operatorToken,
+            // This diagnostic only fires when the extension receiver of `symbol` doesn't typecheck.
+            // Observation: if the call site has both an explicit and an implicit receiver, it
+            // must have necessarily been the explicit one that failed.
+            candidate.chosenExtensionReceiver?.expression?.resolvedType
+                ?: candidate.dispatchReceiver?.expression?.resolvedType
+                ?: error("Receiver missing in ConeInapplicableWrongReceiver"),
+            session,
+        )
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
 

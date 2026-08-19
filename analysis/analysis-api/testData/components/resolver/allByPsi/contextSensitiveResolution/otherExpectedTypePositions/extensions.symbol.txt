@@ -176,7 +176,7 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
     candidateSymbols = [
       val bar: MyClass2
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MyClass.Companion'.>
 
 KtNameReferenceExpression(232,239): 'MyClass'
   isImplicitReferenceToCompanion: true
@@ -195,7 +195,7 @@ KtNameReferenceExpression(240,243): 'bar'
     candidateSymbols = [
       val bar: MyClass2
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MyClass.Companion'.>
 
 KtCallExpression(249,257): 'foo(bar)'
   KaSymbolResolutionSuccess:
