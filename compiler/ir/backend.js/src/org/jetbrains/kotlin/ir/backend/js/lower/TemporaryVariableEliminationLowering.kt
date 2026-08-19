@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  */
 class TemporaryVariableEliminationLowering(@Suppress("UNUSED") context: JsCommonBackendContext) : ChangeAwareBodyLoweringPass {
     override fun changeAwareLower(irBody: IrBody, container: IrDeclaration): Boolean {
-        return false
         if (container !is IrFunction) return false
         val collector = Collector()
         irBody.acceptVoid(collector)
