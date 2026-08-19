@@ -34,10 +34,22 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browser = target.subTargets.filterIsInstance<KotlinBrowserJsIr>().singleOrNull() ?: return@launchInStage
 
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
+        if (!browserTestDsl.isConfiguredByUser) {
+            project.logger.debug("The new browser test DSL is not used. Skipping kotlin js test task configuration")
+            return@launchInStage
+        }
 
         if (target.isWasm) {
             project.reportDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError())
             return@launchInStage
+        }
+
+        // The user opted into the new DSL but named no browser, so fall back to a single Chromium runner.
+        // Declaring it eagerly here keeps `allBrowserRunners` a side-effect-free view of the declared runners,
+        // so `browserRunnersDeclared` stays meaningful for the Karma and Node.js pipelines.
+        if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
+            project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework())
+            browserTestDsl.useDefaultBrowserRunner()
         }
 
         // TODO: KT-86706 Implement different browser runners as independent test runs

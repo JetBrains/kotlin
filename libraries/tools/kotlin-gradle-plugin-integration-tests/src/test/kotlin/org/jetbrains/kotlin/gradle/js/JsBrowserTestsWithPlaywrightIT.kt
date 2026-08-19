@@ -565,7 +565,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     js() {
                         browser {
-                            test.apply {
+                            test {
                                 //no browsers
                             }
                         }
@@ -590,10 +590,11 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 }
             }
 
-            build(":jsBrowserTest", forwardBuildOutput = true) {
+            build(":jsBrowserTest") {
                 assertTasksAreNotInTaskGraph(":kotlinInstallPlaywrightWebkit", ":kotlinInstallPlaywrightFirefox")
                 //when no runners are configured, default chromium runner should be installed
                 assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
+                assertHasDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework)
             }
         }
     }

@@ -85,10 +85,15 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
     }
 
-    override val test: KotlinJsBrowserTestDsl = project
+    private val testImpl: KotlinJsBrowserTestImpl = project.objects
         .createKotlinJsBrowserTestImpl(target.compilations.getByName(TEST_COMPILATION_NAME))
 
-    override fun test(body: Action<KotlinJsBrowserTestDsl>) = body.execute(test)
+    override val test: KotlinJsBrowserTestDsl get() = testImpl
+
+    override fun test(body: Action<KotlinJsBrowserTestDsl>) {
+        testImpl.markTestDslInvoked()
+        body.execute(testImpl)
+    }
 
     companion object {
         internal const val WEBPACK_TASK_NAME = "webpack"

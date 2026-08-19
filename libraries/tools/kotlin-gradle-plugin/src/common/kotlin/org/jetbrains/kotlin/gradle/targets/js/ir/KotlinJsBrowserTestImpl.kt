@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.*
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -54,30 +54,50 @@ internal class KotlinWebkitTestRunner(
     objects: ObjectFactory
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.WebkitTestRunnerDsl
 
-internal fun Project.createKotlinJsBrowserTestImpl(
+internal fun ObjectFactory.createKotlinJsBrowserTestImpl(
     testCompilation: KotlinJsIrCompilation
-) = objects.newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation, this::reportDiagnostic)
+) = newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation)
 
 internal abstract class KotlinJsBrowserTestImpl
 @Inject constructor(
     testCompilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
     providers: ProviderFactory,
-    reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ) : KotlinJsBrowserTestDsl {
 
-    private val defaultBrowserRunner = providers.provider {
-        reportDiagnostic(
-            KotlinToolingDiagnostics.NonBrowserSpecifiedForJsBrowserTestFramework()
-        )
-        KotlinChromiumTestRunner("default_chromium", objects).also {
-            connectTopLevelConfigDslWithBrowserTestDsl(it)
-        }
+    private var testDslInvoked: Boolean = false
+
+    /**
+     * Records that the user entered the `test {}` block, so that "no browsers were declared on purpose"
+     * can be told apart from "the new DSL was never used".
+     *
+     * Runner maps being empty cannot express that difference: a project that never touches the new DSL
+     * must keep the legacy Karma pipeline, while an explicit `test {}` block opts into browser tests and
+     * gets [useDefaultBrowserRunner].
+     */
+    fun markTestDslInvoked() {
+        testDslInvoked = true
     }
+
+    /**
+     * Whether the user opted into the new browser test DSL, either by entering `test {}` or by declaring a runner.
+     *
+     * @see markTestDslInvoked
+     */
+    val isConfiguredByUser: Boolean
+        get() = testDslInvoked || chromiumRunners.isNotEmpty() || firefoxRunners.isNotEmpty() || webkitRunners.isNotEmpty()
+
+    /**
+     * Declares the browser runner used when the user opted into the new DSL without naming any browser.
+     *
+     * Must be called at configuration time, before [allBrowserRunners] is queried.
+     */
+    fun useDefaultBrowserRunner() {
+        chromium()
+    }
+
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
-        (chromiumRunners + firefoxRunners + webkitRunners).ifEmpty {
-            mapOf(defaultBrowserRunner.get().name to defaultBrowserRunner.get())
-        }
+        chromiumRunners + firefoxRunners + webkitRunners
     }
 
     override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> = testCompilation

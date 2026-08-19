@@ -12,6 +12,8 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERS
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.junit.jupiter.api.io.TempDir
 import java.net.URI
@@ -55,8 +58,8 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `without runners the default karma framework is kept and bundle task stays disabled`() {
-        val setup = buildBrowserTestProject {}
+    fun `without the test DSL the default karma framework is kept and bundle task stays disabled`() {
+        val setup = buildBrowserProjectWithoutTestDsl()
 
         assertIs<KotlinKarma>(setup.jsBrowserTestTask.testFramework)
 
@@ -64,7 +67,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         setup.mockJsTestLinkOutput()
         assertFalse(
             bundleTask.browserRunnersDeclared.get(),
-            "Expected the bundle task to stay disabled when no browser runners are declared"
+            "Expected the bundle task to stay disabled when the new test {} DSL is not used"
         )
         assertTrue(
             bundleTask.requiredNpmDependencies.isEmpty(),
@@ -72,7 +75,43 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         )
         assertFalse(
             bundleTask.onlyIf.isSatisfiedBy(bundleTask),
-            "Expected the bundle task to be skipped, as no browser runners are declared"
+            "Expected the bundle task to be skipped, as the new test {} DSL is not used"
+        )
+        setup.project.assertNoDiagnostics(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework)
+    }
+
+    @Test
+    fun `an empty test DSL block falls back to a single chromium runner`() {
+        val setup = buildBrowserTestProject {}
+
+        assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        assertEquals(
+            listOf("chromium"),
+            setup.testDsl.allBrowserRunners.get().keys.toList(),
+            "Expected exactly one default chromium runner"
+        )
+
+        val bundleTask = setup.webpackBundleTask
+        setup.mockJsTestLinkOutput()
+        assertTrue(
+            bundleTask.browserRunnersDeclared.get(),
+            "Expected the bundle task to be enabled by the default browser runner"
+        )
+    }
+
+    @Test
+    fun `the no-browser diagnostic is reported exactly once`() {
+        val setup = buildBrowserTestProject {}
+
+        // The default runner is declared eagerly, so repeatedly querying the runners must not re-report.
+        repeat(3) { setup.testDsl.allBrowserRunners.get() }
+
+        assertEquals(
+            1,
+            setup.project.kotlinToolingDiagnosticsCollector
+                .getDiagnosticsForProject(setup.project.path)
+                .count { it.id == KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework.id },
+            "Expected the no-browser warning to be reported exactly once"
         )
     }
 
@@ -163,12 +202,28 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `without runners no playwright install task is registered`() {
-        val setup = buildBrowserTestProject {}
+    fun `without the test DSL no playwright install task is registered`() {
+        val setup = buildBrowserProjectWithoutTestDsl()
 
         PwBrowserKind.entries.forEach {
             val installTask = setup.project.tasks.findByName(it.getPwInstallBrowserTaskName())
-            assertNull(installTask, "Expected no ${it.getPwInstallBrowserTaskName()} task when no runners declared")
+            assertNull(installTask, "Expected no ${it.getPwInstallBrowserTaskName()} task when the test {} DSL is not used")
+        }
+    }
+
+    @Test
+    fun `an empty test DSL block registers only the chromium install task`() {
+        val setup = buildBrowserTestProject {}
+
+        assertIs<PlaywrightBrowserInstall>(
+            setup.project.tasks.findByName(PwBrowserKind.CHROMIUM.getPwInstallBrowserTaskName()),
+            "Expected the chromium install task to back the default browser runner"
+        )
+        listOf(PwBrowserKind.FIREFOX, PwBrowserKind.WEBKIT).forEach {
+            assertNull(
+                setup.project.tasks.findByName(it.getPwInstallBrowserTaskName()),
+                "Expected no ${it.getPwInstallBrowserTaskName()} task for the default browser runner"
+            )
         }
     }
 
@@ -300,6 +355,24 @@ private fun buildBrowserTestProject(configure: KotlinJsBrowserTestDsl.() -> Unit
                 browser {
                     testDsl = test
                     test(configure)
+                }
+            }
+        }
+    }
+    project.evaluate()
+    return BrowserTestProject(project, testDsl)
+}
+
+/**
+ * A `browser {}` project that never enters the `test {}` block, i.e. one that must keep the legacy Karma pipeline.
+ */
+private fun buildBrowserProjectWithoutTestDsl(): BrowserTestProject {
+    lateinit var testDsl: KotlinJsBrowserTestDsl
+    val project = buildProjectWithMPP {
+        with(multiplatformExtension) {
+            js {
+                browser {
+                    testDsl = test
                 }
             }
         }
