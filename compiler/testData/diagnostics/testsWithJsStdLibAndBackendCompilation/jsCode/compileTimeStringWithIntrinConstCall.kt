@@ -7,15 +7,15 @@
 )
 
 fun testTrimMargin() {
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>"""
+    js("""
     |   var x = 1;
-    """.<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>trimMargin()<!><!>)
+    """.trimMargin())
 }
 
 fun testTrimIndent() {
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>"""
+    js("""
         var x = 1;
-    """.<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>trimIndent()<!><!>)
+    """.trimIndent())
 }
 
 const val ONE = 1
@@ -85,15 +85,15 @@ fun testLogicOperations() {
 
 fun testEq() {
     js("{ var a = ${1 == 1}; }")
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1U == 1U<!>}; }"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>UONE == 1U<!>}; }"<!>)
+    js("{ var a = ${1U == 1U}; }")
+    js("{ var a = ${UONE == 1U}; }")
     js("{ var a = ${"FOO" == STR}; }")
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>TRUE == null<!>}; }"<!>)
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>STR == null<!>}; }"<!>)
 
     js("{ var a = ${1 != 1}; }")
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1U != 1U<!>}; }"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>UONE != 1U<!>}; }"<!>)
+    js("{ var a = ${1U != 1U}; }")
+    js("{ var a = ${UONE != 1U}; }")
     js("{ var a = ${"FOO" != STR}; }")
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>TRUE != null<!>}; }"<!>)
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>STR != null<!>}; }"<!>)
