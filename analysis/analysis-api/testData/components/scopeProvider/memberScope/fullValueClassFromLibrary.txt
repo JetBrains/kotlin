@@ -85,7 +85,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: null
+  javaMethodName: choose
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -499,7 +499,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FullValueClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
-    javaMethodName: null
+    javaMethodName: getLast
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -630,7 +630,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FullValueClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
-    javaMethodName: null
+    javaMethodName: getSecond
     importableFqName: null
   hasBackingField: true
   hasGetter: true
