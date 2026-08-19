@@ -272,28 +272,29 @@ open class FirKaptAnalysisHandlerExtension(
 
         val sourceFiles = mutableListOf<String>()
 
+        val packagePaths = HashMap<String, String>()
+        val packageDirs = HashMap<String, File>()
+
         for (kaptStub in stubs) {
             val stubFile = kaptStub.jtreeFile
             val className: String
             val packageName: String
-            val classFilePathWithoutExtension: String
             if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
                 className = kaptStub.directSimpleClassName
                 packageName = kaptStub.directPackageName
-                classFilePathWithoutExtension = kaptStub.directClassFilePathWithoutExtension
             } else {
                 className = (stubFile.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
                 packageName = stubFile.getPackageNameJava9Aware()?.toString() ?: ""
-                classFilePathWithoutExtension = if (packageName.isEmpty()) {
-                    className
-                } else {
-                    "${packageName.replace('.', '/')}/$className"
-                }
             }
 
-            val packageDir =
-                if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
-            packageDir.mkdirs()
+            val packagePath = packagePaths.getOrPut(packageName) { packageName.replace('.', '/') }
+            val classFilePathWithoutExtension = if (packageName.isEmpty()) className else "$packagePath/$className"
+
+            val packageDir = packageDirs.getOrPut(packageName) {
+                val dir = if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packagePath)
+                dir.mkdirs()
+                dir
+            }
 
             val sourceFile = File(packageDir, "$className.java")
 
