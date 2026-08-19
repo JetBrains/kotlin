@@ -1,0 +1,9 @@
+Classifier names:
+
+Callable names:
+  <init>
+  code
+  equals
+  hashCode
+  isSuccess
+  toString

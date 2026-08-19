@@ -134,6 +134,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassAbstract.kt")
+  public void testFullValueClassAbstract() {
+    run("fullValueClassAbstract.kt");
+  }
+
+  @Test
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     run("innerClass.kt");

@@ -1,0 +1,21 @@
+KaTypeScope:
+val first: kotlin.String
+val second: kotlin.String
+val last: kotlin.String
+fun choose(useFirst: kotlin.Boolean): kotlin.String
+fun firstValue(): kotlin.String
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+
+
+Declaration Scope:
+val first: T
+val second: T
+val last: T
+  get()
+fun choose(useFirst: kotlin.Boolean): T
+fun firstValue(): T
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String

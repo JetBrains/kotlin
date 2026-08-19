@@ -56,6 +56,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleTypeScopeTestGenerated exten
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("innerClassTypeParamsSubstitution.kt")
   public void testInnerClassTypeParamsSubstitution() {
     run("innerClassTypeParamsSubstitution.kt");

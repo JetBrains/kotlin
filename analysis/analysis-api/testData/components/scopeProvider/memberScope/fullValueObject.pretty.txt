@@ -1,0 +1,12 @@
+override val code: kotlin.Int
+  get()
+
+fun isSuccess(): kotlin.Boolean
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+private constructor()

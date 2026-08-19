@@ -195,6 +195,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("fullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("fullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("genericsOnOuterClass.kt")
   public void testGenericsOnOuterClass() {
     run("genericsOnOuterClass.kt");
