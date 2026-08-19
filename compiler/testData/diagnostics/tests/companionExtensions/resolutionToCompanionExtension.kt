@@ -62,7 +62,7 @@ inline fun <reified T> test() {
     C.propTa
     TA.propTa
 
-    D.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun C.foo(): Unit")!>foo<!>()
+    D.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun C.foo(): Unit; D.Companion")!>foo<!>()
     D.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fooTa<!>()
     <!TYPE_PARAMETER_ON_LHS_OF_DOT!>T<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
     D.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>prop<!>

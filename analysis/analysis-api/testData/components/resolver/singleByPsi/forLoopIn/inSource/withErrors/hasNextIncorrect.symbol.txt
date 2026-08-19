@@ -10,5 +10,5 @@ KtForExpression(23,37): 'for(i in f) {}'
         candidateSymbols = [
           /hasNext(<extension receiver>: kotlin.Int): kotlin.Boolean
         ]
-        diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.hasNext(): Boolean' is inapplicable because of a receiver type mismatch.>
+        diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.hasNext(): Boolean' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Iterator'.>
     ]

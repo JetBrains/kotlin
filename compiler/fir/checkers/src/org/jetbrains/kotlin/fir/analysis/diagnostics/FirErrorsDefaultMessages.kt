@@ -1073,9 +1073,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            "Candidate ''{0}'' is inapplicable{1} because of a receiver type mismatch.",
+            "Candidate ''{0}'' is inapplicable{1} because of a receiver type mismatch. Actual receiver type is ''{2}''.",
             SYMBOL,
             FOR_OPTIONAL_OPERATOR,
+            RENDER_TYPE,
         )
         map.put(
             INACCESSIBLE_OUTER_CLASS_RECEIVER,
