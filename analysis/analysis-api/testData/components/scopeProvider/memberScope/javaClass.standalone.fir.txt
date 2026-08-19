@@ -479,6 +479,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: OPEN
   name: NestedClass
@@ -513,6 +514,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: true
+  isValue: false
   location: CLASS
   modality: OPEN
   name: InnerClass
@@ -547,6 +549,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: OPEN
   name: NestedSuperClass
@@ -581,6 +584,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: true
+  isValue: false
   location: CLASS
   modality: OPEN
   name: InnerSuperClass
