@@ -80,7 +80,10 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         "Function parameters with kotlinx.atomicfu.Atomic* types are unsupported."
 
     private const val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE =
-        "Atomic extension functions must be inline and non-public."
+        "Atomic extension functions and properties must be inline and non-public."
+
+    private const val ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE =
+        "Atomic array extension properties are prohibited."
 
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
@@ -112,6 +115,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE, ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN, ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE
         )
     }
 

@@ -1,0 +1,5 @@
+/AtomicScalarExtensions.kt:9:23: error: Atomic extension functions and properties must be inline and non-public.
+
+/AtomicScalarExtensions.kt:11:29: error: Atomic extension functions and properties must be inline and non-public.
+
+/AtomicScalarExtensions.kt:13:46: error: Atomic extension functions and properties must be inline and non-public.

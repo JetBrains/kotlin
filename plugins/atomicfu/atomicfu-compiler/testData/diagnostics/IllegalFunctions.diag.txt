@@ -1,8 +1,8 @@
-/IllegalFunctions.kt:9:29: error: Atomic extension functions must be inline and non-public.
+/IllegalFunctions.kt:9:29: error: Atomic extension functions and properties must be inline and non-public.
 
-/IllegalFunctions.kt:11:39: error: Atomic extension functions must be inline and non-public.
+/IllegalFunctions.kt:11:39: error: Atomic extension functions and properties must be inline and non-public.
 
-/IllegalFunctions.kt:12:24: error: Atomic extension functions must be inline and non-public.
+/IllegalFunctions.kt:12:24: error: Atomic extension functions and properties must be inline and non-public.
 
 /IllegalFunctions.kt:15:15: error: Function parameters with kotlinx.atomicfu.Atomic* types are unsupported.
 
