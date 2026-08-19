@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
@@ -43,18 +44,33 @@ class UselessDeclarationsRemover(
         process(declaration)
     }
 
+    /**
+     * Whether an `@AssociatedObjectKey`-annotated annotation may stay on the declaration.
+     *
+     * It has to be dropped as soon as [org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsClassGenerator]
+     * would be unable to emit the `associatedObjects` entry for it: that entry references the
+     * associated object's `getInstance` function, and the namer cannot produce a name for a declaration
+     * DCE has already removed (KT-88571).
+     *
+     * The object itself being useful is *not* sufficient. A companion object's instance is created in the
+     * containing class's `static_init`, not in its own `getInstance`, so the object may well survive DCE
+     * while `getInstance` does not — e.g. an enum whose entries force `static_init` to be retained, but
+     * whose companion is never accessed from Kotlin code.
+     *
+     * This mirrors [JsUsefulDeclarationProcessor.handleAssociatedObjects], which enqueues `getInstance`
+     * only for classes reachable as JS classes. Whenever it declines to, the annotation must go too,
+     * otherwise the two decisions contradict each other.
+     */
     private fun IrAnnotation.shouldKeepAnnotation(): Boolean {
-        associatedObject()?.let { obj ->
-            if (obj !in usefulDeclarations) return false
-        }
-        return true
+        val obj = associatedObject() ?: return true
+        if (obj !in usefulDeclarations) return false
+        val getInstance = obj.objectGetInstanceFunction
+        return getInstance == null || getInstance in usefulDeclarations
     }
 
     override fun visitClass(declaration: IrClass) {
         process(declaration)
-        // Remove annotations for `findAssociatedObject` feature, which reference objects eliminated by the DCE.
-        // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
-        // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
+        // Drop `findAssociatedObject` annotations whose association can no longer be emitted. See `shouldKeepAnnotation`.
         if (removeUnusedAssociatedObjects && declaration.annotations.any { !it.shouldKeepAnnotation() }) {
             declaration.annotations = declaration.annotations.memoryOptimizedFilter { it.shouldKeepAnnotation() }
         }
