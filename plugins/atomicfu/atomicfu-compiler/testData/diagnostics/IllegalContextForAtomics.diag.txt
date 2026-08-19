@@ -27,4 +27,6 @@ public val a: T by _a
 ```
 
 
+/IllegalContextForAtomics.kt:47:24: error: Atomic properties must have a backing field.
+
 /IllegalContextForAtomics.kt:54:16: error: Atomic factories can only be called to initialize a property or as delegates.
