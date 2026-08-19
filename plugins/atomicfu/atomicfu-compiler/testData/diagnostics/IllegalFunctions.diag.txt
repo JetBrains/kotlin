@@ -1,10 +1,10 @@
-/IllegalFunctions.kt:9:29: error: Atomic extension functions must be inline and non-public: `'// Non-inline and public extension functions are forbidden
+/IllegalFunctions.kt:9:29: error: Atomic extension functions and properties must be inline and non-public: `'// Non-inline and public extension functions are forbidden
 public inline fun AtomicInt.f1() { }'`
 
-/IllegalFunctions.kt:11:39: error: Atomic extension functions must be inline and non-public: `'@PublishedApi
+/IllegalFunctions.kt:11:39: error: Atomic extension functions and properties must be inline and non-public: `'@PublishedApi
 internal inline fun AtomicRef<String>.f2() { }'`
 
-/IllegalFunctions.kt:12:24: error: Atomic extension functions must be inline and non-public: `'private fun AtomicLong.f3() { }'`
+/IllegalFunctions.kt:12:24: error: Atomic extension functions and properties must be inline and non-public: `'private fun AtomicLong.f3() { }'`
 
 /IllegalFunctions.kt:15:15: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'b: AtomicBoolean'`.
 

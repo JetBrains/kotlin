@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -31,6 +33,26 @@ private val FirProperty.resolvedVisibility: EffectiveVisibility
 object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
+        // Check extension properties with atomic receiver
+        if (declaration.isExtension) {
+            val receiverClassId = declaration.receiverParameter?.symbol?.resolvedType?.classId
+            if (receiverClassId?.isAtomicArrayType() == true) {
+                reporter.reportOn(
+                    declaration.source,
+                    AtomicfuErrors.ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN,
+                    declaration.source.text.toString()
+                )
+            } else if (receiverClassId?.isAtomicType() == true) {
+                if (declaration.getter?.isInline != true || declaration.resolvedVisibility.publicApi) {
+                    reporter.reportOn(
+                        declaration.source,
+                        AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE,
+                        declaration.source.text.toString()
+                    )
+                }
+            }
+        }
+        // Check all other properties having atomic type
         if (!declaration.isKotlinxAtomicfu()) return
         if (declaration.isLocal) {
             reporter.reportOn(

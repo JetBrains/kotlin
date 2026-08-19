@@ -81,7 +81,10 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         "Function parameters could not have kotlinx.atomicfu.Atomic* type: `''{0}''`."
 
     private const val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE =
-        "Atomic extension functions must be inline and non-public: `''{0}''`"
+        "Atomic extension functions and properties must be inline and non-public: `''{0}''`"
+
+    private const val ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE =
+        "Atomic array extension properties are prohibited: `''{0}''`."
 
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
@@ -113,6 +116,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE, ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN, ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
     }
 

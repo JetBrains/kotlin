@@ -1,0 +1,8 @@
+/AtomicArrayExtensions.kt:11:28: error: Atomic array extension properties are prohibited: `'private val AtomicIntArray.firstElement: Int
+    get() = this[0].value'`.
+
+/AtomicArrayExtensions.kt:14:32: error: Atomic array extension properties are prohibited: `'private var AtomicBooleanArray.firstElement: Boolean
+    get() = this[0].value
+    set(value) {
+        this[0].value = value
+    }'`.

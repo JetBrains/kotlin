@@ -1,0 +1,6 @@
+/AtomicScalarExtensions.kt:9:23: error: Atomic extension functions and properties must be inline and non-public: `'// Extension properties should be inline and non public
+private val AtomicInt.p1: Int get() = value * 2'`
+
+/AtomicScalarExtensions.kt:11:29: error: Atomic extension functions and properties must be inline and non-public: `'public inline val AtomicInt.p3: Int get() = value * 2'`
+
+/AtomicScalarExtensions.kt:13:46: error: Atomic extension functions and properties must be inline and non-public: `'@PublishedApi internal inline val AtomicLong.p5: Long get() = value * 2'`
