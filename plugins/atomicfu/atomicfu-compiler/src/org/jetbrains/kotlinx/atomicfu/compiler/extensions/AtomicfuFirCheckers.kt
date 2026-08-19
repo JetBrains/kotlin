@@ -25,6 +25,7 @@ class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(
         override val functionCallCheckers: Set<FirFunctionCallChecker>
             get() = setOf(
                 AtomicfuAtomicRefToPrimitiveCallChecker,
+                AtomicfuFactoryCallChecker
             )
 
         override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
