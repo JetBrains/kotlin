@@ -320,7 +320,7 @@ val nativeImageArchiveBaseName = run {
         "x86_64", "amd64" -> "x86_64"
         else -> error("Unsupported native-image host architecture: $osArch")
     }
-    "kotlin-native-image-$osName-$arch-${project.version}"
+    "kotlin-compiler-graalvm-native-image-$osName-$arch-${project.version}"
 }
 val nativeImageArchiveExtension = if (currentOs.isWindows) "zip" else "tar.gz"
 
