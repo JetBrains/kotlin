@@ -1,1 +1,1 @@
-inline class FullValueClassMultipleFields(first: kotlin.String, second: kotlin.Int)
+value class FullValueClassMultipleFields(first: kotlin.String, second: kotlin.Int)

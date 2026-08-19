@@ -83,7 +83,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.Base
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: null
+    javaMethodName: getFirst
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -177,7 +177,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: null
+  javaMethodName: firstValue
   importableFqName: null
 
 KaConstructorSymbol:

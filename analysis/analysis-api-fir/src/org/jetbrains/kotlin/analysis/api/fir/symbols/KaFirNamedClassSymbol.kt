@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.fir.declarations.isInlineClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -90,6 +91,11 @@ internal class KaFirNamedClassSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.DATA_KEYWORD) ?: firSymbol.isData }
 
     override val isInline: Boolean
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) == true || firSymbol.isInlineClass
+        }
+
+    override val isValue: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null) {
                 backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) || backingPsi.hasModifier(KtTokens.INLINE_KEYWORD)

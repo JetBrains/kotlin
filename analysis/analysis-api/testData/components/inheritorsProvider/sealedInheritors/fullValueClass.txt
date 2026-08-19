@@ -1,8 +1,8 @@
 test/Empty
-inline object Empty : test.Result()
+value object Empty : test.Result()
 
 test/Failure
 class Failure(message: kotlin.String) : test.Result()
 
 test/Success
-inline class Success(value: kotlin.String, code: kotlin.Int) : test.Result()
+value class Success(value: kotlin.String, code: kotlin.Int) : test.Result()
