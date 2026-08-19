@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AtomicfuErrors : KtDiagnosticsContainer() {
@@ -16,5 +17,6 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ATOMIC_PROPERTIES_SHOULD_BE_VAL by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     val NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN by error1<KtCallableReferenceExpression, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }

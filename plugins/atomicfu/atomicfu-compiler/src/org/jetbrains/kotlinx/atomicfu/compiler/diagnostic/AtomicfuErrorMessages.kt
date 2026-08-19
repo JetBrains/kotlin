@@ -65,6 +65,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         "\nTo prevent atomic properties defined in companion blocks or as companion extensions " +
                 "from being referenced outside the current Kotlin file, they must be declared as private."
 
+    private const val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE =
+        "Taking a reference to an atomic member or extension function is prohibited: `''{0}''`."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -77,6 +80,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN, NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN, ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
     }
 

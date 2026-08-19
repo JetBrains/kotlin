@@ -1,0 +1,3 @@
+/AtomicFunctionReferences.kt:14:17: error: Taking a reference to an atomic member or extension function is prohibited: `'a::incrementAndGet'`.
+
+/AtomicFunctionReferences.kt:16:18: error: Taking a reference to an atomic member or extension function is prohibited: `'a::inc'`.
