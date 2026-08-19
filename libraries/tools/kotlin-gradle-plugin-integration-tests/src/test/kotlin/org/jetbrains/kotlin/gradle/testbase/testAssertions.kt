@@ -20,7 +20,6 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * @param stripBrowserVersionInfoFromTestCaseNames Some test executor implementations include browser version info in test case names,
