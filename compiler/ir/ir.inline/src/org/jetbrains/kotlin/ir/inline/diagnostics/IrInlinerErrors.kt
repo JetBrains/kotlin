@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -21,21 +22,23 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 
 object IrInlinerErrors : KtDiagnosticsContainer() {
-    val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError2<PsiElement, IrDeclaration, IrDeclaration>(
+    val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by
+    deprecationError3<PsiElement, Visibility, IrDeclaration, IrDeclaration>(
         LanguageFeature.ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs,
     )
 
     val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING by
-    deprecationError3<PsiElement, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
+    deprecationError4<PsiElement, Visibility, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
         LanguageFeature.ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs,
     )
 
-    val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION by deprecationError2<PsiElement, IrDeclaration, IrDeclaration>(
+    val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION by
+    deprecationError3<PsiElement, Visibility, IrDeclaration, IrDeclaration>(
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
     val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING by
-    deprecationError3<PsiElement, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
+    deprecationError4<PsiElement, Visibility, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
@@ -50,26 +53,30 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
-            "Public-API inline {0} accesses a non Public-API {1}.",
+            "Public-API {0} inline {1} accesses a non Public-API {2}.",
+            KtDiagnosticRenderers.VISIBILITY,
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND,
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
-            "Public-API inline {0} accesses a non Public-API {1}. This can happen as a result of cascaded inlining of the following functions:\n{2}\n",
+            "Public-API {0} inline {1} accesses a non Public-API {2}. This can happen as a result of cascaded inlining of the following functions:\n{3}\n",
+            KtDiagnosticRenderers.VISIBILITY,
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
             Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
-            "Public-API inline {0} references a non Public-API {1}.",
+            "Public-API {0} inline {1} references a non Public-API {2}.",
+            KtDiagnosticRenderers.VISIBILITY,
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND,
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
-            "Public-API inline {0} references a non Public-API {1}. This can happen as a result of cascaded inlining of the following functions:\n{2}\n",
+            "Public-API {0} inline {1} references a non Public-API {2}. This can happen as a result of cascaded inlining of the following functions:\n{3}\n",
+            KtDiagnosticRenderers.VISIBILITY,
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
             Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)

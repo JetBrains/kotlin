@@ -118,6 +118,12 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
             }
         }
 
+        override fun <A : Any, B : Any, C : Any, D : Any> report(factory: KtDiagnosticFactory4<A, B, C, D>, a: A, b: B, c: C, d: D) {
+            sourceElement?.let {
+                reportOn(it, factory, a, b, c, d)
+            }
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is IrDiagnosticReporter.IrDiagnosticContext) return false

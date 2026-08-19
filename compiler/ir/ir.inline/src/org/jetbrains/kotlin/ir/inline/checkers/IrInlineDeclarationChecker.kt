@@ -63,6 +63,7 @@ class IrInlineDeclarationChecker(
             if (data.inliningPath.isNotEmpty()) {
                 diagnosticReporter.at(data.inliningPath.first(), data.file).report(
                     IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+                    inlineFunction.visibility.delegate,
                     inlineFunction,
                     klass,
                     data.inliningPath
@@ -70,6 +71,7 @@ class IrInlineDeclarationChecker(
             } else {
                 diagnosticReporter.at(container, data.file).report(
                     IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
+                    inlineFunction.visibility.delegate,
                     inlineFunction,
                     klass,
                 )
@@ -94,6 +96,7 @@ class IrInlineDeclarationChecker(
             if (data.inliningPath.isNotEmpty()) {
                 diagnosticReporter.at(data.inliningPath.first(), data.file).report(
                     IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+                    inlineFunction.visibility.delegate,
                     inlineFunction,
                     reflectionTarget,
                     data.inliningPath
@@ -101,6 +104,7 @@ class IrInlineDeclarationChecker(
             } else {
                 diagnosticReporter.at(expression, data.file).report(
                     IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
+                    inlineFunction.visibility.delegate,
                     inlineFunction,
                     reflectionTarget,
                 )

@@ -46,6 +46,12 @@ interface IrDiagnosticReporter {
 
         fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C)
 
+        fun <A : Any, B : Any, C : Any, D : Any> report(factory: KtDiagnosticFactoryForDeprecation4<A, B, C, D>, a: A, b: B, c: C, d: D) {
+            report(factory.chooseFactory(), a, b, c, d)
+        }
+
+        fun <A : Any, B : Any, C : Any, D : Any> report(factory: KtDiagnosticFactory4<A, B, C, D>, a: A, b: B, c: C, d: D)
+
         abstract override fun equals(other: Any?): Boolean
         abstract override fun hashCode(): Int
     }
