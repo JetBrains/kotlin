@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
 import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
@@ -42,10 +44,15 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
+        // A failing test can bring down its entire batch, so tests whose failure is expected run in isolation.
+        // `IGNORE_BACKEND`/`IGNORE_BACKEND_K2` only mute the backends they name though: a test muted for, say,
+        // the JVM backend is still expected to pass here, and isolating it would only fragment the batches.
+        if (moduleStructure.allDirectives.mutesCurrentBackend(CodegenTestDirectives.IGNORE_BACKEND) ||
+            moduleStructure.allDirectives.mutesCurrentBackend(CodegenTestDirectives.IGNORE_BACKEND_K2)
+        ) return BatchToken.Isolated
+
         val isolationDirectives = listOf(
             // some test failures can bring down an entire batch, so where those failures are expected, tests need to be run in isolated mode
-            CodegenTestDirectives.IGNORE_BACKEND,
-            CodegenTestDirectives.IGNORE_BACKEND_K2,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
@@ -132,6 +139,17 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         ).filter { it in registeredDirectives }
         // The default set of helper files is the same for all such tests, so they may be grouped as usual.
         return extraHelperDirectives.ifNotEmpty { Custom("coroutine helpers: ${joinToString { it.name }}") }
+    }
+
+    /**
+     * `true` if [directive] mutes the test for the backend which is being tested. A directive listing no backend
+     * at all, or a test which does not declare its target backend, is treated as a catch-all mute.
+     */
+    private fun RegisteredDirectives.mutesCurrentBackend(directive: ValueDirective<TargetBackend>): Boolean {
+        val mutedBackends = this[directive]
+        if (mutedBackends.isEmpty()) return directive in this
+        val targetBackend = testServices.defaultsProvider.targetBackend ?: return true
+        return mutedBackends.any { it == TargetBackend.ANY || targetBackend.isTransitivelyCompatibleWith(it) }
     }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
