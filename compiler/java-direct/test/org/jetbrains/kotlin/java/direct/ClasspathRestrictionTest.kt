@@ -32,8 +32,16 @@ import kotlin.io.path.writeBytes
  * does for the same classpath: for an entry of an archive the archive itself must be the root, for a loose class
  * file any enclosing directory counts.
  *
- * Worth pinning down here, because the compilations that pass a non-empty root list — the incremental output
- * directories and an HMPP fragment's classpath — have no java-direct test coverage.
+ * The classpaths below are those of an incremental compilation, the only compilation that gives a session a
+ * proper part of the classpath: the output directory of the previous build, as the roots of the
+ * precompiled-binaries session and as the exclusions of the libraries session. (An HMPP fragment narrows the
+ * *Kotlin* class finder only; `createBinaryJavaFacade` is always given the whole libraries classpath.)
+ *
+ * The incremental suites do run those shapes, but cannot observe the restriction: their fixtures state sources
+ * only, so a class file in the previous output agrees with what the round compiles, and which of the two a
+ * lookup sees makes no difference to the result.
+ *
+ * What the restriction then decides is in [JavaClassFinderOverBinaryIndexTest].
  */
 class ClasspathRestrictionTest {
 

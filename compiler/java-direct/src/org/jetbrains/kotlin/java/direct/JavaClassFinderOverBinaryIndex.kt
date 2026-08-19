@@ -28,7 +28,7 @@ class JavaClassFinderOverBinaryIndex(
 ) : JavaClassFinder {
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
-        findClassImpl(request, restrictToClasspath = true)
+        findClassImpl(request, visibleClasspath = classpath)
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> =
         listOfNotNull(findClass(request))
@@ -53,19 +53,11 @@ class JavaClassFinderOverBinaryIndex(
     private fun findPackageInfoClass(packageFqName: FqName): JavaClass? =
         findClass(JavaClassFinder.Request(ClassId(packageFqName, PACKAGE_INFO_NAME)))
 
-    /**
-     * Cross-references from bytecode must resolve against the whole classpath of the compilation, not only this
-     * session's part of it.
-     */
-    private fun findClassAnywhereOnClasspath(request: JavaClassFinder.Request): JavaClass? =
-        findClassImpl(request, restrictToClasspath = false)
-
-    private fun findClassImpl(request: JavaClassFinder.Request, restrictToClasspath: Boolean): JavaClass? {
+    private fun findClassImpl(request: JavaClassFinder.Request, visibleClasspath: JvmClasspath): JavaClass? {
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
         val candidates = classes.findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName())
-        val classFile =
-            (if (restrictToClasspath) candidates.firstOrNull { it in classpath } else candidates.firstOrNull()) ?: return null
+        val classFile = candidates.firstOrNull { it in visibleClasspath } ?: return null
 
         return readBinaryJavaClass(
             classId = classId,
@@ -74,8 +66,8 @@ class JavaClassFinderOverBinaryIndex(
             outerClassFromRequest = outerClassFromRequest,
             binaryCache = classes.classes,
             signatureParser = classes.signatureParser,
-            findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), restrictToClasspath) },
-            resolveCrossReference = { ref -> findClassAnywhereOnClasspath(JavaClassFinder.Request(ref)) },
+            findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), visibleClasspath) },
+            resolveCrossReference = { ref -> findClassImpl(JavaClassFinder.Request(ref), JvmClasspath.ProjectLibraries()) },
         )
     }
 
