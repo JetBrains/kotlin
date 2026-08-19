@@ -1,3 +1,5 @@
-/leakingVolatilePropertyThroughInternalInlineFun.kt:12:9: error: Public-API inline function references a non Public-API property 'Error.pa$volatile'. This can happen as a result of cascaded inlining of the following functions:
+/leakingVolatilePropertyThroughInternalInlineFun.kt:12:9: error: Public-API internal inline function references a non Public-API property 'Error.pa$volatile'. This can happen as a result of cascaded inlining of the following functions:
 <unknown>
 private inline fun update$atomicfu$NATIVE_PROPERTY_REF$Int(crossinline handler$atomicfu: Function0<KMutableProperty0<Int>>, action$atomicfu: Function1<Int, Int>)
+
+
