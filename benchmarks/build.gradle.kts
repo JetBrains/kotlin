@@ -120,7 +120,7 @@ tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach
 // `afterEvaluate`. Configuring them from a later one is what makes the classpath rewrite below observe
 // the classpath the plugin assembled instead of an empty one.
 afterEvaluate {
-    reflectionBenchmarks.forEach { (configurationName, benchmarkSystemProperties) ->
+    val reflectionExecTaskNames = reflectionBenchmarks.map { (configurationName, benchmarkSystemProperties) ->
         // kotlinx-benchmark names the exec task "<target><CapitalizedConfiguration>Benchmark"
         val taskName = "test${configurationName.replaceFirstChar { it.uppercaseChar() }}Benchmark"
         tasks.withType<JavaExec>().matching { it.name == taskName }.configureEach {
@@ -129,6 +129,20 @@ afterEvaluate {
             // Swap the published kotlin-reflect inherited from the test runtime classpath for the local one
             classpath = files(localKotlinReflect) + classpath.filter { !it.name.startsWith("kotlin-reflect") }
         }
+        taskName
+    }
+
+    // For debugging: `reflectionBenchmark` runs every reflection variant, each as its own exec task, so
+    // the implementations are measured in separate JVMs and reported separately.
+    tasks.named("reflectionBenchmark") {
+        dependsOn(reflectionExecTaskNames)
+    }
+
+    // The variants must run strictly one after another. `org.gradle.parallel=true` would otherwise let
+    // them run at once, which both distorts the measurements and makes them fight over JMH's global
+    // lock file - the loser reports a failure but does not fail the build, silently losing its results.
+    reflectionExecTaskNames.zipWithNext().forEach { (earlier, later) ->
+        tasks.named(later) { mustRunAfter(earlier) }
     }
 }
 
