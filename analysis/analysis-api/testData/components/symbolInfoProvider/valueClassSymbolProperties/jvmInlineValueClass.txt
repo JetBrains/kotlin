@@ -1,0 +1,2 @@
+CLASS_ID: /JvmInlineValueClass
+IS_INLINE: true

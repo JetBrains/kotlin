@@ -1,0 +1,2 @@
+CLASS_ID: /FullValueClassMultipleFields
+IS_INLINE: true

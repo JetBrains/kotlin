@@ -1,0 +1,2 @@
+CLASS_ID: pack/FullValueClassFromBinary
+IS_INLINE: true

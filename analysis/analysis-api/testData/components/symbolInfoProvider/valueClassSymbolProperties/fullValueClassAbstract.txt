@@ -1,0 +1,2 @@
+CLASS_ID: /FullValueClassAbstract
+IS_INLINE: true

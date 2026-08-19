@@ -543,6 +543,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
         test<AbstractDefaultAnnotationTargetsTest> {
             model(it, "defaultAnnotationTargets")
         }
+
+        test<AbstractValueClassSymbolPropertiesTest> {
+            model(it, "valueClassSymbolProperties")
+        }
     }
 
     component("typeCreator") {

@@ -1,0 +1,2 @@
+CLASS_ID: /ValueClassFeatureDisabled
+IS_INLINE: true

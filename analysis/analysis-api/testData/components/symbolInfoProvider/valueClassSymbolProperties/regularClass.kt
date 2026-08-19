@@ -1,0 +1,1 @@
+class Regular<caret>Class

@@ -1,0 +1,2 @@
+CLASS_ID: /FullValueClassSingleField
+IS_INLINE: true

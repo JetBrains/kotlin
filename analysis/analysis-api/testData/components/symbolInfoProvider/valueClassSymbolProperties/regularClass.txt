@@ -1,0 +1,2 @@
+CLASS_ID: /RegularClass
+IS_INLINE: false

@@ -1,0 +1,2 @@
+CLASS_ID: /FullValueObject
+IS_INLINE: true

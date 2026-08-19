@@ -1,0 +1,2 @@
+CLASS_ID: /FullValueClassWithSuperClass
+IS_INLINE: true
