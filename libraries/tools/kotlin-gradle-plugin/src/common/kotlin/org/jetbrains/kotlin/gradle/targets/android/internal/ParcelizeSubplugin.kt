@@ -11,15 +11,23 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.utils.configureAndroidVariants
+import org.jetbrains.kotlin.gradle.utils.whenMppEnabled
 
 // Use apply plugin: 'kotlin-parcelize' to enable Android Extensions in an Android project.
 class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
         val kotlinPluginVersion = target.getKotlinPluginVersion()
         val dependency = target.dependencies.create("org.jetbrains.kotlin:kotlin-parcelize-runtime:$kotlinPluginVersion")
+        var isMultiplatform = false
+        target.whenMppEnabled {
+            isMultiplatform = true
+            target.dependencies.add("commonMainImplementation", dependency)
+        }
         target.configureAndroidVariants {
-            it.runtimeConfiguration.dependencies.add(dependency)
-            it.compileConfiguration.dependencies.add(dependency)
+            if (!isMultiplatform) {
+                it.runtimeConfiguration.dependencies.add(dependency)
+                it.compileConfiguration.dependencies.add(dependency)
+            }
         }
     }
 
