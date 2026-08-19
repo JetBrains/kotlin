@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -35,6 +37,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             CodegenTestDirectives,
             LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
+            AdditionalFilesDirectives, // for directives WITH_COROUTINES, CHECK_STATE_MACHINE
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -86,6 +89,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
+            computeCoroutineHelpersToken(moduleStructure.allDirectives),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -102,6 +106,13 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         ).firstNotNullOfOrNull { [directive, token] ->
             token.takeIf { directive in moduleStructure.allDirectives }
         }
+
+    private fun computeCoroutineHelpersToken(registeredDirectives: RegisteredDirectives): BatchToken? {
+        // The default coroutine helpers are the same for all tests, so only extra ones need a separate batch.
+        if (AdditionalFilesDirectives.WITH_COROUTINES !in registeredDirectives) return null
+        if (CHECK_STATE_MACHINE !in registeredDirectives) return null
+        return Custom("coroutine helpers: $CHECK_STATE_MACHINE")
+    }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
         // `distinct()` below is used to match directive lists for tests having different amount of modules, like `[2.2]` vs `[2.2, 2.2]`
