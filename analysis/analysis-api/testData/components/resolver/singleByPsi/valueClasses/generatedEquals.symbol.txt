@@ -1,0 +1,5 @@
+KtBinaryExpression(119,134): 'first == second'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Point.equals(<dispatch receiver>: Point, other: kotlin.Any?): kotlin.Boolean
+    ]

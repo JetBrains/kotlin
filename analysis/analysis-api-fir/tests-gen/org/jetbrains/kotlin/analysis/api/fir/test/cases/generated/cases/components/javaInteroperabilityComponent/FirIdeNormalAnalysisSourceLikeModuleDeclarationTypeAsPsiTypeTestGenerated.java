@@ -296,6 +296,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationTypeAsPsiTypeTestGen
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("javaBoxed.kt")
   public void testJavaBoxed() {
     run("javaBoxed.kt");

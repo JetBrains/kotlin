@@ -1,10 +1,7 @@
 KaNamedClassSymbol:
   anchorPsi: KtClass
-  annotations: [
-    kotlin/jvm/JvmInline()
-      psi: KtAnnotationEntry
-  ]
-  classId: ValueClass
+  annotations: []
+  classId: FullValueClassSingleField
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -17,7 +14,7 @@ KaNamedClassSymbol:
   isInner: false
   location: TOP_LEVEL
   modality: FINAL
-  name: ValueClass
+  name: FullValueClassSingleField
   origin: SOURCE
   psi: KtClass
   realPsi: KtClass
@@ -29,8 +26,8 @@ KaNamedClassSymbol:
   ]
   typeParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(valueClass.kt)
+  getContainingFileSymbol: KaFileSymbol(fullValueClassSingleField.kt)
   getContainingModule: KaSourceModule "Sources of main"
   applicableAnnotationTargets: null
   deprecation: null
-  importableFqName: ValueClass
+  importableFqName: FullValueClassSingleField

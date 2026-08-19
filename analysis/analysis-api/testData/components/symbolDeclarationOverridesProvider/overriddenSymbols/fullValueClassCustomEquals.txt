@@ -1,0 +1,5 @@
+ALL:
+  kotlin/Any.equals(other: Any?): Boolean
+DIRECT:
+  kotlin/Any.equals(other: Any?): Boolean
+INTERSECTION:
