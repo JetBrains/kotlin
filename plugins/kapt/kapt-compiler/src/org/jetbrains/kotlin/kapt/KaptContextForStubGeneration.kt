@@ -44,6 +44,14 @@ class KaptContextForStubGeneration(
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 
+    // Internal name -> compiled class, shared by [KaptTreeMaker] and `KaptStubConverter`.
+    val compiledClassByName: Map<String, ClassNode> =
+        buildMap(compiledClasses.size) {
+            for (compiledClass in compiledClasses) {
+                putIfAbsent(compiledClass.name, compiledClass)
+            }
+        }
+
     // FirSession can be null in case of incremental compilation, e.g. if only Java files need reprocessing,
     // or all affected Kotlin sources are removed.
     val firSession: FirSession? = firFiles.firstOrNull()?.moduleData?.session
