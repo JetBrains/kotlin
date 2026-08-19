@@ -53,15 +53,12 @@ class CustomCliIntegrationTest : AbstractNativeSimpleTest() {
             )
         }
 
-        val exception = assertThrows<CompilationToolException> {
-            compileToLibrary(
-                sourcesDir = nativeSource,
-                outputDir = nativeDir,
-                freeCompilerArgs = TestCompilerArgs(listOf("-Xmetadata-klib")),
-                dependencies = listOf(commonKlib.asLibraryDependency())
-            )
-        }
-        assertTrue(exception.reason.contains("member overrides different '@Throws' filter from 'interface MyInterface : Any'."))
+        compileToLibrary(
+            sourcesDir = nativeSource,
+            outputDir = nativeDir,
+            freeCompilerArgs = TestCompilerArgs(listOf("-Xmetadata-klib")),
+            dependencies = listOf(commonKlib.asLibraryDependency())
+        )
     }
 
     private fun compileInterfaceWithGenericMetadataCompiler(sourceFile: File, outputDir: File): TestCompilationArtifact.KLIB {

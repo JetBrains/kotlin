@@ -36,6 +36,18 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?>
     object ForMetadata : FirNativeSessionFactory() {
         override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
             get() = false
+
+        override fun FirSessionConfigurator.registerPlatformCheckers() {
+            withOnlyPlatformSpecificCheckersEnabledInMetadataCompilation {
+                registerNativeCheckers()
+            }
+        }
+
+        override fun FirSessionConfigurator.registerExtraPlatformCheckers() {
+            withOnlyPlatformSpecificCheckersEnabledInMetadataCompilation {
+                registerExtraNativeCheckers()
+            }
+        }
     }
 
 
