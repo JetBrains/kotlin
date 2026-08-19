@@ -80,6 +80,27 @@ class MppTestFilteringIT : KGPBaseTest() {
                 }
                 """.trimIndent()
             }
+
+            source("org/example/failing/FailingTest.kt") {
+                """
+                package org.example.failing
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                class FailingTest {
+                    @Test
+                    fun testPass() {
+                        assertTrue(true)
+                    }
+
+                    @Test
+                    fun testFail() {
+                        assertTrue(false, "Expected test failure")
+                    }
+                }
+                """.trimIndent()
+            }
         }
     }
 
@@ -265,6 +286,24 @@ class MppTestFilteringIT : KGPBaseTest() {
                 assertTasksExecuted(":jvmTest")
             }
             assertExecutedTestCases(":jvmTest")
+        }
+    }
+
+    @DisplayName("CLI --tests executes all filtered test cases even when tests fail")
+    @GradleTest
+    fun testCliFilteringWithFailingTests(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            setupSampleSources()
+            // Filter matches both testPass and testFail in FailingTest.
+            // Task must fail, but both test cases must be executed (no premature termination).
+            buildAndFail(":jvmTest", "--tests", "FailingTest") {
+                assertTasksFailed(":jvmTest")
+            }
+            assertExecutedTestCases(
+                ":jvmTest",
+                "org.example.failing.FailingTest#testPass",
+                "org.example.failing.FailingTest#testFail",
+            )
         }
     }
 }
