@@ -111,6 +111,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("fullValueClassFromLibrary.kt")
+  public void testFullValueClassFromLibrary() {
+    run("fullValueClassFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("fullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("imports.kt")
   public void testImports() {
     run("imports.kt");
@@ -385,6 +397,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     @TestMetadata("fragmentFunction.kt")
     public void testFragmentFunction() {
       run("fragmentFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassCapture.kt")
+    public void testFullValueClassCapture() {
+      run("fullValueClassCapture.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassReceiver.kt")
+    public void testFullValueClassReceiver() {
+      run("fullValueClassReceiver.kt");
     }
 
     @Test
