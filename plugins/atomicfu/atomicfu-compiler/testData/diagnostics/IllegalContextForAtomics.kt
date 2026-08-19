@@ -4,24 +4,24 @@ import kotlinx.atomicfu.*
 
 //// Local atomic variables are prohibited
 fun localDeclarations() {
-    val i = atomic(0)
-    val l = atomic(0L)
-    val r = atomic("ref")
-    val b = atomic(true)
-    val ia = AtomicIntArray(0)
-    val la = AtomicLongArray(0)
-    val ra = atomicArrayOfNulls<String?>(0)
-    val ba = AtomicBooleanArray(0)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> i = atomic(0)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> l = atomic(0L)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> r = atomic("ref")
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> b = atomic(true)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> ia = AtomicIntArray(0)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> la = AtomicLongArray(0)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> ra = atomicArrayOfNulls<String?>(0)
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> ba = AtomicBooleanArray(0)
 
-    val ni: AtomicInt? = null
-    val nl: AtomicLong? = null
-    val nb: AtomicBoolean? = null
-    val nr: AtomicRef<Any?>? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> ni: AtomicInt? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> nl: AtomicLong? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> nb: AtomicBoolean? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> nr: AtomicRef<Any?>? = null
 
-    val nia: AtomicIntArray? = null
-    val nla: AtomicLongArray? = null
-    val nba: AtomicBooleanArray? = null
-    val naa: AtomicArray<Any?>? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> nia: AtomicIntArray? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> nla: AtomicLongArray? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> nba: AtomicBooleanArray? = null
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> naa: AtomicArray<Any?>? = null
 }
 
 // Creating a regular array of AFU's atomics is forbidden

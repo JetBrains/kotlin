@@ -21,5 +21,6 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN by error1<KtCallableReferenceExpression, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY by error1<KtCallExpression, String>(SourceElementPositioningStrategies.DEFAULT)
     val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val ATOMIC_LOCALS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }

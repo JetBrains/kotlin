@@ -32,6 +32,14 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isKotlinxAtomicfu()) return
+        if (declaration.isLocal) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN,
+                declaration.source.text.toString()
+            )
+            return
+        }
         if (!declaration.resolvedVisibility.privateApi &&
             (declaration.isCompanionBlockMember || declaration.isCompanionExtension)
         ) {
