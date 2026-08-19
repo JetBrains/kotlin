@@ -185,6 +185,8 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                 "CODE_SIGN_IDENTITY=",
                 "COMPILER_INDEX_STORE_ENABLE=NO",
                 "SWIFT_INDEX_STORE_ENABLE=NO",
+                // Remove the flag below once SPM issue #10429 is fixed:
+                // https://github.com/swiftlang/swift-package-manager/issues/10429
                 "SWIFT_ENABLE_EXPLICIT_MODULES=NO",
             )
 
