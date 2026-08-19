@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -158,6 +159,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     @Deprecated("Deprecated stub API")
     @Suppress("DEPRECATION") // KT-78356
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType
+    override fun getIElementType(): IElementType? = classOrObjectDeclaration?.iElementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObjectDeclaration?.stub
 
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE

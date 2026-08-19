@@ -39,9 +39,8 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public String toString() {
-        return getElementType().toString();
+        return getIElementType().toString();
     }
 
     @Override
