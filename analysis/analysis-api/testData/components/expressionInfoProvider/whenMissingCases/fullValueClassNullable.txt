@@ -1,0 +1,3 @@
+TypeCase(object test/Empty)
+TypeCase(test/Failure)
+NullCase

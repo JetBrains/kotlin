@@ -1,0 +1,2 @@
+KtNameReferenceExpression(111,116): 'Empty'
+  null

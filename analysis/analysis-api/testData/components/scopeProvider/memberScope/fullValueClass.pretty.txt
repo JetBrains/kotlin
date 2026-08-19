@@ -1,0 +1,20 @@
+override val first: T
+
+val second: T
+
+val last: T
+  get()
+
+fun choose(useFirst: kotlin.Boolean): T
+
+override fun firstValue(): T
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor(first: T, second: T)
+
+constructor(value: T)

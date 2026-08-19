@@ -178,6 +178,12 @@ public class FirStandaloneNormalAnalysisSourceModuleLegacyRenderingTestGenerated
     public void testValueClass() {
       run("valueClass.kt");
     }
+
+    @Test
+    @TestMetadata("valueClasses.kt")
+    public void testValueClasses() {
+      run("valueClasses.kt");
+    }
   }
 
   @Nested

@@ -1,0 +1,5 @@
+KtDestructuringDeclarationEntry(178,179): 'x'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.Int
+    ]
