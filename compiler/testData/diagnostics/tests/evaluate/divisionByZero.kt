@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
+// WITH_STDLIB
 
 const val a = 0
 val a1 = 0
@@ -23,6 +24,17 @@ val b1: Byte <!INITIALIZER_TYPE_MISMATCH!>=<!> <!DIVISION_BY_ZERO!>1 / 0<!>
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>1 / a<!>) val b4 = 1
 
 annotation class Ann(val i : Int)
+
+val div = <!DIVISION_BY_ZERO!>0.div(0)<!>
+val rem = 0.rem(0)
+val mod = 0.mod(0)
+val floorDiv = 0.floorDiv(0)
+
+const val constDiv = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO, DIVISION_BY_ZERO!>0.div(0)<!>
+const val constRem = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO!>0.rem(0)<!>
+// Fails with error
+//const val constMod = 0.mod(0)
+//const val constFloorDiv = 0.floorDiv(0)
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, const, integerLiteral, multiplicativeExpression, primaryConstructor,
 propertyDeclaration */
