@@ -823,7 +823,7 @@ private fun evaluateBinary(
     val functionName = callableId.callableName.asString()
 
     // Check for division by zero
-    if (functionName == "div" || functionName == "rem") {
+    if (functionName == "div" || functionName == "rem" || functionName == "mod" || functionName == "floorDiv") {
         if (!leftCompileTimeType.isFloatingPoint() && !rightCompileTimeType.isFloatingPoint() && (arg2.value as? Number)?.toLong() == 0L) {
             // If expression is division by zero, then return the original expression as a result. We will handle on later steps.
             return DivisionByZero
