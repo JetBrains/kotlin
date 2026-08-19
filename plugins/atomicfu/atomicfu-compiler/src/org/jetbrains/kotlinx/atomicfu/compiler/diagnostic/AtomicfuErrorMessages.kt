@@ -73,6 +73,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
 
     private const val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE = "Atomic properties must have a backing field."
 
+    private const val ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE =
+        "Local properties with kotlinx.atomicfu.Atomic* types are unsupported."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -94,6 +97,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD, ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN, ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE
         )
     }
 

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.text
@@ -32,6 +33,10 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isKotlinxAtomicfu()) return
+        if (declaration.symbol is FirLocalPropertySymbol) {
+            reporter.reportOn(declaration.source, AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN)
+            return
+        }
         if (!declaration.resolvedVisibility.privateApi &&
             (declaration.isCompanionBlockMember || declaration.isCompanionExtension)
         ) {
