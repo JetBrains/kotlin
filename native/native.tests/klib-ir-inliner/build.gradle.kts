@@ -65,6 +65,12 @@ projectTests {
         enableGroupingTestEngine = true,
         maxHeapSize = testMaxHeapSizeLarge
     ) {
+        // Native grouping-stage compilations are more memory-intensive than JS/Wasm.
+        // Keep Native grouping parallelization settings smaller to avoid running out of memory.
+        // Before increasing it, make sure memory settings of CI agents are enough.
+        systemProperty("kotlin.test.grouping.engine.batch.size", "30")
+        systemProperty("kotlin.test.grouping.engine.simultaneous.batches", "2")
+
         val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
             .getOrElse(HostManager.hostName)

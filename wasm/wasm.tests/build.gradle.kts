@@ -391,6 +391,14 @@ projectTests {
                 tags?.let { includeTags(it) }
             }
             setupGradlePropertiesForwarding()
+
+            // Most of the batches of a Wasm test run consist of a single isolated test, and the grouping stage of
+            // such a batch is single-threaded, so processing only a couple of batches at a time leaves most of the
+            // worker threads idle. Measured on `WasmJsCodegenBoxTestGenerated` (8393 tests): 6m32s with the
+            // conservative engine default of 2 vs 6m01s with 6, at an unchanged limit on the tests in flight.
+            // Higher values do not help any more: 7 is within noise and 10 is slower.
+            systemProperty("kotlin.test.grouping.engine.simultaneous.batches", "6")
+
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
             body()
