@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -30,6 +33,8 @@ object FirDivisionByZeroChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
         if (firstValue != null && (firstValue == 0L || firstValue == 0.0f || firstValue == 0.0)) {
             val callableId = (expression.calleeReference.toResolvedNamedFunctionSymbol())?.callableId
             if (callableId != null && callableId.packageName == defaultPackageName && callableId.callableName in forbiddenDivisions) {
+                // Do not report DIVISION_BY_ZERO for const properties. It will be done by `FirConstPropertyChecker`.
+                if (context.findClosest<FirPropertySymbol> { it.isConst } != null) return
                 reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO)
             }
         }
