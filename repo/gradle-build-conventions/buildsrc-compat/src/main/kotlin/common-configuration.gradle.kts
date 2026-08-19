@@ -121,6 +121,7 @@ val projectsWithReturnValueCheckerFull = setOf(
     ":kotlin-power-assert-runtime",
     ":kotlin-native:Interop:Runtime",
     ":kotlin-native:runtime",
+    ":kotlin-gradle-plugin"
 )
 
 fun Project.configureKotlinCompilationOptions() {
