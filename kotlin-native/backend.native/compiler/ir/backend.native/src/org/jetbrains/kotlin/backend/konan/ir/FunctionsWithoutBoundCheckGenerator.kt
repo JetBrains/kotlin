@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // Generate additional functions for array set and get operators without bounds checking.
-internal class FunctionsWithoutBoundCheckGenerator(val context: NativeBackendContext) {
+internal class FunctionsWithoutBoundCheckGenerator(val context: NativeBackendContext) : ModuleLoweringPass {
     private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
             context.irFactory.createSimpleFunction(
                     startOffset = baseFunction.startOffset,
@@ -60,7 +62,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: NativeBackendCon
                 function.annotations = setWithoutBEAnnotations
             }
 
-    fun generate() {
+    override fun lower(irModule: IrModuleFragment) {
         context.irBuiltIns.arrays.forEach { classSymbol ->
             val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
                     .types.single().takeIf { classSymbol.owner.isInlineClass }
