@@ -26,14 +26,16 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
         data class Custom(val name: String) : BatchToken()
     }
 
-    companion object {
-        private val sourceContainsCache = ConcurrentHashMap<TestModuleStructure, ConcurrentHashMap<Regex, Boolean>>()
-        fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
-            val perStructureCache = sourceContainsCache.computeIfAbsent(this) { ConcurrentHashMap() }
-            return perStructureCache.computeIfAbsent(regex) {
-                modules.any { module ->
-                    module.files.any { it.originalContent.contains(regex) }
-                }
+    /**
+     * Cached per isolator instance, i.e. per test: a global cache would keep the module structure of every test
+     * ever inspected — and thus the content of all its files — alive for the whole test run.
+     */
+    private val sourceContainsCache = ConcurrentHashMap<Regex, Boolean>()
+
+    protected fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
+        return sourceContainsCache.computeIfAbsent(regex) {
+            modules.any { module ->
+                module.files.any { it.originalContent.contains(regex) }
             }
         }
     }
