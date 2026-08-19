@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_TAIL_CALL_OPTIMIZATION
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -35,6 +38,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             CodegenTestDirectives,
             LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
+            AdditionalFilesDirectives, // for directives WITH_COROUTINES, CHECK_STATE_MACHINE, CHECK_TAIL_CALL_OPTIMIZATION
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -84,6 +88,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
+            computeCoroutineHelpersToken(moduleStructure.allDirectives),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -100,6 +105,31 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         ).firstNotNullOfOrNull { [directive, token] ->
             token.takeIf { directive in moduleStructure.allDirectives }
         }
+
+    /**
+     * All `// WITH_COROUTINES` tests of a batch share a single `helpers.klib`: their helper files are extracted
+     * into one `helpers` module by [org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer], and
+     * the grouping facade keeps only the first of the resulting per-test KLIBs
+     * (`AbstractWasmSecondStageGroupingFacade.deduplicateHelperKlibPaths`), as they all declare
+     * `unique_name = "helpers"`.
+     *
+     * That is only sound while the helper files are the same for every test of the batch, and they are not:
+     * [org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider] adds
+     * `CoroutineUtil.kt` + `StateMachineChecker.kt` only for [CHECK_STATE_MACHINE], and
+     * `TailCallOptimizationChecker.kt` only for [CHECK_TAIL_CALL_OPTIMIZATION].
+     * Mixing tests with different helper sets makes the batch link against whichever `helpers.klib` came first,
+     * and if that one is the smaller set, every test needing the extra declarations fails with linkage errors
+     * from the partial linkage engine. So tests requesting extra helper files are grouped separately.
+     */
+    private fun computeCoroutineHelpersToken(registeredDirectives: RegisteredDirectives): BatchToken? {
+        if (AdditionalFilesDirectives.WITH_COROUTINES !in registeredDirectives) return null
+        val extraHelperDirectives = listOf(
+            CHECK_STATE_MACHINE,
+            CHECK_TAIL_CALL_OPTIMIZATION,
+        ).filter { it in registeredDirectives }
+        // The default set of helper files is the same for all such tests, so they may be grouped as usual.
+        return extraHelperDirectives.ifNotEmpty { Custom("coroutine helpers: ${joinToString { it.name }}") }
+    }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
         val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].sorted()
