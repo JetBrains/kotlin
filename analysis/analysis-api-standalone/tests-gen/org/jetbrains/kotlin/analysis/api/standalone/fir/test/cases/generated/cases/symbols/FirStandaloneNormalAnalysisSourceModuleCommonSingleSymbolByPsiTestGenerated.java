@@ -1669,4 +1669,84 @@ public class FirStandaloneNormalAnalysisSourceModuleCommonSingleSymbolByPsiTestG
       run("valPropertyWithSetter2.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/valueClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ValueClasses {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/valueClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInValueClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/valueClasses"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassAbstract.kt")
+    public void testFullValueClassAbstract() {
+      run("fullValueClassAbstract.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassMultipleFields.kt")
+    public void testFullValueClassMultipleFields() {
+      run("fullValueClassMultipleFields.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassNoFields.kt")
+    public void testFullValueClassNoFields() {
+      run("fullValueClassNoFields.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassSealed.kt")
+    public void testFullValueClassSealed() {
+      run("fullValueClassSealed.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassSingleField.kt")
+    public void testFullValueClassSingleField() {
+      run("fullValueClassSingleField.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassSingleFieldCommon.kt")
+    public void testFullValueClassSingleFieldCommon() {
+      run("fullValueClassSingleFieldCommon.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassWithSuperClass.kt")
+    public void testFullValueClassWithSuperClass() {
+      run("fullValueClassWithSuperClass.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueObject.kt")
+    public void testFullValueObject() {
+      run("fullValueObject.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmInlineValueClass.kt")
+    public void testJvmInlineValueClass() {
+      run("jvmInlineValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("legacyInlineClass.kt")
+    public void testLegacyInlineClass() {
+      run("legacyInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassFeatureDisabled.kt")
+    public void testValueClassFeatureDisabled() {
+      run("valueClassFeatureDisabled.kt");
+    }
+  }
 }

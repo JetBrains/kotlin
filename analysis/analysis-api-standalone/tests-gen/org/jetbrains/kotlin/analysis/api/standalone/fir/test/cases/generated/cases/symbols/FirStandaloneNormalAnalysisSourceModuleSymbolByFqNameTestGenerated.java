@@ -98,6 +98,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("fullValueClassFromBinary.kt")
+  public void testFullValueClassFromBinary() {
+    run("fullValueClassFromBinary.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithContextParameterFromLibrary.kt")
   public void testFunctionWithContextParameterFromLibrary() {
     run("functionWithContextParameterFromLibrary.kt");

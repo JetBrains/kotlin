@@ -1,0 +1,33 @@
+KaNamedClassSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  classId: pack/FullValueClassFromBinary
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: true
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: FullValueClassFromBinary
+  origin: LIBRARY
+  psi: KtClass
+  realPsi: KtClass
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library library"
+  applicableAnnotationTargets: null
+  deprecation: null
+  importableFqName: pack.FullValueClassFromBinary
