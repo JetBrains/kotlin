@@ -5,7 +5,7 @@ KtFile: Functions_ERR.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -14,7 +14,7 @@ KtFile: Functions_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -54,7 +54,7 @@ KtFile: Functions_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -103,7 +103,7 @@ KtFile: Functions_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -159,7 +159,7 @@ KtFile: Functions_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -218,7 +218,7 @@ KtFile: Functions_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -291,7 +291,7 @@ KtFile: Functions_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -310,7 +310,7 @@ KtFile: Functions_ERR.kt
       PsiElement(IDENTIFIER)('a')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -324,7 +324,7 @@ KtFile: Functions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -342,7 +342,7 @@ KtFile: Functions_ERR.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -359,7 +359,7 @@ KtFile: Functions_ERR.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST

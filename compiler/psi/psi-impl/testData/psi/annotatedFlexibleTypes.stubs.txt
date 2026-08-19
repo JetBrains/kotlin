@@ -13,7 +13,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=d]
               REFERENCE_EXPRESSION[referencedName=JavaClass]
     CLASS_BODY
-      FUN[fqName=test.AnnotatedFlexibleTypes.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=test.AnnotatedFlexibleTypes.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=javaClass]

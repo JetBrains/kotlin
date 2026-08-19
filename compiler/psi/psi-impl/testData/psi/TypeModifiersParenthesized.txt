@@ -5,7 +5,7 @@ KtFile: TypeModifiersParenthesized.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -37,7 +37,7 @@ KtFile: TypeModifiersParenthesized.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -71,7 +71,7 @@ KtFile: TypeModifiersParenthesized.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('parameter')
@@ -98,7 +98,7 @@ KtFile: TypeModifiersParenthesized.kt
           PsiElement(RPAR)(')')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('parameterN')
@@ -127,7 +127,7 @@ KtFile: TypeModifiersParenthesized.kt
             PsiElement(QUEST)('?')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('parameterArgument')
@@ -162,7 +162,7 @@ KtFile: TypeModifiersParenthesized.kt
               PsiElement(GT)('>')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('parameterArgumentN')
@@ -199,7 +199,7 @@ KtFile: TypeModifiersParenthesized.kt
               PsiElement(GT)('>')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('returnValue')
@@ -224,7 +224,7 @@ KtFile: TypeModifiersParenthesized.kt
           PsiElement(IDENTIFIER)('C')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('returnValueN')
@@ -251,7 +251,7 @@ KtFile: TypeModifiersParenthesized.kt
         PsiElement(RPAR)(')')
         PsiElement(QUEST)('?')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -282,7 +282,7 @@ KtFile: TypeModifiersParenthesized.kt
           PsiElement(IDENTIFIER)('T')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -315,7 +315,7 @@ KtFile: TypeModifiersParenthesized.kt
         PsiElement(RPAR)(')')
         PsiElement(QUEST)('?')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('returnArgument')
@@ -348,7 +348,7 @@ KtFile: TypeModifiersParenthesized.kt
               PsiElement(RPAR)(')')
           PsiElement(GT)('>')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('returnArgumentN')

@@ -48,7 +48,7 @@ KtFile: importsWithConflict.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('BAR')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('bar')
@@ -79,7 +79,7 @@ KtFile: importsWithConflict.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('df')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

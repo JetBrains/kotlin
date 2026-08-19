@@ -72,7 +72,7 @@ KtFile: jvmAbiInlineClassWithPrivateConstructor.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             TYPE_PARAMETER_LIST

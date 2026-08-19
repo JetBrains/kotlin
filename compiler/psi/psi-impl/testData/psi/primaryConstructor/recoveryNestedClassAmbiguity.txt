@@ -50,7 +50,7 @@ KtFile: recoveryNestedClassAmbiguity.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Nested2')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
@@ -106,7 +106,7 @@ KtFile: recoveryNestedClassAmbiguity.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -150,7 +150,7 @@ KtFile: recoveryNestedClassAmbiguity.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -203,7 +203,7 @@ KtFile: recoveryNestedClassAmbiguity.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

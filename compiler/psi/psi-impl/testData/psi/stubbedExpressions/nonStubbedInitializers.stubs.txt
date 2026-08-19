@@ -4,13 +4,13 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  FUN[fqName=test.compute, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
+  FUNCTION[fqName=test.compute, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-  FUN[fqName=test.evaluate, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=evaluate]
+  FUNCTION[fqName=test.evaluate, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=evaluate]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
     CALL_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=block]
       VALUE_ARGUMENT_LIST
-  FUN[fqName=test.combine, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=combine]
+  FUNCTION[fqName=test.combine, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=combine]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
         TYPE_REFERENCE
@@ -143,7 +143,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
     CALL_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=evaluate]
       LAMBDA_ARGUMENT[isSpread=false]
-  FUN[fqName=test.expressionBodyWithLambda, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyWithLambda]
+  FUNCTION[fqName=test.expressionBodyWithLambda, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyWithLambda]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE

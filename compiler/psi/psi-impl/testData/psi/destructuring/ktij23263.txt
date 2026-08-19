@@ -80,7 +80,7 @@ KtFile: ktij23263.kt
         PsiErrorElement:Property getter or setter expected
           <empty list>
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiErrorElement:Expecting member declaration
           <empty list>
         BLOCK

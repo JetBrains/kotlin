@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -641,7 +641,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (declType == null && at(KtTokens.LBRACE)) {
             error("Expecting a top level declaration")
             parseBlock()
-            declType = KtNodeTypes.FUN
+            declType = KtNodeTypes.FUNCTION
         }
 
         if (declType == null) {
@@ -1495,7 +1495,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         } else if (at(KtTokens.LBRACE)) {
             error("Expecting member declaration")
             parseBlock()
-            declType = KtNodeTypes.FUN
+            declType = KtNodeTypes.FUNCTION
         }
         return declType
     }
@@ -1964,7 +1964,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         // Recovery for the case of class A { fun| }
         if (at(KtTokens.RBRACE)) {
             error("Function body expected")
-            return KtNodeTypes.FUN
+            return KtNodeTypes.FUNCTION
         }
 
         var typeParameterListOccurred = false
@@ -2034,7 +2034,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             parseFunctionBody()
         }
 
-        return KtNodeTypes.FUN
+        return KtNodeTypes.FUNCTION
     }
 
     /*

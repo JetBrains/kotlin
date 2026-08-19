@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
   partSimpleName: "CombinedContractWithCallInPlaceKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=holdsInExactlyOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInExactlyOnce]
+  FUNCTION[fqName=holdsInExactlyOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInExactlyOnce]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:CallsInPlace(param(1), EXACTLY_ONCE)
@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=holdsInAtLeastOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAtLeastOnce]
+  FUNCTION[fqName=holdsInAtLeastOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAtLeastOnce]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:CallsInPlace(param(1), AT_LEAST_ONCE)
@@ -59,7 +59,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=holdsInWithTwoCallInPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInWithTwoCallInPlace]
+  FUNCTION[fqName=holdsInWithTwoCallInPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInWithTwoCallInPlace]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:CallsInPlace(param(1), EXACTLY_ONCE)

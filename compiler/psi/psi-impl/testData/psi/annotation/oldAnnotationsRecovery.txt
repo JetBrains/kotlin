@@ -26,7 +26,7 @@ KtFile: oldAnnotationsRecovery.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -45,7 +45,7 @@ KtFile: oldAnnotationsRecovery.kt
           PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
             <empty list>
           PsiWhiteSpace(' ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('bar')

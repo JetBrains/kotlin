@@ -41,7 +41,7 @@ KtFile: MutableArray.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION
             PsiElement(AT)('@')
@@ -109,7 +109,7 @@ KtFile: MutableArray.kt
       PsiWhiteSpace(' ')
       PsiComment(EOL_COMMENT)('// This is needed to keep IIterator's <T> covariant')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION
             PsiElement(AT)('@')

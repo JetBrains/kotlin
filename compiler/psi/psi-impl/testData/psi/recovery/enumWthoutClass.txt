@@ -53,7 +53,7 @@ KtFile: enumWthoutClass.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('Q')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
@@ -68,7 +68,7 @@ KtFile: enumWthoutClass.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

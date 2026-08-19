@@ -106,7 +106,7 @@ KtFile: topJvmPackageName.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

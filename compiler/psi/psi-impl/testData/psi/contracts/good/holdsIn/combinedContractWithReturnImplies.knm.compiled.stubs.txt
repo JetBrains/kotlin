@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=holdsInAndReturnImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAndReturnImplies]
+  FUNCTION[fqName=holdsInAndReturnImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAndReturnImplies]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:Returns(WILDCARD) -> param(0)

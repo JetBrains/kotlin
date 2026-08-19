@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/AnnotationsOnNullableTypes, fqName=AnnotationsOnNullableTypes, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationsOnNullableTypes, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]
@@ -21,7 +21,7 @@ FILE[kind=File[packageFqName=<root>]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
         VALUE_PARAMETER_LIST
-      FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.parameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -34,7 +34,7 @@ FILE[kind=File[packageFqName=<root>]]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
                       NULLABLE_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.returnValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -65,7 +65,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
         NULL[kind=NULL, value=null]
-      FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
         VALUE_PARAMETER_LIST
@@ -80,7 +80,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=T]
         NULL[kind=NULL, value=null]
-      FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.returnArgument, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -196,7 +196,7 @@ FILE[kind=File[packageFqName=<root>]]
         POSTFIX_EXPRESSION
           NULL[kind=NULL, value=null]
           OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
-      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -209,7 +209,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
         VALUE_PARAMETER_LIST
-      FUN[fqName=AnnotationsOnNullableTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[]
@@ -222,7 +222,7 @@ FILE[kind=File[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
         VALUE_PARAMETER_LIST
-      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver2]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver2]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -238,7 +238,7 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
         VALUE_PARAMETER_LIST
-      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver3]
+      FUNCTION[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver3]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[]

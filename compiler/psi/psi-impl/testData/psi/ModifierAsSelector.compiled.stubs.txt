@@ -14,7 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ModifierAsSelectorKt]]
             REFERENCE_EXPRESSION[referencedName=java]
           REFERENCE_EXPRESSION[referencedName=io]
         REFERENCE_EXPRESSION[referencedName=PrintStream]
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     origin: Facade(className=ModifierAsSelectorKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

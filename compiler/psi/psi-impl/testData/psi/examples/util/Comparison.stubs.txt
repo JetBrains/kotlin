@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
   partSimpleName: "ComparisonKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=naturalOrder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=naturalOrder]
+  FUNCTION[fqName=naturalOrder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=naturalOrder]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             REFERENCE_EXPRESSION[referencedName=b]
-  FUN[fqName=castingNaturalOrder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=castingNaturalOrder]
+  FUNCTION[fqName=castingNaturalOrder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=castingNaturalOrder]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
         TYPE_REFERENCE
@@ -59,7 +59,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
       ENUM_ENTRY[classId=null, fqName=ComparisonResult.LS, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=LS, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=ComparisonResult.EQ, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=EQ, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=ComparisonResult.GR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=GR, superNames=[]]
-  FUN[fqName=asMatchableComparison, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=asMatchableComparison]
+  FUNCTION[fqName=asMatchableComparison, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=asMatchableComparison]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST

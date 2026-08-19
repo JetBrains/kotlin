@@ -23,7 +23,7 @@ KtFile: EmptyName.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(BAD_CHARACTER)('`')
@@ -48,7 +48,7 @@ KtFile: EmptyName.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -99,7 +99,7 @@ KtFile: EmptyName.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('g')

@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
+  FUNCTION[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
     contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
+  FUNCTION[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
     contract: [ effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -35,7 +35,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
+  FUNCTION[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
     contract: [ effect:Returns(NOT_NULL) -> param(0) !is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test4]
+  FUNCTION[fqName=test4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test4]
     contract: [ effect:Returns(TRUE) -> param(0) != null && param(1) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -76,7 +76,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test5]
+  FUNCTION[fqName=test5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test5]
     contract: [ effect:Returns(TRUE) -> param(0) != null || param(0) is KotlinClassTypeBean(classId=kotlin/Any, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -93,7 +93,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test6]
+  FUNCTION[fqName=test6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test6]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=true, abbreviatedType=null) && param(0) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -110,7 +110,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test7, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test7]
+  FUNCTION[fqName=test7, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test7]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=true, abbreviatedType=null) && param(0) != null || param(0) is KotlinClassTypeBean(classId=kotlin/Int, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -127,7 +127,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test8, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test8]
+  FUNCTION[fqName=test8, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test8]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) || param(0) is KotlinClassTypeBean(classId=kotlin/Int, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -144,7 +144,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test9, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test9]
+  FUNCTION[fqName=test9, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test9]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) || param(0) is KotlinClassTypeBean(classId=kotlin/Int, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -161,7 +161,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test10]
+  FUNCTION[fqName=test10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test10]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/Comparable, arguments=[KotlinTypeArgumentBean(projectionKind=STAR, type=null)], nullable=false, abbreviatedType=null) || param(0) is KotlinClassTypeBean(classId=kotlin/CharSequence, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -178,7 +178,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test11, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test11]
+  FUNCTION[fqName=test11, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test11]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/Comparable, arguments=[KotlinTypeArgumentBean(projectionKind=STAR, type=null)], nullable=false, abbreviatedType=null) && param(0) is KotlinClassTypeBean(classId=kotlin/CharSequence, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -195,7 +195,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test12, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test12]
+  FUNCTION[fqName=test12, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test12]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/Comparable, arguments=[KotlinTypeArgumentBean(projectionKind=STAR, type=null)], nullable=false, abbreviatedType=null) && param(0) is KotlinClassTypeBean(classId=kotlin/CharSequence, arguments=[], nullable=false, abbreviatedType=null) || param(0) is KotlinClassTypeBean(classId=kotlin/Number, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -212,7 +212,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test13, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test13]
+  FUNCTION[fqName=test13, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test13]
     contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/Comparable, arguments=[KotlinTypeArgumentBean(projectionKind=STAR, type=null)], nullable=false, abbreviatedType=null) || param(0) !is KotlinClassTypeBean(classId=kotlin/CharSequence, arguments=[], nullable=false, abbreviatedType=null) && param(0) !is KotlinClassTypeBean(classId=kotlin/Number, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

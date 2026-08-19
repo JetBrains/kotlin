@@ -91,7 +91,7 @@ KtFile: annotatedTypeConstraint.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Anno2')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// FILE: foo.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST

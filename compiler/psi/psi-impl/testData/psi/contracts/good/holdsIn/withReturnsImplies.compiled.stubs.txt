@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithReturnsImpliesKt]]
   partSimpleName: "WithReturnsImpliesKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
+  FUNCTION[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
     origin: Facade(className=WithReturnsImpliesKt, jvmClassName=null)
     MODIFIER_LIST[public inline]

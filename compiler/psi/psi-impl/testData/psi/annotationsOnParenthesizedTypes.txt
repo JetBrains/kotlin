@@ -14,7 +14,7 @@ KtFile: annotationsOnParenthesizedTypes.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
@@ -50,7 +50,7 @@ KtFile: annotationsOnParenthesizedTypes.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('parameter')
@@ -81,7 +81,7 @@ KtFile: annotationsOnParenthesizedTypes.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('parameterArgument')
@@ -120,7 +120,7 @@ KtFile: annotationsOnParenthesizedTypes.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('returnValue')
@@ -153,7 +153,7 @@ KtFile: annotationsOnParenthesizedTypes.kt
           OPERATION_REFERENCE
             PsiElement(EXCLEXCL)('!!')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -192,7 +192,7 @@ KtFile: annotationsOnParenthesizedTypes.kt
           OPERATION_REFERENCE
             PsiElement(EXCLEXCL)('!!')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('returnArgument')

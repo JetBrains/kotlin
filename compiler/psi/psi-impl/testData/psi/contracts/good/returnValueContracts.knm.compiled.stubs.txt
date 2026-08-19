@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=myAlso, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myAlso]
+  FUNCTION[fqName=myAlso, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myAlso]
     contract: [
       effect:CallsInPlace(param(0), EXACTLY_ONCE)
       effect:ReturnsParameter(param(-1))
@@ -29,7 +29,7 @@ FILE[kind=File[packageFqName=<root>]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
-  FUN[fqName=myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myLet]
+  FUNCTION[fqName=myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myLet]
     contract: [
       effect:CallsInPlace(param(0), EXACTLY_ONCE)
       effect:ReturnsResultOf(param(0))

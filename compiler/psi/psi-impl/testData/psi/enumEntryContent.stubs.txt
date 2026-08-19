@@ -15,7 +15,7 @@ FILE[kind=File[packageFqName=<root>]]
               OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject.NestedNested, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NestedNested, superNames=[]]
                 CLASS_BODY
           CLASS_INITIALIZER
-            FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=initFunction]
+            FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=initFunction]
               VALUE_PARAMETER_LIST
             CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass, superNames=[]]
               CLASS_BODY
@@ -23,11 +23,11 @@ FILE[kind=File[packageFqName=<root>]]
               CLASS_BODY
             OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
               CLASS_BODY
-                FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=literalFunction]
+                FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=literalFunction]
                   VALUE_PARAMETER_LIST
                 PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=literalVariable]
                   INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=25]
-          FUN[fqName=MyEnumClass.ENTRY.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUNCTION[fqName=MyEnumClass.ENTRY.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
           PROPERTY[fqName=MyEnumClass.ENTRY.baz, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
             TYPE_REFERENCE

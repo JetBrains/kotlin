@@ -15,7 +15,7 @@ KtFile: differentTypes.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
@@ -182,7 +182,7 @@ KtFile: differentTypes.kt
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('0')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
@@ -472,7 +472,7 @@ KtFile: differentTypes.kt
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('0')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')

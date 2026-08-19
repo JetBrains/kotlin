@@ -13,7 +13,7 @@ KtFile: IncompleteWhenElse.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -62,7 +62,7 @@ KtFile: IncompleteWhenElse.kt
             PsiWhiteSpace('\n    ')
             PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('bar')

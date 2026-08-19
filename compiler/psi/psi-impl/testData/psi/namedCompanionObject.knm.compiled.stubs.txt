@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=test.NamedCompanionObject.Named.z, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
+          FUNCTION[fqName=test.NamedCompanionObject.Named.z, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -45,7 +45,7 @@ FILE[kind=File[packageFqName=test]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
-                  FUN[fqName=test.NamedCompanionObject.Named.A.B.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                  FUNCTION[fqName=test.NamedCompanionObject.Named.A.B.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                     MODIFIER_LIST[public final]
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
@@ -60,7 +60,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.NamedCompanionObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUNCTION[fqName=test.NamedCompanionObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -102,7 +102,7 @@ FILE[kind=File[packageFqName=test]]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=Int]
-                              FUN[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                              FUNCTION[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                                 MODIFIER_LIST[public final]
                                 VALUE_PARAMETER_LIST
                                 TYPE_REFERENCE

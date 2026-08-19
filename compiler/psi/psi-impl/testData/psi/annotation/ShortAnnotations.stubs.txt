@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ShortAnnotationsKt]]
   IMPORT_LIST
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
   OBJECT_DECLARATION[classId=/B, fqName=B, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=B, superNames=[]]
-  FUN[fqName=a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
+  FUNCTION[fqName=a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=c]
     TYPE_REFERENCE
@@ -24,7 +24,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ShortAnnotationsKt]]
         CLASS_BODY
       CLASS[classId=/Foo.A, fqName=Foo.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
       OBJECT_DECLARATION[classId=/Foo.B, fqName=Foo.B, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
-      FUN[fqName=Foo.a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
+      FUNCTION[fqName=Foo.a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         TYPE_REFERENCE
@@ -37,5 +37,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ShortAnnotationsKt]]
             REFERENCE_EXPRESSION[referencedName=Int]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       CLASS_INITIALIZER
-  FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
+  FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
     VALUE_PARAMETER_LIST

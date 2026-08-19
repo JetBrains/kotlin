@@ -54,7 +54,7 @@ KtFile: annotatedContextParameterType.kt
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// FILE: main.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST

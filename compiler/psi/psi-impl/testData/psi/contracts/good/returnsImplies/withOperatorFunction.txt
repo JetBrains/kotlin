@@ -45,7 +45,7 @@ KtFile: withOperatorFunction.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(operator)('operator')
     PsiWhiteSpace(' ')

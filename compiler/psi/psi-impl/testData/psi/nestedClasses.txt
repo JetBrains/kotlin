@@ -20,7 +20,7 @@ KtFile: nestedClasses.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
@@ -65,7 +65,7 @@ KtFile: nestedClasses.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('f')
@@ -112,7 +112,7 @@ KtFile: nestedClasses.kt
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n            ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('f')
@@ -168,7 +168,7 @@ KtFile: nestedClasses.kt
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n            ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('f')
@@ -228,7 +228,7 @@ KtFile: nestedClasses.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('f')
@@ -267,7 +267,7 @@ KtFile: nestedClasses.kt
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n            ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('f')

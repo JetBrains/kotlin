@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExactlyOnceKt]]
   partSimpleName: "ExactlyOnceKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=inlineRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=inlineRun]
+  FUNCTION[fqName=inlineRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=inlineRun]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     origin: Facade(className=ExactlyOnceKt, jvmClassName=null)
     MODIFIER_LIST[public inline]
@@ -22,7 +22,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExactlyOnceKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=myRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRun]
+  FUNCTION[fqName=myRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRun]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     origin: Facade(className=ExactlyOnceKt, jvmClassName=null)
     MODIFIER_LIST[public]

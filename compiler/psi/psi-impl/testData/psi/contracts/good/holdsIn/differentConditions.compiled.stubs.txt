@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
   partSimpleName: "DifferentConditionsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=testConditionInDescription, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription]
+  FUNCTION[fqName=testConditionInDescription, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription]
     contract: [ effect:param(0) == null HoldsIn(param(1)) ]
     origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
     MODIFIER_LIST[public inline]
@@ -29,7 +29,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=testConditionInDescription2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription2]
+  FUNCTION[fqName=testConditionInDescription2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription2]
     contract: [ effect:param(0) is KotlinClassTypeBean(classId=kotlin/Boolean, arguments=[], nullable=false, abbreviatedType=null) HoldsIn(param(1)) ]
     origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
     MODIFIER_LIST[public inline]
@@ -55,7 +55,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=testConditionInDescription3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription3]
+  FUNCTION[fqName=testConditionInDescription3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription3]
     contract: [ effect:param(0) && param(1) HoldsIn(param(2)) ]
     origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
     MODIFIER_LIST[public inline]
@@ -86,7 +86,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=testConditionInDescription4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription4]
+  FUNCTION[fqName=testConditionInDescription4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription4]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
     origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
     MODIFIER_LIST[public inline]
@@ -111,7 +111,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=testConditionInDescription6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription6]
+  FUNCTION[fqName=testConditionInDescription6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription6]
     contract: [ effect:param(0) && param(1) HoldsIn(param(2)) ]
     origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
     MODIFIER_LIST[public inline]
@@ -142,7 +142,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=testConditionInDescription10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription10]
+  FUNCTION[fqName=testConditionInDescription10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription10]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
     origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
     MODIFIER_LIST[public inline]

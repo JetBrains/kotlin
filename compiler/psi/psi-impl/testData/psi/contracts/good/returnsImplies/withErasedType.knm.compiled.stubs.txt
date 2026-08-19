@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=testErasedType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testErasedType]
+  FUNCTION[fqName=testErasedType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testErasedType]
     contract: [ effect:param(0) is KotlinTypeParameterTypeBean(typeParameterName=T, nullable=false, definitelyNotNull=false) -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST

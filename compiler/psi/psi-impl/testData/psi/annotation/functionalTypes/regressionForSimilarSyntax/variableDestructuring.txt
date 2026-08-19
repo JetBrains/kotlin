@@ -7,7 +7,7 @@ KtFile: variableDestructuring.kt
   PsiWhiteSpace('\n\n')
   PsiComment(EOL_COMMENT)('// Issue: KT-31734')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

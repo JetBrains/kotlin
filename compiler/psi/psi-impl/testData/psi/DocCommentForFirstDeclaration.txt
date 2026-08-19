@@ -3,7 +3,7 @@ KtFile: DocCommentForFirstDeclaration.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')

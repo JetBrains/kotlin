@@ -28,7 +28,7 @@ KtFile: contextReceiversCallableMembers.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')

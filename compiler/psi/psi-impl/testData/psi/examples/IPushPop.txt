@@ -33,7 +33,7 @@ KtFile: IPushPop.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('push')
@@ -50,7 +50,7 @@ KtFile: IPushPop.kt
                   PsiElement(IDENTIFIER)('T')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('pop')

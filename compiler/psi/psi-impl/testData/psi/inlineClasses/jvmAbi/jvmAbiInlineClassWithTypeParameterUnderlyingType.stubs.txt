@@ -22,7 +22,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/Box.Companion, fqName=Box.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-          FUN[fqName=Box.Companion.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+          FUNCTION[fqName=Box.Companion.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=T]
             VALUE_PARAMETER_LIST

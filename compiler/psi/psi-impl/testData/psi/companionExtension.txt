@@ -5,7 +5,7 @@ KtFile: companionExtension.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// LANGUAGE: +CompanionBlocks +CompanionExtensions')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(companion)('companion')
     PsiWhiteSpace(' ')
@@ -25,7 +25,7 @@ KtFile: companionExtension.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(private)('private')
       PsiWhiteSpace(' ')
@@ -47,7 +47,7 @@ KtFile: companionExtension.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(companion)('companion')
       PsiWhiteSpace(' ')

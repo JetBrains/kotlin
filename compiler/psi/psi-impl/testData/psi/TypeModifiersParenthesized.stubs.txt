@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
   partSimpleName: "TypeModifiersParenthesizedKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=receiverArgument, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=receiverArgument]
+  FUNCTION[fqName=receiverArgument, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=receiverArgument]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=B]
@@ -19,7 +19,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
     VALUE_PARAMETER_LIST
-  FUN[fqName=receiverArgumentN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=receiverArgumentN]
+  FUNCTION[fqName=receiverArgumentN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=receiverArgumentN]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=B]
@@ -36,7 +36,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
     VALUE_PARAMETER_LIST
-  FUN[fqName=parameter, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameter]
+  FUNCTION[fqName=parameter, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameter]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
         TYPE_REFERENCE
@@ -48,7 +48,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                     REFERENCE_EXPRESSION[referencedName=A]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=parameterN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterN]
+  FUNCTION[fqName=parameterN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterN]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
         TYPE_REFERENCE
@@ -61,7 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                       REFERENCE_EXPRESSION[referencedName=A]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=parameterArgument, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterArgument]
+  FUNCTION[fqName=parameterArgument, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterArgument]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
         TYPE_REFERENCE
@@ -78,7 +78,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                             REFERENCE_EXPRESSION[referencedName=A]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=parameterArgumentN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterArgumentN]
+  FUNCTION[fqName=parameterArgumentN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterArgumentN]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
         TYPE_REFERENCE
@@ -96,7 +96,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                               REFERENCE_EXPRESSION[referencedName=A]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=returnValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnValue]
+  FUNCTION[fqName=returnValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnValue]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       MODIFIER_LIST[]
@@ -107,7 +107,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                 REFERENCE_EXPRESSION[referencedName=A]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=returnValueN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnValueN]
+  FUNCTION[fqName=returnValueN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnValueN]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       NULLABLE_TYPE
@@ -119,7 +119,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                   REFERENCE_EXPRESSION[referencedName=A]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=returnTypeParameterValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValue]
+  FUNCTION[fqName=returnTypeParameterValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValue]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
@@ -132,7 +132,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                 REFERENCE_EXPRESSION[referencedName=A]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
-  FUN[fqName=returnTypeParameterValueN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValueN]
+  FUNCTION[fqName=returnTypeParameterValueN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValueN]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
@@ -146,7 +146,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                   REFERENCE_EXPRESSION[referencedName=A]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
-  FUN[fqName=returnArgument, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnArgument]
+  FUNCTION[fqName=returnArgument, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnArgument]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
@@ -162,7 +162,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersParenthesizedKt
                         REFERENCE_EXPRESSION[referencedName=A]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-  FUN[fqName=returnArgumentN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnArgumentN]
+  FUNCTION[fqName=returnArgumentN, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnArgumentN]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       NULLABLE_TYPE

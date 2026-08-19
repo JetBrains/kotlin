@@ -12,7 +12,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiErrorElement:Expecting '('
         <empty list>
@@ -27,7 +27,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -43,7 +43,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -90,7 +90,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -146,7 +146,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -201,7 +201,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -249,7 +249,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -300,7 +300,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -365,7 +365,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -396,7 +396,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiErrorElement:Property getter or setter expected
       <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     VALUE_PARAMETER_LIST
@@ -415,7 +415,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiErrorElement:Property getter or setter expected
       <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     VALUE_PARAMETER_LIST
@@ -434,7 +434,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiErrorElement:Property getter or setter expected
       <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     VALUE_PARAMETER_LIST
@@ -448,7 +448,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
@@ -469,7 +469,7 @@ KtFile: FunctionExpressions_ERR.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('V')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('where_fun')
@@ -479,7 +479,7 @@ KtFile: FunctionExpressions_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
@@ -500,7 +500,7 @@ KtFile: FunctionExpressions_ERR.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('V')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('outer')
@@ -517,7 +517,7 @@ KtFile: FunctionExpressions_ERR.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiErrorElement:Expecting '('
                 <empty list>
@@ -530,7 +530,7 @@ KtFile: FunctionExpressions_ERR.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('T')
@@ -544,7 +544,7 @@ KtFile: FunctionExpressions_ERR.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
@@ -562,7 +562,7 @@ KtFile: FunctionExpressions_ERR.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiErrorElement:Annotations are not allowed in this position
@@ -592,7 +592,7 @@ KtFile: FunctionExpressions_ERR.kt
             <empty list>
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
@@ -612,7 +612,7 @@ KtFile: FunctionExpressions_ERR.kt
             <empty list>
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
@@ -632,7 +632,7 @@ KtFile: FunctionExpressions_ERR.kt
             <empty list>
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
@@ -646,7 +646,7 @@ KtFile: FunctionExpressions_ERR.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST

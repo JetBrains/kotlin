@@ -10,7 +10,7 @@ KtFile: semicolonBetweenDeclarations.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo1')
@@ -59,7 +59,7 @@ KtFile: semicolonBetweenDeclarations.kt
           PsiElement(INTEGER_LITERAL)('1')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -89,7 +89,7 @@ KtFile: semicolonBetweenDeclarations.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
@@ -136,7 +136,7 @@ KtFile: semicolonBetweenDeclarations.kt
       PsiElement(RBRACE)('}')
   PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

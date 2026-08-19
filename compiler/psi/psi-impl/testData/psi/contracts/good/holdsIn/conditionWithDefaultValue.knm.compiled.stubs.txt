@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=testDefaultArguments, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testDefaultArguments]
+  FUNCTION[fqName=testDefaultArguments, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testDefaultArguments]
     contract: [ effect:param(1) HoldsIn(param(2)) ]
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST

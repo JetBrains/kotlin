@@ -79,7 +79,7 @@ KtFile: withDestructuringDeclaration.kt
                 PsiElement(GT)('>')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(operator)('operator')
     PsiWhiteSpace(' ')

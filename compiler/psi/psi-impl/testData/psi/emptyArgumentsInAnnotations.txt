@@ -5,7 +5,7 @@ KtFile: emptyArgumentsInAnnotations.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -120,7 +120,7 @@ KtFile: emptyArgumentsInAnnotations.kt
       PsiWhiteSpace(' ')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -286,7 +286,7 @@ KtFile: emptyArgumentsInAnnotations.kt
       PsiWhiteSpace(' ')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -356,7 +356,7 @@ KtFile: emptyArgumentsInAnnotations.kt
       PsiWhiteSpace(' ')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

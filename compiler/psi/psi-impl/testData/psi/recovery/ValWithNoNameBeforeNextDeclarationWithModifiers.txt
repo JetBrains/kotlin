@@ -21,7 +21,7 @@ KtFile: ValWithNoNameBeforeNextDeclarationWithModifiers.kt
         PsiErrorElement:Expecting property name or receiver type
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiComment(EOL_COMMENT)('// private is parsed as val's identifier')
         PsiWhiteSpace('\n    ')
         MODIFIER_LIST
@@ -47,7 +47,7 @@ KtFile: ValWithNoNameBeforeNextDeclarationWithModifiers.kt
         PsiErrorElement:Expecting property name or receiver type
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
@@ -70,7 +70,7 @@ KtFile: ValWithNoNameBeforeNextDeclarationWithModifiers.kt
         PsiErrorElement:Expecting property name or receiver type
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo3')

@@ -3,5 +3,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MultiDollarBacktickKt]]
   partSimpleName: "MultiDollarBacktickKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=parserBug, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parserBug]
+  FUNCTION[fqName=parserBug, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parserBug]
     VALUE_PARAMETER_LIST

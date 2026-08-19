@@ -13,7 +13,7 @@ KtFile: contextParametersAndAnnotations.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Ann')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
@@ -47,7 +47,7 @@ KtFile: contextParametersAndAnnotations.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -81,7 +81,7 @@ KtFile: contextParametersAndAnnotations.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(private)('private')
       PsiWhiteSpace('\n')
