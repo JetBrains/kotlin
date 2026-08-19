@@ -71,6 +71,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE =
         "Atomic factories can only be called to initialize a property or as delegates: `''{0}''`."
 
+    private const val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE = "Atomic properties must have a backing field.\n" +
+            "Consider declaring `''{0}''` as a property with a backing field."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -89,6 +92,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY, ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD, ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE, Renderers.TO_STRING
         )
     }
 

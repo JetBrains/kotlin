@@ -26,3 +26,7 @@ private val _a = atomic<T>(initial)
 public val a: T by _a
 ```
 
+
+/IllegalContextForAtomics.kt:47:24: error: Atomic properties must have a backing field.
+Consider declaring `'// Non private property, has no backing field
+    protected abstract val a: AtomicInt'` as a property with a backing field.

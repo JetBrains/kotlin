@@ -44,6 +44,6 @@ class AtomicInCtor(private val a: AtomicLong = <!ATOMIC_FACTORIES_ARE_FOR_INITIA
 
 abstract class AbstractAtomicProperty {
     // Non private property, has no backing field
-    <!PUBLIC_ATOMICS_ARE_FORBIDDEN!>protected<!> abstract val a: AtomicInt
+    <!PUBLIC_ATOMICS_ARE_FORBIDDEN!>protected<!> abstract <!ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD!>val<!> a: AtomicInt
 }
 
