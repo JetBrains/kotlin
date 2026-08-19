@@ -44,7 +44,11 @@
 
 /IllegalContextForAtomics.kt:38:5: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(2)'`.
 
+/IllegalContextForAtomics.kt:42:57: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicInt = atomic(0)'`.
+
 /IllegalContextForAtomics.kt:42:72: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/IllegalContextForAtomics.kt:43:32: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicLong = atomic(0L)'`.
 
 /IllegalContextForAtomics.kt:43:48: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.
 

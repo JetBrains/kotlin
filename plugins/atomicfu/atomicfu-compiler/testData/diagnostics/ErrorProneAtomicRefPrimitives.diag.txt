@@ -22,6 +22,8 @@
 
 /ErrorProneAtomicRefPrimitives.kt:22:27: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
 
+/ErrorProneAtomicRefPrimitives.kt:25:15: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'a: AtomicArray<Int>'`.
+
 /ErrorProneAtomicRefPrimitives.kt:26:5: warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int?' does not have a consistent identity. Consider using 'AtomicInt' instead.
 
 /ErrorProneAtomicRefPrimitives.kt:26:24: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.

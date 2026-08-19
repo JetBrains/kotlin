@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AtomicfuErrors : KtDiagnosticsContainer() {
@@ -22,5 +24,7 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY by error1<KtCallExpression, String>(SourceElementPositioningStrategies.DEFAULT)
     val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     val ATOMIC_LOCALS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN by error1<KtNamedDeclaration, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE by error1<KtFunction, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }
