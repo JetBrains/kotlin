@@ -299,14 +299,11 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     // Code fragments
 
-    override val expressionCodeFragmentType: ICodeFragmentElementType
-        get() = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT
+    override val expressionCodeFragmentType: ICodeFragmentElementType = KtExpressionCodeFragmentType()
 
-    override val blockCodeFragmentType: ICodeFragmentElementType
-        get() = KtStubElementTypes.BLOCK_CODE_FRAGMENT
+    override val blockCodeFragmentType: ICodeFragmentElementType = KtBlockCodeFragmentType()
 
-    override val typeCodeFragmentType: ICodeFragmentElementType
-        get() = KtStubElementTypes.TYPE_CODE_FRAGMENT
+    override val typeCodeFragmentType: ICodeFragmentElementType = KtTypeCodeFragmentType()
 
 
     // KDoc
