@@ -219,7 +219,23 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     public abstract val isData: Boolean
 
     /**
-     * Whether the class is an [inline class](https://kotlinlang.org/docs/inline-classes.html).
+     * Whether the class uses Kotlin's single-field [inline value class](https://kotlinlang.org/docs/inline-classes.html) representation.
+     *
+     * This is a declaration-level property. It does not predict whether a value is boxed at a particular use site, nor whether a backend
+     * can optimize a compatible
+     * [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
+     * to an unboxed form. In particular, a full value class with exactly one primary property still returns `false`.
+     *
+     * For valid declarations, this property is `true` for all of the following:
+     *
+     * - A single-property `@JvmInline value class` in a module whose target platform includes JVM, with the experimental
+     *   `FullValueClasses` language feature either enabled or disabled. This covers JVM modules and common modules that target JVM among
+     *   other platforms. On a JS, Wasm, or Native module, the annotation has no effect on this property.
+     * - An unannotated single-property `value class` on Common or a non-JVM target with `FullValueClasses` disabled.
+     * - The deprecated `inline class` form on every target, with `FullValueClasses` either enabled or disabled.
+     *
+     * This property is `false` for full value classes and value objects. With `FullValueClasses` enabled, an unannotated `value class`
+     * uses the full representation on every target, even if it has exactly one primary property.
      */
     public abstract val isInline: Boolean
 

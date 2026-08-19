@@ -10,7 +10,7 @@ KaNamedClassSymbol:
   isExpect: false
   isExternal: false
   isFun: false
-  isInline: true
+  isInline: false
   isInner: false
   location: TOP_LEVEL
   modality: FINAL

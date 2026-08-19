@@ -1,1 +1,1 @@
-inline class FullValueClassSingleField(value: kotlin.Int)
+class FullValueClassSingleField(value: kotlin.Int)
