@@ -13,6 +13,10 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:language.targets.jvm"))
@@ -57,6 +61,8 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 sourceSets {
@@ -75,6 +81,8 @@ projectTests {
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)
     ) {
         useJUnitPlatform()
+
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
 
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 3)
     }

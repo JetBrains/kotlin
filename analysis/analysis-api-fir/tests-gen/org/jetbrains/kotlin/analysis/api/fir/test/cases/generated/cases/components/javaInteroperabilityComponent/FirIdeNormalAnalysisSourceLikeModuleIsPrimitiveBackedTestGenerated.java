@@ -50,6 +50,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleIsPrimitiveBackedTestGenerated 
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassCommon.kt")
+  public void testFullValueClassCommon() {
+    run("fullValueClassCommon.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassMultipleFieldsCommon.kt")
+  public void testFullValueClassMultipleFieldsCommon() {
+    run("fullValueClassMultipleFieldsCommon.kt");
+  }
+
+  @Test
   @TestMetadata("inlineValueClass.kt")
   public void testInlineValueClass() {
     run("inlineValueClass.kt");
