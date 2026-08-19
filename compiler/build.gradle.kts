@@ -79,7 +79,6 @@ projectTests {
     testData(isolated, "testData/checkLocalVariablesTable")
     testData(isolated, "testData/codegen")
     testData(isolated, "testData/serialization")
-    testData(isolated, "testData/versionRequirement")
     testData(isolated, "testData/writeFlags")
     testData(isolated, "testData/writeSignature")
     withJvmStdlibAndReflect()

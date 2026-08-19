@@ -17,3 +17,24 @@ fun function() {}
 
 @RequireKotlin("1.3", "property must not be used!")
 val property = ""
+
+class Outer {
+    inner class Inner {
+        @RequireKotlin("1.3")
+        inner class Deep @RequireKotlin("1.3") constructor() {
+            @RequireKotlin("1.3")
+            fun f() {}
+
+            @RequireKotlin("1.3")
+            val x = ""
+        }
+    }
+
+    class Nested {
+        @RequireKotlin("1.3")
+        fun g() {}
+    }
+
+    @RequireKotlin("1.3")
+    companion object
+}
