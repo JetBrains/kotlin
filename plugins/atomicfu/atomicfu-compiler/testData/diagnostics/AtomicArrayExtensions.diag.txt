@@ -1,0 +1,3 @@
+/AtomicArrayExtensions.kt:11:28: error: Atomic array extension properties are prohibited.
+
+/AtomicArrayExtensions.kt:14:32: error: Atomic array extension properties are prohibited.
