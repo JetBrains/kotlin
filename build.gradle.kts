@@ -93,7 +93,6 @@ val jpsBootstrap = configurations.create("jpsBootstrap")
 
 val commonBuildDir = File(rootDir, "build")
 val distDir = "$rootDir/dist"
-extra["distDir"] = distDir
 val distKotlinHomeDir = "$distDir/kotlinc"
 extra["distKotlinHomeDir"] = distKotlinHomeDir
 val distLibDir = "$distKotlinHomeDir/lib"
