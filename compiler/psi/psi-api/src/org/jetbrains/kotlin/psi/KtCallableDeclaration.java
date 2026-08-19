@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElement;
+import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,7 +118,7 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
     @SuppressWarnings("unused") // used in Kotlin IDE plugin
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setCallableTypeReference(this, null, typeRef)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.setCallableTypeReference(null, typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setCallableTypeReference"
             )

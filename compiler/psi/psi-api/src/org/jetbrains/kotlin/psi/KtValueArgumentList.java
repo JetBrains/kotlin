@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -67,7 +68,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendValueArgument(this, argument)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.appendValueArgument(argument)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.appendValueArgument"
             )
@@ -84,7 +85,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertValueArgumentAfter(this, argument, anchor)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.insertValueArgumentAfter(argument, anchor)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.insertValueArgumentAfter"
             )
@@ -101,7 +102,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertValueArgumentBefore(this, argument, anchor)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.insertValueArgumentBefore(argument, anchor)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.insertValueArgumentBefore"
             )
@@ -117,7 +118,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      */
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteValueArgument(this, argument)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.deleteValueArgument(argument)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.deleteValueArgument"
             )
@@ -133,7 +134,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      */
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteValueArgument(this, index)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.deleteValueArgument(index)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.deleteValueArgument"
             )

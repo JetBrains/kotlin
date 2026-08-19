@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
+import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -71,7 +72,7 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
      */
     @kotlin.Deprecated(
             message = "Use 'KtModifierList.getContextParameterList()' (via 'getModifierList()') instead. This method is obsolete and exists for compatibility reasons only.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "modifierList?.contextParameterList",
                     imports = {}
             )
@@ -97,7 +98,7 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
      */
     @kotlin.Deprecated(
             message = "Use 'KtModifierList.getContextParameterLists()' (via 'getModifierList()') instead. This method is obsolete and exists for compatibility reasons only.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "modifierList?.contextParameterLists.orEmpty()",
                     imports = {}
             )

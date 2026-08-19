@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -109,7 +110,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      */
     @kotlin.Deprecated(
             message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "contextParameterList",
                     imports = {}
             )

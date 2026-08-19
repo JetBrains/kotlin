@@ -14,6 +14,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
+import kotlin.ReplaceWith;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -901,7 +902,7 @@ public class KtPsiUtil {
     @Contract("_, !null -> !null")
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.replaceModifierList(owner, modifierList)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "owner.replaceModifierList(modifierList)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.replaceModifierList"
             )

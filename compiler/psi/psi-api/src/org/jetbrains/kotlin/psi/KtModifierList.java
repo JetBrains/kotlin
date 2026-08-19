@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -80,7 +81,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      */
     @kotlin.Deprecated(
             message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "contextParameterList",
                     imports = {}
             )
@@ -111,7 +112,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'getContextParameterLists()' instead. This method is obsolete and exists for compatibility reasons only.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "contextParameterLists",
                     imports = {}
             )
