@@ -763,7 +763,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode?> =
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER", KotlinReleaseVersion(2, 2, 0))
 
     /**

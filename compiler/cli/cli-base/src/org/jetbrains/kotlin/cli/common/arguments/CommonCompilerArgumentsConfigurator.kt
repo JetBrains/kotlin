@@ -66,11 +66,32 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.firAggressivePruning, firAggressivePruning ?: headerMode)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
             fillWarningLevelMap(arguments, reporter)
-            ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
-                ?: reporter.reportError(
-                    "Unknown value for parameter -Xreturn-value-checker: '$returnValueChecker'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
-                )
+            returnValueCheckerMode(
+                languageVersion,
+                returnValueChecker,
+                reporter
+            )?.let { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
         }
+    }
+
+    private fun returnValueCheckerMode(
+        languageVersion: LanguageVersion,
+        compilerArg: String?,
+        reporter: Reporter,
+    ): ReturnValueCheckerMode? {
+        val stableRvVersion = LanguageFeature.ReturnValueCheckerIsStable.sinceVersion
+        if (compilerArg == null) {
+            return if (stableRvVersion != null && languageVersion >= stableRvVersion) {
+                ReturnValueCheckerMode.CHECKER
+            } else {
+                null // use default
+            }
+        }
+
+        ReturnValueCheckerMode.fromString(compilerArg)?.let { return it } ?: reporter.reportError(
+            "Unknown value for parameter -Xreturn-value-checker: '$compilerArg'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
+        )
+        return null
     }
 
     protected fun MutableMap<AnalysisFlag<*>, Any>.putAnalysisFlag(flag: AnalysisFlag<*>, value: Any) {
@@ -97,7 +118,11 @@ open class CommonCompilerArgumentsConfigurator {
                 }
             }
 
-            ReturnValueCheckerMode.fromString(returnValueChecker)?.also {
+            returnValueCheckerMode(
+                languageVersion,
+                returnValueChecker,
+                reporter
+            )?.also {
                 if (it != ReturnValueCheckerMode.DISABLED)
                     put(LanguageFeature.UnnamedLocalVariables, LanguageFeature.State.ENABLED)
             }
@@ -115,7 +140,7 @@ open class CommonCompilerArgumentsConfigurator {
     protected open fun configureExtraLanguageFeatures(
         arguments: CommonCompilerArguments,
         map: HashMap<LanguageFeature, LanguageFeature.State>,
-        reporter: Reporter
+        reporter: Reporter,
     ) {
     }
 
@@ -294,7 +319,10 @@ private fun checkApiVersionIsNotGreaterThenLanguageVersion(
     }
 }
 
-private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion: LanguageVersion, reporter: CommonCompilerArgumentsConfigurator.Reporter) {
+private fun CommonCompilerArguments.checkLanguageVersionIsStable(
+    languageVersion: LanguageVersion,
+    reporter: CommonCompilerArgumentsConfigurator.Reporter,
+) {
     if (!languageVersion.isStable && !suppressVersionWarnings) {
         reporter.report(
             CliDiagnostics.EXPERIMENTAL_LANGUAGE_VERSION,
@@ -349,7 +377,10 @@ private fun findOutdatedVersion(
     }
 }
 
-private fun CommonCompilerArguments.checkProgressiveMode(languageVersion: LanguageVersion, reporter: CommonCompilerArgumentsConfigurator.Reporter) {
+private fun CommonCompilerArguments.checkProgressiveMode(
+    languageVersion: LanguageVersion,
+    reporter: CommonCompilerArgumentsConfigurator.Reporter,
+) {
     if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE && !suppressVersionWarnings) {
         reporter.reportWarning(
             "'-progressive' is meaningful only for the latest language version (${LanguageVersion.LATEST_STABLE}), " +
@@ -384,7 +415,11 @@ private fun CommonCompilerArguments.parseOrConfigureLanguageVersion(reporter: Co
     return parseVersion(reporter, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
 }
 
-private fun CommonCompilerArguments.parseVersion(reporter: CommonCompilerArgumentsConfigurator.Reporter, value: String?, versionOf: String): LanguageVersion? =
+private fun CommonCompilerArguments.parseVersion(
+    reporter: CommonCompilerArgumentsConfigurator.Reporter,
+    value: String?,
+    versionOf: String,
+): LanguageVersion? =
     if (value == null) null
     else LanguageVersion.fromVersionString(value)
         ?: run {

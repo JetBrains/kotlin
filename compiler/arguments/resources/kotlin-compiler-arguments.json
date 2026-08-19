@@ -5968,19 +5968,20 @@
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
                             "isNullable": {
-                                "current": false,
-                                "valueInVersions": []
-                            },
-                            "defaultValue": {
-                                "current": "check",
+                                "current": true,
                                 "valueInVersions": [
                                     {
-                                        "minReleaseVersion": "1.0.0",
-                                        "maxReleaseVersion": "2.2.0",
-                                        "value": null
-                                    },
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": false
+                                    }
+                                ]
+                            },
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": [
                                     {
-                                        "minReleaseVersion": "2.2.20",
+                                        "minReleaseVersion": "2.2.0",
                                         "maxReleaseVersion": "2.4.20",
                                         "value": "disable"
                                     }
@@ -6000,19 +6001,20 @@
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
                             "isNullable": {
-                                "current": false,
-                                "valueInVersions": []
-                            },
-                            "defaultValue": {
-                                "current": "check",
+                                "current": true,
                                 "valueInVersions": [
                                     {
-                                        "minReleaseVersion": "1.0.0",
-                                        "maxReleaseVersion": "2.2.0",
-                                        "value": null
-                                    },
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": false
+                                    }
+                                ]
+                            },
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": [
                                     {
-                                        "minReleaseVersion": "2.2.20",
+                                        "minReleaseVersion": "2.2.0",
                                         "maxReleaseVersion": "2.4.20",
                                         "value": "disable"
                                     }
