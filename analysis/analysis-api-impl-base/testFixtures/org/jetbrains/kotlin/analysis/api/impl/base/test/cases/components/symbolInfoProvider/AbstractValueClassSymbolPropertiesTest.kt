@@ -3,9 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KaExperimentalApi::class)
+
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.isValue
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -27,6 +31,7 @@ abstract class AbstractValueClassSymbolPropertiesTest : AbstractAnalysisApiBased
             val actual = buildString {
                 appendLine("CLASS_ID: ${symbol.classId}")
                 appendLine("IS_INLINE: ${symbol.isInline}")
+                appendLine("IS_VALUE: ${symbol.isValue}")
             }
             testServices.assertions.assertEqualsToTestOutputFile(actual)
         }

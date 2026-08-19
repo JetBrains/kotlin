@@ -104,6 +104,12 @@ public class FirStandaloneNormalAnalysisSourceModuleValueClassSymbolPropertiesTe
   }
 
   @Test
+  @TestMetadata("javaClass.kt")
+  public void testJavaClass() {
+    run("javaClass.kt");
+  }
+
+  @Test
   @TestMetadata("jvmInlineValueClass.kt")
   public void testJvmInlineValueClass() {
     run("jvmInlineValueClass.kt");

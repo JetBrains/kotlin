@@ -25,6 +25,8 @@ public interface KaInternalsSymbolInformationProvider {
 
     public fun applicableAnnotationTargets(symbol: KaClassSymbol): Set<KaAnnotationTarget>?
 
+    public fun isValue(symbol: KaNamedClassSymbol): Boolean
+
     public fun isInline(symbol: KaKotlinPropertySymbol): Boolean
 
     public fun importableFqName(symbol: KaSymbol): FqName?

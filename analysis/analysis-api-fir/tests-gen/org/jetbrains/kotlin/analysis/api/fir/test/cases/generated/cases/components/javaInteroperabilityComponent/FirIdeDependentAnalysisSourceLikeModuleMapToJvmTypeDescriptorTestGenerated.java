@@ -56,6 +56,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleMapToJvmTypeDescriptorTestGe
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("int.kt")
   public void testInt() {
     run("int.kt");

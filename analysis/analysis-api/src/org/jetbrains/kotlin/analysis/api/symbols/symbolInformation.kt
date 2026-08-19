@@ -82,6 +82,21 @@ public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
     }
 
 /**
+ * Whether the symbol represents a Kotlin value class.
+ *
+ * This includes inline value classes, full value classes, and value objects. It does not imply any particular runtime representation:
+ * whether a value class is unboxed depends on the target and use site. To check specifically for an inline value class representation, use
+ * [KaNamedClassSymbol.isInline].
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaNamedClassSymbol.isValue: Boolean
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.symbolInformationProvider.isValue(this)
+    }
+
+/**
  * Whether the property is an [inline property](https://kotlinlang.org/docs/inline-functions.html#inline-properties).
  * A property is considered `inline` when both of its accessors are `inline` or when it has the `inline` keyword.
  * The `inline` keyword on a property is syntactic sugar for marking both accessors as `inline`.

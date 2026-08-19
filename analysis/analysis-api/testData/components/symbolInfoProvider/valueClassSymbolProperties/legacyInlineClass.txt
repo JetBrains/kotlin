@@ -1,2 +1,3 @@
 CLASS_ID: /LegacyInlineClass
 IS_INLINE: true
+IS_VALUE: true

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
@@ -122,6 +123,12 @@ internal class KaFirSymbolInformationProvider(
         if (symbol !is KaFirNamedClassSymbolBase<*>) return null
         if (symbol.firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
         return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
+    }
+
+    override fun isValue(symbol: KaNamedClassSymbol): Boolean = withValidityAssertion {
+        if (symbol is KaFirPsiJavaClassSymbol) return false
+        require(symbol is KaFirNamedClassSymbolBase<*>) { "${symbol::class}" }
+        return symbol.firSymbol.isInlineOrValue
     }
 
     override fun importableFqName(symbol: KaSymbol): FqName? = withValidityAssertion {
