@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
@@ -30,15 +32,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.AfterEach
@@ -211,6 +217,69 @@ class KotlinCliJavaFileManagerTest {
         assertNull(manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE)) { "Should not find class in empty scope" }
     }
 
+    /**
+     * A reference recorded in a class file is bound to the classpath that class file was compiled against, which is
+     * wider than the scope the class is requested from, so it is resolved in the all-scope instead (KT-17897).
+     *
+     * `p.Ref` is read through a scope holding the output directory alone — the shape of a build that hands the
+     * previous output and the libraries to the compiler as separate roots — while the `p.Lib` its signature names
+     * lies in the library. Were the reference resolved in the search scope, the return type of `Ref.get()` would
+     * silently become an unresolved `p.Lib`.
+     *
+     * The same for the binary [org.jetbrains.kotlin.load.java.JavaClassFinder] of java-direct:
+     * `JavaClassFinderOverBinaryIndexTest.testACrossReferenceIsResolvedOutsideTheVisibleClasspath`.
+     */
+    @Test
+    fun testBinaryCrossReferenceIsResolvedOutsideTheSearchScope() {
+        val libraryClasses = compileJava("lib", "p/Lib.java" to "package p; public class Lib {}")
+        val outputClasses = compileJava(
+            "out",
+            "p/Ref.java" to "package p; public class Ref { public Lib get() { return null; } }",
+            classpath = libraryClasses,
+        )
+        val manager = configureManager(binaryRoot(outputClasses), binaryRoot(libraryClasses))
+        val outputOnly = scopeOf(outputClasses)
+
+        assertNull(manager.findClass(LIB_ID, outputOnly)) { "p.Lib lies in the library, which this scope does not hold" }
+
+        val ref = checkNotNull(manager.findClass(REF_ID, outputOnly)) { "p.Ref lies in the output directory" }
+        val returnType = ref.methods.single { it.name.asString() == "get" }.returnType as JavaClassifierType
+        assertEquals(
+            LIB_ID.asSingleFqName(), (returnType.classifier as? JavaClass)?.fqName,
+            "the return type of Ref.get() is resolved although p.Lib is outside the scope Ref itself was read through"
+        )
+    }
+
+    /** Compiles [sources], given as pairs of a path relative to the source root and its text, into `$name` of [javaFilesDir]. */
+    private fun compileJava(name: String, vararg sources: Pair<String, String>, classpath: File? = null): File {
+        val sourceFiles = sources.map { source ->
+            File(javaFilesDir, "$name-src/${source.first}").apply {
+                parentFile.mkdirs()
+                writeText(source.second)
+            }
+        }
+        val destination = File(javaFilesDir, name).apply { mkdirs() }
+        val options = listOfNotNull("-d", destination.path, classpath?.let { "-classpath" }, classpath?.path)
+        compileJavaFiles(sourceFiles, options).assertSuccessful()
+        return destination
+    }
+
+    private fun binaryRoot(classesDirectory: File): JavaRoot =
+        JavaRoot(virtualFile(classesDirectory), JavaRoot.RootType.BINARY)
+
+    /** The scope of the class files under [classesDirectory], compared by path: the file system hands out a new [VirtualFile] per lookup. */
+    private fun scopeOf(classesDirectory: File): GlobalSearchScope {
+        val rootPath = virtualFile(classesDirectory).path + "/"
+        return object : GlobalSearchScope(project) {
+            override fun contains(file: VirtualFile): Boolean = file.path.startsWith(rootPath)
+            override fun isSearchInModuleContent(aModule: Module): Boolean = true
+            override fun isSearchInLibraries(): Boolean = true
+        }
+    }
+
+    private fun virtualFile(file: File): VirtualFile =
+        checkNotNull(StandardFileSystems.local().findFileByPath(file.path)) { "no virtual file for $file" }
+
     private fun createProject(): Project {
         val configuration = KotlinTestUtils.newConfiguration(
             ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
@@ -231,14 +300,17 @@ class KotlinCliJavaFileManagerTest {
 
         File(fooPackageDir, "$className.java").writeText(text)
 
+        return configureManager(JavaRoot(virtualFile(javaFilesDir), JavaRoot.RootType.SOURCE))
+    }
+
+    private fun configureManager(vararg roots: JavaRoot): KotlinCliJavaFileManagerImpl {
         // Initialize classpath/index in the manager
         VirtualFileFinder.getInstance(project, module = null)
 
         val coreJavaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
         coreJavaFileManager.initialize(
-            JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
+            JvmDependenciesIndexImpl(roots.toList()),
             emptyList(),
             SingleJavaFileRootsIndex(emptyList()),
             usePsiClassFilesReading = false,
@@ -277,5 +349,10 @@ class KotlinCliJavaFileManagerTest {
         val classId = ClassId(FqName(packageFQName), FqName(classFqName), isLocal = false)
         val foundClass = manager.findClass(classId, GlobalSearchScope.allScope(project))
         assertNull(foundClass) { "Found, but shouldn't have: $classId" }
+    }
+
+    private companion object {
+        private val LIB_ID = ClassId(FqName("p"), Name.identifier("Lib"))
+        private val REF_ID = ClassId(FqName("p"), Name.identifier("Ref"))
     }
 }
