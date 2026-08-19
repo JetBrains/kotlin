@@ -74,6 +74,26 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         }
     }
 
+    fun testReassignedTypeArguments(): KaType {
+        val stringType = getTypeByCaret("string")
+        val intType = getTypeByCaret("int")
+        return session.typeCreator.classType(StandardClassIds.List) {
+            invariantTypeArgument(stringType)
+            typeArguments = listOf(typeProjection(Variance.INVARIANT, intType))
+        }
+    }
+
+    fun testReassignedAnnotations(): KaType {
+        val annotationClassId1 = ClassId.fromString("MyAnno1")
+        val annotationClassId2 = ClassId.fromString("MyAnno2")
+
+        val userTypeSymbol = getClassLikeSymbolByCaret("type")
+        return session.typeCreator.classType(userTypeSymbol) {
+            annotation(annotationClassId1)
+            annotations = listOf(annotationClassId2)
+        }
+    }
+
     fun testNonExistingClassIdWithAnnotations(): KaType {
         val annotationClassId1 = ClassId.fromString("MyAnno1")
         val annotationClassId2 = ClassId.fromString("MyAnno2")

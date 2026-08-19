@@ -103,6 +103,25 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
         }
     }
 
+    fun testReassignedValueParameters(): KaType {
+        val type = getTypeByCaret("type")
+        return session.typeCreator.functionType {
+            valueParameter(Name.identifier("first"), type)
+            valueParameter(Name.identifier("second"), type)
+            valueParameter(Name.identifier("third"), type)
+            valueParameters = valueParameters.filter { it.name != Name.identifier("second") }
+        }
+    }
+
+    fun testReassignedContextParameters(): KaType {
+        val stringType = getTypeByCaret("string")
+        val intType = getTypeByCaret("int")
+        return session.typeCreator.functionType {
+            contextParameter(stringType)
+            contextParameters = listOf(intType)
+        }
+    }
+
     fun testWithPluginAnnotation(): KaType {
         val annotationClassId = PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID
         return session.typeCreator.functionType {

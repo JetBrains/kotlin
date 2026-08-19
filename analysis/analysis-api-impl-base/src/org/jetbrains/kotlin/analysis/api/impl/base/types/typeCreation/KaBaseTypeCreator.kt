@@ -76,11 +76,16 @@ abstract class KaBaseTypeCreator<T : KaSession>(val analysisSession: T) : KaType
 
 @KaImplementationDetail
 abstract class KaBaseTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
-    val backingAnnotations = mutableListOf<ClassId>()
+    private val backingAnnotations = mutableListOf<ClassId>()
 
-    override val annotations: List<ClassId>
-        get() = withValidityAssertion {
-            backingAnnotations
+    override var annotations: List<ClassId>
+        get() = withValidityAssertion { backingAnnotations }
+        set(value) {
+            withValidityAssertion {
+                val copy = value.toList()
+                backingAnnotations.clear()
+                backingAnnotations += copy
+            }
         }
 
     override fun annotation(annotationClassId: ClassId) = withValidityAssertion {
@@ -113,8 +118,15 @@ class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBu
             }
         }
 
-    override val typeArguments: List<KaTypeProjection>
+    override var typeArguments: List<KaTypeProjection>
         get() = withValidityAssertion { backingTypeArguments }
+        set(value) {
+            withValidityAssertion {
+                val copy = value.toList()
+                backingTypeArguments.clear()
+                backingTypeArguments += copy
+            }
+        }
 
     override fun typeArgument(argument: KaTypeProjection) = withValidityAssertion {
         backingTypeArguments += argument
@@ -219,7 +231,15 @@ class KaBaseIntersectionTypeBuilder(
 
     private fun KaType.unwrapConjunct(): List<KaType> = (this as? KaIntersectionType)?.conjuncts ?: listOf(this)
 
-    override val conjuncts: Set<KaType> get() = withValidityAssertion { backingConjuncts }
+    override var conjuncts: Set<KaType>
+        get() = withValidityAssertion { backingConjuncts }
+        set(value) {
+            withValidityAssertion {
+                val copy = value.flatMap { it.unwrapConjunct() }
+                backingConjuncts.clear()
+                backingConjuncts += copy
+            }
+        }
 
     override fun conjunct(conjunct: KaType): Unit = withValidityAssertion {
         backingConjuncts += conjunct.unwrapConjunct()
@@ -268,8 +288,15 @@ class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaS
 
     private val backingContextParameters: MutableList<KaType> = mutableListOf()
 
-    override val contextParameters: List<KaType>
+    override var contextParameters: List<KaType>
         get() = withValidityAssertion { backingContextParameters }
+        set(value) {
+            withValidityAssertion {
+                val copy = value.toList()
+                backingContextParameters.clear()
+                backingContextParameters += copy
+            }
+        }
 
     override fun contextParameter(contextParameter: KaType) = withValidityAssertion {
         backingContextParameters += contextParameter
@@ -279,12 +306,18 @@ class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaS
 
     private val backingValueParameters: MutableList<KaFunctionValueParameter> = mutableListOf()
 
-    override val valueParameters: List<KaFunctionValueParameter>
+    override var valueParameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion { backingValueParameters }
+        set(value) {
+            withValidityAssertion {
+                val copy = value.toList()
+                backingValueParameters.clear()
+                backingValueParameters += copy
+            }
+        }
 
     override fun valueParameter(name: Name?, type: KaType) = withValidityAssertion {
-        val valueParameter = KaBaseFunctionValueParameter(name, type)
-        backingValueParameters += valueParameter
+        backingValueParameters += KaBaseFunctionValueParameter(name, type)
     }
 
     override fun valueParameter(name: Name?, type: () -> KaType) = valueParameter(name, type())

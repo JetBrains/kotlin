@@ -263,9 +263,14 @@ public interface KaTypeBuilderWithAnnotations : KaTypeBuilder {
     /**
      * A list of annotation [ClassId]s, which are used to construct annotations of the resulting type.
      *
+     * Assigning the property replaces all previously registered annotations, while the [annotation] and [annotations]
+     * functions append to them.
+     *
+     * The assigned collection is copied, so its later modifications do not affect the builder.
+     *
      * @see KaType.annotations
      */
-    public val annotations: List<ClassId>
+    public var annotations: List<ClassId>
 
     /**
      * Adds [annotationClassId] to [annotations].
@@ -327,9 +332,13 @@ public interface KaClassTypeBuilder : KaTypeBuilderWithAnnotations {
 
     /**
      * List of type arguments that are currently registered in the builder.
-     * A type argument can be added using [typeArgument], [typeArguments] or [invariantTypeArgument].
+     *
+     * Assigning the property replaces the all previously registered type arguments, while [typeArgument], [typeArguments]
+     * or [invariantTypeArgument] functions append to them.
+     *
+     * The assigned collection is copied, so its later modifications do not affect the builder.
      */
-    public val typeArguments: List<KaTypeProjection>
+    public var typeArguments: List<KaTypeProjection>
 
     /**
      * Adds [type] as an [invariant][Variance.INVARIANT] type argument to the class type.
@@ -486,8 +495,13 @@ public interface KaFlexibleTypeBuilder : KaTypeBuilderWithAnnotations {
 public interface KaIntersectionTypeBuilder : KaTypeBuilder {
     /**
      * A set of individual types participating in the intersection.
+     *
+     * Assigning the property replaces the registered conjuncts, while the [conjunct] and [conjuncts] functions
+     * append to them.
+     *
+     * The assigned collection is copied, so its later modifications do not affect the builder.
      */
-    public val conjuncts: Set<KaType>
+    public var conjuncts: Set<KaType>
 
     /**
      * Adds a [conjunct] to the [conjuncts] set.
@@ -565,9 +579,14 @@ public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
      * Note that Kotlin prohibits context parameters in reflection types.
      * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
      *
+     * Assigning the property replaces the registered context parameters, while the [contextParameter] function
+     * appends to them.
+     *
+     * The assigned collection is copied, so its later modifications do not affect the builder.
+     *
      * @see KaFunctionType.contextReceivers
      */
-    public val contextParameters: List<KaType>
+    public var contextParameters: List<KaType>
 
     /**
      * Adds the given [contextParameter] to the [contextParameters] list.
@@ -597,9 +616,14 @@ public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * Function value parameters.
      *
+     * Assigning the property replaces the registered value parameters, while the [valueParameter] function appends
+     * to them.
+     *
+     * The assigned collection is copied, so its later modifications do not affect the builder.
+     *
      * @see KaFunctionType.parameters
      */
-    public val valueParameters: List<KaFunctionValueParameter>
+    public var valueParameters: List<KaFunctionValueParameter>
 
     /**
      * Adds a value parameter with the given [name] and [type] to the [valueParameters] list.

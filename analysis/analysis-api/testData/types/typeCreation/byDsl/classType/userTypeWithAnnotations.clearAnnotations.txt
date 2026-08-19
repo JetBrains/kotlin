@@ -1,0 +1,19 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: A
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(A)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+A

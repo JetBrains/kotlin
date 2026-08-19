@@ -29,8 +29,8 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
 
         typeCreator.classType(sourceSymbol) {
             isMarkedNullable = sourceIsMarkedNullable
-            typeArguments { sourceTypeArguments }
-            annotations(sourceAnnotationClassIds)
+            typeArguments = sourceTypeArguments
+            annotations = sourceAnnotationClassIds
             init()
         } as KaClassType
     }
@@ -56,15 +56,11 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
                 isMarkedNullable = sourceIsMarkedNullable
                 isSuspend = sourceIsSuspend
                 isReflectType = sourceIsReflectType
-                for (contextReceiver in sourceContextReceivers) {
-                    contextParameter(contextReceiver.type)
-                }
+                contextParameters = sourceContextReceivers.map { it.type }
                 receiverType = sourceReceiverType
-                for (parameter in sourceParameters) {
-                    valueParameter(parameter.name, parameter.type)
-                }
+                valueParameters = sourceParameters
                 returnType = sourceReturnType
-                annotations(sourceAnnotationClassIds)
+                annotations = sourceAnnotationClassIds
                 init()
             }
         }
@@ -79,7 +75,7 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
 
             typeCreator.typeParameterType(sourceSymbol) {
                 isMarkedNullable = sourceIsMarkedNullable
-                annotations(sourceAnnotationClassIds)
+                annotations = sourceAnnotationClassIds
                 init()
             }
         }

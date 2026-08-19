@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExec
 import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiExecutionTestEnvironment
 import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiTestEnvironmentStorage
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.testInfo
+import org.jetbrains.kotlin.types.Variance
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.fail
@@ -100,6 +102,60 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     fun `classType boxedArrayWithStringTypeArgument +addTypeArgument`() = test<KaClassType> { type ->
         type.copy {
             typeArgument(typeCreator.starTypeProjection())
+        }
+    }
+
+    @Test
+    @TestMetadata("classType/boxedArrayWithStringTypeArgument.kt")
+    fun `classType boxedArrayWithStringTypeArgument +replaceTypeArgument`() = test<KaClassType> { type ->
+        type.copy {
+            typeArguments = listOf(typeCreator.typeProjection(Variance.INVARIANT, builtinTypes.int))
+        }
+    }
+
+    @Test
+    @TestMetadata("classType/boxedArrayWithStringTypeArgument.kt")
+    fun `classType boxedArrayWithStringTypeArgument +clearTypeArguments`() = test<KaClassType> { type ->
+        type.copy {
+            typeArguments = emptyList()
+        }
+    }
+
+    @Test
+    @TestMetadata("classType/boxedArrayWithStringTypeArgument.kt")
+    fun `classType boxedArrayWithStringTypeArgument +assignedCollectionIsCopied`() = test<KaClassType> { type ->
+        type.copy {
+            val arguments = mutableListOf<KaTypeProjection>(typeCreator.typeProjection(Variance.INVARIANT, builtinTypes.int))
+            typeArguments = arguments
+
+            // Should not affect the resulting type as the assigned collection is copied
+            arguments.clear()
+        }
+    }
+
+    @Test
+    @TestMetadata("classType/boxedArrayWithStringTypeArgument.kt")
+    fun `classType boxedArrayWithStringTypeArgument +selfReassignedTypeArguments`() = test<KaClassType> { type ->
+        type.copy {
+            typeArguments = typeArguments.map {
+                typeCreator.typeProjection(Variance.OUT_VARIANCE, (it as KaTypeArgumentWithVariance).type)
+            }
+        }
+    }
+
+    @Test
+    @TestMetadata("classType/userTypeWithAnnotations.kt")
+    fun `classType userTypeWithAnnotations +replaceAnnotations`() = test<KaClassType> { type ->
+        type.copy {
+            annotations = listOf(ClassId.fromString("MyAnno4"))
+        }
+    }
+
+    @Test
+    @TestMetadata("classType/userTypeWithAnnotations.kt")
+    fun `classType userTypeWithAnnotations +clearAnnotations`() = test<KaClassType> { type ->
+        type.copy {
+            annotations = emptyList()
         }
     }
 
@@ -241,6 +297,23 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     fun `functionType basicFunWithIntReturnType +changeReturnType`() = test<KaFunctionType> { type ->
         type.copy {
             returnType = typeCreator.classType(StandardClassIds.String)
+        }
+    }
+
+    @Test
+    @TestMetadata("functionType/fourIntValueParameters.kt")
+    fun `functionType fourIntValueParameters +replaceValueParameters`() = test<KaFunctionType> { type ->
+        type.copy {
+            valueParameters = emptyList()
+            valueParameter(Name.identifier("str"), typeCreator.classType(StandardClassIds.String))
+        }
+    }
+
+    @Test
+    @TestMetadata("functionType/withContextParameterReceiverAndValueParameter.kt")
+    fun `functionType withContextParameterReceiverAndValueParameter +clearContextParameters`() = test<KaFunctionType> { type ->
+        type.copy {
+            contextParameters = emptyList()
         }
     }
 

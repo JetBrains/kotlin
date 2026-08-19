@@ -296,6 +296,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
+    @TestMetadata("reassignedAnnotations.kt")
+    public void testReassignedAnnotations() {
+      run("reassignedAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("reassignedTypeArguments.kt")
+    public void testReassignedTypeArguments() {
+      run("reassignedTypeArguments.kt");
+    }
+
+    @Test
     @TestMetadata("typeAlias.kt")
     public void testTypeAlias() {
       run("typeAlias.kt");
@@ -550,6 +562,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
+    @TestMetadata("reassignedContextParameters.kt")
+    public void testReassignedContextParameters() {
+      run("reassignedContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("reassignedValueParameters.kt")
+    public void testReassignedValueParameters() {
+      run("reassignedValueParameters.kt");
+    }
+
+    @Test
     @TestMetadata("reflectAndSuspendWithDefaultValues.kt")
     public void testReflectAndSuspendWithDefaultValues() {
       run("reflectAndSuspendWithDefaultValues.kt");
@@ -645,6 +669,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     @TestMetadata("flexibleTypeAsConjunct.kt")
     public void testFlexibleTypeAsConjunct() {
       run("flexibleTypeAsConjunct.kt");
+    }
+
+    @Test
+    @TestMetadata("reassignedConjuncts.kt")
+    public void testReassignedConjuncts() {
+      run("reassignedConjuncts.kt");
+    }
+
+    @Test
+    @TestMetadata("reassignedConjunctsWithNestedIntersection.kt")
+    public void testReassignedConjunctsWithNestedIntersection() {
+      run("reassignedConjunctsWithNestedIntersection.kt");
     }
 
     @Test

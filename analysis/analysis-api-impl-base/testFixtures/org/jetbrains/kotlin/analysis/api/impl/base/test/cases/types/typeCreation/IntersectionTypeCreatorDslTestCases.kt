@@ -83,6 +83,30 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         }
     }
 
+    fun testReassignedConjuncts(): KaType {
+        val type1 = getTypeByCaret("1")
+        val type2 = getTypeByCaret("2")
+        val type3 = getTypeByCaret("3")
+        return session.typeCreator.intersectionType {
+            conjunct(type1)
+            conjuncts = setOf(type2, type3)
+        }
+    }
+
+    fun testReassignedConjunctsWithNestedIntersection(): KaType {
+        val type1 = getTypeByCaret("1")
+        val type2 = getTypeByCaret("2")
+        val type3 = getTypeByCaret("3")
+        val intersection = session.typeCreator.intersectionType {
+            conjunct(type1)
+            conjunct(type2)
+        }
+
+        return session.typeCreator.intersectionType {
+            conjuncts = setOf(intersection, type3)
+        }
+    }
+
     fun testWithAnnotationsOnConjuncts(): KaType {
         val annotationClassId1 = ClassId.fromString("MyAnno1")
         val annotationClassId2 = ClassId.fromString("MyAnno2")
