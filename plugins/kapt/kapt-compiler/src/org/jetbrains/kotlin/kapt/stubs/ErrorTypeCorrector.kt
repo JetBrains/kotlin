@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.kapt.stubs
 import com.intellij.psi.util.PsiTreeUtil
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -30,9 +29,9 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.kapt.base.getJavacList
 import org.jetbrains.kotlin.kapt.base.javac.kaptError
 import org.jetbrains.kotlin.kapt.base.mapJList
-import org.jetbrains.kotlin.kapt.base.getJavacList
 import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.util.joinPairedText
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeMapper.getVarianceForWildcard
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -151,9 +151,7 @@ class ErrorTypeCorrector(
         val typeParameter = typeParameters?.getOrNull(index)
         val typeArgument = type.getArguments().getOrNull(index)
         val variance = if (typeArgument != null && typeParameter != null && !typeArgument.isStarProjection()) {
-            with(KotlinTypeMapper) {
-                getVarianceForWildcard(typeParameter, typeArgument, typeMappingMode)
-            }
+            getVarianceForWildcard(typeParameter, typeArgument, typeMappingMode)
         } else {
             null
         }

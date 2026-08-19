@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -27,6 +26,9 @@ import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeMapper
+import org.jetbrains.kotlin.types.AbstractTypeMapper.hasNothingInNonContravariantPosition
+import org.jetbrains.kotlin.types.AbstractTypeMapper.writeFormalTypeParameter
+import org.jetbrains.kotlin.types.AbstractTypeMapper.writeGenericArguments
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContextForTypeMapping
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -116,11 +118,9 @@ open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase()
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
-        with(KotlinTypeMapper) {
-            for (typeParameter in irParameters) {
-                typeSystem.writeFormalTypeParameter(typeParameter.symbol, sw) { type, mode ->
-                    mapType(type as IrType, mode, sw)
-                }
+        for (typeParameter in irParameters) {
+            typeSystem.writeFormalTypeParameter(typeParameter.symbol, sw) { type, mode ->
+                mapType(type as IrType, mode, sw)
             }
         }
     }
@@ -148,7 +148,7 @@ open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase()
         }
 
         if (type !is IrSimpleType) return
-        if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty() || type.isRawTypeImpl()) {
+        if (skipGenericSignature() || typeSystem.hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty() || type.isRawTypeImpl()) {
             writeAsmType(asmType)
             return
         }
@@ -176,10 +176,6 @@ open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase()
         }
 
         writeClassEnd()
-    }
-
-    private fun hasNothingInNonContravariantPosition(irType: IrType): Boolean = with(KotlinTypeMapper) {
-        typeSystem.hasNothingInNonContravariantPosition(irType)
     }
 
     private fun writeInnerParts(
@@ -222,10 +218,8 @@ open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase()
         parameters: List<IrTypeParameterSymbol>,
         mode: TypeMappingMode,
     ) {
-        with(KotlinTypeMapper) {
-            typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
-                mapType(type as IrType, mode, sw)
-            }
+        typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
+            mapType(type as IrType, mode, sw)
         }
     }
 }
