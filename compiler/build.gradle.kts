@@ -72,7 +72,6 @@ projectTests {
     testData(isolated, "testData/moduleProtoBuf")
     testData(isolated, "testData/modules.xml")
     testData(isolated, "testData/serialization")
-    testData(isolated, "testData/versionRequirement")
     testData(isolated, "testData/writeFlags")
     testData(isolated, "testData/writeSignature")
     withJvmStdlibAndReflect()
