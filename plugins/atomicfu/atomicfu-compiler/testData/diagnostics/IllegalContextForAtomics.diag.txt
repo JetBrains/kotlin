@@ -1,3 +1,35 @@
+/IllegalContextForAtomics.kt:7:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:8:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:9:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:10:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:11:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:12:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:13:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:14:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:16:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:17:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:18:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:19:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:21:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:22:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:23:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/IllegalContextForAtomics.kt:24:5: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
 /IllegalContextForAtomics.kt:29:22: error: Atomic factories can only be called to initialize a property or as delegates.
 
 /IllegalContextForAtomics.kt:29:33: error: Atomic factories can only be called to initialize a property or as delegates.
