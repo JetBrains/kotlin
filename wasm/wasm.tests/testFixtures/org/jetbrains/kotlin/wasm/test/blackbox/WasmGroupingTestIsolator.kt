@@ -31,7 +31,15 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
+/**
+ * @param considerCustomSecondStageDirectives whether `IGNORE_KLIB_*_WITH_CUSTOM_SECOND_STAGE` directives are
+ *   meaningful for this test runner. They mark failures which are expected only when a custom second-stage
+ *   compiler is used, so for the regular Wasm runners such tests are expected to pass and need no isolation.
+ */
+class WasmGroupingTestIsolator(
+    testServices: TestServices,
+    private val considerCustomSecondStageDirectives: Boolean = false,
+) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(
             WasmEnvironmentConfigurationDirectives,
@@ -51,11 +59,18 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             moduleStructure.allDirectives.mutesCurrentBackend(CodegenTestDirectives.IGNORE_BACKEND_K2)
         ) return BatchToken.Isolated
 
+        if (considerCustomSecondStageDirectives) {
+            val customSecondStageIgnoreDirectives = listOf(
+                CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+                CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+                CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            )
+            if (customSecondStageIgnoreDirectives.any { it in moduleStructure.allDirectives })
+                return BatchToken.Isolated
+        }
+
         val isolationDirectives = listOf(
             // some test failures can bring down an entire batch, so where those failures are expected, tests need to be run in isolated mode
-            CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
-            CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
-            CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             WasmEnvironmentConfigurationDirectives.WASM_IGNORE_FOR,
             // other isolation reasons
             WasmEnvironmentConfigurationDirectives.WASM_STANDALONE,
