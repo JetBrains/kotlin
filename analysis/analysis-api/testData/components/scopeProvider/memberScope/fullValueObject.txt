@@ -161,7 +161,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: null
+  javaMethodName: isSuccess
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -248,7 +248,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
-  javaMethodName: null
+  javaMethodName: equals
   importableFqName: test.Success.equals
 
 KaNamedFunctionSymbol:
@@ -296,7 +296,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
-  javaMethodName: null
+  javaMethodName: hashCode
   importableFqName: test.Success.hashCode
 
 KaNamedFunctionSymbol:
@@ -344,7 +344,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
-  javaMethodName: null
+  javaMethodName: toString
   importableFqName: test.Success.toString
 
 KaConstructorSymbol:
