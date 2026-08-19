@@ -33,6 +33,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
     testImplementation(project(":kotlin-util-klib-metadata"))
     testImplementation(project(":native:cinterop.deserialization"))
+    testImplementation(project(":compiler:cli-metadata"))
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))
@@ -57,6 +58,8 @@ projectTests {
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
     testData(project(":native:native.tests").isolated, "testData/oneStageCompilation")
+
+    withStdlibCommon()
 
     nativeTestTask(
         "test",
