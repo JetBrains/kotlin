@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import llvm.LLVMModuleRef
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringsSecondStagePhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.common.phaser.createModulePhase
+import org.jetbrains.kotlin.backend.common.phaser.createModulePhases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
@@ -92,7 +93,7 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
-        backendEngine.runModuleWisePhase(createModulePhase(::FunctionsWithoutBoundCheckGenerator), listOf(irModule))
+        backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModule))
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
@@ -131,27 +132,30 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             }
         }
 
-        fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, loweringsToLaunch: LoweringList) {
-            runEngineForLowerings {
-                val module = fragment.irModule
-                partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
-            }
-        }
+        fun List<Pair<BackendJobFragment, NativeGenerationState>>.runSpecifiedLowerings(loweringsToLaunch: LoweringList) =
+                forEach { [fragment, state] ->
+                    state.runEngineForLowerings {
+                        val module = fragment.irModule
+                        partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
+                    }
+                }
 
-        fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, moduleLowering: ModuleLowering) {
-            runEngineForLowerings {
-                val module = fragment.irModule
-                partiallyLowerModuleWithDependencies(module, moduleLowering)
-            }
-        }
+        fun List<Pair<BackendJobFragment, NativeGenerationState>>.runSpecifiedLowering(phase: (NativeLoweringContext) -> ModuleLoweringPass) =
+                forEach { [fragment, state] ->
+                    state.runEngineForLowerings {
+                        val module = fragment.irModule
+                        partiallyLowerModuleWithDependencies(module, createModulePhases(phase).first())
+                    }
+                }
 
-        fun NativeGenerationState.finalizeLowerings(fragment: BackendJobFragment) {
-            runEngineForLowerings {
-                val module = fragment.irModule
-                val dependenciesToCompile = findDependenciesToCompile()
-                mergeDependencies(module, dependenciesToCompile)
-            }
-        }
+        fun List<Pair<BackendJobFragment, NativeGenerationState>>.finalizeLowerings() =
+                forEach { [fragment, state] ->
+                    state.runEngineForLowerings {
+                        val module = fragment.irModule
+                        val dependenciesToCompile = findDependenciesToCompile()
+                        mergeDependencies(module, dependenciesToCompile)
+                    }
+                }
 
         fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
             val generationStates = this.map { fragment -> createGenerationState(fragment) }
@@ -164,8 +168,8 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
             // (like IR visibility checks).
             // This is what we call a 'lowering synchronization point'.
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::IrValidationBeforeLoweringsKlibSecondStagePhase)) }
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::InlineCallCycleCheckerLowering)) }
+            fragmentWithState.runSpecifiedLowering(::IrValidationBeforeLoweringsKlibSecondStagePhase)
+            fragmentWithState.runSpecifiedLowering(::InlineCallCycleCheckerLowering)
 
             run {
                 // This is a so-called "KLIB Common Lowerings Prefix".
@@ -177,17 +181,19 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // synthetic accessors) have been already applied.
                 // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
                 // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, getLoweringsUpToAndIncludingSyntheticAccessors()) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::NativeIrValidationAfterInliningPrivateFunctionsKlibPhase)) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createNativePhases(::NativeAllFunctionInlining)) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createNativePhases(::SpecialObjCValidationLowering, ::RedundantCastsRemoverLowering)) }
+                fragmentWithState.runSpecifiedLowerings(getLoweringsUpToAndIncludingSyntheticAccessors())
+                fragmentWithState.runSpecifiedLowering(::NativeIrValidationAfterInliningPrivateFunctionsKlibPhase)
+                fragmentWithState.runSpecifiedLowerings(createNativePhases(::NativeAllFunctionInlining))
+                fragmentWithState.runSpecifiedLowerings(
+                        createNativePhases(::SpecialObjCValidationLowering, ::RedundantCastsRemoverLowering)
+                )
             }
 
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::NativeIrValidationAfterInliningAllFunctionsKlibSecondStagePhase)) }
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, state.context.config.getLoweringsAfterInlining()) }
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::IrValidationAfterLoweringsSecondStagePhase)) }
+            fragmentWithState.runSpecifiedLowering(::NativeIrValidationAfterInliningAllFunctionsKlibSecondStagePhase)
+            fragmentWithState.runSpecifiedLowerings(context.config.getLoweringsAfterInlining())
+            fragmentWithState.runSpecifiedLowering(::IrValidationAfterLoweringsSecondStagePhase)
 
-            fragmentWithState.forEach { [fragment, state] -> state.finalizeLowerings(fragment) }
+            fragmentWithState.finalizeLowerings()
 
             return generationStates
         }
