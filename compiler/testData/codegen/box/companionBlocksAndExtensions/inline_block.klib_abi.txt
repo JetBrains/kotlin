@@ -5,10 +5,18 @@
 
 // Library unique name: <main>
 final class /A { // /A|null[0]
+    final val compBlockInlineVal // /A.compBlockInlineVal|#static{}compBlockInlineVal[0]
+        final inline fun <get-compBlockInlineVal>(): kotlin/String // /A.compBlockInlineVal.<get-compBlockInlineVal>|<get-compBlockInlineVal>#static(){}[0]
+    final var compBlockInlineVar // /A.compBlockInlineVar|#static{}compBlockInlineVar[0]
+        final inline fun <get-compBlockInlineVar>(): kotlin/String // /A.compBlockInlineVar.<get-compBlockInlineVar>|<get-compBlockInlineVar>#static(){}[0]
+        final inline fun <set-compBlockInlineVar>(kotlin/String) // /A.compBlockInlineVar.<set-compBlockInlineVar>|<set-compBlockInlineVar>#static(kotlin.String){}[0]
     final val compBlockVal // /A.compBlockVal|#static{}compBlockVal[0]
         final fun <get-compBlockVal>(): kotlin/UInt // /A.compBlockVal.<get-compBlockVal>|<get-compBlockVal>#static(){}[0]
     final val compBlockValI // /A.compBlockValI|#static{}compBlockValI[0]
         final fun <get-compBlockValI>(): kotlin/Int // /A.compBlockValI.<get-compBlockValI>|<get-compBlockValI>#static(){}[0]
+    final var compBlockVarI // /A.compBlockVarI|#static{}compBlockVarI[0]
+        final fun <get-compBlockVarI>(): kotlin/Int // /A.compBlockVarI.<get-compBlockVarI>|<get-compBlockVarI>#static(){}[0]
+        final fun <set-compBlockVarI>(kotlin/Int) // /A.compBlockVarI.<set-compBlockVarI>|<set-compBlockVarI>#static(kotlin.Int){}[0]
     constructor <init>() // /A.<init>|<init>(){}[0]
     final inline fun compBlockFun(kotlin/UInt = ...): kotlin/String // /A.compBlockFun|compBlockFun#static(kotlin.UInt){}[0]
 }
