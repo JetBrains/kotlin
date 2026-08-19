@@ -823,7 +823,7 @@ private fun evaluateBinary(
     val functionName = callableId.callableName.asString()
 
     // Check for division by zero
-    if (functionName == "div" || functionName == "rem" || functionName == "mod" || functionName == "floorDiv") {
+    if (callableId.isDivisionOperation) {
         if (!leftCompileTimeType.isFloatingPoint() && !rightCompileTimeType.isFloatingPoint() && (arg2.value as? Number)?.toLong() == 0L) {
             // If expression is division by zero, then return the original expression as a result. We will handle on later steps.
             return DivisionByZero
@@ -851,6 +851,13 @@ private fun Any?.adjustTypeAndConvertToResult(original: FirExpression, expectedT
     val typeAdjustedValue = expectedKind.convertToGivenKind(this) ?: return NotConst
     return typeAdjustedValue.toConstExpression(expectedKind, original).wrap()
 }
+
+private val divisions = setOf(
+    OperatorNameConventions.DIV, OperatorNameConventions.REM, Name.identifier("mod"), Name.identifier("floorDiv")
+)
+
+val CallableId.isDivisionOperation: Boolean
+    get() = packageName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME && callableName in divisions
 
 private val CallableId.isStringLength: Boolean
     get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "length"
