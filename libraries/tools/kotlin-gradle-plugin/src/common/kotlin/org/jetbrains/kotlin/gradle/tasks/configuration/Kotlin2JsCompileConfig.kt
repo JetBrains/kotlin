@@ -65,8 +65,8 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             task.enableUnsafeIncrementalCompilationForMultiplatform
                 .convention(
                     when (compilation.platformType) {
-                        KotlinPlatformType.js -> propertiesProvider.enableJsUnsafeOptimizationsForMultiplatform
-                        KotlinPlatformType.wasm -> propertiesProvider.enableWasmUnsafeOptimizationsForMultiplatform
+                        KotlinPlatformType.js -> propertiesProvider.enableJsIncrementalCompilationOfCommonSources
+                        KotlinPlatformType.wasm -> propertiesProvider.enableWasmIncrementalCompilationOfCommonSources
                         else -> project.providers.provider { false }
                     }
                 )

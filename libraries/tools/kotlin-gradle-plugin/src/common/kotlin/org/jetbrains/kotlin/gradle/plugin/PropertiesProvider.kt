@@ -623,12 +623,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
     /** See [enableJvmIncrementalCompilationOfCommonSources] */
-    val enableJsUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    val enableJsIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
     /** See [enableJvmIncrementalCompilationOfCommonSources] */
-    val enableWasmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    val enableWasmIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
     /**
      * Context: assume that incremental compilation of a.kt makes b.kt dirty (for example, because some function needs to be re-inlined)
@@ -905,10 +905,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
             property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
-        val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.wasm.enableUnsafeOptimizationsForMultiplatform")
+        val KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("$KOTLIN_INTERNAL_NAMESPACE.js.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("$KOTLIN_INTERNAL_NAMESPACE.wasm.enableIncrementalCompilationOfCommonSources")
         val KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA =
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableKmpClasspathMetadataForIncrementalCompilation")
         val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")

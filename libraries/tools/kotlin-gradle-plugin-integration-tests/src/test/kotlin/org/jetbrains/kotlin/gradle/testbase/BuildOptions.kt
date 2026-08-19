@@ -62,8 +62,8 @@ data class BuildOptions(
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
     val enableJvmIncrementalCompilationOfCommonSources: Boolean? = null,
-    val enableJsUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
-    val enableWasmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableJsIncrementalCompilationOfCommonSources: Boolean? = null,
+    val enableWasmIncrementalCompilationOfCommonSources: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
@@ -319,12 +319,12 @@ data class BuildOptions(
             arguments.add("-Pkotlin.jvm.enableIncrementalCompilationOfCommonSources=$enableJvmIncrementalCompilationOfCommonSources")
         }
 
-        if (enableJsUnsafeIncrementalCompilationForMultiplatform != null) {
-            arguments.add("-Pkotlin.internal.js.enableUnsafeOptimizationsForMultiplatform=$enableJsUnsafeIncrementalCompilationForMultiplatform")
+        if (enableJsIncrementalCompilationOfCommonSources != null) {
+            arguments.add("-Pkotlin.internal.js.enableIncrementalCompilationOfCommonSources=$enableJsIncrementalCompilationOfCommonSources")
         }
 
-        if (enableWasmUnsafeIncrementalCompilationForMultiplatform != null) {
-            arguments.add("-Pkotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform=$enableWasmUnsafeIncrementalCompilationForMultiplatform")
+        if (enableWasmIncrementalCompilationOfCommonSources != null) {
+            arguments.add("-Pkotlin.internal.wasm.enableIncrementalCompilationOfCommonSources=$enableWasmIncrementalCompilationOfCommonSources")
         }
 
         if (enableMonotonousIncrementalCompileSetExpansion != null) {

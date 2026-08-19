@@ -17,7 +17,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class UnsafeOptimizationsForMultiplatformTest {
+class IncrementalCompilationOfCommonSourcesTest {
 
     @Test
     fun disabledByDefaultForEveryTarget() {
@@ -38,7 +38,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun jsPropertyAffectsOnlyJsTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.js.enableUnsafeOptimizationsForMultiplatform",
+            enabledProperty = "kotlin.internal.js.enableIncrementalCompilationOfCommonSources",
             expectedJvm = false, expectedJs = true, expectedWasm = false,
         )
     }
@@ -46,7 +46,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun wasmPropertyAffectsOnlyWasmTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform",
+            enabledProperty = "kotlin.internal.wasm.enableIncrementalCompilationOfCommonSources",
             expectedJvm = false, expectedJs = false, expectedWasm = true,
         )
     }

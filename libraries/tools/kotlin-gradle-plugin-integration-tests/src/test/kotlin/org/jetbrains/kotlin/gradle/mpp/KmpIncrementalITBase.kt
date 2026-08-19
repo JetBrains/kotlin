@@ -29,8 +29,8 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
              * disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
              */
             enableJvmIncrementalCompilationOfCommonSources = true,
-            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
-            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsIncrementalCompilationOfCommonSources = true,
+            enableWasmIncrementalCompilationOfCommonSources = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     protected open val gradleTask = "assemble"

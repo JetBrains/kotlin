@@ -27,8 +27,8 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copyEnsuringK2().copy(
             // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
             enableJvmIncrementalCompilationOfCommonSources = true,
-            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
-            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsIncrementalCompilationOfCommonSources = true,
+            enableWasmIncrementalCompilationOfCommonSources = true,
             logLevel = LogLevel.DEBUG,
         )
 
