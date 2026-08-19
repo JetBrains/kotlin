@@ -256,7 +256,8 @@ class MetricContainer : Serializable {
     fun put(metric: StringMetrics, value: String) = stringMetrics.put(metric, value)
     fun put(metric: BooleanMetrics, value: Boolean) = booleanMetrics.put(metric, value)
     fun put(metric: NumericalMetrics, value: Long) = numericalMetrics.put(metric, value)
-    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, value)
+    //KT-88448: custom List implementation like BuildList could cause serialization issues and break configuration cache
+    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, ArrayList(value))
     fun put(metric: StringListMetrics, value: String) = put(metric, listOf(value))
 }
 
