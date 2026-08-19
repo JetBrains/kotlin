@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBo
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
 import java.io.File
+import java.security.MessageDigest
 
 data class PerTestOutput(val testServices: TestServices, val testModule: TestModule, val klib: BinaryArtifacts.KLib)
 data class DependencyPaths(val regular: Set<String>, val friend: Set<String>)
@@ -388,10 +389,20 @@ abstract class AbstractWasmSecondStageGroupingFacade(
 
 /**
  * Computes the synthetic per-test `ProxyLauncher` class name used by the WASM grouped test infrastructure.
- * The test infrastructure tracks this name to persistently identify the test from the testInfo
+ * The test infrastructure tracks this name to persistently identify the test from the testInfo, both when
+ * generating the launcher (see `generateGroupedBatchLauncherSource`) and later, independently, when matching
+ * executed test output back to its input (see `AbstractWasmGroupingStageBoxRunner.computeExpectedSuiteNames`).
  *
- * The hash is derived from the per-test additional package (see [computePackage]) so that
- * the result is short enough for filesystem paths yet uniquely identifies the test.
+ * [computePackage] is already unique per test, but a plain 32-bit `String.hashCode()` is not a safe way to turn
+ * an arbitrary-length unique string into a short, filesystem/identifier-friendly one: with enough tests sharing
+ * a batch, a collision between the hashes of two genuinely different (and unrelated) tests' packages becomes a
+ * real possibility (the birthday paradox), and such a collision means two distinct tests would compile to the
+ * same class - one of them silently missing from the batch. Hashing with SHA-256 and keeping 64 bits of the
+ * digest makes the identifier just as short while making a collision astronomically unlikely instead of merely
+ * unlikely.
  */
-internal fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
-    "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"
+internal fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String {
+    val digest = MessageDigest.getInstance("SHA-256").digest(computePackage(testInfo).toByteArray())
+    val hex = digest.copyOf(8).joinToString("") { "%02x".format(it.toInt() and 0xFF) }
+    return "ProxyLauncher_$hex"
+}
