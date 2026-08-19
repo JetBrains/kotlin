@@ -256,7 +256,7 @@ class MetricContainer : Serializable {
     fun put(metric: StringMetrics, value: String) = stringMetrics.put(metric, value)
     fun put(metric: BooleanMetrics, value: Boolean) = booleanMetrics.put(metric, value)
     fun put(metric: NumericalMetrics, value: Long) = numericalMetrics.put(metric, value)
-    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, value)
+    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, ArrayList(value))
     fun put(metric: StringListMetrics, value: String) = put(metric, listOf(value))
 }
 
