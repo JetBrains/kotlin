@@ -87,9 +87,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.valueParameterListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.valueParameterType
 org.jetbrains.kotlin.KtNodeType
 org.jetbrains.kotlin.KtNodeType.KtLeftBoundNodeType
-org.jetbrains.kotlin.KtNodeType.KtLeftBoundNodeType:constructor(String, Class<? extends KtElement>)
 org.jetbrains.kotlin.KtNodeType.KtLeftBoundNodeType:constructor(String, Function<ASTNode, KtElement>)
-org.jetbrains.kotlin.KtNodeType:constructor(String, Class<? extends KtElement>)
 org.jetbrains.kotlin.KtNodeType:constructor(String, Function<ASTNode, KtElement>)
 org.jetbrains.kotlin.KtNodeType:createPsi(ASTNode)
 org.jetbrains.kotlin.KtNodeTypes
