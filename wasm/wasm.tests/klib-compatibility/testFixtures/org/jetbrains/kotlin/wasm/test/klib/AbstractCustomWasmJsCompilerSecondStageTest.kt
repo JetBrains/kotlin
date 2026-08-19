@@ -104,7 +104,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             useReflectionPackageNameAnnotationIfSupported(customWasmJsCompilerSettings.defaultLanguageVersion)
         }
         nonGroupingStage {
-            useGroupingTestIsolators(::WasmGroupingTestIsolator)
+            useGroupingTestIsolators({ WasmGroupingTestIsolator(it, considerCustomSecondStageDirectives = true) })
             isolateReflectionPackageNameDependentTestsIfNeeded(customWasmJsCompilerSettings.defaultLanguageVersion)
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
