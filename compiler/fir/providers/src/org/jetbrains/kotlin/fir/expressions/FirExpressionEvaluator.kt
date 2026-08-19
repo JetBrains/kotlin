@@ -457,7 +457,7 @@ object FirExpressionEvaluator {
             val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty(session)
 
             return when {
-                propertySymbol is FirLocalPropertySymbol -> NotConst(propertyAccessExpression.source)
+                propertySymbol is FirLocalPropertySymbol -> NotConstValInConstExpression(propertyAccessExpression.source)
                 propertyAccessExpression.getExpandedType(session).classId == StandardClassIds.KClass -> NotKClassLiteral(propertyAccessExpression.source)
                 isConstWithoutInitializer -> when {
                     propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> null

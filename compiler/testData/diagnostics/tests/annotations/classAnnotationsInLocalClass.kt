@@ -6,8 +6,8 @@ open class A<T>
 
 fun foo() {
     val localProp = 1
-    @Anno("class $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>")
-    class OriginalClass<@Anno("type param $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>") T : @Anno("bound $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>") List<@Anno("nested bound $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>") Int>> : @Anno("super type $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>") A<@Anno("nested super type $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>") List<@Anno("nested nested super type $<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>localProp<!>") Int>>() {
+    @Anno("class $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>")
+    class OriginalClass<@Anno("type param $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>") T : @Anno("bound $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>") List<@Anno("nested bound $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>") Int>> : @Anno("super type $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>") A<@Anno("nested super type $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>") List<@Anno("nested nested super type $<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>localProp<!>") Int>>() {
         val prop = 0
 
         @Anno("class $<!INACCESSIBLE_OUTER_CLASS_RECEIVER, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>prop<!>")
