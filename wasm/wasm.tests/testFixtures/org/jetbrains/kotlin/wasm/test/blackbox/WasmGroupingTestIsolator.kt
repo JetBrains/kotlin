@@ -85,16 +85,17 @@ class WasmGroupingTestIsolator(
         if (moduleStructure.modules.any { module ->
                 // Isolate tests having non-Kotlin files
                 module.files.any { !it.name.endsWith(".kt") }
-                        // Tests with friend dependencies between their own modules cannot be safely grouped with other tests
-                        // (e.g. `// MODULE: lib1` + `// MODULE: main()(lib1)`).
-                        // The Wasm grouping facade synthesizes a single `-Xinclude` launcher KLIB and passes all per-test KLIBs
-                        // as ordinary `-libraries`. The JS/Wasm compiler can express friend-module relationships only for the included main module:
-                        // there is no CLI to declare friendship between two `-libraries`. As a result, friend visibility between `main` and `lib1`
-                        // of the same test is lost at IR link time, which manifests as e.g. `kotlin.internal.IrLinkageError`
-                        // or wrong override resolution for `internal open` declarations crossing module boundaries.
-                        // Isolating such tests routes them through the isolated-batch path which preserves per-test friend dependencies.
-                        || module.allDependencies.any { it.relation == DependencyRelation.FriendDependency }
             })
+            return BatchToken.Isolated
+
+        // The splitting test transformer deliberately creates a `lib` module and a `main` module with a friend
+        // dependency between them. This is needed to preserve the visibility of internal declarations after a
+        // single-module test is split, but it must not turn every splitting test into a singleton batch. Explicit
+        // friend-module test data still takes the isolated path below.
+        if (moduleStructure.modules.any { module ->
+                module.allDependencies.any { it.relation == DependencyRelation.FriendDependency }
+            } && !isSyntheticSplitTest(moduleStructure)
+        )
             return BatchToken.Isolated
 
         // Tests with companion .js/.mjs files on disk are highly likely to break in grouped execution
@@ -238,6 +239,21 @@ class WasmGroupingTestIsolator(
         "^\\s*package\\s+(${StandardNames.KOTLIN_INTERNAL_FQ_NAME}|${StandardNames.BUILT_INS_PACKAGE_FQ_NAME})\\s*$",
         RegexOption.MULTILINE,
     )
+
+    private val explicitModuleDirectiveRegex = Regex("^\\s*//\\s*MODULE\\s*:", RegexOption.MULTILINE)
+
+    private fun isSyntheticSplitTest(moduleStructure: TestModuleStructure): Boolean {
+        val modules = moduleStructure.modules
+        if (modules.size != 2) return false
+        val [lib, main] = modules
+        val friendDependency = main.allDependencies.singleOrNull()
+            ?.takeIf { it.relation == DependencyRelation.FriendDependency }
+        return friendDependency?.dependencyModule == lib &&
+                lib.allDependencies.isEmpty() &&
+                lib.name.substringAfterLast('.') == "lib" &&
+                main.name.substringAfterLast('.') == "main" &&
+                modules.flatMap { it.files }.none { it.originalContent.contains(explicitModuleDirectiveRegex) }
+    }
 
     private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
         registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
