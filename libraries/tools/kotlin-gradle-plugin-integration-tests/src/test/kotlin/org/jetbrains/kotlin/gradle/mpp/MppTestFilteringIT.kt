@@ -150,13 +150,12 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Task DSL filter configuration: include, exclude, and CLI narrowing behavior")
+    @DisplayName("Task DSL filter configuration: includeTestsMatching")
     @GradleTest
-    fun testDslTaskFilterConfiguration(gradleVersion: GradleVersion) {
+    fun testDslIncludeTestsMatching(gradleVersion: GradleVersion) {
         project("base-kotlin-multiplatform-library", gradleVersion) {
             setupSampleSources()
 
-            // 1. Task DSL includeTestsMatching pattern
             buildScriptInjection {
                 project.tasks.withType(Test::class.java).configureEach {
                     it.filter.includeTestsMatching("*SampleTest")
@@ -170,11 +169,18 @@ class MppTestFilteringIT : KGPBaseTest() {
                 "org.example.project.SampleTest#testOne",
                 "org.example.project.SampleTest#testTwo",
             )
+        }
+    }
 
-            // 2. Task DSL include pattern + exclude pattern
+    @DisplayName("Task DSL filter configuration: include and exclude patterns")
+    @GradleTest
+    fun testDslIncludeAndExcludePatterns(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            setupSampleSources()
+
             buildScriptInjection {
                 project.tasks.withType(Test::class.java).configureEach {
-                    it.filter.setIncludePatterns("org.example.project.*")
+                    it.filter.includeTestsMatching("org.example.project.*")
                     it.filter.excludeTestsMatching("*OtherTest")
                 }
             }
@@ -186,12 +192,18 @@ class MppTestFilteringIT : KGPBaseTest() {
                 "org.example.project.SampleTest#testOne",
                 "org.example.project.SampleTest#testTwo",
             )
+        }
+    }
 
-            // 3. CLI narrowing behavior: script include filter is further narrowed by CLI --tests
+    @DisplayName("Task DSL filter configuration: CLI narrowing behavior")
+    @GradleTest
+    fun testDslCliNarrowing(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            setupSampleSources()
+
             buildScriptInjection {
                 project.tasks.withType(Test::class.java).configureEach {
-                    it.filter.setIncludePatterns("*SampleTest")
-                    it.filter.setExcludePatterns()
+                    it.filter.includeTestsMatching("*SampleTest")
                 }
             }
 
