@@ -75,7 +75,7 @@ benchmark {
 
                 warmups = warmupsParam?.toInt() ?: 0
                 iterations = iterationsParam?.toInt() ?: 1
-                advanced("jvmForks", 3)
+                advanced("jvmForks", 50)
 
                 if (sizeParam != null) {
                     param("size", sizeParam.toInt())
