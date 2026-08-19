@@ -21,6 +21,12 @@ open class KClassMembersHierarchyBenchmark {
     private val targetClass2: KClass<out JavaFinalLayerNoDeclaredMembers> = JavaFinalLayerNoDeclaredMembers::class
     private val targetClass3: KClass<out JavaFinalLayerNoParents> = JavaFinalLayerNoParents::class
 
+    // Same hierarchy shape as `targetClass1`, but declared in Kotlin, and in a chain whose languages
+    // alternate Kotlin/Java down to a Java leaf and (one level deeper) a Kotlin leaf.
+    private val kotlinTargetClass: KClass<out KtFinalLayer> = KtFinalLayer::class
+    private val mixedJavaLeafTargetClass: KClass<out MixedFinalLayerJava> = MixedFinalLayerJava::class
+    private val mixedKotlinLeafTargetClass: KClass<out MixedFinalLayerKotlin> = MixedFinalLayerKotlin::class
+
     @TearDown(Level.Trial)
     fun after() {
         println("DEBUG Own (finalOwn1): " + targetClass1.members.find { it.name == "finalOwn1" }!!::class)
@@ -42,6 +48,21 @@ open class KClassMembersHierarchyBenchmark {
     @Benchmark
     open fun noParents(): String {
         return targetClass3.members.joinToString { it.toString() }
+    }
+
+    @Benchmark
+    open fun kotlinHierarchy(): String {
+        return kotlinTargetClass.members.joinToString { it.toString() }
+    }
+
+    @Benchmark
+    open fun mixedHierarchyJavaLeaf(): String {
+        return mixedJavaLeafTargetClass.members.joinToString { it.toString() }
+    }
+
+    @Benchmark
+    open fun mixedHierarchyKotlinLeaf(): String {
+        return mixedKotlinLeafTargetClass.members.joinToString { it.toString() }
     }
 
 }
