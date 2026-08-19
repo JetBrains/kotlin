@@ -36,12 +36,6 @@ fun <Context : LoweringContext> createModulePhases(
     }
 }
 
-fun <Context : LoweringContext> createModulePhase(
-    phase: ((Context) -> ModuleLoweringPass),
-    actions: Set<Action<IrElement, Context>> = DEFAULT_IR_ACTIONS,
-): NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
-    ModuleLoweringPhase(phase.extractReturnTypeArgument(), phase, actions)
-
 private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
         FunctionType.extractReturnTypeArgument(): Class<out ReturnType> {
     // Using Java reflection to extract the generic type argument from the function type.
