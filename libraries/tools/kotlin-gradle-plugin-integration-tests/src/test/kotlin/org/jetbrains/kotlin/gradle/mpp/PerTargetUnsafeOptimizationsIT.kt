@@ -42,7 +42,7 @@ class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
             "kt-62686-mpp-source-set-boundary",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+                enableJvmIncrementalCompilationOfCommonSources = true,
                 enableJsUnsafeIncrementalCompilationForMultiplatform = false,
             )
         ) {
@@ -68,7 +68,7 @@ class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
             "kt-62686-mpp-source-set-boundary",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                enableJvmUnsafeIncrementalCompilationForMultiplatform = false,
+                enableJvmIncrementalCompilationOfCommonSources = false,
                 enableJsUnsafeIncrementalCompilationForMultiplatform = true,
             )
         ) {

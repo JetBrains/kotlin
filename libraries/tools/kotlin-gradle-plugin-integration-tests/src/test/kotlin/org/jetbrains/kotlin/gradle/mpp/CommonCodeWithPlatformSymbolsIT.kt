@@ -42,7 +42,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
     private fun BuildOptions.withUnsafeOptimizationsForMultiplatform(enabled: Boolean): BuildOptions = when (platformType) {
         KotlinPlatformType.js -> copy(enableJsUnsafeIncrementalCompilationForMultiplatform = enabled)
         KotlinPlatformType.wasm -> copy(enableWasmUnsafeIncrementalCompilationForMultiplatform = enabled)
-        else -> copy(enableJvmUnsafeIncrementalCompilationForMultiplatform = enabled)
+        else -> copy(enableJvmIncrementalCompilationOfCommonSources = enabled)
     }
 
     private val platformSourceSet = "${platformType.name}Main"
