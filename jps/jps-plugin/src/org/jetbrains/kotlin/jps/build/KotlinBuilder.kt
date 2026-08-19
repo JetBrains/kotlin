@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.btapi.closeBtaBuild
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
@@ -164,6 +165,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 
     override fun buildFinished(context: CompileContext) {
+        context.closeBtaBuild()
         ensureKotlinContextDisposed(context)
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.buildFinish(context)
@@ -500,7 +502,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             environment
         )
 
-        if (!representativeTarget.isIncrementalCompilationEnabled) {
+        if (!representativeTarget.isIncrementalCompilationEnabled ||
+            representativeTarget.isIncrementalCompilationDelegatedToCompiler
+        ) {
+            // Everything below reads trackers and caches that only the legacy path populates. When the compiler runs
+            // incremental compilation itself there is nothing to read, and `incrementalCaches` is empty besides.
             return OK
         }
 

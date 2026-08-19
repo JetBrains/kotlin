@@ -103,6 +103,12 @@ object PathUtil {
     const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
     const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
 
+    const val KOTLIN_COMPILER_EMBEDDABLE_NAME = "kotlin-compiler-embeddable"
+    const val KOTLIN_COMPILER_RUNNER_NAME = "kotlin-compiler-runner"
+    const val KOTLIN_BUILD_TOOLS_IMPL_NAME = "kotlin-build-tools-impl"
+    const val KOTLIN_BUILD_TOOLS_CRI_IMPL_NAME = "kotlin-build-tools-cri-impl"
+    const val KOTLIN_TOOLING_CORE_NAME = "kotlin-tooling-core"
+
     @JvmField
     val KOTLIN_RUNTIME_JAR_PATTERN: Pattern = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar")
     val KOTLIN_STDLIB_JS_JAR_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-js.*\\.jar")

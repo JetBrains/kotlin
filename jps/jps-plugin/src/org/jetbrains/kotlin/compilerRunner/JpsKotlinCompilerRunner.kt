@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
@@ -198,53 +197,7 @@ class JpsKotlinCompilerRunner {
     }
 
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
-        val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
-                (compilerSettings?.additionalArgumentsAsList ?: emptyList())
-        return allArgs
-            .filterDuplicatedCompilerPluginOptions()
-            .filterDuplicatedWarningLevel()
-            .toTypedArray()
-    }
-
-    /*
-    * This function filters duplicates of -P plugin:<pluginId>:<optionName>=<value> in the compiler arguments
-    */
-    private fun List<String>.filterDuplicatedCompilerPluginOptions(): List<String> {
-        val filteredArguments = mutableListOf<String>()
-        val knownPluginOptions = mutableSetOf<String>()
-        val argumentsIterator = this.iterator()
-
-        while (argumentsIterator.hasNext()) {
-            val argument = argumentsIterator.next()
-            // try to find pair -P plugin:<pluginId>:<optionName>=<value>
-            if (argument == "-P" && argumentsIterator.hasNext()) {
-                val pluginOption = argumentsIterator.next() // expected plugin:<pluginId>:<optionName>=<value>
-                val elementIsUnique = knownPluginOptions.add(pluginOption)
-                if (elementIsUnique) {
-                    filteredArguments.add(argument) // add -P
-                    filteredArguments.add(pluginOption) // add the plugin option
-                }
-            } else {
-                // skip filtering for all other arguments
-                filteredArguments.add(argument)
-            }
-        }
-
-        return filteredArguments
-    }
-
-    /**
-     * Removes duplicate `-Xwarning-level` arguments from a compiler argument list,
-     * keeping only the first occurrence of each unique `-Xwarning-level=<diagnostic>:<level>` entry
-     */
-    private fun List<String>.filterDuplicatedWarningLevel(): List<String> {
-        val warningLevelArgumentsAccumulator = mutableSetOf<String>()
-        return filter {
-            if (it.startsWith("-Xwarning-level")) {
-                return@filter warningLevelArgumentsAccumulator.add(it)
-            }
-            return@filter true
-        }
+        return flattenCompilerArguments(compilerArgs, compilerSettings).toTypedArray()
     }
 
     private fun reportCategories(verbose: Boolean): Array<Int> {

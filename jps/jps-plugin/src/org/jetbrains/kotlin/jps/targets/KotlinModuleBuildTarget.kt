@@ -64,12 +64,24 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     abstract val isIncrementalCompilationEnabled: Boolean
 
+    /**
+     * Whether the compiler runs incremental compilation on its own, in which case JPS keeps noticing which files
+     * changed but stops maintaining its Kotlin caches and lookup storage: nothing populates the trackers they are
+     * built from. Implied by [hasCaches] being `false`, which is what actually switches the bookkeeping off.
+     */
+    open val isIncrementalCompilationDelegatedToCompiler: Boolean
+        get() = false
+
     open fun isEnabled(chunkCompilerArguments: Lazy<CommonCompilerArguments>): Boolean = true
 
     @Suppress("LeakingThis")
     val localCacheVersionManager = localCacheVersionManager(
         kotlinContext.dataPaths.getTargetDataRootDir(jpsModuleBuildTarget),
-        isIncrementalCompilationEnabled
+        // Not just `isIncrementalCompilationEnabled`: when the compiler runs incremental compilation, JPS's own
+        // caches for this target stop being updated, so they have to count as disabled. That makes toggling the
+        // Build Tools API path invalidate in both directions — on, the stale JPS caches are cleared; off, the target
+        // is rebuilt instead of resuming from caches that are arbitrarily out of date.
+        isIncrementalCompilationEnabled && !isIncrementalCompilationDelegatedToCompiler
     )
 
     val initialLocalCacheAttributesDiff: CacheAttributesDiff<*> = localCacheVersionManager.loadDiff()

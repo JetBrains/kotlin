@@ -84,6 +84,16 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing-runtime",
     ":kotlin-annotation-processing",
     ":kotlin-annotations-jvm",
+    // The Build Tools API implementation, loaded in an isolated classloader by the JPS plugin. It needs
+    // kotlin-compiler-embeddable specifically: it is compiled against the embeddable's relocated
+    // org.jetbrains.kotlin.com.intellij.* packages, which the plain kotlin-compiler.jar does not have.
+    ":compiler:build-tools:kotlin-build-tools-impl",
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
+    ":kotlin-compiler-embeddable",
+    // A runtimeOnly dependency of kotlin-build-tools-impl. distLibraryProjects resolves without transitives, so it
+    // has to be listed even though the JPS meta pom gets it for free.
+    ":kotlin-compiler-runner",
+    ":kotlin-tooling-core",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
     ":kotlin-main-kts",

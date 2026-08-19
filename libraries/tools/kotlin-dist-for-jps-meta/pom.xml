@@ -46,6 +46,16 @@
       <artifactId>kotlin-annotations-jvm</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--
+      The Build Tools API implementation, loaded by the JPS plugin in an isolated classloader.
+      Its runtime dependencies (kotlin-compiler-embeddable, kotlin-build-tools-cri-impl,
+      kotlin-tooling-core, kotlin-compiler-runner) come along transitively.
+    -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-build-tools-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>kotlin-compiler</artifactId>

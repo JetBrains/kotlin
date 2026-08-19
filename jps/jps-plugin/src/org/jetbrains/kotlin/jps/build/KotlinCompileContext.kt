@@ -110,7 +110,10 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
         targetsIndex.chunks.forEach { chunk ->
             chunk.targets.forEach { target ->
-                if (target.isIncrementalCompilationEnabled) {
+                // The lookup storage is only written by JPS's own incremental compilation. Leaving the component out
+                // while the compiler does incremental compilation itself is what makes toggling the Build Tools API
+                // path clear the global caches on the way in and rebuild all Kotlin on the way out.
+                if (target.isIncrementalCompilationEnabled && !target.isIncrementalCompilationDelegatedToCompiler) {
                     expectedLookupsCacheComponents.add(target.globalLookupCacheId)
                 }
             }

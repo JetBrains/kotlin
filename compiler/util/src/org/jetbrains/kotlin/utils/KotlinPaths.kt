@@ -105,6 +105,11 @@ interface KotlinPaths {
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
         SerializationPlugin(PathUtil.SERIALIZATION_PLUGIN_NAME),
         Compiler(PathUtil.KOTLIN_COMPILER_NAME),
+        CompilerEmbeddable(PathUtil.KOTLIN_COMPILER_EMBEDDABLE_NAME),
+        CompilerRunner(PathUtil.KOTLIN_COMPILER_RUNNER_NAME),
+        BuildToolsImpl(PathUtil.KOTLIN_BUILD_TOOLS_IMPL_NAME),
+        BuildToolsCriImpl(PathUtil.KOTLIN_BUILD_TOOLS_CRI_IMPL_NAME),
+        ToolingCore(PathUtil.KOTLIN_TOOLING_CORE_NAME),
         ScriptingPlugin(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME),
         ScriptingImpl(PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_NAME),
         ScriptingLib(PathUtil.KOTLIN_SCRIPTING_COMMON_NAME),
@@ -120,6 +125,27 @@ interface KotlinPaths {
         StdLib(Jar.StdLib),
         Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
+
+        /**
+         * Classpath for an isolated Build Tools API implementation, as loaded by
+         * `KotlinToolchains.loadImplementation(classpath)`.
+         *
+         * Deliberately built around [Jar.CompilerEmbeddable] rather than [Jar.Compiler]: `kotlin-build-tools-impl` is
+         * compiled against the embeddable's relocated `org.jetbrains.kotlin.com.intellij.*` packages, which the plain
+         * compiler jar does not have, so running against it fails with `NoClassDefFoundError`.
+         */
+        BuildToolsApi(
+            Jar.BuildToolsImpl,
+            Jar.BuildToolsCriImpl,
+            Jar.CompilerEmbeddable,
+            Jar.CompilerRunner,
+            Jar.ToolingCore,
+            Jar.StdLib,
+            Jar.Reflect,
+            Jar.ScriptRuntime,
+            Jar.KotlinDaemon,
+            Jar.CoroutinesCore,
+        ),
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())
