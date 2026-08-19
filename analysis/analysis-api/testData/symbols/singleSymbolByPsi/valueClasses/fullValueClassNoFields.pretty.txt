@@ -1,1 +1,1 @@
-inline class FullValueClassNoFields
+value class FullValueClassNoFields

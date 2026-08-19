@@ -3,10 +3,10 @@ inline class InlineValueClass(value: Int) {
   val value: Int
 }
 
-inline class FullValueClass(first: String, second: Int) {
+value class FullValueClass(first: String, second: Int) {
   val first: String
 
   val second: Int
 }
 
-inline object FullValueObject
+value object FullValueObject

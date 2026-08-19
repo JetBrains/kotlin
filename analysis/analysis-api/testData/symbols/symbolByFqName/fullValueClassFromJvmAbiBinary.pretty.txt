@@ -1,1 +1,1 @@
-inline class FullValueClassFromJvmAbiBinary<T>
+value class FullValueClassFromJvmAbiBinary<T>

@@ -10,8 +10,9 @@ KaNamedClassSymbol:
   isExpect: false
   isExternal: false
   isFun: false
-  isInline: true
+  isInline: false
   isInner: false
+  isValue: true
   location: TOP_LEVEL
   modality: FINAL
   name: FullValueClassNoFields

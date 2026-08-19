@@ -164,6 +164,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: LOCAL
   modality: FINAL
   name: Foo
