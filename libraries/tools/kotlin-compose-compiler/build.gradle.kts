@@ -1,6 +1,7 @@
 import gradle.GradlePluginVariant
 import gradle.addKgpGradleApiDependency
 import gradle.removeGradleApiDependencyFromTestConfiguration
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("common-configuration")
@@ -105,6 +106,13 @@ tasks.named("check") {
 
 tasks.withType<Test>().configureEach {
     javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)).disallowChanges()
+}
+
+tasks.named<KotlinCompile>("compileFunctionalTestKotlin") {
+    // Checker is globally enabled in repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/common-configuration.gradle.kts,
+    // but functional tests use Kotlin compiler and stdlib 2.2 (MAXIMUM_SUPPORTED_GRADLE_VARIANT), so we need
+    // to override checker state because 2.2 compiler reported too much.
+    this.compilerOptions.freeCompilerArgs.add("-Xreturn-value-checker=disable")
 }
 
 configurations.all {

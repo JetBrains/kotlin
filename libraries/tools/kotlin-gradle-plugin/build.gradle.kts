@@ -727,6 +727,15 @@ testing {
     }
 }
 
+tasks.named<KotlinCompile>("compileFunctionalTestKotlin") {
+    // Checker is globally enabled in repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/common-configuration.gradle.kts,
+    // but functional tests use Kotlin compiler and stdlib 2.2 (MAXIMUM_SUPPORTED_GRADLE_VARIANT), so we need
+    // to override checker state because 2.2 compiler reported too much.
+    this.compilerOptions.freeCompilerArgs.add("-Xreturn-value-checker=disable")
+    this.compilerOptions.freeCompilerArgs.add("-XXLanguage:+UnnamedLocalVariables")
+}
+
+
 tasks.check {
     dependsOn(testing.suites)
 }
