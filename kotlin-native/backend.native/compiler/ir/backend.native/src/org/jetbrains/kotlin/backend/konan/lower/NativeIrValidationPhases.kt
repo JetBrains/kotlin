@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 
+// TODO: KT-88761. Remove these (the base class's constructor call sites are identical).
 internal class NativeIrValidationAfterInliningPrivateFunctionsKlibPhase(
         context: NativeLoweringContext
 ) : IrValidationAfterInliningPrivateFunctionsKlibPhase<NativeLoweringContext>(
