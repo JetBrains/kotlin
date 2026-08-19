@@ -215,6 +215,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("fullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("fullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("generics.kt")
   public void testGenerics() {
     run("generics.kt");
@@ -1497,6 +1503,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     @TestMetadata("extensionVariable.kt")
     public void testExtensionVariable() {
       run("extensionVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClass.kt")
+    public void testFullValueClass() {
+      run("fullValueClass.kt");
     }
 
     @Test

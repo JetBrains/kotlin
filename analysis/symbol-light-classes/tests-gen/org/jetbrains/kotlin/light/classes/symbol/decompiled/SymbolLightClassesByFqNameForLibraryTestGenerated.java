@@ -275,6 +275,18 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassInSignature.kt")
+  public void testFullValueClassInSignature() {
+    run("fullValueClassInSignature.kt");
+  }
+
+  @Test
   @TestMetadata("HiddenDeprecated.kt")
   public void testHiddenDeprecated() {
     run("HiddenDeprecated.kt");
