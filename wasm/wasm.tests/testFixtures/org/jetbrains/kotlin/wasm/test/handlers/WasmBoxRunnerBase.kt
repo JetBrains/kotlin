@@ -63,7 +63,20 @@ abstract class WasmBoxRunnerBase(
                         console.log = print;
                     }
                     try {
-                        await jsModule.startUnitTests();
+                        // A grouped batch is driven by `startGroupedBoxTests`, an ordinary `@JsExport`ed function
+                        // generated into `ProxyBatchLauncher.kt` by `AbstractWasmSecondStageGroupingFacade`. Prefer it
+                        // over the compiler-synthesized `startUnitTests`, which is only exported from a module that
+                        // itself defines `runRootSuites` - not the case for the main module under closed-world
+                        // multi-module compilation, where `<kotlin-test>` is emitted as a separate wasm module.
+                        // `startUnitTests` remains the entry point for `// RUN_UNIT_TESTS` tests, which genuinely
+                        // exercise the kotlin-test runner and generate no `ProxyBatchLauncher.kt`.
+                        const startGrouped = jsModule.startGroupedBoxTests ||
+                                             (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.startGroupedBoxTests);
+                        if (typeof startGrouped === 'function') {
+                            await startGrouped();
+                        } else {
+                            await jsModule.startUnitTests();
+                        }
                         const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
                                             (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
                         if (hasFailures) {

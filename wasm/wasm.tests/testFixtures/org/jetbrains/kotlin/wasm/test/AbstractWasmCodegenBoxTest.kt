@@ -186,14 +186,6 @@ abstract class AbstractWasmJsCodegenMultiModuleTest : AbstractWasmJsCodegenBoxTe
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)
         nonGroupingStageBuilder.enableByConfigurationKey(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
-        commonConfiguration {
-            defaultDirectives {
-                // Closed-world multi-module compilation is incompatible with the current grouped-batch path: the grouped runner uses `startUnitTests`
-                // (unit-test runner) for multi-test batches, but these are box tests that export `box()` and have no `startUnitTests`.
-                // WASM_STANDALONE directive routes tests through the standalone box-export path, matching the non-grouping runner behavior.
-                +WasmEnvironmentConfigurationDirectives.WASM_STANDALONE
-            }
-        }
     }
 }
 

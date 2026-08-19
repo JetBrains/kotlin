@@ -95,8 +95,27 @@ class WasmLoweringFacade(
             configureWith(testServices.moduleStructure.allDirectives)
         }
 
-        val testPackage = extractTestPackage(testServices)
-        configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
+        // Which function the main module must export depends on how the compiled artifact will be driven, and
+        // only the caller knows that: `WasmInProcessSecondStageFacade.groupedBatch` pre-sets this key to the
+        // grouped-batch entry point generated into `ProxyBatchLauncher.kt`, because a grouped batch is driven
+        // through that entry point rather than through `box()` (there are many `box`es in a batch, one per test,
+        // and exporting them all would clash - see `WasmJsExportBoxPreprocessor.processModule`).
+        //
+        // Everything else - a single-test batch, or a plain non-grouping run - is executed by calling `box()`
+        // directly (the standalone box-export model, matching `FirWasmJsCodegenBoxTestGenerated`), which is the
+        // default applied here when the caller left the key unset.
+        //
+        // NB this key, not the `@JsExport` annotation in the source, is what actually produces the export in the
+        // in-process pipeline: exports are marked exclusively via `wasmTestBoxFunctionToExport` /
+        // `markFunctionToExport` (see `compileToLoweredIr`).
+        //
+        // Deliberately NOT decided here via `testServices.isSingleTestBatch()`: on the grouped path this facade
+        // runs with a single test's `TestServices`, which carries no `GroupingStageInputsHolder`, so asking it
+        // about the batch throws `No 'GroupingStageInputsHolder' in array owner`.
+        if (configuration.wasmTestBoxFunctionToExport == null) {
+            val testPackage = extractTestPackage(testServices)
+            configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
+        }
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
