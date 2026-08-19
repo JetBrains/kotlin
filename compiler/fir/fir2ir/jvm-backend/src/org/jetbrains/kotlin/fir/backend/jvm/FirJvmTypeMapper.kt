@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -32,6 +30,8 @@ import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeMapper
+import org.jetbrains.kotlin.types.AbstractTypeMapper.hasNothingInNonContravariantPosition
+import org.jetbrains.kotlin.types.AbstractTypeMapper.writeGenericArguments
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContextForTypeMapping
@@ -97,7 +97,7 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
 
         override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
             if (type !is ConeKotlinType) return
-            if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.typeArguments.isEmpty()) {
+            if (skipGenericSignature() || typeContext.hasNothingInNonContravariantPosition(type) || type.typeArguments.isEmpty()) {
                 writeAsmType(asmType)
                 return
             }
@@ -125,10 +125,6 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
             }
 
             writeClassEnd()
-        }
-
-        private fun hasNothingInNonContravariantPosition(type: ConeKotlinType): Boolean = with(KotlinTypeMapper) {
-            typeContext.hasNothingInNonContravariantPosition(type)
         }
 
         private fun ConeKotlinType.buildPossiblyInnerType(): PossiblyInnerConeType {
@@ -200,11 +196,9 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
             parameterSymbols: List<FirTypeParameterSymbol>,
             mode: TypeMappingMode
         ) {
-            with(KotlinTypeMapper) {
-                val parameters = parameterSymbols.map { ConeTypeParameterLookupTag(it) }
-                typeContext.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
-                    mapType(type.asCone(), mode, sw)
-                }
+            val parameters = parameterSymbols.map { ConeTypeParameterLookupTag(it) }
+            typeContext.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
+                mapType(type.asCone(), mode, sw)
             }
         }
 
