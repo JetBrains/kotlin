@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.backend.common.phaser.createModulePhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.runModuleWisePhase
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
+import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
@@ -90,7 +92,7 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
-        backendEngine.runAndMeasurePhase(functionsWithoutBoundCheck)
+        backendEngine.runModuleWisePhase(createModulePhase(::FunctionsWithoutBoundCheckGenerator), listOf(irModule))
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
@@ -177,7 +179,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, getLoweringsUpToAndIncludingSyntheticAccessors()) }
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::NativeIrValidationAfterInliningPrivateFunctionsKlibPhase)) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, listOf(inlineAllFunctionsPhase)) }
+                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createNativePhases(::NativeAllFunctionInlining)) }
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createNativePhases(::SpecialObjCValidationLowering, ::RedundantCastsRemoverLowering)) }
             }
 
