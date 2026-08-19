@@ -19,21 +19,13 @@ plugins {
     id("test-inputs-check")
 }
 
+configureKotlinCompileTasksGradleCompatibility()
+
 val generateSources = tasks.register<GenerateTestFederationRuntimeCodeTask>("generateTestFederationSources")
 
 kotlin.sourceSets.main.configure {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     generatedKotlin.srcDir(generateSources.map { it.outputDir })
-}
-
-kotlin.target.compilations.all {
-    compileTaskProvider.configure {
-        compilerOptions {
-            freeCompilerArgs.add("-Xsuppress-version-warnings")
-            languageVersion.set(KotlinVersion.KOTLIN_2_1)
-            apiVersion.set(KotlinVersion.KOTLIN_2_1)
-        }
-    }
 }
 
 tasks.withType<Test>().configureEach {
@@ -59,11 +51,12 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly(kotlin("stdlib", coreDepsVersion))
     implementation(libs.junit.jupiter.api)
 
-    testImplementation(kotlin("stdlib"))
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
