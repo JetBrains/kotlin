@@ -39,8 +39,8 @@ fun callWithoutAssignment() {
 }
 
 // Calling atomic factory to assign default value in constructor is unsupported
-abstract class AbstractAtomicPropertyInCtor(private val a: AtomicInt = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>)
-class AtomicInCtor(private val a: AtomicLong = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0L)<!>)
+abstract class AbstractAtomicPropertyInCtor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicInt = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>)
+class AtomicInCtor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicLong = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0L)<!>)
 
 abstract class AbstractAtomicProperty {
     // Non private property, has no backing field

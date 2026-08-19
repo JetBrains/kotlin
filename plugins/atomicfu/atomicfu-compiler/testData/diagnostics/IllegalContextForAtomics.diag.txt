@@ -44,7 +44,11 @@
 
 /IllegalContextForAtomics.kt:38:5: error: Atomic factories can only be called to initialize a property or as delegates.
 
+/IllegalContextForAtomics.kt:42:57: error: Function parameters with kotlinx.atomicfu.Atomic* types are unsupported.
+
 /IllegalContextForAtomics.kt:42:72: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:43:32: error: Function parameters with kotlinx.atomicfu.Atomic* types are unsupported.
 
 /IllegalContextForAtomics.kt:43:48: error: Atomic factories can only be called to initialize a property or as delegates.
 
