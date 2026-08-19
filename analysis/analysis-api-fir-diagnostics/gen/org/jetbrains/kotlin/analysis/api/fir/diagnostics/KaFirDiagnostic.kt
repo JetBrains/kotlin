@@ -1337,6 +1337,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AnnotationArgumentWithControlFlowNotSupported : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<AnnotationArgumentWithControlFlowNotSupported>
+            get() = AnnotationArgumentWithControlFlowNotSupported::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface AnnotationClassMember : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<AnnotationClassMember>
             get() = AnnotationClassMember::class
@@ -5493,6 +5500,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface ConstValWithNonConstInitializer : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<ConstValWithNonConstInitializer>
             get() = ConstValWithNonConstInitializer::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ConstValWithControlFlowInInitializer : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<ConstValWithControlFlowInInitializer>
+            get() = ConstValWithControlFlowInInitializer::class
     }
 
     @KaUnstableDiagnosticApi
