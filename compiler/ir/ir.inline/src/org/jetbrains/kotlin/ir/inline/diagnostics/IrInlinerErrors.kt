@@ -80,13 +80,15 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
     private fun renderCascadingInlining(inlinedFunctionBlocks: List<IrInlinedFunctionBlock>) =
         buildString {
             inlinedFunctionBlocks.reversed().forEach { inlinedFunctionBlock ->
-                appendLine(
-                    inlinedFunctionBlock.inlinedFunctionSymbol!!.owner.dumpKotlinLike(
+                val renderedFunction = inlinedFunctionBlock.inlinedFunctionSymbol?.owner
+                    ?.dumpKotlinLike(
                         KotlinLikeDumpOptions(
                             bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES
                         )
-                    ).trim()
-                )
+                    )
+                    ?.trim()
+                    ?: "<unknown>"
+                appendLine(renderedFunction)
             }
         }
 }
