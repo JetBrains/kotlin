@@ -85,6 +85,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE =
         "Atomic array extension properties are prohibited."
 
+    private const val NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN_MESSAGE =
+        "Nullable atomic properties are prohibited."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -118,6 +121,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN, ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN, NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN_MESSAGE
         )
     }
 
