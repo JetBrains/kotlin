@@ -1,0 +1,31 @@
+/NullableAtomicProperties.kt:7:18: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:8:18: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:9:18: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:10:18: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:12:19: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:13:19: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:14:19: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:15:19: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:18:21: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:19:21: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:20:21: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:21:21: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:23:22: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:24:22: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:25:22: error: Nullable atomic properties are prohibited.
+
+/NullableAtomicProperties.kt:26:22: error: Nullable atomic properties are prohibited.
