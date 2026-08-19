@@ -1,0 +1,31 @@
+/NoBackingField.kt:8:43: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/NoBackingField.kt:9:44: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.
+
+/NoBackingField.kt:10:49: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic("")'`.
+
+/NoBackingField.kt:11:47: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(true)'`.
+
+/NoBackingField.kt:13:49: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicIntArray(1)'`.
+
+/NoBackingField.kt:14:50: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicLongArray(1)'`.
+
+/NoBackingField.kt:15:53: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(1)'`.
+
+/NoBackingField.kt:16:52: error: Atomic factories can only be called to initialize a property or as delegates: `'atomicArrayOfNulls(1)'`.
+
+/NoBackingField.kt:19:39: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/NoBackingField.kt:20:40: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.
+
+/NoBackingField.kt:21:45: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic("")'`.
+
+/NoBackingField.kt:22:43: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(true)'`.
+
+/NoBackingField.kt:24:45: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicIntArray(1)'`.
+
+/NoBackingField.kt:25:46: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicLongArray(1)'`.
+
+/NoBackingField.kt:26:49: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(1)'`.
+
+/NoBackingField.kt:27:48: error: Atomic factories can only be called to initialize a property or as delegates: `'atomicArrayOfNulls(1)'`.

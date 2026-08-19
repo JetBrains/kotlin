@@ -23,10 +23,17 @@ private val ATOMIC_ARRAY_TYPES = setOf(
     "AtomicBooleanArray",
     "AtomicArray"
 )
+private val ATOMIC_FACTORIES = setOf("atomic", "atomicArrayOfNulls")
 
 /** Atomic scalar or array type */
 internal fun ClassId.isAtomicType(): Boolean {
     if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
     val className = relativeClassName.toString()
     return className in ATOMIC_SCALAR_TYPES || className in ATOMIC_ARRAY_TYPES
+}
+
+internal fun FirNamedReference.isAtomicFactory(): Boolean {
+    if (symbol?.packageFqName()?.asString() != KOTLINX_ATOMICFU) return false
+    val nameStr = name.asString()
+    return nameStr in ATOMIC_SCALAR_TYPES || nameStr in ATOMIC_ARRAY_TYPES || nameStr in ATOMIC_FACTORIES
 }
