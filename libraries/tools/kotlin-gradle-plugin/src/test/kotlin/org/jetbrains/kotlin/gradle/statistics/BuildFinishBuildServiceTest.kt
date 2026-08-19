@@ -73,7 +73,7 @@ class BuildFinishBuildServiceTest {
         )
 
 
-        val errorMessages = BuildFinishBuildService.collectAllFusReportsIntoOne(buildId, fusDir, "test version", logger)
+        val errorMessages = BuildFinishBuildService.collectAllFusReportsIntoOne(buildId, fusDir, "test version", logger, true)
         assertTrue("No error messages expected") { errorMessages.isEmpty() }
 
         assertTrue("finish-profile file should be created after build finish") {

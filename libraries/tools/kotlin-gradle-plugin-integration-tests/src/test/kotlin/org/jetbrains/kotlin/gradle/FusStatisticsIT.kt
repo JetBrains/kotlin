@@ -543,14 +543,6 @@ class FusStatisticsIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(
-                    configurationCache = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14)) {
-                        // FIXME: KT-88448
-                        BuildOptions.ConfigurationCacheValue.DISABLED
-                    } else {
-                        BuildOptions.ConfigurationCacheValue.ENABLED
-                    }
-                )
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
@@ -753,7 +745,7 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion,
         ) {
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, pathToFusReportDirectory = { null })) {
+            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, fusReportDirectory = { null })) {
                 assertOutputContains("Fus metrics won't be collected: CI build is detected via environment variable TEAMCITY_VERSION")
             }
         }

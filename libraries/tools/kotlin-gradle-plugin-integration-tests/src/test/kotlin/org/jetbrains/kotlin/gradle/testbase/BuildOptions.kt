@@ -103,7 +103,7 @@ data class BuildOptions(
     val jvmClasspathMetadata: Boolean? = null,
     val separateCompilation: Boolean? = null,
     val expandTypeAliasesInClasspathSnapshots: Boolean? = null,
-    val pathToFusReportDirectory: () -> Path? = { null }
+    val fusReportDirectory: () -> Path? = { null }
 ) {
     enum class ConfigurationCacheValue {
 
@@ -389,7 +389,7 @@ data class BuildOptions(
             arguments.add("-Pkotlin.compiler.generateCompilerRefIndex=$generateCompilerRefIndex")
         }
 
-        pathToFusReportDirectory()?.let {
+        fusReportDirectory()?.let {
             arguments.add("-Pkotlin.session.logger.root.path=${it.absolutePathString()}")
         }
 

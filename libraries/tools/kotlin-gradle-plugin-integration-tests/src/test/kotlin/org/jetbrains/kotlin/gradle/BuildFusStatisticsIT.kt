@@ -21,7 +21,7 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(logLevel = LogLevel.DEBUG)
         ) {
-            build("assemble", buildOptions = buildOptions.copy(pathToFusReportDirectory = { projectPath })) {
+            build("assemble", buildOptions = buildOptions.copy(fusReportDirectory = { projectPath })) {
                 //register build service for buildSrc.
                 when {
                     // Since Gradle 8.11 Kotlin version 2.0.20 is used which contains only one service

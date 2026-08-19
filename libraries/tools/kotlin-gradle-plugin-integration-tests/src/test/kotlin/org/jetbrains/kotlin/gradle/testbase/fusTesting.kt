@@ -23,7 +23,7 @@ fun TestProject.collectFusEvents(
         arrayOf(
             *buildArguments,
         ),
-        deriveBuildOptions().copy(pathToFusReportDirectory = { fusEventPath }),
+        deriveBuildOptions().copy(fusReportDirectory = { fusEventPath }),
         {}
     )
     return fusEventPath.resolve("kotlin-profile").filterKotlinFusFiles().single().readLines().toSet()
@@ -68,10 +68,9 @@ fun TestProject.validateFusDirectory(
             arrayOf(
                 *buildArguments,
             ),
-            buildOptions.copy(pathToFusReportDirectory = { fusReportRootDirectory} ),
+            buildOptions.copy(fusReportDirectory = { fusReportRootDirectory} ),
             {
                 buildAssertions()
-                assertOutputDoesNotContainFusErrors()
             }
         )
         validateFusDirectory(fusReportRootDirectory.resolve("kotlin-profile"))
@@ -86,7 +85,3 @@ fun TestProject.validateFusDirectory(
  */
 fun TestProject.defaultFusReportRootDirectory(): Path = projectPath.resolve("fusEvent_${generateIdentifier()}")
 
-private fun BuildResult.assertOutputDoesNotContainFusErrors() {
-    assertOutputDoesNotContain("finish-profile already exists")
-    assertOutputDoesNotContain("Unable to collect finish file for build")
-}

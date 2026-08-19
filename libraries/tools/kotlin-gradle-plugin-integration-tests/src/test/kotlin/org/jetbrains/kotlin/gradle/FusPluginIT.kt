@@ -181,7 +181,7 @@ class FusPluginIT : KGPBaseTest() {
 
             //invalid path for FUS reports should not break the build
             build("test-fus", "-Pkotlin.session.logger.root.path=${invalidPath.absolutePathString()}",
-                  buildOptions = buildOptions.copy(pathToFusReportDirectory = { null })) {
+                  buildOptions = buildOptions.copy(fusReportDirectory = { null })) {
                 assertOutputContains("Failed to create directory '${invalidPath.resolve("kotlin-profile").absolutePathString()}' for FUS report. FUS report won't be created")
             }
         }

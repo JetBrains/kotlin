@@ -412,7 +412,7 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
         }
     }
 
-    private fun KotlinBrowserTestRunnerDsl.optionsChangedFromDefaults(): List<String> = buildList {
+    private fun KotlinBrowserTestRunnerDsl.optionsChangedFromDefaults(): List<String> = mutableListOf<String>().apply {
         if (testsLocation.get() !is KotlinDefaultJsTestLocation) add("testsLocation")
         if (headless.get() != KotlinJsBrowserTestImpl.DEFAULT_HEADLESS) add("headless")
         if (launchArgs.get().isNotEmpty()) add("launchArgs")
