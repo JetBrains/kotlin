@@ -93,7 +93,10 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
             1 -> specificTokens.single()
-            else -> BatchToken.Isolated
+            // Every token states something which has to be uniform within a batch, so tests agreeing on *all*
+            // of their tokens are exactly as groupable as tests agreeing on a single one. Combining the tokens
+            // keeps such tests batched together instead of giving each of them a batch of its own.
+            else -> Custom(specificTokens.joinToString(separator = " & "))
         }
     }
 
@@ -132,11 +135,14 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
     }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
-        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].sorted()
-        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].sorted()
-        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION]
-        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION]
-        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE]
+        // `allDirectives` reports the values of every module, so a directive shared by all modules of a test is
+        // repeated once per module. Without deduplication two tests requesting exactly the same settings end up
+        // with different tokens as soon as they have a different number of modules.
+        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].distinct().sorted()
+        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].distinct().sorted()
+        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION].distinct()
+        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION].distinct()
+        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE].distinct()
         val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in moduleStructure.allDirectives
 
         if (languageFeatures.isEmpty()
