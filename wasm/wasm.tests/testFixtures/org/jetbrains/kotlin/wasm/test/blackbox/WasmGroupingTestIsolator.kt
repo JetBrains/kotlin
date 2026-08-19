@@ -76,7 +76,6 @@ class WasmGroupingTestIsolator(
             WasmEnvironmentConfigurationDirectives.WASM_STANDALONE,
             WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER,
             WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS,
-            JvmEnvironmentConfigurationDirectives.WITH_REFLECT,
             JsEnvironmentConfigurationDirectives.CALL_MAIN,
         )
         if (isolationDirectives.any { it in moduleStructure.allDirectives })
@@ -111,6 +110,7 @@ class WasmGroupingTestIsolator(
             computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
             computeCoroutineHelpersToken(moduleStructure.allDirectives),
+            computeWithReflectToken(moduleStructure.allDirectives),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -166,6 +166,16 @@ class WasmGroupingTestIsolator(
         val targetBackend = testServices.defaultsProvider.targetBackend ?: return true
         return mutedBackends.any { it == TargetBackend.ANY || targetBackend.isTransitivelyCompatibleWith(it) }
     }
+
+    /**
+     * `WITH_REFLECT` only means something to the JVM runners (it adds `kotlin-reflect` to the classpath, see
+     * `JvmEnvironmentConfigurator`), so it changes nothing about how a Wasm test is compiled or run. It is used
+     * here purely as a marker of tests which are likely to inspect names of their own declarations — the thing
+     * that the package patching of grouped runs changes. Such tests are grouped with each other rather than
+     * isolated one by one, so that a name-dependent test can only ever affect other name-dependent ones.
+     */
+    private fun computeWithReflectToken(registeredDirectives: RegisteredDirectives): BatchToken? =
+        Custom("WITH_REFLECT").takeIf { JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
         // `allDirectives` reports the values of every module, so a directive shared by all modules of a test is
