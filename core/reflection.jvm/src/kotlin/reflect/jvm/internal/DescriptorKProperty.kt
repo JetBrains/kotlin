@@ -22,7 +22,6 @@ import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -290,7 +289,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
             }
         }
         is JavaField -> {
-            computeFieldCaller(jvmSignature.field)
+            computeFieldCaller(property.javaField ?: jvmSignature.field)
         }
         is JavaMethodProperty -> {
             val method =
