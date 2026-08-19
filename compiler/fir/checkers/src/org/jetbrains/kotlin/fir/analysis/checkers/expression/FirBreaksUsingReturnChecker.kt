@@ -28,6 +28,42 @@ import org.jetbrains.kotlin.fir.types.isBasicFunctionType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
+private fun <T> List<T>.reverseIterator(): ListIterator<T> = listIterator(size)
+
+private val collectionFunctions = setOf(
+    "forEach",
+    "map",
+    "takeWhile",
+    "all",
+    "any",
+    "first",
+    "associate",
+    "dropWhile",
+    "filter",
+    "find",
+    "flatMap",
+    "fold",
+    "onEach",
+    "reduce"
+)
+
+context(sessionHolder: SessionHolder)
+private inline val FirNamedFunctionSymbol.isCollectionsLikeFunction: Boolean
+    get() = collectionFunctions.any { name.asString().contains(it, ignoreCase = true) }
+            && isInline
+            && valueParameterSymbols.lastOrNull()?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
+
+private inline val FirNamedFunctionSymbol.isFromCollectionsPackage: Boolean get() = callableId.packageName.asString() == "kotlin.collections"
+
+context(sessionHolder: SessionHolder)
+private inline val Pair<FirNamedFunctionSymbol, FirFunctionCall>.collectionsFunctionLambda: FirAnonymousFunction?
+    get() = let { [callableFunction, call] ->
+        when {
+            callableFunction.isCollectionsLikeFunction -> (call.arguments.lastOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
+            else -> null
+        }
+    }
+
 context(context: CheckerContext)
 private infix fun FirFunction.isDeclaredBeforeLambda(lambda: FirAnonymousFunction): Boolean {
     val reverseContainingDeclarationIterator = context.containingDeclarations.reverseIterator()
@@ -41,38 +77,16 @@ private infix fun FirFunction.isDeclaredBeforeLambda(lambda: FirAnonymousFunctio
     return false
 }
 
-context(sessionHolder: SessionHolder)
-private inline val Pair<FirNamedFunctionSymbol, FirFunctionCall>.collectionsFunctionLambda: FirAnonymousFunction?
-    get() = let { [callableFunction, call] ->
-        when {
-            callableFunction.isCollectionsLikeFunction -> (call.arguments.lastOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
-            else -> null
-        }
-    }
-
-private val collectionFunctions =
-    setOf("forEach", "map", "takeWhile", "all", "any", "associate", "dropWhile", "filter", "find", "flatMap", "fold", "onEach", "reduce")
-
-context(sessionHolder: SessionHolder)
-private inline val FirNamedFunctionSymbol.isCollectionsLikeFunction: Boolean
-    get() = collectionFunctions.any { name.asString().contains(it, ignoreCase = true) }
-            && isInline
-            && valueParameterSymbols.lastOrNull()?.resolvedReturnType?.isBasicFunctionType(sessionHolder.session) ?: false
-
-private inline val FirNamedFunctionSymbol.isFromCollectionsPackage: Boolean get() = callableId.packageName.asString() == "kotlin.collections"
-
-private fun <T> List<T>.reverseIterator(): ListIterator<T> = listIterator(size)
-
 context(context: CheckerContext, reporter: DiagnosticReporter)
 private inline fun FirReturnExpression.checkBreak(
-    returnTypeCheck: (ConeKotlinType) -> Boolean,
+    targetTypeCheck: (ConeKotlinType) -> Boolean,
     callTypeCheck: (targetType: ConeKotlinType, callReturnType: ConeKotlinType) -> Boolean = { _, _ -> true },
     diagnosticFactory: KtDiagnosticFactory1<FirNamedFunctionSymbol>,
     collectionsDiagnosticFactory: KtDiagnosticFactory1<FirNamedFunctionSymbol>,
 ) {
     if (source?.kind is KtFakeSourceElementKind.ImplicitReturn) return
     val targetType = result.resolvedType
-    if (!returnTypeCheck(targetType)) return
+    if (!targetTypeCheck(targetType)) return
     val targetedFunction = target.labeledElement
     val reverseCallStackIterator = context.callsOrAssignments.reverseIterator()
     while (reverseCallStackIterator.hasPrevious()) {
@@ -100,7 +114,7 @@ object FirBreaksUsingUnitReturnChecker : FirReturnExpressionChecker(MppCheckerKi
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirReturnExpression): Unit = expression.checkBreak(
-        returnTypeCheck = ConeKotlinType::isUnit,
+        targetTypeCheck = ConeKotlinType::isUnit,
         diagnosticFactory = FirErrors.UNIT_RETURN_AS_BREAK,
         collectionsDiagnosticFactory = FirErrors.UNIT_RETURN_AS_BREAK_IN_STDLIB_FUNCTION
     )
@@ -110,9 +124,20 @@ object FirBreaksUsingMatchingTypeReturnChecker : FirReturnExpressionChecker(MppC
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirReturnExpression): Unit = expression.checkBreak(
-        returnTypeCheck = { !it.isUnit },
+        targetTypeCheck = { !it.isUnit },
         callTypeCheck = { targetType, callType -> targetType.equalTypes(callType, context.session) },
         diagnosticFactory = FirErrors.MATCHING_TYPE_RETURN_AS_BREAK,
         collectionsDiagnosticFactory = FirErrors.MATCHING_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION
+    )
+}
+
+object FirBreaksUsingAnyTypeReturnChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirReturnExpression): Unit = expression.checkBreak(
+        targetTypeCheck = { !it.isUnit },
+        callTypeCheck = { targetType, callType -> !targetType.equalTypes(callType, context.session) },
+        diagnosticFactory = FirErrors.ANY_TYPE_RETURN_AS_BREAK,
+        collectionsDiagnosticFactory = FirErrors.ANY_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION
     )
 }

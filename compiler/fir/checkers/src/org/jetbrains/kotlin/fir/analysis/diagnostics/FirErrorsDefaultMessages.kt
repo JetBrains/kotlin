@@ -121,6 +121,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_SUSPEND_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANY_TYPE_RETURN_AS_BREAK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANY_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.API_NOT_AVAILABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_PASSED_TWICE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_TYPE_MISMATCH
@@ -4114,6 +4116,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MATCHING_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION,
             "Matching type `return` is used as break inside a call to {0}.",
+            DECLARATION_FQ_NAME,
+        )
+        map.put(
+            ANY_TYPE_RETURN_AS_BREAK,
+            "Any type `return` is used as break inside a call to {0}.",
+            DECLARATION_FQ_NAME,
+        )
+        map.put(
+            ANY_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION,
+            "Any type `return` is used as break inside a call to {0}.",
             DECLARATION_FQ_NAME,
         )
     }

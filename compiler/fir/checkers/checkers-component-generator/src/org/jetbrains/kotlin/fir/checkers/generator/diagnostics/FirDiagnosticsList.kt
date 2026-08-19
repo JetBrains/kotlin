@@ -2508,6 +2508,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val MATCHING_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION by warning<PsiElement> {
             parameter<FirNamedFunctionSymbol>("returnedTo")
         }
+        val ANY_TYPE_RETURN_AS_BREAK by warning<PsiElement> {
+            parameter<FirNamedFunctionSymbol>("returnedTo")
+        }
+        val ANY_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION by warning<PsiElement> {
+            parameter<FirNamedFunctionSymbol>("returnedTo")
+        }
     }
 }
 

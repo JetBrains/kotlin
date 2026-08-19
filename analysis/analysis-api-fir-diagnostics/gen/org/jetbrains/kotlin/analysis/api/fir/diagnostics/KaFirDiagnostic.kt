@@ -8341,6 +8341,24 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AnyTypeReturnAsBreak : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<AnyTypeReturnAsBreak>
+            get() = AnyTypeReturnAsBreak::class
+
+        public val returnedTo: KaFunctionSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AnyTypeReturnAsBreakInStdlibFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<AnyTypeReturnAsBreakInStdlibFunction>
+            get() = AnyTypeReturnAsBreakInStdlibFunction::class
+
+        public val returnedTo: KaFunctionSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

@@ -1935,6 +1935,13 @@ private fun KaDiagnosticConverterBuilder.addConversions38() {
             token,
         )
     }
+    add(FirErrors.ANY_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION) { firDiagnostic ->
+        AnyTypeReturnAsBreakInStdlibFunctionImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
         JavaTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -7591,6 +7598,13 @@ private fun KaDiagnosticConverterBuilder.addConversions167() {
     add(FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS) { firDiagnostic ->
         IllegalSuspendPropertyAccessImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ANY_TYPE_RETURN_AS_BREAK) { firDiagnostic ->
+        AnyTypeReturnAsBreakImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
