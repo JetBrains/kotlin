@@ -1,1 +1,1 @@
-inline class FullValueClassWithSuperClass(value: kotlin.String) : SealedValue()
+value class FullValueClassWithSuperClass(value: kotlin.String) : SealedValue()

@@ -85,6 +85,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: true
   isInner: false
+  isValue: true
   location: TOP_LEVEL
   modality: FINAL
   name: A
@@ -192,6 +193,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: true
   isInner: false
+  isValue: true
   location: TOP_LEVEL
   modality: FINAL
   name: B

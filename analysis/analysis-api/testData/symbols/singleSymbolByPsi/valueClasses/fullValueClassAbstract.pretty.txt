@@ -1,1 +1,1 @@
-abstract inline class FullValueClassAbstract(parameter: kotlin.Int)
+abstract value class FullValueClassAbstract(parameter: kotlin.Int)

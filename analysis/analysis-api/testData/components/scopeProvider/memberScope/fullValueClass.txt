@@ -409,7 +409,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FullValueClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: null
+    javaMethodName: getLast
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -542,7 +542,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: null
+  javaMethodName: choose
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -684,7 +684,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
-  javaMethodName: null
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -736,7 +736,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
-  javaMethodName: null
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -788,7 +788,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
-  javaMethodName: null
+  javaMethodName: toString
   importableFqName: null
 
 KaConstructorSymbol:
