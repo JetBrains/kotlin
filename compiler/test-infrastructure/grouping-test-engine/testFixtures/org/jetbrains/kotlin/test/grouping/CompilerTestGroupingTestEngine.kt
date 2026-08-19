@@ -98,6 +98,10 @@ class CompilerTestGroupingTestEngine : TestEngine {
          */
         private const val SIMULTANEOUS_BATCHES_PROP = "kotlin.test.grouping.engine.simultaneous.batches"
         private const val DEFAULT_SIMULTANEOUS_BATCHES = 2
+
+        // Temporary diagnostic switch: turn to `false` to keep a failed grouped batch failed
+        // instead of retrying every test in isolation which hides the exceptions during grouping run
+        private const val RETRY_FAILED_GROUPS_IN_ISOLATION = true
     }
 
     override fun getId(): String = ID
@@ -534,18 +538,21 @@ class CompilerTestGroupingTestEngine : TestEngine {
         executionListener.dynamicTestRegistered(testDescriptor)
         executionListener.executionStarted(testDescriptor)
 
-        // Abort the batch (dispose its tests and let the caller retry them in isolation) the same way whether the
-        // failure was collected normally or is a throwable which escaped `ThrowableCollector.execute` below.
+        // Abort the batch (dispose its tests and, normally, let the caller retry them in isolation) the same way
+        // whether the failure was collected normally or is a throwable which escaped `ThrowableCollector.execute` below.
         // `ThrowableCollector.execute` deliberately rethrows unrecoverable throwables such as `OutOfMemoryError`
         // instead of collecting them, so without this the batch descriptor would never be finished and its tests
         // would never be disposed or retried.
-        fun abortBatch(result: TestExecutionResult): Boolean {
+        fun abortBatch(result: TestExecutionResult, failure: Throwable? = null): Boolean {
             executionListener.executionFinished(testDescriptor, result)
             batch.forEach {
                 it.finalizeNonGroupingStage()
                 it.finalizeGroupingStage()
+                if (!RETRY_FAILED_GROUPS_IN_ISOLATION) {
+                    it.reportFinished(failure?.let { throwable -> TestExecutionResult.failed(throwable) } ?: result)
+                }
             }
-            return false
+            return !RETRY_FAILED_GROUPS_IN_ISOLATION
         }
 
         val escapedThrowable = try {
@@ -566,14 +573,15 @@ class CompilerTestGroupingTestEngine : TestEngine {
         } catch (e: Throwable) {
             e
         }
-        if (escapedThrowable != null) return abortBatch(TestExecutionResult.failed(escapedThrowable))
+        if (escapedThrowable != null) return abortBatch(TestExecutionResult.failed(escapedThrowable), escapedThrowable)
 
         if (throwableCollector.isNotEmpty) {
             // The batch as a whole did not make it through the grouping stage, so there is no per-test result to
             // report: the failure may just as well come from a single test of the batch which cannot be grouped.
             // Report the synthetic batch descriptor as aborted (it shows up as skipped, with the reason attached)
-            // and let the caller re-run the tests one by one to find out what really failed.
-            return abortBatch(TestExecutionResult.aborted(throwableCollector.throwable))
+            // and, unless the temporary diagnostic switch above is disabled, let the caller re-run the tests one
+            // by one to find out what really failed.
+            return abortBatch(TestExecutionResult.aborted(throwableCollector.throwable), throwableCollector.throwable)
         }
 
         try {
@@ -587,7 +595,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
                 }
             }
         } catch (e: Throwable) {
-            return abortBatch(TestExecutionResult.failed(e))
+            return abortBatch(TestExecutionResult.failed(e), e)
         }
 
         executionListener.executionFinished(testDescriptor, throwableCollector.toTestExecutionResult())
