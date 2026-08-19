@@ -8,6 +8,7 @@ plugins {
 }
 
 version = "1.0.0"
+group = "kotlin-multiplatform-projects"
 
 publishing {
     repositories {

@@ -152,7 +152,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             }
         }
 
-        val configuredTasks = project("empty", gradleVersion) {
+        val configuredTasks = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "root"
             }
@@ -260,7 +264,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             }
         }
 
-        val resolvedConfigurations = project("empty", gradleVersion) {
+        val resolvedConfigurations = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "root"
             }

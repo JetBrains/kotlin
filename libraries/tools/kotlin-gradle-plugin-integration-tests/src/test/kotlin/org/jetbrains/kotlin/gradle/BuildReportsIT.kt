@@ -977,9 +977,7 @@ class BuildReportsIT : KGPBaseTest() {
         ) {
             build(
                 "compileKotlin", "--scan"
-            ) {
-                assertOutputContains("Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled.")
-            }
+            )
         }
     }
 

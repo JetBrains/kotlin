@@ -170,6 +170,7 @@ class PublishingIT : KGPBaseTest() {
         val local = project("empty", gradleVersion) {
             buildScriptInjection {
                 project.version = "1.2.3"
+                project.group = pomRewriterRootName
                 project.plugins.apply("maven-publish")
                 project.applyMultiplatform {
                     jvm()

@@ -1,11 +1,8 @@
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
-
 package org.jetbrains.kotlin.gradle.uklibs
+
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.assertNoCompileTasksGotExecuted
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
@@ -18,7 +15,6 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib interproject consumption")
 class UklibInterprojectConsumptionIT : KGPBaseTest() {
@@ -87,8 +83,13 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                 }.buildAndReturn(
                     ":consumer:assemble",
                     executingProject = this,
-                    configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
-                    configurationCacheProblems = BuildOptions.ConfigurationCacheProblems.WARN,
+                    deriveBuildOptions = {
+                        buildOptions.copy(
+                            configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                            configurationCacheProblems = BuildOptions.ConfigurationCacheProblems.WARN,
+                            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                        )
+                    },
                 )
             }
 

@@ -540,8 +540,17 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions
+                .copy(
+                    configurationCache = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14)) {
+                        // FIXME: KT-88448
+                        BuildOptions.ConfigurationCacheValue.DISABLED
+                    } else {
+                        BuildOptions.ConfigurationCacheValue.ENABLED
+                    }
+                )
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {

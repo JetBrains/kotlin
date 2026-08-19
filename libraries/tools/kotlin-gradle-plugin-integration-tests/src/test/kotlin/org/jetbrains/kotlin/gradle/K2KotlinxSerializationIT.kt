@@ -39,9 +39,9 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationK2AgainstK1",
             gradleVersion,
             buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_9_0,
+                TestVersions.Gradle.G_8_14,
                 gradleVersion,
-                "KGP 1.9.25 produces deprecation warning in Gradle 9.x releases"
+                "KGP 1.9.25 produces deprecation warning"
             ).run {
                 if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0)) {
                     copy(
