@@ -10,7 +10,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-  FUN[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
+  FUNCTION[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=int]
         TYPE_REFERENCE

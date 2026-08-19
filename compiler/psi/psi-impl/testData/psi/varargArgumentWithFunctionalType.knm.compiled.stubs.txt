@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=test]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      FUN[fqName=test.VarargArgumentWithFunctionalType.myDsl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=myDsl]
+      FUNCTION[fqName=test.VarargArgumentWithFunctionalType.myDsl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=myDsl]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arguments]

@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithErasedTypeKt]]
   partSimpleName: "WithErasedTypeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=testErasedType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testErasedType]
+  FUNCTION[fqName=testErasedType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testErasedType]
     contract: [ effect:param(0) is KotlinTypeParameterTypeBean(typeParameterName=T, nullable=false, definitelyNotNull=false) -> Returns(NOT_NULL) ]
     origin: Facade(className=WithErasedTypeKt, jvmClassName=null)
     MODIFIER_LIST[public]

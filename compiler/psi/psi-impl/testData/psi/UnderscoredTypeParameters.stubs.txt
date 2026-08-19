@@ -19,7 +19,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnderscoredTypeParametersKt]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
         TYPE_REFERENCE
@@ -28,7 +28,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnderscoredTypeParametersKt]
       TYPE_PARAMETER[fqName=null, name=_]
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
       TYPE_PARAMETER[fqName=null, name=_]

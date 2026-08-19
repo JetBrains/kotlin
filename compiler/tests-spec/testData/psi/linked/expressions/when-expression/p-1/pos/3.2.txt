@@ -3,7 +3,7 @@ KtFile: 3.2.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('case_1')

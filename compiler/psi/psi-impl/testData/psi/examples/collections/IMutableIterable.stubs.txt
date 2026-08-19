@@ -17,7 +17,7 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
     CLASS_BODY
-      FUN[fqName=IMutableIterable.mutableIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mutableIterator]
+      FUNCTION[fqName=IMutableIterable.mutableIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mutableIterator]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

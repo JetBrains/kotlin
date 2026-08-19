@@ -240,7 +240,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=f1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=f1]
+  FUNCTION[fqName=f1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=f1]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE
@@ -257,7 +257,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=a]
     VALUE_PARAMETER_LIST
-  FUN[fqName=f2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=f2]
+  FUNCTION[fqName=f2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=f2]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]

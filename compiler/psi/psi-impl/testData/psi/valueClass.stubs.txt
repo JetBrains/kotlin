@@ -19,7 +19,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValueClassKt]]
     MODIFIER_LIST[abstract value]
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[value]
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[value]
     VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
@@ -29,7 +29,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValueClassKt]]
     CLASS_BODY
       PROPERTY[fqName=Foo.l, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=l]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-      FUN[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
+      FUNCTION[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[private value]

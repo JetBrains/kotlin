@@ -120,7 +120,7 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.createCoroutine1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine1]
+      FUNCTION[fqName=test.SuspendLambda.createCoroutine1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine1]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -148,7 +148,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.createCoroutine2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine2]
+      FUNCTION[fqName=test.SuspendLambda.createCoroutine2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine2]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=R]
@@ -185,7 +185,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.createCoroutineAnother, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutineAnother]
+      FUNCTION[fqName=test.SuspendLambda.createCoroutineAnother, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutineAnother]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=R]
@@ -216,7 +216,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.testCoroutine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutine]
+      FUNCTION[fqName=test.SuspendLambda.testCoroutine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutine]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -241,7 +241,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.testCoroutineWithAnnotation, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutineWithAnnotation]
+      FUNCTION[fqName=test.SuspendLambda.testCoroutineWithAnnotation, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutineWithAnnotation]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -275,7 +275,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.override, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
+      FUNCTION[fqName=test.SuspendLambda.override, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
@@ -306,7 +306,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Nothing]
-      FUN[fqName=test.SuspendLambda.override, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
+      FUNCTION[fqName=test.SuspendLambda.override, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
@@ -331,7 +331,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Nothing]
-      FUN[fqName=test.SuspendLambda.annotatedReturnSuspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=annotatedReturnSuspend]
+      FUNCTION[fqName=test.SuspendLambda.annotatedReturnSuspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=annotatedReturnSuspend]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -357,7 +357,7 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.returnSuspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnSuspend]
+      FUNCTION[fqName=test.SuspendLambda.returnSuspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnSuspend]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

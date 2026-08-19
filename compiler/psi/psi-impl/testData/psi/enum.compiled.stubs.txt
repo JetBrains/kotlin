@@ -99,7 +99,7 @@ Enum.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-        FUN[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        FUNCTION[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
           MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE

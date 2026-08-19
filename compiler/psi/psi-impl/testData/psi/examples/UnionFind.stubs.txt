@@ -15,12 +15,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
           VALUE_ARGUMENT_LIST
-      FUN[fqName=UnionFind.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUNCTION[fqName=UnionFind.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=UnionFind.parent, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parent]
+      FUNCTION[fqName=UnionFind.parent, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parent]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -30,7 +30,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=UnionFind.union, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=union]
+      FUNCTION[fqName=UnionFind.union, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=union]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE

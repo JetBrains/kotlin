@@ -33,7 +33,7 @@ KtFile: InvalidCharAfterPropertyName.kt
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('run')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiErrorElement:Expecting member declaration
           <empty list>
         BLOCK

@@ -3,7 +3,7 @@ KtFile: ObjectLiteralAsStatement.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')

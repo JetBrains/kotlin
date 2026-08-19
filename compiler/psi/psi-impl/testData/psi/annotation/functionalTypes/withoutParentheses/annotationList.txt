@@ -583,7 +583,7 @@ KtFile: annotationList.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -627,7 +627,7 @@ KtFile: annotationList.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('x')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -726,7 +726,7 @@ KtFile: annotationList.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -813,7 +813,7 @@ KtFile: annotationList.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -1079,7 +1079,7 @@ KtFile: annotationList.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -1165,7 +1165,7 @@ KtFile: annotationList.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('10')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -1231,7 +1231,7 @@ KtFile: annotationList.kt
           <empty list>
         PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -1305,7 +1305,7 @@ KtFile: annotationList.kt
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -1357,7 +1357,7 @@ KtFile: annotationList.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -1446,7 +1446,7 @@ KtFile: annotationList.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -1648,7 +1648,7 @@ KtFile: annotationList.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

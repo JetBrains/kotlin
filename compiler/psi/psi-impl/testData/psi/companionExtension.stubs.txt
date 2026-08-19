@@ -3,19 +3,19 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
   partSimpleName: "CompanionExtensionKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
     MODIFIER_LIST[companion]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
     VALUE_PARAMETER_LIST
-  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
     MODIFIER_LIST[private companion]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
     VALUE_PARAMETER_LIST
-  FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
+  FUNCTION[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
     MODIFIER_LIST[companion inline]
     TYPE_REFERENCE
       USER_TYPE

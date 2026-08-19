@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.*;
 @KtImplementationDetail
 public interface KtStubElementTypes {
     @NotNull KtClassElementType CLASS = KtClassElementType.INSTANCE;
-    @NotNull KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
+    @NotNull KtFunctionElementType FUNCTION = new KtFunctionElementType();
     @NotNull KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
     @NotNull KtPropertyAccessorElementType PROPERTY_ACCESSOR = KtPropertyAccessorElementType.INSTANCE;
     @NotNull KtBackingFieldElementType BACKING_FIELD = new KtBackingFieldElementType("BACKING_FIELD");

@@ -11,7 +11,7 @@ KtFile: DocCommentOnPackageDirectiveLine.kt
     PsiElement(SEMICOLON)(';')
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       KDOC_SECTION

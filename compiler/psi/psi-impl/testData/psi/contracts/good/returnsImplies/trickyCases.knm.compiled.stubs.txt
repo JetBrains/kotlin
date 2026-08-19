@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
+  FUNCTION[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
     contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
+  FUNCTION[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
     contract: [ effect:Returns(TRUE) -> param(0) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -35,7 +35,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
+  FUNCTION[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
     contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=test4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test4]
+  FUNCTION[fqName=test4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test4]
     contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

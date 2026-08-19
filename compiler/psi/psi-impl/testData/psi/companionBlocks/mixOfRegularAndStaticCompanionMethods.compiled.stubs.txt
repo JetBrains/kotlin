@@ -58,7 +58,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular1]
+    FUNCTION[fqName=regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular1]
       origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -70,7 +70,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
+    FUNCTION[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
       origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -82,7 +82,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
+    FUNCTION[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
       origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
       MODIFIER_LIST[public companion]
       TYPE_REFERENCE

@@ -30,7 +30,7 @@ KtFile: PrimaryConstructorModifiers_ERR.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

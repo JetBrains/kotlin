@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ConditionWithDefaultValueKt]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=testDefaultArguments, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testDefaultArguments]
+  FUNCTION[fqName=testDefaultArguments, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testDefaultArguments]
     MODIFIER_LIST[inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]

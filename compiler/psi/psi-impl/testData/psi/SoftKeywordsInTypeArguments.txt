@@ -29,7 +29,7 @@ KtFile: SoftKeywordsInTypeArguments.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')

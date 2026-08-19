@@ -121,7 +121,7 @@ KtFile: BinaryHeap.kt
       PsiWhiteSpace('\n  ')
       PsiComment(EOL_COMMENT)('//}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -220,7 +220,7 @@ KtFile: BinaryHeap.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -273,7 +273,7 @@ KtFile: BinaryHeap.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -501,7 +501,7 @@ KtFile: BinaryHeap.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -914,7 +914,7 @@ KtFile: BinaryHeap.kt
                   PsiElement(INTEGER_LITERAL)('0')
               PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -969,7 +969,7 @@ KtFile: BinaryHeap.kt
       PsiWhiteSpace('\n\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

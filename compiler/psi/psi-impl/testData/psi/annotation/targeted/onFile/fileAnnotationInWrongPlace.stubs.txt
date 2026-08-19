@@ -12,7 +12,7 @@ FILE[kind=Facade[packageFqName=bar, facadeFqName=bar.FileAnnotationInWrongPlaceK
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=foo]
-  FUN[fqName=bar.func, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=func]
+  FUNCTION[fqName=bar.func, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=func]
     MODIFIER_LIST[]
       ANNOTATION
         ANNOTATION_TARGET[useSiteTarget=FILE]

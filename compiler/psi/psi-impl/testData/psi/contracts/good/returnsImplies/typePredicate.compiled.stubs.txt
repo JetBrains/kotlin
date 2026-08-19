@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypePredicateKt]]
   partSimpleName: "TypePredicateKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=checkIsString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=checkIsString]
+  FUNCTION[fqName=checkIsString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=checkIsString]
     contract: [
       effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null)
       effect:Returns(FALSE) -> param(0) !is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null)

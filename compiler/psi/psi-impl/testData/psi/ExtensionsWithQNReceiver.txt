@@ -38,7 +38,7 @@ KtFile: ExtensionsWithQNReceiver.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('Int')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

@@ -25,7 +25,7 @@ MyInterface.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
+        FUNCTION[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[public abstract]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
               valueArguments: [ ]

@@ -8,7 +8,7 @@ Annotation.class:
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        FUN[fqName=Annotation.setProblemGroup, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=setProblemGroup]
+        FUNCTION[fqName=Annotation.setProblemGroup, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=setProblemGroup]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -16,7 +16,7 @@ Annotation.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=Annotation.getQuickFixes, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getQuickFixes]
+        FUNCTION[fqName=Annotation.getQuickFixes, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getQuickFixes]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -32,7 +32,7 @@ AnnotationAsArgComplexKt.class:
     partSimpleName: "AnnotationAsArgComplexKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=registerQuickFix, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=registerQuickFix]
+    FUNCTION[fqName=registerQuickFix, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=registerQuickFix]
       origin: Facade(className=AnnotationAsArgComplexKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST

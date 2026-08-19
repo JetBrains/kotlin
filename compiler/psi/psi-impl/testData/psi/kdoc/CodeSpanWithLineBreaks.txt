@@ -3,7 +3,7 @@ KtFile: CodeSpanWithLineBreaks.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
@@ -37,7 +37,7 @@ KtFile: CodeSpanWithLineBreaks.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
@@ -63,7 +63,7 @@ KtFile: CodeSpanWithLineBreaks.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')

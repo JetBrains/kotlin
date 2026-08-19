@@ -11,7 +11,7 @@ FILE[kind=File[packageFqName=test]]
       CLASS[classId=test/FunInterfaceDeclaration.KRunnable, fqName=test.FunInterfaceDeclaration.KRunnable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=KRunnable, superNames=[]]
         MODIFIER_LIST[public fun]
         CLASS_BODY
-          FUN[fqName=test.FunInterfaceDeclaration.KRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
+          FUNCTION[fqName=test.FunInterfaceDeclaration.KRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
             MODIFIER_LIST[public abstract]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -25,7 +25,7 @@ FILE[kind=File[packageFqName=test]]
           TYPE_PARAMETER[fqName=null, name=T]
           TYPE_PARAMETER[fqName=null, name=R]
         CLASS_BODY
-          FUN[fqName=test.FunInterfaceDeclaration.GenericKRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
+          FUNCTION[fqName=test.FunInterfaceDeclaration.GenericKRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
             MODIFIER_LIST[public abstract]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=t]

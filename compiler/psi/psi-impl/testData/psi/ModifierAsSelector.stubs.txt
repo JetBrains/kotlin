@@ -7,5 +7,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ModifierAsSelectorKt]]
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=System]
       REFERENCE_EXPRESSION[referencedName=out]
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST

@@ -40,7 +40,7 @@ FILE[kind=File[packageFqName=<root>]]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final inline]
       VALUE_PARAMETER_LIST
-  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
     MODIFIER_LIST[public companion]
     TYPE_REFERENCE
       USER_TYPE
@@ -53,7 +53,7 @@ FILE[kind=File[packageFqName=<root>]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
     MODIFIER_LIST[private companion]
     TYPE_REFERENCE
       USER_TYPE
@@ -66,7 +66,7 @@ FILE[kind=File[packageFqName=<root>]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
+  FUNCTION[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
     MODIFIER_LIST[public companion inline]
     TYPE_REFERENCE
       USER_TYPE

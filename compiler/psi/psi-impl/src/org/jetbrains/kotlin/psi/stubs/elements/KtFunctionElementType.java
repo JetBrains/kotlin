@@ -22,17 +22,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean;
 
 import java.io.IOException;
 import java.util.List;
 
 public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubImpl, KtNamedFunction> {
-
-    private static final String NAME = "kotlin.FUNCTION";
-
-    public KtFunctionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtNamedFunction.class, KotlinFunctionStub.class);
+    public KtFunctionElementType() {
+        super("FUNCTION", KtNamedFunction.class, KotlinFunctionStub.class);
     }
 
     /**
@@ -116,11 +112,5 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
     @Override
     public void indexStub(@NotNull KotlinFunctionStubImpl stub, @NotNull IndexSink sink) {
         StubIndexService.getInstance().indexFunction(stub, sink);
-    }
-
-    @NotNull
-    @Override
-    public String getExternalId() {
-        return NAME;
     }
 }

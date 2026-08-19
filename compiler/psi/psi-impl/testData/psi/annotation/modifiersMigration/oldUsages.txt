@@ -30,7 +30,7 @@ KtFile: oldUsages.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -62,7 +62,7 @@ KtFile: oldUsages.kt
         PsiElement(IDENTIFIER)('kotlin')
       PsiErrorElement:Expecting member declaration
         PsiElement(DOT)('.')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(inline)('inline')
         PsiWhiteSpace(' ')

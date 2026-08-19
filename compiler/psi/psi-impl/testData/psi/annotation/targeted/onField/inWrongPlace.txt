@@ -66,7 +66,7 @@ KtFile: inWrongPlace.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('I')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

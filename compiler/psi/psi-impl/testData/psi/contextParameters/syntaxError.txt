@@ -5,7 +5,7 @@ KtFile: syntaxError.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
@@ -165,7 +165,7 @@ KtFile: syntaxError.kt
       PsiErrorElement:Expecting member declaration
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiErrorElement:Expecting member declaration
           <empty list>
         BLOCK
@@ -176,7 +176,7 @@ KtFile: syntaxError.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
@@ -213,7 +213,7 @@ KtFile: syntaxError.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')

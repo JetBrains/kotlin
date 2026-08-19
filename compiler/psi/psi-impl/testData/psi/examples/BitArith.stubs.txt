@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
   partSimpleName: "BitArithKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=oneBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=oneBit]
+  FUNCTION[fqName=oneBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=oneBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
         TYPE_REFERENCE
@@ -13,7 +13,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=shl]
       REFERENCE_EXPRESSION[referencedName=index]
-  FUN[fqName=setBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=setBit]
+  FUNCTION[fqName=setBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=setBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             REFERENCE_EXPRESSION[referencedName=index]
-  FUN[fqName=unsetBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unsetBit]
+  FUNCTION[fqName=unsetBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unsetBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -53,7 +53,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   REFERENCE_EXPRESSION[referencedName=index]
-  FUN[fqName=getBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getBit]
+  FUNCTION[fqName=getBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -74,7 +74,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
               REFERENCE_EXPRESSION[referencedName=index]
       OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-  FUN[fqName=getBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getBit]
+  FUNCTION[fqName=getBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -95,25 +95,25 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=31]
       OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-  FUN[fqName=countOnes, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=countOnes]
+  FUNCTION[fqName=countOnes, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=countOnes]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=INumber]
-  FUN[fqName=mostSignificantBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=mostSignificantBit]
+  FUNCTION[fqName=mostSignificantBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=mostSignificantBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=INumber]
-  FUN[fqName=countOnes, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=countOnes]
+  FUNCTION[fqName=countOnes, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=countOnes]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=INumber]
-  FUN[fqName=matchMask, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=matchMask]
+  FUNCTION[fqName=matchMask, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=matchMask]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
@@ -145,7 +145,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=INumber.plus, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=plus]
+      FUNCTION[fqName=INumber.plus, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=plus]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Operator]
             CONSTRUCTOR_CALLEE
@@ -160,7 +160,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=This]
-      FUN[fqName=INumber.shl, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=shl]
+      FUNCTION[fqName=INumber.shl, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=shl]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Operator]
             CONSTRUCTOR_CALLEE

@@ -7,7 +7,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AtLeastOnceKt]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=inlineRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=inlineRun]
+  FUNCTION[fqName=inlineRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=inlineRun]
     MODIFIER_LIST[inline]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
         CONSTRUCTOR_CALLEE
@@ -26,7 +26,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AtLeastOnceKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=myRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRun]
+  FUNCTION[fqName=myRun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRun]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
         CONSTRUCTOR_CALLEE

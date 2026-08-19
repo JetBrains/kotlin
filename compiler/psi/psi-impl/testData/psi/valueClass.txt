@@ -65,7 +65,7 @@ KtFile: valueClass.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(value)('value')
     PsiWhiteSpace(' ')
@@ -108,7 +108,7 @@ KtFile: valueClass.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('invoke')

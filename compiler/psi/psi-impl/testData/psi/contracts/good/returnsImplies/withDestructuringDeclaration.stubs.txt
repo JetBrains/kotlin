@@ -35,7 +35,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithDestructuringDeclaration
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T]
-  FUN[fqName=component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=component1]
+  FUNCTION[fqName=component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=component1]
     MODIFIER_LIST[operator]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

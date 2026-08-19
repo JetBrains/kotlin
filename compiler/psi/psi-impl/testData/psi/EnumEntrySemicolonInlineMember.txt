@@ -18,7 +18,7 @@ KtFile: EnumEntrySemicolonInlineMember.kt
         PsiElement(IDENTIFIER)('FIRST')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(inline)('inline')
         PsiWhiteSpace(' ')

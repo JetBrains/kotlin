@@ -459,7 +459,7 @@ KtFile: PropertiesWithFunctionReceivers.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
@@ -533,7 +533,7 @@ KtFile: PropertiesWithFunctionReceivers.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK

@@ -66,7 +66,7 @@ AnnotatedWhenExpressionKt.class:
     partSimpleName: "AnnotatedWhenExpressionKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+    FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
       origin: Facade(className=AnnotatedWhenExpressionKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST

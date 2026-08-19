@@ -22,7 +22,7 @@ KtFile: EnumEntryCommaMember.kt
       PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
         <empty list>
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

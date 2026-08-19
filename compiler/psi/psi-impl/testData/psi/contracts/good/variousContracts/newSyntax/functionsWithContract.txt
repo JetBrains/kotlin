@@ -16,7 +16,7 @@ KtFile: functionsWithContract.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test1')
@@ -88,7 +88,7 @@ KtFile: functionsWithContract.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test2')
@@ -206,7 +206,7 @@ KtFile: functionsWithContract.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test3')

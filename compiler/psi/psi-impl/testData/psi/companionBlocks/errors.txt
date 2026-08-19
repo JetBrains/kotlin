@@ -3,7 +3,7 @@ KtFile: errors.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
@@ -23,7 +23,7 @@ KtFile: errors.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
@@ -35,7 +35,7 @@ KtFile: errors.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -53,7 +53,7 @@ KtFile: errors.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(companion)('companion')
           PsiWhiteSpace(' ')
@@ -67,7 +67,7 @@ KtFile: errors.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

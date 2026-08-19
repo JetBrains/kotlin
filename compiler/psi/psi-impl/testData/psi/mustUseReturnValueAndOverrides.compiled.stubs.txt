@@ -5,7 +5,7 @@ Base1.class:
     CLASS[classId=/Base1, fqName=Base1, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Base1, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
-        FUN[fqName=Base1.unspecified, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
+        FUNCTION[fqName=Base1.unspecified, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
           MODIFIER_LIST[public abstract]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -30,7 +30,7 @@ Base2.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       CLASS_BODY
-        FUN[fqName=Base2.mustUse, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
+        FUNCTION[fqName=Base2.mustUse, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           MODIFIER_LIST[public abstract MustUseReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -38,7 +38,7 @@ Base2.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Base2.ignorable, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Base2.ignorable, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public abstract IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               valueArguments: [ ]
@@ -71,7 +71,7 @@ Impl1.class:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base1]
       CLASS_BODY
-        FUN[fqName=Impl1.unspecified, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
+        FUNCTION[fqName=Impl1.unspecified, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
           MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -96,7 +96,7 @@ Impl2.class:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base2]
       CLASS_BODY
-        FUN[fqName=Impl2.mustUse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
+        FUNCTION[fqName=Impl2.mustUse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           MODIFIER_LIST[public open MustUseReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -104,7 +104,7 @@ Impl2.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Impl2.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Impl2.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public open IgnorableReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -137,7 +137,7 @@ Impl3.class:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base2]
       CLASS_BODY
-        FUN[fqName=Impl3.mustUse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
+        FUNCTION[fqName=Impl3.mustUse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           MODIFIER_LIST[public open MustUseReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -145,7 +145,7 @@ Impl3.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Impl3.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Impl3.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public open IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               valueArguments: [ ]

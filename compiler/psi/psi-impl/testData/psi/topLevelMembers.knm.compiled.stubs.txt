@@ -81,7 +81,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
               REFERENCE_EXPRESSION[referencedName=foo]
             REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
           REFERENCE_EXPRESSION[referencedName=D]
-  FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
+  FUNCTION[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -89,7 +89,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
+  FUNCTION[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -97,7 +97,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
+  FUNCTION[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -111,7 +111,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
+  FUNCTION[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -131,7 +131,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
+  FUNCTION[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -152,7 +152,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
+  FUNCTION[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

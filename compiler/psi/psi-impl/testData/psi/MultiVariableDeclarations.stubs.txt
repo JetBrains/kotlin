@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MultiVariableDeclarationsKt]
   partSimpleName: "MultiVariableDeclarationsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
+  FUNCTION[fqName=a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
     VALUE_PARAMETER_LIST
   DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

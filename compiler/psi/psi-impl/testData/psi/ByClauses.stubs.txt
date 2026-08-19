@@ -93,7 +93,7 @@ FILE[kind=File[packageFqName=<root>]]
         OBJECT_LITERAL
           OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
             CLASS_BODY
-              FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION[referencedName=a]

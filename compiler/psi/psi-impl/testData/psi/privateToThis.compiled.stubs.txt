@@ -44,7 +44,7 @@ FILE[kind=File[packageFqName=p]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=I]
-      FUN[fqName=p.PrivateToThis.bas, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bas]
+      FUNCTION[fqName=p.PrivateToThis.bas, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bas]
         MODIFIER_LIST[private final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

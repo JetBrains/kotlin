@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=p1.p2]]
       REFERENCE_EXPRESSION[referencedName=p1]
       REFERENCE_EXPRESSION[referencedName=p2]
   IMPORT_LIST
-  FUN[fqName=p1.p2.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=p1.p2.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

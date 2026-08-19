@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithExtensionReceiverKt]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=testConditionInExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=testConditionInExtension]
+  FUNCTION[fqName=testConditionInExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=testConditionInExtension]
     MODIFIER_LIST[inline]
     TYPE_REFERENCE
       USER_TYPE
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithExtensionReceiverKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=testLambdaInExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=testLambdaInExtension]
+  FUNCTION[fqName=testLambdaInExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=testLambdaInExtension]
     MODIFIER_LIST[inline]
     TYPE_REFERENCE
       FUNCTION_TYPE

@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=decode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decode]
+  FUNCTION[fqName=decode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decode]
     contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-  FUN[fqName=decodeFake, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeFake]
+  FUNCTION[fqName=decodeFake, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeFake]
     contract: [ effect:param(0) == null -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -35,7 +35,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-  FUN[fqName=decodeIfString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeIfString]
+  FUNCTION[fqName=decodeIfString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeIfString]
     contract: [ effect:param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -51,7 +51,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-  FUN[fqName=decodeNotNumber, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeNotNumber]
+  FUNCTION[fqName=decodeNotNumber, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeNotNumber]
     contract: [ effect:param(0) !is KotlinClassTypeBean(classId=kotlin/Number, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

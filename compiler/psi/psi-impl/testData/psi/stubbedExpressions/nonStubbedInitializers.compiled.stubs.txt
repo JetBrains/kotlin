@@ -106,7 +106,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.compute, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
+  FUNCTION[fqName=test.compute, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
     origin: Facade(className=test/NonStubbedInitializersKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -115,7 +115,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.evaluate, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=evaluate]
+  FUNCTION[fqName=test.evaluate, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=evaluate]
     origin: Facade(className=test/NonStubbedInitializersKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -133,7 +133,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.combine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=combine]
+  FUNCTION[fqName=test.combine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=combine]
     origin: Facade(className=test/NonStubbedInitializersKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -157,7 +157,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.expressionBodyWithLambda, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyWithLambda]
+  FUNCTION[fqName=test.expressionBodyWithLambda, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyWithLambda]
     origin: Facade(className=test/NonStubbedInitializersKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

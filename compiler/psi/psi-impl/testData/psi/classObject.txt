@@ -19,7 +19,7 @@ KtFile: classObject.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
@@ -63,7 +63,7 @@ KtFile: classObject.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('0')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('z')
@@ -108,7 +108,7 @@ KtFile: classObject.kt
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('0')
                   PsiWhiteSpace('\n                ')
-                  FUN
+                  FUNCTION
                     PsiElement(fun)('fun')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('f')
@@ -188,7 +188,7 @@ KtFile: classObject.kt
                                 INTEGER_CONSTANT
                                   PsiElement(INTEGER_LITERAL)('3')
                               PsiWhiteSpace('\n                            ')
-                              FUN
+                              FUNCTION
                                 PsiElement(fun)('fun')
                                 PsiWhiteSpace(' ')
                                 PsiElement(IDENTIFIER)('f')

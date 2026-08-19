@@ -10,7 +10,7 @@ KtFile: mixOfRegularAndStaticCompanionMethods.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -88,7 +88,7 @@ KtFile: mixOfRegularAndStaticCompanionMethods.kt
           PsiElement(REGULAR_STRING_PART)('r2')
         PsiElement(CLOSING_QUOTE)('"')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -135,7 +135,7 @@ KtFile: mixOfRegularAndStaticCompanionMethods.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('2L')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(companion)('companion')
     PsiWhiteSpace(' ')

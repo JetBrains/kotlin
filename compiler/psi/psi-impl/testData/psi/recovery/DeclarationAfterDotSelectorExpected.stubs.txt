@@ -3,16 +3,16 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DeclarationAfterDotSelectorE
   partSimpleName: "DeclarationAfterDotSelectorExpectedKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Any]
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
       VALUE_PARAMETER_LIST
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
@@ -30,14 +30,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DeclarationAfterDotSelectorE
         DOT_QUALIFIED_EXPRESSION
           STRING_TEMPLATE
             LITERAL_STRING_TEMPLATE_ENTRY[text=b]
-      FUN[fqName=A.baz, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
+      FUNCTION[fqName=A.baz, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
       PROPERTY[fqName=A.q, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=q]
         DOT_QUALIFIED_EXPRESSION
           STRING_TEMPLATE
             LITERAL_STRING_TEMPLATE_ENTRY[text=c]
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]

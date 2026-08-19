@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
     MODIFIER_LIST[public data]
     CLASS_BODY
-      FUN[fqName=DataObject.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=DataObject.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -19,7 +19,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=DataObject.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=DataObject.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -27,7 +27,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=DataObject.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=DataObject.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

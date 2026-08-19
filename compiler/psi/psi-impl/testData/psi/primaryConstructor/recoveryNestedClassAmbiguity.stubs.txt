@@ -14,7 +14,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/Outer2, fqName=Outer2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer2, superNames=[]]
     CLASS_BODY
       CLASS[classId=/Outer2.Nested2, fqName=Outer2.Nested2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested2, superNames=[]]
-      FUN[fqName=Outer2.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=Outer2.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[private]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
             CONSTRUCTOR_CALLEE
@@ -33,7 +33,7 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Ann]
         CLASS_BODY
-      FUN[fqName=Outer3.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=Outer3.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Outer4, fqName=Outer4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer4, superNames=[]]
     CLASS_BODY
@@ -47,7 +47,7 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=Ann]
               VALUE_ARGUMENT_LIST
         CLASS_BODY
-      FUN[fqName=Outer4.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=Outer4.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Outer5, fqName=Outer5, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer5, superNames=[]]
     CLASS_BODY
@@ -67,7 +67,7 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Base]
             VALUE_ARGUMENT_LIST
-      FUN[fqName=Outer5.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=Outer5.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Outer6, fqName=Outer6, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer6, superNames=[]]
     CLASS_BODY

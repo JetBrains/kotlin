@@ -3,5 +3,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ForWithoutParamButWithRangeK
   partSimpleName: "ForWithoutParamButWithRangeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
+  FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
     VALUE_PARAMETER_LIST

@@ -58,7 +58,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicArray.loadAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=loadAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicArray.loadAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=loadAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -70,7 +70,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicArray.storeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=storeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicArray.storeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=storeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -88,7 +88,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicArray.exchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchangeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicArray.exchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchangeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -104,7 +104,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicArray.compareAndSetAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSetAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicArray.compareAndSetAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSetAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -126,7 +126,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicArray.compareAndExchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchangeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicArray.compareAndExchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchangeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -146,7 +146,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicArray.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicArray.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -192,7 +192,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
     CLASS_BODY
-      FUN[fqName=kotlin.concurrent.atomics.AtomicBoolean.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicBoolean.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -200,7 +200,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicBoolean.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicBoolean.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -214,7 +214,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicBoolean.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicBoolean.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -228,27 +228,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicBoolean.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
-        MODIFIER_LIST[public final MustUseReturnValue]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Boolean]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Boolean]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicBoolean.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicBoolean.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -268,7 +248,27 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicBoolean.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicBoolean.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Boolean]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Boolean]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicBoolean.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -314,7 +314,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -322,7 +322,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -336,7 +336,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -350,7 +350,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -370,7 +370,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -390,7 +390,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.fetchAndAdd, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAdd]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.fetchAndAdd, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAdd]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=delta]
@@ -404,7 +404,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.addAndFetch, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetch]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.addAndFetch, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetch]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=delta]
@@ -418,7 +418,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicInt.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicInt.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -480,7 +480,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.loadAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=loadAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.loadAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=loadAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -494,7 +494,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.storeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=storeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.storeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=storeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -514,7 +514,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.exchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchangeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.exchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchangeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -534,7 +534,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.compareAndSetAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSetAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.compareAndSetAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSetAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -560,7 +560,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.compareAndExchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchangeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.compareAndExchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchangeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -586,7 +586,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.fetchAndAddAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAddAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.fetchAndAddAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAddAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -606,7 +606,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.addAndFetchAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetchAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.addAndFetchAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetchAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -626,7 +626,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicIntArray.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicIntArray.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -672,7 +672,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Long]
     CLASS_BODY
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -680,7 +680,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -694,7 +694,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -708,7 +708,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -728,7 +728,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -748,7 +748,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.fetchAndAdd, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAdd]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.fetchAndAdd, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAdd]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=delta]
@@ -762,7 +762,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.addAndFetch, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetch]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.addAndFetch, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetch]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=delta]
@@ -776,7 +776,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLong.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLong.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -838,7 +838,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.loadAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=loadAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.loadAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=loadAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -852,7 +852,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.storeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=storeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.storeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=storeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -872,7 +872,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.exchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchangeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.exchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchangeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -892,7 +892,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.compareAndSetAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSetAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.compareAndSetAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSetAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -918,7 +918,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.compareAndExchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchangeAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.compareAndExchangeAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchangeAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -944,7 +944,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.fetchAndAddAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAddAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.fetchAndAddAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fetchAndAddAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -964,7 +964,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.addAndFetchAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetchAt]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.addAndFetchAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAndFetchAt]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -984,7 +984,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicLongArray.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicLongArray.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1030,13 +1030,13 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=T]
     CLASS_BODY
-      FUN[fqName=kotlin.concurrent.atomics.AtomicReference.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicReference.load, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=load]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicReference.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicReference.store, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=store]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -1048,7 +1048,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicReference.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicReference.exchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=exchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
@@ -1058,7 +1058,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicReference.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicReference.compareAndSet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndSet]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -1074,7 +1074,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicReference.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicReference.compareAndExchange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareAndExchange]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expectedValue]
@@ -1088,7 +1088,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.concurrent.atomics.AtomicReference.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.concurrent.atomics.AtomicReference.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

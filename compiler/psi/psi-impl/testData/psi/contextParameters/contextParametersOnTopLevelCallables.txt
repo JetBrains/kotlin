@@ -38,7 +38,7 @@ KtFile: contextParametersOnTopLevelCallables.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('B')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')

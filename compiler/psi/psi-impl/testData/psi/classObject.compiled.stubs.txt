@@ -20,7 +20,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=test.class_object.ClassObject.Companion.z, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
+          FUNCTION[fqName=test.class_object.ClassObject.Companion.z, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -47,7 +47,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
-                  FUN[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                  FUNCTION[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                     MODIFIER_LIST[public final]
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
@@ -62,7 +62,7 @@ FILE[kind=File[packageFqName=test.class_object]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.class_object.ClassObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUNCTION[fqName=test.class_object.ClassObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -104,7 +104,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=Int]
-                              FUN[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                              FUNCTION[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                                 MODIFIER_LIST[public final]
                                 VALUE_PARAMETER_LIST
                                 TYPE_REFERENCE

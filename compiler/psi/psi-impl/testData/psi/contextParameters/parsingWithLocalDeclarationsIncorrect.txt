@@ -22,7 +22,7 @@ KtFile: parsingWithLocalDeclarationsIncorrect.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('KClass')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test')
@@ -44,7 +44,7 @@ KtFile: parsingWithLocalDeclarationsIncorrect.kt
         CALL_EXPRESSION
           PARENTHESIZED
             PsiElement(LPAR)('(')
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -77,7 +77,7 @@ KtFile: parsingWithLocalDeclarationsIncorrect.kt
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
@@ -107,7 +107,7 @@ KtFile: parsingWithLocalDeclarationsIncorrect.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')

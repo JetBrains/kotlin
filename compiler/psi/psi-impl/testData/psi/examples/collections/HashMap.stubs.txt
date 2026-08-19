@@ -6,7 +6,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
   CLASS[classId=/IEquality, fqName=IEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IEquality, superNames=[]]
     MODIFIER_LIST[open]
     CLASS_BODY
-      FUN[fqName=IEquality.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=IEquality.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
             TYPE_REFERENCE
@@ -46,7 +46,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
       TYPE_PARAMETER[fqName=null, name=K]
       TYPE_PARAMETER[fqName=null, name=V]
     CLASS_BODY
-      FUN[fqName=IMap.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+      FUNCTION[fqName=IMap.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
@@ -55,7 +55,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=IMap.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+      FUNCTION[fqName=IMap.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
@@ -68,7 +68,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=IMap.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+      FUNCTION[fqName=IMap.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
@@ -77,7 +77,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=IMap.containsKey, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsKey]
+      FUNCTION[fqName=IMap.containsKey, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsKey]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
@@ -98,7 +98,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=IHashable]
-  FUN[fqName=hashable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=hashable]
+  FUNCTION[fqName=hashable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=hashable]
     MODIFIER_LIST[]
       ANNOTATION
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=inline]
@@ -122,7 +122,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
     CLASS_BODY
-      FUN[fqName=IHashingStrategy.equals, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=IHashingStrategy.equals, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -135,7 +135,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=IHashingStrategy.hashCode, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=IHashingStrategy.hashCode, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -162,7 +162,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=K]
     CLASS_BODY
-      FUN[fqName=DefaultHashingStrategy.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=DefaultHashingStrategy.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -183,7 +183,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
                 REFERENCE_EXPRESSION[referencedName=b]
-      FUN[fqName=DefaultHashingStrategy.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=DefaultHashingStrategy.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -210,7 +210,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=K]
     CLASS_BODY
-      FUN[fqName=JavaObjectHashingStrategy.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=JavaObjectHashingStrategy.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -235,7 +235,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
                 REFERENCE_EXPRESSION[referencedName=b]
-      FUN[fqName=JavaObjectHashingStrategy.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=JavaObjectHashingStrategy.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -271,7 +271,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=HashMap.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=HashMap.hashCode, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[private]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=inline]
@@ -291,7 +291,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
               REFERENCE_EXPRESSION[referencedName=hashable]
               VALUE_ARGUMENT_LIST
           REFERENCE_EXPRESSION[referencedName=hashCode]
-      FUN[fqName=HashMap.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=HashMap.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[private]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=inline]

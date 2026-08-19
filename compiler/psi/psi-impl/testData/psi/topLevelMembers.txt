@@ -11,7 +11,7 @@ KtFile: topLevelMembers.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('funWithBlockBody')
@@ -24,7 +24,7 @@ KtFile: topLevelMembers.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(private)('private')
     PsiWhiteSpace(' ')
@@ -40,7 +40,7 @@ KtFile: topLevelMembers.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('3')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(private)('private')
     PsiWhiteSpace(' ')
@@ -133,7 +133,7 @@ KtFile: topLevelMembers.kt
         REFERENCE_EXPRESSION
           PsiElement(this)('this')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(public)('public')
     PsiWhiteSpace(' ')
@@ -181,7 +181,7 @@ KtFile: topLevelMembers.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('i')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(private)('private')
     PsiWhiteSpace(' ')
@@ -218,7 +218,7 @@ KtFile: topLevelMembers.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(private)('private')
     PsiWhiteSpace(' ')

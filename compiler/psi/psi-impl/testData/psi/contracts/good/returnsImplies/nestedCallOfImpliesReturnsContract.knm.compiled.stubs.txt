@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=impliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=impliesReturn]
+  FUNCTION[fqName=impliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=impliesReturn]
     contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-  FUN[fqName=returnNotNullImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnNotNullImplies]
+  FUNCTION[fqName=returnNotNullImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnNotNullImplies]
     contract: [ effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

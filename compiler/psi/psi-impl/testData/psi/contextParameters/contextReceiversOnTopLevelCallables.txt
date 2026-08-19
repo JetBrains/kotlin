@@ -15,7 +15,7 @@ KtFile: contextReceiversOnTopLevelCallables.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('MyAnnotation')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')

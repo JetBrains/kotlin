@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=<root>]]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      FUN[fqName=Outer.myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=true, name=myLet]
+      FUNCTION[fqName=Outer.myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=true, name=myLet]
         contract: [
           effect:CallsInPlace(param(0), EXACTLY_ONCE)
           effect:ReturnsResultOf(param(0))

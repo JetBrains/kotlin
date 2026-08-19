@@ -9,4 +9,4 @@ FILE[kind=File[packageFqName=<root>]]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
-      FUN[fqName=ClassB.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      FUNCTION[fqName=ClassB.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]

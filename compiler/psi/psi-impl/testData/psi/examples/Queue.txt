@@ -140,7 +140,7 @@ KtFile: Queue.kt
         NULL
           PsiElement(null)('null')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -256,7 +256,7 @@ KtFile: Queue.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')

@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=test_1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_1]
+  FUNCTION[fqName=test_1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_1]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
@@ -19,7 +19,7 @@ FILE[kind=File[packageFqName=<root>]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
+  FUNCTION[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
@@ -37,7 +37,7 @@ FILE[kind=File[packageFqName=<root>]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test_4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_4]
+  FUNCTION[fqName=test_4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_4]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
@@ -55,7 +55,7 @@ FILE[kind=File[packageFqName=<root>]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=test_5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_5]
+  FUNCTION[fqName=test_5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_5]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
@@ -73,7 +73,7 @@ FILE[kind=File[packageFqName=<root>]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=test_6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_6]
+  FUNCTION[fqName=test_6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_6]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST

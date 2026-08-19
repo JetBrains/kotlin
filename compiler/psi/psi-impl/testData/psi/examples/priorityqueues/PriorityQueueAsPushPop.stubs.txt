@@ -26,7 +26,7 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
     CLASS_BODY
-      FUN[fqName=PriorityQueueAsPushPop.pop, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=pop]
+      FUNCTION[fqName=PriorityQueueAsPushPop.pop, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=pop]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
         DOT_QUALIFIED_EXPRESSION
@@ -34,7 +34,7 @@ FILE[kind=File[packageFqName=<root>]]
           CALL_EXPRESSION
             REFERENCE_EXPRESSION[referencedName=extract]
             VALUE_ARGUMENT_LIST
-      FUN[fqName=PriorityQueueAsPushPop.push, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=push]
+      FUNCTION[fqName=PriorityQueueAsPushPop.push, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=push]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]

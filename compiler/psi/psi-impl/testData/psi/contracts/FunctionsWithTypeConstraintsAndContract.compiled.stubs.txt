@@ -4,7 +4,7 @@ MainKt.class:
     partSimpleName: "MainKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=someFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=someFunctionWithTypeConstraints]
+    FUNCTION[fqName=someFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=someFunctionWithTypeConstraints]
       origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
@@ -34,7 +34,7 @@ MainKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-    FUN[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
+    FUNCTION[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
       origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST

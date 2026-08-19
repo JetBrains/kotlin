@@ -34,7 +34,7 @@ KtFile: PropertiesWithFunctionReceiversRecovery.kt
       PsiElement(IDENTIFIER)('P')
       PsiElement(GT)('>')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
@@ -270,7 +270,7 @@ KtFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiErrorElement:Property getter or setter expected
       <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK

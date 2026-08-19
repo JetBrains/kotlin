@@ -326,7 +326,7 @@ Test.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=Test.fooF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooF]
+        FUNCTION[fqName=Test.fooF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooF]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             MODIFIER_LIST[]
@@ -353,7 +353,7 @@ Test.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=Test.fooWithNullableReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooWithNullableReceiver]
+        FUNCTION[fqName=Test.fooWithNullableReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooWithNullableReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             MODIFIER_LIST[]

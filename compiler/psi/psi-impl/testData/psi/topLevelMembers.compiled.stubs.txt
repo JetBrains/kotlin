@@ -164,7 +164,7 @@ TopLevelMembersKt.class:
                 REFERENCE_EXPRESSION[referencedName=foo]
               REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
             REFERENCE_EXPRESSION[referencedName=D]
-    FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
+    FUNCTION[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
       origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -173,7 +173,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
+    FUNCTION[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
       origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
@@ -182,7 +182,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
+    FUNCTION[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
       origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
@@ -197,7 +197,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
+    FUNCTION[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
       origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -218,7 +218,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
+    FUNCTION[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
       origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
@@ -240,7 +240,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
+    FUNCTION[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
       origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST

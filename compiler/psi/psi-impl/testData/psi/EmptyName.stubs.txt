@@ -8,11 +8,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyNameKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
     VALUE_PARAMETER_LIST
   CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
-  FUN[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
+  FUNCTION[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=null]
     VALUE_PARAMETER_LIST
@@ -27,5 +27,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyNameKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=g, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=g]
+  FUNCTION[fqName=g, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=g]
     VALUE_PARAMETER_LIST

@@ -17,7 +17,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExtensionsWithQNReceiverKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=size, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=size]
+  FUNCTION[fqName=size, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=size]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE

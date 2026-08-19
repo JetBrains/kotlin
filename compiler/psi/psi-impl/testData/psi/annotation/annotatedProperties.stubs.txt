@@ -141,7 +141,7 @@ Test.kt:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
       CLASS_BODY
-        FUN[fqName=Test.fooF, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooF]
+        FUNCTION[fqName=Test.fooF, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooF]
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
@@ -159,7 +159,7 @@ Test.kt:
               REFERENCE_EXPRESSION[referencedName=Int]
           VALUE_PARAMETER_LIST
           REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=Test.fooWithNullableReceiver, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooWithNullableReceiver]
+        FUNCTION[fqName=Test.fooWithNullableReceiver, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=fooWithNullableReceiver]
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]

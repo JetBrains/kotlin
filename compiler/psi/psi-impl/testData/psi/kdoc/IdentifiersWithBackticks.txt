@@ -5,7 +5,7 @@ KtFile: IdentifiersWithBackticks.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// ISSUE: KT-69975, KT-78229')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
@@ -151,7 +151,7 @@ KtFile: IdentifiersWithBackticks.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('`top level`')
@@ -172,7 +172,7 @@ KtFile: IdentifiersWithBackticks.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('`with space`')
@@ -185,7 +185,7 @@ KtFile: IdentifiersWithBackticks.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('Unit')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('without_space')

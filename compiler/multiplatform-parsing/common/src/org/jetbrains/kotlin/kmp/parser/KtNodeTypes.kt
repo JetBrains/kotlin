@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,8 +20,8 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val KT_FILE_ID: Int = KtTokens.ACTUAL_MODIFIER_ID + 1
 
     const val CLASS_ID: Int = KT_FILE_ID + 1
-    const val FUN_ID: Int = CLASS_ID + 1
-    const val PROPERTY_ID: Int = FUN_ID + 1
+    const val FUNCTION_ID: Int = CLASS_ID + 1
+    const val PROPERTY_ID: Int = FUNCTION_ID + 1
     const val PROPERTY_ACCESSOR_ID: Int = PROPERTY_ID + 1
     const val BACKING_FIELD_ID: Int = PROPERTY_ACCESSOR_ID + 1
     const val TYPEALIAS_ID: Int = BACKING_FIELD_ID + 1
@@ -147,7 +147,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     // Start of stub element types
 
     val CLASS: SyntaxElementType = register(CLASS_ID, "CLASS")
-    val FUN: SyntaxElementType = register(FUN_ID, "FUN")
+    val FUNCTION: SyntaxElementType = register(FUNCTION_ID, "FUNCTION")
     val PROPERTY: SyntaxElementType = register(PROPERTY_ID, "PROPERTY")
     val PROPERTY_ACCESSOR: SyntaxElementType = register(PROPERTY_ACCESSOR_ID, "PROPERTY_ACCESSOR")
     val BACKING_FIELD: SyntaxElementType = register(BACKING_FIELD_ID, "BACKING_FIELD")

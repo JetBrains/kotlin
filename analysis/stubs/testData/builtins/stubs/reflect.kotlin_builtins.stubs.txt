@@ -62,7 +62,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-      FUN[fqName=kotlin.reflect.KClass.isInstance, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isInstance]
+      FUNCTION[fqName=kotlin.reflect.KClass.isInstance, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isInstance]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
@@ -91,7 +91,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.reflect.KClass.equals, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.reflect.KClass.equals, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public expect abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -106,7 +106,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.reflect.KClass.hashCode, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.reflect.KClass.hashCode, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -213,7 +213,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=kotlin.reflect.KMutableProperty0.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+      FUNCTION[fqName=kotlin.reflect.KMutableProperty0.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -262,7 +262,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=kotlin.reflect.KMutableProperty1.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+      FUNCTION[fqName=kotlin.reflect.KMutableProperty1.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
@@ -320,7 +320,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=kotlin.reflect.KMutableProperty2.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+      FUNCTION[fqName=kotlin.reflect.KMutableProperty2.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver1]
@@ -387,7 +387,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=kotlin.reflect.KProperty0.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+      FUNCTION[fqName=kotlin.reflect.KProperty0.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -425,7 +425,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=kotlin.reflect.KProperty1.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+      FUNCTION[fqName=kotlin.reflect.KProperty1.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
@@ -472,7 +472,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
     CLASS_BODY
-      FUN[fqName=kotlin.reflect.KProperty2.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+      FUNCTION[fqName=kotlin.reflect.KProperty2.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver1]
@@ -689,7 +689,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
               MODIFIER_LIST[public final]
               VALUE_PARAMETER_LIST
-          FUN[fqName=kotlin.reflect.KTypeProjection.Companion.invariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invariant]
+          FUNCTION[fqName=kotlin.reflect.KTypeProjection.Companion.invariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invariant]
             MODIFIER_LIST[public final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
                 valueArguments: [ ]
@@ -717,7 +717,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=reflect]
                 REFERENCE_EXPRESSION[referencedName=KTypeProjection]
-          FUN[fqName=kotlin.reflect.KTypeProjection.Companion.contravariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contravariant]
+          FUNCTION[fqName=kotlin.reflect.KTypeProjection.Companion.contravariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contravariant]
             MODIFIER_LIST[public final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
                 valueArguments: [ ]
@@ -745,7 +745,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=reflect]
                 REFERENCE_EXPRESSION[referencedName=KTypeProjection]
-          FUN[fqName=kotlin.reflect.KTypeProjection.Companion.covariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=covariant]
+          FUNCTION[fqName=kotlin.reflect.KTypeProjection.Companion.covariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=covariant]
             MODIFIER_LIST[public final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
                 valueArguments: [ ]
@@ -793,7 +793,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=reflect]
               REFERENCE_EXPRESSION[referencedName=KType]
-      FUN[fqName=kotlin.reflect.KTypeProjection.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.reflect.KTypeProjection.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -801,7 +801,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-      FUN[fqName=kotlin.reflect.KTypeProjection.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
+      FUNCTION[fqName=kotlin.reflect.KTypeProjection.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -812,7 +812,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=reflect]
               REFERENCE_EXPRESSION[referencedName=KVariance]
-      FUN[fqName=kotlin.reflect.KTypeProjection.component2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component2]
+      FUNCTION[fqName=kotlin.reflect.KTypeProjection.component2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component2]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -823,7 +823,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=reflect]
               REFERENCE_EXPRESSION[referencedName=KType]
-      FUN[fqName=kotlin.reflect.KTypeProjection.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
+      FUNCTION[fqName=kotlin.reflect.KTypeProjection.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
         MODIFIER_LIST[public final MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=variance]
@@ -853,7 +853,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=reflect]
             REFERENCE_EXPRESSION[referencedName=KTypeProjection]
-      FUN[fqName=kotlin.reflect.KTypeProjection.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.reflect.KTypeProjection.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -868,7 +868,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.reflect.KTypeProjection.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.reflect.KTypeProjection.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

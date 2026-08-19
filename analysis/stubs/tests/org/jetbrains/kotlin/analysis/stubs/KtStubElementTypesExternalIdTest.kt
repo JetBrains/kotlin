@@ -16,10 +16,14 @@ class KtStubElementTypesExternalIdTest {
     @OptIn(KtImplementationDetail::class)
     fun testExternalIds() {
         for (declaredField in KtStubElementTypes::class.java.declaredFields) {
-            val stubSerializer = declaredField.get(null) as KtStubElementType<*, *>
-            val name = declaredField.name
-            val externalId = stubSerializer.externalId
-            assertEquals("kotlin.$name", externalId)
+            val elementType = declaredField.get(null) as KtStubElementType<*, *>
+            val fieldName = declaredField.name
+
+            // StubElementTypeHolderEP explicitly says that the debug name must be the same as the field
+            assertEquals(fieldName, elementType.toString())
+
+            val externalId = elementType.externalId
+            assertEquals("kotlin.$fieldName", externalId)
         }
     }
 }

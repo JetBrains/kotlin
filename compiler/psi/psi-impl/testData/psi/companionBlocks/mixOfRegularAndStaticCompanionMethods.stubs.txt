@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MixOfRegularAndStaticCompani
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
-  FUN[fqName=regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular1]
+  FUNCTION[fqName=regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular1]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Foo]
@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MixOfRegularAndStaticCompani
       VALUE_PARAMETER_LIST
       STRING_TEMPLATE
         LITERAL_STRING_TEMPLATE_ENTRY[text=r2]
-  FUN[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
+  FUNCTION[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Foo]
@@ -47,7 +47,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MixOfRegularAndStaticCompani
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2L]
-  FUN[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
+  FUNCTION[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
     MODIFIER_LIST[companion]
     TYPE_REFERENCE
       USER_TYPE

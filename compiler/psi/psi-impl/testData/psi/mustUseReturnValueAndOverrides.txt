@@ -17,7 +17,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('unspecified')
@@ -50,7 +50,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('mustUse')
@@ -64,7 +64,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -107,7 +107,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -148,7 +148,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -171,7 +171,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
           PsiElement(OPEN_QUOTE)('"')
           PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -221,7 +221,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -244,7 +244,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
           PsiElement(OPEN_QUOTE)('"')
           PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')

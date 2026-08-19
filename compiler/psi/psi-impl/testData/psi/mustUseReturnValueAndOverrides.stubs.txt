@@ -4,7 +4,7 @@ Base.kt:
     IMPORT_LIST
     CLASS[classId=/Base1, fqName=Base1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Base1, superNames=[]]
       CLASS_BODY
-        FUN[fqName=Base1.unspecified, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
+        FUNCTION[fqName=Base1.unspecified, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -17,12 +17,12 @@ Base.kt:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       CLASS_BODY
-        FUN[fqName=Base2.mustUse, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
+        FUNCTION[fqName=Base2.mustUse, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Base2.ignorable, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Base2.ignorable, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               CONSTRUCTOR_CALLEE
@@ -46,7 +46,7 @@ Impl.kt:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base1]
       CLASS_BODY
-        FUN[fqName=Impl1.unspecified, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
+        FUNCTION[fqName=Impl1.unspecified, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
           MODIFIER_LIST[override]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -60,14 +60,14 @@ Impl.kt:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base2]
       CLASS_BODY
-        FUN[fqName=Impl2.mustUse, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
+        FUNCTION[fqName=Impl2.mustUse, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           MODIFIER_LIST[override]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
           STRING_TEMPLATE
-        FUN[fqName=Impl2.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Impl2.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[override]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -87,14 +87,14 @@ Impl.kt:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base2]
       CLASS_BODY
-        FUN[fqName=Impl3.mustUse, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
+        FUNCTION[fqName=Impl3.mustUse, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           MODIFIER_LIST[override]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
           STRING_TEMPLATE
-        FUN[fqName=Impl3.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Impl3.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[override]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               CONSTRUCTOR_CALLEE

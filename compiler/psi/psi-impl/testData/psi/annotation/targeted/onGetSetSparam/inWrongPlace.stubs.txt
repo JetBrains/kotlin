@@ -81,7 +81,7 @@ FILE[kind=Facade[packageFqName=boo, facadeFqName=boo.InWrongPlaceKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Deprecated]
-  FUN[fqName=boo.a, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
+  FUNCTION[fqName=boo.a, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
         ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
@@ -102,7 +102,7 @@ FILE[kind=Facade[packageFqName=boo, facadeFqName=boo.InWrongPlaceKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Deprecated]
     VALUE_PARAMETER_LIST
-  FUN[fqName=boo.b, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=b]
+  FUNCTION[fqName=boo.b, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=b]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
         ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]

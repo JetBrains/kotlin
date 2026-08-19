@@ -48,7 +48,7 @@ KtFile: UnderscoredTypeParameters.kt
                   PsiElement(IDENTIFIER)('K')
           PsiElement(GT)('>')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -81,7 +81,7 @@ KtFile: UnderscoredTypeParameters.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST

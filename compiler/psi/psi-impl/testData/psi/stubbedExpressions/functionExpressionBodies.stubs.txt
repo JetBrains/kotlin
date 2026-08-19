@@ -10,20 +10,20 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.FunctionExpressionBodiesK
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-  FUN[fqName=test.int, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=int]
+  FUNCTION[fqName=test.int, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=int]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  FUN[fqName=test.string, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
+  FUNCTION[fqName=test.string, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=s]
-  FUN[fqName=test.negative, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=negative]
+  FUNCTION[fqName=test.negative, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=negative]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
@@ -31,13 +31,13 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.FunctionExpressionBodiesK
     PREFIX_EXPRESSION
       OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
-  FUN[fqName=test.reference, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=reference]
+  FUNCTION[fqName=test.reference, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=reference]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     REFERENCE_EXPRESSION[referencedName=constant]
-  FUN[fqName=test.qualified, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=qualified]
+  FUNCTION[fqName=test.qualified, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=qualified]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
@@ -45,10 +45,10 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.FunctionExpressionBodiesK
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=test]
       REFERENCE_EXPRESSION[referencedName=constant]
-  FUN[fqName=test.inferred, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=inferred]
+  FUNCTION[fqName=test.inferred, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=inferred]
     VALUE_PARAMETER_LIST
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
-  FUN[fqName=test.generic, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=generic]
+  FUNCTION[fqName=test.generic, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=generic]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
@@ -62,7 +62,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.FunctionExpressionBodiesK
     REFERENCE_EXPRESSION[referencedName=value]
   CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
     CLASS_BODY
-      FUN[fqName=test.WithMember.member, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=member]
+      FUNCTION[fqName=test.WithMember.member, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=member]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

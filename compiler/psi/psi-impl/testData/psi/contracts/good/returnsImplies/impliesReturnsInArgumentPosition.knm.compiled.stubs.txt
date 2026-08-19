@@ -19,7 +19,7 @@ FILE[kind=File[packageFqName=<root>]]
       contract: [ effect:param(-1) == null -> Returns(NOT_NULL) ]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
-  FUN[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
+  FUNCTION[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
     contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -36,7 +36,7 @@ FILE[kind=File[packageFqName=<root>]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
-  FUN[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
+  FUNCTION[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
     contract: [ effect:param(-1) == null -> Returns(NOT_NULL) ]
     MODIFIER_LIST[public]
     TYPE_REFERENCE

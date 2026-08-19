@@ -64,7 +64,7 @@
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=myCheck, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myCheck]
+    FUNCTION[fqName=myCheck, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myCheck]
       contract: [ effect:Returns(WILDCARD) -> param(0) ]
       MODIFIER_LIST[public]
       TYPE_REFERENCE

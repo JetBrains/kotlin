@@ -47,7 +47,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       OBJECT_DECLARATION[classId=kotlin/ranges/CharProgression.Companion, fqName=kotlin.ranges.CharProgression.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-          FUN[fqName=kotlin.ranges.CharProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
+          FUNCTION[fqName=kotlin.ranges.CharProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
             MODIFIER_LIST[public final MustUseReturnValue]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=rangeStart]
@@ -96,7 +96,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.CharProgression.iterator, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.ranges.CharProgression.iterator, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -106,7 +106,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=CharIterator]
-      FUN[fqName=kotlin.ranges.CharProgression.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.CharProgression.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -114,7 +114,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.CharProgression.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.ranges.CharProgression.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -129,7 +129,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.CharProgression.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.ranges.CharProgression.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -137,7 +137,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.CharProgression.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.ranges.CharProgression.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -206,7 +206,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.CharProgressionIterator.hasNext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
+      FUNCTION[fqName=kotlin.ranges.CharProgressionIterator.hasNext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -214,7 +214,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.CharProgressionIterator.nextChar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextChar]
+      FUNCTION[fqName=kotlin.ranges.CharProgressionIterator.nextChar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextChar]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -366,7 +366,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
-      FUN[fqName=kotlin.ranges.CharRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+      FUNCTION[fqName=kotlin.ranges.CharRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -380,7 +380,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.CharRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.CharRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -388,7 +388,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.CharRange.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.ranges.CharRange.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -403,7 +403,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.CharRange.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.ranges.CharRange.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -411,7 +411,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.CharRange.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.ranges.CharRange.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -444,7 +444,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.ranges.ClosedRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+      FUNCTION[fqName=kotlin.ranges.ClosedRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -456,7 +456,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.ClosedRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.ClosedRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -507,7 +507,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       OBJECT_DECLARATION[classId=kotlin/ranges/IntProgression.Companion, fqName=kotlin.ranges.IntProgression.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-          FUN[fqName=kotlin.ranges.IntProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
+          FUNCTION[fqName=kotlin.ranges.IntProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
             MODIFIER_LIST[public final MustUseReturnValue]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=rangeStart]
@@ -556,7 +556,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.IntProgression.iterator, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.ranges.IntProgression.iterator, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -566,7 +566,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=IntIterator]
-      FUN[fqName=kotlin.ranges.IntProgression.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.IntProgression.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -574,7 +574,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.IntProgression.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.ranges.IntProgression.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -589,7 +589,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.IntProgression.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.ranges.IntProgression.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -597,7 +597,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.IntProgression.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.ranges.IntProgression.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -666,7 +666,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.IntProgressionIterator.hasNext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
+      FUNCTION[fqName=kotlin.ranges.IntProgressionIterator.hasNext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -674,7 +674,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.IntProgressionIterator.nextInt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextInt]
+      FUNCTION[fqName=kotlin.ranges.IntProgressionIterator.nextInt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextInt]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -826,7 +826,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
-      FUN[fqName=kotlin.ranges.IntRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+      FUNCTION[fqName=kotlin.ranges.IntRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -840,7 +840,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.IntRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.IntRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -848,7 +848,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.IntRange.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.ranges.IntRange.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -863,7 +863,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.IntRange.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.ranges.IntRange.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -871,7 +871,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.IntRange.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.ranges.IntRange.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -922,7 +922,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       OBJECT_DECLARATION[classId=kotlin/ranges/LongProgression.Companion, fqName=kotlin.ranges.LongProgression.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-          FUN[fqName=kotlin.ranges.LongProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
+          FUNCTION[fqName=kotlin.ranges.LongProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
             MODIFIER_LIST[public final MustUseReturnValue]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=rangeStart]
@@ -971,7 +971,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.ranges.LongProgression.iterator, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.ranges.LongProgression.iterator, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -981,7 +981,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=LongIterator]
-      FUN[fqName=kotlin.ranges.LongProgression.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.LongProgression.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -989,7 +989,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.LongProgression.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.ranges.LongProgression.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -1004,7 +1004,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.LongProgression.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.ranges.LongProgression.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1012,7 +1012,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.LongProgression.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.ranges.LongProgression.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1081,7 +1081,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.ranges.LongProgressionIterator.hasNext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
+      FUNCTION[fqName=kotlin.ranges.LongProgressionIterator.hasNext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1089,7 +1089,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.LongProgressionIterator.nextLong, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextLong]
+      FUNCTION[fqName=kotlin.ranges.LongProgressionIterator.nextLong, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextLong]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1241,7 +1241,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
-      FUN[fqName=kotlin.ranges.LongRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+      FUNCTION[fqName=kotlin.ranges.LongRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -1255,7 +1255,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.LongRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.LongRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1263,7 +1263,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.LongRange.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUNCTION[fqName=kotlin.ranges.LongRange.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -1278,7 +1278,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.LongRange.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      FUNCTION[fqName=kotlin.ranges.LongRange.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1286,7 +1286,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.ranges.LongRange.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      FUNCTION[fqName=kotlin.ranges.LongRange.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1350,7 +1350,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.ranges.OpenEndRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+      FUNCTION[fqName=kotlin.ranges.OpenEndRange.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -1362,7 +1362,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.ranges.OpenEndRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+      FUNCTION[fqName=kotlin.ranges.OpenEndRange.isEmpty, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

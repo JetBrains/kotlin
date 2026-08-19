@@ -5,7 +5,7 @@ KtFile: DeclarationAfterIncompleteElvis.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -54,7 +54,7 @@ KtFile: DeclarationAfterIncompleteElvis.kt
         PsiErrorElement:Expecting an element
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
@@ -74,7 +74,7 @@ KtFile: DeclarationAfterIncompleteElvis.kt
         OPERATION_REFERENCE
           PsiElement(ELVIS)('?:')
         PsiWhiteSpace('\n    ')
-        FUN
+        FUNCTION
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
@@ -143,7 +143,7 @@ KtFile: DeclarationAfterIncompleteElvis.kt
           PsiErrorElement:Expecting an element
             <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('baz')
@@ -170,7 +170,7 @@ KtFile: DeclarationAfterIncompleteElvis.kt
           OPERATION_REFERENCE
             PsiElement(ELVIS)('?:')
           PsiWhiteSpace('\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE

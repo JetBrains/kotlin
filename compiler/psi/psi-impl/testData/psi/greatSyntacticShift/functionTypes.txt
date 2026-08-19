@@ -21,7 +21,7 @@ KtFile: functionTypes.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('n')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK

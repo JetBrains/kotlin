@@ -48,7 +48,7 @@ KtFile: EnumShortWithOverload.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(override)('override')
             PsiWhiteSpace(' ')
@@ -98,7 +98,7 @@ KtFile: EnumShortWithOverload.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(override)('override')
             PsiWhiteSpace(' ')
@@ -148,7 +148,7 @@ KtFile: EnumShortWithOverload.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(override)('override')
             PsiWhiteSpace(' ')
@@ -179,7 +179,7 @@ KtFile: EnumShortWithOverload.kt
           PsiElement(RBRACE)('}')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    \n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(abstract)('abstract')
         PsiWhiteSpace(' ')

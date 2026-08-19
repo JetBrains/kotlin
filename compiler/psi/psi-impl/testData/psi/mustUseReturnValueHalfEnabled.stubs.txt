@@ -10,7 +10,7 @@ Marked.kt:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       CLASS_BODY
-        FUN[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
+        FUNCTION[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -30,7 +30,7 @@ Marked.kt:
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-        FUN[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               CONSTRUCTOR_CALLEE
@@ -53,7 +53,7 @@ MyEnum.kt:
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=MyEnum.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
         ENUM_ENTRY[classId=null, fqName=MyEnum.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-        FUN[fqName=MyEnum.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        FUNCTION[fqName=MyEnum.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           VALUE_PARAMETER_LIST
           STRING_TEMPLATE
 
@@ -64,7 +64,7 @@ Unmarked.kt:
     IMPORT_LIST
     CLASS[classId=/Unmarked, fqName=Unmarked, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unmarked, superNames=[]]
       CLASS_BODY
-        FUN[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
+        FUNCTION[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -84,7 +84,7 @@ Unmarked.kt:
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-        FUN[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               CONSTRUCTOR_CALLEE
@@ -111,7 +111,7 @@ markedTopLevel.kt:
               REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
+    FUNCTION[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
@@ -129,7 +129,7 @@ unmarkedTopLevel.kt:
     partSimpleName: "UnmarkedTopLevelKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
+    FUNCTION[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
@@ -139,7 +139,7 @@ unmarkedTopLevel.kt:
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=25]
-    FUN[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
+    FUNCTION[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
           CONSTRUCTOR_CALLEE

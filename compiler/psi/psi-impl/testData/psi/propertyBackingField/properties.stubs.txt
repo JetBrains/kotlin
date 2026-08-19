@@ -94,7 +94,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=Foo.getValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=getValue]
+      FUNCTION[fqName=Foo.getValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=getValue]
         MODIFIER_LIST[operator]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]

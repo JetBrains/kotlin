@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithContextParametersKt]]
   partSimpleName: "WithContextParametersKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=conditionInContext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=conditionInContext]
+  FUNCTION[fqName=conditionInContext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=conditionInContext]
     contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
     origin: Facade(className=WithContextParametersKt, jvmClassName=null)
     MODIFIER_LIST[public]

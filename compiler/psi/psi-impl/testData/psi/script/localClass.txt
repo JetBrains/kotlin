@@ -10,7 +10,7 @@ KtFile: localClass.kts
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('TopLevelClass')
       PsiWhiteSpace('\n\n')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -42,7 +42,7 @@ KtFile: localClass.kts
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('LocalClass1')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('localFun1')
@@ -100,7 +100,7 @@ KtFile: localClass.kts
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
               PsiWhiteSpace('\n    ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('localFun2')
@@ -142,7 +142,7 @@ KtFile: localClass.kts
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('LocalClass3')
                   PsiWhiteSpace('\n\n    ')
-                  FUN
+                  FUNCTION
                     PsiElement(fun)('fun')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('localFun3')

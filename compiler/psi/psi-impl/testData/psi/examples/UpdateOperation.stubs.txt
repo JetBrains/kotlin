@@ -18,7 +18,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UpdateOperationKt]]
       OBJECT_DECLARATION[classId=/Pair.Companion, fqName=Pair.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-          FUN[fqName=Pair.Companion.copy, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
+          FUNCTION[fqName=Pair.Companion.copy, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=from]
                 TYPE_REFERENCE

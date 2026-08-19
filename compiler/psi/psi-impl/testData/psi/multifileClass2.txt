@@ -42,7 +42,7 @@ KtFile: multifileClass2.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p1Fun')
@@ -54,7 +54,7 @@ KtFile: multifileClass2.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -71,7 +71,7 @@ KtFile: multifileClass2.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p1ExprFun')
@@ -90,7 +90,7 @@ KtFile: multifileClass2.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p1FunWithParams')
@@ -251,7 +251,7 @@ KtFile: multifileClass2.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('test')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p3Fun')
@@ -263,7 +263,7 @@ KtFile: multifileClass2.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -362,7 +362,7 @@ KtFile: multifileClass2.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('test')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p2Fun')
@@ -374,7 +374,7 @@ KtFile: multifileClass2.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

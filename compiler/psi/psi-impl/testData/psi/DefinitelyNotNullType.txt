@@ -5,7 +5,7 @@ KtFile: DefinitelyNotNullType.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -87,14 +87,14 @@ KtFile: DefinitelyNotNullType.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(EXCLEXCL)('!!')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// should be prohibited on type-resolution level')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
@@ -198,14 +198,14 @@ KtFile: DefinitelyNotNullType.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(EXCLEXCL)('!!')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo3')

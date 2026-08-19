@@ -28,7 +28,7 @@ KtFile: functionExpressionBodies.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('int')
@@ -47,7 +47,7 @@ KtFile: functionExpressionBodies.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('2')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('string')
@@ -69,7 +69,7 @@ KtFile: functionExpressionBodies.kt
         PsiElement(REGULAR_STRING_PART)('s')
       PsiElement(CLOSING_QUOTE)('"')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('negative')
@@ -91,7 +91,7 @@ KtFile: functionExpressionBodies.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('3')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('reference')
@@ -110,7 +110,7 @@ KtFile: functionExpressionBodies.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('constant')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('qualified')
@@ -133,7 +133,7 @@ KtFile: functionExpressionBodies.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('constant')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('inferred')
@@ -146,7 +146,7 @@ KtFile: functionExpressionBodies.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('4')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -187,7 +187,7 @@ KtFile: functionExpressionBodies.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('member')

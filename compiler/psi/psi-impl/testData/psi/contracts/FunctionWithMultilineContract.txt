@@ -10,7 +10,7 @@ KtFile: FunctionWithMultilineContract.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('MyElement')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// FILE: baz.kt')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')

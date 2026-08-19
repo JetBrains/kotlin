@@ -346,7 +346,7 @@ KtFile: properties.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(operator)('operator')
         PsiWhiteSpace(' ')

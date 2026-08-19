@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
   partSimpleName: "AnnotationsOnNullableTypesKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
@@ -16,7 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
         TYPE_REFERENCE
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar]
+  FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -57,7 +57,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
@@ -73,7 +73,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
         TYPE_REFERENCE
@@ -94,7 +94,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=bar1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar1]
+  FUNCTION[fqName=bar1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar1]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=b]
@@ -123,7 +123,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
@@ -145,7 +145,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
         TYPE_REFERENCE
@@ -172,7 +172,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnNullableTypesKt
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=bar2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar2]
+  FUNCTION[fqName=bar2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar2]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION

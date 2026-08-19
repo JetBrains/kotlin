@@ -35,7 +35,7 @@
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
+        FUNCTION[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
           MODIFIER_LIST[public final MustUseReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -43,7 +43,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public final IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               valueArguments: [ ]
@@ -85,7 +85,7 @@
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=MyEnum.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
         ENUM_ENTRY[classId=null, fqName=MyEnum.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-        FUN[fqName=MyEnum.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        FUNCTION[fqName=MyEnum.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           MODIFIER_LIST[public final MustUseReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -124,7 +124,7 @@
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
+        FUNCTION[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
           MODIFIER_LIST[public final MustUseReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -132,7 +132,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+        FUNCTION[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public final IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
               valueArguments: [ ]
@@ -164,7 +164,7 @@
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
+    FUNCTION[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -172,7 +172,7 @@
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-    FUN[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
+    FUNCTION[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
       MODIFIER_LIST[public IgnorableReturnValue]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
           valueArguments: [ ]
@@ -204,7 +204,7 @@
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
+    FUNCTION[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
