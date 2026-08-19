@@ -1,0 +1,29 @@
+KtCallableReferenceExpression(89,96): '::Point'
+  KaSimpleCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Point
+        symbol = <constructor>(x: kotlin.Int, y: kotlin.Int): Point
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = y
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = y: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

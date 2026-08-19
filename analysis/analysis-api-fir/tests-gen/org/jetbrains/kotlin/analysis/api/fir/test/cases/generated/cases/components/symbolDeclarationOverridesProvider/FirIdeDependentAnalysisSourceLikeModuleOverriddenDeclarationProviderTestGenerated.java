@@ -74,6 +74,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleOverriddenDeclarationProvide
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassCustomEquals.kt")
+  public void testFullValueClassCustomEquals() {
+    run("fullValueClassCustomEquals.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithMissedOverride.kt")
   public void testFunctionWithMissedOverride() {
     run("functionWithMissedOverride.kt");

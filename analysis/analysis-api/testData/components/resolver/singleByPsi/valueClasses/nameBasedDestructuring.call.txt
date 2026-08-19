@@ -1,0 +1,19 @@
+KtDestructuringDeclarationEntry(275,276): 'x'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = Point
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = /Point.x
+      typeArgumentsMapping = {}

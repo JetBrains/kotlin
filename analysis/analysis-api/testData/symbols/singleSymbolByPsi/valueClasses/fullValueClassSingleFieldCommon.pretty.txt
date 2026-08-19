@@ -1,0 +1,1 @@
+inline class FullValueClassSingleFieldCommon(value: kotlin.Int)

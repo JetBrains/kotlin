@@ -1,0 +1,5 @@
+KtCallExpression(145,153): 'Point(1)'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Int): Point
+    ]

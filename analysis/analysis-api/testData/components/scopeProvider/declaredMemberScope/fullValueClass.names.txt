@@ -1,0 +1,7 @@
+Classifier names:
+
+Callable names:
+  choose
+  first
+  last
+  second

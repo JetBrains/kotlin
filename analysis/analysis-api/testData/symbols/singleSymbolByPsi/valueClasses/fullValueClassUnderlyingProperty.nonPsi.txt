@@ -4,8 +4,8 @@ KaValueParameterSymbol:
   callableId: null
   contextParameters: []
   contextReceivers: []
-  hasDeclaredDefaultValue: false
-  hasDefaultValue: false
+  hasDeclaredDefaultValue: true
+  hasDefaultValue: true
   isActual: false
   isCompanion: false
   isCrossinline: false
@@ -19,20 +19,20 @@ KaValueParameterSymbol:
   isVararg: false
   location: LOCAL
   modality: FINAL
-  name: value
+  name: y
   origin: SOURCE
-  primaryConstructorProperty: KaKotlinPropertySymbol(/Some.value)
+  primaryConstructorProperty: KaKotlinPropertySymbol(/Point.y)
   psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/String
+    type: kotlin/Int
   typeParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(valueClassUnderlyingProperty.kt)
-  getContainingJvmClassName: Some
+  getContainingFileSymbol: KaFileSymbol(fullValueClassUnderlyingProperty.kt)
+  getContainingJvmClassName: Point
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   importableFqName: null
@@ -58,26 +58,26 @@ KaKotlinPropertySymbol:
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(/Some.value)
+    owningProperty: KaKotlinPropertySymbol(/Point.y)
     psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/String
+      type: kotlin/Int
     typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: Some
-    getContainingFileSymbol: KaFileSymbol(valueClassUnderlyingProperty.kt)
-    getContainingJvmClassName: Some
+      type: Point
+    getContainingFileSymbol: KaFileSymbol(fullValueClassUnderlyingProperty.kt)
+    getContainingJvmClassName: Point
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
-  callableId: /Some.value
+  callableId: /Point.y
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -104,24 +104,24 @@ KaKotlinPropertySymbol:
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/String
+      type: kotlin/Int
     typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: Some
-    getContainingFileSymbol: KaFileSymbol(valueClassUnderlyingProperty.kt)
-    getContainingJvmClassName: Some
+      type: Point
+    getContainingFileSymbol: KaFileSymbol(fullValueClassUnderlyingProperty.kt)
+    getContainingJvmClassName: Point
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getValue
+    javaMethodName: getY
     importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KaNonConstantInitializerValue(val value: String)
+  initializer: KaConstantInitializerValue(0)
   isActual: false
   isCompanion: false
   isConst: false
@@ -135,7 +135,7 @@ KaKotlinPropertySymbol:
   isVal: true
   location: CLASS
   modality: FINAL
-  name: value
+  name: y
   origin: SOURCE
   primaryConstructorParameter: KaValueParameterSymbol:
     anchorPsi: KtParameter
@@ -143,8 +143,8 @@ KaKotlinPropertySymbol:
     callableId: null
     contextParameters: []
     contextReceivers: []
-    hasDeclaredDefaultValue: false
-    hasDefaultValue: false
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
     isActual: false
     isCompanion: false
     isCrossinline: false
@@ -158,20 +158,20 @@ KaKotlinPropertySymbol:
     isVararg: false
     location: LOCAL
     modality: FINAL
-    name: value
+    name: y
     origin: SOURCE
-    primaryConstructorProperty: KaKotlinPropertySymbol(/Some.value)
+    primaryConstructorProperty: KaKotlinPropertySymbol(/Point.y)
     psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/String
+      type: kotlin/Int
     typeParameters: []
     visibility: PUBLIC
-    getContainingFileSymbol: KaFileSymbol(valueClassUnderlyingProperty.kt)
-    getContainingJvmClassName: Some
+    getContainingFileSymbol: KaFileSymbol(fullValueClassUnderlyingProperty.kt)
+    getContainingJvmClassName: Point
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
@@ -181,16 +181,16 @@ KaKotlinPropertySymbol:
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/String
+    type: kotlin/Int
   setter: null
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: Some
-  getContainingFileSymbol: KaFileSymbol(valueClassUnderlyingProperty.kt)
-  getContainingJvmClassName: Some
+    type: Point
+  getContainingFileSymbol: KaFileSymbol(fullValueClassUnderlyingProperty.kt)
+  getContainingJvmClassName: Point
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   isInline: false

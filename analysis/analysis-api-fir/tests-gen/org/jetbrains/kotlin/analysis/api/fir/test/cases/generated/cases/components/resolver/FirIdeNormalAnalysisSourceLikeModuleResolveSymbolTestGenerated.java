@@ -6849,6 +6849,62 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSymbolTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/valueClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ValueClasses {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/valueClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInValueClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/valueClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("constructor.kt")
+    public void testConstructor() {
+      run("constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorReference.kt")
+    public void testConstructorReference() {
+      run("constructorReference.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedEquals.kt")
+    public void testGeneratedEquals() {
+      run("generatedEquals.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedMember.kt")
+    public void testInheritedMember() {
+      run("inheritedMember.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuring.kt")
+    public void testNameBasedDestructuring() {
+      run("nameBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructor.kt")
+    public void testSecondaryConstructor() {
+      run("secondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("valueObject.kt")
+    public void testValueObject() {
+      run("valueObject.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class WithErrors {
