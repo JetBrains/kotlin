@@ -56,6 +56,7 @@ object BuiltinParcelableTypes {
     val PARCELABLE_BASE_TYPE_FQNAMES = setOf(
         "android.os.Bundle",
         "android.os.PersistableBundle",
+        "android.text.SpannableString",
         "android.util.Size",
         "android.util.SizeF",
         "android.util.SparseBooleanArray",

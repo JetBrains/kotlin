@@ -83,7 +83,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             // Built-in parcel serializers
             "kotlin.String", "java.lang.String" ->
                 return stringSerializer
-            "kotlin.CharSequence", "java.lang.CharSequence" ->
+            "kotlin.CharSequence", "java.lang.CharSequence", "android.text.SpannableString" ->
                 return charSequenceSerializer
             "android.os.Bundle" ->
                 return IrParcelSerializerWithClassLoader(parcelizeType, symbols.parcelReadBundle, symbols.parcelWriteBundle)
