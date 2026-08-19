@@ -487,7 +487,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `KT-88106 - Firebase dump task does not fail when version key changes from exact to from`(version: GradleVersion) {
-        val useFromVersionKey = "useFromVersionKey"
+        val useNewerFirebaseVersion = "useNewerFirebaseVersion"
 
         project("empty", version) {
             withLockFileFixture {
@@ -501,7 +501,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     swiftPMDependencies {
                         swiftPackage(
                             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
-                            version = if (project.hasProperty(useFromVersionKey)) from("12.9.0") else exact("12.9.0"),
+                            version = exact(if (project.hasProperty(useNewerFirebaseVersion)) "12.17.0" else "12.9.0"),
                             products = listOf(product("FirebaseFirestore")),
                         )
                     }
@@ -509,7 +509,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                 build("dumpXcodebuildArgsMacosx")
 
-                build("dumpXcodebuildArgsMacosx", "-P$useFromVersionKey=true")
+                build("dumpXcodebuildArgsMacosx", "-P$useNewerFirebaseVersion=true")
             }
         }
     }
