@@ -2,4 +2,4 @@
 // TARGET_PLATFORM: JVM
 
 @JvmInline
-value class Value<caret>Class(val value: String)
+value class Inline<caret>Class(val value: String)

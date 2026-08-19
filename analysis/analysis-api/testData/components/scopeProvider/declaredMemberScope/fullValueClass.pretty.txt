@@ -1,0 +1,12 @@
+override val first: T
+
+val second: T
+
+val last: T
+  get()
+
+fun choose(useFirst: kotlin.Boolean): T
+
+constructor(first: T, second: T)
+
+constructor(value: T)
