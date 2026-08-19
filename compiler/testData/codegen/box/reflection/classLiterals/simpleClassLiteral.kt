@@ -1,4 +1,7 @@
 // WITH_REFLECT
+// WASM_STANDALONE
+// ^^^ the test asserts on names of its own declarations; in a non-standalone run test classes are placed
+//     in a sub-package, so those names would differ
 
 package test
 
