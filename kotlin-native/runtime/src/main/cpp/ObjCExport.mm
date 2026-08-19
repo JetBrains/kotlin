@@ -33,6 +33,7 @@
 #import "Natives.h"
 #import "TypeInfoObjCExportAddition.hpp"
 #import "WritableTypeInfo.hpp"
+#include "ExternalRCRef.hpp"
 #include "swiftExportRuntime/SwiftExport.hpp"
 
 using namespace kotlin;
@@ -40,6 +41,9 @@ using namespace kotlin;
 @interface NSObject (KotlinBaseExtensions)
 // Implemented for KotlinBase
 + (instancetype)createRetainedWrapper:(struct ObjHeader*)obj;
+// Implemented for KotlinBase
++ (id)_createProtocolWrapperForExternalRCRef:(void*)ref
+                                  conformsTo:(NS_NOESCAPE BOOL (^)(Class candidate))conformsTo;
 @end
 
 namespace {
@@ -117,7 +121,16 @@ extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
   static id instance = nullptr;
   dispatch_once(&onceToken, ^{
     Class unitClass = getOrCreateClass(unitInstance->type_info());
-    instance = [unitClass createRetainedWrapper:unitInstance];
+
+    if (compiler::swiftExport()) {
+      kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+      void* ref = kotlin::mm::createRetainedExternalRCRef(unitInstance);
+      kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+      instance = [unitClass _createProtocolWrapperForExternalRCRef:ref
+                                                       conformsTo:^BOOL(Class) { return YES; }];
+    } else {
+      instance = [unitClass createRetainedWrapper:unitInstance];
+    }
   });
   return Kotlin_objc_retain_inNative(instance);
 }
@@ -529,7 +542,16 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
 static id convertKotlinObjectToRetained(ObjHeader* obj) {
   Class clazz = objCExport(obj->type_info()).objCClass;
   RuntimeAssert(clazz != nullptr, "");
-  return [clazz createRetainedWrapper:obj];
+
+  if (compiler::swiftExport()) {
+    kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+    void* ref = kotlin::mm::createRetainedExternalRCRef(obj);
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    return [clazz _createProtocolWrapperForExternalRCRef:ref
+                                             conformsTo:^BOOL(Class) { return YES; }];
+  } else {
+    return [clazz createRetainedWrapper:obj];
+  }
 }
 
 static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const TypeInfo* typeInfo) {
