@@ -23,8 +23,20 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("AccessAtomicPropertyWithoutCallingAnOperation.kt")
+  public void testAccessAtomicPropertyWithoutCallingAnOperation() {
+    run("AccessAtomicPropertyWithoutCallingAnOperation.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("AtomicArrayExtensions.kt")
+  public void testAtomicArrayExtensions() {
+    run("AtomicArrayExtensions.kt");
   }
 
   @Test
@@ -34,9 +46,27 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("AtomicFunctionReferences.kt")
+  public void testAtomicFunctionReferences() {
+    run("AtomicFunctionReferences.kt");
+  }
+
+  @Test
+  @TestMetadata("AtomicScalarExtensions.kt")
+  public void testAtomicScalarExtensions() {
+    run("AtomicScalarExtensions.kt");
+  }
+
+  @Test
   @TestMetadata("AtomicsInCompanionBlocks.kt")
   public void testAtomicsInCompanionBlocks() {
     run("AtomicsInCompanionBlocks.kt");
+  }
+
+  @Test
+  @TestMetadata("CastBetweenAtomicTypes.kt")
+  public void testCastBetweenAtomicTypes() {
+    run("CastBetweenAtomicTypes.kt");
   }
 
   @Test
@@ -61,5 +91,29 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   @TestMetadata("errorProneAtomicReferenceArguments.kt")
   public void testErrorProneAtomicReferenceArguments() {
     run("errorProneAtomicReferenceArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("IllegalContextForAtomics.kt")
+  public void testIllegalContextForAtomics() {
+    run("IllegalContextForAtomics.kt");
+  }
+
+  @Test
+  @TestMetadata("IllegalFunctions.kt")
+  public void testIllegalFunctions() {
+    run("IllegalFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("NoBackingField.kt")
+  public void testNoBackingField() {
+    run("NoBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableAtomicProperties.kt")
+  public void testNullableAtomicProperties() {
+    run("NullableAtomicProperties.kt");
   }
 }
