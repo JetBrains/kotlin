@@ -124,7 +124,7 @@ sealed class KotlinWebpackUpToDateIT(
                             .trim()
                     }
 
-                val expectedFileBasedDepPath = projectPath.absolute().resolve("sp2/foo-npm-dep").pathString
+                val expectedFileBasedDepPath = projectPath.toRealPath().resolve("sp2/foo-npm-dep").pathString
                 assertEquals(
                     "$buildTaskPath doNotCacheIf=true. Task depends on file-based NPM dependencies: [$expectedFileBasedDepPath]. See KT-86309.",
                     fileBasedNpmDepsLogLines,
