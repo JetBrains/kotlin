@@ -99,6 +99,15 @@ internal class KaFirNamedClassSymbol private constructor(
             }
         }
 
+    override val isValue: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) || backingPsi.hasModifier(KtTokens.INLINE_KEYWORD)
+            } else {
+                firSymbol.isInlineOrValue
+            }
+        }
+
     override val isExternal: Boolean
         get() = withValidityAssertion {
             backingPsi?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)

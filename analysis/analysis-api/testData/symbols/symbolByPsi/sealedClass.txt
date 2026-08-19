@@ -60,6 +60,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: InterfaceA
@@ -994,6 +995,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: FINAL
   name: NestedClass
@@ -1028,6 +1030,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: true
+  isValue: false
   location: CLASS
   modality: FINAL
   name: InnerClass
@@ -1062,6 +1065,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: FINAL
   name: NestedObject
@@ -1096,6 +1100,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: ABSTRACT
   name: NestedInterface
@@ -1130,6 +1135,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: FINAL
   name: NestedAnnotation
@@ -1188,6 +1194,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: SEALED
   name: SealedClassWithImplicitConstructor
@@ -1367,6 +1374,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: SEALED
   name: SealedClassWithExplicitConstructor
