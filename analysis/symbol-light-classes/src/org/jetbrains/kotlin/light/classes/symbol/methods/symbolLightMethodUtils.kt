@@ -94,6 +94,9 @@ internal fun isEffectivelyPrivate(symbol: KaDeclarationSymbol): Boolean {
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
  * @param isOverridable Whether the method can be overridden.
  * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. @see isEffectivelyPrivate
+ * @param preserveJvmExposeBoxedAnnotation Whether an explicit [JvmExposeBoxed] annotation should be
+ * retained on the only generated method because a full value class is involved but doesn't require a
+ * boxed JVM alternative.
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
@@ -104,18 +107,25 @@ internal fun methodGeneration(
     isSuspend: Boolean,
     isOverridable: Boolean,
     isEffectivelyPrivate: Boolean,
+    preserveJvmExposeBoxedAnnotation: Boolean,
 ): MethodGenerationResult {
+    val isAffectedByInlineValueClass =
+        hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass
+
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
     val isBoxedAccessorRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
             !isEffectivelyPrivate &&
-            (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
+            (isAffectedByInlineValueClass || preserveJvmExposeBoxedAnnotation)
 
-    val isRegularAccessorRequired = if (isAffectedByValueClass) {
+    val isRegularAccessorRequired = when {
+        // Keep the explicit annotation on the only generated method when no boxed alternative is needed
+        isBoxedAccessorRequestedExplicitly && !isAffectedByInlineValueClass -> false
+
         // JvmName -> unmangled method can be generated
-        hasJvmNameAnnotation
-    } else {
+        isAffectedByValueClass -> hasJvmNameAnnotation
+
         // Unmangled name -> regular method is needed
-        true
+        else -> true
     }
 
     val isBoxedAccessorRequired = when {

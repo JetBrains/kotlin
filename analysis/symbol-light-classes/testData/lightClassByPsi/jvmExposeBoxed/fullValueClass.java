@@ -15,9 +15,16 @@ public final class FullValue /* exposed.FullValue*/ {
   public  FullValue(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getY();//  getY()
 
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
   public final int getX();//  getX()
+
+  public int hashCode();//  hashCode()
 }
 
 public final class Usage /* exposed.Usage*/ {
@@ -27,16 +34,19 @@ public final class Usage /* exposed.Usage*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() exposed.FullValue value;
 
+  @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() exposed.FullValue consume(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() exposed.FullValue);//  consume(@org.jetbrains.annotations.NotNull() exposed.FullValue)
 
+  @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() exposed.FullValue getMutable();//  getMutable()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setMutable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() exposed.FullValue);//  setMutable(@org.jetbrains.annotations.NotNull() exposed.FullValue)
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() exposed.FullValue getValue();//  getValue()
 
   public  Usage(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() exposed.FullValue);//  .ctor(@org.jetbrains.annotations.NotNull() exposed.FullValue)
-
-  public final void setMutable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() exposed.FullValue);//  setMutable(@org.jetbrains.annotations.NotNull() exposed.FullValue)
 }

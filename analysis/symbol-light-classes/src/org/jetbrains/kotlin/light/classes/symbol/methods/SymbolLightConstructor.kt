@@ -125,11 +125,15 @@ internal class SymbolLightConstructor private constructor(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE &&
-                        (hasValueClassInParameterType || destinationClassIsValueClass) &&
-                        // Private declarations are inaccessible from Java, so they are never exposed as boxed
-                        !isEffectivelyPrivate(constructor)
-                    ) {
+                    val isAffectedByInlineValueClass = hasValueClassInParameterType || destinationClassIsValueClass
+                    val preserveJvmExposeBoxedAnnotation = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+                            hasFullValueClassForJvmExposeBoxed(constructor, valueParameterPickMask)
+                    val shouldGenerateJvmExposedBoxed = exposeBoxedMode != JvmExposeBoxedMode.NONE &&
+                            (isAffectedByInlineValueClass || preserveJvmExposeBoxedAnnotation) &&
+                            // Private declarations are inaccessible from Java, so they are never exposed as boxed
+                            !isEffectivelyPrivate(constructor)
+
+                    if (shouldGenerateJvmExposedBoxed) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
@@ -139,7 +143,8 @@ internal class SymbolLightConstructor private constructor(
                         )
                     }
 
-                    if (!destinationClassIsValueClass) {
+                    val isExplicitlyExposedWithoutBoxing = shouldGenerateJvmExposedBoxed && !isAffectedByInlineValueClass
+                    if (!destinationClassIsValueClass && !isExplicitlyExposedWithoutBoxing) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
@@ -153,11 +158,17 @@ internal class SymbolLightConstructor private constructor(
 
             val primaryConstructor = constructors.singleOrNull { it.isPrimary }
             if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
+                val preserveJvmExposeBoxedAnnotation =
+                    jvmExposeBoxedMode(primaryConstructor) == JvmExposeBoxedMode.EXPLICIT &&
+                            hasFullValueClassForJvmExposeBoxed(
+                                primaryConstructor,
+                                BitSet(),
+                            )
                 when {
                     !destinationClassIsValueClass -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
-                            isJvmExposedBoxed = false,
+                            isJvmExposedBoxed = preserveJvmExposeBoxedAnnotation,
                         )
                     }
 

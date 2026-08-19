@@ -285,6 +285,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     isSuspend = isSuspend,
                     isOverridable = isOverridable,
                     isEffectivelyPrivate = isEffectivelyPrivate,
+                    preserveJvmExposeBoxedAnnotation = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+                            hasFullValueClassForJvmExposeBoxed(functionSymbol, valueParameterPickMask),
                 )
 
                 if (generationResult.isBoxedMethodRequired) {

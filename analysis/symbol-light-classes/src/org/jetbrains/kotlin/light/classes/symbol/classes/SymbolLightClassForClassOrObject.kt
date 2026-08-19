@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -24,10 +23,10 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -51,51 +50,51 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.HASH_CODE
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
-    private val isValueClass: Boolean
+private class ClassSymbolInfo(
+    val pointer: KaSymbolPointer<KaNamedClassSymbol>,
+    val isInline: Boolean,
+)
+
+internal class SymbolLightClassForClassOrObject private constructor(
+    classOrObjectDeclaration: KtClassOrObject?,
+    classSymbolInfo: ClassSymbolInfo,
+    ktModule: KaModule,
+    manager: PsiManager,
+) : SymbolLightClassForNamedClassLike(
+    classOrObjectDeclaration = classOrObjectDeclaration,
+    classSymbolPointer = classSymbolInfo.pointer,
+    ktModule = ktModule,
+    manager = manager,
+) {
+    private val isValueClass = classSymbolInfo.isInline
     override fun isValueClass() = isValueClass
 
     constructor(
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
-    ) : super(
+    ) : this(
+        classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
+        classSymbolInfo = ClassSymbolInfo(classSymbol.createPointer(), classSymbol.isInline),
         ktModule = ktModule,
-        classSymbol = classSymbol,
         manager = manager,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isValueClass = classSymbol.isInline
     }
 
-    @OptIn(KaImplementationDetail::class)
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
+        classSymbolInfo = classOrObject.createClassSymbolInfo(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
-        isValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
     ) {
         require(classOrObject !is KtClass || !classOrObject.isInterface() && !classOrObject.isAnnotation())
-    }
-
-    private constructor(
-        classOrObjectDeclaration: KtClassOrObject?,
-        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
-        manager: PsiManager,
-        isValueClass: Boolean,
-    ) : super(
-        classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
-        manager = manager,
-    ) {
-        this.isValueClass = isValueClass
     }
 
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -218,7 +217,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     context(session: KaSession)
     private fun generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>): Unit = with(session) {
-        if (!classSymbol.isData && !classSymbol.isInline) return
+        if (!classSymbol.isData && !classSymbol.isValue) return
 
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.
@@ -373,9 +372,19 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
+        classSymbolInfo = ClassSymbolInfo(classSymbolPointer, isValueClass),
         ktModule = ktModule,
         manager = manager,
-        isValueClass = isValueClass,
     )
+}
+
+private fun KtClassOrObject.createClassSymbolInfo(module: KaModule): ClassSymbolInfo = analyzeForLightClasses(module) {
+    val symbol = symbol
+    requireWithAttachment(symbol is KaNamedClassSymbol, { "Unexpected symbol type" }) {
+        withPsiEntry("declaration", this@createClassSymbolInfo)
+        withEntry("symbol", symbol) { it.toString() }
+        withEntry("expectedSymbolType", KaNamedClassSymbol::class.simpleName ?: "<null>")
+    }
+
+    ClassSymbolInfo(symbol.createPointer(), symbol.isInline)
 }

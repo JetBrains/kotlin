@@ -756,6 +756,28 @@ internal fun hasValueClassInSignature(
 ) { typeForValueClass(it) }
 
 /**
+ * Whether [callableSymbol] involves a full value class in its dispatch receiver or signature.
+ *
+ * Full value classes don't require a boxed JVM alternative. However, an explicit [JvmExposeBoxed]
+ * annotation is still retained on the ordinary method generated for such a declaration.
+ */
+context(_: KaSession)
+internal fun hasFullValueClassForJvmExposeBoxed(
+    callableSymbol: KaCallableSymbol,
+    valueParameterPickMask: BitSet? = null,
+): Boolean {
+    val owner = jvmMethodOwner(callableSymbol)
+    if (owner is KaNamedClassSymbol && owner.isValue && !owner.isInline) return true
+
+    val declaration = (callableSymbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaCallableSymbol ?: callableSymbol
+    return hasValueClassInReturnType(declaration) { typeForFullValueClass(it) } || hasValueClassInParameterPosition(
+        callableSymbol = declaration,
+        skipValueParametersCheck = false,
+        valueParameterPickMask = valueParameterPickMask,
+    ) { typeForFullValueClass(it) }
+}
+
+/**
  * Whether the name of the [callableSymbol] is mangled because of a value class in a parameter position: a value parameter,
  * an extension receiver, or a context parameter.
  *
@@ -790,12 +812,19 @@ private inline fun hasValueClassInParameterPosition(
 }
 
 context(_: KaSession)
-internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
+internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean =
+    hasValueClassInReturnType(callableSymbol) { typeForValueClass(it) }
+
+context(_: KaSession)
+private inline fun hasValueClassInReturnType(
+    callableSymbol: KaCallableSymbol,
+    predicate: (KaType) -> Boolean,
+): Boolean {
     // A declaration without real PSI, e.g., a library or a generated one, always has its type at hand
     val psiDeclaration = callableSymbol.realPsi as? KtCallableDeclaration
     val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
     // Only explicitly declared types can be checked to avoid contract violations
-    return shouldCheckType && typeForValueClass(callableSymbol.returnType)
+    return shouldCheckType && predicate(callableSymbol.returnType)
 }
 
 /**
@@ -886,16 +915,23 @@ private fun isNonMaterializedValueClassMember(symbol: KaCallableSymbol, owner: K
  * The value class behind [type] after erasure, or `null` if [type] is not represented by a value class.
  */
 context(_: KaSession)
-private fun valueClassSymbol(type: KaType): KaNamedClassSymbol? {
+private fun valueClassSymbol(
+    type: KaType,
+    predicate: (KaNamedClassSymbol) -> Boolean,
+): KaNamedClassSymbol? {
     // A value class is final, so it can only be an upper bound of a type parameter as is
     val candidates = if (type is KaTypeParameterType) type.symbol.upperBounds else listOf(type)
     return candidates.firstNotNullOfOrNull { candidate ->
-        (candidate.expandedSymbol as? KaNamedClassSymbol)?.takeIf { it.isInline }
+        (candidate.expandedSymbol as? KaNamedClassSymbol)?.takeIf(predicate)
     }
 }
 
 context(_: KaSession)
-internal fun typeForValueClass(type: KaType): Boolean = valueClassSymbol(type) != null
+internal fun typeForValueClass(type: KaType): Boolean = valueClassSymbol(type) { it.isInline } != null
+
+context(_: KaSession)
+private fun typeForFullValueClass(type: KaType): Boolean =
+    valueClassSymbol(type) { it.isValue && !it.isInline } != null
 
 /**
  * Whether the [type] in a parameter position mangles the name of a declaration.
@@ -905,7 +941,7 @@ internal fun typeForValueClass(type: KaType): Boolean = valueClassSymbol(type) !
  */
 context(_: KaSession)
 internal fun parameterTypeRequiresMangling(type: KaType): Boolean {
-    val symbol = valueClassSymbol(type) ?: return false
+    val symbol = valueClassSymbol(type) { it.isInline } ?: return false
     return symbol.classId != StandardClassIds.Result
 }
 

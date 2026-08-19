@@ -528,6 +528,8 @@ internal class SymbolLightAccessorMethod private constructor(
                 hasValueClassInParameterType = hasValueClassInParameterType,
                 hasValueClassInReturnType = hasValueClassInReturnType,
                 isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassProperty,
+                preserveJvmExposeBoxedAnnotation = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+                        hasFullValueClassForJvmExposeBoxed(accessor),
                 hasJvmNameAnnotation = hasJvmNameAnnotation,
                 isSuspend = false,
                 isOverridable = accessor.isOverridable(),
