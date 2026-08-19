@@ -83,6 +83,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                 FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
             }
             is FirEvaluatorResult.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+            is FirEvaluatorResult.ControlFlowNotSupportedError -> FirErrors.CONST_VAL_WITH_CONTROL_FLOW_IN_INITIALIZER
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }
         reporter.reportOn((evaluationResult as? FirEvaluatorResult.NotEvaluated)?.source ?: initializer.source, errorKind)

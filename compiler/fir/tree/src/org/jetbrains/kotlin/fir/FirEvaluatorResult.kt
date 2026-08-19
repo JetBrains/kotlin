@@ -25,6 +25,7 @@ sealed class FirEvaluatorResult {
     class NotKClassLiteral(source: AbstractKtSourceElement?) : DiagnosticError(source)
     class NotConstValInConstExpression(source: AbstractKtSourceElement?) : DiagnosticError(source)
     class KClassLiteralOfTypeParameterError(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class ControlFlowNotSupportedError(source: AbstractKtSourceElement?) : DiagnosticError(source)
 
     sealed class CompileTimeException(source: AbstractKtSourceElement?) : NotEvaluated(source)
     class DivisionByZero(source: AbstractKtSourceElement?) : CompileTimeException(source)

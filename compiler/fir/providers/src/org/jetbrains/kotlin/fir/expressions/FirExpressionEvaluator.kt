@@ -291,6 +291,10 @@ object FirExpressionEvaluator {
             return errorResolvedQualifier.wrap()
         }
 
+        override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): FirEvaluatorResult {
+            return ControlFlowNotSupportedError(whenExpression.source)
+        }
+
         override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?): FirEvaluatorResult {
             var coneType = getClassCall.argument.getExpandedType(session)
 
@@ -989,7 +993,8 @@ private fun FirEvaluatorResult.copy(originalExpression: FirExpression): FirEvalu
         is NotKClassLiteral -> NotKClassLiteral(originalExpression.source)
         is NotConstValInConstExpression -> NotConstValInConstExpression(originalExpression.source)
         is KClassLiteralOfTypeParameterError -> KClassLiteralOfTypeParameterError(originalExpression.source)
-        else -> this
+        is ControlFlowNotSupportedError -> ControlFlowNotSupportedError(originalExpression.source)
+        is DivisionByZero, is RecursionInInitializer, is TrimMarginBlankPrefix -> this
     }
 }
 

@@ -9,7 +9,7 @@ annotation class C(val f: String)
 const val flag = true
 
 @C(
-    f = <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>when (flag) {
+    f = <!ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED!>when (flag) {
         true -> "OK"
         false -> "Not OK"
     }<!>
