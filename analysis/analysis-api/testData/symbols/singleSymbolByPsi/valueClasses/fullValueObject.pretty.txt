@@ -1,1 +1,1 @@
-inline object FullValueObject
+value object FullValueObject

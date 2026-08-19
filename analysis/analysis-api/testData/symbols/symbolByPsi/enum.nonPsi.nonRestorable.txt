@@ -12,6 +12,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: true
+  isValue: false
   location: CLASS
   modality: FINAL
   name: InnerClass

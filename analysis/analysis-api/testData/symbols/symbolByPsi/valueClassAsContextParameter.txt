@@ -88,6 +88,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: true
   isInner: false
+  isValue: true
   location: TOP_LEVEL
   modality: FINAL
   name: Some
@@ -498,6 +499,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: FINAL
   name: RegularClass

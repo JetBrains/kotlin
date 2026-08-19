@@ -1,1 +1,1 @@
-sealed inline class FullValueClassSealed
+sealed value class FullValueClassSealed

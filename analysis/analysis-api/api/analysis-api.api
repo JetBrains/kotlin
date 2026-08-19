@@ -1161,6 +1161,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymb
 	public abstract fun isFun ()Z
 	public abstract fun isInline ()Z
 	public abstract fun isInner ()Z
+	public abstract fun isValue ()Z
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol {

@@ -219,9 +219,23 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     public abstract val isData: Boolean
 
     /**
-     * Whether the class is an [inline class](https://kotlinlang.org/docs/inline-classes.html).
+     * Whether the class has an [inline value class](https://kotlinlang.org/docs/inline-classes.html) representation.
+     *
+     * This is `false` for
+     * [full value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md),
+     * even when a backend can unbox a compatible full value class. To check whether this is any Kotlin value class, use
+     * [isValue].
      */
     public abstract val isInline: Boolean
+
+    /**
+     * Whether the class is a Kotlin value class.
+     *
+     * This includes inline value classes, full value classes, and value objects. It does not imply any particular runtime
+     * representation: whether a value class is unboxed depends on the target and use site. To check specifically for an inline value class
+     * representation, use [isInline].
+     */
+    public abstract val isValue: Boolean
 
     /**
      * Indicates whether the class is a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html)
