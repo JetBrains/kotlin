@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.hasEnhancedNullability
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.text
 
 private const val KOTLINX_ATOMICFU = "kotlinx.atomicfu"
@@ -97,6 +100,13 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD,
+                declaration.source.text.toString()
+            )
+        }
+        if (declaration.returnTypeRef.coneType.isMarkedNullable) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN,
                 declaration.source.text.toString()
             )
         }
