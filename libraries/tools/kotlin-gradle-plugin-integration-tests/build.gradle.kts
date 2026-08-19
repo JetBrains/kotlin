@@ -395,6 +395,16 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
     it.isTransitive = false
 }
 
+// Keep compatible with the embedded Kotlin version in the oldest supported Gradle version (7.6.3).
+val buildScriptInjectionKotlinTestVersion = "1.7.10"
+val buildScriptInjectionTestDependencies = configurations.detachedConfiguration(
+    dependencies.create("org.jetbrains.kotlin:kotlin-test:$buildScriptInjectionKotlinTestVersion"),
+    dependencies.create("org.jetbrains.kotlin:kotlin-test-junit:$buildScriptInjectionKotlinTestVersion"),
+    dependencies.create(libs.junit4.get()),
+).apply {
+    isTransitive = false
+}
+
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
@@ -495,6 +505,7 @@ tasks.withType<Test>().configureEach {
     // This is a classpath that the injections will see
     val buildScriptInjectionsClasspath = files(
         kgpTestingUtilities,
+        buildScriptInjectionTestDependencies,
         kotlin.target.compilations.getByName("test").output.classesDirs,
     )
     doFirst {
