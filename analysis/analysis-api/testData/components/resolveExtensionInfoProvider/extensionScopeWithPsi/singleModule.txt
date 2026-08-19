@@ -21,6 +21,7 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    isValue: false
     location: TOP_LEVEL
     modality: FINAL
     name: GenClass1
@@ -53,6 +54,7 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    isValue: false
     location: TOP_LEVEL
     modality: OPEN
     name: GenClass2

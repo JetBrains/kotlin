@@ -13,6 +13,7 @@ CLASS:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: FINAL
   name: RegularClass

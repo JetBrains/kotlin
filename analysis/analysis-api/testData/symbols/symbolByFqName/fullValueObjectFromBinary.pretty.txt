@@ -1,1 +1,1 @@
-object FullValueObjectFromBinary
+value object FullValueObjectFromBinary
