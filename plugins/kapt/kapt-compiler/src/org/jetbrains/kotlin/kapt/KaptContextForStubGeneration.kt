@@ -43,6 +43,14 @@ class KaptContextForStubGeneration(
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 
+    // Internal name -> compiled class, shared by [KaptTreeMaker] and `KaptStubConverter`.
+    val compiledClassByName: Map<String, ClassNode> =
+        buildMap(compiledClasses.size) {
+            for (compiledClass in compiledClasses) {
+                putIfAbsent(compiledClass.name, compiledClass)
+            }
+        }
+
     val project: Project get() = generationState.project
 
     val firSession: FirSession? = firFiles.firstOrNull()?.moduleData?.session

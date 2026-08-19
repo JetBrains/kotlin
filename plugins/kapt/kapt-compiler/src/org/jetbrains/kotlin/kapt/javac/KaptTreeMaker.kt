@@ -38,6 +38,8 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
     val nameTable: Name.Table = Names.instance(context).table
 
+    private val qualifiedNameCache = HashMap<String, String>()
+
     @Suppress("FunctionName")
     fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }
@@ -92,10 +94,17 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
         // This is a top-level class
         if ('$' !in nameWithDots) return nameWithDots
 
+        qualifiedNameCache[internalName]?.let { return it }
+        val qualifiedName = computeQualifiedName(internalName, nameWithDots)
+        qualifiedNameCache[internalName] = qualifiedName
+        return qualifiedName
+    }
+
+    private fun computeQualifiedName(internalName: String, nameWithDots: String): String {
         val kaptContext = this.kaptContext.get()
 
         // Maybe it's in our sources?
-        val classFromSources = kaptContext.compiledClasses.firstOrNull { it.name == internalName }
+        val classFromSources = kaptContext.compiledClassByName[internalName]
         if (classFromSources != null) {
             // Get inner class node pointing to the outer class
             val innerClassNode = classFromSources.innerClasses.firstOrNull { it.name == classFromSources.name }
@@ -178,6 +187,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
     fun name(name: String): Name = nameTable.fromString(name)
 
     override fun dispose() {
+        qualifiedNameCache.clear()
         kaptContext.dispose()
     }
 
