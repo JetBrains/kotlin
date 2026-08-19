@@ -68,8 +68,6 @@ plugins {
 }
 
 include(
-    ":docs-developer",
-
     ":dokka-subprojects",
     ":dokka-subprojects:analysis-java-psi",
     ":dokka-subprojects:analysis-kotlin-api",
