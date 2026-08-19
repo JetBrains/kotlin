@@ -64,7 +64,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_TARGET
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BACKING_FIELD
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BINARY_EXPRESSION
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BLOCK_CODE_FRAGMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BOOLEAN_CONSTANT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CALL_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CHARACTER_CONSTANT
@@ -86,7 +85,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DYNAMIC_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ENUM_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ESCAPE_STRING_TEMPLATE_ENTRY
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:EXPRESSION_CODE_FRAGMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:FILE_ANNOTATION_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:FLOAT_CONSTANT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:FUNCTION
@@ -126,7 +124,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:SUPER_TYPE_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:SUPER_TYPE_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPEALIAS
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_ARGUMENT_LIST
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_CODE_FRAGMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_CONSTRAINT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_CONSTRAINT_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_PARAMETER
