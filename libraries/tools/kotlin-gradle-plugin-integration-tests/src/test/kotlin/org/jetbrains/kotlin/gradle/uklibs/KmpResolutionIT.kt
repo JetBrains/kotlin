@@ -1370,7 +1370,11 @@ class KmpResolutionIT : KGPBaseTest() {
         }
 
 
-        val transitiveProducer = project("empty", gradleVersion) {
+        val transitiveProducer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "transitive"
             }
@@ -1400,7 +1404,11 @@ class KmpResolutionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "foo"))
 
-        return project("empty", gradleVersion) {
+        return project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "consumer"
             }

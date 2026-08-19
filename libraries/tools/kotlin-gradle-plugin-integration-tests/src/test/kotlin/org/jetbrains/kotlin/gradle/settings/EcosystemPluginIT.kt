@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
@@ -67,6 +68,14 @@ class EcosystemPluginIT : KGPBaseTest() {
                     buildScriptInjection {
                         @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
                         kotlinJvm.compilerVersion.set("2.1.0")
+
+                        project.configurations.named(PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+                            it.resolutionStrategy {
+                                it.eachDependency {
+                                    if (it.requested.group == "org.jetbrains.kotlin") it.useVersion("2.1.0")
+                                }
+                            }
+                        }
 
                         // this code can be unwrapped from afterEvaluate after upgrading minimal supported Gradle version to 8.2 or newer
                         project.afterEvaluate {

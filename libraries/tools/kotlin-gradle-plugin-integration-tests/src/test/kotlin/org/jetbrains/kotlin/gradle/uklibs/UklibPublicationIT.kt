@@ -44,6 +44,7 @@ class UklibPublicationIT : KGPBaseTest() {
     ) {
         val publisher = publishUklib(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             linuxArm64()
             linuxX64()
@@ -450,7 +451,8 @@ class UklibPublicationIT : KGPBaseTest() {
     ) {
         val producerImplementation = publishUklib(
             gradleVersion = gradleVersion,
-            publisherConfig = PublisherConfiguration(group = "implementation")
+            publisherConfig = PublisherConfiguration(group = "implementation"),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             jvm()
             js()
@@ -459,7 +461,8 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val producerApi = publishUklib(
             gradleVersion = gradleVersion,
-            publisherConfig = PublisherConfiguration(group = "api")
+            publisherConfig = PublisherConfiguration(group = "api"),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             jvm()
             js()
@@ -469,6 +472,7 @@ class UklibPublicationIT : KGPBaseTest() {
         val project = publishUklib(
             gradleVersion = gradleVersion,
             dependencyRepositories = listOf(producerImplementation, producerApi),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             // FIXME: Allow consuming Uklibs
             jvm()
@@ -558,7 +562,8 @@ class UklibPublicationIT : KGPBaseTest() {
     ) {
         val producer = publishUklib(
             gradleVersion = gradleVersion,
-            publisherConfig = PublisherConfiguration(group = "dependency")
+            publisherConfig = PublisherConfiguration(group = "dependency"),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             jvm()
             js()
@@ -681,6 +686,7 @@ class UklibPublicationIT : KGPBaseTest() {
         template: String = "empty",
         gradleVersion: GradleVersion,
         androidVersion: String? = null,
+        buildOptions: BuildOptions = defaultBuildOptions,
         dependencyRepositories: List<PublishedProject> = emptyList(),
         publisherConfig: PublisherConfiguration = PublisherConfiguration(),
         configuration: KotlinMultiplatformExtension.() -> Unit,
@@ -688,6 +694,7 @@ class UklibPublicationIT : KGPBaseTest() {
         val publisher = project(
             template,
             gradleVersion,
+            buildOptions = buildOptions,
         ) {
             if (androidVersion != null) addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()
@@ -702,7 +709,7 @@ class UklibPublicationIT : KGPBaseTest() {
         }.publish(
             publisherConfiguration = publisherConfig,
             deriveBuildOptions = {
-                defaultBuildOptions.copy(
+                buildOptions.copy(
                     androidVersion = androidVersion,
                     // WarningMode.None because of AGP issue: https://issuetracker.google.com/399393875
                     warningMode = if (androidVersion != null) WarningMode.None else defaultBuildOptions.warningMode,

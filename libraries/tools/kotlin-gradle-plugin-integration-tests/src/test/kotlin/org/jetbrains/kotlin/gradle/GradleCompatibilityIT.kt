@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.internals.MINIMALLY_SUPPORTED_GRADLE_VERSION
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.GradleWithJdkTest
@@ -77,7 +78,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
             buildAndFail("help") {
                 // assertHasDiagnostic does not work as proper diagnostic reporting may fail on unsupported Gradle versions
                 assertOutputContains("The applied Kotlin Gradle is not compatible with the used Gradle version")
-                assertOutputContains("Please update the Gradle version to at least Gradle ${TestVersions.Gradle.MIN_SUPPORTED}")
+                assertOutputContains("Please update the Gradle version to at least Gradle ${MINIMALLY_SUPPORTED_GRADLE_VERSION}")
             }
         }
     }

@@ -13,6 +13,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+group = "kotlin-multiplatform-projects"
+
 val dependencyMode = providers.gradleProperty("dependencyMode")
 
 kotlin {
