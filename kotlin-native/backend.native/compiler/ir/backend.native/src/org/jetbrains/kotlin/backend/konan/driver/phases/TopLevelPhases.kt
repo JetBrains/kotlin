@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringsSecondStagePhase
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.common.phaser.createModulePhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
@@ -158,8 +162,8 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
             // (like IR visibility checks).
             // This is what we call a 'lowering synchronization point'.
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrBeforeLowering) }
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, checkInlineCallCyclesPhase) }
+            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::IrValidationBeforeLoweringsKlibSecondStagePhase)) }
+            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::InlineCallCycleCheckerLowering)) }
 
             run {
                 // This is a so-called "KLIB Common Lowerings Prefix".
@@ -172,14 +176,14 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
                 // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, getLoweringsUpToAndIncludingSyntheticAccessors()) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningOnlyPrivateFunctions) }
+                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::NativeIrValidationAfterInliningPrivateFunctionsKlibPhase)) }
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, listOf(inlineAllFunctionsPhase)) }
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createNativePhases(::SpecialObjCValidationLowering, ::RedundantCastsRemoverLowering)) }
             }
 
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningAllFunctions) }
+            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::NativeIrValidationAfterInliningAllFunctionsKlibSecondStagePhase)) }
             fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, state.context.config.getLoweringsAfterInlining()) }
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrAfterLowering) }
+            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, createModulePhase(::IrValidationAfterLoweringsSecondStagePhase)) }
 
             fragmentWithState.forEach { [fragment, state] -> state.finalizeLowerings(fragment) }
 

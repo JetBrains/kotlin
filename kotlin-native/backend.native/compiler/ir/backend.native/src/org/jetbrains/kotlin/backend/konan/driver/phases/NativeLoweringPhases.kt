@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
 import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
@@ -36,7 +33,7 @@ import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
-internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
+internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, IrModuleFragment, IrModuleFragment>
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         lowerings: LoweringList,
@@ -78,51 +75,6 @@ internal fun PhaseEngine<NativeGenerationState>.runModuleWisePhase(
         }
     }
 }
-
-internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "ValidateIrBeforeLowering",
-        op = { context, module -> IrValidationBeforeLoweringsKlibSecondStagePhase(context.context).lower(module) }
-)
-
-internal val checkInlineCallCyclesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "InlineCallCycleChecker",
-        op = { context, module -> InlineCallCycleCheckerLowering(context.context).lower(module) }
-)
-
-
-internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "ValidateIrAfterInliningOnlyPrivateFunctions",
-        op = { context, module ->
-            IrValidationAfterInliningPrivateFunctionsKlibPhase(
-                    context = context.context,
-                    checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                        // Call sites of only non-private functions are allowed at this stage.
-                        !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-                    }
-            ).lower(module)
-        }
-)
-
-internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "ValidateIrAfterInliningAllFunctions",
-        op = { context, module ->
-            IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
-                    context = context.context,
-                    checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
-                        // No inline function call sites should remain at this stage.
-                        val inlineFunction = inlineFunctionUseSite.symbol.owner
-                        // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                        if (inlineFunction.symbol.isTypeOfIntrinsic()) return@check true
-                        return@check inlineFunction.body == null
-                    }
-            ).lower(module)
-        }
-)
-
-internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "ValidateIrAfterLowering",
-        op = { context, module -> IrValidationAfterLoweringsSecondStagePhase(context.context).lower(module) }
-)
 
 internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<NativeBackendContext, Unit>(
         name = "FunctionsWithoutBoundCheckGenerator",
