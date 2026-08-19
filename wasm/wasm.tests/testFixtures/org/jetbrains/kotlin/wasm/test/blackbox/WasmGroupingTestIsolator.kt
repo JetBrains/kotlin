@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -35,6 +37,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             CodegenTestDirectives,
             LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
+            AdditionalFilesDirectives, // for directives WITH_COROUTINES, CHECK_STATE_MACHINE
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -86,6 +89,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
+            computeCoroutineHelpersToken(moduleStructure.allDirectives),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -102,6 +106,15 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         ).firstNotNullOfOrNull { [directive, token] ->
             token.takeIf { directive in moduleStructure.allDirectives }
         }
+
+    private fun computeCoroutineHelpersToken(registeredDirectives: RegisteredDirectives): BatchToken? {
+        if (AdditionalFilesDirectives.WITH_COROUTINES !in registeredDirectives) return null
+        val extraHelperDirectives = listOf(
+            CHECK_STATE_MACHINE, // adds helpers: `CoroutineUtil.kt` + `StateMachineChecker.kt`
+        ).filter { it in registeredDirectives }
+        // The default set of helper files is the same for all such tests, so they may be grouped as usual.
+        return extraHelperDirectives.ifNotEmpty { Custom("coroutine helpers: ${joinToString { it.name }}") }
+    }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
         // `distinct()` below is used to match directive lists for tests having different amount of modules, like `[2.2]` vs `[2.2, 2.2]`
