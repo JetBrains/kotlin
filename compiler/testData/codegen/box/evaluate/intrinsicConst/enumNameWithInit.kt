@@ -12,7 +12,6 @@ enum class EnumClass {
     }
 }
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (EnumClass.OK.name.id() != "OK") return "Fail 1"
     return result

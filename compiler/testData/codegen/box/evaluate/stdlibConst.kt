@@ -5,7 +5,6 @@ const val code = '1'.code
 const val floorDiv = 10.floorDiv(2)
 const val mod = 5.mod(3)
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (code.id() != 49) return "Fail 1"
     if (floorDiv.id() != 5) return "Fail 2"

@@ -120,7 +120,6 @@ const val limits1 = 254u.toUByte()+oneVal
 const val limits2 = 255u.toUByte()+oneVal
 const val limits3 = zeroVal-oneVal
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (compareTo1.id() != -1)   return "Fail compareTo1"
     if (compareTo2.id() != 0)    return "Fail compareTo2"

@@ -20,7 +20,6 @@ const val className = ::A.name
 const val topLevelPropName = ::topLevelProp.name
 const val nameInComplexExpression = A::OK.name + "!"
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (propertyName1.id() != "OK") return "Fail propertyName1"
     if (propertyName2.id() != "somePropertyWithLongName") return "Fail propertyName2"

@@ -27,7 +27,6 @@ const val equals3 = otherStr == someStr
 
 const val toString1 = someStr.toString()
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (plus1.id() != "123other")    return "Fail 1.1"
     if (plus2.id() != "1231")        return "Fail 1.2"
