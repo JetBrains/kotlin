@@ -1,3 +1,21 @@
+/IllegalContextForAtomics.kt:29:22: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:29:33: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:30:17: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:31:25: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:36:5: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:37:5: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:38:5: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:42:72: error: Atomic factories can only be called to initialize a property or as delegates.
+
+/IllegalContextForAtomics.kt:43:48: error: Atomic factories can only be called to initialize a property or as delegates.
+
 /IllegalContextForAtomics.kt:47:5: error:
 To prevent atomic properties from being referenced outside the current Kotlin module, they must be declared as either private or internal. Note, that `@kotlin.PublishedApi` annotation, when applied to a class or a member with internal visibility, makes it effectively public.
 Consider setting the visibility of the property `'// Non private property, has no backing field
@@ -8,3 +26,5 @@ private val _a = atomic<T>(initial)
 public val a: T by _a
 ```
 
+
+/IllegalContextForAtomics.kt:54:16: error: Atomic factories can only be called to initialize a property or as delegates.

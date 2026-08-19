@@ -68,6 +68,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE =
         "Callable references to atomic member or extension functions are prohibited."
 
+    private const val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE =
+        "Atomic factories can only be called to initialize a property or as delegates."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -83,6 +86,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN, ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY, ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE
         )
     }
 
