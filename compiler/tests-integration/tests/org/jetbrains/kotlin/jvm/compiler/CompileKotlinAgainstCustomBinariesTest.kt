@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
@@ -257,6 +258,34 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     @Test
     fun testMissingDependencyJavaNestedAnnotation() {
         doTestBrokenLibrary("library", $$"test/A$Anno.class")
+    }
+
+    /**
+     * Emulating an incremental compilation scenario where a class file of the library mentions a nested Java class in a signature,
+     * and that nested class is changed, and therefore its class file is deleted by the incremental pipeline, and the changed source
+     * is passed instead. The referring class file records the nested `ClassId`, so the reference has to be resolved against the source.
+     *
+     * The similar scenario with a nested *Kotlin* class is covered by
+     * `JKlibJavaInteropIntegrationTest.testJavaExtendingNestedKotlinClassFromKlib`.
+     */
+    @Test
+    fun testBinarySignatureReferencesNestedJavaClassFromSource() {
+        val library = copyJarFileWithoutEntry(
+            compileLibrary(
+                "library",
+                compileJava = { _, javaFiles, outputDir ->
+                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+                },
+            ),
+            "p/Outer.class", $$"p/Outer$Inner.class"
+        )
+        for (javaDirect in listOf(true, false)) {
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library),
+                additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
+                additionalSources = listOf("p/Outer.java"),
+            )
+        }
     }
 
     @Test

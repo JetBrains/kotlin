@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.name.ClassId
 
 interface JavaType : ListBasedJavaAnnotationOwner
 
@@ -32,6 +33,12 @@ interface JavaClassifierType : JavaType {
 
     val classifierQualifiedName: String
     val presentableText: String
+
+    /**
+     * [ClassId] recorded for the classifier, known even when the [classifier] itself was not found; unlike
+     * [classifierQualifiedName] it tells where the package name ends. `null` if only the qualified name is known.
+     */
+    val classifierClassId: ClassId? get() = null
 }
 
 interface JavaPrimitiveType : JavaType {
