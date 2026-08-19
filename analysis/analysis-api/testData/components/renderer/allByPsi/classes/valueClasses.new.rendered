@@ -1,6 +1,6 @@
 @JvmInline
 value class InlineValueClass(val value: Int)
 
-class FullValueClass(val first: String, val second: Int)
+value class FullValueClass(val first: String, val second: Int)
 
-object FullValueObject
+value object FullValueObject

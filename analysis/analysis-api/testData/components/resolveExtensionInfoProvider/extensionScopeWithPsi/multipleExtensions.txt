@@ -28,6 +28,7 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    isValue: false
     location: TOP_LEVEL
     modality: ABSTRACT
     name: RexClass1
@@ -60,6 +61,7 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    isValue: false
     location: TOP_LEVEL
     modality: ABSTRACT
     name: RexClass2
