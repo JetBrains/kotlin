@@ -679,6 +679,13 @@ private fun KaDiagnosticConverterBuilder.addConversions8() {
             token,
         )
     }
+    add(FirErrors.UNIT_RETURN_AS_BREAK_IN_STDLIB_FUNCTION) { firDiagnostic ->
+        UnitReturnAsBreakInStdlibFunctionImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.SYNCHRONIZED_IN_INTERFACE) { firDiagnostic ->
         SynchronizedInInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5011,6 +5018,13 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b,
             firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.MATCHING_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION) { firDiagnostic ->
+        MatchingTypeReturnAsBreakInStdlibFunctionImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

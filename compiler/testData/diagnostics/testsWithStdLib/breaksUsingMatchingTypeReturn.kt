@@ -3,7 +3,7 @@
 fun test() {
     val x = run {
         listOf("a", "b").takeWhile {
-            if (it == "b") <!MATCHING_TYPE_RETURN_AS_BREAK("takeWhile")!>return@run emptyList()<!>
+            if (it == "b") <!MATCHING_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION("takeWhile")!>return@run emptyList()<!>
             return@takeWhile true
         }
     }
@@ -11,7 +11,7 @@ fun test() {
     val y = run {
         setOf(1, 2).takeWhile { outer ->
             listOf("a", "b").forEach {
-                if (outer == 2) <!MATCHING_TYPE_RETURN_AS_BREAK("takeWhile")!>return@run emptyList()<!>
+                if (outer == 2) <!MATCHING_TYPE_RETURN_AS_BREAK_IN_STDLIB_FUNCTION("takeWhile")!>return@run emptyList()<!>
             }
             true
         }

@@ -5872,11 +5872,23 @@ internal class UnitReturnAsBreakImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnitReturnAsBreak
 
+internal class UnitReturnAsBreakInStdlibFunctionImpl(
+    override val returnedTo: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnitReturnAsBreakInStdlibFunction
+
 internal class MatchingTypeReturnAsBreakImpl(
     override val returnedTo: KaFunctionSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MatchingTypeReturnAsBreak
+
+internal class MatchingTypeReturnAsBreakInStdlibFunctionImpl(
+    override val returnedTo: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MatchingTypeReturnAsBreakInStdlibFunction
 
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
