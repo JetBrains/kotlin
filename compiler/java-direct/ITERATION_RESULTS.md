@@ -36,6 +36,46 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-19 — a lookup says which part of the classpath it may see; both arms pinned
+- **Change**: `findClassImpl` took a `restrictToClasspath: Boolean`, which reads as "whether to bother
+  filtering" and invites reading the unfiltered arm as a fast path. It is not one: the arms answer different
+  questions, and they differ whenever a session is given a *proper part* of the compilation's classpath — which
+  happens during incremental compilation only (`Roots(previous output)` for the precompiled-binaries session,
+  `ProjectLibraries(excludedRoots = previous output)` for the libraries one). It now takes the visible
+  `JvmClasspath`, the filtering line is unconditional, and the cross-reference arm passes
+  `ProjectLibraries()`, i.e. `allScope` of the PSI peer — unrestricted because a bytecode reference is bound
+  to the classpath the class was compiled against, not to the one it is requested from (KT-17897).
+- **Files**: `JavaClassFinderOverBinaryIndex.kt`, `ClasspathRestrictionTest.kt` (KDoc: an HMPP fragment
+  narrows the *Kotlin* finder only, so incremental compilation is the sole case), new
+  `test/.../JavaClassFinderOverBinaryIndexTest.kt`, `tests-integration/.../KotlinCliJavaFileManagerTest.kt`.
+- **Tests**: `:compiler:java-direct:test` full suite green; `KotlinCliJavaFileManagerTest` 8/0.
+- **Result**: green. The two new tests are the first coverage of what the restriction *decides* rather than of
+  the `isUnder` predicate: one `ClassId` in two roots, so the scoped arm reads the output copy and the
+  excluded-root arm the jar copy, and a cross-reference still resolves outside the visible classpath. Mutation-
+  checked both ways (dropping the filter fails the scoped tests; scoping the cross-reference arm fails the
+  cross-reference ones, in java-direct and in the PSI file manager alike).
+
+### 2026-08-19 — a nested class named in a class file is resolved by its recorded `ClassId` (KT-87507)
+- **Change**: a class file spells a nested class as `p/Outer$Inner` and its `InnerClasses` attribute says where
+  the class name starts; that boundary was dropped on the way to FIR — only the dotted name reached
+  `JavaTypeConversion`, which re-split it as a top-level one, so a reference to a nested class with **no class
+  file on the classpath** became package `p.Outer` + class `Inner` and never matched the declaration. The
+  recorded `ClassId` now travels through `ClassifierResolutionContext.Result` and the new
+  `JavaClassifierType.classifierClassId` (`null` for PSI/AST/reflection types) and is used instead of the
+  re-parse. This was the one genuine narrowing of the cross-reference arm versus master, whose `allScope`
+  lookup also reached `.java` sources; it was also a pre-existing PSI bug, so both implementations are fixed.
+- **Files**: `JavaTypeConversion.kt`, `ClassifierResolutionContext.kt`, `classFiles/Types.kt`,
+  `core/.../javaTypes.kt`; tests `CompileKotlinAgainstCustomBinariesTest.kt` + new
+  `testData/compileKotlinAgainstCustomBinaries/binarySignatureReferencesNestedJavaClassFromSource/`,
+  `JKlibJavaInteropIntegrationTest.kt` (unmuted `testJavaExtendingNestedKotlinClassFromKlib`),
+  `missingTypeOfParameterInFakeOverride_2.kt` (`FRONTEND` → `BACKEND`, two divergence files deleted).
+- **Tests**: `:compiler:java-direct:test` full suite; `CompileKotlinAgainstCustomBinariesTest` 76/0;
+  `:compiler:jklib.tests:test` `JKlibJavaInteropIntegrationTest` 2/0; `fir:analysis-tests` `*J_k*` green.
+- **Result**: regression fixed; the new fixture models the pipeline that deletes the binary before invoking the
+  compiler and compiles twice, `-Xjava-direct=true` and `=false`, so the golden pins both Java views. Residual
+  gap: a class file written without an `InnerClasses` attribute records a flat `ClassId`, so such a reference
+  still degrades unless a binary copy of the target confirms the `resolveByInternalName` heuristic.
+
 ### 2026-08-14 — the binary lookup cache outlived the classpath it was made against
 - **Change**: `BinaryJavaClassCache` memoizes the two lookups which answer "what is on the classpath"
   (`findTopLevelClassFiles`, `classFileNamesInPackage`) for the lifetime of the compilation. Scripting extends
