@@ -805,6 +805,9 @@ private fun MutableList<String>.addJacocoAgentIfEnabled() {
     add("-Djacoco-agent.destfile=${jacocoDestFile}")
     add("-Djacoco-agent.append=true")
     add("-Djacoco-agent.output=file")
+    // with instrumentation tests consume more memory and after reducing gradle daemon memory limit in 441ff40a it brought OOM
+    // this increase the limit as it was before
+    add("-Xmx1024m")
 }
 
 private fun collectKotlinJvmArgs(
