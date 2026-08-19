@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
@@ -105,8 +106,21 @@ class WasmGroupingTestIsolator(
         if (hasCompanionJsFile)
             return BatchToken.Isolated
 
+        // `BatchingPackageInserter` deliberately leaves the `kotlin` and `kotlin.internal` packages unpatched, as
+        // the compiler recognizes some of their declarations by exact fully qualified name. Declarations which
+        // tests put there therefore keep colliding across the batch: two tests declaring, say,
+        // `kotlin.internal.ImplicitIntegerCoercion` make the deserializer fail with `IrClassSymbolImpl is already
+        // bound`. `NativeGroupingTestIsolator` isolates such tests for the same reason.
+        // Additional source providers may deliberately add shared support files in the `kotlin` package (for
+        // example, Wasm's common assertion helpers). They are not declarations from the testdata and therefore
+        // must not make every test look like a non-patched-package collision.
+        if (moduleStructure.modules.any { module ->
+                module.files.any { !it.isAdditional && it.originalContent.contains(nonPatchedPackageRegex) }
+            })
+            return BatchToken.Isolated
+
         val specificTokens = listOfNotNull(
-            computeEHToken(moduleStructure),
+            computeWasmCodegenSettingsToken(moduleStructure.allDirectives),
             computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
             computeCoroutineHelpersToken(moduleStructure.allDirectives),
@@ -121,15 +135,6 @@ class WasmGroupingTestIsolator(
             else -> Custom(specificTokens.joinToString(separator = " & "))
         }
     }
-
-    private fun computeEHToken(moduleStructure: TestModuleStructure): BatchToken? =
-        mapOf(
-            DISABLE_WASM_EXCEPTION_HANDLING to Custom("disabled EH"),
-            USE_NEW_EXCEPTION_HANDLING_PROPOSAL to Custom("new EH"),
-            USE_OLD_EXCEPTION_HANDLING_PROPOSAL to Custom("old EH"),
-        ).firstNotNullOfOrNull { [directive, token] ->
-            token.takeIf { directive in moduleStructure.allDirectives }
-        }
 
     /**
      * All `// WITH_COROUTINES` tests of a batch share a single `helpers.klib`: their helper files are extracted
@@ -177,6 +182,34 @@ class WasmGroupingTestIsolator(
     private fun computeWithReflectToken(registeredDirectives: RegisteredDirectives): BatchToken? =
         Custom("WITH_REFLECT").takeIf { JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives }
 
+    /**
+     * A whole batch is compiled by a single invocation of the backend, so every directive which changes *how* the
+     * code is generated has to be uniform within the batch — otherwise the tests requesting a setting would be
+     * compiled without it. For example, `wasmIrCheckForTailCalls.kt` relies on [ENABLE_TAIL_CALLS] to emit
+     * `return_call`, and without it its mutually recursive functions exhaust the VM stack, which fails the run of
+     * the whole batch. Note that the remaining directives of `WasmEnvironmentConfigurationDirectives` are
+     * [org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global], i.e. equal for every test of a
+     * run, so they cannot differ within a batch.
+     */
+    private fun computeWasmCodegenSettingsToken(registeredDirectives: RegisteredDirectives): BatchToken? {
+        val codegenDirectives = listOf(
+            DISABLE_WASM_EXCEPTION_HANDLING,
+            USE_NEW_EXCEPTION_HANDLING_PROPOSAL,
+            USE_OLD_EXCEPTION_HANDLING_PROPOSAL,
+            WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL,
+            WasmEnvironmentConfigurationDirectives.ENABLE_TAIL_CALLS,
+            WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG,
+            WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS,
+            WasmEnvironmentConfigurationDirectives.WASM_DISABLE_ARRAY_RANGE_CHECKS,
+            WasmEnvironmentConfigurationDirectives.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION,
+        ).filter { it in registeredDirectives }
+        val localVariablePrefix =
+            registeredDirectives[WasmEnvironmentConfigurationDirectives.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX].distinct()
+
+        if (codegenDirectives.isEmpty() && localVariablePrefix.isEmpty()) return null
+        return Custom("Wasm codegen settings: ${codegenDirectives.map { it.name }}, $localVariablePrefix")
+    }
+
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
         // `allDirectives` reports the values of every module, so a directive shared by all modules of a test is
         // repeated once per module. Without deduplication two tests requesting exactly the same settings end up
@@ -201,6 +234,11 @@ class WasmGroupingTestIsolator(
         return BatchToken.Custom("Lang settings: $languageFeatures, $optIns, $apiVersion, $languageVersion, $returnValueCheckerMode, progressive=$progressiveMode")
     }
 
+    private val nonPatchedPackageRegex = Regex(
+        "^\\s*package\\s+(${StandardNames.KOTLIN_INTERNAL_FQ_NAME}|${StandardNames.BUILT_INS_PACKAGE_FQ_NAME})\\s*$",
+        RegexOption.MULTILINE,
+    )
+
     private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
         registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
             .ifNotEmpty { ToggledCheckersToken(this) }
@@ -214,4 +252,3 @@ class WasmGroupingTestIsolator(
         return additionalCheckers to disabledIrCheckers
     }
 }
-
