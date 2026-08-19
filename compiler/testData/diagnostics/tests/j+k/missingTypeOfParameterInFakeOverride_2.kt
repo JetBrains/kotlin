@@ -1,7 +1,5 @@
-// LATEST_LV_DIFFERENCE
-// ^this test requires deserialization of modules, and latestLV tests treat them as source dependencies
 // ISSUE: KT-87507
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: a
 // FILE: a/b/Some.kt
 package a.b
@@ -34,6 +32,6 @@ open class Derived : Base() {
 
 import a.b.d.Derived
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Impl<!> : Derived()
+class Impl : Derived()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

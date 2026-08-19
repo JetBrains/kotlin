@@ -253,7 +253,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+            val classId = classifierClassId ?: ClassId.topLevel(FqName(this.classifierQualifiedName))
             classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
         }
 
