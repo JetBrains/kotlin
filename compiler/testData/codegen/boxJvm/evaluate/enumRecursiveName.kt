@@ -5,7 +5,6 @@ enum class TestEnum(val testNaming: String) {
     OK(OK.name),
 }
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     val name = TestEnum.OK.name
     return name

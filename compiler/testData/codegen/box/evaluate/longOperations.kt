@@ -88,7 +88,6 @@ const val equals4 = fourVal == twoVal
 const val toString1 = oneVal.toString()
 const val toString2 = twoVal.toString()
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (compareTo1.id() != -1)   return "Fail 1.1"
     if (compareTo2.id() != 0)    return "Fail 1.2"
