@@ -76,7 +76,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType DYNAMIC_TYPE = new KtNodeType("DYNAMIC_TYPE", KtDynamicType::new);
 
-    @NotNull KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
+    @NotNull KtNodeType FUNCTION_TYPE = new KtNodeType("FUNCTION_TYPE", KtFunctionType::new);
 
     @NotNull KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
 
