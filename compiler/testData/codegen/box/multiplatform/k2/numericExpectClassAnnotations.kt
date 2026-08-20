@@ -26,6 +26,8 @@ annotation class NumericClass(
 // MODULE: main-common(stdlibextra)()()
 // FILE: Common.kt
 
+import kotlinx.cinterop.convert
+
 @kotlin.NumericClass(kotlin.NumericClass.Variant.Long)
 expect class NSInteger {
     fun toByte(): Byte
@@ -88,6 +90,9 @@ fun common(): String {
 
     val _ignore1: OverloadVariant.Int = acceptNSIntegerOrInt(20)
     val _ignore2: OverloadVariant.Long = acceptLongOrInt(getNSInteger())
+
+    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+    val _ignore4: OverloadVariant.NSInteger = acceptNSIntegerOrInt(0.convert())
 
     var a: NSInteger = 10
     acceptNSInteger(a)
