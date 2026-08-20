@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 import com.google.common.cache.CacheBuilder
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.net.URL
 import java.net.URLClassLoader
 import java.time.Duration
 import java.util.concurrent.ConcurrentMap
@@ -72,16 +71,18 @@ class ClassLoadersCache(
     private fun makeClassLoader(key: CacheKey, parent: ClassLoader): URLClassLoader {
         val cp = key.entries.map { it.path }
         logger.info("Creating new classloader for classpath: $cp")
-        return URLClassLoader(cp.toTypedArray(), parent)
+        return URLClassLoader(cp.map { it.toURI().toURL() }.toTypedArray(), parent)
     }
 
     private fun makeKey(files: List<File>): CacheKey {
         //probably should walk dirs content for actual last modified
-        val entries = files.map { f -> ClasspathEntry(f.toURI().toURL(), f.lastModified()) }
+        val entries = files.map { f -> ClasspathEntry(f, f.lastModified()) }
         return CacheKey(entries)
     }
 
-    private data class ClasspathEntry(val path: URL, val modificationTimestamp: Long)
+    // Keyed by `File`, not `URL`: `URL.equals`/`hashCode` are protocol-handler operations and not plain value comparisons,
+    // so `File` is more stable as a map key.
+    private data class ClasspathEntry(val path: File, val modificationTimestamp: Long)
 
     private data class CacheKey(val entries: List<ClasspathEntry>)
 }
