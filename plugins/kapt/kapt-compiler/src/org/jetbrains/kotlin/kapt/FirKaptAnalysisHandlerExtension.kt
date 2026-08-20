@@ -257,8 +257,11 @@ open class FirKaptAnalysisHandlerExtension(
             }
         }
 
-        saveStubs(kaptContext, kaptStubs)
-        saveIncrementalData(kaptContext, converter)
+        val [saveStubsTime] = measureTimeMillis { saveStubs(kaptContext, kaptStubs) }
+        logger.info { "Java stub saving took $saveStubsTime ms" }
+
+        val [saveIncrementalDataTime] = measureTimeMillis { saveIncrementalData(kaptContext, converter) }
+        logger.info { "Incremental data saving took $saveIncrementalDataTime ms" }
     }
 
     protected open fun saveStubs(
