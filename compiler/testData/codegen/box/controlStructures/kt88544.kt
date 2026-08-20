@@ -1,3 +1,4 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
 // WITH_STDLIB
 
 sealed interface State {
