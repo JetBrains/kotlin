@@ -243,7 +243,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
                     executionPolicy = compilerExecutionStrategy.get(),
                     kmpJvmClasspathMetadataEnabled = kmpJvmCompile?.enableJvmClasspathMetadata?.get(),
-                    kmpJvmUnsafeOptimizationsEnabled = kmpJvmCompile?.enableIncrementalCompilationOfCommonSources?.get(),
+                    kmpJvmIncrementalCompilationOfCommonSourcesEnabled = kmpJvmCompile?.enableIncrementalCompilationOfCommonSources?.get(),
                     it
                 )
             }
