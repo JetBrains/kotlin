@@ -310,7 +310,7 @@ abstract class IncrementalCompilerRunner<
                         messageCollector,
                     )
                 } catch (e: RequireRebuildForCorrectnessInKMPException) {
-                    return ICResult.RequiresRebuild(UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                    return ICResult.RequiresRebuild(COMMON_SOURCES_NEED_RECOMPILATION)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
                 }

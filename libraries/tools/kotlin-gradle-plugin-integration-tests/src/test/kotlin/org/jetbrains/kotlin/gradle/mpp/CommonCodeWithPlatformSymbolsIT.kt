@@ -95,7 +95,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -117,7 +117,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -142,7 +142,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -167,7 +167,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }

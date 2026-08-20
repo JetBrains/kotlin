@@ -82,7 +82,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
     @Test
     fun testChangedKeySet() {
         val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
-        val newHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.UNSAFE_INCREMENTAL_CHANGE_KT_62686 to byteArrayOf(1, 2, 3)))
+        val newHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMMON_SOURCES_NEED_RECOMPILATION to byteArrayOf(1, 2, 3)))
         map.updateHash(oldHashedInputs)
         val state = map.checkConfigurationState(newHashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)

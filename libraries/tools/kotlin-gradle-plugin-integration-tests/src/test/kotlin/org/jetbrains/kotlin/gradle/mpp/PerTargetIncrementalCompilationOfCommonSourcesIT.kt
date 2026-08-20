@@ -55,7 +55,7 @@ class PerTargetIncrementalCompilationOfCommonSourcesIT : KGPBaseTest() {
                 assertIncrementalCompilation()
             }
             build(JS_TASK) {
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -81,7 +81,7 @@ class PerTargetIncrementalCompilationOfCommonSourcesIT : KGPBaseTest() {
                 assertIncrementalCompilation()
             }
             build(JVM_TASK) {
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }

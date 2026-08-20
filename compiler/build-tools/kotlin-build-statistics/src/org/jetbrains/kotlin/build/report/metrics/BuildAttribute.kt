@@ -38,7 +38,7 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     DEP_CHANGE_NON_INCREMENTAL_BUILD_IN_DEP(BuildAttributeKind.REBUILD_REASON, "Non incremental build in history"),
     IN_PROCESS_EXECUTION(BuildAttributeKind.REBUILD_REASON, "In-process execution"),
     IC_IS_NOT_ENABLED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation is not enabled"),
-    UNSAFE_INCREMENTAL_CHANGE_KT_62686(BuildAttributeKind.REBUILD_REASON, "Incremental compilation might be incorrect (KT-62686)"),
+    COMMON_SOURCES_NEED_RECOMPILATION(BuildAttributeKind.REBUILD_REASON, "Common sources need to be recompiled"),
     COMPILER_ARGS_CHANGED(BuildAttributeKind.REBUILD_REASON, "Compiler arguments changed"),
     INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation configuration changed"),
     ;
