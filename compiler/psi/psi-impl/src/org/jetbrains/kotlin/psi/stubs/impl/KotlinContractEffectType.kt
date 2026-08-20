@@ -5,32 +5,11 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.psi.KtContractEffect
-import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
-import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeTypeBean
 import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
-
-@OptIn(KtImplementationDetail::class)
-class KotlinContractEffectStubImpl(parent: StubElement<*>?) : KotlinPlaceHolderStubImpl<KtContractEffect>(
-    /* parent = */ parent,
-    /* elementType = */ KtNodeTypes.CONTRACT_EFFECT,
-), KotlinContractEffectStub {
-    @KtImplementationDetail
-    override fun copyInto(newParent: StubElement<*>?): KotlinContractEffectStubImpl = KotlinContractEffectStubImpl(
-        parent = newParent,
-    )
-
-    @KtImplementationDetail
-    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
-        other is KotlinContractEffectStubImpl && super.isEquivalentTo(other)
-}
 
 enum class KotlinContractEffectType {
     CALLS {

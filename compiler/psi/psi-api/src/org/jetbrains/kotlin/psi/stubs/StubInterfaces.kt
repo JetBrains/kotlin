@@ -110,9 +110,6 @@ interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
-interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect>
-
-@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinAnnotationEntryStub : KotlinStubElement<KtAnnotationEntry> {
     val shortName: String?
     val hasValueArguments: Boolean
@@ -302,9 +299,6 @@ interface KotlinConstantExpressionStub : KotlinStubElement<KtConstantExpression>
     val kind: ConstantValueKind
     val value: String
 }
-
-@SubclassOptInRequired(KtImplementationDetail::class)
-interface KotlinClassLiteralExpressionStub : KotlinStubElement<KtClassLiteralExpression>
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinCollectionLiteralExpressionStub : KotlinStubElement<KtCollectionLiteralExpression> {

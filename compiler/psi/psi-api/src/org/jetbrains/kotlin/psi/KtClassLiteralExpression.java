@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
  * Represents a class literal expression that gets a class reference.
@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
  * //          ^__________^
  * }</pre>
  */
-public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiteralExpressionStub> implements KtDoubleColonExpression {
+public class KtClassLiteralExpression extends KtElementImplStub<KotlinPlaceHolderStub<KtClassLiteralExpression>>
+        implements KtDoubleColonExpression {
     @KtImplementationDetail
-    public KtClassLiteralExpression(KotlinClassLiteralExpressionStub stub) {
+    public KtClassLiteralExpression(KotlinPlaceHolderStub<KtClassLiteralExpression> stub) {
         super(stub, KtNodeTypes.CLASS_LITERAL_EXPRESSION);
     }
 
@@ -43,7 +44,7 @@ public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiter
     @Nullable
     @Override
     public KtExpression getReceiverExpression() {
-        KotlinClassLiteralExpressionStub stub = getStub();
+        KotlinPlaceHolderStub<KtClassLiteralExpression> stub = getStub();
         if (stub != null) {
             KtExpression[] expressions = stub.getChildrenByType(CLASS_REFS, KtExpression.EMPTY_ARRAY);
             if (expressions.length == 1) {

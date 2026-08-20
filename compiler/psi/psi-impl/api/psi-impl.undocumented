@@ -119,7 +119,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinBackingFieldStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinBackingFieldStubImpl:constructor(StubElement<?>, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinBlockStringTemplateEntryStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinClassLiteralExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinCollectionLiteralExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantExpressionStubImpl
@@ -149,7 +148,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues.NOT_NULL
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues.NULL
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues.TRUE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues.WILDCARD
-org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.BOOLEAN_LOGIC
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.BOOLEAN_PARAMETER_REFERENCE

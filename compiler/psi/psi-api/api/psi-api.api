@@ -3868,9 +3868,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinCallableStu
 	public abstract fun isTopLevel ()Z
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassLiteralExpressionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-}
-
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub : org/jetbrains/kotlin/psi/stubs/KotlinClassifierStub, org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
 	public abstract fun getKdocText ()Ljava/lang/String;
 	public abstract fun getSuperNames ()Ljava/util/List;
@@ -3903,9 +3900,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstructor
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContextReceiverStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
 	public abstract fun getLabel ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContractEffectStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
