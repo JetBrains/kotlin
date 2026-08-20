@@ -22,5 +22,5 @@ fun main(args: Array<String>) {
 
     val jsonArguments = format.encodeToString(kotlinCompilerArguments)
 
-    GeneratorsFileUtil.writeFileIfContentChanged(destinationFile, jsonArguments)
+    GeneratorsFileUtil.writeFileIfContentChanged(destinationFile, jsonArguments, logNotChanged = false)
 }
