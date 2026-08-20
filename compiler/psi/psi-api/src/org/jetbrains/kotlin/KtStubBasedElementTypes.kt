@@ -238,8 +238,7 @@ internal object KtStubBasedElementTypes {
         provider.lambdaExpressionType
 
     @JvmField
-    val REFERENCE_EXPRESSION: KtStubElementType<out KotlinNameReferenceExpressionStub, KtNameReferenceExpression> =
-        provider.referenceExpressionType
+    val REFERENCE_EXPRESSION: KtNodeType = provider.referenceExpressionType
 
     @JvmField
     val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression> =

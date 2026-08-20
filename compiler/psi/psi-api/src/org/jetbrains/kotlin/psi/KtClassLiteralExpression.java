@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
@@ -36,7 +37,7 @@ public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiter
 
 
     private static final TokenSet CLASS_REFS = TokenSet.create(
-            KtStubBasedElementTypes.REFERENCE_EXPRESSION,
+            KtNodeTypes.REFERENCE_EXPRESSION,
             KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION
     );
 
