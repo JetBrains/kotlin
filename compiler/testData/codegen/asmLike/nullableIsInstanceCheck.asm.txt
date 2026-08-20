@@ -32,14 +32,13 @@ public final class NullableIsInstanceCheckKt : java/lang/Object {
         LINENUMBER (11)
           ALOAD (1)
           DUP
-          IFNULL (L3)
-          INSTANCEOF (java/lang/String)
+          IFNONNULL (L3)
+          POP
           GOTO (L4)
         LABEL (L3)
-          POP
-          ICONST_1
-        LABEL (L4)
+          INSTANCEOF (java/lang/String)
           IFEQ (L5)
+        LABEL (L4)
           LDC (true)
           GOTO (L6)
         LABEL (L5)
