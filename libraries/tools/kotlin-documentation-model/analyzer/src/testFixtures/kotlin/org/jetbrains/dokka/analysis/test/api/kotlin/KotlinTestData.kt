@@ -9,10 +9,9 @@ import org.jetbrains.dokka.analysis.test.api.TestDataFile
 
 /**
  *
- * [org.jetbrains.dokka.analysis.test.api.kotlin.KotlinTestData] iss
  * A container for populating and holding Kotlin source code test data.
  *
- * [org.jetbrains.dokka.analysis.test.api.kotlin] This container exists so that common creation, population and verification logic
+ * This container exists so that common creation, population and verification logic
  * can be reused, instead of having to implement [KtFileCreator] multiple times.
  *
  * @param pathToKotlinSources path to the `src` directory in which Kotlin sources must reside.
