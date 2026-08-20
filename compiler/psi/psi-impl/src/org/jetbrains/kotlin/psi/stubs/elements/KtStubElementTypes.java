@@ -41,7 +41,7 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType TYPE_PARAMETER = new KtNodeType("TYPE_PARAMETER", KtTypeParameter::new);
     @NotNull KtNodeType TYPE_PARAMETER_LIST = new KtNodeType("TYPE_PARAMETER_LIST", KtTypeParameterList::new);
 
-    @NotNull KtAnnotationEntryElementType ANNOTATION_ENTRY = KtAnnotationEntryElementType.INSTANCE;
+    @NotNull KtNodeType ANNOTATION_ENTRY = new KtNodeType("ANNOTATION_ENTRY", KtAnnotationEntry::new);
     @NotNull KtPlaceHolderStubElementType<KtAnnotation> ANNOTATION =
             new KtPlaceHolderStubElementType<>("ANNOTATION", KtAnnotation.class);
 
