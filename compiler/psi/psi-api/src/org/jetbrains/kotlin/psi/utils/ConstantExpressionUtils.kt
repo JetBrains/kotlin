@@ -7,16 +7,15 @@
 
 package org.jetbrains.kotlin.psi.utils
 
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.text.LiteralFormatUtil
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtStubBasedElementTypes.BOOLEAN_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.CHARACTER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.FLOAT_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.INTEGER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.NULL
-import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
-import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.utils.extractRadix
 
 /**
@@ -160,7 +159,7 @@ fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Bo
 /**
  * Converts the given [ConstantValueKind] to the corresponding [com.intellij.psi.tree.IElementType].
  */
-fun ConstantValueKind.toConstantExpressionElementType(): KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> {
+fun ConstantValueKind.toConstantExpressionElementType(): KtNodeType {
     return when (this) {
         ConstantValueKind.NULL -> NULL
         ConstantValueKind.BOOLEAN_CONSTANT -> BOOLEAN_CONSTANT
@@ -174,7 +173,7 @@ fun ConstantValueKind.toConstantExpressionElementType(): KtStubElementType<out K
  * Converts the given [com.intellij.psi.tree.IElementType] to the corresponding [ConstantValueKind].
  * The element type must be one of the constant expression types. Otherwise, an [IllegalArgumentException] is thrown.
  */
-fun KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>.toConstantValueKind(): ConstantValueKind {
+fun IElementType.toConstantValueKind(): ConstantValueKind {
     return when (this) {
         NULL -> ConstantValueKind.NULL
         BOOLEAN_CONSTANT -> ConstantValueKind.BOOLEAN_CONSTANT
