@@ -44,10 +44,15 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             }
         } else {
             configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-            val loadedKlibArtifact = klibLoadingPhase.executePhaseIsolatedWithActions(input) ?: return null
-            val backendIr = compileNonIncrementally(loadedKlibArtifact)
+            val backendIr = compileToBackendIrNonIncrementally(input)
             return backendIr?.let { compileIntermediate(it, configuration) }
         }
+    }
+
+    // Do not inline this function - make sure that BackendIr may be collected after intermediate output is built
+    private fun compileToBackendIrNonIncrementally(input: ConfigurationPipelineArtifact): IntermediateOutput? {
+        val loadedKlibArtifact = klibLoadingPhase.executePhaseIsolatedWithActions(input) ?: return null
+        return compileNonIncrementally(loadedKlibArtifact)
     }
 
     private fun compileToBackendIrIncrementally(
