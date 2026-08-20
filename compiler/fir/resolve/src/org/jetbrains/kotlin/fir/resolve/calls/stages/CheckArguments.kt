@@ -246,9 +246,19 @@ private fun Candidate.getExpectedTypeWithBuiltinToNumericClassConversion(
         argument is FirLiteralExpression -> argument.resolvedType
         else -> argument.toReference(session)?.toResolvedCallableSymbol()?.takeIf { it.rawStatus.isConst }?.resolvedReturnType
     }
+    return when {
+        argumentType != null -> getExpectedTypeWithBuiltinToNumericClassConversion(session, argumentType, candidateExpectedType)
+        else -> null
+    }
+}
 
+fun Candidate.getExpectedTypeWithBuiltinToNumericClassConversion(
+    session: FirSession,
+    argumentType: ConeKotlinType,
+    candidateExpectedType: ConeKotlinType,
+): ConeKotlinType? {
     val expectedTypeSymbol = candidateExpectedType.fullyExpandedType(session).toSymbol(session) ?: return null
-    if (argumentType == null || !expectedTypeSymbol.supportsNumericClassConversionFrom(argumentType, session)) return null
+    if (!expectedTypeSymbol.supportsNumericClassConversionFrom(argumentType, session)) return null
 
     return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
         .also { markUseOfNumericClassConversion() }
@@ -263,7 +273,18 @@ private fun Candidate.getExpectedTypeWithNumericClassToBuiltinConversion(
     val argumentType = argument.toReference(session)?.toResolvedCallableSymbol()
         ?.let { context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(it) }
         ?.coneType
-    if (argumentType == null || argumentType.toSymbol(session)?.supportsNumericClassConversionTo(candidateExpectedType, session) != true) return null
+    return when {
+        argumentType != null -> getExpectedTypeWithNumericClassToBuiltinConversion(session, argumentType, candidateExpectedType)
+        else -> null
+    }
+}
+
+fun Candidate.getExpectedTypeWithNumericClassToBuiltinConversion(
+    session: FirSession,
+    argumentType: ConeKotlinType,
+    candidateExpectedType: ConeKotlinType,
+): ConeKotlinType? {
+    if (argumentType.toSymbol(session)?.supportsNumericClassConversionTo(candidateExpectedType, session) != true) return null
     return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
         .also { markUseOfNumericClassConversion() }
 }
