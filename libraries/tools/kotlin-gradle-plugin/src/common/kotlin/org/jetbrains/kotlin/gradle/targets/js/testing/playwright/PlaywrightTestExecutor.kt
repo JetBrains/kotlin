@@ -24,6 +24,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
+import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.impl.Connection
 import com.microsoft.playwright.impl.driver.Driver
@@ -37,6 +38,10 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.SocketTimeoutException
 import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -59,6 +64,18 @@ internal class PwRunnerSpec(
     val launchArgs: List<String>,
     val launchEnvironmentVariables: Map<String, String>,
     val customBrowserExecutable: Path?,
+    val debugOptions: PwDebugOptions?,
+    val isDebugEnabled: Boolean = debugOptions != null,
+)
+
+private const val NO_TIMEOUT = 0.0
+
+internal class PwDebugOptions(
+    // A CDP debugger can attach to Chromium on this port.
+    val remoteDebuggingPort: Int,
+    // Set when the run should wait until a debugger is attached.
+    val debuggerReadyPort: Int?,
+    val debuggerReadyTimeoutMillis: Int,
 )
 
 /**
@@ -220,10 +237,25 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             PwBrowserKind.FIREFOX -> playwright.firefox()
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
+
+        if (runner.isDebugEnabled && runner.headless) {
+            log.info("Running '${runner.name}' headed instead of headless, because it is being debugged")
+        }
         val launchOptions = BrowserType.LaunchOptions()
-            .setHeadless(runner.headless)
+            .setHeadless(!runner.isDebugEnabled && runner.headless)
             .apply {
-                if (runner.launchArgs.isNotEmpty()) setArgs(runner.launchArgs)
+                val debugOptions = runner.debugOptions
+                val launchArgs = if (debugOptions != null) {
+                    // The debugger needs CDP, so non-Chromium runners are swapped out before we get here.
+                    check(runner.browserKind == PwBrowserKind.CHROMIUM) {
+                        "Browser test debugging for Playwright is supported only with Chromium runners"
+                    }
+                    runner.launchArgs.withRemoteDebuggingPort(debugOptions.remoteDebuggingPort)
+                } else {
+                    runner.launchArgs
+                }
+
+                if (launchArgs.isNotEmpty()) setArgs(launchArgs)
                 if (runner.launchEnvironmentVariables.isNotEmpty()) setEnv(runner.launchEnvironmentVariables)
                 if (runner.customBrowserExecutable != null) setExecutablePath(runner.customBrowserExecutable)
             }
@@ -234,6 +266,13 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         browser.use {
             val page = browser.newPage()
             page.use {
+                runner.debugOptions?.let { debugOptions ->
+                    debugOptions.debuggerReadyPort?.let { readyPort ->
+                        runner.awaitDebuggerAttached(readyPort, debugOptions.debuggerReadyTimeoutMillis)
+                    }
+                }
+
+                val timeoutMillis = if (runner.isDebugEnabled) NO_TIMEOUT else runner.timeout.inWholeMilliseconds.toDouble()
                 page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
                 page.onConsoleMessage {
@@ -246,14 +285,57 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                 }
                 val url = runner.buildTestsExecutionerUrl(testLocationUrl)
                 log.info("Execute JS tests with ${runner.name} runner at URL: $url")
-                page.navigate(url.toString())
-                page.waitForCondition({ finished })
+                // Zero has to be passed per call: setDefaultTimeout(0) leaves waitForCondition with an
+                // already expired deadline instead of disabling it.
+                page.navigate(url.toString(), Page.NavigateOptions().setTimeout(timeoutMillis))
+                page.waitForCondition({ finished }, Page.WaitForConditionOptions().setTimeout(timeoutMillis))
             }
         }
     }
 
+    // The timeout covers the connect and the reply separately.
+    private fun PwRunnerSpec.awaitDebuggerAttached(readyPort: Int, timeoutMillis: Int) {
+        log.info("Waiting up to $timeoutMillis ms for a debugger to attach to '$name'")
+        try {
+            Socket().use { socket ->
+                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), timeoutMillis)
+                socket.soTimeout = timeoutMillis
+                check(socket.getInputStream().read() >= 0) {
+                    "The debugger readiness connection for '$name' on port $readyPort was closed without acknowledgement"
+                }
+            }
+        } catch (e: SocketTimeoutException) {
+            throw IllegalStateException(
+                "Timed out after $timeoutMillis ms waiting for a debugger to attach to '$name' on port $readyPort", e
+            )
+        } catch (e: IOException) {
+            throw IllegalStateException(
+                "Could not reach the debugger readiness port $readyPort for '$name'. " +
+                        "The debugger is no longer waiting to attach.", e
+            )
+        }
+    }
+
     override fun stopNow() {
-        // TODO: implement stop now now support
+        // TODO: KT-88516 implement immediate stop support
         log.warn("Playwright executor doesn't support immediate stop")
     }
+
+}
+
+private const val REMOTE_DEBUGGING_PORT_ARG = "--remote-debugging-port"
+
+// Drops any CDP port the user passed, it would clash with the one we were given.
+internal fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
+    val args = mutableListOf<String>()
+    var skipPort = false
+    for ((index, arg) in withIndex()) {
+        when {
+            skipPort -> skipPort = false
+            arg.startsWith("$REMOTE_DEBUGGING_PORT_ARG=") -> Unit
+            arg == REMOTE_DEBUGGING_PORT_ARG -> skipPort = getOrNull(index + 1)?.toIntOrNull() != null
+            else -> args.add(arg)
+        }
+    }
+    return args + "$REMOTE_DEBUGGING_PORT_ARG=$port"
 }

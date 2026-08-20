@@ -2422,6 +2422,62 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object BrowserDebugOptionsNotSupportedByTestFramework : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(taskPath: String) = build {
+            title { "Browser debug options are not supported by this test framework" }
+                .description {
+                    "Browser debug options were passed to '$taskPath', but its test framework is only debuggable when the " +
+                            "IDE sets the debug session up. The tests run without a debugger."
+                }
+                .solution {
+                    "Use the Playwright browser test DSL to enable it"
+                }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    internal object NoChromiumRunnerForBrowserDebug : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String) = build {
+            title { "Browser test debugging requires a Chromium runner" }
+                .description {
+                    "The debugger attaches over the Chrome DevTools Protocol, which is only supported by Chromium-based " +
+                            "browsers, so the Firefox and WebKit runners cannot be debugged. " +
+                            "'$runnerName' is not a Chromium runner."
+                }
+                .solution {
+                    "Pass --browser-debug-runner with the name of a chromium() runner"
+                }
+        }
+    }
+
+    internal object UnknownRunnerForBrowserDebug : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String, declaredRunnerNames: List<String>) = build {
+            title { "No browser test runner is declared under the requested name" }
+                .description {
+                    "Browser test debugging attaches a debugger to the runner named by --browser-debug-runner, but " +
+                            "'$runnerName' is not declared. " +
+                            if (declaredRunnerNames.isEmpty()) {
+                                "No browser test runners are declared."
+                            } else {
+                                "Declared runners: " + declaredRunnerNames.joinToString { "'$it'" } + "."
+                            }
+                }
+                .solution {
+                    "Declare a chromium(\"$runnerName\") or  a chromium() runner, or pass --browser-debug-runner with a declared runner name"
+                }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

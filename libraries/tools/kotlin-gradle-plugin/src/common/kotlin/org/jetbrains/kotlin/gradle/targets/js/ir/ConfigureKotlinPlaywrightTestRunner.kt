@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
@@ -59,12 +60,8 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         // locateOrRegisterTask returns the existing task when already registered by another target.
         val browserInstallTasks = jdBrowserRunners
             .map { runner -> runner.getBrowserKind() }
-            .distinct()
-            .map { browserType ->
-                project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
-                    browsers.add(browserType.browserName)
-                }
-            }
+            .toSet()
+            .map { browserKind -> project.registerBrowserInstall(browserKind, testCompilation) }
 
         testTaskProvider.configure { testTask ->
             val objects = project.objects
@@ -109,12 +106,24 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
     }
 }
 
-internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind = when (this) {
-    is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
-    is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
-    is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
-    else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
-}
+private fun Project.registerBrowserInstall(
+    browserKind: PwBrowserKind,
+    testCompilation: KotlinJsIrCompilation,
+): TaskProvider<PlaywrightBrowserInstall> =
+    locateOrRegisterTask<PlaywrightBrowserInstall>(
+        browserKind.getPwInstallBrowserTaskName(),
+        args = listOf(testCompilation),
+    ) {
+        browsers.add(browserKind.browserName)
+    }
+
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind =
+    when (this) {
+        is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
+        is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
+        is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
+        else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
+    }
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     project: Project,

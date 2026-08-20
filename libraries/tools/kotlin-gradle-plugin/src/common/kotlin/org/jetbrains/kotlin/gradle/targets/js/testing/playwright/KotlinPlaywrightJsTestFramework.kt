@@ -13,8 +13,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsBrowserDebugOptions
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsBrowserDebuggableFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
@@ -44,7 +46,7 @@ internal class KotlinPlaywrightJsTestFramework(
     @Transient override val compilation: KotlinJsIrCompilation,
     override val frameworkTaskInputs: Inputs,
     private val objects: ObjectFactory,
-) : KotlinJsTestFramework {
+) : KotlinJsTestFramework, KotlinJsBrowserDebuggableFramework {
 
     abstract class Inputs @Inject constructor(objects: ObjectFactory) {
         @get:Nested
@@ -104,6 +106,11 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val executable: Property<String> = objects.property(nodeJs.executable)
 
+    @get:Nested
+    @get:Optional
+    override val kotlinJsBrowserDebugOptions: Property<KotlinJsBrowserDebugOptions> = objects.property<KotlinJsBrowserDebugOptions>()
+
+
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
         NpmPackageVersion("playwright-core", PLAYWRIGHT_VERSION)
@@ -113,6 +120,24 @@ internal class KotlinPlaywrightJsTestFramework(
     internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
+
+    private fun resolveDebugRunner(task: KotlinJsTest, requestedName: String): ChromiumRunnerInput? {
+        val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
+        chromiumRunners.firstOrNull { it.name.get() == requestedName }?.let { return it }
+
+        val otherRunners = frameworkTaskInputs.firefoxRunners.get() + frameworkTaskInputs.webkitRunners.get()
+        if (otherRunners.any { it.name.get() == requestedName }) {
+            task.reportDiagnostic(KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug(requestedName))
+        } else {
+            task.reportDiagnostic(
+                KotlinToolingDiagnostics.UnknownRunnerForBrowserDebug(
+                    runnerName = requestedName,
+                    declaredRunnerNames = (chromiumRunners + otherRunners).map { it.name.get() },
+                )
+            )
+        }
+        return null
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -134,16 +159,31 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
+        val debugOptions = kotlinJsBrowserDebugOptions.orNull
 
         val pwRunners = buildList {
-            frameworkTaskInputs.chromiumRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
-            }
-            frameworkTaskInputs.firefoxRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs))
-            }
-            frameworkTaskInputs.webkitRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs))
+            if (debugOptions != null) {
+                val runner = resolveDebugRunner(task, debugOptions.runnerName.get())
+                runner?.let {
+                    add(
+                        runner.createPwRunnerSpec(
+                            PwBrowserKind.CHROMIUM,
+                            browsersDirectory,
+                            cliArgs,
+                            debugOptions,
+                        )
+                    )
+                }
+            } else {
+                frameworkTaskInputs.chromiumRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
+                }
+                frameworkTaskInputs.firefoxRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs))
+                }
+                frameworkTaskInputs.webkitRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs))
+                }
             }
         }
 
@@ -162,23 +202,31 @@ internal class KotlinPlaywrightJsTestFramework(
         kind: PwBrowserKind,
         browsersDirectory: Path,
         cliArgs: List<String>,
+        debugOptions: KotlinJsBrowserDebugOptions? = null,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
         browsersDirectory = browsersDirectory,
         testsLocation = testsLocation.get(),
-        buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs) },
+        buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs, isDebugEnabled = debugOptions != null) },
         timeout = timeout.get().toKotlinDuration(),
         finishMarker = finishMarker.get(),
         headless = headless.get(),
         launchArgs = launchArgs.get(),
         launchEnvironmentVariables = launchEnvironmentVariables.get(),
-        customBrowserExecutable = customBrowserExecutable.asPathOrNull
+        customBrowserExecutable = customBrowserExecutable.asPathOrNull,
+        debugOptions = debugOptions?.let {
+            PwDebugOptions(
+                it.debugPort.get(),
+                it.debuggerReadyPort.orNull,
+                it.debuggerReadyTimeoutMillis.get()
+            )
+        }
     )
 
-    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
+    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>, isDebugEnabled: Boolean): URI {
         val runnerConfig = KotlinBrowserRunnerConfig(
-            timeout = timeout.get(),
+            timeout = if (isDebugEnabled) Duration.ZERO else timeout.get(),
             testsFinishedMarker = finishMarker.get(),
             kotlinTestCliArguments = cliArgs
         )

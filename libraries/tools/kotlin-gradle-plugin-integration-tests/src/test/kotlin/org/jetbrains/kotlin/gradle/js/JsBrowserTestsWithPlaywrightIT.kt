@@ -73,6 +73,48 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `debugging a firefox runner fails`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            jsProject {
+                chromium()
+                firefox("myFirefox")
+            }
+
+            buildAndFail(":jsBrowserTest", "--browser-debug", "--browser-debug-runner=myFirefox") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.NoChromiumRunnerForBrowserDebug,
+                    withSubstring = "'myFirefox' is not a Chromium runner.",
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `debugging an undeclared runner fails`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            jsProject {
+                chromium("first")
+                chromium("second")
+            }
+
+            buildAndFail(":jsBrowserTest", "--browser-debug") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.UnknownRunnerForBrowserDebug,
+                    withSubstring = "Declared runners: 'first', 'second'.",
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `verify launchArgs configuration with browser api access`(gradleVersion: GradleVersion) {
         project(
             "empty",
