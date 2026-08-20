@@ -672,6 +672,27 @@ class Collections {
         }
 
         @Sample
+        fun addKeepsStoredElement() {
+            class User(val id: Int, val name: String) {
+                override fun equals(other: Any?): Boolean = other is User && id == other.id
+                override fun hashCode(): Int = id
+                override fun toString(): String = name
+            }
+
+            val set = mutableSetOf(User(1, "Alice"))
+
+            assertPrints(set.add(User(1, "Alicia")), "false")
+            assertPrints(set, "[Alice]")
+
+            assertPrints(set.addAll(listOf(User(1, "Alicia"))), "false")
+            assertPrints(set, "[Alice]")
+
+            set.remove(User(1, "Alice"))
+            set.add(User(1, "Alicia"))
+            assertPrints(set, "[Alicia]")
+        }
+
+        @Sample
         fun addAll() {
             val set = mutableSetOf('a', 'b', 'c')
             // All three elements are in set, nothing will be added
