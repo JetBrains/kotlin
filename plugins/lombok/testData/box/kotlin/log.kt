@@ -37,7 +37,7 @@ class LogExampleWithExistingCompanion {
     }
 }
 
-@Log
+<!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
 class LogExampleWithExistingCompanionAndLogField {
     companion object MyCompanion {
         val log = "No log"
