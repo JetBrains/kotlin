@@ -117,7 +117,7 @@ interface KotlinElementTypeProvider {
     val operationReferenceType: KtNodeType
     val dotQualifiedExpressionType: KtNodeType
     val callExpressionType: KtNodeType
-    val prefixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression>
+    val prefixExpressionType: KtNodeType
     val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
     val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
     val parenthesizedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression>

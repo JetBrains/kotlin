@@ -90,8 +90,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType OPERATION_REFERENCE = new KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtPrefixExpression> PREFIX_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
+    @NotNull KtNodeType PREFIX_EXPRESSION = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression::new);
+
     @NotNull KtPlaceHolderStubElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
             new KtPlaceHolderStubElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
     @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION =

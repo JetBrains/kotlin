@@ -254,8 +254,7 @@ internal object KtStubBasedElementTypes {
     val CALL_EXPRESSION: KtNodeType = provider.callExpressionType
 
     @JvmField
-    val PREFIX_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression> =
-        provider.prefixExpressionType
+    val PREFIX_EXPRESSION: KtNodeType = provider.prefixExpressionType
 
     @JvmField
     val POSTFIX_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression> =
