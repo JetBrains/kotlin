@@ -340,8 +340,7 @@ internal object KtStubBasedElementTypes {
     val IMPORT_LIST: KtNodeType = provider.importListType
 
     @JvmField
-    val IMPORT_DIRECTIVE: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective> =
-        provider.importDirectiveType
+    val IMPORT_DIRECTIVE: KtNodeType = provider.importDirectiveType
 
     @JvmField
     val IMPORT_ALIAS: KtStubElementType<out KotlinImportAliasStub, KtImportAlias> =

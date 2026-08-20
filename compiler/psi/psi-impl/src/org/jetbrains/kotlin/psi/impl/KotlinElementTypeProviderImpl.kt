@@ -288,7 +288,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val importListType: KtNodeType
         get() = KtStubElementTypes.IMPORT_LIST
 
-    override val importDirectiveType: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective>
+    override val importDirectiveType: KtNodeType
         get() = KtStubElementTypes.IMPORT_DIRECTIVE
 
     override val importAliasType: KtStubElementType<out KotlinImportAliasStub, KtImportAlias>
