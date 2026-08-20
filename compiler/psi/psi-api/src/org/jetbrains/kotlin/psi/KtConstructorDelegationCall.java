@@ -25,6 +25,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtConstructorDelegationCall extends KtElementImpl implements KtCallElement {
+    @KtImplementationDetail
     public KtConstructorDelegationCall(@NotNull ASTNode node) {
         super(node);
     }

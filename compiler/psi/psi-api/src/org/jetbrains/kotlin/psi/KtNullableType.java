@@ -32,10 +32,12 @@ import java.util.List;
  */
 public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStub<KtNullableType>>
         implements KtTypeElement, KtResolvable {
+    @KtImplementationDetail
     public KtNullableType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtNullableType(@NotNull KotlinPlaceHolderStub<KtNullableType> stub) {
         super(stub, KtStubBasedElementTypes.NULLABLE_TYPE);
     }

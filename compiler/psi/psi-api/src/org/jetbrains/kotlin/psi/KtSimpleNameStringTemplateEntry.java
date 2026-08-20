@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * }</pre>
  */
 public class KtSimpleNameStringTemplateEntry extends KtStringTemplateEntryWithExpression {
+    @KtImplementationDetail
     public KtSimpleNameStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSimpleNameStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry> stub) {
         super(stub, KtStubBasedElementTypes.SHORT_STRING_TEMPLATE_ENTRY);
     }

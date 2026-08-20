@@ -19,6 +19,9 @@ import com.intellij.lang.ASTNode
  * }
  * ```
  */
-class KtLabelReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
+class KtLabelReferenceExpression : KtSimpleNameExpressionImpl {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
+
     override fun getReferencedNameElement() = getIdentifier() ?: this
 }

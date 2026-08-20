@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * }</pre>
  */
 public class KtValueArgumentName extends KtElementImplStub<KotlinPlaceHolderStub<KtValueArgumentName>> implements ValueArgumentName {
+    @KtImplementationDetail
     public KtValueArgumentName(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtValueArgumentName(@NotNull KotlinPlaceHolderStub<KtValueArgumentName> stub) {
         super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
     }

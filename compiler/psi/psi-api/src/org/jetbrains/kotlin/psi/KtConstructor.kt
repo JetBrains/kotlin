@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
  * @param T the concrete constructor node type, used by the stub machinery
  */
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
+    @KtImplementationDetail
     protected constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     protected constructor(
         stub: KotlinConstructorStub<T>,
         nodeType: KtStubElementType<out KotlinConstructorStub<T>, T>,

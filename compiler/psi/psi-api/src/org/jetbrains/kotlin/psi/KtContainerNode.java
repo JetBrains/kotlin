@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  */
 public class KtContainerNode extends KtElementImpl {
+    @KtImplementationDetail
     public KtContainerNode(@NotNull ASTNode node) {
         super(node);
     }

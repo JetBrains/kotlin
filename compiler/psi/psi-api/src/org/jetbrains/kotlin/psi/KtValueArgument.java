@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,15 +27,18 @@ import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
  * }</pre>
  */
 public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<? extends KtValueArgument>> implements ValueArgument {
+    @KtImplementationDetail
     public KtValueArgument(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtValueArgument(@NotNull KotlinValueArgumentStub<KtValueArgument> stub) {
         super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT);
     }
 
-    protected KtValueArgument(KotlinValueArgumentStub<? extends KtValueArgument> stub, IStubElementType nodeType) {
+    @KtImplementationDetail
+    protected KtValueArgument(@NotNull KotlinValueArgumentStub<? extends KtValueArgument> stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 

@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
  */
 class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifierOwner {
     @Suppress("unused")
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
     @Suppress("unused")
+    @KtImplementationDetail
     constructor(stub: KotlinImportAliasStub) : super(stub, KtStubBasedElementTypes.IMPORT_ALIAS)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {

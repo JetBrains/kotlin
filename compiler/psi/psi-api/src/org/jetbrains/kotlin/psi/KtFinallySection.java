@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * }</pre>
  */
 public class KtFinallySection extends KtElementImpl implements KtStatementExpression {
+    @KtImplementationDetail
     public KtFinallySection(@NotNull ASTNode node) {
         super(node);
     }

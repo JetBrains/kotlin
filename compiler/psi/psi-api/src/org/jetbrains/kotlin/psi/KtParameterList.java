@@ -42,10 +42,12 @@ import java.util.List;
  * @see #getOwnerFunction()
  */
 public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtParameterList>> {
+    @KtImplementationDetail
     public KtParameterList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtParameterList(@NotNull KotlinPlaceHolderStub<KtParameterList> stub) {
         super(stub, KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
     }

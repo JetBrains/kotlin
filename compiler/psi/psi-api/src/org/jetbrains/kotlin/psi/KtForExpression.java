@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }</pre>
  */
 public class KtForExpression extends KtLoopExpression implements KtResolvableCall {
+    @KtImplementationDetail
     public KtForExpression(@NotNull ASTNode node) {
         super(node);
     }

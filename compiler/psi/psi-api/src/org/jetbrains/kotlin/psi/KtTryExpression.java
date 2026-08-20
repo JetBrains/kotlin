@@ -29,6 +29,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtTryExpression extends KtExpressionImpl {
+    @KtImplementationDetail
     public KtTryExpression(@NotNull ASTNode node) {
         super(node);
     }

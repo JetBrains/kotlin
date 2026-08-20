@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * }</pre>
  */
 public class KtSuperTypeEntry extends KtSuperTypeListEntry {
+    @KtImplementationDetail
     public KtSuperTypeEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
         super(stub, KtStubBasedElementTypes.SUPER_TYPE_ENTRY);
     }

@@ -17,7 +17,10 @@ import com.intellij.lang.ASTNode
  * //        ^_________^
  * ```
  */
-class KtSafeQualifiedExpression(node: ASTNode) : KtExpressionImpl(node), KtQualifiedExpression {
+class KtSafeQualifiedExpression : KtExpressionImpl, KtQualifiedExpression {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitSafeQualifiedExpression(this, data)
     }

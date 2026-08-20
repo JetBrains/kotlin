@@ -73,10 +73,12 @@ import java.util.List;
  */
 public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration, KtValVarKeywordOwner {
 
+    @KtImplementationDetail
     public KtParameter(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtParameter(@NotNull KotlinParameterStub stub) {
         super(stub, KtStubBasedElementTypes.VALUE_PARAMETER);
     }

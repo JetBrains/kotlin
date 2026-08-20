@@ -32,6 +32,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtArrayAccessExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtArrayAccessExpression(@NotNull ASTNode node) {
         super(node);
     }

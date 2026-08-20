@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * }</pre>
  */
 public class KtThrowExpression extends KtExpressionImpl implements KtStatementExpression {
+    @KtImplementationDetail
     public KtThrowExpression(@NotNull ASTNode node) {
         super(node);
     }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * }</pre>
  */
 public class KtDoWhileExpression extends KtWhileExpressionBase {
+    @KtImplementationDetail
     public KtDoWhileExpression(@NotNull ASTNode node) {
         super(node);
     }

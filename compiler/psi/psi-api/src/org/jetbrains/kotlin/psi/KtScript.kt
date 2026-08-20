@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
 open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationContainer {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinScriptStub) : super(stub, KtStubBasedElementTypes.SCRIPT)
 
     override fun getFqName(): FqName {

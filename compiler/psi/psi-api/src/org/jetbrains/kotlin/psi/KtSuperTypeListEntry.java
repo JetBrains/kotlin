@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,13 +29,15 @@ public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStu
     /** A factory for creating arrays of {@link KtSuperTypeListEntry}, used by the PSI child-access machinery. */
     public static ArrayFactory<KtSuperTypeListEntry> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtSuperTypeListEntry[count];
 
+    @KtImplementationDetail
     public KtSuperTypeListEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeListEntry(
             @NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub,
-            @NotNull IStubElementType nodeType) {
+            @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 

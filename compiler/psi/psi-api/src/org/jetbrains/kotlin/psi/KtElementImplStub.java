@@ -10,8 +10,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,10 +36,12 @@ import java.util.List;
  */
 public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiElementBase<T>
         implements KtElement, StubBasedPsiElement<T> {
-    public KtElementImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
+    @KtImplementationDetail
+    public KtElementImplStub(@NotNull T stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 
+    @KtImplementationDetail
     public KtElementImplStub(@NotNull ASTNode node) {
         super(node);
     }

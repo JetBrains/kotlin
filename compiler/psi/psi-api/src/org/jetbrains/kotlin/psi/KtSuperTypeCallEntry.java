@@ -24,10 +24,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {
+    @KtImplementationDetail
     public KtSuperTypeCallEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeCallEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
         super(stub, KtStubBasedElementTypes.SUPER_TYPE_CALL_ENTRY);
     }

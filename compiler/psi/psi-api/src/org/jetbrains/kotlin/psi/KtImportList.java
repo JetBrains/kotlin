@@ -24,10 +24,12 @@ import java.util.List;
  */
 public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImportList>> {
 
+    @KtImplementationDetail
     public KtImportList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtImportList(@NotNull KotlinPlaceHolderStub<KtImportList> stub) {
         super(stub, KtStubBasedElementTypes.IMPORT_LIST);
     }

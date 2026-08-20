@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.psi.utils.ConstantExpressionUtils;
  * }</pre>
  */
 public class KtConstantExpression extends KtExpressionImplStub<KotlinConstantExpressionStub> {
+    @KtImplementationDetail
     public KtConstantExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtConstantExpression(@NotNull KotlinConstantExpressionStub stub) {
         super(stub, ConstantExpressionUtils.toConstantExpressionElementType(stub.getKind()));
     }

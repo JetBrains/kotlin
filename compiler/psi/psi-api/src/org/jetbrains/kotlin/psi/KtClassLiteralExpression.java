@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
  * }</pre>
  */
 public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiteralExpressionStub> implements KtDoubleColonExpression {
+    @KtImplementationDetail
     public KtClassLiteralExpression(KotlinClassLiteralExpressionStub stub) {
         super(stub, KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION);
     }
 
+    @KtImplementationDetail
     public KtClassLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }

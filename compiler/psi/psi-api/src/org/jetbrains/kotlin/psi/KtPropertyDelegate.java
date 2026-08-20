@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }</pre>
  */
 public class KtPropertyDelegate extends KtElementImpl implements KtResolvableCall {
+    @KtImplementationDetail
     public KtPropertyDelegate(@NotNull ASTNode node) {
         super(node);
     }

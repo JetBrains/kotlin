@@ -40,6 +40,7 @@ import java.util.Objects;
  */
 public abstract class KtInstanceExpressionWithLabel extends KtExpressionWithLabel implements KtResolvable {
 
+    @KtImplementationDetail
     public KtInstanceExpressionWithLabel(@NotNull ASTNode node) {
         super(node);
     }

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  */
 public class KtWhileExpression extends KtWhileExpressionBase {
+    @KtImplementationDetail
     public KtWhileExpression(@NotNull ASTNode node) {
         super(node);
     }

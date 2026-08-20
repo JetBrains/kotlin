@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }</pre>
  */
 public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtConstructorCalleeExpression>> implements KtResolvableCall {
+    @KtImplementationDetail
     public KtConstructorCalleeExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtConstructorCalleeExpression(@NotNull KotlinPlaceHolderStub<KtConstructorCalleeExpression> stub) {
         super(stub, KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
     }

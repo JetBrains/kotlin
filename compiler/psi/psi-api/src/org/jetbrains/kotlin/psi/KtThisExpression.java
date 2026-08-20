@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class KtThisExpression extends KtInstanceExpressionWithLabel {
 
+    @KtImplementationDetail
     public KtThisExpression(@NotNull ASTNode node) {
         super(node);
     }

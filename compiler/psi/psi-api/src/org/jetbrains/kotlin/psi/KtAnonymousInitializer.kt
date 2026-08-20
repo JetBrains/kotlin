@@ -47,8 +47,10 @@ interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
  * ```
  */
 class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitializer>>, KtAnonymousInitializer {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtClassInitializer>) : super(stub, KtStubBasedElementTypes.CLASS_INITIALIZER)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R = visitor.visitClassInitializer(this, data)
@@ -85,8 +87,10 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
  * ```
  */
 class KtScriptInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtScriptInitializer>>, KtAnonymousInitializer {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtScriptInitializer>) : super(stub, KtStubBasedElementTypes.SCRIPT_INITIALIZER)
 
     override val body: KtExpression?

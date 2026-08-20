@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,10 +26,12 @@ import java.util.List;
  */
 public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqName<?>>
         extends KtNamedDeclarationStub<T> implements KtTypeParameterListOwner {
-    public KtTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
+    @KtImplementationDetail
+    public KtTypeParameterListOwnerStub(@NotNull T stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 
+    @KtImplementationDetail
     public KtTypeParameterListOwnerStub(@NotNull ASTNode node) {
         super(node);
     }

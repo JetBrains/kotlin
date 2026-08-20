@@ -44,10 +44,12 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     private static final Logger LOG = Logger.getInstance(KtProperty.class);
 
+    @KtImplementationDetail
     public KtProperty(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtProperty(@NotNull KotlinPropertyStub stub) {
         super(stub, KtStubBasedElementTypes.PROPERTY);
     }

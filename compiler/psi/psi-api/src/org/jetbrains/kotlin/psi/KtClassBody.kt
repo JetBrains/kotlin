@@ -32,8 +32,10 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
     private val lBraceTokenSet = TokenSet.create(KtTokens.LBRACE)
     private val rBraceTokenSet = TokenSet.create(KtTokens.RBRACE)
 
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, KtStubBasedElementTypes.CLASS_BODY)
 
     override fun getDeclarations() = stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()

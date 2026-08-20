@@ -25,10 +25,12 @@ import java.util.List;
  */
 public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraint>>
         implements KtAnnotated, KtAnnotationsContainer {
+    @KtImplementationDetail
     public KtTypeConstraint(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeConstraint(@NotNull KotlinPlaceHolderStub<KtTypeConstraint> stub) {
         super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT);
     }

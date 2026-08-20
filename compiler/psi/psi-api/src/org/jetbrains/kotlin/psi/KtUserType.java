@@ -50,10 +50,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements KtTypeElement, KtResolvable {
+    @KtImplementationDetail
     public KtUserType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtUserType(@NotNull KotlinUserTypeStub stub) {
         super(stub, KtStubBasedElementTypes.USER_TYPE);
     }

@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * ```
  */
 class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectionType>>, KtTypeElement {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtStubBasedElementTypes.INTERSECTION_TYPE)
 
     /** Always empty: an intersection type has no type arguments (its operands are [getLeftTypeRef] and [getRightTypeRef]). */

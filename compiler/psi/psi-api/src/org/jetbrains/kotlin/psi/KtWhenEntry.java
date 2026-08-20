@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
  * }</pre>
  */
 public class KtWhenEntry extends KtElementImpl {
+    @KtImplementationDetail
     public KtWhenEntry(@NotNull ASTNode node) {
         super(node);
     }

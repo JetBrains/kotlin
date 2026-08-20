@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
  */
 public class KtSuperExpression extends KtInstanceExpressionWithLabel implements KtStatementExpression {
 
+    @KtImplementationDetail
     public KtSuperExpression(@NotNull ASTNode node) {
         super(node);
     }

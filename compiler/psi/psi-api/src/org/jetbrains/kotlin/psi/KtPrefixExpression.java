@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * }</pre>
  */
 public class KtPrefixExpression extends KtUnaryExpression {
+    @KtImplementationDetail
     public KtPrefixExpression(@NotNull ASTNode node) {
         super(node);
     }

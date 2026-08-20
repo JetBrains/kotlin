@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * ```
  */
 class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDotQualifiedExpression>>, KtQualifiedExpression {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtDotQualifiedExpression>) : super(stub, KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

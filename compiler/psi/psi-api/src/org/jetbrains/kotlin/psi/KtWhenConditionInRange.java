@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }</pre>
  */
 public class KtWhenConditionInRange extends KtWhenCondition implements KtResolvableCall {
+    @KtImplementationDetail
     public KtWhenConditionInRange(@NotNull ASTNode node) {
         super(node);
     }

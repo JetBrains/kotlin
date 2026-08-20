@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * Deprecated in favor of context parameters.
  */
 class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubBasedElementTypes.CONTEXT_RECEIVER)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {

@@ -23,10 +23,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtDynamicType extends KtElementImplStub<KotlinPlaceHolderStub<KtDynamicType>> implements KtTypeElement {
+    @KtImplementationDetail
     public KtDynamicType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtDynamicType(@NotNull KotlinPlaceHolderStub<KtDynamicType> stub) {
         super(stub, KtStubBasedElementTypes.DYNAMIC_TYPE);
     }

@@ -30,10 +30,12 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
         implements PsiLanguageInjectionHost, ContributedReferenceHost {
     private static final TokenSet CLOSE_QUOTE_TOKEN_SET = TokenSet.create(KtTokens.CLOSING_QUOTE);
 
+    @KtImplementationDetail
     public KtStringTemplateExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtStringTemplateExpression(@NotNull KotlinPlaceHolderStub<KtStringTemplateExpression> stub) {
         super(stub, KtStubBasedElementTypes.STRING_TEMPLATE);
     }

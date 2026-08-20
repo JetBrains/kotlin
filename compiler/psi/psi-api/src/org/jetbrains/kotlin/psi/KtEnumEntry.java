@@ -34,10 +34,12 @@ import java.util.Objects;
  * }</pre>
  */
 public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType {
+    @KtImplementationDetail
     public KtEnumEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtEnumEntry(@NotNull KotlinClassStub stub) {
         super(stub, KtStubBasedElementTypes.ENUM_ENTRY);
     }

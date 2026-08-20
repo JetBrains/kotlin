@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * ```
  */
 class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffectList>> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 }
 

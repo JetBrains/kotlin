@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.resolution.KtResolvable
 class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeReference>>,
     KtAnnotated, KtAnnotationsContainer, KtResolvable {
 
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtTypeReference>) : super(stub, KtStubBasedElementTypes.TYPE_REFERENCE)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

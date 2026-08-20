@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,11 +35,13 @@ import java.util.Objects;
  */
 public abstract class KtUnaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<? extends KtUnaryExpression>>
         implements KtOperationExpression, KtResolvableCall {
-    public KtUnaryExpression(ASTNode node) {
+    @KtImplementationDetail
+    public KtUnaryExpression(@NotNull ASTNode node) {
         super(node);
     }
 
-    protected KtUnaryExpression(@NotNull KotlinPlaceHolderStub<? extends KtUnaryExpression> stub, @NotNull IStubElementType nodeType) {
+    @KtImplementationDetail
+    protected KtUnaryExpression(@NotNull KotlinPlaceHolderStub<? extends KtUnaryExpression> stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 

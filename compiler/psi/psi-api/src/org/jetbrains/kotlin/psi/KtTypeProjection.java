@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
  */
 public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjectionStub> {
 
+    @KtImplementationDetail
     public KtTypeProjection(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeProjection(@NotNull KotlinTypeProjectionStub stub) {
         super(stub, KtStubBasedElementTypes.TYPE_PROJECTION);
     }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * }</pre>
  */
 public class KtIfExpression extends KtExpressionImpl {
+    @KtImplementationDetail
     public KtIfExpression(@NotNull ASTNode node) {
         super(node);
     }

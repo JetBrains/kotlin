@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  */
 public class KtContinueExpression extends KtExpressionWithLabel implements KtStatementExpression {
+    @KtImplementationDetail
     public KtContinueExpression(@NotNull ASTNode node) {
         super(node);
     }

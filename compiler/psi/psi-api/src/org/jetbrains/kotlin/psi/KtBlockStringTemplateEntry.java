@@ -24,10 +24,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtBlockStringTemplateEntry extends KtStringTemplateEntryWithExpression {
+    @KtImplementationDetail
     public KtBlockStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtBlockStringTemplateEntry(@NotNull KotlinBlockStringTemplateEntryStub stub) {
         super(stub, KtStubBasedElementTypes.LONG_STRING_TEMPLATE_ENTRY);
     }

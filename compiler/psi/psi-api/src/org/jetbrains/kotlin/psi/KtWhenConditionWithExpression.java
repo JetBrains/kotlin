@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * }</pre>
  */
 public class KtWhenConditionWithExpression extends KtWhenCondition {
+    @KtImplementationDetail
     public KtWhenConditionWithExpression(@NotNull ASTNode node) {
         super(node);
     }

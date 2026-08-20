@@ -27,6 +27,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtCatchClause extends KtElementImpl {
+    @KtImplementationDetail
     public KtCatchClause(@NotNull ASTNode node) {
         super(node);
     }

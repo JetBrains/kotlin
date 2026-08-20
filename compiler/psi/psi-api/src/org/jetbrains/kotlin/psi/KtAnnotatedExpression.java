@@ -23,6 +23,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtAnnotatedExpression extends KtExpressionImpl implements KtAnnotated, KtAnnotationsContainer {
+    @KtImplementationDetail
     public KtAnnotatedExpression(@NotNull ASTNode node) {
         super(node);
     }

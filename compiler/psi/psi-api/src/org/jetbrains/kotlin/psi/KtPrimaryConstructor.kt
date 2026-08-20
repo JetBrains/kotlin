@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
  * ```
  */
 class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
