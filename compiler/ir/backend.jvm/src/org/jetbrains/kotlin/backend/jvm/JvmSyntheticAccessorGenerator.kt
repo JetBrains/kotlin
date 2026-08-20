@@ -241,4 +241,5 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
 // Also, we keep the constructor with the marker to preserve binary compatibility.
 fun IrConstructor.isExposedByMakingPublic(): Boolean =
     hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+            constructedClass.modality != Modality.SEALED &&
             parameters.filter { it.type.isInlineClassType() }.all { it.type.isBoxedInlineClassType() }
