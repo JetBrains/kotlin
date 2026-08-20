@@ -1310,6 +1310,7 @@ public abstract class org/jetbrains/kotlin/psi/KtDeclarationImpl : org/jetbrains
 }
 
 public class org/jetbrains/kotlin/psi/KtDeclarationModifierList : org/jetbrains/kotlin/psi/KtModifierList {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtDeclarationModifierList;
 }
 
 public abstract class org/jetbrains/kotlin/psi/KtDeclarationStub : org/jetbrains/kotlin/psi/KtModifierListOwnerStub, org/jetbrains/kotlin/psi/KtDeclaration {

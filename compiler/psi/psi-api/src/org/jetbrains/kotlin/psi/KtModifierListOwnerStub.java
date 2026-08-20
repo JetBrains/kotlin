@@ -11,9 +11,10 @@ import com.intellij.psi.tree.IElementType;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,9 +39,8 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtModifierList getModifierList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.class);
     }
 
     /**
@@ -61,7 +61,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      */
     @NotNull
     public List<KtDeclarationModifierList> getAllModifierLists() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.EMPTY_ARRAY));
     }
 
     @Override

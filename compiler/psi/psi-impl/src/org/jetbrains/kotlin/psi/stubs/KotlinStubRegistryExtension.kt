@@ -157,6 +157,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.PACKAGE_DIRECTIVE,
             psiFactory = ::KtPackageDirective,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.MODIFIER_LIST,
+            factory = KtModifierListStubSerializingElementFactory,
+        )
     }
 }
 

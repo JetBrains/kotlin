@@ -134,7 +134,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     // Modifiers and annotations
 
-    override val modifierListType: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList>
+    override val modifierListType: KtNodeType
         get() = KtStubElementTypes.MODIFIER_LIST
 
     override val annotationType: KtNodeType
