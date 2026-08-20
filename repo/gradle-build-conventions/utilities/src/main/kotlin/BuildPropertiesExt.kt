@@ -113,4 +113,6 @@ val KotlinBuildProperties.testXms: Provider<Size>
  * Supported values are `G1` and `Parallel`.
  */
 val KotlinBuildProperties.testGarbageCollector: Provider<GarbageCollector>
-    get() = stringProperty("kotlin.test.garbage.collector").map { GarbageCollector.valueOf(it) }
+    get() = stringProperty("kotlin.test.garbage.collector").map { raw ->
+        if (raw.isEmpty()) null else GarbageCollector.valueOf(raw)
+    }

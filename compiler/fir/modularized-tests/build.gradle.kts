@@ -58,7 +58,8 @@ projectTests {
         minHeapSize = testMaxHeapSizeHuge,
         maxHeapSize = testMaxHeapSizeHuge,
         reservedCodeCacheSize = 512.MiB,
-        javaLauncher = JdkMajorVersion.JDK_1_8
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        garbageCollector = null // explicitly not selecting any GC as the 'fir.modularized.jvm.args' is expected to provide such settings
     ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
