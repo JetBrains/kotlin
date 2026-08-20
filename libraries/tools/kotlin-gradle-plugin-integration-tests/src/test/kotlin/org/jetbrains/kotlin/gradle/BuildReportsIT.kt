@@ -1170,7 +1170,7 @@ class BuildReportsIT : KGPBaseTest() {
                         jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                     // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                    val expected = compilerPerformanceMetrics()
+                    val expected = nativeCompilerPerformanceMetrics()
                     reportedCompilerMetrics.assertContainsValues(expected)
                 }
 
@@ -1215,7 +1215,7 @@ class BuildReportsIT : KGPBaseTest() {
                         buildExecutionData.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                     // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                    val expected = compilerPerformanceMetrics()
+                    val expected = nativeCompilerPerformanceMetrics()
                     reportedCompilerMetrics.assertContainsValues(expected)
                 }
 
@@ -1267,9 +1267,9 @@ class BuildReportsIT : KGPBaseTest() {
 
     companion object {
         private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
-        private fun compilerPerformanceMetrics(): List<BuildTimeMetric> = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
+        private fun nativeCompilerPerformanceMetrics(): List<BuildTimeMetric> = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
             .flatMap { allBuildTimeMetricsByParentMap[it] ?: listOf(it) }
-            .filter { it !is CustomBuildTimeMetric }
+            .filter { it !is CustomBuildTimeMetric && it != KLIB_METADATA_WRITING } // KLIB_METADATA_WRITING is only for JVM and metadata compilers
 
         private fun Collection<BuildPerformanceMetric>.assertContainsValues(vararg expectedValues: String) {
             val missedKeys = expectedValues.filter { metricName -> find { it.name == metricName } == null }

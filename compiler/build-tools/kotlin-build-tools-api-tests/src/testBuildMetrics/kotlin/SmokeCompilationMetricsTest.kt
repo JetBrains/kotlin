@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompil
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
@@ -30,10 +31,10 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         project {
             val module1 = module("basic-multimodule-project/module-1")
 
-            val expectedNames = if (this is MetadataProject) {
-                platformIndependentMetricNames
-            } else {
-                platformIndependentMetricNames + COMPILER_TRANSLATION_TO_IR_METRIC
+            val expectedNames = when (this) {
+                is MetadataProject -> platformIndependentMetricNames + compilerTranslationToMetadataMetrics
+                is JvmProject -> platformIndependentMetricNames + compilerTranslationToJvmMetrics
+                else -> platformIndependentMetricNames + compilerTranslationToKlibMetrics
             }
 
             module1.compileWithMetrics { metrics ->
@@ -54,7 +55,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             module1.compileWithMetrics { metrics ->
-                val expectedNames = baseMetricNames
+                val expectedNames = baseJvmMetricNames
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
                     "Unexpected set of metric names for module1 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
@@ -62,7 +63,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
             module2.compileWithMetrics { metrics ->
-                val expectedNames = baseMetricNames
+                val expectedNames = baseJvmMetricNames
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
                     "Unexpected set of metric names for module2 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
@@ -167,27 +168,41 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     }
 
     companion object {
-        // Reported by every IR-producing platform (JVM/JS/Wasm) but not by the metadata compiler, which produces no IR.
-        private const val COMPILER_TRANSLATION_TO_IR_METRIC =
-            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR"
+        // Reported by every IR-producing Klib platform (JS/Wasm/Naitve).
+        // This excludes the metadata compiler, which produces no IR, and JVM, which produces no Klib.
+        private val compilerTranslationToKlibMetrics = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
+        )
+
+        // Reported by the metadata compiler, which DO NOT produce IR and produce Klib (with metadata).
+        private val compilerTranslationToMetadataMetrics = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib metadata writing",
+        )
+
+        // Reported on the JVM platform, which DOES produce IR and produce Klib (with metadata).
+        private val compilerTranslationToJvmMetrics = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib metadata writing",
+        )
 
         // Compiler-phase metrics that are reported regardless of the target platform (JVM/JS/Wasm/Metadata).
         // Excludes:
         //  - GC metrics ("PS MarkSweep"/"PS Scavenge"), which depend on whether the GC actually ran;
         //  - JVM-only classpath-snapshot metrics;
         //  - "Compiler code generation", which is JVM-only (the klib platforms serialize IR instead).
+        //  - Klib writing. This diagnostic is slightly different on JVM and on klib platforms.
         private val platformIndependentMetricNames = setOf(
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
-            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler initialization time",
             "Total compiler iteration",
         )
 
-        private val baseMetricNames = setOf(
+        private val baseJvmMetricNames = setOf(
             "PS MarkSweep",
             "PS Scavenge",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
-            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib metadata writing",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler IR lowering",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler backend",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation",
@@ -199,7 +214,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             "Total compiler iteration -> Number of lines analyzed",
         )
 
-        private val incrementalCompilationBaseMetricNames = baseMetricNames + setOf(
+        private val incrementalCompilationBaseMetricNames = baseJvmMetricNames + setOf(
             "Number of times classpath snapshot is loaded -> Number of cache hits when loading classpath entry snapshots",
             "Number of times classpath snapshot is loaded -> Number of cache misses when loading classpath entry snapshots",
             "Number of times classpath snapshot is loaded",

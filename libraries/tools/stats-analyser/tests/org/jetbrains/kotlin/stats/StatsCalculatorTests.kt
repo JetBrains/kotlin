@@ -37,6 +37,7 @@ class StatsCalculatorTests {
             assertEquals(moduleStats0.irPreLoweringStats!! + moduleStats1.irPreLoweringStats + moduleStats2.irPreLoweringStats, irPreLoweringStats)
             assertEquals(moduleStats0.irSerializationStats!! + moduleStats1.irSerializationStats + moduleStats2.irSerializationStats, irSerializationStats)
             assertEquals(moduleStats0.klibWritingStats!! + moduleStats1.klibWritingStats + moduleStats2.klibWritingStats, klibWritingStats)
+            assertEquals(moduleStats0.klibMetadataWritingStats!! + moduleStats1.klibMetadataWritingStats + moduleStats2.klibMetadataWritingStats, klibMetadataWritingStats)
             assertEquals(moduleStats0.irLoweringStats!! + moduleStats1.irLoweringStats + moduleStats2.irLoweringStats, irLoweringStats)
             assertEquals(moduleStats0.backendStats!! + moduleStats1.backendStats + moduleStats2.backendStats, backendStats)
             assertEquals(
