@@ -62,4 +62,63 @@ class MppEmptyTestSourceSetsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Common test discovery and inheritance in jvmTest")
+    @GradleTest
+    fun testCommonTestDiscoveryAndInheritance(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.getByName("commonTest").dependencies {
+                    implementation(kotlin("test"))
+                }
+            }
+            kotlinSourcesDir("commonTest").source("CommonSampleTest.kt") {
+                """
+                package org.example.project
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                open class CommonSampleTest {
+                    @Test
+                    fun testInCommon() {
+                        assertTrue(true)
+                    }
+                }
+                """.trimIndent()
+            }
+
+            build(":jvmTest") {
+                assertTasksExecuted(":compileTestKotlinJvm", ":jvmTest")
+                assertExecutedTestCases("jvmTest", "org.example.project.CommonSampleTest#testInCommon")
+            }
+
+            kotlinSourcesDir("jvmTest").source("JvmSampleTest.kt") {
+                """
+                package org.example.project
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                class JvmSampleTest : CommonSampleTest() {
+                    @Test
+                    fun testInJvm() {
+                        assertTrue(true)
+                    }
+                }
+                """.trimIndent()
+            }
+
+            build(":jvmTest") {
+                assertTasksExecuted(":compileTestKotlinJvm", ":jvmTest")
+                assertExecutedTestCases(
+                    "jvmTest",
+                    "org.example.project.CommonSampleTest#testInCommon",
+                    "org.example.project.JvmSampleTest#testInCommon",
+                    "org.example.project.JvmSampleTest#testInJvm",
+                )
+            }
+        }
+    }
 }
