@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_HMPP: ANY
 // ISSUE: KT-88721
 
 // MODULE: main-common
@@ -11,6 +10,7 @@ open class Foo {
 
 // MODULE: test-common()(main-common)()
 class Bar : Foo()
+
 
 // MODULE: test-platform()(main-platform)(test-common)
 fun box(): String {

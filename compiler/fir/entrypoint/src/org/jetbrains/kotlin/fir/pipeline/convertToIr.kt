@@ -327,6 +327,7 @@ private class Fir2IrPipeline(
                 isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
                 isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
                 delegatedMembersGenerationStrategy,
+                leafModuleDescriptor = componentsStorage.module.descriptor,
             ),
             componentsStorage.extensions.externalOverridabilityConditions
         ) to delegatedMembersGenerationStrategy
