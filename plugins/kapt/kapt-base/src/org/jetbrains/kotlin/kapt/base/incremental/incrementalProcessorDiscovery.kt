@@ -12,7 +12,22 @@ import java.util.zip.ZipFile
 
 private val INCREMENTAL_DECLARED_TYPES =
     setOf(DeclaredProcType.AGGREGATING.name, DeclaredProcType.ISOLATING.name, DeclaredProcType.DYNAMIC.name)
-private const val INCREMENTAL_ANNOTATION_FLAG = "META-INF/gradle/incremental.annotation.processors"
+const val INCREMENTAL_ANNOTATION_FLAG = "META-INF/gradle/incremental.annotation.processors"
+
+// Return name -> declared type map.
+fun parseIncrementalProcessorDeclarations(text: List<String>): Map<String, DeclaredProcType> {
+    val nameToType = mutableMapOf<String, DeclaredProcType>()
+    for (line in text) {
+        val parts = line.split(",")
+        if (parts.size == 2) {
+            val kind = parts[1].uppercase()
+            if (INCREMENTAL_DECLARED_TYPES.contains(kind)) {
+                nameToType[parts[0]] = enumValueOf(kind)
+            }
+        }
+    }
+    return nameToType
+}
 
 /** Checks the incremental annotation processor information for the annotation processor classpath. */
 fun getIncrementalProcessorsFromClasspath(
@@ -48,15 +63,5 @@ private fun processSingleClasspathEntry(rootFile: File): Map<String, DeclaredPro
         else -> emptyList()
     }
 
-    val nameToType = mutableMapOf<String, DeclaredProcType>()
-    for (line in text) {
-        val parts = line.split(",")
-        if (parts.size == 2) {
-            val kind = parts[1].uppercase()
-            if (INCREMENTAL_DECLARED_TYPES.contains(kind)) {
-                nameToType[parts[0]] = enumValueOf(kind)
-            }
-        }
-    }
-    return nameToType
+    return parseIncrementalProcessorDeclarations(text)
 }

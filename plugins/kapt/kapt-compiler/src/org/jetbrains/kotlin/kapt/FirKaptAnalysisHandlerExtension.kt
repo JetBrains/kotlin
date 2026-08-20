@@ -301,7 +301,7 @@ open class FirKaptAnalysisHandlerExtension(
     }
 
     protected open fun createProcessorLoader(): ProcessorLoader =
-        EfficientProcessorLoader(options, logger)
+        ProcessorLoaderImpl(options, logger)
 
     private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean? {
         if (classesOutputDir == null && configuration.outputJar != null) {
