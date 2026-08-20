@@ -3,7 +3,7 @@
 // FILE: J.java
 public class J {
     private int y = 1;
-    
+
     public int getY() {
         throw new AssertionError("J.y's getter should be called instead.");
     }
