@@ -4,7 +4,7 @@
  */
 @file:OptIn(KtImplementationDetail::class)
 
-package org.jetbrains.kotlin.psi.stubs.elements
+package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.IndexSink
@@ -12,32 +12,37 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
-import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
+import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
+import org.jetbrains.kotlin.psi.stubs.elements.deserializeValueClassRepresentation
+import org.jetbrains.kotlin.psi.stubs.elements.serializeValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.Utils
 
-internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtClass>(
-    /* debugName = */ "CLASS",
-    /* psiClass = */ KtClass::class.java,
-    /* stubClass = */ KotlinClassStub::class.java,
-) {
+internal object KtClassStubSerializingElementFactory :
+    KtStubSerializingElementFactory<KotlinClassStubImpl, KtClass>(
+        type = KtNodeTypes.CLASS,
+    ) {
+
+    override fun createPsi(stub: KotlinClassStubImpl): KtClass = KtClass(stub)
+
     /**
      * All classes should have stubs since we want to index even local ones
      */
-    override fun shouldCreateStub(node: ASTNode?): Boolean = true
+    override fun shouldCreateStub(node: ASTNode): Boolean = true
 
-    override fun createStub(psi: KtClass, parentStub: StubElement<*>): KotlinClassStubImpl {
+    override fun createStub(psi: KtClass, parentStub: StubElement<*>?): KotlinClassStubImpl {
         val fqName = psi.safeFqNameForLazyResolve()?.asString()
-        val classId = createClassId(parentStub, psi)
+        val classId = parentStub?.let { createClassId(it, psi) }
         val name = psi.getName()
         val superNames = psi.getSuperNames()
         val isInterface = psi.isInterface()
