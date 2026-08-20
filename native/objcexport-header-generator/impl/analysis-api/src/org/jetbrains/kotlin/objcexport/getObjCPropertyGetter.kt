@@ -6,21 +6,11 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 
-/**
- * Getter needs to be defined only for properties with [reservedPropertyNames]
- * ```c
- * @interface Foo
- * @property (getter=bool, setter=setBool) BOOL bool_
- * @end
- * ```
- */
 internal fun ObjCExportContext.getObjCPropertyGetter(symbol: KaPropertySymbol, objCName: String): String? {
-
-    // `init`-like properties will always need prefixing.
-    if (!symbol.hasReservedName && symbol.name.asString() !in objCMacroDefinitions && !objCName.isSpecialFamilyOrInit(exportSession.configuration.explicitMethodFamilyName))
+    // See KaPropertySymbol.requiresAccessor() to know when an explicit setter is required.
+    if (!symbol.needsAccessor(objCName, exportSession.configuration.explicitMethodFamilyName))
         return null
 
     val symbolGetter = symbol.getter
