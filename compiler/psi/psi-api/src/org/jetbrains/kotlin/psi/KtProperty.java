@@ -16,7 +16,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
@@ -116,7 +115,6 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getReceiverTypeReference() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
@@ -124,7 +122,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return null;
             }
             else {
-                return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+                return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
             }
         }
         return getReceiverTypeRefByTree();
@@ -155,7 +153,8 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return null;
             }
             else {
-                List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
+                List<KtTypeReference> typeReferences =
+                        Arrays.asList(getStubOrPsiChildren(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.EMPTY_ARRAY));
                 int returnTypeRefPositionInPsi = stub.isExtension() ? 1 : 0;
                 if (typeReferences.size() <= returnTypeRefPositionInPsi) {
                     LOG.error("Invalid stub structure built for property:\n" + getText());

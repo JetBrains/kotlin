@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
@@ -49,9 +49,8 @@ public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStu
 
     /** Returns the type reference of the supertype named by this entry, or {@code null} if it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /**

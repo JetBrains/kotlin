@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
@@ -65,7 +66,7 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /** Returns the projection token ({@code *}, {@code in}, or {@code out}), or {@code null} for an invariant argument. */

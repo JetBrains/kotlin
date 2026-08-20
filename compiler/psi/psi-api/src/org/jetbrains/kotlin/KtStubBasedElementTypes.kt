@@ -153,8 +153,7 @@ internal object KtStubBasedElementTypes {
     // Type references
 
     @JvmField
-    val TYPE_REFERENCE: KtStubElementType<out KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference> =
-        provider.typeReferenceType
+    val TYPE_REFERENCE: KtNodeType = provider.typeReferenceType
 
     @JvmField
     val USER_TYPE: KtStubElementType<out KotlinUserTypeStub, KtUserType> =

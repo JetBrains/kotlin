@@ -129,7 +129,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         if (!stub.isExtension) {
             return null
         }
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).firstOrNull()
+        return typeReferences().firstOrNull()
     }
 
     private val receiverTypeRefByTree: KtTypeReference?
@@ -150,10 +150,13 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     override fun getTypeReference(): KtTypeReference? {
         val stub = greenStub ?: return getTypeReference(declaration = this)
 
-        val typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE)
+        val typeReferences = typeReferences()
         val returnTypeIndex = if (stub.isExtension) 1 else 0
         return if (returnTypeIndex < typeReferences.size) typeReferences[returnTypeIndex] else null
     }
+
+    private fun typeReferences(): Array<out KtTypeReference> =
+        getStubOrPsiChildren(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.EMPTY_ARRAY)
 
     @Deprecated(
         message = "Use setFunctionTypeReference(typeRef) instead",

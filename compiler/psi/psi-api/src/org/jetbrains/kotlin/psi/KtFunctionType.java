@@ -154,9 +154,8 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     /** Returns the return type reference (the part after {@code ->}), or {@code null} if it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /**

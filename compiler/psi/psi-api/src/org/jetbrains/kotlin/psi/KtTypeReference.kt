@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -31,7 +31,7 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtTypeReference>) : super(stub, KtStubBasedElementTypes.TYPE_REFERENCE)
+    constructor(stub: KotlinPlaceHolderStub<KtTypeReference>) : super(stub, KtNodeTypes.TYPE_REFERENCE)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitTypeReference(this, data)
@@ -150,5 +150,11 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
             null -> null
             else -> error("Unsupported type $typeElement")
         }
+    }
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtTypeReference> = emptyArray()
     }
 }
