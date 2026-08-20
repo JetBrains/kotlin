@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBinaryGenerationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoadingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmRegularBackendPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
@@ -107,10 +106,8 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
         }
 
         val loadedIr = WasmIrLoadingPipelinePhase.executePhase(input)
-        val parametersForCompile = WasmRegularBackendPipelinePhase.compileNonIncrementally(loadedIr)!!.backendIr.first()
-
-        val linkedModule = linkWasmIr(parametersForCompile)
-        val compileResult = compileWasmIrToBinary(parametersForCompile, linkedModule)
+        val intermediateArtifact = WasmRegularBackendPipelinePhase.compileNonIncrementally(loadedIr)!!
+        val compileResult = WasmBinaryGenerationPipelinePhase.executePhase(intermediateArtifact).result.single()
         compileResult.writeTo(outputDir, outputName, debugMode)
     }
 

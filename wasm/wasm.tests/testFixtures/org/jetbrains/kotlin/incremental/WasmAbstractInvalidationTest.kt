@@ -274,7 +274,8 @@ abstract class WasmAbstractInvalidationTest(
                 }
 
                 val intermediateArtifact = incrementalBuildingPhase.executePhase(preparedIcCachesArtifact)!!
-                WasmBinaryGenerationPipelinePhase.executePhase(intermediateArtifact)
+                val binaryArtifact = WasmBinaryGenerationPipelinePhase.executePhase(intermediateArtifact)
+                WasmWriteOutputsPipelinePhase.executePhase(binaryArtifact)
             }
 
             when (wasmCompilationMode) {
