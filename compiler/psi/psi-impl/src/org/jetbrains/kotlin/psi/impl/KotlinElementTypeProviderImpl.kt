@@ -294,7 +294,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val importAliasType: KtNodeType
         get() = KtStubElementTypes.IMPORT_ALIAS
 
-    override val scriptType: KtStubElementType<out KotlinScriptStub, KtScript>
+    override val scriptType: KtNodeType
         get() = KtStubElementTypes.SCRIPT
 
 

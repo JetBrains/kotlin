@@ -8,7 +8,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
@@ -33,7 +33,7 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinScriptStub) : super(stub, KtStubBasedElementTypes.SCRIPT)
+    constructor(stub: KotlinScriptStub) : super(stub, KtNodeTypes.SCRIPT)
 
     override fun getFqName(): FqName {
         val stub = greenStub
