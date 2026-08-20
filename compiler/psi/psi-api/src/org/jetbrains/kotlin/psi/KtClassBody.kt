@@ -84,7 +84,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * may appear in erroneous code.
      */
     val allCompanionObjects: List<KtObjectDeclaration>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
+        get() = getStubOrPsiChildren(KtNodeTypes.OBJECT_DECLARATION, KtObjectDeclaration.EMPTY_ARRAY).filter { it.isCompanion() }
 
     /**
      * The list of all companion blocks.

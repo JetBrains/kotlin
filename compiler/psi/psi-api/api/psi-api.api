@@ -1890,6 +1890,8 @@ public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/
 }
 
 public final class org/jetbrains/kotlin/psi/KtObjectDeclaration : org/jetbrains/kotlin/psi/KtClassOrObject {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtObjectDeclaration$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtObjectDeclaration;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCompanionObjects ()Ljava/util/List;
 	public fun getIdentifyingElement ()Lcom/intellij/psi/PsiElement;
@@ -1899,6 +1901,9 @@ public final class org/jetbrains/kotlin/psi/KtObjectDeclaration : org/jetbrains/
 	public final fun isCompanion ()Z
 	public final fun isObjectLiteral ()Z
 	public fun setName (Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
+}
+
+public final class org/jetbrains/kotlin/psi/KtObjectDeclaration$Companion {
 }
 
 public class org/jetbrains/kotlin/psi/KtObjectLiteralExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub {

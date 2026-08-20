@@ -27,8 +27,7 @@ internal object KtStubBasedElementTypes {
     val CLASS: KtNodeType = provider.classType
 
     @JvmField
-    val OBJECT_DECLARATION: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration> =
-        provider.objectType
+    val OBJECT_DECLARATION: KtNodeType = provider.objectType
 
     @JvmField
     val TYPEALIAS: KtNodeType = provider.typeAliasType
