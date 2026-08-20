@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -113,7 +113,7 @@ private fun JvmScenario.jvmClasspathMetadataModule(enabled: Boolean) = module(
     "jvm-classpath-metadata",
     compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = enabled),
     icOptionsConfigAction = {
-        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+        it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
     },
 )
 
@@ -122,7 +122,7 @@ private fun JvmScenario.metadataHeaderMergeModule() = module(
     "metadata-header-merge",
     compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
     icOptionsConfigAction = {
-        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+        it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
     },
 )
 
@@ -131,7 +131,7 @@ private fun JvmScenario.twoCommonModulesModule() = module(
     "two-common-modules",
     compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
     icOptionsConfigAction = {
-        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+        it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
     },
 )
 

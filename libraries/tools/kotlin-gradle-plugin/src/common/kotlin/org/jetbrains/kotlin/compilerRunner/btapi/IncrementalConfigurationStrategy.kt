@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.compilerRunner.btapi
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.BACKUP_CLASSES
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import java.nio.file.Path
@@ -36,6 +36,6 @@ internal fun BaseIncrementalCompilationConfiguration.Builder.setupBaseIncrementa
     this[BACKUP_CLASSES] = icEnv.icFeatures.preciseCompilationResultsBackup
     this[KEEP_IC_CACHES_IN_MEMORY] = icEnv.icFeatures.keepIncrementalCompilationCachesInMemory
     this[OUTPUT_DIRS] = outputDirs
-    this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
+    this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
     this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
 }

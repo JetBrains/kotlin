@@ -3,12 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
-
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import java.nio.file.Path
 
 internal abstract class BaseIncrementalCompilationConfigurationImpl : BaseIncrementalCompilationConfiguration,
@@ -47,8 +44,17 @@ internal abstract class BaseIncrementalCompilationConfigurationImpl : BaseIncrem
 
         val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
 
+        @Deprecated(
+            "This option has no effect. Use `ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES` instead. This option will be removed in 2.6.0.",
+            ReplaceWith("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES"),
+            level = DeprecationLevel.ERROR,
+        )
         val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
             Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
+
+        @RequiresLegacyOptionFallback(optionId = "UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
+        val ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES: Option<Boolean> =
+            Option("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES", false)
 
         val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", true)
 

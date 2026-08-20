@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
-import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
@@ -227,7 +227,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
                 },
             ) {
                 assertLogContainsPatterns(
@@ -249,14 +249,14 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
                 },
             )
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = false
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = false
                 },
             ) {
                 assertLogContainsPatterns(
@@ -278,7 +278,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
                 },
             )
             module.compileIncrementally(
@@ -385,7 +385,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
                 },
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_11 },
             )
@@ -393,7 +393,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = false
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = false
                 },
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17 },
             ) {
@@ -496,14 +496,14 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = false
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
                 },
             )
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = true
-                    it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = false
+                    it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = false
                 },
             ) {
                 assertLogContainsPatterns(

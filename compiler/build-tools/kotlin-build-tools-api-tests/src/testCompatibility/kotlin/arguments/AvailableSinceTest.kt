@@ -176,9 +176,9 @@ class AvailableSinceTest : BaseCompilationTest() {
                             this[BaseIncrementalCompilationConfiguration.OUTPUT_DIRS] = null
                         }
                         @OptIn(ExperimentalCompilerArgument::class)
-                        trySet(BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM.availableSinceVersion) {
+                        trySet(BaseIncrementalCompilationConfiguration.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES.availableSinceVersion) {
                             @OptIn(ExperimentalCompilerArgument::class)
-                            this[BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = false
+                            this[BaseIncrementalCompilationConfiguration.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = false
                         }
                         @OptIn(ExperimentalCompilerArgument::class)
                         trySet(BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION.availableSinceVersion) {

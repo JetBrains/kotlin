@@ -128,8 +128,17 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
 
         val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
 
+        @Deprecated(
+            "This option has no effect. Use `ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES` instead. This option will be removed in 2.6.0.",
+            ReplaceWith("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES"),
+            level = DeprecationLevel.ERROR,
+        )
         val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
             Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
+
+        @RequiresLegacyOptionFallback(optionId = "UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
+        val ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES: Option<Boolean> =
+            Option("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES", false)
 
         val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", true)
 

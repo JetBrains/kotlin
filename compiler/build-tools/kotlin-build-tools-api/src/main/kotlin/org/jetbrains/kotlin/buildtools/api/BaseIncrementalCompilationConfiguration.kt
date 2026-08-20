@@ -97,14 +97,36 @@ public interface BaseIncrementalCompilationConfiguration {
         public val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", KotlinReleaseVersion(2, 3, 0))
 
         /**
-         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
-         * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
-         * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
+         * Controls whether the common sources of a multiplatform module are compiled incrementally.
+         *
+         * @deprecated This option has no effect. Use [ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] instead. This option will be removed in 2.6.0.
          */
         @JvmField
         @ExperimentalCompilerArgument
+        @Deprecated(
+            "This option has no effect. Use `ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES` instead. This option will be removed in 2.6.0.",
+            ReplaceWith("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES"),
+            level = DeprecationLevel.ERROR,
+        )
         public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
             Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", KotlinReleaseVersion(2, 3, 0))
+
+        /**
+         * Controls whether the common sources of a multiplatform module are compiled incrementally.
+         *
+         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
+         * Keeping this option disabled provides consistent builds at the cost of compilation speed.
+         * Enabling this option restores incremental compilation of common sources.
+         *
+         * On the JVM target, the correctness issue behind the default (KT-62686) is resolved, although this option is still experimental.
+         * On the JS and Wasm targets, KT-62686 still applies, so enabling this option may potentially introduce incorrect incremental builds.
+         *
+         * @since 2.5.0
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES: Option<Boolean> =
+            Option("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES", KotlinReleaseVersion(2, 5, 0))
 
         /**
          * When this option is enabled, the incremental compilation scope is always expanded monotonously (see explanation below).
