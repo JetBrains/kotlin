@@ -64,8 +64,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType TYPE_CONSTRAINT_LIST = new KtNodeType("TYPE_CONSTRAINT_LIST", KtTypeConstraintList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeConstraint> TYPE_CONSTRAINT =
-            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT", KtTypeConstraint.class);
+    @NotNull KtNodeType TYPE_CONSTRAINT = new KtNodeType("TYPE_CONSTRAINT", KtTypeConstraint::new);
 
     @NotNull KtPlaceHolderStubElementType<KtNullableType> NULLABLE_TYPE =
             new KtPlaceHolderStubElementType<>("NULLABLE_TYPE", KtNullableType.class);

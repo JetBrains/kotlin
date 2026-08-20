@@ -113,8 +113,7 @@ internal object KtStubBasedElementTypes {
     val TYPE_CONSTRAINT_LIST: KtNodeType = provider.typeConstraintListType
 
     @JvmField
-    val TYPE_CONSTRAINT: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint> =
-        provider.typeConstraintType
+    val TYPE_CONSTRAINT: KtNodeType = provider.typeConstraintType
 
 
     // Supertypes

@@ -167,6 +167,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.TYPE_CONSTRAINT_LIST,
             psiFactory = ::KtTypeConstraintList,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.TYPE_CONSTRAINT,
+            psiFactory = ::KtTypeConstraint,
+        )
     }
 }
 
