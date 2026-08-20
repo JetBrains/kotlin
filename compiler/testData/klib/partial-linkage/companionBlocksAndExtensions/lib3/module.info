@@ -1,3 +1,0 @@
-STEP 0:
-    arguments: -Xcompanion-blocks-and-extensions
-    dependencies: stdlib, lib1

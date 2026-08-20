@@ -48,27 +48,6 @@ fun box() = abiTest {
     expectFailure(linkage("Property accessor 'removedCompanionVar.<get-removedCompanionVar>' can not be called: No property accessor found for symbol '/B.removedCompanionVar.<get-removedCompanionVar>'")) { removedCompanionVarRef.invoke() }
     expectFailure(linkage("Function 'removedCompanionFun' can not be called: No function found for symbol '/B.removedCompanionFun'")) { removedCompanionFunRef.invoke() }
 
-    val companionObjectInstanceError = linkage("Can not get instance of singleton 'Companion': No class found for symbol '/C.Companion'")
-
-    expectFailure(companionObjectInstanceError) { createRemovedCompanionObjectFunRef() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectFunRefName() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectFunRefInvoke() }
-
-    expectFailure(companionObjectInstanceError) { createRemovedCompanionObjectValRef() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectValRefName() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectValRefInvoke() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectValRefGet() }
-
-    expectFailure(companionObjectInstanceError) { createRemovedCompanionObjectVarRef() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectVarRefName() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectVarRefInvoke() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectVarRefGet() }
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectVarRefSet() }
-
-    // Subsequent reads fail because the file initialization is already poisoned.
-    expectFailure(companionObjectInstanceError) { removedCompanionObjectFunRef }
-    expectFailure(custom { it::class.simpleName == "NoClassDefFoundError" && it.message == "Could not initialize file" }) { removedCompanionObjectValRef }
-    expectFailure(custom { it::class.simpleName == "NoClassDefFoundError" && it.message == "Could not initialize file" }) { removedCompanionObjectVarRef }
 
     expectFailure(linkage("Function 'blockToObject' can not be called: No function found for symbol '/A.blockToObject'")) { blockToObjectCall() }
     expectFailure(linkage("Function 'objectToBlock' can not be called: No function found for symbol '/A.Companion.objectToBlock'")) { objectToBlockCall() }

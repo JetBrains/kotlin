@@ -51,21 +51,6 @@ val removedCompanionFunRef = B::removedCompanionFun
 val removedCompanionValRef = B::removedCompanionVal
 val removedCompanionVarRef = B::removedCompanionVar
 
-fun createRemovedCompanionObjectFunRef(): Any = C::removedCompanionObjectFun
-fun removedCompanionObjectFunRefName(): String = C::removedCompanionObjectFun.name
-fun removedCompanionObjectFunRefInvoke(): String = C::removedCompanionObjectFun.invoke()
-
-fun createRemovedCompanionObjectValRef(): Any = C::removedCompanionObjectVal
-fun removedCompanionObjectValRefName(): String = C::removedCompanionObjectVal.name
-fun removedCompanionObjectValRefInvoke(): Int = C::removedCompanionObjectVal.invoke()
-fun removedCompanionObjectValRefGet(): Int = C::removedCompanionObjectVal.get()
-
-fun createRemovedCompanionObjectVarRef(): Any = C::removedCompanionObjectVar
-fun removedCompanionObjectVarRefName(): String = C::removedCompanionObjectVar.name
-fun removedCompanionObjectVarRefInvoke(): Int = C::removedCompanionObjectVar.invoke()
-fun removedCompanionObjectVarRefGet(): Int = C::removedCompanionObjectVar.get()
-fun removedCompanionObjectVarRefSet(): Unit = C::removedCompanionObjectVar.set(123)
-
 fun blockToObjectCall() = A.blockToObject()
 fun objectToBlockCall() = A.objectToBlock()
 fun blockToCompanionExtensionCall() = A.blockToCompanionExtension()

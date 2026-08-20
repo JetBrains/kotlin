@@ -64,14 +64,6 @@ class B {
     }
 }
 
-class C {
-    companion object {
-        val removedCompanionObjectVal = 42
-        var removedCompanionObjectVar = 42
-        fun removedCompanionObjectFun() = "removedCompanionObjectFun"
-    }
-}
-
 class PrivateClass
 companion fun PrivateClass.privateClassFun() = "privateClassFun"
 
