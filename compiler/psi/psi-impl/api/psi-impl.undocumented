@@ -26,7 +26,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType.Companion.kindToConstantElementType(ConstantValueKind)
-org.jetbrains.kotlin.psi.stubs.elements.KtContextReceiverElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType

@@ -69,7 +69,8 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
      *
      * @see contextParameters
      */
-    fun contextReceivers(): List<KtContextReceiver> = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_RECEIVER)
+    fun contextReceivers(): List<KtContextReceiver> =
+        getStubOrPsiChildren(KtNodeTypes.CONTEXT_RECEIVER, KtContextReceiver.EMPTY_ARRAY).asList()
 
     /**
      * Returns the list of type references from context receivers.
