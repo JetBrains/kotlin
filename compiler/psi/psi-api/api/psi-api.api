@@ -2053,6 +2053,8 @@ public class org/jetbrains/kotlin/psi/KtProperty : org/jetbrains/kotlin/psi/KtTy
 }
 
 public class org/jetbrains/kotlin/psi/KtPropertyAccessor : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtDeclarationWithBody, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtDeclarationWithReturnType, org/jetbrains/kotlin/psi/KtModifierListOwner {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtPropertyAccessor$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtPropertyAccessor;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getBodyBlockExpression ()Lorg/jetbrains/kotlin/psi/KtBlockExpression;
 	public fun getBodyExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -2076,6 +2078,9 @@ public class org/jetbrains/kotlin/psi/KtPropertyAccessor : org/jetbrains/kotlin/
 	public fun isGetter ()Z
 	public fun isSetter ()Z
 	public fun mayHaveContract ()Z
+}
+
+public final class org/jetbrains/kotlin/psi/KtPropertyAccessor$Companion {
 }
 
 public class org/jetbrains/kotlin/psi/KtPropertyDelegate : org/jetbrains/kotlin/psi/KtElementImpl, org/jetbrains/kotlin/resolution/KtResolvableCall {
