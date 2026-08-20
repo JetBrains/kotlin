@@ -139,9 +139,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
                 val propertyName = property.name
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, session) != null ||
-                    propertyName.identifier in toStringConfig.excludeFields
-                ) {
+                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, session) != null) {
                     return@processAllProperties
                 }
 
