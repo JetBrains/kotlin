@@ -132,6 +132,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.COMPANION_BLOCK,
             psiFactory = ::KtCompanionBlock,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.IMPORT_LIST,
+            psiFactory = ::KtImportList,
+        )
     }
 }
 

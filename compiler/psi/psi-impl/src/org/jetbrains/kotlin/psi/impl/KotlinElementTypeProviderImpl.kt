@@ -285,7 +285,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val fileAnnotationListType: KtStubElementType<out KotlinPlaceHolderStub<KtFileAnnotationList>, KtFileAnnotationList>
         get() = KtStubElementTypes.FILE_ANNOTATION_LIST
 
-    override val importListType: KtStubElementType<out KotlinPlaceHolderStub<KtImportList>, KtImportList>
+    override val importListType: KtNodeType
         get() = KtStubElementTypes.IMPORT_LIST
 
     override val importDirectiveType: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective>
