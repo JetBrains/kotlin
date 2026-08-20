@@ -196,8 +196,7 @@ internal object KtStubBasedElementTypes {
     val LONG_STRING_TEMPLATE_ENTRY: KtNodeType = provider.longStringTemplateEntryType
 
     @JvmField
-    val SHORT_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry> =
-        provider.shortStringTemplateEntryType
+    val SHORT_STRING_TEMPLATE_ENTRY: KtNodeType = provider.shortStringTemplateEntryType
 
     @JvmField
     val LITERAL_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry> =
