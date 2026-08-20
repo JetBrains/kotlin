@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 
@@ -27,7 +27,13 @@ class KtContractEffect : KtElementImplStub<KotlinContractEffectStub> {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinContractEffectStub) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT)
+    constructor(stub: KotlinContractEffectStub) : super(stub, KtNodeTypes.CONTRACT_EFFECT)
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtContractEffect> = emptyArray()
+    }
 }
 
 /**

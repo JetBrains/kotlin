@@ -290,8 +290,7 @@ internal object KtStubBasedElementTypes {
     val CONTRACT_EFFECT_LIST: KtNodeType = provider.contractEffectListType
 
     @JvmField
-    val CONTRACT_EFFECT: KtStubElementType<out KotlinContractEffectStub, KtContractEffect> =
-        provider.contractEffectType
+    val CONTRACT_EFFECT: KtNodeType = provider.contractEffectType
 
     @JvmField
     val LAMBDA_ARGUMENT: KtStubElementType<out KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument> =
