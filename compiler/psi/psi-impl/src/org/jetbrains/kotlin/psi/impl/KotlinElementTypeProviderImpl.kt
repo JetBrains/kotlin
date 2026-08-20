@@ -202,7 +202,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val shortStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY
 
-    override val literalStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry>
+    override val literalStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY
 
     override val escapeStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry>
