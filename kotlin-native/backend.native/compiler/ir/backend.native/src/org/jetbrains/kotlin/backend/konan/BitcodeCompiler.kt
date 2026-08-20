@@ -80,9 +80,11 @@ internal class BitcodeCompiler(
     /**
      * Compile [bitcodeFile] to [objectFile].
      */
-    fun makeObjectFile(bitcodeFile: File, objectFile: File) =
-            when (val configurables = platform.configurables) {
-                is ClangFlags -> clang(configurables, bitcodeFile, objectFile)
-                else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
-            }
+    fun makeObjectFile(bitcodeFile: File, objectFile: File) {
+        System.gc() // Release memory before spawning clang++
+        when (val configurables = platform.configurables) {
+            is ClangFlags -> clang(configurables, bitcodeFile, objectFile)
+            else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
+        }
+    }
 }
