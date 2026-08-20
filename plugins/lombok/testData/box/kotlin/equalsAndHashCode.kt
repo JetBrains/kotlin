@@ -9,12 +9,6 @@ class Simple(val name: String, val age: Int) {
 @EqualsAndHashCode
 class WithExclude(val a: String, @EqualsAndHashCode.Exclude val b: String)
 
-@EqualsAndHashCode(exclude = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>["b"]<!>)
-class WithExcludeAttr(val a: String, val b: String)
-
-@EqualsAndHashCode(of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>["a"]<!>)
-class WithOf(val a: String, val b: String)
-
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 class OnlyIncluded(@EqualsAndHashCode.Include val included: String, val excluded: String)
 
@@ -79,16 +73,6 @@ fun box(): String {
     val we2 = WithExclude("a", "b2")
     assertEquals(true, we1 == we2)
     assertEquals(true, we1.hashCode() == we2.hashCode())
-
-    val wea1 = WithExcludeAttr("a", "x")
-    val wea2 = WithExcludeAttr("a", "y")
-    assertEquals(true, wea1 == wea2)
-
-    val wo1 = WithOf("same", "x")
-    val wo2 = WithOf("same", "y")
-    assertEquals(true, wo1 == wo2)
-    val wo3 = WithOf("other", "x")
-    assertEquals(false, wo1 == wo3)
 
     assertEquals(true, OnlyIncluded("yes", "no") == OnlyIncluded("yes", "different"))
     assertEquals(false, OnlyIncluded("yes", "no") == OnlyIncluded("no", "no"))

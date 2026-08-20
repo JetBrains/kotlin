@@ -576,26 +576,21 @@ object ConeLombokAnnotations {
         }
     }
 
+    /**
+     * Drop `doNotUseGetters`, `excludeFields`, `ofFields` arguments but report diagnostics on them.
+     *   * `doNotUseGetters` isn't relevant in Kotlin;
+     *   * `excludeFields`, `ofFields` will soon be marked as deprecated in Lombok, so don't support them beforehand.
+     */
     class EqualsAndHashCode(
         override val callSuper: CallSuperMode?,
-        val doNotUseGetters: Boolean?,
         val onlyExplicitlyIncluded: Boolean?,
-        val excludeFields: Set<String>,
-        /**
-         * `null` means the `of` argument was not specified at all (i.e. include-all behaviour).
-         * A non-null value (even an empty set) restricts the inclusion of those exact field names.
-         */
-        val ofFields: Set<String>?,
         annotation: FirAnnotation,
     ) : ConeLombokAnnotation(annotation), CallSuper {
         companion object : ConeAnnotationCompanion<EqualsAndHashCode>(LombokNames.EQUALS_AND_HASH_CODE_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): EqualsAndHashCode {
                 return EqualsAndHashCode(
                     callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip },
-                    doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
-                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
-                    ofFields = annotation.getStringArrayArgument(OF)?.toSet(),
                     annotation = annotation,
                 )
             }
