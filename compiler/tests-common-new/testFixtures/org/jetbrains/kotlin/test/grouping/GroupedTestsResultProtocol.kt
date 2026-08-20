@@ -216,8 +216,9 @@ object GroupedTestsResultProtocol {
     }
 
     /**
-     * Generates the driver appended to the synthesized batch launcher. It concatenates with `+` rather than
-     * interpolating, so that no `$` handling leaks into the emitted source.
+     * Generates the Kotlin source for the result-collecting driver appended to the synthesized batch launcher.
+     * The generated driver reports each test in [proxyClassNames]
+     * and adds the target-specific entry point from [exportedEntryPointGenerator].
      *
      * A protocol line is not flushed, and cannot be: `println` is a direct `fd_write` on wasm-wasi and a `console.log`
      * on wasm-js, so nothing is buffered on the Kotlin side, and Kotlin/Wasm exposes no flush API. A line can still be
