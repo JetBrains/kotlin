@@ -1,3 +1,12 @@
+// direct access
+fun getRemovedCompanion(): Any = B.Companion
+fun removedCompanionValCall(): Int = B.removedCompanionVal
+fun removedCompanionVarCall(): Int = B.removedCompanionVar
+fun removedCompanionVarSetCall() {
+    B.removedCompanionVar = 0
+}
+fun removedCompanionFunCall(): String = B.removedCompanionFun()
+
 // fun
 fun createRemovedCompanionFunRef(): Any = B::removedCompanionFun
 fun removedCompanionFunRefName(): String = B::removedCompanionFun.name
