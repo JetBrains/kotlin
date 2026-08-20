@@ -191,26 +191,19 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
 
                 val propertyName = property.name
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID, session) != null ||
-                    propertyName.identifier in annotation.excludeFields
-                ) {
+                if (property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID, session) != null) {
                     return@processAllProperties
                 }
 
                 val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID, session)
 
-                // The deprecated-but-still-supported `of` parameter pins selection to the listed names.
-                if (annotation.ofFields != null) {
-                    if (propertyName.identifier !in annotation.ofFields) return@processAllProperties
-                } else if (includeAnnotation == null && annotation.onlyExplicitlyIncluded ?: config.equalsAndHashCodeOnlyExplicitlyIncluded) {
+                if (includeAnnotation == null && annotation.onlyExplicitlyIncluded ?: config.equalsAndHashCodeOnlyExplicitlyIncluded) {
                     return@processAllProperties
                 }
 
                 // Same convention as ToString: properties without a backing field are treated like
                 // computed/getter-only members. Include them only if explicitly opted in.
-                val ignoreWithoutBackingField = includeAnnotation == null && annotation.ofFields == null
-
-                add(EqualsAndHashCodePropertyInfo(propertyName, ignoreWithoutBackingField))
+                add(EqualsAndHashCodePropertyInfo(propertyName, ignoreWithoutBackingField = includeAnnotation == null))
             }
         }
     }
