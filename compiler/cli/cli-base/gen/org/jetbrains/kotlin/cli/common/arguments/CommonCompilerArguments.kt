@@ -985,13 +985,13 @@ with bodies.""",
 
     @Argument(
         value = "-Xreturn-value-checker",
-        valueDescription = "{check|full|disable}",
-        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
+        valueDescription = "{check|full|disable|default}",
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
     )
-    var returnValueChecker: String? = null
+    var returnValueChecker: String = "default"
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = value
         }
 
     @Argument(

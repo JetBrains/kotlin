@@ -757,13 +757,13 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_REPORT_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
-     * Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
+     * Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode?> =
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER", KotlinReleaseVersion(2, 2, 0))
 
     /**

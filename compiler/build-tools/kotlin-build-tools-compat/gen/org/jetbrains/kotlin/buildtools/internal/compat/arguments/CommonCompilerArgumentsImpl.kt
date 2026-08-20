@@ -223,7 +223,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { if (X_REPORT_ALL_WARNINGS in this) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPORT_ALL_WARNINGS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
     if (X_REPORT_OUTPUT_FILES in this) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES)}
     if (X_REPORT_PERF in this) { arguments.reportPerf = get(X_REPORT_PERF)}
-    try { if (X_RETURN_VALUE_CHECKER in this) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER)?.stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
+    try { if (X_RETURN_VALUE_CHECKER in this) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER).stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     try { if (X_SEPARATE_KMP_COMPILATION in this) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SEPARATE_KMP_COMPILATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
     if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
@@ -313,7 +313,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker?.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
@@ -526,7 +526,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_PERF")
 
-    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode?> =
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER")
 
     public val X_SEPARATE_KMP_COMPILATION: CommonCompilerArgument<Boolean> =

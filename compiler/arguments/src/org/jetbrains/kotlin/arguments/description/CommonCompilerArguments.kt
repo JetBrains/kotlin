@@ -337,7 +337,8 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             |For Native, the performance report includes execution time and lines processed per second for every individual lowering.
             |For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
         """.trimMargin()
-        description = ReleaseDependent(commonDescriptionPart + '\n' + """
+        description = ReleaseDependent(
+            commonDescriptionPart + '\n' + """
             |Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
             |  machines, so use this mode with caution.
         """.trimMargin(),
@@ -731,8 +732,9 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
 
     compilerArgument {
         name = "Xreturn-value-checker"
-        description =
-            "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.".asReleaseDependent()
+        description = (
+                "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. " +
+                        "'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.").asReleaseDependent()
         valueDescription = ReleaseDependent(
             current = ReturnValueCheckerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
         )
@@ -1046,13 +1048,13 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
 
-        description =ReleaseDependent(
+        description = ReleaseDependent(
             current = """
                 Declare common klib dependencies for the specific fragment.
                 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
                 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
             """.trimIndent(),
-            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib dependencies for the specific fragment.
+            (KotlinReleaseVersion.v2_2_20..KotlinReleaseVersion.v2_4_0) to """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 """
@@ -1076,7 +1078,7 @@ The argument should be used only if the new compilation scheme is enabled with -
                 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
             """.trimIndent(),
-            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib friend dependencies for the specific fragment.
+            (KotlinReleaseVersion.v2_2_20..KotlinReleaseVersion.v2_4_0) to """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 """
@@ -1171,7 +1173,8 @@ The argument should be used only if the new compilation scheme is enabled with -
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         val introducedVersion = KotlinReleaseVersion.v2_1_0
-        val deprecatedVersion = KotlinReleaseVersion.v2_2_0 // According to https://github.com/JetBrains/kotlin/commit/533d2f5ba6e6d2759d92d59b6004ee433214e262
+        val deprecatedVersion =
+            KotlinReleaseVersion.v2_2_0 // According to https://github.com/JetBrains/kotlin/commit/533d2f5ba6e6d2759d92d59b6004ee433214e262
         val commonDescriptionPart = "Suppress specified warning module-wide."
         name = "Xsuppress-warning"
         compilerName = "suppressedDiagnostics"
@@ -1218,7 +1221,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
 default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.""",
-            (KotlinReleaseVersion.v2_1_20 .. KotlinReleaseVersion.v2_3_20) to
+            (KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_3_20) to
                     """Change the default annotation targets for constructor properties:
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
@@ -1410,7 +1413,8 @@ Warning: this flag is not intended for production use. If you want to configure 
     compilerArgument {
         name = "Xfir-aggressive-pruning"
         compilerName = "firAggressivePruning"
-        description = "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.".asReleaseDependent()
+        description =
+            "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
         lifecycle(

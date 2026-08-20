@@ -76,15 +76,15 @@ open class CommonCompilerArgumentsConfigurator {
 
     private fun returnValueCheckerMode(
         languageVersion: LanguageVersion,
-        compilerArg: String?,
+        compilerArg: String,
         reporter: Reporter,
     ): ReturnValueCheckerMode? {
         val stableRvVersion = LanguageFeature.ReturnValueCheckerIsStable.sinceVersion
-        if (compilerArg == null) {
+        if (compilerArg == "default") {
             return if (stableRvVersion != null && languageVersion >= stableRvVersion) {
                 ReturnValueCheckerMode.CHECKER
             } else {
-                null // use default
+                ReturnValueCheckerMode.DISABLED
             }
         }
 
