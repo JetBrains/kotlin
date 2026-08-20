@@ -35,14 +35,7 @@ object SyntaxErrorReporter {
                 KtRealPsiSourceElement(element),
                 message,
                 positioningStrategy = null,
-                // syntax errors couldn't be suppressed anyway
-                object : DiagnosticContext {
-                    override val languageVersionSettings: LanguageVersionSettings get() = LanguageVersionSettingsImpl.DEFAULT
-                    override val containingFile: KtSourceFile? get() = null
-                    override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
-                    override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper =
-                        PsiSourceToDiagnosticInstanceMapper()
-                },
+                PsiDefaultDiagnosticContext, // syntax errors couldn't be suppressed anyway
             )
             val context = object : DiagnosticContext {
                 override val containingFile: KtSourceFile
@@ -57,6 +50,14 @@ object SyntaxErrorReporter {
             }
             diagnosticCollector.report(diagnostic, context)
         }
+    }
+
+    object PsiDefaultDiagnosticContext : DiagnosticContext {
+        override val languageVersionSettings: LanguageVersionSettings get() = LanguageVersionSettingsImpl.DEFAULT
+        override val containingFile: KtSourceFile? get() = null
+        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
+        override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper =
+            PsiSourceToDiagnosticInstanceMapper()
     }
 
     internal fun reportSyntaxErrors(

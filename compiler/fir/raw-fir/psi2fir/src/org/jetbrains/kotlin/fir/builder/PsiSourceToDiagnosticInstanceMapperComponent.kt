@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.KtSimpleDiagnostic
 import org.jetbrains.kotlin.diagnostics.PsiSourceToDiagnosticInstanceMapper
 import org.jetbrains.kotlin.diagnostics.Severity
 
-internal class PsiSourceToDiagnosticInstanceMapperComponent :
+class PsiSourceToDiagnosticInstanceMapperComponent :
     PsiSourceToDiagnosticInstanceMapper(), KtSourceToDiagnosticInstanceMapperComponent {
     override fun createDiagnostic0(
         element: AbstractKtSourceElement,

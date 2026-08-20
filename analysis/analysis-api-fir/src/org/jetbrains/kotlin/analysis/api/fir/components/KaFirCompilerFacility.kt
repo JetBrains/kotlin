@@ -362,6 +362,9 @@ internal class KaFirCompilerFacility(
 
                 override val languageVersionSettings: LanguageVersionSettings
                     get() = analysisSession.firSession.languageVersionSettings
+
+                override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper =
+                    PsiSourceToDiagnosticInstanceMapper()
             }
 
             lambda.accept(object : FirDefaultVisitorVoid() {
