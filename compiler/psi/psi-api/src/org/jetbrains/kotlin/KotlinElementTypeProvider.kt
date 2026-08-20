@@ -131,7 +131,7 @@ interface KotlinElementTypeProvider {
     val valueArgumentType: KtNodeType
     val contractEffectListType: KtNodeType
     val contractEffectType: KtNodeType
-    val lambdaArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument>
+    val lambdaArgumentType: KtNodeType
     val valueArgumentNameType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName>
 
     // Special

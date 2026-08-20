@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -55,7 +54,7 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
      * than one element.
      */
     override fun getLambdaArguments(): List<KtLambdaArgument> {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.LAMBDA_ARGUMENT)
+        return getStubOrPsiChildren(KtNodeTypes.LAMBDA_ARGUMENT, KtLambdaArgument.EMPTY_ARRAY).asList()
     }
 
     override fun getValueArguments(): List<KtValueArgument> {
