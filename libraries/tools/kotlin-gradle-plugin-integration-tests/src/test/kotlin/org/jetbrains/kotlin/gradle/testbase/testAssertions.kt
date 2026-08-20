@@ -13,12 +13,14 @@ import org.jdom.Content
 import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Base64
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * @param stripBrowserVersionInfoFromTestCaseNames Some test executor implementations include browser version info in test case names,
@@ -60,6 +62,24 @@ fun GradleProject.assertTestResults(
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
+}
+
+fun GradleProject.assertNoTestResultsProduced(
+    taskName: String,
+    subprojectName: String? = null,
+) {
+    val dirs = testResultsAndReportsDirs(taskName, subprojectName)
+
+    for (dir in listOf(dirs.first, dirs.second)) {
+        if (Files.exists(dir)) {
+            val entries = Files.list(dir).use { it.toList() }
+                .filter { it.name != "binary" }
+            assertTrue(
+                entries.isEmpty(),
+                "Expected directory '$dir' to be absent or contain no test results, but found entries: ${entries.joinToString()}"
+            )
+        }
+    }
 }
 
 internal fun readValidateAndCleanupTestResults(
