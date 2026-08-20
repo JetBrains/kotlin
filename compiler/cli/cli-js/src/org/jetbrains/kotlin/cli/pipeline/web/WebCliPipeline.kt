@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.pipeline.*
-import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.js.JsWriteOutputsPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmMultiModuleBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmRegularBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmWriteOutputsPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.js.*
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -46,9 +42,17 @@ abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
 
 class JsCliPipeline(defaultPerformanceManager: PerformanceManager) : WebCliPipeline<K2JSCompilerArguments>(defaultPerformanceManager) {
     override fun createCodeGenerationPhase(arguments: K2JSCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JSCompilerArguments>, *> {
-        return JsConfigurationPhase then
-                JsBackendPipelinePhase then
-                JsWriteOutputsPipelinePhase
+        return JsConfigurationPhase then if (arguments.cacheDirectory == null) {
+            // Non-incremental compilation pipeline
+            JsIrLoadingPipelinePhase then
+                    JsIrLoweringPipelinePhase then
+                    JsCodegenPipelinePhase then
+                    JsWriteOutputsPipelinePhase
+        } else {
+            // Incremental compilation pipeline
+            JsIncrementalCachePreparationPipelinePhase then
+                    JsIncrementalBuildingPhase
+        }
     }
 
     override val webConfigurationPhase = JsConfigurationPhase
@@ -57,13 +61,32 @@ class JsCliPipeline(defaultPerformanceManager: PerformanceManager) : WebCliPipel
 class WasmCliPipeline(defaultPerformanceManager: PerformanceManager) :
     WebCliPipeline<KotlinWasmCompilerArguments>(defaultPerformanceManager) {
     override fun createCodeGenerationPhase(arguments: KotlinWasmCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<KotlinWasmCompilerArguments>, out WebBackendPipelineArtifact> {
-        val backendPhase = when {
-            arguments.wasmIncludedModuleOnly -> WasmSingleModuleBackendPipelinePhase
-            arguments.wasmGenerateClosedWorldMultimodule -> WasmMultiModuleBackendPipelinePhase
-            else -> WasmRegularBackendPipelinePhase
-        }
-        return WasmConfigurationPhase then
-                backendPhase then
+        return WasmConfigurationPhase then if (arguments.cacheDirectory == null) {
+            // Non-incremental compilation pipeline
+            WasmIrLoadingPipelinePhase then
+                    WasmIrLinkingPipelinePhase then
+                    WasmIrLoweringPipelinePhase then
+                    when {
+                        arguments.wasmIncludedModuleOnly -> WasmSingleModuleBackendIrGenerationPipelinePhase
+                        arguments.wasmGenerateClosedWorldMultimodule -> WasmMultiModuleBackendIrGenerationPipelinePhase
+                        else -> WasmWholeWorldBackendIrGenerationPipelinePhase
+                    }
+        } else {
+            // Incremental compilation pipeline
+            when {
+                arguments.wasmIncludedModuleOnly ->
+                    WasmSingleModuleIncrementalCachePreparationPipelinePhase then
+                            WasmSingleModuleIncrementalBuildingPhase
+                arguments.wasmGenerateClosedWorldMultimodule ->
+                    WasmMultiModuleIncrementalCachePreparationPipelinePhase then
+                            WasmMultiModuleIncrementalBuildingPhase
+                else ->
+                    WasmWholeWorldIncrementalCachePreparationPipelinePhase then
+                            WasmWholeWorldIncrementalBuildingPhase
+
+            }
+        } then
+                WasmBinaryGenerationPipelinePhase then
                 WasmWriteOutputsPipelinePhase
     }
 
