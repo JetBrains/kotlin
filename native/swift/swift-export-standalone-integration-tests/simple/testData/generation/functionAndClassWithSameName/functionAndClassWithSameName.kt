@@ -122,3 +122,13 @@ import flattenedPackage.FlattenedPackageClass
 //  so they clash in Swift.
 // TODO KT-70758
 //fun FlattenedPackageClass(d: Double) = FlattenedPackageClass()
+
+// FILE: suffix.kt
+
+package test.factory.suffix
+
+sealed class Foo
+
+class BasicFoo internal constructor(arg: Boolean) : Foo()
+
+fun BasicFoo(): Foo = BasicFoo(true)

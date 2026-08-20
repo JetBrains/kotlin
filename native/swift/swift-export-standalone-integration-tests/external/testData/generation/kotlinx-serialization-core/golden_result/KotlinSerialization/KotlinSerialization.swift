@@ -1301,7 +1301,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
             return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule_get())
         }
     }
-    public static func EmptySerializersModule() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+    public static func emptySerializersModule() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule())
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -2173,7 +2173,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_descriptors_nullable_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor.Type.self) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public static func PrimitiveSerialDescriptor(
+    public static func primitiveSerialDescriptor(
         serialName: Swift.String,
         kind: ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {

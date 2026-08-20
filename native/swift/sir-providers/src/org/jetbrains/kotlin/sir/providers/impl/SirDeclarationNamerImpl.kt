@@ -74,7 +74,7 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
         // It is a top-level function, and its name starts with an uppercase.
 
         val returnType = this.returnType.abbreviation ?: this.returnType
-        val classIds = generateSequence(returnType.symbol) { symbol ->
+        val isFactoryFunction = generateSequence(returnType.symbol) { symbol ->
             when (symbol) {
                 is KaTypeAliasSymbol -> symbol.expandedType.symbol
                 is KaClassSymbol -> {
@@ -88,10 +88,11 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
                     }.firstOrNull()?.symbol as KaClassSymbol?
                 }
             }
-        }.takeWhile { it.isTopLevel }.mapNotNull { it.classId }
-        // The return type is based on a top-level class or typealias with `classId`.
+        }.takeWhile { it.isTopLevel }.mapNotNull { it.classId }.any {
+            callableId.packageName == it.packageFqName && callableId.callableName.asString().endsWith(it.shortClassName.asString())
+        }
 
-        return if (classIds.any { callableId.packageName == it.packageFqName && callableId.callableName == it.shortClassName }) {
+        return if (isFactoryFunction) {
             // They match ⇒ mangle the function name by lowercasing the first latter.
             callableId.callableName.asString().replaceFirstChar { it.lowercase() }
         } else {
