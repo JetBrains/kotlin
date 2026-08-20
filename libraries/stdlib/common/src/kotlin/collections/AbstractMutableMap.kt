@@ -20,6 +20,8 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
     /**
      * Associates the specified [value] with the specified [key] in the map.
      *
+     * If the map already contains a mapping for [key], the key instance stored in the map is retained.
+     *
      * This method is redeclared as abstract, because it's not implemented in the base class,
      * so it must be always overridden in the concrete mutable collection implementation.
      *
