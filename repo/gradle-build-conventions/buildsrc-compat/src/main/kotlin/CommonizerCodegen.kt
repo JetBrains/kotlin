@@ -101,9 +101,20 @@ abstract class GenerateSupportSources : DefaultTask() {
                             @kotlin.experimental.ExpectRefinement
                             expect inline var <T : support.$name> support.${name}VarOf<T>.value: T
                         """.trimIndent()
+                        val allocFunction = """
+                            @Suppress(
+                                "FINAL_UPPER_BOUND", "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
+                                "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "CONFLICTING_OVERLOADS",
+                            )
+                            @OptIn(ExperimentalMultiplatform::class)
+                            @kotlin.experimental.ExpectRefinement
+                            @ExperimentalForeignApi
+                            expect inline fun <T : support.$name> NativePlacement.alloc(value: T): support.${name}VarOf<T>
+                        """.trimIndent()
 
                         if (name in classesThatNeedVar) {
                             kotlinxXCinteropFileContents += valueAccessor
+                            kotlinxXCinteropFileContents += allocFunction
                             it.plus("\n\n$varOfVariant")
                         } else {
                             it
