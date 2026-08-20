@@ -162,6 +162,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.MODIFIER_LIST,
             factory = KtModifierListStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.TYPE_CONSTRAINT_LIST,
+            psiFactory = ::KtTypeConstraintList,
+        )
     }
 }
 

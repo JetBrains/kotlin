@@ -11,7 +11,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
 
 import java.util.Collections;
@@ -45,9 +44,8 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeConstraintList getTypeConstraintList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_CONSTRAINT_LIST, KtTypeConstraintList.class);
     }
 
     @Override

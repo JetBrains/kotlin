@@ -62,8 +62,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType MODIFIER_LIST = new KtNodeType("MODIFIER_LIST", KtDeclarationModifierList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeConstraintList> TYPE_CONSTRAINT_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT_LIST", KtTypeConstraintList.class);
+    @NotNull KtNodeType TYPE_CONSTRAINT_LIST = new KtNodeType("TYPE_CONSTRAINT_LIST", KtTypeConstraintList::new);
 
     @NotNull KtPlaceHolderStubElementType<KtTypeConstraint> TYPE_CONSTRAINT =
             new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT", KtTypeConstraint.class);
