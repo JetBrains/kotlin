@@ -88,7 +88,7 @@ internal fun Project.createGeneralTestTask(
     minHeapSize: Size = testDefaultMinHeapSize,
     maxMetaspaceSize: Size = testDefaultMaxMetaspaceSize,
     reservedCodeCacheSize: Size = testDefaultReservedCodeCacheSize,
-    garbageCollector: GarbageCollector = testDefaultGC,
+    garbageCollector: GarbageCollector? = testDefaultGC,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
@@ -96,7 +96,7 @@ internal fun Project.createGeneralTestTask(
     val properties = kotlinBuildProperties
     val effectiveXmx = properties.testXmx.orElse(maxHeapSize)
     val effectiveXms = properties.testXms.orElse(minHeapSize)
-    val effectiveGC = properties.testGarbageCollector.orElse(garbageCollector)
+    val effectiveGC = properties.testGarbageCollector.orElse(provider { garbageCollector })
 
     project.dependencies {
         "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
@@ -152,14 +152,17 @@ internal fun Project.createGeneralTestTask(
             "-Djna.nosys=true"
         )
 
-        jvmArgs(
-            when (effectiveGC.get()) {
-                GarbageCollector.G1 -> "-XX:+UseG1GC"
-                GarbageCollector.Parallel -> "-XX:+UseParallelGC"
-            },
-            "-XX:MaxHeapFreeRatio=30",
-            "-XX:MinHeapFreeRatio=10",
-        )
+        val effectiveGC = effectiveGC.orNull
+        if (effectiveGC != null) {
+            jvmArgs(
+                when (effectiveGC) {
+                    GarbageCollector.G1 -> "-XX:+UseG1GC"
+                    GarbageCollector.Parallel -> "-XX:+UseParallelGC"
+                },
+                "-XX:MaxHeapFreeRatio=30",
+                "-XX:MinHeapFreeRatio=10",
+            )
+        }
 
         val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
         if (nativeMemoryTracking.isPresent) {
