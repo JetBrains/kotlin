@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtNodeTypes
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 /**
  * A Kotlin PSI file implementation independent of Java PSI (it does not implement [PsiClassOwner]).
@@ -95,7 +95,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * The file-level annotation list holding the `@file:...` annotations, or `null` if the file has none.
      */
     val fileAnnotationList: KtFileAnnotationList?
-        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubBasedElementTypes.FILE_ANNOTATION_LIST)
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtNodeTypes.FILE_ANNOTATION_LIST)
 
     /**
      * The import directives of this file, in source order; empty if the file has no imports.
@@ -213,7 +213,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * required to support the optimization for [KtScript], as it can only appear at the beginning.
      */
     private fun <T : KtElementImplStub<out StubElement<T>>> findChildBeforeFirstDeclarationInclusiveByType(
-        elementType: KtStubElementType<out StubElement<T>, T>,
+        elementType: IElementType,
     ): T? {
         val stub = greenStub
         if (stub != null) {

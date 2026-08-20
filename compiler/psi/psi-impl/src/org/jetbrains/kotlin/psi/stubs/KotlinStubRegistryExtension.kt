@@ -137,6 +137,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.IMPORT_LIST,
             psiFactory = ::KtImportList,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.FILE_ANNOTATION_LIST,
+            psiFactory = ::KtFileAnnotationList,
+        )
     }
 }
 
