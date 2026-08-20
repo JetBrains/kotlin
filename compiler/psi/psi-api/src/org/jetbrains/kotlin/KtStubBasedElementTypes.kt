@@ -173,8 +173,7 @@ internal object KtStubBasedElementTypes {
         provider.functionTypeReceiverType
 
     @JvmField
-    val NULLABLE_TYPE: KtStubElementType<out KotlinPlaceHolderStub<KtNullableType>, KtNullableType> =
-        provider.nullableTypeType
+    val NULLABLE_TYPE: KtNodeType = provider.nullableTypeType
 
     @JvmField
     val INTERSECTION_TYPE: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType> =
