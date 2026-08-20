@@ -19,11 +19,6 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.jackson.kotlin)
-    constraints {
-        implementation(libs.jackson.databind) {
-            because("CVE-2022-42003")
-        }
-    }
 
     // Test only
     testImplementation(libs.kotlin.test)
@@ -38,7 +33,6 @@ dependencies {
 
     // this is a `hack` to include classes `intellij-java-psi-api` in shadowJar
     // which are not present in `kotlin-compiler`
-    // should be `api` since we already have it in :analysis-java-psi
     // it's harder to do it in the same as with `fastutil`
     // as several intellij dependencies share the same packages like `org.intellij.core`
     api(libs.intellij.java.psi.api) { isTransitive = false }
