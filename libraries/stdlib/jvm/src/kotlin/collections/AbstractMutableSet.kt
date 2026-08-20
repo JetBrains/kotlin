@@ -17,6 +17,8 @@ public actual abstract class AbstractMutableSet<E> protected actual constructor(
     /**
      * Adds the specified element to the set.
      *
+     * If the set already contains [element], the element instance stored in the set is retained.
+     *
      * This method is redeclared as abstract, because it's not implemented in the base class,
      * so it must be always overridden in the concrete mutable collection implementation.
      *

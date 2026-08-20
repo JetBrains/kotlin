@@ -259,6 +259,8 @@ public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.
 
 /**
  * Allows to use the index operator for storing values in a mutable map.
+ *
+ * Equivalent to calling [MutableMap.put] with the given [key] and [value].
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
