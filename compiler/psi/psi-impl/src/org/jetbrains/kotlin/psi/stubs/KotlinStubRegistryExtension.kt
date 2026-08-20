@@ -102,6 +102,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.TYPE_PARAMETER,
             factory = KtTypeParameterStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.TYPE_PARAMETER_LIST,
+            psiFactory = ::KtTypeParameterList,
+        )
     }
 }
 

@@ -106,8 +106,7 @@ internal object KtStubBasedElementTypes {
     // Type parameters
 
     @JvmField
-    val TYPE_PARAMETER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList> =
-        provider.typeParameterListType
+    val TYPE_PARAMETER_LIST: KtNodeType = provider.typeParameterListType
 
     @JvmField
     val TYPE_PARAMETER: KtNodeType = provider.typeParameterType
