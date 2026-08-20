@@ -39,6 +39,8 @@ class NpmVersionsTest {
                 "kotlin-web-helpers",
                 "mini-css-extract-plugin",
                 "mocha",
+                "playwright",
+                "playwright-core",
                 "sass",
                 "sass-loader",
                 "source-map-loader",
