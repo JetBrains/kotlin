@@ -109,6 +109,7 @@ projectTests {
         "aggregateTests",
         defineJDKEnvVariables = environment,
         skipInLocalBuild = true,
+        maxHeapSize = testMaxHeapSizeHuge,
     ) {
         configure {
             excludeTags("FirPsiCodegenTest")
