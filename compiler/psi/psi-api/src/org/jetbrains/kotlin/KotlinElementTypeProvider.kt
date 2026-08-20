@@ -116,7 +116,7 @@ interface KotlinElementTypeProvider {
     val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
     val operationReferenceType: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression>
     val dotQualifiedExpressionType: KtNodeType
-    val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
+    val callExpressionType: KtNodeType
     val prefixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression>
     val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
     val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>

@@ -227,7 +227,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val dotQualifiedExpressionType: KtNodeType
         get() = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
 
-    override val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
+    override val callExpressionType: KtNodeType
         get() = KtStubElementTypes.CALL_EXPRESSION
 
     override val operationReferenceType: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression>

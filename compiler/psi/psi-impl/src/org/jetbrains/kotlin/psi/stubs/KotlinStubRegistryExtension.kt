@@ -222,6 +222,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
             psiFactory = ::KtDotQualifiedExpression,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.CALL_EXPRESSION,
+            psiFactory = ::KtCallExpression,
+        )
     }
 }
 
