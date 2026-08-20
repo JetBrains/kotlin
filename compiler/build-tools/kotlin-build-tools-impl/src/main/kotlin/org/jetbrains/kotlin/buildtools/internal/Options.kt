@@ -62,6 +62,13 @@ internal class Options(
 @RequiresOptIn("Don't use from -impl package, as we're not allowed to access API classes for backward compatibility reasons.")
 internal annotation class UseFromImplModuleRestricted
 
+@RequiresOptIn(
+    "This option replaces a deprecated option that is still honored, so it must not be read on its own: " +
+            "the effective value is `<replaced option> || <this option>`. " +
+            "See the `optionId` argument on the declaration for the option to combine it with."
+)
+internal annotation class RequiresLegacyOptionFallback(val optionId: String)
+
 internal fun initializeOptions(klazz: KClass<*>, options: Options) {
     // Use Java reflection to avoid triggering Kotlin reflection hierarchy resolution,
     // which fails when running against an older API version that doesn't have all supertypes.
