@@ -1971,7 +1971,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/sources/DefaultKotlinSo
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public fun getGeneratedKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public fun getImplementationConfigurationName ()Ljava/lang/String;
-	public fun getImplementationMetadataConfigurationName ()Ljava/lang/String;
 	public fun getKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;
 	public fun getName ()Ljava/lang/String;
