@@ -96,7 +96,8 @@ internal class SirSealedTypeEnum(
     }
 
     private val sealedInheritors: List<KaNamedClassSymbol> by lazyWithSessions {
-        ktSymbol.sealedClassInheritors
+        // Don't include enums, they don't conform to protocols (KT-88682 / KT-88716)
+        ktSymbol.sealedClassInheritors.filter { it.classKind != KaClassKind.ENUM_CLASS }
     }
 
     val isEmpty: Boolean get() = sealedInheritors.isEmpty()

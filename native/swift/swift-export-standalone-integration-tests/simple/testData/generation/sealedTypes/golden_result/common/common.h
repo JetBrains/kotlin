@@ -23,6 +23,22 @@ void * org_kotlin_foo_DeprecatedWarningSubClass_init_allocate();
 
 _Bool org_kotlin_foo_DeprecatedWarningSubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * org_kotlin_foo_EnumClassA_ONE();
+
+void * org_kotlin_foo_EnumClassA_THREE();
+
+void * org_kotlin_foo_EnumClassA_TWO();
+
+int32_t org_kotlin_foo_EnumClassA_ordinal(void * self);
+
+void * org_kotlin_foo_EnumClassB_FIVE();
+
+void * org_kotlin_foo_EnumClassB_FOUR();
+
+void * org_kotlin_foo_EnumClassB_SIX();
+
+int32_t org_kotlin_foo_EnumClassB_ordinal(void * self);
+
 void * org_kotlin_foo_MyClassA_init_allocate();
 
 _Bool org_kotlin_foo_MyClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
