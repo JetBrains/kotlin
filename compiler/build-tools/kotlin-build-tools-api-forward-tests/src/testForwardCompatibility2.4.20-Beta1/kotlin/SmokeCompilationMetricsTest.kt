@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.METRICS_COLL
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.MetadataProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.ProjectCreator
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -32,12 +33,13 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                     reportedNames += name
                 }
             }
-            // Every IR-producing platform (JVM/JS/Wasm) reports "Compiler translation to IR"; only the metadata
-            // compiler does not, since it produces no IR. So we require it everywhere except on metadata.
-            val expectedNames = if (this is MetadataProject) {
-                platformIndependentMetricNames
-            } else {
-                platformIndependentMetricNames + COMPILER_TRANSLATION_TO_IR_METRIC
+
+            val expectedNames = when (this) {
+                // Every IR-producing platform (JVM/JS/Wasm) reports "Compiler translation to IR"; only the metadata
+                // compiler does not, since it produces no IR. So we require it everywhere except on metadata.
+                is MetadataProject -> platformIndependentMetricNames + compilerTranslationToMetadataMetrics
+                is JvmProject -> platformIndependentMetricNames + compilerTranslationToJvmMetrics
+                else -> platformIndependentMetricNames + compilerTranslationToKlibMetrics
             }
             module1.compile(compilationConfigAction = {
                 it[METRICS_COLLECTOR] = metricsCollector
@@ -50,10 +52,23 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     }
 
     companion object {
-        // Reported by every IR-producing platform (JVM/JS/Wasm) but not by the metadata compiler, which produces no IR.
-        // Required in keyCompilationMetricsAreReportedOnAllPlatforms for every platform except metadata.
-        private const val COMPILER_TRANSLATION_TO_IR_METRIC =
-            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR"
+        // Reported by every IR-producing Klib platform (JS/Wasm/Naitve).
+        // This excludes the metadata compiler, which produces no IR, and JVM, which produces no Klib.
+        private val compilerTranslationToKlibMetrics = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
+        )
+
+        // Reported by the metadata compiler, which DO NOT produce IR and produce Klib (with metadata).
+        private val compilerTranslationToMetadataMetrics = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib metadata writing",
+        )
+
+        // Reported on the JVM platform, which DOES produce IR and produce Klib (with metadata).
+        private val compilerTranslationToJvmMetrics = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib metadata writing",
+        )
 
         // Compiler-phase metrics that are reported regardless of the target platform (JVM/JS/Wasm/metadata).
         // Deliberately excludes:
@@ -62,9 +77,9 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         //  - "Compiler code generation", which is JVM-only (the klib platforms serialize IR instead);
         //  - "Compiler translation to IR", which is added per-platform (see COMPILER_TRANSLATION_TO_IR_METRIC): the
         //    metadata compiler does not report it (it produces no IR), so it is required only for JVM/JS/Wasm.
+        //  - Klib writing. This diagnostic is slightly different on JVM and on klib platforms.
         private val platformIndependentMetricNames = setOf(
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
-            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler initialization time",
             "Total compiler iteration",
         )

@@ -85,6 +85,7 @@ internal fun PerformanceManager.addLlvmPassesProfile(profile: LlvmPassesProfile)
             irPreLoweringStats = null,
             irSerializationStats = null,
             klibWritingStats = null,
+            klibMetadataWritingStats = null,
             irLinkingStats = null,
             irLoweringStats = null,
             backendStats = null,

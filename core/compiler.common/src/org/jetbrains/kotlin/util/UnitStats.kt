@@ -48,6 +48,7 @@ data class UnitStats(
     val irPreLoweringStats: Time?,
     val irSerializationStats: Time?,
     val klibWritingStats: Time?,
+    val klibMetadataWritingStats: Time?,
     val irLinkingStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
@@ -76,6 +77,7 @@ data class UnitStats(
                 irPreLoweringStats +
                 irSerializationStats +
                 klibWritingStats +
+                klibMetadataWritingStats +
                 irLinkingStats +
                 irLoweringStats +
                 backendStats +
@@ -119,6 +121,9 @@ enum class PhaseType {
 
     /** Phase: Writing the IR and metadata (as raw byte arrays) to a file system (applicable only to Klib-based compilers). */
     KlibWriting,
+
+    /** Phase: Writing a metadata-only Klib to a file system (applicable only to JVM backend). */
+    KlibMetadataWriting,
 
     /** Phase: Deserialization and linkage of IR, building fake overrides and the partial linkage (applicable only to Klib-based compilers). */
     IrLinking,
@@ -223,6 +228,7 @@ fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.IrPreLowering, irPreLoweringStats)
     action(PhaseType.IrSerialization, irSerializationStats)
     action(PhaseType.KlibWriting, klibWritingStats)
+    action(PhaseType.KlibMetadataWriting, klibMetadataWritingStats)
     action(PhaseType.IrLinking, irLinkingStats)
     action(PhaseType.IrLowering, irLoweringStats)
     action(PhaseType.Backend, backendStats)
@@ -240,6 +246,7 @@ val phaseTypeName = mapOf(
     PhaseType.IrPreLowering to "IR PRE-LOWERING",
     PhaseType.IrSerialization to "IR SERIALIZATION",
     PhaseType.KlibWriting to "KLIB WRITING",
+    PhaseType.KlibMetadataWriting to "KLIB METADATA WRITING",
     PhaseType.IrLinking to "IR LINKING",
     PhaseType.IrLowering to "IR LOWERING",
     PhaseType.Backend to "BACKEND",
