@@ -192,6 +192,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.TYPE_REFERENCE,
             psiFactory = ::KtTypeReference,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.USER_TYPE,
+            factory = KtUserTypeStubSerializingElementFactory,
+        )
     }
 }
 
