@@ -23,7 +23,10 @@ import com.intellij.psi.search.LocalSearchScope
  * // The entire `for` block from `outer@` to `}`
  * ```
  */
-class KtLabeledExpression(node: ASTNode) : KtExpressionWithLabel(node), PsiNameIdentifierOwner {
+class KtLabeledExpression : KtExpressionWithLabel, PsiNameIdentifierOwner {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
+
     /**
      * The expression the label is attached to (the part after `label@`), or `null` if it is absent in incomplete code.
      */

@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.resolve.ImportPath;
  */
 public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveStub> implements KtImportInfo {
 
+    @KtImplementationDetail
     public KtImportDirective(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtImportDirective(@NotNull KotlinImportDirectiveStub stub) {
         super(stub, KtStubBasedElementTypes.IMPORT_DIRECTIVE);
     }

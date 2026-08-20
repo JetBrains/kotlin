@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  */
 @KtExperimentalApi
 class KtCompanionBlock : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlock>>, KtDeclarationContainer {
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtCompanionBlock>) : super(stub, KtStubBasedElementTypes.COMPANION_BLOCK)
+
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

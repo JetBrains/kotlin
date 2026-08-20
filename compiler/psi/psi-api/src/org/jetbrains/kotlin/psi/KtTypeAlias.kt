@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
  * ```
  */
 class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDeclaration, KtClassLikeDeclaration {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinTypeAliasStub) : super(stub, KtStubBasedElementTypes.TYPEALIAS)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =

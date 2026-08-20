@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
  * ```
  */
 class KtStringInterpolationPrefix : KtElementImplStub<KotlinStringInterpolationPrefixStub> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinStringInterpolationPrefixStub) : super(stub, KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX)
 
     /**

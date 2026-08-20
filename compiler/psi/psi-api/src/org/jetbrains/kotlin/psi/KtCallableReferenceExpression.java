@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }</pre>
  */
 public class KtCallableReferenceExpression extends KtExpressionImpl implements KtDoubleColonExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtCallableReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }

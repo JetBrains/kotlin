@@ -22,10 +22,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraintList>> {
+    @KtImplementationDetail
     public KtTypeConstraintList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeConstraintList(@NotNull KotlinPlaceHolderStub<KtTypeConstraintList> stub) {
         super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
     }

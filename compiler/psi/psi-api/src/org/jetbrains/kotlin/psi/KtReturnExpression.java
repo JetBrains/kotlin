@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolution.KtResolvable;
  * }</pre>
  */
 public class KtReturnExpression extends KtExpressionWithLabel implements KtStatementExpression, KtResolvable {
+    @KtImplementationDetail
     public KtReturnExpression(@NotNull ASTNode node) {
         super(node);
     }

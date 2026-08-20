@@ -27,10 +27,12 @@ import java.util.List;
 public class KtFileAnnotationList extends KtElementImplStub<KotlinPlaceHolderStub<KtFileAnnotationList>> implements
                                                                                                             KtAnnotationsContainer {
 
+    @KtImplementationDetail
     public KtFileAnnotationList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtFileAnnotationList(@NotNull KotlinPlaceHolderStub<KtFileAnnotationList> stub) {
         super(stub, KtStubBasedElementTypes.FILE_ANNOTATION_LIST);
     }

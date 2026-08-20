@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
  */
 open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDeclarationWithBody, KtModifierListOwner,
     KtDeclarationWithInitializer, KtDeclarationWithReturnType {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =

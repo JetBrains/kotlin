@@ -35,10 +35,12 @@ import java.util.List;
 public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolderStub<KtPackageDirective>> {
     private String qualifiedNameCache = null;
 
+    @KtImplementationDetail
     public KtPackageDirective(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtPackageDirective(@NotNull KotlinPlaceHolderStub<KtPackageDirective> stub) {
         super(stub, KtStubBasedElementTypes.PACKAGE_DIRECTIVE);
     }

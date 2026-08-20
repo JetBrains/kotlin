@@ -35,10 +35,12 @@ import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.getTrailingCommaByClo
  */
 public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub>
         implements KtReferenceExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
         super(stub, KtStubBasedElementTypes.COLLECTION_LITERAL_EXPRESSION);
     }
 
+    @KtImplementationDetail
     public KtCollectionLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }

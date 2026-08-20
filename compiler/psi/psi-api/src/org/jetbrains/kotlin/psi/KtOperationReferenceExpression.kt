@@ -80,6 +80,7 @@ class KtOperationReferenceExpression :
     KtExpressionImplStub<KotlinOperationReferenceExpressionStub>,
     KtSimpleNameExpression,
     KtResolvableCall {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail

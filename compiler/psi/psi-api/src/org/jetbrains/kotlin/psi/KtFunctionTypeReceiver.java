@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * }</pre>
  */
 public class KtFunctionTypeReceiver extends KtElementImplStub<KotlinPlaceHolderStub<KtFunctionTypeReceiver>> {
+    @KtImplementationDetail
     public KtFunctionTypeReceiver(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtFunctionTypeReceiver(@NotNull KotlinPlaceHolderStub<KtFunctionTypeReceiver> stub) {
         super(stub, KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
     }

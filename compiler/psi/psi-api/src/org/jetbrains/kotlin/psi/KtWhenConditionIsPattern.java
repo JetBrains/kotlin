@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * }</pre>
  */
 public class KtWhenConditionIsPattern extends KtWhenCondition {
+    @KtImplementationDetail
     public KtWhenConditionIsPattern(@NotNull ASTNode node) {
         super(node);
     }

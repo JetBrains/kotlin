@@ -28,6 +28,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtWhenExpression extends KtExpressionImpl {
+    @KtImplementationDetail
     public KtWhenExpression(@NotNull ASTNode node) {
         super(node);
     }

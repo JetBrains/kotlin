@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
-import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments;
 
 import java.util.Arrays;
 
@@ -29,6 +28,7 @@ import java.util.Arrays;
  */
 public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtBinaryExpression>>
         implements KtOperationExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtBinaryExpression(@NotNull ASTNode node) {
         super(node);
     }

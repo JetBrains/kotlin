@@ -26,10 +26,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<KtInitializerList>> {
+    @KtImplementationDetail
     public KtInitializerList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtInitializerList(@NotNull KotlinPlaceHolderStub<KtInitializerList> stub) {
         super(stub, KtStubBasedElementTypes.INITIALIZER_LIST);
     }

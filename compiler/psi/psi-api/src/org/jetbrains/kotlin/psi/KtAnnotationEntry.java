@@ -30,10 +30,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement {
+    @KtImplementationDetail
     public KtAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtAnnotationEntry(@NotNull KotlinAnnotationEntryStub stub) {
         super(stub, KtStubBasedElementTypes.ANNOTATION_ENTRY);
     }

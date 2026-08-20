@@ -33,10 +33,12 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
     /** The token that separates the parameter list from the return type in a function type (the {@code ->} arrow). */
     public static final KtToken RETURN_TYPE_SEPARATOR = KtTokens.ARROW;
 
+    @KtImplementationDetail
     public KtFunctionType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtFunctionType(@NotNull KotlinFunctionTypeStub stub) {
         super(stub, KtStubBasedElementTypes.FUNCTION_TYPE);
     }

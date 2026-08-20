@@ -1220,6 +1220,7 @@ class KtPsiFactory private constructor(
         return BlockWrapper(block, expression)
     }
 
+    @OptIn(KtImplementationDetail::class)
     private class BlockWrapper(fakeBlockExpression: KtBlockExpression, private val expression: KtExpression) :
         KtBlockExpression(fakeBlockExpression.text), KtPsiUtil.KtExpressionWrapper {
 

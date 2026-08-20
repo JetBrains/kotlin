@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
  * ```
  */
 class KtContractEffect : KtElementImplStub<KotlinContractEffectStub> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinContractEffectStub) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT)
 }
 

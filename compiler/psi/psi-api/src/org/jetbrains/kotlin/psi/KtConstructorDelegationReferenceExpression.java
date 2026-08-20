@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }</pre>
  */
 public class KtConstructorDelegationReferenceExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtConstructorDelegationReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }

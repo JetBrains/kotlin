@@ -27,10 +27,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeArgumentList>> {
+    @KtImplementationDetail
     public KtTypeArgumentList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeArgumentList(@NotNull KotlinPlaceHolderStub<KtTypeArgumentList> stub) {
         super(stub, KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
     }

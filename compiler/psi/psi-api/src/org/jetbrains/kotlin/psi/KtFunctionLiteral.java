@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.SpecialNames;
  * }</pre>
  */
 public class KtFunctionLiteral extends KtFunctionNotStubbed {
+    @KtImplementationDetail
     public KtFunctionLiteral(@NotNull ASTNode node) {
         super(node);
     }

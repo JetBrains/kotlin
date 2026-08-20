@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
  */
 open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer,
     KtDeclarationWithReturnType {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinBackingFieldStub) : super(stub, KtStubBasedElementTypes.BACKING_FIELD)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =

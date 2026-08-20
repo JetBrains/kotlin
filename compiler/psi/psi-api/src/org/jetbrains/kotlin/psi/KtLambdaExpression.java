@@ -29,6 +29,7 @@ import java.util.List;
  * }</pre>
  */
 public class KtLambdaExpression extends LazyParseablePsiElement implements KtExpression {
+    @KtImplementationDetail
     public KtLambdaExpression(CharSequence text) {
         super(KtNodeTypes.LAMBDA_EXPRESSION, text);
     }

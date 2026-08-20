@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
  * ```
  */
 class KtLambdaArgument : KtValueArgument, LambdaArgument {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinValueArgumentStub<KtLambdaArgument>) : super(stub, KtStubBasedElementTypes.LAMBDA_ARGUMENT) {}
 
     override fun getLambdaExpression(): KtLambdaExpression? = getArgumentExpression()?.unpackFunctionLiteral()

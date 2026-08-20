@@ -65,8 +65,10 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  */
 @OptIn(KtExperimentalApi::class)
 class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression, KtResolvableCall {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubBasedElementTypes.REFERENCE_EXPRESSION)
 
     override fun getReferencedName(): String {

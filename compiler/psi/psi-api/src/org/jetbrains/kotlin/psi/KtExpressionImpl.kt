@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
  * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside of the PSI
  * implementation. For expressions that may also be backed by a stub, see [KtExpressionImplStub].
  */
-abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
+abstract class KtExpressionImpl : KtElementImpl, KtExpression {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 

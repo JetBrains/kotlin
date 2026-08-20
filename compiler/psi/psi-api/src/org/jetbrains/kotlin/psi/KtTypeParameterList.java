@@ -27,10 +27,12 @@ import java.util.List;
  * }</pre>
  */
 public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeParameterList>> {
+    @KtImplementationDetail
     public KtTypeParameterList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeParameterList(@NotNull KotlinPlaceHolderStub<KtTypeParameterList> stub) {
         super(stub, KtStubBasedElementTypes.TYPE_PARAMETER_LIST);
     }

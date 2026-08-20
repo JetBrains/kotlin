@@ -41,6 +41,7 @@ import static org.jetbrains.kotlin.KtNodeTypes.BLOCK;
 @SuppressWarnings("deprecation")
 public class KtBlockExpression extends LazyParseablePsiElement implements KtElement, KtExpression, KtStatementExpression {
 
+    @KtImplementationDetail
     public KtBlockExpression(@Nullable CharSequence text) {
         super(BLOCK, text);
     }

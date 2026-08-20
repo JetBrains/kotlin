@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * }</pre>
  */
 public class KtBinaryExpressionWithTypeRHS extends KtExpressionImpl implements KtOperationExpression {
+    @KtImplementationDetail
     public KtBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {
         super(node);
     }

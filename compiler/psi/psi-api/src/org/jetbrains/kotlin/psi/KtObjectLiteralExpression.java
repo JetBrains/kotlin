@@ -25,6 +25,7 @@ import java.util.Objects;
  * }</pre>
  */
 public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtObjectLiteralExpression>> {
+    @KtImplementationDetail
     public KtObjectLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }

@@ -32,8 +32,10 @@ class KtEnumEntrySuperclassReferenceExpression : KtExpressionImplStub<KotlinEnum
     KtSimpleNameExpression,
     KtResolvableCall {
 
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
+    @KtImplementationDetail
     constructor(stub: KotlinEnumEntrySuperclassReferenceExpressionStub) :
             super(stub, KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
 

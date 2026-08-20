@@ -19,6 +19,7 @@ import java.util.List;
 )
 @Deprecated
 public class KtSelfType extends KtElementImpl implements KtTypeElement {
+    @KtImplementationDetail
     public KtSelfType(@NotNull ASTNode node) {
         super(node);
     }

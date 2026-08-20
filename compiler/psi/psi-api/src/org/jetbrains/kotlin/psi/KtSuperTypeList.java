@@ -29,10 +29,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtSuperTypeList>> {
     private final AtomicLong modificationStamp = new AtomicLong();
 
+    @KtImplementationDetail
     public KtSuperTypeList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeList(@NotNull KotlinPlaceHolderStub<KtSuperTypeList> stub) {
         super(stub, KtStubBasedElementTypes.SUPER_TYPE_LIST);
     }

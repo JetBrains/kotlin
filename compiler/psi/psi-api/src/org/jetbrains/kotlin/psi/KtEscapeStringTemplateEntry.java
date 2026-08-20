@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * }</pre>
  */
 public class KtEscapeStringTemplateEntry extends KtStringTemplateEntry {
+    @KtImplementationDetail
     public KtEscapeStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtEscapeStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry> stub) {
         super(stub, KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY);
     }

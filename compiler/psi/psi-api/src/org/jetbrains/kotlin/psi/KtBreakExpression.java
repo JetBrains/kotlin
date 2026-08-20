@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  */
 public class KtBreakExpression extends KtExpressionWithLabel implements KtStatementExpression {
+    @KtImplementationDetail
     public KtBreakExpression(@NotNull ASTNode node) {
         super(node);
     }

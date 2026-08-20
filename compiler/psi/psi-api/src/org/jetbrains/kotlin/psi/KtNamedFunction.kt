@@ -33,7 +33,10 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
 open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, KtFunction, KtDeclarationWithInitializer {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinFunctionStub) : super(stub, /* nodeType = */ KtStubBasedElementTypes.FUNCTION)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =

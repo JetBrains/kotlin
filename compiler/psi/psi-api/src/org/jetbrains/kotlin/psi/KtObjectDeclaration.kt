@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
  * ```
  */
 class KtObjectDeclaration : KtClassOrObject {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinObjectStub) : super(stub, KtStubBasedElementTypes.OBJECT_DECLARATION)
 
     private val _stub: KotlinObjectStub?

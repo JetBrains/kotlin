@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
  * }</pre>
  */
 public class KtDeclarationModifierList extends KtModifierList {
+    @KtImplementationDetail
     public KtDeclarationModifierList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtDeclarationModifierList(@NotNull KotlinModifierListStub stub) {
         super(stub, KtStubBasedElementTypes.MODIFIER_LIST);
     }

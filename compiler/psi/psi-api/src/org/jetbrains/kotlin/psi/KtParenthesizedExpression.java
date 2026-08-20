@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * }</pre>
  */
 public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtParenthesizedExpression>> {
+    @KtImplementationDetail
     public KtParenthesizedExpression(@NotNull ASTNode node) {
         super(node);
     }

@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.types.Variance;
  */
 public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterStub> {
 
+    @KtImplementationDetail
     public KtTypeParameter(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeParameter(@NotNull KotlinTypeParameterStub stub) {
         super(stub, KtStubBasedElementTypes.TYPE_PARAMETER);
     }

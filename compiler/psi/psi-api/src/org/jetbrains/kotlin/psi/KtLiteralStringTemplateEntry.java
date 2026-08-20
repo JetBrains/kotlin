@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * }</pre>
  */
 public class KtLiteralStringTemplateEntry extends KtStringTemplateEntry {
+    @KtImplementationDetail
     public KtLiteralStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtLiteralStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry> stub) {
         super(stub, KtStubBasedElementTypes.LITERAL_STRING_TEMPLATE_ENTRY);
     }

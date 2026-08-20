@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElementImpl
 import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -20,7 +21,10 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  * A single part of a qualified name in the tag subject or link.
  */
 @OptIn(KtExperimentalApi::class)
-class KDocName(node: ASTNode) : KtElementImpl(node), KtResolvable {
+class KDocName : KtElementImpl, KtResolvable {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
+
     /**
      * Returns the [KDoc] comment this name belongs to.
      *

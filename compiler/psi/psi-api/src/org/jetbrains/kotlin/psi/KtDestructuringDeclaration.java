@@ -37,10 +37,12 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestructuringDeclarationStub>
         implements KtValVarKeywordOwner, KtDeclarationWithInitializer, KtDeclarationWithReturnType {
 
+    @KtImplementationDetail
     public KtDestructuringDeclaration(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtDestructuringDeclaration(@NotNull KotlinDestructuringDeclarationStub stub) {
         super(stub, KtStubBasedElementTypes.DESTRUCTURING_DECLARATION);
     }
