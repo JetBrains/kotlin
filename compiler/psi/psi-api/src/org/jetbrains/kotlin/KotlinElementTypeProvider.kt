@@ -119,7 +119,7 @@ interface KotlinElementTypeProvider {
     val callExpressionType: KtNodeType
     val prefixExpressionType: KtNodeType
     val postfixExpressionType: KtNodeType
-    val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
+    val binaryExpressionType: KtNodeType
     val parenthesizedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression>
     val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
     val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
