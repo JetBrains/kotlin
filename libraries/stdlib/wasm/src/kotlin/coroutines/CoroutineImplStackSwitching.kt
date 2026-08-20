@@ -20,13 +20,20 @@ import kotlin.wasm.internal.resumeWithImpl
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
 internal class CoroutineImplStackSwitching<T, R>(
-    resultContinuation: Continuation<R>,
+    private val resultContinuation: Continuation<R>,
     internal val wasmContBox: WasmContinuationBox =
         WasmContinuationBox(nullContrefIntrinsic())
-) : CoroutineImpl<T, R>(resultContinuation) {
+) : Continuation<T> {
 
-    protected val _resultContinuation = resultContinuation
-    override val _context: CoroutineContext = resultContinuation.context
+    internal var result: Any? = null
+    internal var exception: Throwable? = null
+
+    public override val context: CoroutineContext = resultContinuation.context
+    private var intercepted_: Continuation<T>? = null
+    public fun intercepted(): Continuation<T> = intercepted_
+        ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
+            .also { intercepted_ = it }
+
     internal var pendingSuspend = false
 
     @Suppress("UNCHECKED_CAST")
@@ -51,7 +58,7 @@ internal class CoroutineImplStackSwitching<T, R>(
 
         releaseIntercepted() // this instance is terminating
 
-        val completion = _resultContinuation
+        val completion = resultContinuation
 
         // top-level completion reached -- invoke and return
         if (exception != null) {
@@ -61,7 +68,15 @@ internal class CoroutineImplStackSwitching<T, R>(
         }
     }
 
-    override fun doResume(): Any? {
+    private fun releaseIntercepted() {
+        val intercepted = intercepted_
+        if (intercepted != null && intercepted !== this) {
+            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
+        }
+        this.intercepted_ = CompletedContinuation // just in case
+    }
+
+    fun doResume(): Any? {
         val wasmCont = wasmContBox.wasmContinuation!!
 
         val e = exception
