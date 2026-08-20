@@ -149,7 +149,7 @@ FILE: Main.kt
         lval _ignore1: R|OverloadVariant.Int| = R|/acceptNSIntegerOrInt|(Int(20))
         lval _ignore2: R|OverloadVariant.Long| = R|/acceptLongOrInt|(NumericConversion<kotlin/Long>(R|/getNSInteger|()))
         lval _ignore3: R|OverloadVariant.Int| = R|/getNSInteger|().R|/callOverLongOrInt<Candidate is inapplicable because of receiver type mismatch: /callOverLongOrInt>#|()
-        lval _ignore4: R|OverloadVariant.Long| = <Ambiguity: acceptNSIntegerOrInt, [/acceptNSIntegerOrInt, /acceptNSIntegerOrInt]>#(Int(0).R|kotlinx/cinterop/convert|<<ERROR TYPE REF: Cannot infer argument for type parameter R>>())
+        lval _ignore4: R|OverloadVariant.NSInteger| = R|/acceptNSIntegerOrInt|(Int(0).R|kotlinx/cinterop/convert|<R|NSInteger|>())
         R|/acceptLong|(NumericConversion<kotlin/Long>(R|/getNSInteger|()))
         R|/acceptULong<Inapplicable(INAPPLICABLE): /acceptULong>#|(R|/getNSInteger|())
         R|/acceptInt<Inapplicable(INAPPLICABLE): /acceptInt>#|(R|/getNSInteger|())

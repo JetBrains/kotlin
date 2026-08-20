@@ -55,7 +55,7 @@ private fun FirBasedSymbol<*>.supportsNumericClassConversionFrom(type: ConeKotli
 private fun FirBasedSymbol<*>.supportsNumericClassConversionTo(type: ConeKotlinType, session: FirSession): Boolean =
     getSupportedNumericClassConversions(session)?.all { it.fitsInto(type) } ?: false
 
-private fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
+fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
     lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
 
     val arguments = (getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session) as? FirAnnotationCall)
