@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstr
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -53,7 +51,6 @@ import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -795,9 +792,10 @@ private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, ses
             parent = treeStructure.getParent(parent) ?: return false
         }
         if (parent.tokenType == KtNodeTypes.LAMBDA_ARGUMENT) {
+            // Only trivia separates the lambda from the rest of the call, so the walk stops at the first preceding element
             var prevSibling = parent.getPreviousSibling(treeStructure)
-            while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
-                if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {
+            while (prevSibling is LighterASTTokenNode) {
+                if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling.text.contains("\n")) {
                     return true
                 }
                 prevSibling = prevSibling.getPreviousSibling(treeStructure)
