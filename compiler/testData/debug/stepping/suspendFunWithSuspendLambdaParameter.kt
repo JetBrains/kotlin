@@ -31,8 +31,17 @@ suspend fun box() {
 // test.kt:10 invokeSuspend
 // test.kt:5 foo
 // test.kt:6 foo
+// test.kt:10 Any
+// test.kt:10 Any
+// test.kt:10 Any
+// test.kt:10 invoke
+// test.kt:11 invoke
+// test.kt:12 invoke
+// test.kt:10 Any
+// test.kt:12 Any
 // test.kt:6 foo
 // test.kt:7 foo
+// test.kt:10 invokeSuspend
 // test.kt:10 invokeSuspend
 // test.kt:10 invokeSuspend
 // test.kt:9 invokeSuspend
@@ -53,15 +62,17 @@ suspend fun box() {
 // test.kt:13 $box (1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context> (37)
 // test.kt:13 $box (1)
-// test.kt:10 $$boxCOROUTINE$.doResume (8, 4)
+// test.kt:10 $SuspendLambda_0.doResume (8)
+// test.kt:10 $$boxCOROUTINE$$doResume (8, 4)
 // test.kt:6 $foo (14, 11, 14)
 // test.kt:10 $SuspendFunction1.invoke (8)
 // test.kt:10 $box$slambda.invoke (8)
 // test.kt:11 $box$slambda.invoke (8, 12)
 // test.kt:10 $SuspendFunction1.invoke (8)
 // test.kt:6 $foo (4)
-// test.kt:10 $$boxCOROUTINE$.doResume (4)
-// test.kt:13 $$boxCOROUTINE$.doResume (1)
-// test.kt:10 $$boxCOROUTINE$.doResume (8, 4)
-// test.kt:13 $$boxCOROUTINE$.doResume (0)
+// test.kt:10 $$boxCOROUTINE$$doResume (4)
+// test.kt:13 $$boxCOROUTINE$$doResume (1)
+// test.kt:10 $$boxCOROUTINE$$doResume (8, 4)
+// test.kt:13 $$boxCOROUTINE$$doResume (0)
+// test.kt:10 $SuspendLambda_0.doResume (8)
 // test.kt:13 $box (1)
