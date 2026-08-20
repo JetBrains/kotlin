@@ -38,7 +38,7 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
 
         if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
-            project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework())
+            project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework(targetName = target.name))
             browserTestDsl.setUpDefaultBrowserRunner()
         }
 

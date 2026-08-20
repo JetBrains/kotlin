@@ -64,7 +64,7 @@ internal abstract class KotlinJsBrowserTestImpl
 ) : KotlinJsBrowserTestDsl {
 
     internal fun setUpDefaultBrowserRunner() {
-        chromium("default_chromium")
+        chromium("chromium")
     }
 
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {

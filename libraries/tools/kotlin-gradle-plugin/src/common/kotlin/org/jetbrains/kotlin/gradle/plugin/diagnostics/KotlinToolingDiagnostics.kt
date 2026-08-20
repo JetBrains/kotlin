@@ -2426,13 +2426,25 @@ internal object KotlinToolingDiagnostics {
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke() = build {
-            title { "No browser is specified for JS browser test framework configuration" }
+        operator fun invoke(targetName: String) = build {
+            title { "No browser runner is specified for the $targetName browser test configuration" }
                 .description {
-                    "JS browser test framework has been configured using the new test {} DSL, but without any browsers. " +
-                            "A default Chromium browser will be used."
+                    """
+                    Chromium runner will be used as default.
+                    
+                    kotlin {
+                      $targetName {
+                        browser {
+                          test {
+                            // no browser runners configured
+                            // chromium() will be used as default
+                          }
+                        }
+                      }
+                    }
+                    """.trimIndent()
                 }
-                .solution { "Please add at least one browser to the test {} DSL" }
+                .solution { "Please specify at least one browser runner explicitly" }
                 .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
         }
     }
