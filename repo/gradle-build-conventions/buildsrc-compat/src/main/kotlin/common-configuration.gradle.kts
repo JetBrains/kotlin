@@ -150,26 +150,19 @@ fun Project.configureKotlinCompilationOptions() {
             }
 
             val layout = project.layout
-            val rootDir = rootDir
+            val projectRootDir = rootDir
             val useAbsolutePathsInKlib = kotlinBuildProperties.booleanProperty("kotlin.build.use.absolute.paths.in.klib").get()
 
-            // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
-            // This is a workaround for KT-50876, but with no clear explanation why doFirst is used.
-            // However, KGP with Native targets is used in the native-xctest project, and this code fails with
-            //  The value for property 'freeCompilerArgs' is final and cannot be changed any further.
-            if (project.path != ":native:kotlin-test-native-xctest" &&
-                !project.path.startsWith(":native:objcexport-header-generator") &&
-                !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
-                !project.path.startsWith(":native:external-projects-test-utils") &&
-                !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations") &&
-                !project.path.startsWith(":kotlin-power-assert-runtime")
-            ) {
-                doFirst {
-                    if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
-                        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
-                        (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
-                            "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
-                    }
+            // KT-50876: store relative source paths in klibs so artifacts are reproducible across machines.
+            // Must be added at configuration time via compilerOptions. Native injects compilation.compilerOptions
+            // into the task, so freeCompilerArgs is a task input and cannot be mutated from doFirst.
+            if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
+                compilerOptions {
+                    freeCompilerArgs.add(
+                        layout.buildDirectory.map { buildDir ->
+                            "-Xklib-relative-path-base=${buildDir.asFile},${layout.projectDirectory.asFile},$projectRootDir"
+                        }
+                    )
                 }
             }
         }
