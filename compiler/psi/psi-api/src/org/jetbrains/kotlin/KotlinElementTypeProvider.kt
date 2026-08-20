@@ -82,7 +82,7 @@ interface KotlinElementTypeProvider {
     val modifierListType: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList>
     val annotationType: KtNodeType
     val annotationEntryType: KtNodeType
-    val annotationTargetType: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>
+    val annotationTargetType: KtNodeType
 
     // Type references
     val typeReferenceType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference>

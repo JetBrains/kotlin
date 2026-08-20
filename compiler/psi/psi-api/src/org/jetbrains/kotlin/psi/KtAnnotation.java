@@ -10,7 +10,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Arrays;
@@ -56,9 +55,8 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
      * target is specified.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
+        return getStubOrPsiChild(KtNodeTypes.ANNOTATION_TARGET, KtAnnotationUseSiteTarget.class);
     }
 
     /**
