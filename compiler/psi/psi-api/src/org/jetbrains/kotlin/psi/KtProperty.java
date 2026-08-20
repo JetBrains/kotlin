@@ -226,11 +226,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     /** Returns the explicit backing field declaration ({@code field ...}), or {@code null} if this property has none. */
     @Nullable
     public KtBackingField getFieldDeclaration() {
-        for (KtBackingField field : getStubOrPsiChildrenAsList(KtStubBasedElementTypes.BACKING_FIELD)) {
-            return field;
-        }
-
-        return null;
+        return getStubOrPsiChild(KtNodeTypes.BACKING_FIELD, KtBackingField.class);
     }
 
     /** Returns {@code true} if this property is delegated (declared with {@code by}). */
