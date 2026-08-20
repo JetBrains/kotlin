@@ -55,6 +55,7 @@ data class DynamicJsModule(
 )
 
 class WasmCompilerResult(
+    val linkedModule: WasmModule,
     val wat: String?,
     val jsWrapper: String,
     val wasm: WasmBinaryData,
@@ -340,6 +341,7 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
     }
 
     return WasmCompilerResult(
+        linkedModule = linkedModule,
         wat = wat,
         jsWrapper = jsWrapper.normalizeEmptyLines(),
         wasm = writer.getBinaryData(),
