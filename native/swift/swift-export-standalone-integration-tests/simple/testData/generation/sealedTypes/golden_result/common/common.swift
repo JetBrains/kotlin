@@ -17,6 +17,8 @@ public typealias DeprecatedErrorSubClass_SealedType = ExportedKotlinPackages.org
 public typealias DeprecatedWarningSubClass = ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass
 @available(*, deprecated, message: "deprecated")
 public typealias DeprecatedWarningSubClass_SealedType = ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass_SealedType
+public typealias EnumClassA = ExportedKotlinPackages.org.kotlin.foo.EnumClassA
+public typealias EnumClassB = ExportedKotlinPackages.org.kotlin.foo.EnumClassB
 public typealias InterfaceC = ExportedKotlinPackages.org.kotlin.foo.InterfaceC
 public typealias InterfaceC_SealedType = ExportedKotlinPackages.org.kotlin.foo.InterfaceC_SealedType
 public typealias MyClassA = ExportedKotlinPackages.org.kotlin.foo.MyClassA
@@ -168,6 +170,126 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._InterfaceC {
 }
 extension ExportedKotlinPackages.org.kotlin.foo {
+    public enum EnumClassA: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case ONE
+        case TWO
+        case THREE
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .ONE: "ONE"
+                case .TWO: "TWO"
+                case .THREE: "THREE"
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .ONE: 0
+                case .TWO: 1
+                case .THREE: 2
+                default: fatalError()
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "ONE": self = .ONE
+            case "TWO": self = .TWO
+            case "THREE": self = .THREE
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<3 ~= rawValue else { return nil }
+            self = EnumClassA.allCases[Int(rawValue)]
+        }
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch org_kotlin_foo_EnumClassA_ordinal(__externalRCRefUnsafe) {
+            case 0: self = .ONE
+            case 1: self = .TWO
+            case 2: self = .THREE
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .ONE: org_kotlin_foo_EnumClassA_ONE()
+            case .TWO: org_kotlin_foo_EnumClassA_TWO()
+            case .THREE: org_kotlin_foo_EnumClassA_THREE()
+            default: fatalError()
+            }
+        }
+    }
+    public enum EnumClassB: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case FOUR
+        case FIVE
+        case SIX
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .FOUR: "FOUR"
+                case .FIVE: "FIVE"
+                case .SIX: "SIX"
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .FOUR: 0
+                case .FIVE: 1
+                case .SIX: 2
+                default: fatalError()
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "FOUR": self = .FOUR
+            case "FIVE": self = .FIVE
+            case "SIX": self = .SIX
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<3 ~= rawValue else { return nil }
+            self = EnumClassB.allCases[Int(rawValue)]
+        }
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch org_kotlin_foo_EnumClassB_ordinal(__externalRCRefUnsafe) {
+            case 0: self = .FOUR
+            case 1: self = .FIVE
+            case 2: self = .SIX
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .FOUR: org_kotlin_foo_EnumClassB_FOUR()
+            case .FIVE: org_kotlin_foo_EnumClassB_FIVE()
+            case .SIX: org_kotlin_foo_EnumClassB_SIX()
+            default: fatalError()
+            }
+        }
+    }
     public enum MySealedClass_SealedType: KotlinRuntimeSupport.SealedType {
         case myClassAInner(ExportedKotlinPackages.org.kotlin.foo.MyClassA.Inner_SealedType)
         case myClassBInner(ExportedKotlinPackages.org.kotlin.foo.MyClassB.Inner_SealedType)
