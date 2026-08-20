@@ -554,12 +554,15 @@ object ConeLombokAnnotations {
         val callSuper: CallSuperMode?
     }
 
+    /**
+     * Drop `doNotUseGetters`, `exclude`, `of` arguments but report diagnostics on them.
+     *   * `doNotUseGetters` isn't relevant in Kotlin;
+     *   * `exclude`, `of` will soon be marked as deprecated in Lombok, so don't support them beforehand.
+     */
     class ToString(
         val includeFieldNames: Boolean?,
         override val callSuper: CallSuperMode?,
-        val doNotUseGetters: Boolean?,
         val onlyExplicitlyIncluded: Boolean?,
-        val excludeFields: Set<String>,
         annotation: FirAnnotation,
     ) : ConeLombokAnnotation(annotation), CallSuper {
         companion object : ConeAnnotationCompanion<ToString>(LombokNames.TO_STRING_ID) {
@@ -567,9 +570,7 @@ object ConeLombokAnnotations {
                 return ToString(
                     includeFieldNames = annotation.getBooleanArgument(INCLUDE_FIELD_NAMES),
                     callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip },
-                    doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
-                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
                     annotation = annotation,
                 )
             }
@@ -577,9 +578,9 @@ object ConeLombokAnnotations {
     }
 
     /**
-     * Drop `doNotUseGetters`, `excludeFields`, `ofFields` arguments but report diagnostics on them.
+     * Drop `doNotUseGetters`, `exclude`, `of` arguments but report diagnostics on them.
      *   * `doNotUseGetters` isn't relevant in Kotlin;
-     *   * `excludeFields`, `ofFields` will soon be marked as deprecated in Lombok, so don't support them beforehand.
+     *   * `exclude`, `of` will soon be marked as deprecated in Lombok, so don't support them beforehand.
      */
     class EqualsAndHashCode(
         override val callSuper: CallSuperMode?,
