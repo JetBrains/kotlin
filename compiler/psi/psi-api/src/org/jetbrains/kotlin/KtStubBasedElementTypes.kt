@@ -296,8 +296,7 @@ internal object KtStubBasedElementTypes {
     val LAMBDA_ARGUMENT: KtNodeType = provider.lambdaArgumentType
 
     @JvmField
-    val VALUE_ARGUMENT_NAME: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName> =
-        provider.valueArgumentNameType
+    val VALUE_ARGUMENT_NAME: KtNodeType = provider.valueArgumentNameType
 
 
     // Special

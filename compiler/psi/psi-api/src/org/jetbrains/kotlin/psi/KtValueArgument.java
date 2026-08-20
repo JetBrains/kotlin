@@ -87,9 +87,8 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentName getArgumentName() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_NAME, KtValueArgumentName.class);
     }
 
     /** Returns the {@code =} token of a named argument ({@code name = value}), or {@code null} if this argument is positional. */

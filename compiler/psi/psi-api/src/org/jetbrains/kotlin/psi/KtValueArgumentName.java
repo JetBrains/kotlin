@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -29,7 +28,7 @@ public class KtValueArgumentName extends KtElementImplStub<KotlinPlaceHolderStub
 
     @KtImplementationDetail
     public KtValueArgumentName(@NotNull KotlinPlaceHolderStub<KtValueArgumentName> stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
+        super(stub, KtNodeTypes.VALUE_ARGUMENT_NAME);
     }
 
     @Override
