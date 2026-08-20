@@ -13,6 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CLASSLOADER_CACHE_TIMEOUT
@@ -67,6 +68,8 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
@@ -618,9 +621,35 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Disabled: in k2, if common source is dirty, module will be rebuilt.
      * Enabled: regular IC logic is used. Common sources might see declarations from platform sources. See KT-62686
+     *
+     * KT-62686 is fixed on JVM since 2.5.0, but the compiler is not necessarily of the same version as this plugin:
+     * it may be set to an older one via the `compilerVersion` DSL, and then enabling the option is still unsafe.
      */
     val enableJvmIncrementalCompilationOfCommonSources: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
+        get() = booleanPropertyWithValueReporting(
+            PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES,
+            setOf(true),
+        ) {
+            if (compilerVersion?.toKotlinVersion()?.isAtLeast(2, 5) == false) {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.IncrementalCompilationOfCommonSourcesWithOldCompiler(compilerVersion!!),
+                    key = "IncrementalCompilationOfCommonSourcesWithOldCompiler",
+                )
+            }
+        }.orElse(false)
+
+    private val compilerVersion: KotlinToolingVersion?
+        get() {
+            @Suppress("DEPRECATION")
+            if (!runKotlinCompilerViaBuildToolsApi.get()) return null
+            val version = project.kotlinExtensionOrNull?.compilerVersion?.orNull ?: return null
+
+            return try {
+                KotlinToolingVersion(version)
+            } catch (_: IllegalArgumentException) {
+                null
+            }
+        }
 
     /** See [enableJvmIncrementalCompilationOfCommonSources] */
     val enableJsIncrementalCompilationOfCommonSources: Provider<Boolean>
@@ -934,6 +963,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY = "kotlin.suppressGradlePluginWarnings"
 
         private const val KOTLIN_NATIVE_BINARY_OPTION_PREFIX = "kotlin.native.binary."
+
+        /** The version since which incremental compilation of common sources on JVM no longer hits KT-62686. */
+        private val FIRST_CORRECT_COMMON_SOURCES_IC_VERSION = KotlinVersion(2, 5, 0)
 
         internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
 

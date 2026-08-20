@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
+import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildKMPWithAllBackends
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.utils.withType
@@ -59,6 +63,71 @@ class IncrementalCompilationOfCommonSourcesTest {
     @Test
     fun deprecatedGlobalPropertySetToFalseIsReportedAsError() {
         assertDeprecationReported(propertyValue = "false")
+    }
+
+    @Test
+    fun oldCompilerVersionIsReported() {
+        assertOldCompilerWarning(jvmPropertyEnabled = true, compilerVersion = "2.4.20", expectedToBeReported = true)
+    }
+
+    @Test
+    fun preReleaseOfTheFirstSupportedVersionIsNotReported() {
+        assertOldCompilerWarning(jvmPropertyEnabled = true, compilerVersion = "2.5.0-Beta1", expectedToBeReported = false)
+    }
+
+    @Test
+    fun firstSupportedCompilerVersionIsNotReported() {
+        assertOldCompilerWarning(jvmPropertyEnabled = true, compilerVersion = "2.5.0", expectedToBeReported = false)
+    }
+
+    @Test
+    fun newerCompilerVersionIsNotReported() {
+        assertOldCompilerWarning(jvmPropertyEnabled = true, compilerVersion = "2.6.0", expectedToBeReported = false)
+    }
+
+    @Test
+    fun defaultCompilerVersionIsNotReported() {
+        assertOldCompilerWarning(jvmPropertyEnabled = true, compilerVersion = null, expectedToBeReported = false)
+    }
+
+    @Test
+    fun oldCompilerVersionWithoutTheJvmPropertyIsNotReported() {
+        assertOldCompilerWarning(jvmPropertyEnabled = false, compilerVersion = "2.4.20", expectedToBeReported = false)
+    }
+
+    @Test
+    fun oldCompilerVersionWithoutBuildToolsApiIsNotReported() {
+        assertOldCompilerWarning(
+            jvmPropertyEnabled = true,
+            compilerVersion = "2.4.20",
+            runViaBuildToolsApi = false,
+            expectedToBeReported = false,
+        )
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    private fun assertOldCompilerWarning(
+        jvmPropertyEnabled: Boolean,
+        compilerVersion: String?,
+        runViaBuildToolsApi: Boolean = true,
+        expectedToBeReported: Boolean,
+    ) {
+        val project = buildProjectWithJvm(
+            preApplyCode = {
+                if (jvmPropertyEnabled) extraProperties.set("kotlin.jvm.enableIncrementalCompilationOfCommonSources", "true")
+                extraProperties.set("kotlin.compiler.runViaBuildToolsApi", runViaBuildToolsApi.toString())
+            },
+            code = { if (compilerVersion != null) kotlinExtension.compilerVersion.set(compilerVersion) },
+        ).evaluate()
+
+        project.tasks.withType<KotlinCompile>().forEach { it.enableIncrementalCompilationOfCommonSources.get() }
+
+        val diagnostic = KotlinToolingDiagnostics.IncrementalCompilationOfCommonSourcesWithOldCompiler
+        if (expectedToBeReported) {
+            project.assertContainsDiagnostic(diagnostic)
+        } else {
+            project.assertNoDiagnostics(diagnostic)
+        }
     }
 
     private fun assertDeprecationReported(propertyValue: String) {
