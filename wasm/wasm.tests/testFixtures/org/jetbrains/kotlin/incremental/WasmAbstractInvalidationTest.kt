@@ -275,7 +275,7 @@ abstract class WasmAbstractInvalidationTest(
                     verifyCacheUpdateStats(stepId, preparedIcCachesArtifact.dirtyFileLastStats, testInfo + removedModulesInfo)
                 }
 
-                (incrementalBuildingPhase then WasmOutputGenerationPipelinePhase)
+                (incrementalBuildingPhase then WasmOutputGenerationPipelinePhase then WasmWriteOutputsPipelinePhase)
                     .executePhaseIsolatedWithActions(preparedIcCachesArtifact)
             }
 
