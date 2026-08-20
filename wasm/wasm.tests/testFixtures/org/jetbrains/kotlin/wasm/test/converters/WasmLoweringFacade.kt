@@ -133,12 +133,10 @@ class WasmLoweringFacade(
             val optimisedResult = dceCompilationSet.compilerResult.runThirdPartyOptimizer(multiModule = multiModuleOptimization)
             val optimisedDependencies = dceCompilationSet.compilationDependencies.map {
                 WasmCompilationSet(
-                    compiledModule = it.compiledModule,
                     compilerResult = it.compilerResult.runThirdPartyOptimizer(multiModule = multiModuleOptimization)
                 )
             }
             WasmCompilationSet(
-                compiledModule = dceCompilationSet.compiledModule,
                 compilerResult = optimisedResult,
                 compilationDependencies = optimisedDependencies
             )
@@ -155,14 +153,13 @@ class WasmLoweringFacade(
         val compilationSets = parameters.map { current ->
             val linkedModule = linkWasmIr(current)
             val compilerResult = compileWasmIrToBinary(current, linkedModule)
-            WasmCompilationSet(linkedModule, compilerResult)
+            WasmCompilationSet(compilerResult)
         }
 
         val main = compilationSets.last()
         val dependencies = compilationSets.dropLast(1)
 
         return WasmCompilationSet(
-            main.compiledModule,
             main.compilerResult,
             dependencies
         )
@@ -171,6 +168,7 @@ class WasmLoweringFacade(
     private fun WasmCompilerResult.runThirdPartyOptimizer(multiModule: Boolean): WasmCompilerResult {
         (val newWasm = wasm, val newWat = wat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
         return WasmCompilerResult(
+            linkedModule = linkedModule,
             wat = newWat,
             jsWrapper = jsWrapper,
             wasm = newWasm,

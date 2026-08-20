@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -55,6 +56,11 @@ data class DynamicJsModule(
 )
 
 class WasmCompilerResult(
+    /**
+     * The resulting Wasm module. This is not `null` only when running compiler tests, so that we could inspect it.
+     * In regular use, this is always `null` for memory optimization purposes.
+     */
+    val linkedModule: WasmModule?,
     val wat: String?,
     val jsWrapper: String,
     val wasm: WasmBinaryData,
@@ -340,6 +346,7 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
     }
 
     return WasmCompilerResult(
+        linkedModule = linkedModule.takeIf { configuration.testEnvironment },
         wat = wat,
         jsWrapper = jsWrapper.normalizeEmptyLines(),
         wasm = writer.getBinaryData(),

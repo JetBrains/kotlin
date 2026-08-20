@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.js.config.*
@@ -87,6 +88,7 @@ abstract class WasmEnvironmentConfigurator(
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        configuration.testEnvironment = true
         configuration.moduleKind = ModuleKind.ES
         configuration.moduleName = module.name
 
