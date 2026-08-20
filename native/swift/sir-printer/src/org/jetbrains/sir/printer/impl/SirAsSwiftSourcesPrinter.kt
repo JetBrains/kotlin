@@ -93,6 +93,8 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             is SirStruct -> printDeclaration()
             is SirProtocol -> printDeclaration()
             is SirCallable -> printDeclaration()
+            is SirGetterFunction -> getter.printDeclaration()
+            is SirSetterFunction -> setter.printDeclaration()
             is SirVariable -> printDeclaration()
             is SirTypealias -> printDeclaration()
             is SirSubscript -> printDeclaration()
@@ -274,7 +276,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         if (this is SirAccessor) {
             if (this is SirSetter && this.parameterName != "newValue") {
                 // newValue is the default implicit setter parameter name in swift
-                print("(", this.parameterName, ")")
+                print("(", this.parameterName.swiftIdentifier, ")")
             }
         } else {
             print("(")

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.sir.tree.generator
 
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.config.element
 import org.jetbrains.kotlin.generators.tree.config.sealedElement
 import org.jetbrains.kotlin.sir.tree.generator.config.AbstractSwiftIrTreeBuilder
@@ -192,6 +193,30 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("returnType", typeType)
         +field("fixity", fixityType, nullable = true)
 
+    }
+
+    val accessorFunction by sealedElement {
+        kDoc = "An interface that marks getter and setter functions for a property"
+        kind = ImplementationKind.Interface
+        parent(declaration)
+
+        +field("variableName", string)
+        +field("getter", function)
+        +field("setter", function, nullable = true)
+    }
+
+    val setterFunction by element {
+        kDoc = "An interface that marks setter functions for a property"
+        kind = ImplementationKind.Interface
+        parent(accessorFunction)
+
+        +field("setter", function)
+    }
+
+    val getterFunction by element {
+        kDoc = "An interface that marks getter functions for a property"
+        kind = ImplementationKind.Interface
+        parent(accessorFunction)
     }
 
     val accessor by sealedElement {

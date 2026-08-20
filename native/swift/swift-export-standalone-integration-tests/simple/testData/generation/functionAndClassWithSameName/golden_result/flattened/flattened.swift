@@ -7,7 +7,7 @@ public typealias FlattenedPackageClass = ExportedKotlinPackages.flattenedPackage
 public func flattenedPackageClass(
     i: Swift.Int32
 ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
-    ExportedKotlinPackages.flattenedPackage.flattenedPackageClass(i: i)
+    return ExportedKotlinPackages.flattenedPackage.flattenedPackageClass(i: i)
 }
 extension ExportedKotlinPackages.flattenedPackage {
     public final class FlattenedPackageClass: KotlinRuntime.KotlinBase {

@@ -16,6 +16,8 @@ val SirElement.debugString: String
             is SirSetter -> "${parent.swiftFqNameOrNull ?: "?"}.set"
             is SirInit -> "${swiftParentNamePrefix}.init${"?".takeIf { isFailable } ?: ""}(${renderParameters()})${renderEffects()}"
             is SirFunction -> "func ${swiftFqName}(${renderParameters()})${renderEffects()}"
+            is SirGetterFunction -> getter.debugString
+            is SirSetterFunction -> setter.debugString
             is SirExtension -> "extension ${extendedType.render}${renderProtocols.prefixIfNotEmpty(": ")}"
             is SirClass -> "class ${swiftFqName}${listOfNotNull(superClass?.render, renderProtocols.takeIf { it.isNotEmpty() }).joinToString().prefixIfNotEmpty(": ")}"
             is SirProtocol -> "protocol ${swiftFqName}${renderProtocols.prefixIfNotEmpty(": ")}"
