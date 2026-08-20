@@ -71,7 +71,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * The named functions declared directly in this body, in source order; empty if there are none.
      */
     val functions: List<KtNamedFunction>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.FUNCTION)
+        get() = getStubOrPsiChildren(KtNodeTypes.FUN, KtNamedFunction.EMPTY_ARRAY).asList()
 
     /**
      * The enum entries declared in this body, in source order; empty if the owner is not an enum class.
