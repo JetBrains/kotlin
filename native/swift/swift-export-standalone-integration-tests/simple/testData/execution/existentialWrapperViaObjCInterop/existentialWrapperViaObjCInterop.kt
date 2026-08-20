@@ -10,10 +10,6 @@ import platform.Foundation.NSMutableArray
 import platform.Foundation.NSStringFromClass
 import platform.objc.object_getClass
 
-// todo: remove me after KT-87457
-interface Anchor {
-    fun ping(): Int
-}
 
 open class Exported
 

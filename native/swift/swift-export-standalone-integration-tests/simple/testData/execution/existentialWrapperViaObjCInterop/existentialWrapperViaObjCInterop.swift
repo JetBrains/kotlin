@@ -1,5 +1,7 @@
 import ExistentialWrapperViaObjCInterop
 import Testing
+import ObjectiveC
+import Foundation
 
 /// Bridging a Kotlin object to Objective-C has to produce a wrapper that carries the object itself: storing
 /// the value in an `id`-typed Objective-C container and reading it back must yield the same Kotlin object.
@@ -49,4 +51,10 @@ func testSwiftSubclassSurvivesObjCRoundTrip() throws {
     let returned = roundTripExportedThroughObjC(value: subclassInstance)
     try #require(returned === subclassInstance)
     try #require(returned is SwiftSubclass)
+}
+
+@Test
+func testRuntimeSupportIsLinked() throws {
+    let selector = NSSelectorFromString("_Kotlin_SwiftExport_wrapIntoExistential:")
+    try #require(class_getClassMethod(NSObject.self, selector) != nil)
 }
