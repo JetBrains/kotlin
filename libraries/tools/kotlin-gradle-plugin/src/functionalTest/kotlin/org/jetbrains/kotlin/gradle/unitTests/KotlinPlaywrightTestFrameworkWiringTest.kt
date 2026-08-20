@@ -11,6 +11,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -197,6 +198,45 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             assertIs<PlaywrightBrowserInstall>(
                 project.tasks.getByName(it.getPwInstallBrowserTaskName())
             )
+        }
+    }
+
+    @Test
+    fun `playwright install tasks cover wasmJs and js browsers`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {
+                        test {
+                            it.chromium()
+                            it.webkit()
+                        }
+                    }
+                }
+
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    browser {
+                        test {
+                            it.chromium()
+                            it.firefox()
+                        }
+                    }
+                }
+            }
+        }
+        project.evaluate()
+
+        // Browsers declared by either target get an installation task, and each task installs only its own browser
+        mapOf(
+            PwBrowserKind.CHROMIUM to setOf("chromium"),
+            PwBrowserKind.FIREFOX to setOf("firefox"),
+            PwBrowserKind.WEBKIT to setOf("webkit"),
+        ).forEach { (browserKind, expectedBrowsers) ->
+            val installTask = assertIs<PlaywrightBrowserInstall>(
+                project.tasks.getByName(browserKind.getPwInstallBrowserTaskName())
+            )
+            assertEquals(expectedBrowsers, installTask.browsers.get())
         }
     }
 
