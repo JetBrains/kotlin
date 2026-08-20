@@ -94,6 +94,7 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/diagnostics") {
             testClass<AbstractWasmJsDiagnosticTest> {
                 model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("tests/defaultArguments", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
                 model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
