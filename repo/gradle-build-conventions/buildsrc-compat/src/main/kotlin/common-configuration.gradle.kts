@@ -154,9 +154,18 @@ fun Project.configureKotlinCompilationOptions() {
             val useAbsolutePathsInKlib = kotlinBuildProperties.booleanProperty("kotlin.build.use.absolute.paths.in.klib").get()
 
             // KT-50876: store relative source paths in klibs so artifacts are reproducible across machines.
-            // Must be added at configuration time via compilerOptions. Native injects compilation.compilerOptions
+            // Must be added at configuration time via compilerOptions: Native injects compilation.compilerOptions
             // into the task, so freeCompilerArgs is a task input and cannot be mutated from doFirst.
-            if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
+            // Skip Native anyway: those options are the compilation's, konanc treats leftover freeArgs as
+            // source roots, and :kotlin-stdlib:compileKotlinNative is a -nostdlib compilation without
+            // -Xstdlib-compilation, so this comma-separated flag breaks enum constructors.
+            // The real Native stdlib klib already passes a single -Xklib-relative-path-base in
+            // kotlin-native/runtime/build.gradle.kts.
+            if (!useAbsolutePathsInKlib &&
+                this !is KotlinJvmCompile &&
+                this !is KotlinCompileCommon &&
+                compilerOptions !is KotlinNativeCompilerOptions
+            ) {
                 compilerOptions {
                     freeCompilerArgs.add(
                         layout.buildDirectory.map { buildDir ->
