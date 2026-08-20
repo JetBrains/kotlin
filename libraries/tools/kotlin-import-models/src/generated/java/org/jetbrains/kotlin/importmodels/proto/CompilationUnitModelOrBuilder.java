@@ -137,4 +137,50 @@ public interface CompilationUnitModelOrBuilder extends
    */
   org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder getSourceRootsOrBuilder(
       int index);
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @return A list containing the targetPlatforms.
+   */
+  java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform> getTargetPlatformsList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @return The count of targetPlatforms.
+   */
+  int getTargetPlatformsCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @param index The index of the element to return.
+   * @return The targetPlatforms at the given index.
+   */
+  org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform getTargetPlatforms(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @return A list containing the enum numeric values on the wire for targetPlatforms.
+   */
+  java.util.List<java.lang.Integer>
+  getTargetPlatformsValueList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @param index The index of the value to return.
+   * @return The enum numeric value on the wire of targetPlatforms at the given index.
+   */
+  int getTargetPlatformsValue(int index);
+
+  /**
+   * <code>string target_name = 9;</code>
+   * @return Whether the targetName field is set.
+   */
+  boolean hasTargetName();
+  /**
+   * <code>string target_name = 9;</code>
+   * @return The targetName.
+   */
+  java.lang.String getTargetName();
+  /**
+   * <code>string target_name = 9;</code>
+   * @return The bytes for targetName.
+   */
+  com.google.protobuf.ByteString
+      getTargetNameBytes();
 }

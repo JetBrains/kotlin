@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.importmodels.proto.DependenciesModel
 import org.jetbrains.kotlin.importmodels.proto.Error
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ImportModelEnumCompatibilityTest {
     @Test
     fun `compilation purpose and output kind match the RFC contract`() {
         val compilation = CompilationUnitModel.getDescriptor()
         assertEquals("purpose", compilation.findFieldByNumber(5).name)
+        val targetPlatforms = compilation.findFieldByNumber(8)
+        assertEquals("target_platforms", targetPlatforms.name)
+        assertTrue(targetPlatforms.isRepeated)
+        assertEquals("TargetPlatform", targetPlatforms.enumType.name)
+        assertEquals("target_name", compilation.findFieldByNumber(9).name)
         assertEquals(
             listOf(
                 "COMPILATION_PURPOSE_UNSPECIFIED",
@@ -30,8 +36,26 @@ class ImportModelEnumCompatibilityTest {
         val output = compilation.findNestedTypeByName("Output")
         assertEquals("kind", output.findFieldByNumber(3).name)
         assertEquals(
-            listOf("OUTPUT_KIND_UNSPECIFIED", "OUTPUT_KIND_CLASSES", "OUTPUT_KIND_CRI"),
+            listOf("OUTPUT_KIND_UNSPECIFIED", "OUTPUT_KIND_CLASSES", "OUTPUT_KIND_CRI", "OUTPUT_KIND_KLIB"),
             output.findEnumTypeByName("Kind").values.map { it.name },
+        )
+
+        assertEquals(
+            listOf("PLATFORM_UNSPECIFIED", "PLATFORM_JVM", "PLATFORM_NATIVE", "PLATFORM_METADATA"),
+            compilation.findEnumTypeByName("Platform").values.map { it.name },
+        )
+        assertEquals(
+            listOf("TARGET_PLATFORM_UNSPECIFIED", "TARGET_PLATFORM_JVM", "TARGET_PLATFORM_NATIVE"),
+            compilation.findEnumTypeByName("TargetPlatform").values.map { it.name },
+        )
+
+        assertEquals(
+            listOf(
+                "CAPABILITY_UNSPECIFIED",
+                "CAPABILITY_KOTLIN_JVM",
+                "CAPABILITY_KOTLIN_MULTIPLATFORM",
+            ),
+            BaseModel.getDescriptor().findEnumTypeByName("Capability").values.map { it.name },
         )
     }
 
@@ -39,7 +63,10 @@ class ImportModelEnumCompatibilityTest {
     fun `uses unspecified zero defaults`() {
         assertEquals(0, Error.Type.ERROR_TYPE_UNSPECIFIED.number)
         assertEquals(0, BaseModel.Capability.CAPABILITY_UNSPECIFIED.number)
+        assertEquals(1, BaseModel.Capability.CAPABILITY_KOTLIN_JVM.number)
+        assertEquals(2, BaseModel.Capability.CAPABILITY_KOTLIN_MULTIPLATFORM.number)
         assertEquals(0, CompilationUnitModel.Platform.PLATFORM_UNSPECIFIED.number)
+        assertEquals(0, CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_UNSPECIFIED.number)
         assertEquals(0, CompilationUnitModel.Purpose.COMPILATION_PURPOSE_UNSPECIFIED.number)
         assertEquals(0, CompilationUnitModel.Output.Kind.OUTPUT_KIND_UNSPECIFIED.number)
         assertEquals(0, DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_UNSPECIFIED.number)

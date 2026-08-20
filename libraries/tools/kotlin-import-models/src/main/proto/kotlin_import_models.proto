@@ -53,8 +53,8 @@ message CompilationUnitId {
 message BaseModel {
   enum Capability {
     CAPABILITY_UNSPECIFIED = 0;
-    CAPABILITY_JVM = 1;
-    CAPABILITY_KAPT = 2;
+    CAPABILITY_KOTLIN_JVM = 1;
+    CAPABILITY_KOTLIN_MULTIPLATFORM = 2;
   }
 
   string id = 1;
@@ -81,6 +81,14 @@ message CompilationUnitModel {
   enum Platform {
     PLATFORM_UNSPECIFIED = 0;
     PLATFORM_JVM = 1;
+    PLATFORM_NATIVE = 2;
+    PLATFORM_METADATA = 3;
+  }
+
+  enum TargetPlatform {
+    TARGET_PLATFORM_UNSPECIFIED = 0;
+    TARGET_PLATFORM_JVM = 1;
+    TARGET_PLATFORM_NATIVE = 2;
   }
 
   enum Purpose {
@@ -99,6 +107,7 @@ message CompilationUnitModel {
       OUTPUT_KIND_UNSPECIFIED = 0;
       OUTPUT_KIND_CLASSES = 1;
       OUTPUT_KIND_CRI = 2;
+      OUTPUT_KIND_KLIB = 3;
     }
 
     string path = 1;
@@ -113,6 +122,8 @@ message CompilationUnitModel {
   Purpose purpose = 5;
   repeated Output outputs = 6;
   repeated SourceRoot source_roots = 7;
+  repeated TargetPlatform target_platforms = 8;
+  string target_name = 9;
 }
 
 message CompilerArgumentsModel {

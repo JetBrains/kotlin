@@ -33,6 +33,8 @@ private static final long serialVersionUID = 0L;
     purpose_ = 0;
     outputs_ = java.util.Collections.emptyList();
     sourceRoots_ = java.util.Collections.emptyList();
+    targetPlatforms_ = emptyIntList();
+    targetName_ = "";
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -61,6 +63,14 @@ private static final long serialVersionUID = 0L;
      * <code>PLATFORM_JVM = 1;</code>
      */
     PLATFORM_JVM(1),
+    /**
+     * <code>PLATFORM_NATIVE = 2;</code>
+     */
+    PLATFORM_NATIVE(2),
+    /**
+     * <code>PLATFORM_METADATA = 3;</code>
+     */
+    PLATFORM_METADATA(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -81,6 +91,14 @@ private static final long serialVersionUID = 0L;
      * <code>PLATFORM_JVM = 1;</code>
      */
     public static final int PLATFORM_JVM_VALUE = 1;
+    /**
+     * <code>PLATFORM_NATIVE = 2;</code>
+     */
+    public static final int PLATFORM_NATIVE_VALUE = 2;
+    /**
+     * <code>PLATFORM_METADATA = 3;</code>
+     */
+    public static final int PLATFORM_METADATA_VALUE = 3;
 
 
     public final int getNumber() {
@@ -109,6 +127,8 @@ private static final long serialVersionUID = 0L;
       switch (value) {
         case 0: return PLATFORM_UNSPECIFIED;
         case 1: return PLATFORM_JVM;
+        case 2: return PLATFORM_NATIVE;
+        case 3: return PLATFORM_METADATA;
         default: return null;
       }
     }
@@ -163,6 +183,132 @@ private static final long serialVersionUID = 0L;
     }
 
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Platform)
+  }
+
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform}
+   */
+  public enum TargetPlatform
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>TARGET_PLATFORM_UNSPECIFIED = 0;</code>
+     */
+    TARGET_PLATFORM_UNSPECIFIED(0),
+    /**
+     * <code>TARGET_PLATFORM_JVM = 1;</code>
+     */
+    TARGET_PLATFORM_JVM(1),
+    /**
+     * <code>TARGET_PLATFORM_NATIVE = 2;</code>
+     */
+    TARGET_PLATFORM_NATIVE(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 28,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        TargetPlatform.class.getName());
+    }
+    /**
+     * <code>TARGET_PLATFORM_UNSPECIFIED = 0;</code>
+     */
+    public static final int TARGET_PLATFORM_UNSPECIFIED_VALUE = 0;
+    /**
+     * <code>TARGET_PLATFORM_JVM = 1;</code>
+     */
+    public static final int TARGET_PLATFORM_JVM_VALUE = 1;
+    /**
+     * <code>TARGET_PLATFORM_NATIVE = 2;</code>
+     */
+    public static final int TARGET_PLATFORM_NATIVE_VALUE = 2;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static TargetPlatform valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static TargetPlatform forNumber(int value) {
+      switch (value) {
+        case 0: return TARGET_PLATFORM_UNSPECIFIED;
+        case 1: return TARGET_PLATFORM_JVM;
+        case 2: return TARGET_PLATFORM_NATIVE;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<TargetPlatform>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        TargetPlatform> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<TargetPlatform>() {
+            public TargetPlatform findValueByNumber(int number) {
+              return TargetPlatform.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.getDescriptor().getEnumTypes().get(1);
+    }
+
+    private static final TargetPlatform[] VALUES = values();
+
+    public static TargetPlatform valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private TargetPlatform(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform)
   }
 
   /**
@@ -274,7 +420,7 @@ private static final long serialVersionUID = 0L;
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.getDescriptor().getEnumTypes().get(1);
+      return org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.getDescriptor().getEnumTypes().get(2);
     }
 
     private static final Purpose[] VALUES = values();
@@ -988,6 +1134,10 @@ private static final long serialVersionUID = 0L;
        * <code>OUTPUT_KIND_CRI = 2;</code>
        */
       OUTPUT_KIND_CRI(2),
+      /**
+       * <code>OUTPUT_KIND_KLIB = 3;</code>
+       */
+      OUTPUT_KIND_KLIB(3),
       UNRECOGNIZED(-1),
       ;
 
@@ -1012,6 +1162,10 @@ private static final long serialVersionUID = 0L;
        * <code>OUTPUT_KIND_CRI = 2;</code>
        */
       public static final int OUTPUT_KIND_CRI_VALUE = 2;
+      /**
+       * <code>OUTPUT_KIND_KLIB = 3;</code>
+       */
+      public static final int OUTPUT_KIND_KLIB_VALUE = 3;
 
 
       public final int getNumber() {
@@ -1041,6 +1195,7 @@ private static final long serialVersionUID = 0L;
           case 0: return OUTPUT_KIND_UNSPECIFIED;
           case 1: return OUTPUT_KIND_CLASSES;
           case 2: return OUTPUT_KIND_CRI;
+          case 3: return OUTPUT_KIND_KLIB;
           default: return null;
         }
       }
@@ -2296,6 +2451,111 @@ private static final long serialVersionUID = 0L;
     return sourceRoots_.get(index);
   }
 
+  public static final int TARGET_PLATFORMS_FIELD_NUMBER = 8;
+  @SuppressWarnings("serial")
+  private com.google.protobuf.Internal.IntList targetPlatforms_;
+  private static final com.google.protobuf.Internal.IntListAdapter.IntConverter<
+      org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform> targetPlatforms_converter_ =
+          new com.google.protobuf.Internal.IntListAdapter.IntConverter<
+              org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform>() {
+            public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform convert(int from) {
+              org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform result = org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform.forNumber(from);
+              return result == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform.UNRECOGNIZED : result;
+            }
+          };
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @return A list containing the targetPlatforms.
+   */
+  @java.lang.Override
+  public java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform> getTargetPlatformsList() {
+    return new com.google.protobuf.Internal.IntListAdapter<
+        org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform>(targetPlatforms_, targetPlatforms_converter_);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @return The count of targetPlatforms.
+   */
+  @java.lang.Override
+  public int getTargetPlatformsCount() {
+    return targetPlatforms_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @param index The index of the element to return.
+   * @return The targetPlatforms at the given index.
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform getTargetPlatforms(int index) {
+    return targetPlatforms_converter_.convert(targetPlatforms_.getInt(index));
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @return A list containing the enum numeric values on the wire for targetPlatforms.
+   */
+  @java.lang.Override
+  public java.util.List<java.lang.Integer>
+  getTargetPlatformsValueList() {
+    return targetPlatforms_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+   * @param index The index of the value to return.
+   * @return The enum numeric value on the wire of targetPlatforms at the given index.
+   */
+  @java.lang.Override
+  public int getTargetPlatformsValue(int index) {
+    return targetPlatforms_.getInt(index);
+  }
+  private int targetPlatformsMemoizedSerializedSize;
+
+  public static final int TARGET_NAME_FIELD_NUMBER = 9;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object targetName_ = "";
+  /**
+   * <code>string target_name = 9;</code>
+   * @return Whether the targetName field is set.
+   */
+  @java.lang.Override
+  public boolean hasTargetName() {
+    return ((bitField0_ & 0x00000020) != 0);
+  }
+  /**
+   * <code>string target_name = 9;</code>
+   * @return The targetName.
+   */
+  @java.lang.Override
+  public java.lang.String getTargetName() {
+    java.lang.Object ref = targetName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      targetName_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string target_name = 9;</code>
+   * @return The bytes for targetName.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getTargetNameBytes() {
+    java.lang.Object ref = targetName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      targetName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -2310,6 +2570,7 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    getSerializedSize();
     if (((bitField0_ & 0x00000001) != 0)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 1, id_);
     }
@@ -2330,6 +2591,16 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < sourceRoots_.size(); i++) {
       output.writeMessage(7, sourceRoots_.get(i));
+    }
+    if (getTargetPlatformsList().size() > 0) {
+      output.writeUInt32NoTag(66);
+      output.writeUInt32NoTag(targetPlatformsMemoizedSerializedSize);
+    }
+    for (int i = 0; i < targetPlatforms_.size(); i++) {
+      output.writeEnumNoTag(targetPlatforms_.getInt(i));
+    }
+    if (((bitField0_ & 0x00000020) != 0)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 9, targetName_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -2365,6 +2636,21 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < sourceRoots_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(7, sourceRoots_.get(i));
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < targetPlatforms_.size(); i++) {
+        dataSize += com.google.protobuf.CodedOutputStream
+          .computeEnumSizeNoTag(targetPlatforms_.getInt(i));
+      }
+      size += dataSize;
+      if (!getTargetPlatformsList().isEmpty()) {  size += 1;
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32SizeNoTag(dataSize);
+      }targetPlatformsMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000020) != 0)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(9, targetName_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -2408,6 +2694,12 @@ private static final long serialVersionUID = 0L;
         .equals(other.getOutputsList())) return false;
     if (!getSourceRootsList()
         .equals(other.getSourceRootsList())) return false;
+    if (!targetPlatforms_.equals(other.targetPlatforms_)) return false;
+    if (hasTargetName() != other.hasTargetName()) return false;
+    if (hasTargetName()) {
+      if (!getTargetName()
+          .equals(other.getTargetName())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -2446,6 +2738,14 @@ private static final long serialVersionUID = 0L;
     if (getSourceRootsCount() > 0) {
       hash = (37 * hash) + SOURCE_ROOTS_FIELD_NUMBER;
       hash = (53 * hash) + getSourceRootsList().hashCode();
+    }
+    if (getTargetPlatformsCount() > 0) {
+      hash = (37 * hash) + TARGET_PLATFORMS_FIELD_NUMBER;
+      hash = (53 * hash) + targetPlatforms_.hashCode();
+    }
+    if (hasTargetName()) {
+      hash = (37 * hash) + TARGET_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTargetName().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -2609,6 +2909,9 @@ private static final long serialVersionUID = 0L;
         sourceRootsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000040);
+      targetPlatforms_ = emptyIntList();
+      bitField0_ = (bitField0_ & ~0x00000080);
+      targetName_ = "";
       return this;
     }
 
@@ -2660,6 +2963,11 @@ private static final long serialVersionUID = 0L;
       } else {
         result.sourceRoots_ = sourceRootsBuilder_.build();
       }
+      if (((bitField0_ & 0x00000080) != 0)) {
+        targetPlatforms_.makeImmutable();
+        bitField0_ = (bitField0_ & ~0x00000080);
+      }
+      result.targetPlatforms_ = targetPlatforms_;
     }
 
     private void buildPartial0(org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel result) {
@@ -2686,6 +2994,10 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000010) != 0)) {
         result.purpose_ = purpose_;
         to_bitField0_ |= 0x00000010;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.targetName_ = targetName_;
+        to_bitField0_ |= 0x00000020;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -2773,6 +3085,21 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (!other.targetPlatforms_.isEmpty()) {
+        if (targetPlatforms_.isEmpty()) {
+          targetPlatforms_ = other.targetPlatforms_;
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          ensureTargetPlatformsIsMutable();
+          targetPlatforms_.addAll(other.targetPlatforms_);
+        }
+        onChanged();
+      }
+      if (other.hasTargetName()) {
+        targetName_ = other.targetName_;
+        bitField0_ |= 0x00000100;
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -2852,6 +3179,28 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 58
+            case 64: {
+              int tmpRaw = input.readEnum();
+              ensureTargetPlatformsIsMutable();
+              targetPlatforms_.addInt(tmpRaw);
+              break;
+            } // case 64
+            case 66: {
+              int length = input.readRawVarint32();
+              int oldLimit = input.pushLimit(length);
+              while(input.getBytesUntilLimit() > 0) {
+                int tmpRaw = input.readEnum();
+                ensureTargetPlatformsIsMutable();
+                targetPlatforms_.addInt(tmpRaw);
+              }
+              input.popLimit(oldLimit);
+              break;
+            } // case 66
+            case 74: {
+              targetName_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 74
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -3746,6 +4095,225 @@ private static final long serialVersionUID = 0L;
         sourceRoots_ = null;
       }
       return sourceRootsBuilder_;
+    }
+
+    private com.google.protobuf.Internal.IntList targetPlatforms_ =
+      emptyIntList();
+    private void ensureTargetPlatformsIsMutable() {
+      if (!((bitField0_ & 0x00000080) != 0)) {
+        targetPlatforms_ = makeMutableCopy(targetPlatforms_);
+        bitField0_ |= 0x00000080;
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @return A list containing the targetPlatforms.
+     */
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform> getTargetPlatformsList() {
+      return new com.google.protobuf.Internal.IntListAdapter<
+          org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform>(targetPlatforms_, targetPlatforms_converter_);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @return The count of targetPlatforms.
+     */
+    public int getTargetPlatformsCount() {
+      return targetPlatforms_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param index The index of the element to return.
+     * @return The targetPlatforms at the given index.
+     */
+    public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform getTargetPlatforms(int index) {
+      return targetPlatforms_converter_.convert(targetPlatforms_.getInt(index));
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param index The index to set the value at.
+     * @param value The targetPlatforms to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTargetPlatforms(
+        int index, org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureTargetPlatformsIsMutable();
+      targetPlatforms_.setInt(index, value.getNumber());
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param value The targetPlatforms to add.
+     * @return This builder for chaining.
+     */
+    public Builder addTargetPlatforms(org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureTargetPlatformsIsMutable();
+      targetPlatforms_.addInt(value.getNumber());
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param values The targetPlatforms to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllTargetPlatforms(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform> values) {
+      ensureTargetPlatformsIsMutable();
+      for (org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform value : values) {
+        targetPlatforms_.addInt(value.getNumber());
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTargetPlatforms() {
+      targetPlatforms_ = emptyIntList();
+      bitField0_ = (bitField0_ & ~0x00000080);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @return A list containing the enum numeric values on the wire for targetPlatforms.
+     */
+    public java.util.List<java.lang.Integer>
+    getTargetPlatformsValueList() {
+      return java.util.Collections.unmodifiableList(targetPlatforms_);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param index The index of the value to return.
+     * @return The enum numeric value on the wire of targetPlatforms at the given index.
+     */
+    public int getTargetPlatformsValue(int index) {
+      return targetPlatforms_.getInt(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param index The index to set the value at.
+     * @param value The enum numeric value on the wire for targetPlatforms to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTargetPlatformsValue(
+        int index, int value) {
+      ensureTargetPlatformsIsMutable();
+      targetPlatforms_.setInt(index, value);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param value The enum numeric value on the wire for targetPlatforms to add.
+     * @return This builder for chaining.
+     */
+    public Builder addTargetPlatformsValue(int value) {
+      ensureTargetPlatformsIsMutable();
+      targetPlatforms_.addInt(value);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;</code>
+     * @param values The enum numeric values on the wire for targetPlatforms to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllTargetPlatformsValue(
+        java.lang.Iterable<java.lang.Integer> values) {
+      ensureTargetPlatformsIsMutable();
+      for (int value : values) {
+        targetPlatforms_.addInt(value);
+      }
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object targetName_ = "";
+    /**
+     * <code>string target_name = 9;</code>
+     * @return Whether the targetName field is set.
+     */
+    public boolean hasTargetName() {
+      return ((bitField0_ & 0x00000100) != 0);
+    }
+    /**
+     * <code>string target_name = 9;</code>
+     * @return The targetName.
+     */
+    public java.lang.String getTargetName() {
+      java.lang.Object ref = targetName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        targetName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string target_name = 9;</code>
+     * @return The bytes for targetName.
+     */
+    public com.google.protobuf.ByteString
+        getTargetNameBytes() {
+      java.lang.Object ref = targetName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        targetName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string target_name = 9;</code>
+     * @param value The targetName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTargetName(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      targetName_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string target_name = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTargetName() {
+      targetName_ = getDefaultInstance().getTargetName();
+      bitField0_ = (bitField0_ & ~0x00000100);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string target_name = 9;</code>
+     * @param value The bytes for targetName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTargetNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      targetName_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel)

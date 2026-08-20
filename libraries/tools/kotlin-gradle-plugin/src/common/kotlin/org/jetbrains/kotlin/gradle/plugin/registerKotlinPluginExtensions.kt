@@ -78,8 +78,7 @@ internal fun Project.registerKotlinPluginExtensions() {
 
         register(project, AbiValidationSetupAction)
 
-        // TODO: Support Kotlin import models for targets beyond the JVM POC
-        if (isJvm) {
+        if (isJvm || isMultiplatform) {
             register(project, KotlinImportModelsDumpTaskSetupAction)
             register(project, KotlinModelBuilderSetupAction)
         }

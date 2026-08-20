@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.tooling.BuildController
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
@@ -22,10 +22,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@JvmGradlePluginTests
 class KotlinImportModelsToolingApiIT : KGPBaseTest() {
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_0)
+    @JvmGradlePluginTests
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     fun `Tooling API returns stable basic JVM import models`(gradleVersion: GradleVersion) {
         project(
@@ -45,6 +45,7 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 }
                 val generateImportModelSources = project.tasks.register("generateImportModelSources") {
                     it.outputs.dir(project.layout.buildDirectory.dir("generated/import-models"))
+                    it.doLast { error("generated-source producer must not execute during import-model retrieval") }
                 }
                 kotlinJvm.sourceSets.getByName("main").generatedKotlin.srcDir(generateImportModelSources)
             }
@@ -61,7 +62,17 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             val testDependencies = dependencies.single { it.parameters.compilationUnitId == test.parameters.compilationUnitId }
 
             assertEquals(KotlinImportModelIds.BASE, base.id)
+            assertEquals(listOf(BaseModel.Capability.CAPABILITY_KOTLIN_JVM), base.capabilitiesList)
             assertEquals(listOf("main", "test"), units.map { it.name })
+            assertEquals(
+                listOf(
+                    listOf(CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_JVM),
+                    listOf(CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_JVM),
+                ),
+                units.map(CompilationUnitModel::getTargetPlatformsList),
+            )
+            assertEquals(listOf("jvm", "jvm"), units.map(CompilationUnitModel::getTargetName))
+            assertTrue(units.all(CompilationUnitModel::hasTargetName))
             assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
@@ -107,7 +118,11 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(
                 listOf(
                     output("build/classes/kotlin/test", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES, ":compileTestKotlin"),
-                    output("build/kotlin/compileTestKotlin/cacheable/cri", CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI, ":compileTestKotlin"),
+                    output(
+                        "build/kotlin/compileTestKotlin/cacheable/cri",
+                        CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI,
+                        ":compileTestKotlin"
+                    ),
                 ),
                 units.last().outputsList,
             )
@@ -122,6 +137,84 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertFalse(projectPath.resolve("build/kotlin/compileKotlin/cacheable/cri").exists())
         }
     }
+
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_0)
+    @MppGradlePluginTests
+    fun `Tooling API returns KMP import models including test compilations without materializing outputs`(gradleVersion: GradleVersion) {
+        project(
+            projectName = "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.ENABLED,
+                runViaBuildToolsApi = true,
+                generateCompilerRefIndex = true,
+            ),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.linuxX64()
+            }
+
+            val models = runBuildAction(KotlinImportModelsBuildAction()).toModels()
+            val base = models.base.model.unpack(BaseModel::class.java)
+            val project = models.project.model.unpack(ProjectModel::class.java)
+            val units = models.compilationUnits.map { it.model.unpack(CompilationUnitModel::class.java) }
+            val compilerArguments = models.compilerArguments.map { it.model.unpack(CompilerArgumentsModel::class.java) }
+            val dependencies = models.dependencies.map { it.model.unpack(DependenciesModel::class.java) }
+            val metadata = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_METADATA }
+            val jvm = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_JVM && it.name == "main" }
+            val jvmTest = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_JVM && it.name == "test" }
+            val nativeTest = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_NATIVE && it.name == "test" }
+            val dependenciesByCompilationId = dependencies.associateBy { it.parameters.compilationUnitId }
+
+            assertEquals(KotlinImportModelIds.BASE, base.id)
+            assertEquals(
+                listOf(BaseModel.Capability.CAPABILITY_KOTLIN_MULTIPLATFORM),
+                base.capabilitiesList,
+            )
+            assertEquals(
+                listOf(
+                    ":|:|jvm|main",
+                    ":|:|jvm|test",
+                    ":|:|linuxX64|main",
+                    ":|:|linuxX64|test",
+                    ":|:|metadata|commonMain",
+                ),
+                project.compilationUnitIdsList.map { it.value },
+            )
+            assertEquals(5, units.size)
+            assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
+            assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
+            assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
+            assertEquals("commonMain", metadata.name)
+            assertEquals(
+                listOf(
+                    CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_JVM,
+                    CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_NATIVE,
+                ),
+                metadata.targetPlatformsList,
+            )
+            assertFalse(metadata.hasTargetName())
+            assertEquals(CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN, metadata.purpose)
+            assertEquals(CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST, jvmTest.purpose)
+            assertEquals("jvm", jvmTest.targetName)
+            assertTrue(jvmTest.outputsList.any { it.kind == CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI })
+            assertEquals(CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST, nativeTest.purpose)
+            assertEquals("linuxX64", nativeTest.targetName)
+            assertTrue(nativeTest.outputsList.all { it.kind == CompilationUnitModel.Output.Kind.OUTPUT_KIND_KLIB })
+            assertEquals(
+                listOf(sourceDependency(jvm.parameters.compilationUnitId)),
+                dependenciesByCompilationId.getValue(jvmTest.parameters.compilationUnitId).sourceDependenciesList,
+            )
+            assertTrue(units.flatMap { it.outputsList }.all { output -> !projectPath.resolve(output.path).exists() })
+        }
+    }
+
 }
 
 private fun sourceRoots(vararg roots: SourceRoot): List<SourceRoot> = roots.toList()
@@ -149,6 +242,12 @@ private fun output(
     this.kind = kind
     producingActions += producingTaskPaths.map(::gradleAction)
 }
+
+private fun sourceDependency(targetCompilationUnitId: CompilationUnitId): DependenciesModel.SourceDependency =
+    DependenciesModelKt.sourceDependency {
+        kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+        this.targetCompilationUnitId = targetCompilationUnitId
+    }
 
 private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<KotlinImportModelsBuildActionResult> {
     override fun execute(controller: BuildController): KotlinImportModelsBuildActionResult {

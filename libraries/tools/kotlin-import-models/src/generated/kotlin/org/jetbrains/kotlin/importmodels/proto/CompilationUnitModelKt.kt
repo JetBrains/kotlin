@@ -307,6 +307,95 @@ public object CompilationUnitModelKt {
       _builder.clearSourceRoots()
     }
 
+
+    /**
+     * An uninstantiable, behaviorless type to represent the field in
+     * generics.
+     */
+    @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
+    public class TargetPlatformsProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     */
+    public val targetPlatforms: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>
+      @kotlin.jvm.JvmSynthetic
+      get() = com.google.protobuf.kotlin.DslList(
+        _builder.targetPlatformsList
+      )
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     * @param value The targetPlatforms to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addTargetPlatforms")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform) {
+      _builder.addTargetPlatforms(value)
+    }/**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     * @param value The targetPlatforms to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("plusAssignTargetPlatforms")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform) {
+      add(value)
+    }/**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     * @param values The targetPlatforms to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addAllTargetPlatforms")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform>) {
+      _builder.addAllTargetPlatforms(values)
+    }/**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     * @param values The targetPlatforms to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("plusAssignAllTargetPlatforms")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform>) {
+      addAll(values)
+    }/**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     * @param index The index to set the value at.
+     * @param value The targetPlatforms to set.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("setTargetPlatforms")
+    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform) {
+      _builder.setTargetPlatforms(index, value)
+    }/**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform target_platforms = 8;`
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("clearTargetPlatforms")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.TargetPlatform, TargetPlatformsProxy>.clear() {
+      _builder.clearTargetPlatforms()
+    }
+    /**
+     * `string target_name = 9;`
+     */
+    public var targetName: kotlin.String
+      @JvmName("getTargetName")
+      get() = _builder.targetName
+      @JvmName("setTargetName")
+      set(value) {
+        _builder.targetName = value
+      }
+    /**
+     * `string target_name = 9;`
+     */
+    public fun clearTargetName() {
+      _builder.clearTargetName()
+    }
+    /**
+     * `string target_name = 9;`
+     * @return Whether the targetName field is set.
+     */
+    public fun hasTargetName(): kotlin.Boolean {
+      return _builder.hasTargetName()
+    }
   }
   @kotlin.jvm.JvmName("-initializeparameters")
   public inline fun parameters(block: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt.ParametersKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Parameters =

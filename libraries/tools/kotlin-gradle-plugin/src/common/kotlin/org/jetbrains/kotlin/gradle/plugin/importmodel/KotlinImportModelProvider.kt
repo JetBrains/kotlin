@@ -6,22 +6,34 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import org.jetbrains.kotlin.gradle.utils.lenientArtifactsView
@@ -29,6 +41,7 @@ import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -38,30 +51,38 @@ internal class KotlinImportModelProvider(
     fun baseInformation(): BaseModel = baseModel {
         id = KotlinImportModelIds.BASE
         pluginVersion = project.kotlinToolingVersion.toImportModelVersion()
-        capabilities += BaseModel.Capability.CAPABILITY_JVM
+        project.kotlinJvmExtensionOrNull?.let { capabilities += BaseModel.Capability.CAPABILITY_KOTLIN_JVM }
+            ?: project.multiplatformExtensionOrNull?.let {
+                capabilities += BaseModel.Capability.CAPABILITY_KOTLIN_MULTIPLATFORM
+            }
     }
 
     fun projectInformation(): ProjectModel = projectModel {
         id = KotlinImportModelIds.PROJECT_INFORMATION
-        compilationUnitIds += supportedCompilations().map { compilationUnitId(it.name) }
+        compilationUnitIds += supportedCompilations().map(::compilationUnitId)
     }
 
     fun compilationUnit(id: CompilationUnitId): CompilationUnitModel {
-        val compilation = compilation(id)
-        val compileTask = compilation.compileTaskProvider.get() as KotlinCompile
+        val descriptor = compilation(id)
         return compilationUnitModel {
             this.id = KotlinImportModelIds.COMPILATION_UNIT
             parameters = CompilationUnitModelKt.parameters { compilationUnitId = id }
-            name = compilation.name
-            platform = CompilationUnitModel.Platform.PLATFORM_JVM
-            purpose = compilation.importModelPurpose()
-            sourceRoots += sourceRoots(compilation)
-            outputs += compilationOutputs(compileTask)
+            name = descriptor.compilation.name
+            platform = descriptor.platform
+            purpose = descriptor.purpose
+            targetPlatforms += descriptor.targetPlatforms
+            descriptor.targetName?.let { targetName = it }
+            sourceRoots += sourceRoots(descriptor.compilation)
+            outputs += descriptor.readOutputs()
         }
     }
 
+    fun compilationUnitDumpFileName(id: CompilationUnitId): String = compilation(id).let { descriptor ->
+        "${descriptor.targetKey}-${descriptor.compilation.name}"
+    }
+
     fun compilerArguments(id: CompilationUnitId): CompilerArgumentsModel {
-        val compilation = compilation(id)
+        val compilation = compilation(id).compilation
         return compilerArgumentsModel {
             this.id = KotlinImportModelIds.COMPILER_ARGUMENTS
             parameters = CompilerArgumentsModelKt.parameters { compilationUnitId = id }
@@ -70,7 +91,8 @@ internal class KotlinImportModelProvider(
     }
 
     fun dependencies(parameters: DependenciesModel.Parameters): DependenciesModel {
-        val compilation = compilation(parameters.compilationUnitId)
+        val descriptor = compilation(parameters.compilationUnitId)
+        val compilation = descriptor.compilation
         val artifacts = compilation.internal.configurations.compileDependencyConfiguration.lenientArtifactsView
 
         return dependenciesModel {
@@ -79,28 +101,100 @@ internal class KotlinImportModelProvider(
             val artifactsByFile = artifacts.artifacts.associateBy { it.file }
             binaryDependencies += artifacts.artifactFiles.files.mapNotNull { artifactsByFile[it]?.toBinaryDependency() }
             unresolvedDependencies += artifacts.failures.mapNotNull(::toUnresolvedDependency)
-            sourceDependencies += sourceDependencies(compilation)
+            sourceDependencies += sourceDependencies(descriptor)
         }
     }
 
-    private fun compilation(id: CompilationUnitId): KotlinCompilation<*> =
-        supportedCompilations().singleOrNull { compilationUnitId(it.name) == id }
+    private fun compilation(id: CompilationUnitId): ImportCompilationDescriptor =
+        supportedCompilations().singleOrNull { compilationUnitId(it) == id }
             ?: error("Unknown Kotlin import compilation unit '${id.value}' for project '${project.path}'")
 
-    private fun supportedCompilations() = listOf(
-        KotlinCompilation.MAIN_COMPILATION_NAME,
-        KotlinCompilation.TEST_COMPILATION_NAME,
-    ).map { name -> project.kotlinJvmExtension.target.compilations.getByName(name) }
+    private fun supportedCompilations(): List<ImportCompilationDescriptor> = (
+            project.kotlinJvmExtensionOrNull?.let { jvmProjectCompilations(it.target) }
+                ?: project.multiplatformExtensionOrNull?.let(::multiplatformProjectCompilations)
+                ?: emptyList()
+            ).sortedBy { compilationUnitId(it).value }
 
-    private fun sourceDependencies(compilation: KotlinCompilation<*>): List<DependenciesModel.SourceDependency> {
+    private fun jvmProjectCompilations(target: KotlinTarget): List<ImportCompilationDescriptor> {
+        val targetName = target.targetName.ifEmpty { "jvm" }
+        return importModelCompilationNames.map { name ->
+            jvmCompilationDescriptor(target.compilations.getByName(name), targetName)
+        }
+    }
+
+    private fun multiplatformProjectCompilations(kotlin: KotlinMultiplatformExtension): List<ImportCompilationDescriptor> {
+        val metadataTarget = kotlin.metadata()
+        val leafCompilations = kotlin.targets.withType(KotlinJvmTarget::class.java)
+            .sortedBy { it.targetName }
+            .flatMap { target ->
+                importModelCompilationNames.map { name ->
+                    jvmCompilationDescriptor(target.compilations.getByName(name), target.targetName)
+                }
+            } + kotlin.targets.withType(KotlinNativeTarget::class.java)
+            .sortedBy { it.targetName }
+            .flatMap { target ->
+                importModelCompilationNames.map { name ->
+                    nativeCompilationDescriptor(target.compilations.getByName(name), target.targetName)
+                }
+            }
+        val metadataTargetPlatforms = leafCompilations
+            .flatMap(ImportCompilationDescriptor::targetPlatforms)
+            .distinct()
+            .sortedBy(CompilationUnitModel.TargetPlatform::getNumber)
+        return listOfNotNull(
+            (metadataTarget.compilations.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) as? KotlinCommonCompilation)?.let { commonMain ->
+                metadataCompilationDescriptor(commonMain, metadataTarget.name, metadataTargetPlatforms)
+            },
+        ) + leafCompilations
+    }
+
+    private fun jvmCompilationDescriptor(compilation: KotlinCompilation<*>, targetName: String): ImportCompilationDescriptor =
+        ImportCompilationDescriptor(
+            compilation = compilation,
+            targetKey = targetName,
+            platform = CompilationUnitModel.Platform.PLATFORM_JVM,
+            targetPlatforms = listOf(CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_JVM),
+            targetName = targetName,
+            purpose = compilation.importModelPurpose(),
+            readOutputs = { compilationOutputs(compilation.compileTaskProvider.get() as KotlinCompile) },
+        )
+
+    private fun nativeCompilationDescriptor(
+        compilation: KotlinNativeCompilation,
+        targetName: String,
+    ): ImportCompilationDescriptor = ImportCompilationDescriptor(
+        compilation = compilation,
+        targetKey = targetName,
+        platform = CompilationUnitModel.Platform.PLATFORM_NATIVE,
+        targetPlatforms = listOf(CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_NATIVE),
+        targetName = targetName,
+        purpose = compilation.importModelPurpose(),
+        readOutputs = { compilationOutputs(compilation.compileTaskProvider.get()) },
+    )
+
+    private fun metadataCompilationDescriptor(
+        compilation: KotlinCommonCompilation,
+        targetKey: String,
+        targetPlatforms: List<CompilationUnitModel.TargetPlatform>,
+    ): ImportCompilationDescriptor = ImportCompilationDescriptor(
+        compilation = compilation,
+        targetKey = targetKey,
+        platform = CompilationUnitModel.Platform.PLATFORM_METADATA,
+        targetPlatforms = targetPlatforms,
+        targetName = null,
+        purpose = CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN,
+        readOutputs = { compilationOutputs(compilation.compileTaskProvider.get() as KotlinCompileCommon) },
+    )
+
+    private fun sourceDependencies(compilation: ImportCompilationDescriptor): List<DependenciesModel.SourceDependency> {
         val supportedCompilations = supportedCompilations()
-        return compilation.associatedCompilations
-            .filter { it in supportedCompilations }
-            .sortedBy { compilationUnitId(it.name).value }
+        return compilation.compilation.associatedCompilations
+            .mapNotNull { associatedCompilation -> supportedCompilations.singleOrNull { it.compilation == associatedCompilation } }
+            .sortedBy { compilationUnitId(it).value }
             .map { associatedCompilation ->
                 DependenciesModelKt.sourceDependency {
                     kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
-                    targetCompilationUnitId = compilationUnitId(associatedCompilation.name)
+                    targetCompilationUnitId = compilationUnitId(associatedCompilation)
                 }
             }
     }
@@ -110,12 +204,12 @@ internal class KotlinImportModelProvider(
         val outputs = buildList {
             add(
                 compileTask.destinationDirectory.get().asFile.toPath() to
-                    CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES
+                        CompilationUnitModel.Output.Kind.OUTPUT_KIND_CLASSES
             )
             if (compileTask.runViaBuildToolsApi.getOrElse(false) && compileTask.generateCompilerRefIndex.getOrElse(false)) {
                 add(
                     compileTask.taskBuildCacheableOutputDirectory.get().dir(DATA_PATH).asFile.toPath() to
-                        CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI
+                            CompilationUnitModel.Output.Kind.OUTPUT_KIND_CRI
                 )
             }
         }
@@ -130,6 +224,30 @@ internal class KotlinImportModelProvider(
             }
             .sortedBy(CompilationUnitModel.Output::getPath)
     }
+
+    private fun compilationOutputs(compileTask: KotlinNativeCompile): List<CompilationUnitModel.Output> = compilationOutputs(
+        compileTask.path,
+        listOf(compileTask.outputFile.get().toPath() to CompilationUnitModel.Output.Kind.OUTPUT_KIND_KLIB),
+    )
+
+    private fun compilationOutputs(compileTask: KotlinCompileCommon): List<CompilationUnitModel.Output> = compilationOutputs(
+        compileTask.path,
+        listOf(compileTask.destinationDirectory.get().asFile.toPath() to CompilationUnitModel.Output.Kind.OUTPUT_KIND_KLIB),
+    )
+
+    private fun compilationOutputs(
+        compileTaskPath: String,
+        outputs: List<Pair<Path, CompilationUnitModel.Output.Kind>>,
+    ): List<CompilationUnitModel.Output> = outputs
+        .distinctBy { (path, _) -> path }
+        .map { (path, kind) ->
+            CompilationUnitModelKt.output {
+                this.path = project.relativeProjectPath(path)
+                this.kind = kind
+                producingActions += gradleAction(compileTaskPath)
+            }
+        }
+        .sortedBy(CompilationUnitModel.Output::getPath)
 
     private fun KotlinCompilation<*>.importModelPurpose(): CompilationUnitModel.Purpose = when {
         isMain() -> CompilationUnitModel.Purpose.COMPILATION_PURPOSE_MAIN
@@ -182,17 +300,17 @@ internal class KotlinImportModelProvider(
             }
         }
 
-        val generatedKotlin = compilation.defaultSourceSet.generatedKotlin
-        val tasks = project.tasks
-        return (
-            roots(SourceRoot.Kind.SOURCE_ROOT_KIND_SOURCE, compilation.defaultSourceSet.kotlin.srcDirs.map(File::toPath)) +
-                roots(SourceRoot.Kind.SOURCE_ROOT_KIND_GENERATED, generatedKotlin.srcDirs.map(File::toPath)) { sourceRoot ->
-                    tasks
-                        .filter { sourceRoot in it.outputs.files.files.map(File::toPath) }
-                        .sortedBy { it.path }
-                        .map { producer -> gradleAction(producer.path) }
-                }
-            )
+        return compilation.allKotlinSourceSets.flatMap { sourceSet ->
+            val generatedKotlin = sourceSet.generatedKotlin
+            val generatedRoots = generatedKotlin.srcDirs.map(File::toPath)
+            val generatedRootActions = generatedKotlin.buildDependencies.getDependenciesForInternalUse()
+                .sortedBy { it.path }
+                .map { producer -> gradleAction(producer.path) }
+            roots(SourceRoot.Kind.SOURCE_ROOT_KIND_SOURCE, sourceSet.kotlin.srcDirs.map(File::toPath)) +
+                    roots(SourceRoot.Kind.SOURCE_ROOT_KIND_GENERATED, generatedRoots) {
+                        generatedRootActions
+                    }
+        }
             .sortedWith(compareBy(SourceRoot::getPath).thenBy(SourceRoot::getKindValue))
             .distinctBy(SourceRoot::getPath)
     }
@@ -201,15 +319,49 @@ internal class KotlinImportModelProvider(
         gradleAction = ActionKt.gradleTask { this.taskPath = taskPath }
     }
 
+    // Not using TaskDependency.getDependencies() because it can trigger configuration-cache warnings
+    private fun TaskDependency.getDependenciesForInternalUse(): Set<Task> {
+        val getDependenciesForInternalUse = try {
+            Class.forName("org.gradle.api.internal.tasks.TaskDependencyUtil")
+                .getMethod("getDependenciesForInternalUse", TaskDependency::class.java, Task::class.java)
+        } catch (_: ClassNotFoundException) {
+            return getDependencies(null)
+        } catch (_: NoSuchMethodException) {
+            return getDependencies(null)
+        }
+        @Suppress("UNCHECKED_CAST")
+        return try {
+            getDependenciesForInternalUse.invoke(null, this, null) as Set<Task>
+        } catch (e: InvocationTargetException) {
+            throw e.targetException
+        }
+    }
+
     private fun Project.relativeProjectPath(path: Path): String =
         Paths.get(relativePath(path.toFile())).invariantSeparatorsPathString
 
-    private fun compilationUnitId(compilationName: String): CompilationUnitId {
+    private fun compilationUnitId(compilation: ImportCompilationDescriptor): CompilationUnitId {
         val buildPath = project.currentBuildId().compatAccessor(project).buildPath
-        val targetKey = project.kotlinJvmExtension.target.targetName.ifEmpty { "jvm" }
-        return compilationUnitId { value = compilationUnitIdValue(buildPath, project.path, targetKey, compilationName) }
+        return compilationUnitId {
+            value = compilationUnitIdValue(buildPath, project.path, compilation.targetKey, compilation.compilation.name)
+        }
     }
+
+    private data class ImportCompilationDescriptor(
+        val compilation: KotlinCompilation<*>,
+        val targetKey: String,
+        val platform: CompilationUnitModel.Platform,
+        val targetPlatforms: List<CompilationUnitModel.TargetPlatform>,
+        val targetName: String?,
+        val purpose: CompilationUnitModel.Purpose,
+        val readOutputs: () -> List<CompilationUnitModel.Output>,
+    )
 }
+
+private val importModelCompilationNames = listOf(
+    KotlinCompilation.MAIN_COMPILATION_NAME,
+    KotlinCompilation.TEST_COMPILATION_NAME,
+)
 
 // Stable opaque format: percent-escape each component before joining with `|`
 internal fun compilationUnitIdValue(

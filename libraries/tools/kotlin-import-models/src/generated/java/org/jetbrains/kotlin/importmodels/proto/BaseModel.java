@@ -54,13 +54,13 @@ private static final long serialVersionUID = 0L;
      */
     CAPABILITY_UNSPECIFIED(0),
     /**
-     * <code>CAPABILITY_JVM = 1;</code>
+     * <code>CAPABILITY_KOTLIN_JVM = 1;</code>
      */
-    CAPABILITY_JVM(1),
+    CAPABILITY_KOTLIN_JVM(1),
     /**
-     * <code>CAPABILITY_KAPT = 2;</code>
+     * <code>CAPABILITY_KOTLIN_MULTIPLATFORM = 2;</code>
      */
-    CAPABILITY_KAPT(2),
+    CAPABILITY_KOTLIN_MULTIPLATFORM(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -78,13 +78,13 @@ private static final long serialVersionUID = 0L;
      */
     public static final int CAPABILITY_UNSPECIFIED_VALUE = 0;
     /**
-     * <code>CAPABILITY_JVM = 1;</code>
+     * <code>CAPABILITY_KOTLIN_JVM = 1;</code>
      */
-    public static final int CAPABILITY_JVM_VALUE = 1;
+    public static final int CAPABILITY_KOTLIN_JVM_VALUE = 1;
     /**
-     * <code>CAPABILITY_KAPT = 2;</code>
+     * <code>CAPABILITY_KOTLIN_MULTIPLATFORM = 2;</code>
      */
-    public static final int CAPABILITY_KAPT_VALUE = 2;
+    public static final int CAPABILITY_KOTLIN_MULTIPLATFORM_VALUE = 2;
 
 
     public final int getNumber() {
@@ -112,8 +112,8 @@ private static final long serialVersionUID = 0L;
     public static Capability forNumber(int value) {
       switch (value) {
         case 0: return CAPABILITY_UNSPECIFIED;
-        case 1: return CAPABILITY_JVM;
-        case 2: return CAPABILITY_KAPT;
+        case 1: return CAPABILITY_KOTLIN_JVM;
+        case 2: return CAPABILITY_KOTLIN_MULTIPLATFORM;
         default: return null;
       }
     }

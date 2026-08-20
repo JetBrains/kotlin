@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.importmodels.proto.CompilerArgumentsModel
 import org.jetbrains.kotlin.importmodels.proto.DependenciesModel
 import org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt
 import java.nio.file.Path
+import java.util.Locale
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
@@ -47,6 +48,7 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
     abstract val fileSystem: FileSystemOperations
 
     private data class CompilationModels(
+        val dumpFileName: String,
         val compilationUnit: CompilationUnitModel,
         val compilerArguments: CompilerArgumentsModel,
         val dependencies: DependenciesModel,
@@ -60,6 +62,7 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
         val base = produce("base") { modelProvider.baseInformation() }
         val projectModel = produce("projectInformation") { modelProvider.projectInformation() }
         val compilationModels = projectModel.compilationUnitIdsList.map { id ->
+            val dumpFileName = produce("compilationUnitDumpFileName[${id.value}]") { modelProvider.compilationUnitDumpFileName(id) }
             val compilationUnit = produce("compilationUnit[${id.value}]") { modelProvider.compilationUnit(id) }
             val compilerArguments = produce("compilerArguments[${id.value}]") { modelProvider.compilerArguments(id) }
             val dependencies = produce("dependencies[${id.value}]") {
@@ -71,25 +74,26 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
                     }
                 )
             }
-            CompilationModels(compilationUnit, compilerArguments, dependencies)
+            CompilationModels(dumpFileName, compilationUnit, compilerArguments, dependencies)
         }
 
         write("base", outputRoot.resolve("base.json"), KotlinImportModelSerialization.toJson(base))
         write("projectInformation", outputRoot.resolve("project.json"), KotlinImportModelSerialization.toJson(projectModel))
-        compilationModels.forEach { (compilationUnit, compilerArguments, dependencies) ->
+        compilationModels.forEachIndexed { index, (dumpFileName, compilationUnit, compilerArguments, dependencies) ->
+            val fileName = "%03d-%s.json".format(Locale.ROOT, index, dumpFileName)
             write(
                 "compilationUnit[${compilationUnit.parameters.compilationUnitId.value}]",
-                outputRoot.resolve("compilation-units/${compilationUnit.name}.json"),
+                outputRoot.resolve("compilation-units/$fileName"),
                 KotlinImportModelSerialization.toJson(compilationUnit),
             )
             write(
                 "compilerArguments[${compilerArguments.parameters.compilationUnitId.value}]",
-                outputRoot.resolve("compiler-arguments/${compilationUnit.name}.json"),
+                outputRoot.resolve("compiler-arguments/$fileName"),
                 KotlinImportModelSerialization.toJson(compilerArguments),
             )
             write(
                 "dependencies[${dependencies.parameters.compilationUnitId.value}]",
-                outputRoot.resolve("dependencies/${compilationUnit.name}.json"),
+                outputRoot.resolve("dependencies/$fileName"),
                 KotlinImportModelSerialization.toJson(dependencies),
             )
         }
