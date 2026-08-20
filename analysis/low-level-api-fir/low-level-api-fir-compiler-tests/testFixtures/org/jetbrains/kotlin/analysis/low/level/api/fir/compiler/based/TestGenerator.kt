@@ -150,10 +150,12 @@ fun main(args: Array<String>) {
         testGroup(generatedTestRoot, "compiler/testData/diagnostics") {
             fun TestGroup.TestClass.modelInitWasmJs() {
                 model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("tests/defaultArguments", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             fun TestGroup.TestClass.modelInitWasmWasi() {
                 model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("tests/defaultArguments", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractLLWasmJsDiagnosticsTest>(suiteTestClassName = "LLWasmJsDiagnosticsFe10TestGenerated") {
