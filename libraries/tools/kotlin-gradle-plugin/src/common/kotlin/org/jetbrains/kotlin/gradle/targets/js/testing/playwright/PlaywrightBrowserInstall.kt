@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
@@ -43,7 +42,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 ) : RequiresNpmDependenciesTask, DefaultTask() {
 
     @get:Input
-    internal val nodeExecutable: Property<String> = objects.property(project.kotlinNodeJsEnvSpec.executable)
+    internal val nodeExecutable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
 
     @get:Input
     internal val browsers = objects.setProperty(String::class.java).convention(emptyList())
