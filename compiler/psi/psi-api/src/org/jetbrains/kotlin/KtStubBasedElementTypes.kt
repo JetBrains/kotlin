@@ -48,8 +48,7 @@ internal object KtStubBasedElementTypes {
     val CLASS_INITIALIZER: KtNodeType = provider.classInitializerType
 
     @JvmField
-    val SCRIPT_INITIALIZER: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer> =
-        provider.scriptInitializerType
+    val SCRIPT_INITIALIZER: KtNodeType = provider.scriptInitializerType
 
 
     // Callables

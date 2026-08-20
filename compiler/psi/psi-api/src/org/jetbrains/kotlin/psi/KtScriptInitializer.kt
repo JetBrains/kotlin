@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.utils.sure
@@ -27,7 +27,7 @@ class KtScriptInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtScriptInit
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtScriptInitializer>) : super(stub, KtStubBasedElementTypes.SCRIPT_INITIALIZER)
+    constructor(stub: KotlinPlaceHolderStub<KtScriptInitializer>) : super(stub, KtNodeTypes.SCRIPT_INITIALIZER)
 
     override val body: KtExpression?
         get() = findChildByClass(KtExpression::class.java)
