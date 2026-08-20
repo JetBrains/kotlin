@@ -145,8 +145,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType STRING_TEMPLATE = new KtNodeType("STRING_TEMPLATE", KtStringTemplateExpression::new);
 
-    @NotNull KtBlockStringTemplateEntryElementType LONG_STRING_TEMPLATE_ENTRY =
-            new KtBlockStringTemplateEntryElementType("LONG_STRING_TEMPLATE_ENTRY");
+    @NotNull KtNodeType LONG_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry::new);
 
     @NotNull KtPlaceHolderWithTextStubElementType<KtSimpleNameStringTemplateEntry> SHORT_STRING_TEMPLATE_ENTRY =
             new KtPlaceHolderWithTextStubElementType<>("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);
