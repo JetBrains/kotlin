@@ -109,8 +109,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType VALUE_ARGUMENT = new KtNodeType("VALUE_ARGUMENT", KtValueArgument::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtContractEffectList> CONTRACT_EFFECT_LIST =
-            new KtContractEffectListElementType("CONTRACT_EFFECT_LIST");
+    @NotNull KtNodeType CONTRACT_EFFECT_LIST = new KtNodeType("CONTRACT_EFFECT_LIST", KtContractEffectList::new);
 
     @NotNull KtContractEffectElementType CONTRACT_EFFECT =
             new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect.class);

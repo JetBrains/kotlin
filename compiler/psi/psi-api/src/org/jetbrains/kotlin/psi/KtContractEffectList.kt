@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
@@ -30,7 +31,7 @@ class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractE
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
+    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtNodeTypes.CONTRACT_EFFECT_LIST)
 }
 
 /**
