@@ -159,5 +159,6 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType SCRIPT = new KtNodeType("SCRIPT", KtScript::new);
 
-    @NotNull KtStringInterpolationPrefixElementType STRING_INTERPOLATION_PREFIX = new KtStringInterpolationPrefixElementType("STRING_INTERPOLATION_PREFIX");
+    @NotNull KtNodeType STRING_INTERPOLATION_PREFIX =
+            new KtNodeType("STRING_INTERPOLATION_PREFIX", KtStringInterpolationPrefix::new);
 }

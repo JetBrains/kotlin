@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser
 import org.jetbrains.kotlin.kdoc.parser.KDocParser
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -208,7 +207,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val escapeStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
 
-    override val stringInterpolationPrefixType: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
+    override val stringInterpolationPrefixType: KtNodeType
         get() = KtStubElementTypes.STRING_INTERPOLATION_PREFIX
 
 

@@ -9,8 +9,8 @@ import com.intellij.psi.impl.source.tree.ICodeFragmentElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.ILazyParseableElementType
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.*
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 @KtImplementationDetail
@@ -107,7 +107,7 @@ interface KotlinElementTypeProvider {
     val shortStringTemplateEntryType: KtNodeType
     val literalStringTemplateEntryType: KtNodeType
     val escapeStringTemplateEntryType: KtNodeType
-    val stringInterpolationPrefixType: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
+    val stringInterpolationPrefixType: KtNodeType
 
     // Expressions
     val blockExpressionType: IElementType

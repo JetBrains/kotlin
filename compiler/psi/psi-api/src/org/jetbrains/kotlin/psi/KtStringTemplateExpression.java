@@ -14,7 +14,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -59,9 +58,8 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
      * @see KtStringInterpolationPrefix
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtStringInterpolationPrefix getInterpolationPrefix() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX);
+        return getStubOrPsiChild(KtNodeTypes.STRING_INTERPOLATION_PREFIX, KtStringInterpolationPrefix.class);
     }
 
     /**
