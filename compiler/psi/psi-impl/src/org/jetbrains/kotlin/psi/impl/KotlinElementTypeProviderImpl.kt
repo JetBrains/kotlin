@@ -248,7 +248,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val classLiteralExpressionType: KtNodeType
         get() = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 
-    override val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
+    override val collectionLiteralExpressionType: KtNodeType
         get() = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
 
     override val objectLiteralType: KtNodeType

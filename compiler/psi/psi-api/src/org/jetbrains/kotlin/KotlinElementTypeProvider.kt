@@ -122,7 +122,7 @@ interface KotlinElementTypeProvider {
     val binaryExpressionType: KtNodeType
     val parenthesizedExpressionType: KtNodeType
     val classLiteralExpressionType: KtNodeType
-    val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
+    val collectionLiteralExpressionType: KtNodeType
     val objectLiteralType: KtNodeType
 
     // Arguments
