@@ -221,7 +221,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val referenceExpressionType: KtNodeType
         get() = KtStubElementTypes.REFERENCE_EXPRESSION
 
-    override val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
+    override val enumEntrySuperclassReferenceExpressionType: KtNodeType
         get() = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
 
     override val dotQualifiedExpressionType: KtNodeType

@@ -100,8 +100,9 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType OBJECT_LITERAL = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression::new);
 
-    @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
-            new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
+    @NotNull KtNodeType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
+            new KtNodeType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION", KtEnumEntrySuperclassReferenceExpression::new);
+
     @NotNull KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
             new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
 
