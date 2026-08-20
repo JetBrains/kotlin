@@ -245,8 +245,7 @@ internal object KtStubBasedElementTypes {
         provider.enumEntrySuperclassReferenceExpressionType
 
     @JvmField
-    val OPERATION_REFERENCE: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression> =
-        provider.operationReferenceType
+    val OPERATION_REFERENCE: KtNodeType = provider.operationReferenceType
 
     @JvmField
     val DOT_QUALIFIED_EXPRESSION: KtNodeType = provider.dotQualifiedExpressionType
