@@ -1,0 +1,16 @@
+KtNameReferenceExpression(68,70): 'id'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = id
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = id: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
