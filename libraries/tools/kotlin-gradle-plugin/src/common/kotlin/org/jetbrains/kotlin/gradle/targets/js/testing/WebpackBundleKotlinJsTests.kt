@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -223,22 +224,11 @@ internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
         val compilation = this@locateOrRegisterBrowserTestBundleTask
 
         val nodeJsRoot = compilation.nodeJsRoot()
-        val nodeJsEnvSpec = compilation.nodeJsEnvSpec
-
         task.versions.value(nodeJsRoot.versions).disallowChanges()
 
-        with(nodeJsEnvSpec) {
-            task.dependsOn(project.nodeJsSetupTaskProvider)
-        }
-
-        task.dependsOn(nodeJsRoot.npmInstallTaskProvider)
-        task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-
-        if (compilation.isWasm) {
-            task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-        }
         task.npmToolingEnvDir.set(compilation.npmToolingDir())
         task.npmToolingEnvDir.disallowChanges()
+        task.dependsOnNpmTooling(compilation)
 
         val binary = compilation.binaries.getIrBinaries(
             KotlinJsBinaryMode.DEVELOPMENT

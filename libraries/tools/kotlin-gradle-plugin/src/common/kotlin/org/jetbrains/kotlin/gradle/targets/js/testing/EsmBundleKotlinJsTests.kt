@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -136,6 +137,7 @@ internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask():
     ) {
         val task = this
         val npmToolingDir = npmToolingDir()
+        task.dependsOnNpmTooling(compilation = this@locateOrRegisterEsmBundleKotlinJsTestsTask)
 
         val binary = binaries.getIrBinaries(
             KotlinJsBinaryMode.DEVELOPMENT

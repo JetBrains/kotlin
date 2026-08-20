@@ -234,16 +234,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         dependsOn(
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
-
-        dependsOn(nodeJsRoot.npmInstallTaskProvider)
-
-        dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-
         configureOptimization(mode)
 
         this.npmToolingEnvDir
             .value(npmToolingDir)
             .disallowChanges()
+        dependsOnNpmTooling(compilation)
 
         val isWasm = this@WebpackConfigurator.isWasm
 
