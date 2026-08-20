@@ -74,8 +74,7 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
 
     @NotNull KtUserTypeElementType USER_TYPE = new KtUserTypeElementType("USER_TYPE");
-    @NotNull KtPlaceHolderStubElementType<KtDynamicType> DYNAMIC_TYPE =
-            new KtPlaceHolderStubElementType<>("DYNAMIC_TYPE", KtDynamicType.class);
+    @NotNull KtNodeType DYNAMIC_TYPE = new KtNodeType("DYNAMIC_TYPE", KtDynamicType::new);
 
     @NotNull KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
 
