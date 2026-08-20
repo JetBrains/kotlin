@@ -307,6 +307,19 @@ val createJscRunner = tasks.register<CreateJscRunner>("createJscRunner") {
     inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
+val maybeCleanWasmTestOutputTask = tasks.register<Delete>("maybeCleanWasmTestOutput") {
+    description = "Clean the Wasm test output directory if needed"
+    delete(layout.buildDirectory.dir("out"))
+
+    // see <repo-root>/gradle.properties which documents the possible values of fd.kotlin.wasm.debugMode, and fd.kotlin.wasm.neverCleanTestOutput
+    val debugMode = kotlinBuildProperties.stringProperty("fd.kotlin.wasm.debugMode").map { it !in listOf("none", "false", "0") }
+    val neverCleanTestOutput = kotlinBuildProperties.booleanProperty("fd.kotlin.wasm.neverCleanTestOutput")
+
+    onlyIf("Only clean test output directory, if we're NOT in debug mode, and neverCleanTestOutput has NOT been specified") {
+        !debugMode.getOrElse(false) && !neverCleanTestOutput.getOrElse(false)
+    }
+}
+
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
         .map { it.destinationDir }
@@ -390,6 +403,8 @@ projectTests {
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
             body()
             dependsOn(npmInstall)
+
+            finalizedBy(maybeCleanWasmTestOutputTask)
         }
     }
 
