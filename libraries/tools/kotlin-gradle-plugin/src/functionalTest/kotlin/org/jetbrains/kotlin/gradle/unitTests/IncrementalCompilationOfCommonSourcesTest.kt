@@ -88,8 +88,8 @@ class IncrementalCompilationOfCommonSourcesTest {
         val expected = jvmTasks.associate { it.path to expectedJvm } +
                 jsTasks.associate { it.path to expectedJs } +
                 wasmTasks.associate { it.path to expectedWasm }
-        val actual = jvmTasks.associate { it.path to it.enableUnsafeIncrementalCompilationForMultiplatform.get() } +
-                (jsTasks + wasmTasks).associate { it.path to it.enableUnsafeIncrementalCompilationForMultiplatform.get() }
+        val actual = jvmTasks.associate { it.path to it.enableIncrementalCompilationOfCommonSources.get() } +
+                (jsTasks + wasmTasks).associate { it.path to it.enableIncrementalCompilationOfCommonSources.get() }
 
         assertEquals(expected, actual)
     }

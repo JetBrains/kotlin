@@ -276,7 +276,7 @@ abstract class KotlinCompile @Inject constructor(
                         args.fragmentDependencies = emptyArray()
                         args.fragmentFriendDependencies = emptyArray()
                     }
-                    if (isIncrementalCompilationEnabled() && enableUnsafeIncrementalCompilationForMultiplatform.get() && enableJvmClasspathMetadata.get()) {
+                    if (isIncrementalCompilationEnabled() && enableIncrementalCompilationOfCommonSources.get() && enableJvmClasspathMetadata.get()) {
                         args.useMetadataOnIncrementalClasspath = true
                     }
                 } else {

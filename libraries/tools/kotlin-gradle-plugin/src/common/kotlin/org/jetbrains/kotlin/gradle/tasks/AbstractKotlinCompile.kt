@@ -213,9 +213,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         )
 
-    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform] */
+    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableIncrementalCompilationOfCommonSources] */
     @get:Internal
-    internal abstract val enableUnsafeIncrementalCompilationForMultiplatform: Property<Boolean>
+    internal abstract val enableIncrementalCompilationOfCommonSources: Property<Boolean>
 
     /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableMonotonousIncrementalCompileSetExpansion] */
     @get:Internal
@@ -243,7 +243,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
                     executionPolicy = compilerExecutionStrategy.get(),
                     kmpJvmClasspathMetadataEnabled = kmpJvmCompile?.enableJvmClasspathMetadata?.get(),
-                    kmpJvmUnsafeOptimizationsEnabled = kmpJvmCompile?.enableUnsafeIncrementalCompilationForMultiplatform?.get(),
+                    kmpJvmUnsafeOptimizationsEnabled = kmpJvmCompile?.enableIncrementalCompilationOfCommonSources?.get(),
                     it
                 )
             }
@@ -303,7 +303,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             usePreciseJavaTracking = false, // not generally applicable
             preciseCompilationResultsBackup = true,
             keepIncrementalCompilationCachesInMemory = true,
-            enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),
+            enableIncrementalCompilationOfCommonSources = enableIncrementalCompilationOfCommonSources.get(),
             enableMonotonousIncrementalCompileSetExpansion = enableMonotonousIncrementalCompileSetExpansion.get(),
         )
     }

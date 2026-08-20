@@ -236,7 +236,7 @@ abstract class IncrementalCompilerRunner<
         }
         changedFiles as? DeterminableFiles ?: error("Expected $changedFiles to be an instance of DeterminableFiles")
 
-        val fragmentContext = if (!icFeatures.enableUnsafeIncrementalCompilationForMultiplatform) { //see KT-62686
+        val fragmentContext = if (!icFeatures.enableIncrementalCompilationOfCommonSources) { //see KT-62686
             FragmentContext.fromCompilerArguments(args)
         } else {
             null

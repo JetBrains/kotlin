@@ -52,7 +52,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.incremental = propertiesProvider.incrementalJvm ?: true
                 task.useFirRunner.convention(propertiesProvider.incrementalJvmFir)
                 task.enableJvmClasspathMetadata.convention(propertiesProvider.enableJvmClasspathMetadata)
-                task.enableUnsafeIncrementalCompilationForMultiplatform
+                task.enableIncrementalCompilationOfCommonSources
                     .convention(propertiesProvider.enableJvmIncrementalCompilationOfCommonSources)
                     .finalizeValueOnRead()
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true

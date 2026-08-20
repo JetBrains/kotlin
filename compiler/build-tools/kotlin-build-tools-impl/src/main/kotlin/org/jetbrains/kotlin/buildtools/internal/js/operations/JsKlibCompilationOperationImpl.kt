@@ -294,7 +294,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
             withAbiSnapshot = false,
             preciseCompilationResultsBackup = this[BACKUP_CLASSES],
             keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
-            enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
+            enableIncrementalCompilationOfCommonSources = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
                     this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
             enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
         )

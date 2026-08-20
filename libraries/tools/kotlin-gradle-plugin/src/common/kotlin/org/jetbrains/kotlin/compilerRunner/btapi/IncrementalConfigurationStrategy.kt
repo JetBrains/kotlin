@@ -36,6 +36,6 @@ internal fun BaseIncrementalCompilationConfiguration.Builder.setupBaseIncrementa
     this[BACKUP_CLASSES] = icEnv.icFeatures.preciseCompilationResultsBackup
     this[KEEP_IC_CACHES_IN_MEMORY] = icEnv.icFeatures.keepIncrementalCompilationCachesInMemory
     this[OUTPUT_DIRS] = outputDirs
-    this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
+    this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = icEnv.icFeatures.enableIncrementalCompilationOfCommonSources
     this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
 }
