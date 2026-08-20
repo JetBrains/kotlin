@@ -117,8 +117,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType VALUE_ARGUMENT_NAME = new KtNodeType("VALUE_ARGUMENT_NAME", KtValueArgumentName::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList.class);
+    @NotNull KtNodeType SUPER_TYPE_LIST = new KtNodeType("SUPER_TYPE_LIST", KtSuperTypeList::new);
 
     @NotNull KtPlaceHolderStubElementType<KtInitializerList> INITIALIZER_LIST =
             new KtPlaceHolderStubElementType<>("INITIALIZER_LIST", KtInitializerList.class);
