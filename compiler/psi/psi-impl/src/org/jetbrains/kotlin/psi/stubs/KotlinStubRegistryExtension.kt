@@ -262,6 +262,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION,
             factory = KtEnumEntrySuperclassReferenceExpressionStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.TYPE_ARGUMENT_LIST,
+            psiFactory = ::KtTypeArgumentList,
+        )
     }
 }
 
