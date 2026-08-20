@@ -252,8 +252,7 @@ internal object KtStubBasedElementTypes {
     val PARENTHESIZED: KtNodeType = provider.parenthesizedExpressionType
 
     @JvmField
-    val CLASS_LITERAL_EXPRESSION: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
-        provider.classLiteralExpressionType
+    val CLASS_LITERAL_EXPRESSION: KtNodeType = provider.classLiteralExpressionType
 
     @JvmField
     val COLLECTION_LITERAL_EXPRESSION: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression> =

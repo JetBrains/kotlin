@@ -11,7 +11,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
 
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
 public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiteralExpressionStub> implements KtDoubleColonExpression {
     @KtImplementationDetail
     public KtClassLiteralExpression(KotlinClassLiteralExpressionStub stub) {
-        super(stub, KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION);
+        super(stub, KtNodeTypes.CLASS_LITERAL_EXPRESSION);
     }
 
     @KtImplementationDetail

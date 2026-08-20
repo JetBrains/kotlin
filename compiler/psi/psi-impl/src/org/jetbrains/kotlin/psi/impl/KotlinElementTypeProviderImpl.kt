@@ -245,7 +245,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val parenthesizedExpressionType: KtNodeType
         get() = KtStubElementTypes.PARENTHESIZED
 
-    override val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
+    override val classLiteralExpressionType: KtNodeType
         get() = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 
     override val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
