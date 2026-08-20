@@ -93,8 +93,7 @@ internal object KtStubBasedElementTypes {
         provider.valueParameterListType
 
     @JvmField
-    val VALUE_PARAMETER: KtStubElementType<out KotlinParameterStub, KtParameter> =
-        provider.valueParameterType
+    val VALUE_PARAMETER: KtNodeType = provider.valueParameterType
 
     @JvmField
     val CONTEXT_PARAMETER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContextParameterList>, KtContextParameterList> =

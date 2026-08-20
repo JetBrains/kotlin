@@ -1949,6 +1949,7 @@ public class org/jetbrains/kotlin/psi/KtPackageDirective : org/jetbrains/kotlin/
 }
 
 public class org/jetbrains/kotlin/psi/KtParameter : org/jetbrains/kotlin/psi/KtNamedDeclarationStub, org/jetbrains/kotlin/psi/KtCallableDeclaration, org/jetbrains/kotlin/psi/KtValVarKeywordOwner {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtParameter;
 	public static final field VAL_VAR_TOKEN_SET Lcom/intellij/psi/tree/TokenSet;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;

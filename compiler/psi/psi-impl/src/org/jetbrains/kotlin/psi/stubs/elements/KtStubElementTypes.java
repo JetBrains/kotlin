@@ -35,7 +35,7 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType SECONDARY_CONSTRUCTOR = new KtNodeType("SECONDARY_CONSTRUCTOR", KtSecondaryConstructor::new);
     @NotNull KtNodeType PRIMARY_CONSTRUCTOR = new KtNodeType("PRIMARY_CONSTRUCTOR", KtPrimaryConstructor::new);
 
-    @NotNull KtParameterElementType VALUE_PARAMETER = new KtParameterElementType("VALUE_PARAMETER");
+    @NotNull KtNodeType VALUE_PARAMETER = new KtNodeType("VALUE_PARAMETER", KtParameter::new);
     @NotNull KtPlaceHolderStubElementType<KtParameterList> VALUE_PARAMETER_LIST =
             new KtPlaceHolderStubElementType<>("VALUE_PARAMETER_LIST", KtParameterList.class);
 
