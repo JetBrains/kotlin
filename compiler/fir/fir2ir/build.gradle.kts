@@ -110,6 +110,7 @@ projectTests {
         defineJDKEnvVariables = environment,
         skipInLocalBuild = true,
         maxHeapSize = testMaxHeapSizeHuge,
+        garbageCollector = GarbageCollector.Parallel // JDK 8 is suspected to perform better with ParallelGC under such loads
     ) {
         configure {
             excludeTags("FirPsiCodegenTest")
