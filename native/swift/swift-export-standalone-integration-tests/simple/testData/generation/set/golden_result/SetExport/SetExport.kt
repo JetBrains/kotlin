@@ -5,6 +5,12 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ExportedBridge("__root___foo")
+public fun __root___foo(): kotlin.native.internal.NativePtr {
+    val _result = run { foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____")
 public fun __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __s = if (s == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.collections.Set<Int>>(s)

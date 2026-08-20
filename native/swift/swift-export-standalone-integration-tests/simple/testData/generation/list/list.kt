@@ -21,6 +21,8 @@ fun testListOptNothing(l: List<Nothing?>) = l
 
 fun testStarList(l: List<*>) = l
 
+fun foo(): MutableList<String> = TODO()
+
 // MODULE: ListExport_2
 // EXPORT_TO_SWIFT
 // FILE: main_2.kt
