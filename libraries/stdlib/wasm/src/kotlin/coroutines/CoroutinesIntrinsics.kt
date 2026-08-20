@@ -126,5 +126,4 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  * If this function is invoked on other [Continuation] instances it returns `this` continuation unchanged.
  */
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-// TODO: replace with interceptedIntrinsic(this) after bootstrap
-    (this as? CoroutineImpl<T, *>)?.intercepted() ?: this
+    interceptedIntrinsic(this)
