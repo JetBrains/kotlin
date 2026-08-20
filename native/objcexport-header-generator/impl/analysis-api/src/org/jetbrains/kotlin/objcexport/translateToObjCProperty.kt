@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
@@ -55,5 +56,14 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
 internal val String.asSetterSelector: String
     get() = "set" + replaceFirstChar(Char::uppercase) + ":"
 
-internal val KaPropertySymbol.hasReservedName: Boolean
-    get() = name.asString().isReservedPropertyName
+/**
+ * A getter or setter is defined only when it differs from the property's name. This can happen in 4 scenarios:
+ * 1. Property name is a reserved keyword such as bool: (getter=bool, setter=setBool:) BOOL bool_;
+ * 2. Accessor clashes with a method (an NSObject method, for e.g.): (getter=autorelease_) int32_t autorelease;
+ * 3. Property name clashes with a macro: (setter=setNULL:) int32_t NULL_;
+ * 4. Accessor has to be prefixed with "do": (getter=doInit) int32_t init;
+ */
+internal fun KaPropertySymbol.needsAccessor(objCName: String, explicitMethodFamilyName: Boolean): Boolean {
+    val name = this.name.asString()
+    return name.isReservedClassOrObjectName || name in objCMacroDefinitions || objCName.isSpecialFamilyOrInit(explicitMethodFamilyName)
+}

@@ -24,7 +24,7 @@ private val reservedClassOrObjectNames = setOf(
 internal val String.isReservedPropertyName: Boolean
     get() = this in reservedPropertyNames
 
-private val String.isReservedClassOrObjectName: Boolean
+internal val String.isReservedClassOrObjectName: Boolean
     get() = this in reservedClassOrObjectNames
 
 /**
@@ -37,3 +37,5 @@ private val String.isReservedClassOrObjectName: Boolean
  * See [reservedClassOrObjectNames], [reservedPropertyNames] and [reservedPropertyNames]
  */
 internal fun String.mangleIfReservedObjCName(): String = if (this.isReservedClassOrObjectName) this + "_" else this
+
+internal fun String.mangleIfReservedPropertyName(): String = if (this.isReservedPropertyName) this + "_" else this

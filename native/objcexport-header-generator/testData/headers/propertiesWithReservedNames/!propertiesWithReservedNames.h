@@ -29,10 +29,13 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) NSString *NO_ __attribute__((swift_name("NO")));
 @property (setter=setDEBUG:) BOOL DEBUG_ __attribute__((swift_name("DEBUG")));
 @property (readonly) NSString *NULL_ __attribute__((swift_name("NULL")));
+@property (readonly) NSString *load __attribute__((swift_name("load")));
+@property (getter=release_) NSString *release __attribute__((swift_name("release")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
++ (void)f __attribute__((swift_name("f()")));
 @property (class, readonly) NSString *YES_ __attribute__((swift_name("YES")));
 @end
 
