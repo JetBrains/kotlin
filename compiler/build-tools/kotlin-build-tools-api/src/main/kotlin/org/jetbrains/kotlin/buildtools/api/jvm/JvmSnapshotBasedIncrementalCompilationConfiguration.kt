@@ -323,23 +323,6 @@ constructor(
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
 
         /**
-         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
-         * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
-         * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
-         */
-        @Deprecated(
-            "Use `BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM` instead.",
-            ReplaceWith(
-                "BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM",
-                "org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration"
-            )
-        )
-        @JvmField
-        @ExperimentalCompilerArgument
-        public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", KotlinReleaseVersion(2, 3, 0))
-
-        /**
          * When this option is enabled, the incremental compilation scope is always expanded monotonously (see explanation below).
          *
          * For example, when recompilation of file `a.kt` introduces changes that require the recompilation of file `b.kt`, the new

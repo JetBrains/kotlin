@@ -51,11 +51,6 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         )
         @OptIn(ExperimentalCompilerArgument::class)
         assertEquals(
-            false,
-            icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM]
-        )
-        @OptIn(ExperimentalCompilerArgument::class)
-        assertEquals(
             true,
             icConfiguration[BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]
         )
