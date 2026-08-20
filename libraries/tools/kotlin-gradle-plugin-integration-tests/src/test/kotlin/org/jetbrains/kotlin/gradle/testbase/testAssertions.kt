@@ -142,6 +142,7 @@ fun GradleProject.readTestCases(
     taskName: String,
     subprojectName: String? = null,
 ): List<TestCaseResult> {
+    val simpleTaskName = taskName.removePrefix(":").substringAfterLast(':')
     val testReportDir = testResultsAndReportsDirs(taskName, subprojectName).first
 
     if (!Files.exists(testReportDir)) {
@@ -157,9 +158,10 @@ fun GradleProject.readTestCases(
             else -> root.getChildren("testcase")
         }
         testCases.map { testCaseElement ->
-            val className = testCaseElement.getAttributeValue("classname")
+            val rawClassName = testCaseElement.getAttributeValue("classname")
                 ?: testCaseElement.getAttributeValue("className")
                 ?: ""
+            val className = rawClassName.removePrefix("$simpleTaskName.")
             val name = testCaseElement.getAttributeValue("name") ?: ""
             val failureElement = testCaseElement.getChild("failure") ?: testCaseElement.getChild("error")
             val failure = failureElement?.let {
