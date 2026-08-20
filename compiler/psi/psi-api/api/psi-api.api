@@ -2563,6 +2563,7 @@ public class org/jetbrains/kotlin/psi/KtSuperTypeList : org/jetbrains/kotlin/psi
 
 public class org/jetbrains/kotlin/psi/KtSuperTypeListEntry : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/resolution/KtResolvable {
 	public static field ARRAY_FACTORY Lcom/intellij/util/ArrayFactory;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtSuperTypeListEntry;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getTypeAsUserType ()Lorg/jetbrains/kotlin/psi/KtUserType;
 	public fun getTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
