@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
@@ -42,10 +43,7 @@ class KtCompanionBlock : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBloc
      * The body of the companion block.
      */
     val body: KtClassBody
-        get() {
-            @Suppress("DEPRECATION") // KT-78356
-            return getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)!!
-        }
+        get() = getRequiredStubOrPsiChild(KtNodeTypes.CLASS_BODY, KtClassBody::class.java)
 
     /**
      * The list of declarations inside the companion block.
