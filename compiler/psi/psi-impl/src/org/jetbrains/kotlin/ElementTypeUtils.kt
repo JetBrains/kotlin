@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.util.getSingleChildOrNull
 
 object ElementTypeUtils {
@@ -91,12 +90,10 @@ object ElementTypeUtils {
         IMPORT_ALIAS,
             -> false
 
+        // All stub-based element types that are not `KtExpression` are listed above
         is KtNodeType,
         LAMBDA_EXPRESSION,
             -> true
-
-        // All stub-based element types that are not `KtExpression` are listed above
-        is KtStubElementType<*, *> -> true
 
         else -> false
     }
