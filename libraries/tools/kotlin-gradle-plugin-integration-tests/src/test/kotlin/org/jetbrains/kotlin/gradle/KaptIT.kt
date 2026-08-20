@@ -112,13 +112,7 @@ abstract class KaptBaseIT : KGPBaseTest() {
 }
 
 /**
- * Note that some tests are disabled because kapt class loader cache holds a file descriptor open, which leads to problems on Windows.
- * If you get a failed test on the build server with the message:
- *
- *     java.io.IOException: Failed to delete temp directory Z:\BuildAgent\temp\buildTmp\[...].
- *     The following paths could not be deleted (see suppressed exceptions for details): [...]
- *
- * then override and disable the test here via `@Disabled`.
+ * Runs the whole [KaptIT] suite with the annotation processor classloaders cache enabled.
  */
 @DisplayName("Kapt with classloaders cache")
 class KaptClassLoadersCacheIT : KaptIT() {
@@ -130,41 +124,6 @@ class KaptClassLoadersCacheIT : KaptIT() {
     @Disabled("classloaders cache is incompatible with AP discovery in classpath")
     @GradleTest
     override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testKt33847(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testRepeatableAnnotations(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
     }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
