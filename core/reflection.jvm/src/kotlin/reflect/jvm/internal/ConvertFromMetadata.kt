@@ -325,9 +325,10 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
     val receiverCount = when {
         property.contextParameters.isNotEmpty() -> -1
+        property.isStatic -> 0
         else ->
-            (if (property.receiverParameterType != null && !property.isStatic) 1 else 0) +
-                    (if (container is KClassImpl<*> && !property.isStatic) 1 else 0)
+            (if (property.receiverParameterType != null) 1 else 0) +
+                    (if (container is KClassImpl<*>) 1 else 0)
     }
     val signature = property.computeJvmSignature(container).toString()
     val boundReceiver = CallableReference.NO_RECEIVER
