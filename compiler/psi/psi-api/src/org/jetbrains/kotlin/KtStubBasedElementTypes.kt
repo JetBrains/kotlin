@@ -67,8 +67,7 @@ internal object KtStubBasedElementTypes {
     val SECONDARY_CONSTRUCTOR: KtNodeType = provider.secondaryConstructorType
 
     @JvmField
-    val CONSTRUCTOR_CALLEE: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression> =
-        provider.constructorCalleeType
+    val CONSTRUCTOR_CALLEE: KtNodeType = provider.constructorCalleeType
 
     @JvmField
     val PROPERTY_ACCESSOR: KtNodeType = provider.propertyAccessorType

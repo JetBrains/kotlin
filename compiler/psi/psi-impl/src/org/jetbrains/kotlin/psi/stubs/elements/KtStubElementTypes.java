@@ -128,8 +128,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType SUPER_TYPE_ENTRY = new KtNodeType("SUPER_TYPE_ENTRY", KtSuperTypeEntry::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
-            new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
+    @NotNull KtNodeType CONSTRUCTOR_CALLEE = new KtNodeType("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression::new);
 
     @NotNull KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
 
