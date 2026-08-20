@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.psi.utils
 
-import com.intellij.psi.tree.IElementType
 import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtStubBasedElementTypes.BOOLEAN_CONSTANT
@@ -166,20 +165,5 @@ fun ConstantValueKind.toConstantExpressionElementType(): KtNodeType {
         ConstantValueKind.FLOAT_CONSTANT -> FLOAT_CONSTANT
         ConstantValueKind.CHARACTER_CONSTANT -> CHARACTER_CONSTANT
         ConstantValueKind.INTEGER_CONSTANT -> INTEGER_CONSTANT
-    }
-}
-
-/**
- * Converts the given [com.intellij.psi.tree.IElementType] to the corresponding [ConstantValueKind].
- * The element type must be one of the constant expression types. Otherwise, an [IllegalArgumentException] is thrown.
- */
-fun IElementType.toConstantValueKind(): ConstantValueKind {
-    return when (this) {
-        NULL -> ConstantValueKind.NULL
-        BOOLEAN_CONSTANT -> ConstantValueKind.BOOLEAN_CONSTANT
-        FLOAT_CONSTANT -> ConstantValueKind.FLOAT_CONSTANT
-        CHARACTER_CONSTANT -> ConstantValueKind.CHARACTER_CONSTANT
-        INTEGER_CONSTANT -> ConstantValueKind.INTEGER_CONSTANT
-        else -> throw IllegalArgumentException("Unknown constant node type: $this")
     }
 }
