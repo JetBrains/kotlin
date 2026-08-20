@@ -47,6 +47,20 @@ class DummyJavaClassType(
         get() = classifierQualifiedName
 }
 
+/**
+ * An `? extends [bound]` wildcard. Lombok gives every `@Singular` plural setter a wildcard-bounded parameter -
+ * `Collection<? extends T>`, `Map<? extends K, ? extends V>` - so that a collection of a subtype can be passed in.
+ * Spelling the argument out invariantly instead would reject those calls with `JAVA_TYPE_MISMATCH` (KT-54072).
+ */
+class DummyJavaExtendsWildcardType(override val bound: JavaType) : JavaWildcardType {
+    override val isExtends: Boolean
+        get() = true
+    override val annotations: List<JavaAnnotation>
+        get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+}
+
 fun JavaType.toRef(source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
     type = this@toRef
     annotationBuilder = { emptyList() }
