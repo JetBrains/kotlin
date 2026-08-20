@@ -11,7 +11,6 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.ArrayFactory
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -55,7 +54,15 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * The primary import list of this file, or `null` if the file has no imports.
      */
     open val importList: KtImportList?
-        get() = findChildByTypeOrClass(KtStubBasedElementTypes.IMPORT_LIST, KtImportList::class.java)
+        get() {
+            val stub = greenStub
+            if (stub != null) {
+                @Suppress("DEPRECATION") // KT-78356
+                return stub.findChildStubByType(KtStubBasedElementTypes.IMPORT_LIST)?.psi
+            }
+
+            return findChildByClass(KtImportList::class.java)
+        }
 
     @Volatile
     private var hasImportAlias: Boolean? = null
@@ -75,7 +82,16 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     }
 
     protected open val importLists: List<KtImportList>
-        get() = findChildrenByTypeOrClass(KtStubBasedElementTypes.IMPORT_LIST, KtImportList::class.java).asList()
+        get() {
+            val stub = greenStub
+            if (stub != null) {
+                val elementType = KtStubBasedElementTypes.IMPORT_LIST
+                @Suppress("DEPRECATION") // KT-78356
+                return stub.getChildrenByType(elementType, elementType.arrayFactory).asList()
+            }
+
+            return findChildrenByClass(KtImportList::class.java).asList()
+        }
 
     /**
      * The file-level annotation list holding the `@file:...` annotations, or `null` if the file has none.
@@ -192,7 +208,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     /**
      * This is an optimized way to find a file child element in the header.
      *
-     * Regular [findChildByTypeOrClass] will iterate through all children, which is especially expensive in the case of [findChildByClass].
+     * Regular lookup will iterate through all children, which is especially expensive in the case of [findChildByClass].
      * It will trigger PSI calculation for all children even if the wanted element is the first child.
      *
      * So this function will iterate at most through all leading non-declarations plus one declaration. Processing one declaration is
@@ -240,32 +256,6 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
         return null
     }
-
-    fun <S : StubElement<P>, P : KtElementImplStub<S>> findChildByTypeOrClass(
-        elementType: KtStubElementType<out S, P>,
-        elementClass: Class<P>
-    ): P? {
-        val stub = greenStub
-        if (stub != null) {
-            @Suppress("DEPRECATION") // KT-78356
-            val importListStub = stub.findChildStubByType(elementType)
-            return importListStub?.psi
-        }
-        return findChildByClass(elementClass)
-    }
-
-    fun <T : KtElementImplStub<out StubElement<*>>> findChildrenByTypeOrClass(
-        elementType: KtStubElementType<*, T>,
-        elementClass: Class<T>
-    ): Array<out T> {
-        val stub = greenStub
-        if (stub != null) {
-            val arrayFactory: ArrayFactory<T> = elementType.arrayFactory
-            return stub.getChildrenByType(elementType, arrayFactory)
-        }
-        return findChildrenByClass(elementClass)
-    }
-
 
     /**
      * Returns the import directive that introduces the given alias [name], or `null` if this file has no such alias.

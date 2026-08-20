@@ -272,8 +272,6 @@ org.jetbrains.kotlin.psi.KtCodeFragment.addImport(String)
 org.jetbrains.kotlin.psi.KtCodeFragment:constructor(Project, String, CharSequence, String?, IElementType, PsiElement?)
 org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:constructor(KotlinCollectionLiteralExpressionStub)
-org.jetbrains.kotlin.psi.KtCommonFile.findChildByTypeOrClass(KtStubElementType<out S, P>, Class<P>)
-org.jetbrains.kotlin.psi.KtCommonFile.findChildrenByTypeOrClass(KtStubElementType<*, T>, Class<T>)
 org.jetbrains.kotlin.psi.KtCommonFile.greenStub
 org.jetbrains.kotlin.psi.KtCommonFile.importLists
 org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(ASTNode)
