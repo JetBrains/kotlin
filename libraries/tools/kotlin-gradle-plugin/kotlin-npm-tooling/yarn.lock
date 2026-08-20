@@ -1542,11 +1542,6 @@ foreground-child@^3.1.0:
     cross-spawn "^7.0.6"
     signal-exit "^4.0.1"
 
-format-util@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/format-util/-/format-util-1.0.5.tgz#1ffb450c8a03e7bccffe40643180918cc297d271"
-  integrity sha512-varLbTj0e0yVyRpqQhuWV+8hlePAgaoFRhNFj50BNjEIrw1/DphHSObtqwskVCPWNgzwPoQrZAbfa/SBiicNeg==
-
 forwarded@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.2.0.tgz#2269936428aad4c15c7ebe9779a84bf0b2a81811"
@@ -2076,12 +2071,10 @@ kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kotlin-web-helpers@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-3.4.0.tgz#b72ed05f92dafe852735f63a53ba5c932ada68ca"
-  integrity sha512-i9Mojc5NTyzPT/YjvRlVSvQlqPMeGb0WgkX4otlQAJutlhnpIR2vBTIIvOqK20rWZEwNsyZxxZOQUFZR1NVUoQ==
-  dependencies:
-    format-util "^1.0.5"
+kotlin-web-helpers@^3.5.0:
+  version "3.5.0"
+  resolved "http://localhost:4873/kotlin-web-helpers/-/kotlin-web-helpers-3.5.0.tgz#640a041306e30cf6b3d4bb1d6334318205f3663d"
+  integrity sha512-dnmYkT7Iw3eIGRjd3CzUbtZM0LzSykZDd0uWhQbxWBi8GgqL+JoyA4T1z7y5nwX7jXunwxBvPPgsCeE18Uzw9Q==
 
 launch-editor@^2.14.1:
   version "2.14.1"
