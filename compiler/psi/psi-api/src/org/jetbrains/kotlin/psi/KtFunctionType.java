@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -72,9 +73,8 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     /** Returns the parenthesized list of the function type's parameters, or {@code null} if it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtParameterList getParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList.class);
     }
 
     /** Returns the function type's parameters, or an empty list if it takes no parameters. */

@@ -11,7 +11,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -51,7 +50,7 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
 
     @KtImplementationDetail
     public KtParameterList(@NotNull KotlinPlaceHolderStub<KtParameterList> stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
+        super(stub, KtNodeTypes.VALUE_PARAMETER_LIST);
     }
 
     @Override
