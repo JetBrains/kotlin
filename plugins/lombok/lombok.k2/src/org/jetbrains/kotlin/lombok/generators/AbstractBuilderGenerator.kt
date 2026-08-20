@@ -873,7 +873,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     SingularAddAllParameterType.Map -> JavaClasses.Map
                     SingularAddAllParameterType.Table -> JavaClasses.Table
                 }
-                DummyJavaClassType(baseType, typeArgumentRefs.map { (it as FirJavaTypeRef).type }, annotations).toRef(source = null)
+                // `? extends T` for every argument, mirroring the `Collection<? extends T>` Lombok itself
+                // generates: an invariant argument rejects a collection of a subtype with `JAVA_TYPE_MISMATCH`.
+                val wildcardArguments = typeArgumentRefs.map { DummyJavaExtendsWildcardType((it as FirJavaTypeRef).type) }
+                DummyJavaClassType(baseType, wildcardArguments, annotations).toRef(source = null)
             } else {
                 val baseType = when (collectionType) {
                     SingularAddAllParameterType.Iterable -> StandardClassIds.Iterable
