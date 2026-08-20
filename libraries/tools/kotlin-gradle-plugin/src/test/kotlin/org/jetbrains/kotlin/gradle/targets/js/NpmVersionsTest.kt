@@ -77,4 +77,14 @@ class NpmVersionsTest {
             }
         )
     }
+
+    @Test
+    fun `verify playwright and playwright-core versions are aligned`() {
+        val npmVersions = NpmVersions()
+        assertEquals(
+            npmVersions.playwright.version,
+            npmVersions.playwrightCore.version,
+            "Playwright and Playwright Core versions should be aligned"
+        )
+    }
 }
