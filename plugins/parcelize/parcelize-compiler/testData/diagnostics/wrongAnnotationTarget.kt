@@ -4,7 +4,7 @@ import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
 
 @Parcelize
-interface <!PARCELABLE_SHOULD_BE_CLASS!>Intf<!> : Parcelable
+interface <!PARCELABLE_CANT_BE_NON_SEALED_INTERFACE!>Intf<!> : Parcelable
 
 @Parcelize
 object <!NO_PARCELABLE_SUPERTYPE!>Obj<!>
@@ -22,4 +22,4 @@ enum class <!NO_PARCELABLE_SUPERTYPE!>Enum<!> {
 }
 
 @Parcelize
-annotation class <!ANNOTATION_CLASS_MEMBER, ANNOTATION_CLASS_MEMBER, PARCELABLE_SHOULD_BE_CLASS!>Anno<!>
+annotation class <!ANNOTATION_CLASS_MEMBER, ANNOTATION_CLASS_MEMBER, PARCELABLE_CANT_BE_ANNOTATION_CLASS!>Anno<!>

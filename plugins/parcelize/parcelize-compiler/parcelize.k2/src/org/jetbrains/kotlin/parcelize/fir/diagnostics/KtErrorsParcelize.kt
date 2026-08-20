@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 object KtErrorsParcelize : KtDiagnosticsContainer() {
-    val PARCELABLE_SHOULD_BE_CLASS by error0<PsiElement>(NAME_IDENTIFIER)
+    val PARCELABLE_CANT_BE_NON_SEALED_INTERFACE by error0<PsiElement>(NAME_IDENTIFIER)
+    val PARCELABLE_CANT_BE_ANNOTATION_CLASS by error0<PsiElement>(NAME_IDENTIFIER)
+    val PARCELABLE_CANT_BE_ANONYMOUS_OBJECT by error0<PsiElement>(NAME_IDENTIFIER)
     val PARCELABLE_DELEGATE_IS_NOT_ALLOWED by error0<PsiElement>(DELEGATED_SUPERTYPE_BY_KEYWORD)
     val PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS by error0<PsiElement>()
     val PARCELABLE_SHOULD_BE_INSTANTIABLE by error0<PsiElement>(ABSTRACT_MODIFIER)

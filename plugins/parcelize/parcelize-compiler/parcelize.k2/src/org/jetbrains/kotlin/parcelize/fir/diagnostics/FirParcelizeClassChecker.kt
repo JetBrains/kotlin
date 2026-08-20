@@ -44,28 +44,38 @@ class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) 
         val source = klass.source ?: return
         val classKind = klass.classKind
 
-        if (klass is FirRegularClass) {
-            if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.INTERFACE && !klass.isSealed) {
-                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
-                return
-            }
+        when (klass) {
+            is FirRegularClass -> {
+                if (classKind == ClassKind.ANNOTATION_CLASS) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_ANNOTATION_CLASS, context)
+                    return
+                }
 
-            klass.companionObjectSymbol?.let { companionSymbol ->
-                if (companionSymbol.classId.shortClassName == CREATOR_NAME) {
-                    reporter.reportOn(companionSymbol.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
+                if (classKind == ClassKind.INTERFACE && !klass.isSealed) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_NON_SEALED_INTERFACE, context)
+                    return
+                }
+
+                klass.companionObjectSymbol?.let { companionSymbol ->
+                    if (companionSymbol.classId.shortClassName == CREATOR_NAME) {
+                        reporter.reportOn(companionSymbol.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
+                    }
+                }
+
+                if (klass.isInner) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS, context)
+                }
+
+                if (klass.isLocal) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS, context)
                 }
             }
-
-            if (klass.isInner) {
-                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS, context)
+            is FirAnonymousObject -> {
+                if (classKind != ClassKind.ENUM_ENTRY) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_ANONYMOUS_OBJECT, context)
+                    return
+                }
             }
-
-            if (klass.isLocal) {
-                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS, context)
-            }
-        } else if (classKind != ClassKind.ENUM_ENTRY) {
-            reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
-            return
         }
 
         if (classKind == ClassKind.CLASS && klass.isAbstract) {
