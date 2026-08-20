@@ -39,11 +39,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             return@launchInStage
         }
 
-        if (target.isWasm) {
-            project.reportDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError())
-            return@launchInStage
-        }
-
         // TODO: KT-86706 Implement different browser runners as independent test runs
         //  so it is aligned with KGP API
         val testRun = browser.testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
