@@ -140,33 +140,33 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             insn.opcode = Opcodes.IFEQ + (insn.opcode - Opcodes.IF_ICMPEQ)
         }
     }
+}
 
-    private class IConstValue private constructor(val value: Int) : StrictBasicValue(Type.INT_TYPE) {
-        override fun equals(other: Any?): Boolean = other is IConstValue && other.value == this.value
-        override fun hashCode(): Int = value
-        override fun toString(): String = "IConst($value)"
+private class IConstValue private constructor(val value: Int) : StrictBasicValue(Type.INT_TYPE) {
+    override fun equals(other: Any?): Boolean = other is IConstValue && other.value == this.value
+    override fun hashCode(): Int = value
+    override fun toString(): String = "IConst($value)"
 
-        companion object {
-            private val ICONST_CACHE = Array(7) { IConstValue(it - 1) }
+    companion object {
+        private val ICONST_CACHE = Array(7) { IConstValue(it - 1) }
 
-            fun of(value: Int) =
-                if (value in -1..5)
-                    ICONST_CACHE[value + 1]
-                else
-                    IConstValue(value)
-        }
-    }
-
-    private class ConstantPropagationInterpreter : OptimizationBasicInterpreter() {
-        override fun newOperation(insn: AbstractInsnNode): BasicValue {
-            insn.intConstant?.let { return IConstValue.of(it) }
-            return super.newOperation(insn)
-        }
-
-        override fun merge(v: BasicValue, w: BasicValue): BasicValue =
-            if (v is IConstValue && w is IConstValue && v == w)
-                v
+        fun of(value: Int) =
+            if (value in -1..5)
+                ICONST_CACHE[value + 1]
             else
-                super.merge(v, w)
+                IConstValue(value)
     }
+}
+
+private class ConstantPropagationInterpreter : OptimizationBasicInterpreter() {
+    override fun newOperation(insn: AbstractInsnNode): BasicValue {
+        insn.intConstant?.let { return IConstValue.of(it) }
+        return super.newOperation(insn)
+    }
+
+    override fun merge(v: BasicValue, w: BasicValue): BasicValue =
+        if (v is IConstValue && w is IConstValue && v == w)
+            v
+        else
+            super.merge(v, w)
 }
