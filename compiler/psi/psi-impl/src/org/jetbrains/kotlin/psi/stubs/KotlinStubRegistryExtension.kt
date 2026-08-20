@@ -60,5 +60,10 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.DESTRUCTURING_DECLARATION,
             factory = KtDestructuringDeclarationStubSerializingElementFactory,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.TYPEALIAS,
+            factory = KtTypeAliasStubSerializingElementFactory,
+        )
     }
 }
