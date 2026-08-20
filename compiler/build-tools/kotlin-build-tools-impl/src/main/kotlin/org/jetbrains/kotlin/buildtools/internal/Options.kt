@@ -22,17 +22,17 @@ internal class Options(
 
     @UseFromImplModuleRestricted
     operator fun <V> set(key: BaseOption<V>, value: Any?) {
-        optionsMap[key.id] = value
+        optionsMap[key.storageId] = value
     }
 
     @UseFromImplModuleRestricted
     @Suppress("UNCHECKED_CAST")
-    operator fun <V> get(key: BaseOption<V>): V = get(key.id)
+    operator fun <V> get(key: BaseOption<V>): V = get(key.storageId)
 
-    operator fun <V> get(key: BaseOptionWithDefault<V>): V = get(key.id)
+    operator fun <V> get(key: BaseOptionWithDefault<V>): V = get(key.storageId)
 
     operator fun <V> set(key: BaseOptionWithDefault<V>, value: Any?) {
-        optionsMap[key.id] = value
+        optionsMap[key.storageId] = value
     }
 
     operator fun set(key: String, value: Any?) {
@@ -62,12 +62,28 @@ internal class Options(
 @RequiresOptIn("Don't use from -impl package, as we're not allowed to access API classes for backward compatibility reasons.")
 internal annotation class UseFromImplModuleRestricted
 
-@RequiresOptIn(
-    "This option replaces a deprecated option that is still honored, so it must not be read on its own: " +
-            "the effective value is `<replaced option> || <this option>`. " +
-            "See the `optionId` argument on the declaration for the option to combine it with."
+/**
+ * Ids of options that were renamed, mapped from the former id to the current one.
+ *
+ * Both names must address the same value: a caller built against an older API sets the former id, while the
+ * implementation reads the current one. Normalizing the id on access keeps the two in sync, so that read sites
+ * can consult the current option alone.
+ *
+ * The counterpart for the opposite direction - a current caller against an older implementation - is
+ * `toPre2_5_0Option` in `KotlinWrapperPre2_5_0`.
+ */
+private val renamedOptionIds: Map<String, String> = mapOf(
+    // renamed in 2.5.0
+    "UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM" to "ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES",
 )
-internal annotation class RequiresLegacyOptionFallback(val optionId: String)
+
+/**
+ * The id under which this option's value is stored, which differs from [BaseOption.id] for a renamed option.
+ *
+ * @see renamedOptionIds
+ */
+private val BaseOption<*>.storageId: String
+    get() = renamedOptionIds[id] ?: id
 
 internal fun initializeOptions(klazz: KClass<*>, options: Options) {
     // Use Java reflection to avoid triggering Kotlin reflection hierarchy resolution,

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
@@ -166,8 +165,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @OptIn(RequiresLegacyOptionFallback::class)
     private fun makeConfigurationInputs(
         icConfiguration: JsHistoryBasedIncrementalCompilationConfigurationImpl,
     ): ConfigurationInputs? {
@@ -179,8 +176,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
                     "rootProjectDir" to "${icConfiguration[ROOT_PROJECT_DIR]}",
                     "moduleBuildDir" to "${icConfiguration[MODULE_BUILD_DIR]}",
                     "outputDirs" to "${icConfiguration[OUTPUT_DIRS]}",
-                    "incrementalCompilationOfCommonSources" to "${icConfiguration[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
-                            icConfiguration[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES]}",
+                    "incrementalCompilationOfCommonSources" to "${icConfiguration[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES]}",
                     "monotonousIncrementalCompileSetExpansion" to "${icConfiguration[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]}",
                     "kotlinVersion" to compilerVersion,
                 ),
@@ -286,16 +282,13 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
 
-    @Suppress("DEPRECATION_ERROR")
-    @OptIn(RequiresLegacyOptionFallback::class)
     private fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false,
             withAbiSnapshot = false,
             preciseCompilationResultsBackup = this[BACKUP_CLASSES],
             keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
-            enableIncrementalCompilationOfCommonSources = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
-                    this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
+            enableIncrementalCompilationOfCommonSources = this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
             enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
         )
     }

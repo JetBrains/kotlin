@@ -67,5 +67,13 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
             Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
 
         val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
+
+        @Deprecated(
+            "This option has no effect. Use `ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES` instead. This option will be removed in 2.6.0.",
+            ReplaceWith("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES"),
+            level = DeprecationLevel.ERROR,
+        )
+        val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
+            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
     }
 }

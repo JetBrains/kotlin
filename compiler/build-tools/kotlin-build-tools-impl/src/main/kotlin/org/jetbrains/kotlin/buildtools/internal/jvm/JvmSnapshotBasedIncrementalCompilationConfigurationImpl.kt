@@ -136,7 +136,6 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
         val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
             Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
 
-        @RequiresLegacyOptionFallback(optionId = "UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
         val ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES: Option<Boolean> =
             Option("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES", false)
 

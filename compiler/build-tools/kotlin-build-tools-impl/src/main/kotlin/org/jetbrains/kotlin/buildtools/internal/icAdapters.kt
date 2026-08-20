@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
@@ -51,8 +50,6 @@ internal val AggregatedIcConfiguration<org.jetbrains.kotlin.buildtools.api.jvm.C
         }
     }
 
-@Suppress("DEPRECATION_ERROR")
-@OptIn(RequiresLegacyOptionFallback::class)
 internal fun HasSnapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     val options = this
     return IncrementalCompilationFeatures(
@@ -60,22 +57,18 @@ internal fun HasSnapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeat
         withAbiSnapshot = false,
         preciseCompilationResultsBackup = options[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
-        enableIncrementalCompilationOfCommonSources = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
-                options[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
+        enableIncrementalCompilationOfCommonSources = options[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
         enableMonotonousIncrementalCompileSetExpansion = options[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }
 
-@Suppress("DEPRECATION_ERROR")
-@OptIn(RequiresLegacyOptionFallback::class)
 internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = false,
         withAbiSnapshot = false,
         preciseCompilationResultsBackup = this[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
-        enableIncrementalCompilationOfCommonSources = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
-                this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
+        enableIncrementalCompilationOfCommonSources = this[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES],
         enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }

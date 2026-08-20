@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
@@ -312,8 +311,6 @@ internal class JvmCompilationOperationImpl private constructor(
         return arguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = icConfiguration[PRECISE_JAVA_TRACKING])
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @OptIn(RequiresLegacyOptionFallback::class)
     private fun makeConfigurationInputs(
         icConfiguration: HasSnapshotBasedIcOptionsAccessor,
         verifiedPreciseJavaTracking: Boolean,
@@ -325,8 +322,7 @@ internal class JvmCompilationOperationImpl private constructor(
                     "moduleBuildDir" to "${icConfiguration[MODULE_BUILD_DIR]}",
                     "outputDirs" to "${icConfiguration[OUTPUT_DIRS]}",
                     "useFirRunner" to "${icConfiguration[USE_FIR_RUNNER]}",
-                    "incrementalCompilationOfCommonSources" to "${icConfiguration[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] ||
-                            icConfiguration[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES]}",
+                    "incrementalCompilationOfCommonSources" to "${icConfiguration[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES]}",
                     "monotonousIncrementalCompileSetExpansion" to "${icConfiguration[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]}",
                     "usePreciseJavaTracking" to "$verifiedPreciseJavaTracking",
                     "kotlinSourceFileExtensions" to getKotlinFilenameExtensions().sorted().joinToString(","),
