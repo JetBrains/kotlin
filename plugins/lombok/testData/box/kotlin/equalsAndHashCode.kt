@@ -9,10 +9,10 @@ class Simple(val name: String, val age: Int) {
 @EqualsAndHashCode
 class WithExclude(val a: String, @EqualsAndHashCode.Exclude val b: String)
 
-@EqualsAndHashCode(exclude = ["b"])
+@EqualsAndHashCode(exclude = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>["b"]<!>)
 class WithExcludeAttr(val a: String, val b: String)
 
-@EqualsAndHashCode(of = ["a"])
+@EqualsAndHashCode(of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>["a"]<!>)
 class WithOf(val a: String, val b: String)
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -31,10 +31,10 @@ data class PlainDataClass(val a: String, val b: Int)
 
 // Nothing is generated for an object either: it is a single instance, so the identity comparison it already has
 // is exactly what a generated `equals` would amount to, KT-88507.
-@EqualsAndHashCode
+<!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
 object SingletonObject
 
-@EqualsAndHashCode
+<!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
 object ObjectWithProperties {
     val version = "2.0"
     val label = "release"
@@ -59,7 +59,7 @@ class WithComputedProperties(val real: String) {
 
 // Nothing is generated: `java.lang.Enum` declares `equals`/`hashCode` final, so a generated one used to fail
 // verification and the class didn't even load, KT-88507. `ANNOTATION_HAS_NO_EFFECT` is reported instead.
-@EqualsAndHashCode
+<!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
 enum class Color(val hex: String) {
     RED("#FF0000"),
     GREEN("#00FF00")
