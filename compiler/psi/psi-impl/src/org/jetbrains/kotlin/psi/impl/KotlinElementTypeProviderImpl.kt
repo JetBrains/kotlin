@@ -279,7 +279,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     // Special
 
-    override val packageDirectiveType: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective>
+    override val packageDirectiveType: KtNodeType
         get() = KtStubElementTypes.PACKAGE_DIRECTIVE
 
     override val fileAnnotationListType: KtNodeType

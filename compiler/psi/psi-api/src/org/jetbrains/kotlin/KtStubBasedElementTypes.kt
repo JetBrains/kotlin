@@ -330,8 +330,7 @@ internal object KtStubBasedElementTypes {
     // Special
 
     @JvmField
-    val PACKAGE_DIRECTIVE: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective> =
-        provider.packageDirectiveType
+    val PACKAGE_DIRECTIVE: KtNodeType = provider.packageDirectiveType
 
     @JvmField
     val FILE_ANNOTATION_LIST: KtNodeType = provider.fileAnnotationListType
