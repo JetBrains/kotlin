@@ -67,7 +67,7 @@ kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-clas
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
 intellij-java-psi-impl = { module = "com.jetbrains.intellij.java:java-psi-impl", version.ref = "intellij-platform" }
 # The `*-syntax` artifacts come in transitively via `java-psi(-impl)`, but they must also be declared
-# explicitly to win over the stripped copies bundled in `kotlin-compiler`, see plugin-base
+# explicitly to win over the stripped copies bundled in `kotlin-compiler`
 intellij-java-syntax = { module = "com.jetbrains.intellij.java:java-syntax", version.ref = "intellij-platform" }
 intellij-platform-syntax = { module = "com.jetbrains.intellij.platform:syntax", version.ref = "intellij-platform" }
 intellij-platform-syntax-util = { module = "com.jetbrains.intellij.platform:syntax-util", version.ref = "intellij-platform" }
@@ -84,7 +84,6 @@ jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrai
 
 #### Jackson ####
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 
 #### Test dependencies  ####
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
