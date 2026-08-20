@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsWriteOutputsPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmMultiModuleBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmRegularBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
@@ -46,7 +47,8 @@ abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
 class JsCliPipeline(defaultPerformanceManager: PerformanceManager) : WebCliPipeline<K2JSCompilerArguments>(defaultPerformanceManager) {
     override fun createCodeGenerationPhase(arguments: K2JSCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JSCompilerArguments>, *> {
         return JsConfigurationPhase then
-                JsBackendPipelinePhase
+                JsBackendPipelinePhase then
+                JsWriteOutputsPipelinePhase
     }
 
     override val webConfigurationPhase = JsConfigurationPhase

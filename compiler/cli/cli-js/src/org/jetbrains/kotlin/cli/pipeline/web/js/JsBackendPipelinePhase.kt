@@ -37,9 +37,6 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<
         val loweredIr = JsIrLoweringPipelinePhase.executePhaseIsolatedWithActions(loadedIrArtifact) ?: return null
         val output = JsCodegenPipelinePhase.executePhaseIsolatedWithActions(loweredIr) ?: return null
         loadedIrArtifact.configuration.reportLog("Executable production duration: ${System.currentTimeMillis() - start}ms")
-        for (outputs in output.result.values) {
-            outputs.writeAll()
-        }
         return output
     }
 
