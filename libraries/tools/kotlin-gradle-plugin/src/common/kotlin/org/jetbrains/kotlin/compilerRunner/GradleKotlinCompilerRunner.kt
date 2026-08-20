@@ -42,7 +42,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinCompilerRefIndexMetrics
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.IsolatedKotlinClasspathClassCastException
+import org.jetbrains.kotlin.gradle.utils.javaSourceSetsIfAvailable
+import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
@@ -310,6 +312,7 @@ internal open class GradleCompilerRunner(
         @Volatile
         private var cachedModulesInfo: IncrementalModuleInfo? = null
 
+        // Note: this function is not compatible with Isolated Projects KT-80262
         @Synchronized
         internal fun buildModulesInfo(gradle: Gradle): IncrementalModuleInfo {
             if (cachedGradle.get() === gradle && cachedModulesInfo != null) return cachedModulesInfo!!

@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
@@ -181,8 +183,8 @@ internal constructor(
         return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
             it.versions.value(
                 compilation.webTargetVariant(
-                    { project.rootProject.kotlinNodeJsRootExtension.versions },
-                    { project.rootProject.wasmKotlinNodeJsRootExtension.versions },
+                    { project.jsToolingProject().kotlinNodeJsRootExtension.versions },
+                    { project.jsToolingProject().wasmKotlinNodeJsRootExtension.versions },
                 )
             ).disallowChanges()
             it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
@@ -226,7 +228,7 @@ internal constructor(
             commonLazy
         } else {
             WasmNodeJsPlugin.apply(project)
-            WasmNodeJsRootPlugin.apply(project.rootProject)
+            WasmNodeJsRootPlugin.apply(project.jsToolingProject())
         }
 
         addSubTarget(KotlinNodeJsIr::class.java) {
@@ -248,8 +250,8 @@ internal constructor(
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
         webTargetVariant(
-            { NodeJsRootPlugin.apply(project.rootProject) },
-            { WasmNodeJsRootPlugin.apply(project.rootProject) },
+            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
+            { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
         )
 
         addSubTarget(KotlinD8Ir::class.java) {
@@ -379,33 +381,52 @@ internal constructor(
     internal companion object {
         private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
 
+        /** Check whether [Project.getIsolated] is available. */
+        private val isIsolatedProjectAvailable: Boolean
+            get() = GradleVersion.current() >= GradleVersion.version("8.8")
+
+        /** Check if this [Project] is the root project (in an isolated-project-friendly way, if possible). */
+        private fun Project.isRootProject(): Boolean =
+            if (isIsolatedProjectAvailable) {
+                isolated == isolated.rootProject
+            } else {
+                this == rootProject
+            }
+
+        /** Get the root project name (in an isolated-project-friendly way, if possible). */
+        private fun Project.rootProjectName(): String =
+            if (isIsolatedProjectAvailable) {
+                isolated.rootProject.name
+            } else {
+                rootProject.name
+            }
+
         internal fun buildNpmProjectName(
             project: Project,
             targetName: String,
             defaultTargetName: String,
         ): String {
-            val rootProjectName = project.rootProject.name
+            return buildString {
+                if (project.isRootProject()) {
+                    append(project.rootProjectName())
+                } else {
+                    append(project.rootProjectName().replace(":", "-"))
+                    append(project.path.replace(":", "-"))
+                }
 
-            val localName = if (project != project.rootProject) {
-                (rootProjectName + project.path).replace(":", "-")
-            } else rootProjectName
-
-            val targetPartName = if (targetName.isNotEmpty() && targetName != defaultTargetName) {
-                targetName
-                    .replace(DECAMELIZE_REGEX) {
-                        it.groupValues
-                            .drop(1)
-                            .joinToString(prefix = "-", separator = "-")
-                    }
-                    .toLowerCaseAsciiOnly()
-            } else null
-
-            return sequenceOf(
-                localName,
-                targetPartName
-            )
-                .filterNotNull()
-                .joinToString("-")
+                if (targetName.isNotEmpty() && targetName != defaultTargetName) {
+                    append("-")
+                    append(
+                        targetName
+                            .replace(DECAMELIZE_REGEX) {
+                                it.groupValues
+                                    .drop(1)
+                                    .joinToString(prefix = "-", separator = "-")
+                            }
+                            .toLowerCaseAsciiOnly()
+                    )
+                }
+            }
         }
     }
 }

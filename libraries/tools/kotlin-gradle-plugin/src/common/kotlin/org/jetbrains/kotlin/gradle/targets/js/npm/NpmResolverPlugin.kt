@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.CommonNpmResolverPlugin
@@ -25,7 +26,7 @@ class NpmResolverPlugin : CommonNpmResolverPlugin {
 
     override fun apply(project: Project) {
         val applier = NpmResolverPluginApplier(
-            { NodeJsRootPlugin.apply(project.rootProject) },
+            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
             { NodeJsPlugin.apply(project) },
             { it.compilation.wasmTarget == null },
         )
