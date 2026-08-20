@@ -317,6 +317,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY,
             psiFactory = ::KtSuperTypeCallEntry,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.SUPER_TYPE_ENTRY,
+            psiFactory = ::KtSuperTypeEntry,
+        )
     }
 }
 

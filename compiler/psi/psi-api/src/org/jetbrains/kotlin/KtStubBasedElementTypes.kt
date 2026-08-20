@@ -127,8 +127,7 @@ internal object KtStubBasedElementTypes {
     val SUPER_TYPE_CALL_ENTRY: KtNodeType = provider.superTypeCallEntryType
 
     @JvmField
-    val SUPER_TYPE_ENTRY: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry> =
-        provider.superTypeEntryType
+    val SUPER_TYPE_ENTRY: KtNodeType = provider.superTypeEntryType
 
 
     // Modifiers and annotations

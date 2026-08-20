@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -27,7 +27,7 @@ public class KtSuperTypeEntry extends KtSuperTypeListEntry {
 
     @KtImplementationDetail
     public KtSuperTypeEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
-        super(stub, KtStubBasedElementTypes.SUPER_TYPE_ENTRY);
+        super(stub, KtNodeTypes.SUPER_TYPE_ENTRY);
     }
 
     @Override
