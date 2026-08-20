@@ -42,6 +42,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.to
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -229,17 +230,24 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         }
         project.evaluate()
 
-        // Browsers declared by either target get an installation task, and each task installs only its own browser
-        mapOf(
-            PwBrowserKind.CHROMIUM to setOf("chromium"),
-            PwBrowserKind.FIREFOX to setOf("firefox"),
-            PwBrowserKind.WEBKIT to setOf("webkit"),
-        ).forEach { (browserKind, expectedBrowsers) ->
-            val installTask = assertIs<PlaywrightBrowserInstall>(
-                project.tasks.getByName(browserKind.getPwInstallBrowserTaskName())
-            )
-            assertEquals(expectedBrowsers, installTask.browsers.get())
-        }
+        val browserInstallTasks = project.tasks
+            .filterIsInstance<PlaywrightBrowserInstall>()
+            .associate { it.name to it.browsers.get().toSet() }
+
+        assertEquals(
+            mapOf(
+                "kotlinInstallPlaywrightChromium" to setOf(
+                    "chromium",
+                ),
+                "kotlinInstallPlaywrightFirefox" to setOf(
+                    "firefox",
+                ),
+                "kotlinInstallPlaywrightWebkit" to setOf(
+                    "webkit",
+                ),
+            ).prettyPrinted,
+            browserInstallTasks.prettyPrinted,
+        )
     }
 
     @Test
