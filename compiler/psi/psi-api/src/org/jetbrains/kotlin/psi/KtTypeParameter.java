@@ -12,6 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.types.Variance;
  * }</pre>
  */
 public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterStub> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtTypeParameter[] EMPTY_ARRAY = new KtTypeParameter[0];
 
     @KtImplementationDetail
     public KtTypeParameter(@NotNull ASTNode node) {
@@ -35,7 +38,7 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
 
     @KtImplementationDetail
     public KtTypeParameter(@NotNull KotlinTypeParameterStub stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_PARAMETER);
+        super(stub, KtNodeTypes.TYPE_PARAMETER);
     }
 
     @Override
