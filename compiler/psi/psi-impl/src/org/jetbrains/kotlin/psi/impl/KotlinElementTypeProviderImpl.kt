@@ -122,7 +122,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val superTypeListType: KtNodeType
         get() = KtStubElementTypes.SUPER_TYPE_LIST
 
-    override val delegatedSuperTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry>
+    override val delegatedSuperTypeEntryType: KtNodeType
         get() = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY
 
     override val superTypeCallEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry>
