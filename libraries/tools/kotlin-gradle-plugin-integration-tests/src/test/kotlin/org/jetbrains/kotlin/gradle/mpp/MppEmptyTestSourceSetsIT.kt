@@ -34,4 +34,32 @@ class MppEmptyTestSourceSetsIT : KGPBaseTest() {
             }
         }
     }
+
+    // In Gradle 9.0+, executing a test task fails by default when test compilation outputs exist but 0 tests are discovered.
+    // Older Gradle versions succeeded silently.
+    @DisplayName("Sources in jvmTest without test cases fail on Gradle 9.0+")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_0)
+    @GradleTest
+    fun testSourcesWithoutTests(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+            }
+            kotlinSourcesDir("jvmTest").source("NotATest.kt") {
+                """
+                package org.example.project
+
+                class NotATest {
+                    fun helper(): String = "helper"
+                }
+                """.trimIndent()
+            }
+
+            buildAndFail(":jvmTest") {
+                assertTasksExecuted(":compileTestKotlinJvm")
+                assertTasksFailed(":jvmTest")
+                assertNoTestResultsProduced("jvmTest")
+            }
+        }
+    }
 }

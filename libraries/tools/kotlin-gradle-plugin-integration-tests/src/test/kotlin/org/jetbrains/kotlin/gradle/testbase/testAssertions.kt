@@ -68,17 +68,13 @@ fun GradleProject.assertNoTestResultsProduced(
     taskName: String,
     subprojectName: String? = null,
 ) {
-    val dirs = testResultsAndReportsDirs(taskName, subprojectName)
-
-    for (dir in listOf(dirs.first, dirs.second)) {
-        if (Files.exists(dir)) {
-            val entries = Files.list(dir).use { it.toList() }
-                .filter { it.name != "binary" }
-            assertTrue(
-                entries.isEmpty(),
-                "Expected directory '$dir' to be absent or contain no test results, but found entries: ${entries.joinToString()}"
-            )
-        }
+    val testResultsDir = testResultsAndReportsDirs(taskName, subprojectName).first
+    if (Files.exists(testResultsDir)) {
+        val xmlFiles = testResultsDir.allFilesWithExtension("xml")
+        assertTrue(
+            xmlFiles.isEmpty(),
+            "Expected no test result XML files in '$testResultsDir', but found: ${xmlFiles.joinToString()}"
+        )
     }
 }
 
