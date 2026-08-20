@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
@@ -26,14 +25,7 @@ object WasmBinaryGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
         return cacheGuard.tryAcquireAndRelease {
             val results = backendIr.map { result ->
                 val linkedModule = linkWasmIr(result)
-                val compileResult = compileWasmIrToBinary(result, linkedModule)
-                writeCompilationResult(
-                    result = compileResult,
-                    dir = outputDir,
-                    fileNameBase = result.baseFileName,
-                    configuration = configuration,
-                )
-                compileResult
+                compileWasmIrToBinary(result, linkedModule)
             }
             WasmBackendPipelineArtifact(results, outputDir, configuration)
         }

@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.wasm.test.converters
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.web.WasmIntermediatePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmMultiModuleBackendIrGenerationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmWholeWorldBackendIrGenerationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
@@ -118,14 +116,14 @@ class WasmLoweringFacade(
         }
 
         configuration.dce = false
-        val parameters = backendIrGenerationPhase.executePhaseIsolatedWithActions(loweredIr)?.backendIr
+        val intermediateArtifact = backendIrGenerationPhase.executePhaseIsolatedWithActions(loweredIr)
             ?: return processErrorFromCliPhase(configuration, testServices)
-        val compilationSet = makeCompilationSet(parameters)
+        val compilationSet = makeCompilationSet(intermediateArtifact)
 
         configuration.dce = true
-        val dceParameters = backendIrGenerationPhase.executePhaseIsolatedWithActions(loweredIr)?.backendIr
+        val dceIntermediateArtifact = backendIrGenerationPhase.executePhaseIsolatedWithActions(loweredIr)
             ?: return processErrorFromCliPhase(configuration, testServices)
-        val dceCompilationSet = makeCompilationSet(dceParameters)
+        val dceCompilationSet = makeCompilationSet(dceIntermediateArtifact)
 
         val runOptimiser = WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives
         val optimised = runIf(runOptimiser) {
@@ -149,12 +147,8 @@ class WasmLoweringFacade(
         )
     }
 
-    fun makeCompilationSet(parameters: List<WasmIrModuleConfiguration>): WasmCompilationSet {
-        val compilationSets = parameters.map { current ->
-            val linkedModule = linkWasmIr(current)
-            val compilerResult = compileWasmIrToBinary(current, linkedModule)
-            WasmCompilationSet(compilerResult)
-        }
+    fun makeCompilationSet(intermediateArtifact: WasmIntermediatePipelineArtifact): WasmCompilationSet {
+        val compilationSets = WasmBinaryGenerationPipelinePhase.executePhase(intermediateArtifact).result.map(::WasmCompilationSet)
 
         val main = compilationSets.last()
         val dependencies = compilationSets.dropLast(1)

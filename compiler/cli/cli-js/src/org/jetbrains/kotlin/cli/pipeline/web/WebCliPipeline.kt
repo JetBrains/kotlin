@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmMultiModuleBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmRegularBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmWriteOutputsPipelinePhase
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -60,7 +61,8 @@ class WasmCliPipeline(defaultPerformanceManager: PerformanceManager) :
             else -> WasmRegularBackendPipelinePhase
         }
         return WasmConfigurationPhase then
-                backendPhase
+                backendPhase then
+                WasmWriteOutputsPipelinePhase
     }
 
     override val webConfigurationPhase = WasmConfigurationPhase

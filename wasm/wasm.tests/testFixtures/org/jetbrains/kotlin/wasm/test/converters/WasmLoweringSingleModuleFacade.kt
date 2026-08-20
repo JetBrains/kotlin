@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBinaryGenerationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendIrGenerationPipelinePhase
@@ -86,10 +85,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
         val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
         val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!
-        val compiledIr = WasmSingleModuleBackendIrGenerationPipelinePhase.executePhaseIsolatedWithActions(loweredIr)!!.backendIr.single()
-
-        val linkedModule = linkWasmIr(compiledIr)
-        val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
+        val intermediateArtifact = WasmSingleModuleBackendIrGenerationPipelinePhase.executePhaseIsolatedWithActions(loweredIr)!!
+        val compileResult = WasmBinaryGenerationPipelinePhase.executePhaseIsolatedWithActions(intermediateArtifact)!!.result.single()
 
         return WasmCompilationSetsBinaryArtifact(
             WasmCompilationSet(compileResult)
