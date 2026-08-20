@@ -253,6 +253,18 @@ public class LLReversedSerializationBlackBoxTestGenerated extends AbstractLLReve
     }
 
     @Test
+    @TestMetadata("kt88571.kt")
+    public void testKt88571() {
+      run("kt88571.kt");
+    }
+
+    @Test
+    @TestMetadata("kt88571SerializerFunction.kt")
+    public void testKt88571SerializerFunction() {
+      run("kt88571SerializerFunction.kt");
+    }
+
+    @Test
     @TestMetadata("localSerializable.kt")
     public void testLocalSerializable() {
       run("localSerializable.kt");
