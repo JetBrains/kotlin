@@ -1,6 +1,7 @@
 @_implementationOnly import KotlinBridges_MapExport
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public protocol Bar: KotlinRuntime.KotlinBase, MapExport._Bar {
 }
@@ -8,6 +9,9 @@ public protocol Bar: KotlinRuntime.KotlinBase, MapExport._Bar {
 public protocol _Bar {
 }
 public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableMap {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableMap.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableMap
 }
 public func testMapAnyLong(
     m: [Swift.AnyHashable: Swift.Int64]
