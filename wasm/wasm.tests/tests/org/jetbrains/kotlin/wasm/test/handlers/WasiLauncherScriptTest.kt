@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.TestInfrastructureException
+import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -35,6 +36,63 @@ class WasiLauncherScriptTest {
 
         assertTrue("jsModule.startUnitTests();" in script, script)
         assertFalse("startTest" in script, script)
+    }
+
+    @Test
+    fun `given a driverless unit-test run on a standalone VM then the run is rejected`() {
+        // Those VMs invoke the bare `startTest` export, which without a driver is `wasiBoxTestRun.kt`'s `box()`
+        // helper: the unit tests would not run at all and the batch would still be green.
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            checkUnitTestRunnerSupport(
+                hasGroupedTestsDriver = false,
+                runUnitTests = true,
+                vmsToCheck = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime),
+            )
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue(WasmVM.WasmEdge.vmName in message, message)
+        assertTrue(WasmVM.Wasmtime.vmName in message, message)
+        assertFalse(WasmVM.NodeJs.vmName in message, message)
+    }
+
+    @Test
+    fun `given a driver or a JS-entry-point VM then the unit-test run is accepted`() {
+        // With the driver linked in, `startTest` is the driver itself; Node.js goes through `test.mjs` either way.
+        assertDoesNotThrow {
+            checkUnitTestRunnerSupport(
+                hasGroupedTestsDriver = true,
+                runUnitTests = true,
+                vmsToCheck = listOf(WasmVM.WasmEdge, WasmVM.Wasmtime),
+            )
+        }
+        assertDoesNotThrow {
+            checkUnitTestRunnerSupport(
+                hasGroupedTestsDriver = false,
+                runUnitTests = true,
+                vmsToCheck = listOf(WasmVM.NodeJs),
+            )
+        }
+        assertDoesNotThrow {
+            checkUnitTestRunnerSupport(
+                hasGroupedTestsDriver = false,
+                runUnitTests = false,
+                vmsToCheck = listOf(WasmVM.WasmEdge),
+            )
+        }
+    }
+
+    @Test
+    fun `given an explicit unit-test-only invocation on a standalone VM then it is rejected`() {
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            checkUnitTestRunnerSupport(
+                hasGroupedTestsDriver = false,
+                runUnitTests = true,
+                vmsToCheck = listOf(WasmVM.Wasmtime),
+            )
+        }
+
+        assertTrue("unit-test runner" in error.message.orEmpty(), error.message.orEmpty())
     }
 
     @Test
