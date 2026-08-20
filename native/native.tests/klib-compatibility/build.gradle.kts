@@ -96,6 +96,7 @@ fun Project.customCompilerTest(
         taskName,
         allowParallelExecution = true,
         requirePlatformLibs = false,
+        maxHeapSize = testMaxHeapSizeHuge
     ) {
         val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
