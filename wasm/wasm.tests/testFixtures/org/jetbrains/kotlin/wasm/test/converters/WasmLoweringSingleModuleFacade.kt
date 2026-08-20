@@ -90,7 +90,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
 
         return WasmCompilationSetsBinaryArtifact(
-            WasmCompilationSet(linkedModule, compileResult)
+            WasmCompilationSet(compileResult)
         )
     }
 }
