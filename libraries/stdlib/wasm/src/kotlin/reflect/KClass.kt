@@ -13,7 +13,7 @@ package kotlin.reflect
  *
  * @param T the type of the class.
  */
-public actual interface KClass<T : Any> : KClassifier {
+public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KClassifier {
     /**
      * The simple name of the class as it was declared in the source code,
      * or `null` if the class has no name (if, for example, it is a class of an anonymous object).
