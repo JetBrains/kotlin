@@ -42,7 +42,7 @@ interface KotlinElementTypeProvider {
     val classBodyType: KtNodeType
 
     @KtExperimentalApi
-    val companionBlockType: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock>
+    val companionBlockType: KtNodeType
 
     // Initializers
     val classInitializerType: KtNodeType

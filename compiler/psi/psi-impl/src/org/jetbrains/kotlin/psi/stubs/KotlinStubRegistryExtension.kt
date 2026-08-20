@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.stubs.factories.*
  * element types themselves.
  */
 internal class KotlinStubRegistryExtension : StubRegistryExtension {
-    @OptIn(KtImplementationDetail::class)
+    @OptIn(KtImplementationDetail::class, KtExperimentalApi::class)
     override fun register(registry: StubRegistry) {
         registry.registerStubSerializer(KtFileElementType, KtFileStubSerializer)
 
@@ -126,6 +126,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
         registry.registerPlaceHolderFactory(
             type = KtStubElementTypes.CLASS_BODY,
             psiFactory = ::KtClassBody,
+        )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.COMPANION_BLOCK,
+            psiFactory = ::KtCompanionBlock,
         )
     }
 }
