@@ -272,45 +272,11 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     final override fun resolveToCall(element: KtElement): KaCallInfo? = element.withPsiValidityAssertion {
         when (val attempt = element.tryResolveCallImpl()) {
             is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
-            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.kaCall)
+            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.call.asKaCall())
             is KaMultiCallResolutionAttempt -> attempt.toCallInfo()
             null -> null
         }
     }
-
-    /**
-     * Returns the legacy [KaCall] view of [this] [KaSingleOrMultiCall]. Most resolution result types
-     * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
-     * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
-     * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
-     * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
-     */
-    protected fun KaSingleOrMultiCall.asKaCall(): KaCall = when (this) {
-        is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()
-        else -> this as KaCall
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
-        val partiallyAppliedSymbol = backingPartiallyAppliedSymbol
-        return when (partiallyAppliedSymbol.symbol) {
-            is KaFunctionSymbol -> KaBaseSimpleFunctionCall(
-                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-                backingArgumentMapping = emptyMap(),
-                backingTypeArgumentsMapping = typeArgumentsMapping,
-            )
-
-            is KaVariableSymbol -> KaBaseSimpleVariableAccessCall(
-                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-                backingTypeArgumentsMapping = typeArgumentsMapping,
-                backingKind = KaBaseVariableReadAccess,
-                backingIsContextSensitive = false,
-            )
-        }
-    }
-
-    protected inline val KaCallResolutionSuccess.kaCall: KaCall
-        get() = call.asKaCall()
 
     private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidate> {
         val unwrappedElement = unwrapResolvableCall()
@@ -483,7 +449,7 @@ internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
 }
 
 internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
-    val call = candidate as KaCall
+    val call = candidate.asKaCall()
     return when (this) {
         is KaApplicableCallCandidate -> KaBaseApplicableCallCandidateInfo(
             backingCandidate = call,
@@ -494,6 +460,37 @@ internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
             backingCandidate = call,
             isInBestCandidates = isInBestCandidates,
             diagnostic = diagnostic,
+        )
+    }
+}
+
+/**
+ * Returns the legacy [KaCall] view of [this] [KaSingleOrMultiCall]. Most resolution result types
+ * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
+ * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
+ * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
+ * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
+ */
+private fun KaSingleOrMultiCall.asKaCall(): KaCall = when (this) {
+    is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()
+    else -> this as KaCall
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
+    val partiallyAppliedSymbol = backingPartiallyAppliedSymbol
+    return when (partiallyAppliedSymbol.symbol) {
+        is KaFunctionSymbol -> KaBaseSimpleFunctionCall(
+            backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+            backingArgumentMapping = emptyMap(),
+            backingTypeArgumentsMapping = typeArgumentsMapping,
+        )
+
+        is KaVariableSymbol -> KaBaseSimpleVariableAccessCall(
+            backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
+            backingTypeArgumentsMapping = typeArgumentsMapping,
+            backingKind = KaBaseVariableReadAccess,
+            backingIsContextSensitive = false,
         )
     }
 }

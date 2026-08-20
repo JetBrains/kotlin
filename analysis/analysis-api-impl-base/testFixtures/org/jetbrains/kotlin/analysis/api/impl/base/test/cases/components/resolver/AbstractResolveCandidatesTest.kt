@@ -27,6 +27,10 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         val candidatesAgain = collectCallCandidates(mainElement)
         val callAttempt = (mainElement as? KtResolvableCall)?.tryResolveCall()
 
+        if (mainElement is KtResolvableCall) {
+            checkConsistencyWithObsoleteApi(mainElement, candidates.asKaCallCandidates(), testServices)
+        }
+
         ignoreStabilityIfNeeded {
             assertStableSymbolResult(testServices, candidates.asKaCallCandidates(), candidatesAgain.asKaCallCandidates())
             checkConsistencyWithResolveCall(callAttempt, candidates.asKaCallCandidates(), testServices)
@@ -67,6 +71,34 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
                         "candidates: $candidateSymbols"
             }
         }
+    }
+
+    /**
+     * [org.jetbrains.kotlin.analysis.api.components.KaResolver.resolveToCallCandidates] is the obsolete counterpart of
+     * [KtResolvableCall.collectCallCandidates]. It has to report the same candidates, and it must not fail on calls which have
+     * no legacy [KaCall] counterpart, such as callable references (KT-88489).
+     */
+    context(_: KaSession)
+    private fun checkConsistencyWithObsoleteApi(
+        element: KtElement,
+        candidates: List<KaCallCandidate>,
+        testServices: TestServices,
+    ) {
+        val obsoleteCandidates = element.resolveToCallCandidates().asKaCallCandidates()
+        testServices.assertions.assertEquals(candidates.renderForComparison(), obsoleteCandidates.renderForComparison()) {
+            "Inconsistency between 'collectCallCandidates' and the obsolete 'resolveToCallCandidates'"
+        }
+    }
+
+    /**
+     * Renders only the properties which survive the conversion to the obsolete API, as the obsolete API represents
+     * some calls differently (e.g., a callable reference is exposed as a simple function or variable access call).
+     */
+    context(_: KaSession)
+    private fun List<KaCallCandidate>.renderForComparison(): String = joinToString(separator = "\n\n") { candidate ->
+        val applicability = if (candidate is KaApplicableCallCandidate) "APPLICABLE" else "INAPPLICABLE"
+        "$applicability(isInBestCandidates=${candidate.isInBestCandidates}):\n" +
+                candidate.candidate.symbols.joinToString(separator = "\n") { stringRepresentation(it) }
     }
 
     /**
