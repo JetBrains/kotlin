@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.overrides
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -457,6 +458,14 @@ class ConeOverloadConflictResolver(
             if (discriminateSuspend &&
                 specificClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.Function &&
                 generalClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.SuspendFunction
+            ) {
+                return true
+            }
+
+            // foo(SizeT) >= foo(Int)
+            if (
+                specificClassId.toSymbol()?.getSupportedNumericClassConversions(session) != null &&
+                generalClassId.toSymbol()?.getSupportedNumericClassConversions(session) == null
             ) {
                 return true
             }

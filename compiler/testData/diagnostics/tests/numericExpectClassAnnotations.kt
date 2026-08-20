@@ -82,7 +82,7 @@ fun main() {
     val _ignore1: OverloadVariant.Int = acceptNSIntegerOrInt(20)
     val _ignore2: OverloadVariant.Long = acceptLongOrInt(getNSInteger())
     val _ignore3: OverloadVariant.Int = getNSInteger().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>callOverLongOrInt<!>()
-    val _ignore4: OverloadVariant.Long = acceptNSIntegerOrInt(0.<!CANNOT_INFER_PARAMETER_TYPE!>convert<!>())
+    val _ignore4: OverloadVariant.NSInteger = acceptNSIntegerOrInt(0.convert())
 
     acceptLong(getNSInteger())
     acceptULong(<!ARGUMENT_TYPE_MISMATCH!>getNSInteger()<!>)
