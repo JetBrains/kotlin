@@ -30,12 +30,14 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLIC
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_ANNOTATION_CLASS
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_ANONYMOUS_OBJECT
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_NON_SEALED_INTERFACE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_DELEGATE_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY
-import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS
@@ -50,8 +52,18 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.VALUE_PA
 object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
     override val MAP by KtDiagnosticFactoryToRendererMap("Parcelize") { map ->
         map.put(
-            PARCELABLE_SHOULD_BE_CLASS,
-            "'Parcelable' must be a class."
+            PARCELABLE_CANT_BE_NON_SEALED_INTERFACE,
+            "'Parcelable' cannot be a non-sealed interface."
+        )
+
+        map.put(
+            PARCELABLE_CANT_BE_ANNOTATION_CLASS,
+            "'Parcelable' cannot be an 'annotation class'."
+        )
+
+        map.put(
+            PARCELABLE_CANT_BE_ANONYMOUS_OBJECT,
+            "'Parcelable' cannot be an anonymous object."
         )
 
         map.put(
