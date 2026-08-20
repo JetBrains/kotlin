@@ -45,7 +45,7 @@ interface KotlinElementTypeProvider {
     val companionBlockType: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock>
 
     // Initializers
-    val classInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
+    val classInitializerType: KtNodeType
     val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
 
     // Callables

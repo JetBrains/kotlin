@@ -56,7 +56,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * The `init` blocks declared directly in this body, in source order; empty if there are none.
      */
     val anonymousInitializers: List<KtAnonymousInitializer>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CLASS_INITIALIZER)
+        get() = getStubOrPsiChildren(KtNodeTypes.CLASS_INITIALIZER, KtClassInitializer.EMPTY_ARRAY).asList()
 
     internal val secondaryConstructors: List<KtSecondaryConstructor>
         get() = getStubOrPsiChildren(KtNodeTypes.SECONDARY_CONSTRUCTOR, KtSecondaryConstructor.EMPTY_ARRAY).asList()
