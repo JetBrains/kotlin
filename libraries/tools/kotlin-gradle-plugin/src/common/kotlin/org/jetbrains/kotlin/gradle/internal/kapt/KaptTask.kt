@@ -114,10 +114,11 @@ abstract class KaptTask @Inject constructor(
         if (!includeCompileClasspath.get()) return
 
         val kaptClasspath = kaptClasspath.toSet()
-        val processorsFromCompileClasspath = classpath.files.filterTo(LinkedHashSet()) {
-            hasAnnotationProcessors(it)
-        }
-        val processorsAbsentInKaptClasspath = processorsFromCompileClasspath.filter { it !in kaptClasspath }
+        // Discard the entries already on the kapt classpath *before* opening anything: this check only
+        // reports entries missing from it, and `hasAnnotationProcessors` opens every jar it is given.
+        val processorsAbsentInKaptClasspath = classpath.files
+            .filterTo(LinkedHashSet()) { it !in kaptClasspath }
+            .filter { hasAnnotationProcessors(it) }
         if (processorsAbsentInKaptClasspath.isNotEmpty()) {
             if (logger.isInfoEnabled) {
                 logger.warn(
