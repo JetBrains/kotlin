@@ -1568,7 +1568,7 @@ fs.realpath@^1.0.0:
 
 fsevents@2.3.2:
   version "2.3.2"
-  resolved "https://packages.jetbrains.team/npm/p/crl/build-deps/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 fsevents@~2.3.2:
@@ -2529,12 +2529,12 @@ pkijs@^3.3.3:
 
 playwright-core@1.61.0:
   version "1.61.0"
-  resolved "https://packages.jetbrains.team/npm/p/crl/build-deps/playwright-core/-/playwright-core-1.61.0.tgz#caf8078b2a39cd7738dc75ec11cb3b47f385c3f0"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.61.0.tgz#caf8078b2a39cd7738dc75ec11cb3b47f385c3f0"
   integrity sha512-caX7TrY3Ml6egyDX0WUcTHDxodl/b51y5wJOdCEA36QviK/s2g081hvmGs8eaE3DWb6NYZQ6BjO/QkNRPenoPA==
 
 playwright@1.61.0:
   version "1.61.0"
-  resolved "https://packages.jetbrains.team/npm/p/crl/build-deps/playwright/-/playwright-1.61.0.tgz#7082df3df08ffa82b11420ea5fae84a40bd16e3f"
+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.61.0.tgz#7082df3df08ffa82b11420ea5fae84a40bd16e3f"
   integrity sha512-Z+7BeeqQPRRzklHsVFP4KTGIyMxKUmfeRA4WisM6G3/XW6nwGeX6fX9qYaDa+CiUqpOkb2f6X3nar05R3kSuJQ==
   dependencies:
     playwright-core "1.61.0"
