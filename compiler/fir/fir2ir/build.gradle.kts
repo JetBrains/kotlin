@@ -109,7 +109,7 @@ projectTests {
         "aggregateTests",
         defineJDKEnvVariables = environment,
         skipInLocalBuild = true,
-        maxHeapSize = testMaxHeapSizeHuge,
+        maxHeapSize = testMaxHeapSizeLarge,
         garbageCollector = GarbageCollector.Parallel // JDK 8 is suspected to perform better with ParallelGC under such loads
     ) {
         configure {
