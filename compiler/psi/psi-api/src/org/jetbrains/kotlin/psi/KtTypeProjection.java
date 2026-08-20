@@ -11,7 +11,6 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
 
@@ -25,6 +24,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
  * }</pre>
  */
 public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjectionStub> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtTypeProjection[] EMPTY_ARRAY = new KtTypeProjection[0];
 
     @KtImplementationDetail
     public KtTypeProjection(@NotNull ASTNode node) {
@@ -33,7 +34,7 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
 
     @KtImplementationDetail
     public KtTypeProjection(@NotNull KotlinTypeProjectionStub stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_PROJECTION);
+        super(stub, KtNodeTypes.TYPE_PROJECTION);
     }
 
     /**
@@ -64,7 +65,6 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
 
     /** Returns the projected type reference, or {@code null} for a star projection ({@code *}) or when it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }

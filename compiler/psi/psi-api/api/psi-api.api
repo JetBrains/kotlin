@@ -2689,6 +2689,7 @@ public abstract class org/jetbrains/kotlin/psi/KtTypeParameterListOwnerStub : or
 }
 
 public class org/jetbrains/kotlin/psi/KtTypeProjection : org/jetbrains/kotlin/psi/KtModifierListOwnerStub {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtTypeProjection;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getProjectionKind ()Lorg/jetbrains/kotlin/psi/KtProjectionKind;
 	public fun getProjectionToken ()Lcom/intellij/psi/PsiElement;
