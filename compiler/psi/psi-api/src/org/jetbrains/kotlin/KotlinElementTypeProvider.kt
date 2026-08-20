@@ -50,7 +50,7 @@ interface KotlinElementTypeProvider {
 
     // Callables
     val functionType: KtNodeType
-    val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>
+    val propertyType: KtNodeType
     val enumEntryType: KtStubElementType<out KotlinClassStub, KtEnumEntry>
     val primaryConstructorType: KtNodeType
     val secondaryConstructorType: KtNodeType

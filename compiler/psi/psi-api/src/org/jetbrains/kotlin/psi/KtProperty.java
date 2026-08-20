@@ -44,6 +44,9 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     private static final Logger LOG = Logger.getInstance(KtProperty.class);
 
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtProperty[] EMPTY_ARRAY = new KtProperty[0];
+
     @KtImplementationDetail
     public KtProperty(@NotNull ASTNode node) {
         super(node);
@@ -51,7 +54,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @KtImplementationDetail
     public KtProperty(@NotNull KotlinPropertyStub stub) {
-        super(stub, KtStubBasedElementTypes.PROPERTY);
+        super(stub, KtNodeTypes.PROPERTY);
     }
 
     @Override
