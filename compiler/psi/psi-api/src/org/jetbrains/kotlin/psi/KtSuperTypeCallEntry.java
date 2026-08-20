@@ -32,7 +32,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
 
     @KtImplementationDetail
     public KtSuperTypeCallEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
-        super(stub, KtStubBasedElementTypes.SUPER_TYPE_CALL_ENTRY);
+        super(stub, KtNodeTypes.SUPER_TYPE_CALL_ENTRY);
     }
 
     @Override
