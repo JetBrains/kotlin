@@ -13,6 +13,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -37,7 +38,7 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
 
     @KtImplementationDetail
     public KtStringTemplateExpression(@NotNull KotlinPlaceHolderStub<KtStringTemplateExpression> stub) {
-        super(stub, KtStubBasedElementTypes.STRING_TEMPLATE);
+        super(stub, KtNodeTypes.STRING_TEMPLATE);
     }
 
     @Override

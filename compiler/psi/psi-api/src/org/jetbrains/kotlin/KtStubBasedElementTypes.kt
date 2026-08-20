@@ -190,8 +190,7 @@ internal object KtStubBasedElementTypes {
     // String templates
 
     @JvmField
-    val STRING_TEMPLATE: KtStubElementType<out KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression> =
-        provider.stringTemplateType
+    val STRING_TEMPLATE: KtNodeType = provider.stringTemplateType
 
     @JvmField
     val LONG_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry> =
