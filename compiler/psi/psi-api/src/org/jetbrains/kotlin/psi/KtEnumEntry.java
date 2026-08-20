@@ -11,7 +11,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
@@ -72,9 +71,8 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
 
     /** Returns the initializer list holding the constructor arguments of this enum entry, or {@code null} if it passes no arguments. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtInitializerList getInitializerList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.INITIALIZER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.INITIALIZER_LIST, KtInitializerList.class);
     }
 
     @Override

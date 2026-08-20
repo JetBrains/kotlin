@@ -58,7 +58,7 @@ interface KotlinElementTypeProvider {
     val propertyAccessorType: KtNodeType
     val backingFieldType: KtNodeType
     val destructuringDeclarationType: KtNodeType
-    val initializerListType: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList>
+    val initializerListType: KtNodeType
 
     // Value parameters
     val valueParameterListType: KtNodeType
