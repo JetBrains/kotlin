@@ -23,15 +23,21 @@ import org.jetbrains.kotlin.ir.expressions.addArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.ToStringGeneratorKey
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
+    private val DEEP_TO_STRING_NAME = Name.identifier("deepToString")
+
     override fun IrBlockBodyBuilder.build(key: ToStringGeneratorKey, declaration: IrSimpleFunction) {
         val thisParam = declaration.dispatchReceiverParameter!!
         +irReturn(buildToStringExpression(declaration.parent as IrClass, key, thisParam))
@@ -56,36 +62,67 @@ object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
                 addArgument(superToStringCall)
             }
 
-            for ([index, propInfo] in key.propertyInfos.withIndex()) {
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propInfo.propertyName }
+            // Not the loop index: a property may be skipped below, and then it owes no separator to the next one.
+            var isFirstRendered = superToStringCall == null
 
-                if (propertyDeclaration == null || (propertyDeclaration.backingField == null && propInfo.ignoreWithoutBackingField)) {
+            for ([propertyName, displayName, ignoreWithoutBackingField] in key.propertyInfos) {
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propertyName }
+
+                if (propertyDeclaration == null || (propertyDeclaration.backingField == null && ignoreWithoutBackingField)) {
                     continue
                 }
 
                 addArgument(
                     irString(
                         buildString {
-                            if (index > 0 || superToStringCall != null) {
+                            if (!isFirstRendered) {
                                 append(", ")
                             }
 
-                            if (propInfo.displayName != null) {
-                                append("${propInfo.displayName}=")
+                            if (displayName != null) {
+                                append("$displayName=")
                             }
                         }
                     )
                 )
+                isFirstRendered = false
 
-                addArgument(irCall(propertyDeclaration.getter!!.symbol).apply {
+                val getter = propertyDeclaration.getter!!
+                val value = irCall(getter.symbol).apply {
                     arguments[0] =
                         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParam.type, thisParam.symbol)
-                })
+                }
+
+                addArgument(renderArrayByContent(value, getter.returnType) ?: value)
             }
 
             addArgument(irChar(')'))
         }
+    }
+
+    /**
+     * Mirrors Lombok: an array property is rendered by content rather than by identity, with
+     * `java.util.Arrays.toString` for primitive arrays and `java.util.Arrays.deepToString` for the rest
+     * (an object array is always rendered deeply, even a one-dimensional one).
+     *
+     * Returns `null` for a non-array [type], and also if `java.util.Arrays` can't be resolved,
+     * in which case the caller falls back to plain concatenation.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBuilderWithScope.renderArrayByContent(value: IrExpression, type: IrType): IrExpression? {
+        val builtIns = context.irBuiltIns
+        val classifier = type.classifierOrNull
+        val isPrimitiveArray = classifier in builtIns.primitiveArraysToPrimitiveTypes
+        if (!isPrimitiveArray && classifier != builtIns.arrayClass) return null
+
+        val arraysClass = pluginContext.finderForBuiltins().findClass(LombokNames.JAVA_ARRAYS_ID) ?: return null
+        val name = if (isPrimitiveArray) OperatorNameConventions.TO_STRING else DEEP_TO_STRING_NAME
+        val toStringFunction = arraysClass.owner.functions.firstOrNull { function ->
+            function.name == name && function.parameters.singleOrNull()?.type?.classifierOrNull == classifier
+        } ?: return null
+
+        return irCall(toStringFunction.symbol).apply { arguments[0] = value }
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)

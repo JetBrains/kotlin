@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+import lombok.AccessLevel
 import lombok.Builder
 import lombok.Singular
 
@@ -53,4 +54,17 @@ class ConstructorSingularCannotSingularize(val id: Int) {
 class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
     @Builder
     constructor(id: Int = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>0<!>) : this(id, -1)
+}
+
+@Builder(access = AccessLevel.PROTECTED)
+class BuilderAccessLevelProtected(val id: Int)
+
+@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
+class BuilderAccessLevelPackage(val id: Int)
+
+@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>) // Prohibited, KT-88337
+class BuilderAccessLevelModule(val id: Int)
+
+fun testAccessLevels() {
+    BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
 }

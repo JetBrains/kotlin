@@ -198,6 +198,45 @@ class KotlinNpmToolingLockFilesTest {
         }
     }
 
+    @Test
+    fun `verify npm package-lock file contains only allowed repositories`() {
+        val packagesWithWrongResolutions = packageLockJson.packages
+            .minus("") // root package
+            .mapValues { it.value.resolved }
+            .filter { (pkg, resolvedUrl) ->
+                // if resolved is null, something is wrong
+                if (resolvedUrl== null) return@filter true
+                if (pkg == "node_modules/karma") {
+                    // for karma we have exception to resolve from git
+                    !resolvedUrl.startsWith("git+ssh://git@github.com/Kotlin/karma.git")
+                } else {
+                    !resolvedUrl.startsWith("https://registry.npmjs.org")
+                }
+            }
+        assertEquals(
+            emptyMap<String, String?>().prettyPrinted,
+            packagesWithWrongResolutions.prettyPrinted,
+            "Unexpected resolution URLs in NPM package-lock.json file, make sure you use official NPM repository"
+        )
+    }
+
+    @Test
+    fun `verify yaml lock file contains only allowed repositories`() {
+        val resolvedUrlRegex = """ resolved "(.+)"\n""".toRegex()
+        val wrongResolutionUrls = resolvedUrlRegex
+            .findAll(yarnLockContent)
+            .map { it.groupValues[1] }
+            .filterNot { it.startsWith("https://registry.yarnpkg.com/") }
+            .filterNot { it.startsWith("https://codeload.github.com/Kotlin/karma/tar.gz/") }
+            .toList()
+
+        assertEquals(
+            emptyList<String>().prettyPrinted,
+            wrongResolutionUrls.prettyPrinted,
+            "Unexpected resolution URLs in yarn.lock file, make sure you use official YARN repository"
+        )
+    }
+
     companion object {
 
         /** `package.json` for KGP's tooling dependencies. */

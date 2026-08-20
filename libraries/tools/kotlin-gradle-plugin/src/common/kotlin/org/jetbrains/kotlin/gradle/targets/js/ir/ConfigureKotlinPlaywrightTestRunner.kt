@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrigh
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import kotlin.time.toJavaDuration
 
@@ -36,11 +38,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
         if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
             project.logger.debug("No browser runners configured. Skipping kotlin js test task configuration")
-            return@launchInStage
-        }
-
-        if (target.isWasm) {
-            project.reportDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError())
             return@launchInStage
         }
 

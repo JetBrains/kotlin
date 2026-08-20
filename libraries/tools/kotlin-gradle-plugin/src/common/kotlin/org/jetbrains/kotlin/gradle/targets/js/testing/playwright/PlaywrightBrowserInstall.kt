@@ -17,14 +17,15 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -42,10 +43,10 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 ) : RequiresNpmDependenciesTask, DefaultTask() {
 
     @get:Input
-    internal val nodeExecutable: Property<String> = objects.property(project.kotlinNodeJsEnvSpec.executable)
+    internal val nodeExecutable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
 
     @get:Input
-    internal val browsers = objects.listProperty(String::class.java).convention(emptyList())
+    internal val browsers = objects.setProperty(String::class.java).convention(emptyList())
 
     init {
         onlyIf { browsers.get().isNotEmpty() }
@@ -55,13 +56,18 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = if (browsers.get().isNotEmpty()) {
             setOf(
-                NpmPackageVersion("playwright", PLAYWRIGHT_VERSION)
+                compilation.nodeJsRoot().versions.playwright
             )
         } else emptySet()
 
 
     @get:Internal
-    internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
+    internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty()
+        .value(compilation.npmToolingDir())
+        .also {
+            it.finalizeValue()
+            dependsOnNpmTooling(compilation)
+        }
 
     // this is intentional to prevent gradle warnings about tasks writing to the same location
     // FIXME: KT-87599 Design host-wide toolchain management

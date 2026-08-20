@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -89,7 +90,9 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
     }
 
     private fun initializeToStringIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirNamedFunctionSymbol? {
-        if (classSymbol !is FirRegularClassSymbol || classSymbol.isInterface) return null
+        // An annotation class can hold no member at all, generating one makes the platform report
+        // `ANNOTATION_CLASS_MEMBER` on it. Both kinds are already reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (classSymbol !is FirRegularClassSymbol || classSymbol.isInterface || classSymbol.isAnnotationClass) return null
 
         val toStringConfig = session.lombokService.getToString(classSymbol) ?: return null
         val declaredScope = context.declaredScope

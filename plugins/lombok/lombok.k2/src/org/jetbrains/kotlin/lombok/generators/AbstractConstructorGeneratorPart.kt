@@ -69,6 +69,58 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     }
 
     /**
+     * Whether a static factory would be generated into [classSymbol]'s companion object: the annotation asks for one,
+     * and the name it would take is free.
+     *
+     * Used to decide whether that companion object is worth generating in the first place, and whether the no-args
+     * constructor the factory delegates to has any reason to exist.
+     */
+    fun generatesStaticFactory(classSymbol: FirClassSymbol<*>): Boolean {
+        val constructorInfo = getConstructorInfo(classSymbol) ?: return false
+        if (constructorInfo.accessLevel.toVisibility(classSymbol) == null) return false
+        val staticName = constructorInfo.staticName?.let { Name.identifier(it) } ?: return false
+
+        return !staticFactoryNameIsTaken(classSymbol, staticName, getFieldsForParameters(classSymbol).size)
+    }
+
+    /**
+     * Whether the static factory named [staticName] cannot be generated for [classSymbol], either because the class
+     * itself declares a function of that name, which would shadow the factory, or because its companion object - the
+     * very place the factory goes - already declares one.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun staticFactoryNameIsTaken(classSymbol: FirClassSymbol<*>, staticName: Name, valueParametersCount: Int): Boolean {
+        if (declaresConflictingFunction(classSymbol, staticName, valueParametersCount)) return true
+
+        // The raw (non-lazy-resolving) symbol, as in `AbstractBuilderGenerator`: `resolvedCompanionObjectSymbol` would
+        // `lazyResolveToPhase(COMPANION_GENERATION)` from inside a generation callback running under that very phase.
+        // Only a source-declared companion matters anyway - a generated one holds nothing to clash with.
+        val companionSymbol = (classSymbol as? FirRegularClassSymbol)?.companionObjectSymbol ?: return false
+        return declaresConflictingFunction(companionSymbol, staticName, valueParametersCount)
+    }
+
+    /**
+     * Whether [classSymbol] declares a function that the static factory named [staticName] would be shadowed by.
+     *
+     * The factory is generated into the companion object, so such a function doesn't collide with it - it shadows it
+     * at every unqualified call site inside the class. Java Lombok skips generation when a method of that name
+     * already exists, and generating a factory the class itself cannot call is worse than generating nothing.
+     *
+     * [DirectDeclarationsAccess] rather than a scope, as in [containsExplicitConstructor]: only the functions written
+     * by the user can shadow the factory, and requesting a scope would run the Lombok generators for the very class
+     * whose companion object is being generated.
+     */
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun declaresConflictingFunction(classSymbol: FirClassSymbol<*>, staticName: Name, valueParametersCount: Int): Boolean {
+        return classSymbol.declarationSymbols.any {
+            it is FirNamedFunctionSymbol &&
+                    it.name == staticName &&
+                    !it.hasReceiverOrContextParameters &&
+                    it.checkParametersClashing(valueParametersCount)
+        }
+    }
+
+    /**
      * Checks clashing with generated or explicit constructors according to Lombok logic;
      * Vararg value parameter from an explicit constructor never causes a conflict.
      * Value parameters from generated functions can never be vararg.
@@ -100,7 +152,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             targetClassSymbol = classSymbol
         }
 
-        val visibility = constructorInfo.visibility ?: return
+        val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val fields = getFieldsForParameters(targetClassSymbol)
         val valuesParameterCount = fields.size
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
@@ -124,6 +176,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 hasConflict = hasConflict || constructor.checkParametersClashing(valuesParameterCount)
             }
             if (hasConflict) return
+
+            // With `staticName` on a Kotlin class this constructor exists only so that the static factory in the
+            // companion object has something to call, so it follows that factory: once the name is taken, neither is
+            // generated. `staticName != null` implies a Kotlin class here, Java keeping its factory in the class.
+            if (staticName != null && staticFactoryNameIsTaken(classSymbol, staticName, valuesParameterCount)) return
 
             val builder = if (classSymbol.hasJavaOrigin) {
                 FirJavaConstructorBuilder().apply {
@@ -157,6 +214,14 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 hasConflict = hasConflict || (!function.hasReceiverOrContextParameters && function.checkParametersClashing(valuesParameterCount))
             }
             if (hasConflict) return
+
+            // `declaredScope` belongs to the companion object here, never to the class the annotation is on, so the
+            // functions that would shadow the factory have to be looked up on the latter separately.
+            if (targetClassSymbol != classSymbol &&
+                declaresConflictingFunction(targetClassSymbol, staticName, valuesParameterCount)
+            ) {
+                return
+            }
 
             val methodSymbol = FirNamedFunctionSymbol(CallableId(targetClassSymbol.classId, staticName)).also { constructorSymbol = it }
 

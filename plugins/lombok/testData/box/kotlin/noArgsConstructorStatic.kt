@@ -18,6 +18,15 @@ class ConstructorExampleStaticWithGenerics<T>(val param: T)
 @NoArgsConstructor(staticName = "make", force = true)
 class ConstructorExampleStaticWithBoundedGenerics<T : Comparable<T>>(val param: T)
 
+@NoArgsConstructor(staticName = "make", force = true)
+class ConstructorExampleStaticWithMemberOfTheSameName(val any: Any) {
+    // Nothing is generated: this function would shadow the `make` factory at every unqualified call site, so neither
+    // the factory, nor the companion object holding it, nor the no-args constructor it would have called appear.
+    fun make(): String = "member"
+
+    fun callUnqualified(): String = make()
+}
+
 fun box(): String {
     val zeroObject = ConstructorExampleStatic.make()
     assertEquals(false, zeroObject.boolean)
@@ -33,6 +42,9 @@ fun box(): String {
 
     val zeroObjectWithBoundedGenerics = ConstructorExampleStaticWithBoundedGenerics.make<Int>()
     assertEquals(null, zeroObjectWithBoundedGenerics.param)
+
+    val withMemberOfTheSameName = ConstructorExampleStaticWithMemberOfTheSameName("any")
+    assertEquals("member", withMemberOfTheSameName.callUnqualified())
 
     return "OK"
 }

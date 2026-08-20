@@ -41,7 +41,19 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
     public abstract val returnType: KaType
 
     /**
-     * The [receiver parameter][KaReceiverParameterSymbol] of the callable, or `null` if the callable is not an extension.
+     * The [receiver parameter][KaReceiverParameterSymbol] of the callable, or `null` if the callable has no receiver.
+     *
+     * The receiver parameter is present both for regular [extensions][isExtension] and for [companion extensions][isCompanion].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun String.foo() {} // the receiver parameter is 'String'
+     * companion fun String.bar() {} // the receiver parameter is also 'String'
+     * ```
+     *
+     * **Note**: a companion extension is called on the class itself (`String.bar()`) and not on an instance of it, so its receiver
+     * parameter never gets an actual value.
      */
     public abstract val receiverParameter: KaReceiverParameterSymbol?
 
@@ -127,7 +139,9 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
 }
 
 /**
- * The [receiver parameter][KaCallableSymbol.receiverParameter]'s type, or `null` if the callable is not an extension.
+ * The [receiver parameter][KaCallableSymbol.receiverParameter]'s type, or `null` if the callable has no receiver.
+ *
+ * @see KaCallableSymbol.receiverParameter
  */
 public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.returnType

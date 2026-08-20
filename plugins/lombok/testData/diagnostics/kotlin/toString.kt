@@ -5,6 +5,9 @@ import lombok.ToString
 <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!>
 interface Interface
 
+<!ANNOTATION_HAS_NO_EFFECT!>@ToString<!>
+annotation class AnnotationClass
+
 <!WRONG_ANNOTATION_TARGET!>@ToString<!>
 fun func() {}
 
@@ -12,6 +15,9 @@ fun func() {}
 typealias TA = String
 
 val toStringOnAnonymousObject = <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!> object {}
+
+val toStringOnLiteral = <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!> 1
+val toStringOnCall = <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!> func()
 
 <!TO_STRING_FUNCTION_ALREADY_EXISTS!>@ToString<!>
 class WithExistingToString(val x: Int) {

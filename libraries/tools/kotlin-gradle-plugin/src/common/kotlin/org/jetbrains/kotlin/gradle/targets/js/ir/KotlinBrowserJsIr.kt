@@ -27,17 +27,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
-        with(nodeJsEnvSpec) {
-            test.dependsOn(project.nodeJsSetupTaskProvider)
-        }
-        test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-        test.dependsOn(
-            nodeJsRoot.npmInstallTaskProvider,
-        )
-        if (target.isWasm) {
-            test.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-        }
-
+        test.dependsOnNpmTooling(binary.compilation)
         test.dependsOn(binary.linkSyncTask)
     }
 

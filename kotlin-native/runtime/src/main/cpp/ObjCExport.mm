@@ -33,6 +33,7 @@
 #import "Natives.h"
 #import "TypeInfoObjCExportAddition.hpp"
 #import "WritableTypeInfo.hpp"
+#include "ExternalRCRef.hpp"
 #include "swiftExportRuntime/SwiftExport.hpp"
 
 using namespace kotlin;
@@ -40,6 +41,9 @@ using namespace kotlin;
 @interface NSObject (KotlinBaseExtensions)
 // Implemented for KotlinBase
 + (instancetype)createRetainedWrapper:(struct ObjHeader*)obj;
+// Implemented for KotlinBase
++ (id)_createProtocolWrapperForExternalRCRef:(void*)ref
+                                  conformsTo:(NS_NOESCAPE BOOL (^)(Class candidate))conformsTo;
 @end
 
 namespace {
@@ -117,7 +121,16 @@ extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
   static id instance = nullptr;
   dispatch_once(&onceToken, ^{
     Class unitClass = getOrCreateClass(unitInstance->type_info());
-    instance = [unitClass createRetainedWrapper:unitInstance];
+
+    if (compiler::swiftExport()) {
+      kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+      void* ref = kotlin::mm::createRetainedExternalRCRef(unitInstance);
+      kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+      instance = [unitClass _createProtocolWrapperForExternalRCRef:ref
+                                                       conformsTo:^BOOL(Class) { return YES; }];
+    } else {
+      instance = [unitClass createRetainedWrapper:unitInstance];
+    }
   });
   return Kotlin_objc_retain_inNative(instance);
 }
@@ -529,7 +542,16 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
 static id convertKotlinObjectToRetained(ObjHeader* obj) {
   Class clazz = objCExport(obj->type_info()).objCClass;
   RuntimeAssert(clazz != nullptr, "");
-  return [clazz createRetainedWrapper:obj];
+
+  if (compiler::swiftExport()) {
+    kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+    void* ref = kotlin::mm::createRetainedExternalRCRef(obj);
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    return [clazz _createProtocolWrapperForExternalRCRef:ref
+                                             conformsTo:^BOOL(Class) { return YES; }];
+  } else {
+    return [clazz createRetainedWrapper:obj];
+  }
 }
 
 static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const TypeInfo* typeInfo) {
@@ -732,14 +754,14 @@ static void addDefinedSelectors(Class clazz, std::unordered_set<SEL>& result) {
   if (objcMethods != nullptr) free(objcMethods);
 }
 
-static std::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
+static std::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz, Class stopBeforeClass) {
   std::vector<const TypeInfo*> result;
   std::unordered_set<Protocol*> handledProtocols;
   std::vector<Protocol*> protocolsToHandle;
 
-  {
+  for (Class current = clazz; current != nullptr && current != stopBeforeClass; current = class_getSuperclass(current)) {
     unsigned int protocolCount;
-    Protocol** protocols = class_copyProtocolList(clazz, &protocolCount);
+    Protocol** protocols = class_copyProtocolList(current, &protocolCount);
     if (protocols != nullptr) {
       protocolsToHandle.insert(protocolsToHandle.end(), protocols, protocols + protocolCount);
       free(protocols);
@@ -790,7 +812,7 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
   }
 }
 
-static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
+static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo, Class protocolSearchStopClass = nil) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   bool isSwiftExportSubclass = false;
@@ -848,7 +870,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     }
   }
 
-  std::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
+  std::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz, protocolSearchStopClass ?: class_getSuperclass(clazz));
 
   std::vector<const TypeInfo*> supers(
         superType->implementedInterfaces_,
@@ -976,7 +998,7 @@ extern "C" const TypeInfo* Kotlin_ObjCExport_getOrCreateTypeInfo(Class clazz) {
   return result;
 }
 
-extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, const TypeInfo* kotlinSuperTypeInfo) {
+extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, Class boundClass, const TypeInfo* kotlinSuperTypeInfo) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass);
   if (result != nullptr) {
     return result;
@@ -986,7 +1008,7 @@ extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclas
 
   result = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass); // double-checking.
   if (result == nullptr) {
-    result = createTypeInfo(swiftSubclass, kotlinSuperTypeInfo, nullptr);
+    result = createTypeInfo(swiftSubclass, kotlinSuperTypeInfo, nullptr, boundClass);
     setAssociatedTypeInfo(swiftSubclass, result);
   }
 

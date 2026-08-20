@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_CONFIG_IS_MISSING
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.UNKNOWN_PLUGIN_OPTION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_ACCESS_LEVEL
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT
@@ -34,8 +35,11 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTU
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.STATIC_CONSTRUCTOR_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_NOT_CALLED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
@@ -61,6 +65,7 @@ object LombokCliDiagnostics : KtDiagnosticsContainer() {
 object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val ANNOTATION_IS_NOT_SUPPORTED by warning1<KtAnnotationEntry, Name>()
     val ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED by warning1<KtExpression, Name>()
+    val UNSUPPORTED_ACCESS_LEVEL by error1<KtExpression, Name>()
     val ANNOTATION_HAS_NO_EFFECT by warning2<KtAnnotationEntry, String, Collection<KotlinTarget>>()
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
@@ -70,7 +75,10 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
 
     val LOG_PROPERTY_ALREADY_EXISTS by warning1<KtAnnotationEntry, Name>()
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
+    val TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
     val NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED by error0<KtAnnotationEntry>()
+    val NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
+    val STATIC_CONSTRUCTOR_ALREADY_EXISTS by warning2<KtAnnotationEntry, Name, Name>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST by error0<KtAnnotationEntry>()
 
     val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
@@ -103,6 +111,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.NAME
         )
         map.put(
+            UNSUPPORTED_ACCESS_LEVEL,
+            "''AccessLevel.{0}'' is not supported for Kotlin declarations.",
+            CommonRenderers.NAME
+        )
+        map.put(
             ANNOTATION_HAS_NO_EFFECT,
             "This annotation has no effect on target ''{0}''. Relevant targets: {1}.",
             TO_STRING,
@@ -113,6 +126,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
 
         map.put(LOG_PROPERTY_ALREADY_EXISTS, "Property ''{0}'' already exists.", CommonRenderers.NAME)
         map.put(TO_STRING_FUNCTION_ALREADY_EXISTS, "Not generating 'toString()': A method with that name already exists.")
+        map.put(
+            TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS,
+            "Cannot generate ''toString()'': it is final in ''{0}'' and cannot be overridden.",
+            CommonRenderers.NAME,
+        )
         map.put(
             CALL_SUPER_NOT_CALLED,
             "Generating ''{0}'' implementation but without a call to superclass, even though this class does not extend ''Any''. " +
@@ -134,6 +152,15 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED,
             "Class contains required properties. " +
                     "Use '@NoArgsConstructor(force = true)' to force-initialize them to default values (0 / false / null)."
+        )
+        // Lombok itself stays silent about both clashes below and lets `javac` reject the duplicate it generated,
+        // so the wording follows `javac`'s "{0} {1} is already defined in {2} {3}" rather than a Lombok original.
+        map.put(NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS, "Constructor without parameters is already defined.")
+        map.put(
+            STATIC_CONSTRUCTOR_ALREADY_EXISTS,
+            "Method ''{0}()'' is already defined in ''{1}''.",
+            CommonRenderers.NAME,
+            CommonRenderers.NAME,
         )
         map.put(
             EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST,

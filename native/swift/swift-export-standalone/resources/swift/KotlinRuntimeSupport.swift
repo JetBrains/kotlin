@@ -262,3 +262,10 @@ extension NSObject {
         return openAndWrap(markerType)
     }
 }
+
+// MARK: - Link anchor
+
+/// Anchor that keeps this compilation unit in the linked image. Without it this module gets stripped
+@used
+@_cdecl("KotlinRuntimeSupport_linkAnchor")
+func _kotlinRuntimeSupportLinkAnchor() {}

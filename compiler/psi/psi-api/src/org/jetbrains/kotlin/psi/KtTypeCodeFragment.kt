@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 /**
  * A [KtCodeFragment] whose content is a type reference.
  *
- * Use this when the snippet denotes a type rather than a value, for example when specifying a cast target in a refactoring. Its [content
- * element][getContentElement] is a [KtTypeReference], or `null` if the text could not be parsed as one.
+ * Use this when the snippet denotes a type rather than a value, for example when specifying a cast target in a refactoring.
+ * Its [content element][getContentElement] is a [KtTypeReference], or `null` if the text could not be parsed as one.
  */
 class KtTypeCodeFragment(
     project: Project,

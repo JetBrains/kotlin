@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -25,6 +26,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @JsBrowserGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions =
+        super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     fun `verify custom custom KotlinJsTest environment variables are used to launch tests`(gradleVersion: GradleVersion) {
@@ -183,6 +187,16 @@ class JsBrowserTestsIT : KGPBaseTest() {
                         }
                     }
 
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+
                     sourceSets.commonTest {
                         dependencies {
                             implementation(kotlin("test"))
@@ -219,7 +233,18 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:prepareWebpackBundleForKotlinJsTests/test.html""".toRegex())
                 assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser, chromium] FAILED")
                 assertOutputContains("2 tests completed, 1 failed")
-                // TODO: KT-86778 Add verification of test report
+            }
+
+            buildAndFail("wasmJsBrowserTest") {
+                assumeFalse(
+                    output.contains("error while loading shared libraries: libglib-2.0"),
+                    "No libglib-2.0 on the test runner machine"
+                )
+                assertTasksExecuted(":wasmJsTestBundleAsEsm")
+                assertTasksFailed(":wasmJsBrowserTest")
+                assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:wasmJsTestBundleAsEsm/test.html""".toRegex())
+                assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[wasmJs, browser, chromium] FAILED")
+                assertOutputContains("2 tests completed, 1 failed")
             }
         }
     }
