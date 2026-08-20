@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.wasm.npm
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 
 /**
@@ -40,7 +40,7 @@ abstract class WasmNpmExtension internal constructor(
             get() = extensionName("npm")
 
         operator fun get(project: Project): WasmNpmExtension {
-            val rootProject = project.rootProject
+            val rootProject = project.jsToolingProject()
             rootProject.plugins.apply(NodeJsRootPlugin::class.java)
             return rootProject.extensions.getByName(EXTENSION_NAME) as WasmNpmExtension
         }

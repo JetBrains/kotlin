@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPluginApplier
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec
@@ -44,7 +45,7 @@ abstract class WasmYarnPlugin internal constructor() : CommonYarnPlugin {
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         fun apply(project: Project): WasmYarnRootExtension {
-            val rootProject = project.rootProject
+            val rootProject = project.jsToolingProject()
             rootProject.plugins.apply(WasmYarnPlugin::class.java)
             return rootProject.extensions.getByName(WasmYarnRootExtension.YARN) as WasmYarnRootExtension
         }

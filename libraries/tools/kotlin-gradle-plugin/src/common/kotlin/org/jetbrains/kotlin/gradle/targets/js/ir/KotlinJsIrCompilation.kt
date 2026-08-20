@@ -10,6 +10,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
@@ -88,8 +89,8 @@ internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
 
 internal fun KotlinJsIrCompilation.nodeJsRoot(): BaseNodeJsRootExtension {
     return webTargetVariant(
-        { NodeJsRootPlugin.apply(project.rootProject) },
-        { WasmNodeJsRootPlugin.apply(project.rootProject) },
+        { NodeJsRootPlugin.apply(project.jsToolingProject()) },
+        { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
     )
 }
 

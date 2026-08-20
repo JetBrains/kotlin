@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
@@ -31,10 +32,17 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
     init {
         val libraryFilterCachingService = LibraryFilterCachingService.registerIfAbsent(project)
 
-        val incrementalModuleInfoProvider = IncrementalModuleInfoBuildService.registerIfAbsent(
-            project,
-            objectFactory.providerWithLazyConvention { GradleCompilerRunner.buildModulesInfo(project.gradle) },
-        )
+        val incrementalModuleInfoProvider =
+            if (project.isProjectIsolationEnabled) {
+                // Can't use if IP is enabled. As a temp workaround, disable the service.
+                // https://youtrack.jetbrains.com/issue/KT-80262/Update-JS-IC-implementation-to-support-Project-Isolation
+                null
+            } else {
+                IncrementalModuleInfoBuildService.registerIfAbsent(
+                    project,
+                    objectFactory.providerWithLazyConvention { GradleCompilerRunner.buildModulesInfo(project.gradle) },
+                )
+            }
 
         configureTask { task ->
             task.incremental = propertiesProvider.incrementalJs ?: true
@@ -43,8 +51,9 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             configureAdditionalFreeCompilerArguments(task, compilation)
 
             task.libraryFilterCacheService.value(libraryFilterCachingService).disallowChanges()
-            task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
-
+            if (incrementalModuleInfoProvider != null) {
+                task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
+            }
 
             task.projectVersion.value(project.provider { project.version.toString() }).disallowChanges()
             if (!compilation.isMain && project.kotlinPropertiesProvider.enableKlibKt64115Workaround) {

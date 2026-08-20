@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
@@ -65,8 +66,8 @@ class KotlinKarma internal constructor(
 
     @Transient
     private val nodeJsRoot: BaseNodeJsRootExtension = compilation.webTargetVariant(
-        { project.rootProject.kotlinNodeJsRootExtension },
-        { project.rootProject.wasmKotlinNodeJsRootExtension },
+        { project.jsToolingProject().kotlinNodeJsRootExtension },
+        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
     )
 
     private val versions: NpmVersions by lazy {
