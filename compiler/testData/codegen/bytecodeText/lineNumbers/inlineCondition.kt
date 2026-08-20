@@ -14,4 +14,4 @@ public inline fun <T> Iterable<T>.myAny(predicate: (T) -> Boolean): Boolean {
     return false
 }
 
-// 3 LINENUMBER 5
+// 4 LINENUMBER 5
