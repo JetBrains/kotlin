@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
-
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
