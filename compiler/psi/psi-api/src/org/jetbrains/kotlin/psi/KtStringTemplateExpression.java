@@ -50,7 +50,7 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
             KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY,
             KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY,
             KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY,
-            KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+            KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
     );
 
     /**

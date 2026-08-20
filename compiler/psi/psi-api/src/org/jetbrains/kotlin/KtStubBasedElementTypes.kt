@@ -202,8 +202,7 @@ internal object KtStubBasedElementTypes {
     val LITERAL_STRING_TEMPLATE_ENTRY: KtNodeType = provider.literalStringTemplateEntryType
 
     @JvmField
-    val ESCAPE_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry> =
-        provider.escapeStringTemplateEntryType
+    val ESCAPE_STRING_TEMPLATE_ENTRY: KtNodeType = provider.escapeStringTemplateEntryType
 
     @JvmField
     val STRING_INTERPOLATION_PREFIX: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix> =

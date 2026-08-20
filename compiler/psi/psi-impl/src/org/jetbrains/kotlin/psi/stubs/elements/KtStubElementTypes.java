@@ -154,8 +154,8 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType LITERAL_STRING_TEMPLATE_ENTRY =
             new KtNodeType("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry::new);
 
-    @NotNull KtPlaceHolderWithTextStubElementType<KtEscapeStringTemplateEntry> ESCAPE_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
+    @NotNull KtNodeType ESCAPE_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry::new);
 
     @NotNull KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 
