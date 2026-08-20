@@ -13,7 +13,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
@@ -72,9 +71,8 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      * @see KtContextParameterList
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtContextParameterList getContextParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList.class);
     }
 
     /**
@@ -105,7 +103,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      */
     @NotNull
     public List<KtContextParameterList> getContextParameterLists() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList.EMPTY_ARRAY));
     }
 
     /**
