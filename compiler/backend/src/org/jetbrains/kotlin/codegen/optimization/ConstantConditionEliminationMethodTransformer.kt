@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.codegen.optimization
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
+import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -71,6 +73,11 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
                         changed = tryRewriteComparisonWithZero(insn, frame) || changed
                     in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE ->
                         changed = tryRewriteBinaryComparison(insn, frame) || changed
+                    Opcodes.GOTO -> {
+                        frame.top()?.intConstant?.let {
+                            changed = tryRewriteGotoToComparison(insn, it) || changed
+                        }
+                    }
                 }
             }
 
@@ -78,19 +85,9 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
         }
 
         private fun tryRewriteComparisonWithZero(insn: JumpInsnNode, frame: Frame<BasicValue>): Boolean {
-            val top = frame.top()!! as? IConstValue ?: return false
+            val top = frame.top()!!.intConstant ?: return false
 
-            val constCondition = when (insn.opcode) {
-                Opcodes.IFEQ -> top.value == 0
-                Opcodes.IFNE -> top.value != 0
-                Opcodes.IFGE -> top.value >= 0
-                Opcodes.IFGT -> top.value > 0
-                Opcodes.IFLE -> top.value <= 0
-                Opcodes.IFLT -> top.value < 0
-                else -> throw AssertionError("Unexpected instruction: ${insn.insnText}")
-            }
-
-            if (constCondition) {
+            if (evaluateComparisonWithZeroInsn(insn.opcode, top)) {
                 methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
                 insn.opcode = Opcodes.GOTO
             } else {
@@ -101,13 +98,13 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
         }
 
         private fun tryRewriteBinaryComparison(insn: JumpInsnNode, frame: Frame<BasicValue>): Boolean {
-            val arg1 = frame.peek(1)!!
-            val arg2 = frame.peek(0)!!
+            val arg2 = frame.peek(0)!!.intConstant ?: return false
+            val arg1 = frame.peek(1)!!.intConstant
 
-            if (arg1 is IConstValue && arg2 is IConstValue) {
-                rewriteBinaryComparisonOfConsts(insn, arg1.value, arg2.value)
+            if (arg1 != null) {
+                rewriteBinaryComparisonOfConsts(insn, arg1, arg2)
                 return true
-            } else if (arg2 is IConstValue && arg2.value == 0) {
+            } else if (arg2 == 0) {
                 rewriteBinaryComparisonWith0(insn)
                 return true
             }
@@ -138,6 +135,20 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             require(insn.opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE)
             methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
             insn.opcode = Opcodes.IFEQ + (insn.opcode - Opcodes.IF_ICMPEQ)
+        }
+
+        private fun tryRewriteGotoToComparison(insn: JumpInsnNode, top: Int): Boolean {
+            val targetInsn = insn.targetExecutableInsn() ?: return false
+            if (targetInsn.opcode !in Opcodes.IFEQ..Opcodes.IFLE) return false
+
+            methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
+
+            insn.label = when (evaluateComparisonWithZeroInsn(targetInsn.opcode, top)) {
+                true -> (targetInsn as JumpInsnNode).label
+                false -> methodNode.instructions.getOrCreateLabelAfter(targetInsn)
+            }
+
+            return true
         }
     }
 }
@@ -170,3 +181,36 @@ private class ConstantPropagationInterpreter : OptimizationBasicInterpreter() {
         else
             super.merge(v, w)
 }
+
+private fun evaluateComparisonWithZeroInsn(opcode: Int, value: Int): Boolean =
+    when (opcode) {
+        Opcodes.IFEQ -> value == 0
+        Opcodes.IFNE -> value != 0
+        Opcodes.IFGE -> value >= 0
+        Opcodes.IFGT -> value > 0
+        Opcodes.IFLE -> value <= 0
+        Opcodes.IFLT -> value < 0
+        else -> throw AssertionError("Unexpected instruction opcode: $opcode")
+    }
+
+private fun InsnList.getOrCreateLabelAfter(insn: AbstractInsnNode): LabelNode =
+    insn.findNextOrNull { it.opcode != Opcodes.NOP && it.nodeType != AbstractInsnNode.LINE } as? LabelNode?
+        ?: LabelNode().also { insert(insn, it) }
+
+private fun JumpInsnNode.targetExecutableInsn(): AbstractInsnNode? {
+    var target: AbstractInsnNode? = label
+    while (target != null) {
+        target = when {
+            target.opcode == Opcodes.GOTO -> (target as JumpInsnNode).label
+            target.opcode == Opcodes.NOP || target.nodeType == AbstractInsnNode.LABEL || target.nodeType == AbstractInsnNode.LINE -> target.next
+            else -> break
+        }
+    }
+    return target
+}
+
+private val BasicValue.intConstant: Int?
+    get() = when (this) {
+        is IConstValue -> value
+        else -> null
+    }
