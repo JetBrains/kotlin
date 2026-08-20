@@ -13,6 +13,7 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -147,8 +148,7 @@ abstract class KtClassOrObject :
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 
     override fun getPrimaryConstructor(): KtPrimaryConstructor? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
+        getStubOrPsiChild(KtNodeTypes.PRIMARY_CONSTRUCTOR, KtPrimaryConstructor::class.java)
 
     override fun getPrimaryConstructorModifierList(): KtModifierList? = primaryConstructor?.modifierList
 

@@ -71,8 +71,7 @@ internal object KtStubBasedElementTypes {
         provider.enumEntryType
 
     @JvmField
-    val PRIMARY_CONSTRUCTOR: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor> =
-        provider.primaryConstructorType
+    val PRIMARY_CONSTRUCTOR: KtNodeType = provider.primaryConstructorType
 
     @JvmField
     val SECONDARY_CONSTRUCTOR: KtNodeType = provider.secondaryConstructorType
