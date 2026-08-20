@@ -271,8 +271,14 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
             else CallerImpl.FieldSetter.Static(field, isNotNullProperty())
     }
 
+    // If signature is present, it's a property from a JVM class file (which might have either field or accessor, or both).
+    // If signature is absent, it's a builtin property, so we need to compute the signature and use the accessor only (which must be getter,
+    // as there are no builtin mutable properties so far).
+    val hasPropertySignature = kmProperty.fieldSignature != null || kmProperty.getterSignature != null
+
     val accessorSignature = when {
-        isGetter -> kmProperty.getterSignature ?: kmProperty.computeJvmSignature(property.container)
+        isGetter -> kmProperty.getterSignature
+            ?: if (!hasPropertySignature) kmProperty.computeJvmSignature(property.container) else null
         else -> kmProperty.setterSignature
     }
     val accessor = accessorSignature?.let { signature ->
