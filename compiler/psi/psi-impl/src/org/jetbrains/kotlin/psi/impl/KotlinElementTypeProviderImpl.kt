@@ -224,7 +224,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
         get() = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
 
-    override val dotQualifiedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression>
+    override val dotQualifiedExpressionType: KtNodeType
         get() = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
 
     override val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>

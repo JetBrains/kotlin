@@ -217,6 +217,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.REFERENCE_EXPRESSION,
             factory = KtNameReferenceExpressionStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
+            psiFactory = ::KtDotQualifiedExpression,
+        )
     }
 }
 
