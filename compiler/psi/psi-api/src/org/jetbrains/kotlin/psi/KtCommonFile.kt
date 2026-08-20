@@ -191,7 +191,12 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     override fun toString(): String = "KtFile: $name"
 
-    /** A workaround to provide the proper stub builder for decompiled files until KT-78356 is fixed */
+    /**
+     * A stub builder to be used instead of the language-wide one from [com.intellij.psi.stubs.LanguageStubDefinition].
+     *
+     * The platform provides a single stub builder per language, so this is the only way for a decompiled file to reuse the stub
+     * of the original binary file instead of building a new one from the decompiled text.
+     */
     @KtImplementationDetail
     open val customStubBuilder: StubBuilder? get() = null
 
@@ -285,9 +290,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun getStub(): KotlinFileStub? = super.getStub()?.let { it as KotlinFileStub }
 
     protected open val greenStub: KotlinFileStub?
-        get() =
-            @Suppress("DEPRECATION") // KT-78356
-            super.getGreenStub()?.let { it as KotlinFileStub }
+        get() = stubTreeOrFileElement.first?.root?.let { it as KotlinFileStub }
 
     override fun clearCaches() {
         @Suppress("RemoveExplicitSuperQualifier")

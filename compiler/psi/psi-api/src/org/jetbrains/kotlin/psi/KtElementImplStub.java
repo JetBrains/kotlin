@@ -123,7 +123,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
+    @SuppressWarnings("deprecation") // the overridden KtElement#getReference is deprecated
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
         return (references.length > 0) ? references[0] : null;
