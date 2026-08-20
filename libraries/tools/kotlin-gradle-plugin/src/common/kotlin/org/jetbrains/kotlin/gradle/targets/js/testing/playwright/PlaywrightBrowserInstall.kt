@@ -19,6 +19,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -61,7 +62,12 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
 
     @get:Internal
-    internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
+    internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty()
+        .value(compilation.npmToolingDir())
+        .also {
+            it.finalizeValue()
+            dependsOnNpmTooling(compilation)
+        }
 
     // this is intentional to prevent gradle warnings about tasks writing to the same location
     // FIXME: KT-87599 Design host-wide toolchain management

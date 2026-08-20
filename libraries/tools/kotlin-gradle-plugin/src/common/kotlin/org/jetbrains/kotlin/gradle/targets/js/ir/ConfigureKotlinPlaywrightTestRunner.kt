@@ -46,8 +46,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testRun = browser.testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
-        val nodeJsRoot = testCompilation.nodeJsRoot()
-        val nodeJsEnvSpec = testCompilation.nodeJsEnvSpec
 
         val jdBrowserRunners = browserTestDsl.allBrowserRunners.get().values
 
@@ -62,17 +60,6 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             .map { browserType ->
                 project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
                     browsers.add(browserType.browserName)
-
-                    with(nodeJsEnvSpec) {
-                        dependsOn(project.nodeJsSetupTaskProvider)
-                    }
-
-                    dependsOn(nodeJsRoot.npmInstallTaskProvider)
-                    dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-
-                    if (target.isWasm && nodeJsRoot is WasmNodeJsRootExtension) {
-                        dependsOn(nodeJsRoot.toolingInstallTaskProvider)
-                    }
                 }
             }
 

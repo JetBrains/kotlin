@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -128,14 +129,7 @@ constructor(
                 it.executable = nodeJsEnvSpec.executable.get()
                 if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
                     it.workingDir(npmProject.dir)
-                    it.dependsOn(
-                        nodeJsRoot.npmInstallTaskProvider,
-                    )
-                    it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-
-                    if (compilation.isWasm) {
-                        it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-                    }
+                    it.dependsOnNpmTooling(compilation)
                 }
 
                 it.npmToolingEnvDir.set(npmToolingDir)
