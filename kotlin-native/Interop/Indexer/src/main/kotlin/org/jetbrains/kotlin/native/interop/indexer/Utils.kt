@@ -916,19 +916,21 @@ private fun FilterHeadersOutput.filterHeadersByName(
                     // the path relative to the include path element.
                     name
                 } else {
-                    // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
-                    // Warning: containingFile is null when one module imports another via AST file
-                    val includerFile = includeLocation.getContainingFile()!!
-                    val includerName = headerToName[includerFile.canonicalPath] ?: ""
-                    val includerPath = includerFile.path
-
-                    val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
-                    if (curUnit.getFile(resolvedSibling) == file) {
-                        // included file is accessible from the includer by `name` used as relative path, so
-                        // `name` seems to be relative to the includer:
-                        Paths.get(includerName).resolveSibling(name).normalize().toString()
-                    } else {
+                    val includerFile = includeLocation.getContainingFile()
+                    if (includerFile == null) {
                         name
+                    } else {
+                        val includerName = headerToName[includerFile.canonicalPath] ?: ""
+                        val includerPath = includerFile.path
+
+                        val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
+                        if (curUnit.getFile(resolvedSibling) == file) {
+                            // included file is accessible from the includer by `name` used as relative path, so
+                            // `name` seems to be relative to the includer:
+                            Paths.get(includerName).resolveSibling(name).normalize().toString()
+                        } else {
+                            name
+                        }
                     }
                 }
 

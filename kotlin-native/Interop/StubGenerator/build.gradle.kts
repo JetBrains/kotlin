@@ -72,6 +72,8 @@ projectTests {
         // as an input so the cache is properly invalidated when it changes.
         inputs.dir(project(":kotlin-native").isolated.projectDirectory.dir("konan"))
             .withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.dir(nativeProtoDistribution.root)
+            .withPathSensitivity(PathSensitivity.RELATIVE)
         // Copy-pasted from Indexer build.gradle.kts.
         dependsOn(nativeDependencies.llvmDependency)
         jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
