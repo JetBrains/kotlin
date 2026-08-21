@@ -19,7 +19,8 @@ fun parseJavaToSyntaxTreeBuilder(
     charSequence: CharSequence,
     start: Int,
 ): SyntaxTreeBuilder {
-    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.HIGHEST)
+    // `JDK_X` enables experimental features too
+    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.JDK_X)
 
     val syntaxTreeBuilder = SyntaxTreeBuilderFactory.builder(
         charSequence,
@@ -34,6 +35,17 @@ fun parseJavaToSyntaxTreeBuilder(
     return syntaxTreeBuilder
 }
 
+/**
+ * The `JAVA_FILE` marker that [JavaSyntaxDefinition.parse] wraps around the parse is not decoration:
+ * calling `JavaParser.fileParser` directly, without it, breaks the parse in two ways.
+ * - The first `mark()` of a parse is the only one allowed to start on leading trivia; it then belongs to the
+ *   package statement, whose rollback parks the lexer on that trivia, so a file starting with any trivia (a
+ *   header comment, but a blank first line is enough) and having no `package` loses its whole import list.
+ * - The whitespace balancer skips the outermost production, so the empty import list keeps its parse-time
+ *   position and the first declaration can no longer bind the doc comment preceding it.
+ *
+ * [buildJavaLightTree] unwraps this node into its own root.
+ */
 fun parse(languageLevel: LanguageLevel, builder: SyntaxTreeBuilder) {
     JavaSyntaxDefinition.parse(languageLevel, builder)
 }

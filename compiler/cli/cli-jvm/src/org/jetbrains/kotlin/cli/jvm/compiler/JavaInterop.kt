@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassC
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
+import org.jetbrains.kotlin.util.PerformanceManager
 
 /**
  * The Java view of this compilation as [configuration] asks for it: the java-direct one unless
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 fun VfsBasedProjectEnvironment.javaInterop(
     configuration: CompilerConfiguration,
     withJavaSources: Boolean = true,
+    perfManager: PerformanceManager? = null,
 ): FirJavaInterop =
     if (configuration.useJavaDirectOrDefault) {
         createJavaDirectJavaInterop(
@@ -40,6 +42,7 @@ fun VfsBasedProjectEnvironment.javaInterop(
             // The binary Java classes live as long as the interop, i.e. as long as the compilation which built it.
             BinaryJavaClassCache(binaryClassFileIndex()),
             javaModuleFinder(),
+            perfManager,
         )
     } else {
         psiJavaInterop(withJavaSources)

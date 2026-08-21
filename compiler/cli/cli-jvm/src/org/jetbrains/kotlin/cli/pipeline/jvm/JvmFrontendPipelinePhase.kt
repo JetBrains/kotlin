@@ -346,7 +346,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             configuration,
             projectEnvironment,
             librariesClasspath,
-            javaInterop = projectEnvironment.javaInterop(configuration),
+            javaInterop = projectEnvironment.javaInterop(configuration, perfManager = configuration.perfManager),
         )
 
         return SessionConstructionUtils.prepareSessions(

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
+import org.jetbrains.kotlin.util.PerformanceManager
 
 /**
  * The java-direct Java view of a compilation, to be put into `FirJvmSessionFactory.Context`.
@@ -26,6 +27,7 @@ fun createJavaDirectJavaInterop(
     javaSourceRoots: List<JavaSourceRootEntry>,
     binaryClasses: BinaryJavaClassCache,
     javaModuleFinder: JavaModuleFinder,
+    perfManager: PerformanceManager? = null,
 ): FirJavaInterop {
     val moduleImportedPackages = JavaModuleImportedPackagesOverModuleGraph(javaModuleFinder)
 
@@ -47,6 +49,6 @@ fun createJavaDirectJavaInterop(
             session: FirSession,
             moduleData: FirModuleData,
         ): FirJavaFacade =
-            FirJavaFacadeForModule(session, moduleData, JavaClassFinderOverAstImpl(session, javaSourceRoots, moduleImportedPackages))
+            FirJavaFacadeForModule(session, moduleData, JavaClassFinderOverAstImpl(session, javaSourceRoots, moduleImportedPackages, perfManager))
     }
 }

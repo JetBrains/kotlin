@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -37,13 +39,24 @@ import kotlin.io.path.writeBytes
  * precompiled-binaries session and as the exclusions of the libraries session. (An HMPP fragment narrows the
  * *Kotlin* class finder only; `createBinaryJavaFacade` is always given the whole libraries classpath.)
  *
- * The incremental suites do run those shapes, but cannot observe the restriction: their fixtures state sources
- * only, so a class file in the previous output agrees with what the round compiles, and which of the two a
- * lookup sees makes no difference to the result.
- *
- * What the restriction then decides is in [JavaClassFinderOverBinaryIndexTest].
+ * What the restriction then decides, in a compilation which actually runs that shape, is in
+ * `org.jetbrains.kotlin.incremental.IncrementalJavaClassFromPreviousOutputTest`: a Java class file left in the
+ * output directory by the previous build is read by the precompiled-binaries session, while the reference its
+ * signature records is resolved on the whole classpath. The incremental suites do not observe it, because their
+ * fixtures state Java as sources, which are compiled outside the classpath of the Kotlin compilation.
  */
 class ClasspathRestrictionTest {
+
+    /**
+     * `CoreJarFileSystem`/`ZipHandler` cache an opened archive's file handle process-wide, well past the
+     * `TempDir` this test wrote it under going out of scope. Unix tolerates deleting a file that is still
+     * open; Windows does not, so a leftover handle turns `TempDir`'s post-test cleanup into a "used by
+     * another process" failure. Releasing the cache once a test is done keeps that cleanup from racing it.
+     */
+    @AfterEach
+    fun clearJarHandleCaches() {
+        ZipHandler.clearFileAccessorCache()
+    }
 
     @Test
     fun testClassFileInDirectoryRoot(@TempDir tempDir: Path) {
