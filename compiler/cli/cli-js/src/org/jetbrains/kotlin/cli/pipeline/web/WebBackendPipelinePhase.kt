@@ -15,18 +15,23 @@ import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
 
-abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
-    name: String
+abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
+    name: String,
 ) : PipelinePhase<ConfigurationPipelineArtifact, Output>(
     name = name,
     preActions = emptySet(),
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
-) {
+) where TFragments : IrICProgramFragments,
+        Output : WebBackendPipelineArtifact,
+        TFileArtifact : SrcFileArtifact,
+        TModuleArtifact : ModuleArtifact,
+        TBackendContext : JsCommonBackendContext {
     override fun executePhase(input: ConfigurationPipelineArtifact): Output? {
         val configuration = input.configuration
 
@@ -101,7 +106,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         outputDir: File,
         targetConfiguration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
-    ): List<ModuleArtifact> {
+    ): List<TModuleArtifact> {
 
         targetConfiguration.reportLog("")
         targetConfiguration.reportLog("Building cache:")
@@ -150,12 +155,12 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         cacheDirectory: String,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
-    ): CacheUpdater
+    ): CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>
 
     protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
     abstract fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
+        icCaches: List<TModuleArtifact>,
         configuration: CompilerConfiguration,
     ): IntermediateOutput?
 

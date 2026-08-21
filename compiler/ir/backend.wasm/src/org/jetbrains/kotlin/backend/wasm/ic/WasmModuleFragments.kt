@@ -66,4 +66,4 @@ open class WasmIrProgramFragments(
 class WasmIrModule(
     override val moduleName: String,
     override val fragments: List<WasmCompiledCodeFileFragment>,
-) : IrICModule()
+) : IrICModule<WasmCompiledCodeFileFragment>()

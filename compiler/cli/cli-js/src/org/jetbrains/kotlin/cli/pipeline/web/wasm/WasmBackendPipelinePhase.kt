@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextBase
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
@@ -17,21 +15,32 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.sourceMap
-import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>(
-    name = "WasmBackendPipelinePhase",
-) {
+abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragments, TIcContext> : WebBackendPipelinePhase<
+        WasmBackendPipelineArtifact,
+        List<WasmIrModuleConfiguration>,
+        TModuleArtifact,
+        TFileArtifact,
+        TFragments,
+        WasmBackendContext
+        >(name = "WasmBackendPipelinePhase")
+        where TModuleArtifact : ModuleArtifact,
+              TFileArtifact : SrcFileArtifact,
+              TFragments : IrICProgramFragments,
+              TIcContext : WasmICContextBase<TModuleArtifact, TFileArtifact, TFragments> {
     override val klibLoadingPhase: WebIrLoadingPipelinePhase
         get() = WasmIrLoadingPipelinePhase
 
@@ -54,30 +63,19 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         WasmBackendPipelineArtifact(results, outputDir, configuration)
     }
 
-    override fun compileIncrementally(
-        icCaches: List<ModuleArtifact>,
-        configuration: CompilerConfiguration,
-    ): List<WasmIrModuleConfiguration> {
-        val fragmentCompiler = when (configuration.wasmCompilationMode()) {
-            WasmCompilationMode.MULTI_MODULE -> ::compileIncrementallyMultimodule
-            WasmCompilationMode.SINGLE_MODULE -> ::compileIncrementallySingleModule
-            WasmCompilationMode.REGULAR -> ::compileIncrementallyWholeWorld
-        }
-        return fragmentCompiler(icCaches, configuration)
-    }
+    protected abstract fun createIcContext(
+        allowIncompleteImplementations: Boolean,
+        skipLocalNames: Boolean,
+        skipCommentInstructions: Boolean,
+        skipLocations: Boolean,
+    ): TIcContext
 
     override fun createCacheUpdater(
         cacheDirectory: String,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration
-    ): CacheUpdater {
-        val compilationMode = configuration.wasmCompilationMode()
-        val contextConstructor = when (compilationMode) {
-            WasmCompilationMode.REGULAR -> ::WasmICContextWholeWorld
-            WasmCompilationMode.MULTI_MODULE -> ::WasmICContextMultimodule
-            WasmCompilationMode.SINGLE_MODULE -> ::WasmICContextSingleModule
-        }
-        val icContext = contextConstructor(
+    ): CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, WasmBackendContext> {
+        val icContext = createIcContext(
             false,
             !configuration.wasmDebug,
             !configuration.wasmGenerateWat,
@@ -89,21 +87,20 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             artifactConfiguration = artifactConfiguration,
             icContext = icContext,
             checkForClassStructuralChanges = true,
-            loadBodiesOnlyForMainModule = compilationMode == WasmCompilationMode.SINGLE_MODULE,
+            loadBodiesOnlyForMainModule = configuration.wasmCompilationMode() == WasmCompilationMode.SINGLE_MODULE,
         )
     }
+
+    protected abstract fun createNonIncrementalCompiler(
+        configuration: CompilerConfiguration,
+        irFactory: IrFactoryImplForWasmIC,
+        module: ModulesStructure,
+    ): WasmCompilerBase
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): List<WasmIrModuleConfiguration> {
         (val loadedIr = moduleInfo, val module = moduleStructure, val configuration) = loadedIrArtifact
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
-        val compiler = when (configuration.wasmCompilationMode()) {
-            WasmCompilationMode.MULTI_MODULE ->
-                WholeWorldMultiModuleCompiler(configuration, irFactory)
-            WasmCompilationMode.SINGLE_MODULE ->
-                SingleModuleCompiler(configuration, irFactory, isWasmStdlib = module.klibs.included?.isWasmStdlib == true)
-            WasmCompilationMode.REGULAR ->
-                WholeWorldCompiler(configuration, irFactory)
-        }
+        val compiler = createNonIncrementalCompiler(configuration, irFactory, module)
 
         val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             linkIr(loadedIr, configuration)
