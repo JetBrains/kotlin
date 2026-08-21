@@ -1267,16 +1267,24 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                                 }
                                 else -> null
                             }
-                            getNonErrorMethodParameterType(irParameter.type) {
-                                if (sourceElement == null) return@getNonErrorMethodParameterType null
-
-                                if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(irParameter)) {
-                                    val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
-                                    val functionReturnType = sourceElement.typeReference!!.text
-                                    KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
+                            if (sourceElement != null && sourceElement.hasDeclaredReturnType() && isContinuationParameter(irParameter)) {
+                                val typeMappingMode =
+                                    MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, declaration, irParameter.type)
+                                val argument = getNonErrorType(
+                                    irParameter.type.containsErrorTypes(),
+                                    METHOD_PARAMETER_TYPE,
+                                    ktTypeProvider = { sourceElement.typeReference },
+                                    ifNonError = { projectLegacyFunctionTypeKindsIfNeeded(sourceElement.typeReference, typeMappingMode) },
+                                )
+                                if (argument == null) {
+                                    lazyType()
                                 } else {
-                                    sourceElement.valueParameters.getOrNull(valueParameterIndex)?.typeReference
+                                    val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
+                                    treeMaker.TypeApply(treeMaker.FqName(continuationTypeFqName), JavacList.of(argument.first)) to
+                                            "$continuationTypeFqName<${argument.second}>"
                                 }
+                            } else getNonErrorMethodParameterType(irParameter.type) {
+                                sourceElement?.valueParameters?.getOrNull(valueParameterIndex)?.typeReference
                             }
                         }
                         else -> {

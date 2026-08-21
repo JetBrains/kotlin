@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.kapt
 
-import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -37,13 +37,12 @@ class KaptContextForStubGeneration(
     logger: KaptLogger,
     val compiledClasses: List<ClassNode>,
     val origins: Map<Any, KaptIrOrigin>,
-    val generationState: GenerationState,
+    val configuration: CompilerConfiguration,
+    val classFileFactory: ClassFileFactory,
     val firFiles: List<FirFile>,
     val irBuiltIns: IrBuiltIns,
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
-
-    val project: Project get() = generationState.project
 
     // FirSession can be null in case of incremental compilation, e.g. if only Java files need reprocessing,
     // or all affected Kotlin sources are removed.

@@ -25,13 +25,20 @@ public final class Foo {
 
     @org.jetbrains.annotations.Nullable()
     public final java.lang.Object a(@org.jetbrains.annotations.NotNull()
-    kotlin.coroutines.Continuation<ABC> $completion) {
+    kotlin.coroutines.Continuation<? super error.NonExistentClass> $completion) {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
     public final java.lang.Object c(@org.jetbrains.annotations.NotNull()
-    kotlin.coroutines.Continuation<java.util.List<? extends ABC>> $completion) {
+    kotlin.coroutines.Continuation<? super java.util.List<error.NonExistentClass>> $completion) {
         return null;
     }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
 }
