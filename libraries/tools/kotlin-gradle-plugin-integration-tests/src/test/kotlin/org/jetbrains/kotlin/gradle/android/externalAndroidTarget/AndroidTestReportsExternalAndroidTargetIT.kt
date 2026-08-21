@@ -95,4 +95,48 @@ class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleAndroidTest
+    fun `test - device test configuration time wiring`(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        externalAndroidLibraryProject(
+            gradleVersion = gradleVersion,
+            androidVersion = androidVersion,
+            jdkVersion = jdkVersion,
+            namespace = "org.jetbrains.sample.devicetestwiring",
+            androidLibraryConfiguration = {
+                withHostTest {}
+                withDeviceTest {
+                    instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                }
+            },
+        ) {
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    val commonTest = sourceSets.getByName("commonTest")
+                    sourceSets.getByName("androidDeviceTest").dependsOn(commonTest)
+                }
+            }
+
+            val result = buildScriptReturn {
+                val commonTest = kotlinMultiplatform.sourceSets.getByName("commonTest")
+                val deviceTest = kotlinMultiplatform.sourceSets.getByName("androidDeviceTest")
+                val dependsOnCommon = deviceTest.dependsOn.contains(commonTest)
+                val hasTask = project.tasks.names.contains("connectedAndroidDeviceTest")
+
+                val target = kotlinMultiplatform.targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).single()
+                val compilation = target.compilations.getByName("deviceTest")
+                val runner = compilation::class.java.methods.find { it.name == "getInstrumentationRunner" }?.invoke(compilation) as? String
+
+                Triple(dependsOnCommon, hasTask, runner)
+            }.buildAndReturn(":help")
+
+            assertTrue(result.first, "androidDeviceTest source set must depend on commonTest")
+            assertTrue(result.second, "Task connectedAndroidDeviceTest must be registered in task graph")
+            assertEquals("androidx.test.runner.AndroidJUnitRunner", result.third)
+        }
+    }
 }
