@@ -142,7 +142,7 @@ fun GradleProject.readTestCases(
     taskName: String,
     subprojectName: String? = null,
 ): List<TestCaseResult> {
-    val simpleTaskName = taskName.removePrefix(":").substringAfterLast(':')
+    val simpleTaskName = taskName.substringAfterLast(':')
     val testReportDir = testResultsAndReportsDirs(taskName, subprojectName).first
 
     if (!Files.exists(testReportDir)) {
