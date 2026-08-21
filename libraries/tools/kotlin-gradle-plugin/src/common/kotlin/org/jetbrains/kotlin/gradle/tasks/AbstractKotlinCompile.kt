@@ -213,7 +213,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         )
 
-    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform] */
+    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableIncrementalCompilationOfCommonSources] */
     @get:Internal
     internal abstract val enableUnsafeIncrementalCompilationForMultiplatform: Property<Boolean>
 
@@ -303,7 +303,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             usePreciseJavaTracking = false, // not generally applicable
             preciseCompilationResultsBackup = true,
             keepIncrementalCompilationCachesInMemory = true,
-            enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),
+            enableIncrementalCompilationOfCommonSources = enableUnsafeIncrementalCompilationForMultiplatform.get(),
             enableMonotonousIncrementalCompileSetExpansion = enableMonotonousIncrementalCompileSetExpansion.get(),
         )
     }

@@ -57,7 +57,7 @@ internal fun HasSnapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeat
         withAbiSnapshot = false,
         preciseCompilationResultsBackup = options[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
-        enableUnsafeIncrementalCompilationForMultiplatform = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
+        enableIncrementalCompilationOfCommonSources = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
         enableMonotonousIncrementalCompileSetExpansion = options[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }
@@ -67,7 +67,7 @@ internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrem
         withAbiSnapshot = false,
         preciseCompilationResultsBackup = this[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
-        enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
+        enableIncrementalCompilationOfCommonSources = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
         enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }
