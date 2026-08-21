@@ -1,6 +1,9 @@
 KaTypeAliasSymbol:
   anchorPsi: KtTypeAlias
-  annotations: []
+  annotations: [
+    MyAnnotation()
+      psi: KtAnnotationEntry
+  ]
   classId: null
   expandedType: KaUsualClassType:
     annotations: []

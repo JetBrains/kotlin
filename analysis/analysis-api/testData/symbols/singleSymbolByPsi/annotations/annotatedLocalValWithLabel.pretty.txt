@@ -1,1 +1,2 @@
+@MyAnnotation
 val aa: kotlin.Int

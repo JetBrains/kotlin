@@ -1,6 +1,9 @@
 KaNamedClassSymbol:
   anchorPsi: KtClass
-  annotations: []
+  annotations: [
+    MyAnnotation()
+      psi: KtAnnotationEntry
+  ]
   classId: null
   classKind: CLASS
   companionObject: null
