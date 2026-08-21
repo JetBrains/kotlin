@@ -13,6 +13,7 @@ import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
@@ -68,10 +69,13 @@ import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
 object StandaloneProjectFactory {
+    private val LOG = Logger.getInstance(StandaloneProjectFactory::class.java)
+
     fun createProjectEnvironment(
         projectDisposable: Disposable,
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
@@ -240,6 +244,7 @@ object StandaloneProjectFactory {
             KotlinStandaloneJavaModuleAnnotationsProvider(delegateJavaModuleResolver),
         )
 
+        reportMissingLibraryRoots(modules)
         val libraryRoots = getAllBinaryRoots(modules, environment.environment)
 
         val rootsWithSingleJavaFileRoots = buildList {
@@ -423,7 +428,10 @@ object StandaloneProjectFactory {
         environment: CoreApplicationEnvironment,
     ): List<VirtualFile> {
         return roots.mapNotNull { path ->
-            val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
+            val absolutePath = path.toAbsolutePath()
+            val pathString = FileUtil.toSystemIndependentName(absolutePath.toString())
+            if (path.isMissingLocalLibraryRoot()) return@mapNotNull null
+
             when {
                 pathString.endsWith(JAR_PROTOCOL) || pathString.endsWith(KLIB_FILE_EXTENSION) -> {
                     environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
@@ -453,6 +461,29 @@ object StandaloneProjectFactory {
         val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
         return binaryRootsAsVirtualFiles.map { root ->
             JavaRoot(root, JavaRoot.RootType.BINARY)
+        }
+    }
+
+    private fun Path.isMissingLocalLibraryRoot(): Boolean {
+        val absolutePath = toAbsolutePath()
+        val pathString = FileUtil.toSystemIndependentName(absolutePath.toString())
+        return !pathString.contains(JAR_SEPARATOR) && !Files.exists(absolutePath)
+    }
+
+    private fun reportMissingLibraryRoots(modules: List<KaModule>) {
+        val reportedMissingRoots = mutableSetOf<Path>()
+        for (module in withAllTransitiveDependencies(modules)) {
+            val libraryModule = when (module) {
+                is KaLibraryModule -> module
+                is KaLibrarySourceModule -> module.binaryLibrary
+                else -> continue
+            }
+
+            libraryModule.binaryRoots.filter { it.isMissingLocalLibraryRoot() }.forEach { path ->
+                if (reportedMissingRoots.add(path.toAbsolutePath().normalize())) {
+                    LOG.warn("Classpath entry points to a non-existent location: $path")
+                }
+            }
         }
     }
 
