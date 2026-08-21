@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -164,7 +165,10 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     0,
                 ).apply {
                     val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
-                    arguments[0] = createValueParametersObject(proxyFunctionRegularParameters).toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = IrConstImpl.string(
+                        type = context.irBuiltIns.stringType,
+                        value = createValueParametersObject(proxyFunctionRegularParameters)
+                    )
                 }
             )
         }
@@ -207,7 +211,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 ).apply {
                     val objectAssignCall =
                         "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunction.parameters.drop(1))})"
-                    arguments[0] = objectAssignCall.toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = IrConstImpl.string(type = context.irBuiltIns.stringType, value = objectAssignCall)
                 }
             )
         }

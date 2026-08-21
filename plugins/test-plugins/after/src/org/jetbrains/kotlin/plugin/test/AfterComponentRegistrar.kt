@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
-import org.jetbrains.kotlin.ir.util.toIrConst
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.name.Name
 
 object AfterDiagnostics : KtDiagnosticsContainer() {
@@ -85,7 +85,9 @@ class AfterComponentRegistrar : CompilerPluginRegistrar() {
                         returnType = pluginContext.irBuiltIns.stringType
                     }.apply {
                         val builder = pluginContext.irBuiltIns.createIrBuilder(symbol)
-                        body = builder.irBlockBody { +irReturn("after".toIrConst(pluginContext.irBuiltIns.stringType)) }
+                        body = builder.irBlockBody {
+                            +irReturn(IrConstImpl.string(type = pluginContext.irBuiltIns.stringType, value = "after"))
+                        }
                     }
                 }
             }

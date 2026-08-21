@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
@@ -262,27 +261,27 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         return when {
             linkerError != null -> {
                 when (parameter.name.asString()) {
-                    "message" -> linkerError.toIrConst(context.irBuiltIns.stringType)
-                    "name" -> name.toIrConst(context.irBuiltIns.stringType)
+                    "message" -> IrConstImpl.string(type = context.irBuiltIns.stringType, value = linkerError)
+                    "name" -> IrConstImpl.string(type = context.irBuiltIns.stringType, value = name)
                     else -> irNull()
                 }
             }
             reflectionTargetSymbol != null -> {
                 when (parameter.name.asString()) {
                     "flags" -> {
-                        reference.getFlags().toIrConst(context.irBuiltIns.intType)
+                        IrConstImpl.int(type = context.irBuiltIns.intType, value = reference.getFlags())
                     }
                     "arity" -> {
-                        reference.getArity().toIrConst(context.irBuiltIns.intType)
+                        IrConstImpl.int(type = context.irBuiltIns.intType, value = reference.getArity())
                     }
                     "id" -> {
-                        reference.getId(backendContext).toIrConst(context.irBuiltIns.stringType)
+                        IrConstImpl.string(type = context.irBuiltIns.stringType, value = reference.getId(backendContext))
                     }
                     "boundValueCount" -> {
-                        reference.boundValues.size.toIrConst(context.irBuiltIns.intType)
+                        IrConstImpl.int(type = context.irBuiltIns.intType, value = reference.boundValues.size)
                     }
                     "name" -> {
-                        name.toIrConst(context.irBuiltIns.stringType)
+                        IrConstImpl.string(type = context.irBuiltIns.stringType, value = name)
                     }
                     else -> irNull()
                 }

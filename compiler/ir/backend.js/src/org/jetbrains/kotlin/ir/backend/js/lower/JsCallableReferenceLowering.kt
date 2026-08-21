@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.types.IrType
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.toIrConst
 
 @PhasePrerequisites(PropertyReferenceLowering::class, FunctionInlining::class)
 class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : WebCallableReferenceLowering(jsContext) {
@@ -63,10 +63,10 @@ class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : W
                     origin = JsStatementOrigins.CALLABLE_REFERENCE_INVOKE,
                 )
             } else if (functionReference.reflectionTargetSymbol != null) {
-                arguments[0] = functionReference.getFlags().toIrConst(context.irBuiltIns.intType)
-                arguments[1] = functionReference.getArity().toIrConst(context.irBuiltIns.intType)
+                arguments[0] = IrConstImpl.int(type = context.irBuiltIns.intType, value = functionReference.getFlags())
+                arguments[1] = IrConstImpl.int(type = context.irBuiltIns.intType, value = functionReference.getArity())
                 arguments[2] = JsIrBuilder.buildCall(jsContext.symbols.signatureIdSymbol).apply {
-                    arguments[0] = functionReference.getId(jsContext).toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = IrConstImpl.string(type = context.irBuiltIns.stringType, value = functionReference.getId(jsContext))
                 }
             }
         }

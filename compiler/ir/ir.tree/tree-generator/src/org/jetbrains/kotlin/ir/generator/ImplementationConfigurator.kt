@@ -292,44 +292,45 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(const) {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "SYNTHETIC_OFFSET"))
             implementation.generationCallback = {
                 println()
                 printlnMultiLine("""
                     companion object {
-                        fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =
+                        fun string(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: String): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.String, value)
                 
-                        fun int(startOffset: Int, endOffset: Int, type: IrType, value: Int): IrConstImpl =
+                        fun int(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Int): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Int, value)
                 
-                        fun constNull(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                        fun constNull(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Null, null)
                 
-                        fun boolean(startOffset: Int, endOffset: Int, type: IrType, value: Boolean): IrConstImpl =
+                        fun boolean(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Boolean): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Boolean, value)
                 
-                        fun constTrue(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                        fun constTrue(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType): IrConstImpl =
                             boolean(startOffset, endOffset, type, true)
                 
-                        fun constFalse(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                        fun constFalse(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType): IrConstImpl =
                             boolean(startOffset, endOffset, type, false)
                 
-                        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl =
+                        fun long(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Long): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Long, value)
                 
-                        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl =
+                        fun float(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Float): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Float, value)
                 
-                        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConstImpl =
+                        fun double(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Double): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Double, value)
                 
-                        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConstImpl =
+                        fun char(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Char): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Char, value)
                 
-                        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl =
+                        fun byte(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Byte): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Byte, value)
                 
-                        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl =
+                        fun short(startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET, type: IrType, value: Short): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Short, value)
                     }
                 """.trimIndent())

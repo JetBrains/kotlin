@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -106,7 +106,7 @@ class MetadataExtensionExtractor(val context: IrPluginContext) : IrVisitorVoid()
             endOffset = UNDEFINED_OFFSET,
             type = irBuiltIns.nothingType,
             returnTargetSymbol = declaration.symbol,
-            value = valueFromMetadata.toIrConst(irBuiltIns.intType)
+            value = IrConstImpl.int(type = irBuiltIns.intType, value = valueFromMetadata)
         )
         declaration.body = irFactory.createExpressionBody(returnExpression)
     }

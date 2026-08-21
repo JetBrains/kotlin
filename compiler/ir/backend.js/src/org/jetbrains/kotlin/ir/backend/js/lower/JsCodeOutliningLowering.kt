@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -251,8 +251,8 @@ private class JsCodeOutlineTransformer(
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
         val [jsFunCode, sourceMap] = printJsCodeWithDebugInfo(newFun)
-        annotation.arguments[0] = jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType)
-        annotation.arguments[1] = sourceMap.toIrConst(loweringContext.irBuiltIns.stringType)
+        annotation.arguments[0] = IrConstImpl.string(type = loweringContext.irBuiltIns.stringType, value = jsFunCode)
+        annotation.arguments[1] = IrConstImpl.string(type = loweringContext.irBuiltIns.stringType, value = sourceMap)
 
         return with(loweringContext.createIrBuilder(container.symbol)) {
             irCall(outlinedFunction).apply {

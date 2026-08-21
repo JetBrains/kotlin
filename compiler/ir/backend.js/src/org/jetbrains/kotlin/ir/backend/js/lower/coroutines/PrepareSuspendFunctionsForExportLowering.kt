@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -517,7 +518,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
     private fun IrMutableAnnotationContainer.addJsName(name: String) {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameAnnotation.symbol).apply {
-            arguments[0] = name.toIrConst(context.irBuiltIns.stringType)
+            arguments[0] = IrConstImpl.string(type = context.irBuiltIns.stringType, value = name)
         }
     }
 
