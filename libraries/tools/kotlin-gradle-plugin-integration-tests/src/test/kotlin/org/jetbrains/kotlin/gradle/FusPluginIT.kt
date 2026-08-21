@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.deleteRecursively
-import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
 @JvmGradlePluginTests
@@ -179,10 +177,12 @@ class FusPluginIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
+            val invalidPath = buildGradle.resolve("fus")
+
             //invalid path for FUS reports should not break the build
-            build("test-fus", "-Pkotlin.session.logger.root.path=",
+            build("test-fus", "-Pkotlin.session.logger.root.path=${invalidPath.absolutePathString()}",
                   buildOptions = buildOptions.copy(pathToFusReportDirectory = { null })) {
-                assertOutputContains("Failed to create directory '/kotlin-profile' for FUS report. FUS report won't be created")
+                assertOutputContains("Failed to create directory '${invalidPath.resolve("kotlin-profile").absolutePathString()}' for FUS report. FUS report won't be created")
             }
         }
     }
