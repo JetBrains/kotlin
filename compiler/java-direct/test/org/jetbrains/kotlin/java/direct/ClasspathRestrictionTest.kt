@@ -39,11 +39,11 @@ import kotlin.io.path.writeBytes
  * precompiled-binaries session and as the exclusions of the libraries session. (An HMPP fragment narrows the
  * *Kotlin* class finder only; `createBinaryJavaFacade` is always given the whole libraries classpath.)
  *
- * The incremental suites do run those shapes, but cannot observe the restriction: their fixtures state sources
- * only, so a class file in the previous output agrees with what the round compiles, and which of the two a
- * lookup sees makes no difference to the result.
- *
- * What the restriction then decides is in [JavaClassFinderOverBinaryIndexTest].
+ * What the restriction then decides, in a compilation which actually runs that shape, is in
+ * `org.jetbrains.kotlin.incremental.IncrementalJavaClassFromPreviousOutputTest`: a Java class file left in the
+ * output directory by the previous build is read by the precompiled-binaries session, while the reference its
+ * signature records is resolved on the whole classpath. The incremental suites do not observe it, because their
+ * fixtures state Java as sources, which are compiled outside the classpath of the Kotlin compilation.
  */
 class ClasspathRestrictionTest {
 
