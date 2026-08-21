@@ -33,6 +33,9 @@ void Kotlin_shutdownRuntime();
 // Appends given node to an initializer list.
 RUNTIME_NOTHROW void AppendToInitializersTail(struct InitNode*);
 
+// Re-run initialization after dynamic constructors register new initializer nodes.
+void ReinitializeGlobalVariablesAndTLS();
+
 void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)(), const TypeInfo* typeInfo);
 void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)(), const TypeInfo* typeInfo);
 

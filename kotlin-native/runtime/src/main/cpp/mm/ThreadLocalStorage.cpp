@@ -28,6 +28,12 @@ void mm::ThreadLocalStorage::Commit() noexcept {
     state_ = State::kCommitted;
 }
 
+void mm::ThreadLocalStorage::Reopen() noexcept {
+    RuntimeLogDebug({kTagTLS}, "Reopened");
+    RuntimeAssert(state_ == State::kCommitted, "Storage must be in the committed state");
+    state_ = State::kBuilding;
+}
+
 void mm::ThreadLocalStorage::Clear() noexcept {
     RuntimeLogDebug({kTagTLS}, "Cleared");
     RuntimeAssert(state_ == State::kCommitted, "Storage must be in the committed state");

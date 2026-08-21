@@ -6,16 +6,36 @@
 #ifndef HOTRELOAD_HPP
 #define HOTRELOAD_HPP
 
-#include "Memory.h"
-#include "Natives.h"
-#include "Runtime.h"
-#include "Types.h"
-#include "Common.h"
-#include "Logging.hpp"
+#ifdef KONAN_HOT_RELOAD
 
-#define HRLogInfo(format, ...) RuntimeLogInfo({kotlin::kTagHotReload}, format, ##__VA_ARGS__)
-#define HRLogDebug(format, ...) RuntimeLogDebug({kotlin::kTagHotReload}, format, ##__VA_ARGS__)
-#define HRLogWarning(format, ...) RuntimeLogWarning({kotlin::kTagHotReload}, format, ##__VA_ARGS__)
-#define HRLogError(format, ...) RuntimeLogError({kotlin::kTagHotReload}, format, ##__VA_ARGS__)
+#include <cstdint>
+
+#include "Memory.h"
+#include "Types.h"
+
+namespace kotlin::hot {
+
+using KonanStartFn = KInt(*)(const ObjHeader*);
+
+class HotReload : private Pinned {
+public:
+    static void InitModule() noexcept;
+
+    static HotReload& Instance() noexcept;
+
+    void LoadBootstrap(const uint8_t* manifestData);
+
+    KonanStartFn LookupForKonanStart() const;
+};
+
+} // namespace kotlin::hot
+
+extern "C" {
+    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader*);
+    void Kotlin_native_internal_HotReload_invokeReloadSuccessHandler();
+    void* KNHR_LoadObjCStubAddress(const char* name);
+}
 
 #endif
+
+#endif // HOTRELOAD_HPP

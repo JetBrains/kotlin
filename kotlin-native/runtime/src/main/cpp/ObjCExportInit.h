@@ -10,6 +10,12 @@
 
 extern "C" void Kotlin_ObjCExport_initialize(void);
 
+struct ObjCTypeAdapter;
+
+extern "C" void Kotlin_ObjCExport_bindTypeAdaptersToTypeInfos(
+    const ObjCTypeAdapter** classAdapters, int classAdaptersNum,
+    const ObjCTypeAdapter** protocolAdapters, int protocolAdaptersNum);
+
 #endif // KONAN_OBJC_INTEROP
 
 #endif // RUNTIME_OBJCEXPORTINIT_H

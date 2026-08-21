@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 
 plugins {
     id("common-configuration")
@@ -22,6 +23,9 @@ plugins {
     id("base")
     id("compile-to-bitcode")
 }
+
+val nativeDependencies = extensions.getByType<NativeDependenciesExtension>()
+val llvmHeaders = file(nativeDependencies.llvmPath).resolve("include")
 
 val breakpad = configurations.dependencyScope("breakpad")
 val breakpadClasspath = configurations.resolvable("breakpadClasspath") {
@@ -161,7 +165,7 @@ bitcode {
 
         module("runtime") {
             srcRoot.set(layout.projectDirectory.dir("src/main"))
-            headersDirs.from("src/utfcpp/cpp")
+            headersDirs.from("src/utfcpp/cpp", "src/hot_reload/common/cpp")
             sourceSets {
                 main {}
                 testFixtures {}
@@ -171,7 +175,7 @@ bitcode {
 
         testsGroup("runtime_test") {
             testedModules.addAll("runtime")
-            testSupportModules.addAll("noop_externalCallsChecker", "custom_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("noop_externalCallsChecker", "custom_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
@@ -301,11 +305,28 @@ bitcode {
 
         module("hot_reload") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload/impl"))
-            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/hot_reload/common/cpp", "src/main/cpp")
+            headersDirs.from(
+                    "src/alloc/common/cpp",
+                    "src/gcScheduler/common/cpp",
+                    "src/gc/common/cpp",
+                    "src/mm/cpp",
+                    "src/externalCallsChecker/common/cpp",
+                    "src/hot_reload/common/cpp",
+                    "src/main/cpp",
+                    llvmHeaders,
+            )
             sourceSets {
                 main { }
             }
             onlyIf { it.family.isAppleFamily }
+        }
+
+        module("noop_hot_reload") {
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload/noop"))
+            headersDirs.from("src/hot_reload/common/cpp", "src/main/cpp", "src/mm/cpp", "src/alloc/common/cpp", "src/gc/common/cpp")
+            sourceSets {
+                main {}
+            }
         }
 
         module("debug") {
