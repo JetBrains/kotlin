@@ -14,7 +14,11 @@
 
 /CastBetweenAtomicTypes.kt:30:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:32:16: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:32:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:33:16: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:33:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
@@ -48,7 +52,11 @@
 
 /CastBetweenAtomicTypes.kt:61:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:63:16: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:63:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:64:16: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:64:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
@@ -84,7 +92,11 @@
 
 /CastBetweenAtomicTypes.kt:92:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:94:16: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:94:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:95:16: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:95:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
@@ -128,7 +140,11 @@
 
 /CastBetweenAtomicTypes.kt:129:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:131:16: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:131:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:132:16: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:132:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
@@ -156,19 +172,35 @@
 
 /CastBetweenAtomicTypes.kt:153:16: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:159:15: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:159:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:160:15: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:160:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:166:15: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:166:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:167:15: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:167:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:173:15: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:173:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:174:15: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:174:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:176:15: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:176:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:177:15: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:177:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
@@ -176,7 +208,11 @@
 
 /CastBetweenAtomicTypes.kt:180:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 
+/CastBetweenAtomicTypes.kt:186:15: error: Atomic properties can only be accessed as receivers of atomic operations.
+
 /CastBetweenAtomicTypes.kt:186:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/CastBetweenAtomicTypes.kt:187:15: error: Atomic properties can only be accessed as receivers of atomic operations.
 
 /CastBetweenAtomicTypes.kt:187:15: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
 

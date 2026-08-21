@@ -91,6 +91,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN_MESSAGE =
         "Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types."
 
+    private const val ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION_MESSAGE =
+        "Atomic properties can only be accessed as receivers of atomic operations."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -130,6 +133,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN, ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION, ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION_MESSAGE
         )
     }
 
