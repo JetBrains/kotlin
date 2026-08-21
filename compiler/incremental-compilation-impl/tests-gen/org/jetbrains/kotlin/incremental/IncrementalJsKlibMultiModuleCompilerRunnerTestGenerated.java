@@ -18,13 +18,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common")
 @TestDataPath("$PROJECT_ROOT")
-public class IncrementalK2JsKlibMultiModuleCompilerRunnerTestGenerated extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
+public class IncrementalJsKlibMultiModuleCompilerRunnerTestGenerated extends AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest {
   private void run(String fileName) {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/" + fileName);
   }
 
   @Test
-  public void testAllFilesPresentInCommonAbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest() {
+  public void testAllFilesPresentInCommonAbstractIncrementalJsKlibMultiModuleCompilerRunnerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
