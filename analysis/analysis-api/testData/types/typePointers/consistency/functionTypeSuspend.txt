@@ -4,8 +4,8 @@ KaFunctionType:
   abbreviation: null
   annotations: []
   classId: kotlin/coroutines/SuspendFunction1
-  contextReceivers: []
-  hasContextReceivers: false
+  contextParameterTypes: []
+  hasContextParameters: false
   hasReceiver: false
   isReflectType: false
   isSuspend: true

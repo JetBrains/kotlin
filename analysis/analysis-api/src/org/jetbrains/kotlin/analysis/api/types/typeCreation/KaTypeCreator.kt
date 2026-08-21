@@ -565,7 +565,7 @@ public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
      * Note that Kotlin prohibits context parameters in reflection types.
      * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
      *
-     * @see KaFunctionType.contextReceivers
+     * @see KaFunctionType.contextParameterTypes
      */
     public val contextParameters: List<KaType>
 
