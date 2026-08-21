@@ -63,3 +63,14 @@ open class NothingBound {
 }
 
 class Parent : Child()
+
+// ---
+
+class Unrelated
+
+class UnrelatedBound {
+    override fun equals(@EqualityBound(<!EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS!>Unrelated<!>::class) other: Any?): Boolean = true
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, interfaceDeclaration, nullableType,
+operator, override, typeAliasDeclaration */
