@@ -760,3 +760,11 @@ cacheableTargetNames.forEach { targetName ->
 }
 
 // endregion
+
+// KT-86265: Use ARMv7 baseline for android_arm32 to match NDK armeabi-v7a spec.
+// This ensures ALL runtime modules (including libbacktrace) are compiled with cortex-a7.
+tasks.withType<org.jetbrains.kotlin.cpp.ClangFrontend>().configureEach {
+    if (targetName.get() == "android_arm32") {
+        arguments.addAll("-mcpu=cortex-a7", "-mfloat-abi=softfp")
+    }
+}

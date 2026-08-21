@@ -145,6 +145,8 @@ sealed class ClangArgs(
                     "-I$toolchainSysroot/usr/include",
                     "-I$toolchainSysroot/usr/include/$clangTarget"
             ) + when (target) {
+                // KT-86265: Use ARMv7 baseline for android_arm32 to match NDK armeabi-v7a spec
+                KonanTarget.ANDROID_ARM32 -> listOf("-mcpu=cortex-a7", "-mfloat-abi=softfp")
                 // KT-73559
                 KonanTarget.ANDROID_ARM64 -> listOf("-mno-outline-atomics")
                 else -> emptyList()
