@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidDeviceTestCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
-import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import kotlin.test.assertEquals
