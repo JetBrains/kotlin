@@ -1,0 +1,87 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:13
+Breakpoint 1: where = lldb_inspectArray.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:13:11, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_inspectArray.kexe`kfun:#main(args=[]){} at main.kt:13:11
+   10  	    val boxedIntArray: Array<Int> = arrayOf(1, 2, 3)
+   11  	    val nestedArray: Array<Array<Array<Point>>> =
+   12  	        arrayOf(arrayOf(arrayOf(Point(4, 5), Point(6, 7))), emptyArray())
+-> 13  	    return
+    	          ^
+   14  	}
+   15  	
+   16  	data class Point(val x: Int, val y: Int)
+(lldb) fr var array
+(ObjHeader *) array = [Point(x=1, y=2), Point(x=3, y=4)]
+(lldb) fr var -A -P 5 array
+(ObjHeader *) array = [Point(x=1, y=2), Point(x=3, y=4)] {
+  0 = Point(x=1, y=2) {
+    x = 1
+    y = 2
+  }
+  1 = Point(x=3, y=4) {
+    x = 3
+    y = 4
+  }
+}
+(lldb) fr var emptyArray
+(ObjHeader *) emptyArray = []
+(lldb) fr var -A -P 5 emptyArray
+(ObjHeader *) emptyArray = [] {}
+(lldb) fr var boxedIntArray
+(ObjHeader *) boxedIntArray = [1, 2, 3]
+(lldb) fr var -A -P 5 boxedIntArray
+(ObjHeader *) boxedIntArray = [1, 2, 3] {
+  0 = 1 {
+    value = 1
+  }
+  1 = 2 {
+    value = 2
+  }
+  2 = 3 {
+    value = 3
+  }
+}
+(lldb) fr var nestedArray
+(ObjHeader *) nestedArray = [kotlin.Array<value id>, kotlin.Array<value id>]
+(lldb) fr var -A -P 10 nestedArray
+(ObjHeader *) nestedArray = [kotlin.Array<value id>, kotlin.Array<value id>] {
+  0 = [kotlin.Array<value id>] {
+    0 = [Point(x=4, y=5), Point(x=6, y=7)] {
+      0 = Point(x=4, y=5) {
+        x = 4
+        y = 5
+      }
+      1 = Point(x=6, y=7) {
+        x = 6
+        y = 7
+      }
+    }
+  }
+  1 = [] {}
+}
+(lldb) field_type nestedArray
+Array
+(lldb) field_type nestedArray.0
+Array
+(lldb) field_type nestedArray.0.0
+Array
+(lldb) field_type nestedArray.0.0.0
+Point
+(lldb) field_type nestedArray.0.0.0.x
+int
+(lldb) field_type nestedArray.0.0.0.y
+int
+(lldb) field_type nestedArray.0.0.1
+Point
+(lldb) field_type nestedArray.0.0.1.x
+int
+(lldb) field_type nestedArray.0.0.1.y
+int
+(lldb) q
