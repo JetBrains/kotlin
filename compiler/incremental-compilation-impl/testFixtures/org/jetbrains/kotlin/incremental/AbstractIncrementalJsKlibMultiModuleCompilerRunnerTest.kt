@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import java.io.File
 
-abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
+abstract class AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest :
     AbstractIncrementalMultiModuleCompilerRunnerTest<K2JSCompilerArguments, ModulesApiHistoryJs>() {
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
@@ -24,7 +24,7 @@ abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
             outputDir = destinationDir.path
             moduleName = testDir.name
             sourceMap = false
-            languageVersion = "1.9"
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString
         }
 
     override val buildLogFinder: BuildLogFinder
@@ -87,15 +87,5 @@ abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
 
     companion object {
         private val String.klib: String get() = "$this.$KLIB_FILE_EXTENSION"
-    }
-}
-
-abstract class AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest :
-    AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest() {
-
-    override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
-        return super.createCompilerArguments(destinationDir, testDir).apply {
-            languageVersion = LanguageVersion.LATEST_STABLE.versionString
-        }
     }
 }
