@@ -70,6 +70,29 @@ class A {
     var d = empty()
     var e = withGlobalRead()
     var f = withGlobalReadButEffects()
+    var g = 100
+
+    fun nested() {
+        g = when {
+            true -> {
+                x += 300
+                0
+            }
+            else -> 0
+        }
+    }
+}
+
+class NestedAssignment {
+    var x: Int
+    val y: Int
+    constructor() {
+        x = 100
+        y = when {
+            true -> { x += 1; 0 }
+            else -> 0
+        }
+    }
 }
 
 // FUNCTION_HAS_EFFECTS: function=createAndUse WRITE
@@ -78,6 +101,9 @@ fun createAndUse(): A {
     val a = A()
     a.x += 2
     a.w = withIndirectEffects()
+    a.nested()
+    val b = NestedAssignment()
+    a.x += b.x
     return a
 }
 
@@ -96,8 +122,8 @@ function box() {
     const ps = Object.getOwnPropertyNames(a);
     if (ps.length !== 1)
         return `expected to only have one field left (have ${ps.length}: ${ps})`;
-    if (a[ps[0]] !== 3)
-        return `expected the 'x' field to have the value 3, have ${a[ps[0]]}`;
+    if (a[ps[0]] !== 404)
+        return `expected the 'x' field to have the value 404, have ${a[ps[0]]}`;
     if (effectCount !== 3)
         return `expected effectCount to be exactly 3, have ${effectCount}`;
     const ctor = Object.getPrototypeOf(a).constructor.toString();
