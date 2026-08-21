@@ -44,6 +44,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirDanglingFileResolutionModeProvider"
     />
 
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.internals.KaRendererProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.rendering.KaRendererProviderImpl"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirKDocResolutionStrategyProviderService"
