@@ -209,7 +209,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.unitType, original.symbol
             )
             is IrSimpleFunction -> IrCallImpl.fromSymbolOwner(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, original.returnType, original.symbol
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, original.symbol
             )
         }
 

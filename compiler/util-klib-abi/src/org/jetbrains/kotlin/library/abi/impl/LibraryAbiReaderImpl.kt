@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.abi.impl
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
@@ -54,6 +56,13 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNulla
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
+
+/** Origin names are serialized into every KLIB (`IrDeclarationBase.origin_name`) as [IrDeclarationOrigin.name]. */
+@OptIn(ExperimentalLibraryAbiReader::class)
+private val ABI_DECLARATION_ORIGINS_BY_IR_ORIGIN_NAME: Map<String, AbiDeclarationOrigin> = mapOf(
+    IrDeclarationOrigin.SYNTHETIC_ACCESSOR.name to AbiDeclarationOrigin.SYNTHETIC_ACCESSOR,
+    IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER.name to AbiDeclarationOrigin.VERSION_OVERLOAD_WRAPPER,
+)
 
 @ExperimentalLibraryAbiReader
 internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingFilter>) {
@@ -127,6 +136,13 @@ private class LibraryDeserializer(
 
     private inner class FileDeserializer(fileIndex: Int) {
         private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
+
+        /**
+         * Reading a string from the KLIB string table decodes it anew every time, so origin names are resolved
+         * per *index* rather than per declaration. Strings in the table are deduplicated on serialization, so
+         * this map ends up holding one entry per distinct declaration origin in this file.
+         */
+        private val declarationOriginsByOriginNameIndex = Int2ObjectOpenHashMap<AbiDeclarationOrigin>()
 
         private val packageName: AbiCompoundName
         private val topLevelDeclarationIds: List<Int>
@@ -290,6 +306,16 @@ private class LibraryDeserializer(
             )
         }
 
+        /** The origin that [originNameIndex] stands for, or [AbiDeclarationOrigin.OTHER] if it is not a known one. */
+        private fun resolveDeclarationOrigin(originNameIndex: Int): AbiDeclarationOrigin {
+            declarationOriginsByOriginNameIndex.get(originNameIndex)?.let { return it }
+
+            val origin = ABI_DECLARATION_ORIGINS_BY_IR_ORIGIN_NAME[fileReader.string(originNameIndex)]
+                ?: AbiDeclarationOrigin.OTHER
+            declarationOriginsByOriginNameIndex.put(originNameIndex, origin)
+            return origin
+        }
+
         private fun deserializeFunction(
             proto: ProtoFunctionBase,
             isConstructor: Boolean,
@@ -297,6 +323,7 @@ private class LibraryDeserializer(
             parentTypeParameterResolver: TypeParameterResolver?
         ): AbiFunction? {
             val annotations = deserializeAnnotations(proto.base)
+            val declarationOrigin = resolveDeclarationOrigin(proto.base.originName)
 
             val containingProperty: ContainingEntity.Property?
             val containingClass: ContainingEntity.Class?
@@ -399,7 +426,8 @@ private class LibraryDeserializer(
                     signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                     annotations = annotations,
                     isInline = flags.isInline,
-                    valueParameters = allValueParameters.compact()
+                    valueParameters = allValueParameters.compact(),
+                    declarationOrigin = declarationOrigin,
                 )
             } else {
                 // Show only a non-trivial return type for the others.
@@ -417,6 +445,7 @@ private class LibraryDeserializer(
                     valueParameters = allValueParameters.compact(),
                     returnType = nonTrivialReturnType,
                     companionExtensionsClass = companionExtension,
+                    declarationOrigin = declarationOrigin,
                 )
             }
         }
