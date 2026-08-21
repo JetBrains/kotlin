@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirTypeRefSource
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
@@ -60,6 +62,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val classSymbol = declaration.symbol
             checkMetaSerializableApplicable(classSymbol, reporter)
             checkInheritableSerialInfoNotRepeatable(classSymbol, reporter)
+            checkSerialInfoTargets(classSymbol, reporter)
             checkEnum(classSymbol, reporter)
             checkExternalSerializer(classSymbol, reporter)
             checkKeepGeneratedSerializer(classSymbol, reporter)
@@ -97,6 +100,30 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }
             ?: return
         reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE)
+    }
+
+    // @SerialInfo is meaningful only on class- or property-targeted annotations; @InheritableSerialInfo only on class-targeted ones.
+    private val SERIAL_INFO_ALLOWED_TARGETS = setOf(KotlinTarget.CLASS, KotlinTarget.PROPERTY)
+    private val INHERITABLE_SERIAL_INFO_ALLOWED_TARGETS = setOf(KotlinTarget.CLASS)
+
+    private fun CheckerContext.checkSerialInfoTargets(classSymbol: FirClassSymbol<FirClass>, reporter: DiagnosticReporter) {
+        if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
+        val allowedTargets = classSymbol.getAllowedAnnotationTargets(session)
+        val annotations = classSymbol.resolvedAnnotationsWithClassIds
+
+        fun inapplicableTargets(permitted: Set<KotlinTarget>): String? =
+            allowedTargets.filter { it !in permitted }.sorted().takeIf { it.isNotEmpty() }?.joinToString { it.name }
+
+        annotations.find { it.toAnnotationClassId(session) == SerializationAnnotations.serialInfoClassId }?.let { anno ->
+            inapplicableTargets(SERIAL_INFO_ALLOWED_TARGETS)?.let {
+                reporter.reportOn(anno.source, FirSerializationErrors.SERIALINFO_INAPPLICABLE_TARGET, it)
+            }
+        }
+        annotations.find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }?.let { anno ->
+            inapplicableTargets(INHERITABLE_SERIAL_INFO_ALLOWED_TARGETS)?.let {
+                reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET, it)
+            }
+        }
     }
 
     private fun CheckerContext.checkExternalSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
