@@ -1,6 +1,14 @@
 // FULL_JDK
 // FIR_DUMP
 
+// This test installs a `Handler` on the loggers `@Log` generates, and `@Log` names a logger after the annotated
+// class, so the names below must stay unique across the whole box test data: `java.util.logging.LogManager` is
+// global to the JVM, box tests run concurrently in one, and a name shared with another test file means one shared
+// `Logger` and this test collecting that file's records. `logWithConfig.kt` and `fromLibrary.kt` declare classes
+// of the same names and sit in packages of their own for exactly that reason.
+//
+// This file stays in the root package because `assertEquals` does - see `testData/common.kt`.
+
 import lombok.extern.java.Log
 import lombok.AccessLevel
 import java.util.logging.Handler
