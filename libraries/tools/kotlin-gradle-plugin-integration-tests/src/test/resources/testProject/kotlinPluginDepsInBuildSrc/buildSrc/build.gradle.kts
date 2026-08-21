@@ -14,9 +14,3 @@ allprojects {
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     }
 }
-
-tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileKotlin").configure {
-    compilerOptions {
-        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
-    }
-}

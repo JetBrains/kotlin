@@ -2,5 +2,5 @@ $TESTDATA_DIR$/languageVersion.kt
 -d
 $TEMP_DIR$
 -language-version
-2.2
--XXLanguage\:-NullableNothingInReifiedPosition
+2.5
+-XXLanguage\:-ExplicitContextArguments

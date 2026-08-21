@@ -72,7 +72,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 id("kotlin-dsl")
             }
 
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersions()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -110,7 +110,8 @@ internal class JvmDefaultIT : KGPBaseTest() {
             buildScriptInjection {
                 useCompilerVersion("2.2.0")
             }
-            overrideOldGradleBoundLanguageVersionsWith21()
+            @Suppress("DEPRECATION_ERROR")
+            overrideOldGradleBoundLanguageVersions(version = KotlinVersion.KOTLIN_2_1)
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             build(":compileKotlin") {
@@ -140,7 +141,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersions()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -176,7 +177,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     }
                 }
             }
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersions()
 
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
@@ -204,15 +205,14 @@ internal class JvmDefaultIT : KGPBaseTest() {
     )
 
     // Gradle versions 8.* and before use either LV 1.4 or 1.8, but they both are currently disabled
-    private fun TestProject.overrideOldGradleBoundLanguageVersionsWith21() {
+    private fun TestProject.overrideOldGradleBoundLanguageVersions(version: KotlinVersion = KotlinVersion.DEFAULT) {
         buildScriptInjection {
             project.afterEvaluate {
                 project.afterEvaluate {
                     project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
-                        @Suppress("DEPRECATION")
                         it.compilerOptions {
-                            languageVersion.set(KotlinVersion.KOTLIN_2_1)
-                            apiVersion.set(KotlinVersion.KOTLIN_2_1)
+                            languageVersion.set(version)
+                            apiVersion.set(version)
                         }
                     }
                 }

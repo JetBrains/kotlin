@@ -60,11 +60,11 @@ private fun resolve(key: String, envKey: String): String? =
     System.getProperty(key) ?: System.getenv(envKey)
 
 private fun domainsFromString(value: String): Set<Domain> {
-    return value.split(";").flatMap { value ->
-        when (value) {
-            "*" -> Domain.entries
+    return value.split(";").flatMap {
+        when (it) {
+            "*" -> Domain.values().asList()
             "<none>" -> emptyList()
-            else -> listOf(Domain.valueOf(value))
+            else -> listOf(Domain.valueOf(it))
         }
     }.sorted().toSet()
 }
