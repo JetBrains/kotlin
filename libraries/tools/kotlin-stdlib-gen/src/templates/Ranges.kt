@@ -112,6 +112,39 @@ object RangeOps : TemplateGroupBase() {
         }
     }
 
+    val f_downUntil = fn("downUntil(to: Primitive)").byTwoPrimitives {
+        include(Primitives, integralCombinations + unsignedMappings)
+    } builderWith { (fromType, toType) ->
+        val elementType = rangeElementType(fromType, toType)
+        val progressionType = elementType.name + "Progression"
+
+        infix()
+        signature("downUntil(to: $toType)")
+        returns(progressionType)
+
+        doc {
+            """
+            Returns a progression from this value down to but excluding the specified [to] value with the step -1.
+
+            The [to] value should be less than `this` value.
+            If the [to] value is equal to or greater than `this` value the returned progression is empty.
+            """
+        }
+
+        val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
+        val toExpr = if (elementType == toType) "to" else "to.to$elementType()"
+        val u = if (elementType.isUnsigned()) "u" else ""
+        val incrementExpr = when (elementType) {
+            PrimitiveType.Long, PrimitiveType.ULong -> "-1L"
+            PrimitiveType.Float -> "-1.0F"
+            PrimitiveType.Double -> "-1.0"
+            else -> "-1"
+        }
+
+        body {
+            "return $progressionType.fromClosedRange($fromExpr, $toExpr + 1$u, $incrementExpr)"
+        }
+    }
 
     val f_until = fn("until(to: Primitive)").byTwoPrimitives {
         include(Primitives, integralCombinations + unsignedMappings)
