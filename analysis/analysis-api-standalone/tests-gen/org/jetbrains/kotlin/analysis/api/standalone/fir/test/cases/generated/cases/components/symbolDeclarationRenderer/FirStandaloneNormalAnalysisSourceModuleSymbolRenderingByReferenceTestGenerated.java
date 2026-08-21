@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -49,45 +50,73 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolRenderingByReferenceTe
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/symbolByReference"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
-  @TestMetadata("javaEnhancedRecentlyNonNullType.kt")
-  public void testJavaEnhancedRecentlyNonNullType() {
-    run("javaEnhancedRecentlyNonNullType.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeEnhancement")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JavaTypeEnhancement {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeEnhancement/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInJavaTypeEnhancement() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeEnhancement"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("javaEnhancedRecentlyNonNullType.kt")
+    public void testJavaEnhancedRecentlyNonNullType() {
+      run("javaEnhancedRecentlyNonNullType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaEnhancedRecentlyNullableType.kt")
+    public void testJavaEnhancedRecentlyNullableType() {
+      run("javaEnhancedRecentlyNullableType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
+    public void testJavaEnhancedTypeExternalAnnotation() {
+      run("javaEnhancedTypeExternalAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("jsrAnnotation.kt")
+    public void testJsrAnnotation() {
+      run("jsrAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("jsrAnnotationInsideLibrary.kt")
+    public void testJsrAnnotationInsideLibrary() {
+      run("jsrAnnotationInsideLibrary.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("javaEnhancedRecentlyNullableType.kt")
-  public void testJavaEnhancedRecentlyNullableType() {
-    run("javaEnhancedRecentlyNullableType.kt");
-  }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JavaTypeParameters {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeParameters/" + fileName);
+    }
 
-  @Test
-  @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
-  public void testJavaEnhancedTypeExternalAnnotation() {
-    run("javaEnhancedTypeExternalAnnotation.kt");
-  }
+    @Test
+    public void testAllFilesPresentInJavaTypeParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
 
-  @Test
-  @TestMetadata("javaMethodWithMultipleTypeParametersBound.kt")
-  public void testJavaMethodWithMultipleTypeParametersBound() {
-    run("javaMethodWithMultipleTypeParametersBound.kt");
-  }
+    @Test
+    @TestMetadata("javaMethodWithMultipleTypeParametersBound.kt")
+    public void testJavaMethodWithMultipleTypeParametersBound() {
+      run("javaMethodWithMultipleTypeParametersBound.kt");
+    }
 
-  @Test
-  @TestMetadata("javaMethodWithTypeParametersBound.kt")
-  public void testJavaMethodWithTypeParametersBound() {
-    run("javaMethodWithTypeParametersBound.kt");
-  }
-
-  @Test
-  @TestMetadata("jsrAnnotation.kt")
-  public void testJsrAnnotation() {
-    run("jsrAnnotation.kt");
-  }
-
-  @Test
-  @TestMetadata("jsrAnnotationInsideLibrary.kt")
-  public void testJsrAnnotationInsideLibrary() {
-    run("jsrAnnotationInsideLibrary.kt");
+    @Test
+    @TestMetadata("javaMethodWithTypeParametersBound.kt")
+    public void testJavaMethodWithTypeParametersBound() {
+      run("javaMethodWithTypeParametersBound.kt");
+    }
   }
 }

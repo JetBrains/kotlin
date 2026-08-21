@@ -16,5 +16,3 @@ class SomeClass : SomeInterface {
   private val baz: Int
 }
 
-inline class InlineClass
-

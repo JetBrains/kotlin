@@ -46,188 +46,314 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
   }
 
   @Test
-  @TestMetadata("actualInheritance.kt")
-  public void testActualInheritance() {
-    run("actualInheritance.kt");
-  }
-
-  @Test
   public void testAllFilesPresentInEntireFile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
-  @Test
-  @TestMetadata("annotation.kt")
-  public void testAnnotation() {
-    run("annotation.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/annotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Annotations {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/annotations/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/annotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationOnDeclarations.kt")
+    public void testAnnotationOnDeclarations() {
+      run("annotationOnDeclarations.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("complexTypes.kt")
-  public void testComplexTypes() {
-    run("complexTypes.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/classes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Classes {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/classes/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/classes"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("derivedClass.kt")
+    public void testDerivedClass() {
+      run("derivedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClass.kt")
+    public void testInlineClass() {
+      run("inlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() {
+      run("nestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSuperType.kt")
+    public void testNestedSuperType() {
+      run("nestedSuperType.kt");
+    }
+
+    @Test
+    @TestMetadata("noPrimaryConstructor.kt")
+    public void testNoPrimaryConstructor() {
+      run("noPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleClass.kt")
+    public void testSimpleClass() {
+      run("simpleClass.kt");
+    }
+
+    @Test
+    @TestMetadata("superClass.kt")
+    public void testSuperClass() {
+      run("superClass.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("constructorInObject.kt")
-  public void testConstructorInObject() {
-    run("constructorInObject.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/enums")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Enums {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/enums/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInEnums() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/enums"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("enumWithDefaultArguments.kt")
+    public void testEnumWithDefaultArguments() {
+      run("enumWithDefaultArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("enumWithMembers.kt")
+    public void testEnumWithMembers() {
+      run("enumWithMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("enumWithObjectArguments.kt")
+    public void testEnumWithObjectArguments() {
+      run("enumWithObjectArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleEnum.kt")
+    public void testSimpleEnum() {
+      run("simpleEnum.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("constructorOfAnonymousObject.kt")
-  public void testConstructorOfAnonymousObject() {
-    run("constructorOfAnonymousObject.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/expectActual")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ExpectActual {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/expectActual/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("actualInheritance.kt")
+    public void testActualInheritance() {
+      run("actualInheritance.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInExpectActual() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/expectActual"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("expectActual.kt")
+    public void testExpectActual() {
+      run("expectActual.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("contextParameter.kt")
-  public void testContextParameter() {
-    run("contextParameter.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/functions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Functions {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/functions/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInFunctions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/functions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      run("contextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("genericFunctions.kt")
+    public void testGenericFunctions() {
+      run("genericFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleFun.kt")
+    public void testSimpleFun() {
+      run("simpleFun.kt");
+    }
+
+    @Test
+    @TestMetadata("vararg.kt")
+    public void testVararg() {
+      run("vararg.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("delegates.kt")
-  public void testDelegates() {
-    run("delegates.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/objects")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Objects {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/objects/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInObjects() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/objects"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("constructorInObject.kt")
+    public void testConstructorInObject() {
+      run("constructorInObject.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorOfAnonymousObject.kt")
+    public void testConstructorOfAnonymousObject() {
+      run("constructorOfAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyAnonymousObject.kt")
+    public void testEmptyAnonymousObject() {
+      run("emptyAnonymousObject.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("derivedClass.kt")
-  public void testDerivedClass() {
-    run("derivedClass.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/properties")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Properties {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/properties/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInProperties() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/properties"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("delegatedProperties.kt")
+    public void testDelegatedProperties() {
+      run("delegatedProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("genericProperty.kt")
+    public void testGenericProperty() {
+      run("genericProperty.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("emptyAnonymousObject.kt")
-  public void testEmptyAnonymousObject() {
-    run("emptyAnonymousObject.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/typeAliases")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAliases {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/typeAliases/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInTypeAliases() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/typeAliases"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("functionalTypeAliases.kt")
+    public void testFunctionalTypeAliases() {
+      run("functionalTypeAliases.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedOfAliasedType.kt")
+    public void testNestedOfAliasedType() {
+      run("nestedOfAliasedType.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleTypeAlias.kt")
+    public void testSimpleTypeAlias() {
+      run("simpleTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasWithGeneric.kt")
+    public void testTypeAliasWithGeneric() {
+      run("typeAliasWithGeneric.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("enums.kt")
-  public void testEnums() {
-    run("enums.kt");
-  }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/typeParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameters {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/typeParameters/" + fileName);
+    }
 
-  @Test
-  @TestMetadata("enums2.kt")
-  public void testEnums2() {
-    run("enums2.kt");
-  }
+    @Test
+    public void testAllFilesPresentInTypeParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/typeParameters"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
 
-  @Test
-  @TestMetadata("expectActual.kt")
-  public void testExpectActual() {
-    run("expectActual.kt");
-  }
+    @Test
+    @TestMetadata("typeParameterVsNested.kt")
+    public void testTypeParameterVsNested() {
+      run("typeParameterVsNested.kt");
+    }
 
-  @Test
-  @TestMetadata("F.kt")
-  public void testF() {
-    run("F.kt");
-  }
+    @Test
+    @TestMetadata("typeParameters.kt")
+    public void testTypeParameters() {
+      run("typeParameters.kt");
+    }
 
-  @Test
-  @TestMetadata("functionTypes.kt")
-  public void testFunctionTypes() {
-    run("functionTypes.kt");
-  }
-
-  @Test
-  @TestMetadata("functionalTypeAliases.kt")
-  public void testFunctionalTypeAliases() {
-    run("functionalTypeAliases.kt");
-  }
-
-  @Test
-  @TestMetadata("genericFunctions.kt")
-  public void testGenericFunctions() {
-    run("genericFunctions.kt");
-  }
-
-  @Test
-  @TestMetadata("genericProperty.kt")
-  public void testGenericProperty() {
-    run("genericProperty.kt");
-  }
-
-  @Test
-  @TestMetadata("intersectionType.kt")
-  public void testIntersectionType() {
-    run("intersectionType.kt");
-  }
-
-  @Test
-  @TestMetadata("nestedClass.kt")
-  public void testNestedClass() {
-    run("nestedClass.kt");
-  }
-
-  @Test
-  @TestMetadata("NestedOfAliasedType.kt")
-  public void testNestedOfAliasedType() {
-    run("NestedOfAliasedType.kt");
-  }
-
-  @Test
-  @TestMetadata("NestedSuperType.kt")
-  public void testNestedSuperType() {
-    run("NestedSuperType.kt");
-  }
-
-  @Test
-  @TestMetadata("noPrimaryConstructor.kt")
-  public void testNoPrimaryConstructor() {
-    run("noPrimaryConstructor.kt");
-  }
-
-  @Test
-  @TestMetadata("simpleClass.kt")
-  public void testSimpleClass() {
-    run("simpleClass.kt");
-  }
-
-  @Test
-  @TestMetadata("simpleFun.kt")
-  public void testSimpleFun() {
-    run("simpleFun.kt");
-  }
-
-  @Test
-  @TestMetadata("simpleTypeAlias.kt")
-  public void testSimpleTypeAlias() {
-    run("simpleTypeAlias.kt");
-  }
-
-  @Test
-  @TestMetadata("typeAliasWithGeneric.kt")
-  public void testTypeAliasWithGeneric() {
-    run("typeAliasWithGeneric.kt");
-  }
-
-  @Test
-  @TestMetadata("typeParameterVsNested.kt")
-  public void testTypeParameterVsNested() {
-    run("typeParameterVsNested.kt");
-  }
-
-  @Test
-  @TestMetadata("typeParameters.kt")
-  public void testTypeParameters() {
-    run("typeParameters.kt");
-  }
-
-  @Test
-  @TestMetadata("vararg.kt")
-  public void testVararg() {
-    run("vararg.kt");
-  }
-
-  @Test
-  @TestMetadata("where.kt")
-  public void testWhere() {
-    run("where.kt");
+    @Test
+    @TestMetadata("where.kt")
+    public void testWhere() {
+      run("where.kt");
+    }
   }
 
   @Nested
@@ -271,6 +397,24 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     @TestMetadata("extraTypeArguments.kt")
     public void testExtraTypeArguments() {
       run("extraTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypes.kt")
+    public void testFunctionTypes() {
+      run("functionTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("innerTypesWithProjections.kt")
+    public void testInnerTypesWithProjections() {
+      run("innerTypesWithProjections.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionType.kt")
+    public void testIntersectionType() {
+      run("intersectionType.kt");
     }
   }
 }
