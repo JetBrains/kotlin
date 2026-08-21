@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGeneratorKey
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -44,6 +46,9 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
 
     /** What the hash starts from before any property is folded in, mirroring Lombok's `int result = 1`. */
     const val HASHCODE_INITIAL = 1
+
+    private val DEEP_EQUALS_NAME = Name.identifier("deepEquals")
+    private val DEEP_HASHCODE_NAME = Name.identifier("deepHashCode")
 
     override fun IrBlockBodyBuilder.build(
         key: EqualsAndHashCodeGeneratorKey,
@@ -94,11 +99,18 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         for (property in included) {
             val thisProp = irGetPropertyValue(irGetThis(thisParam), property)
             val otherProp = irGetPropertyValue(irGet(otherCast), property)
-            +irIfThenReturnFalse(
-                primitiveBooleanNot(
-                    irEquals(thisProp, otherProp, origin = IrStatementOrigin.EXCLEQ)
-                )
+            val arraysEquals = findArraysFunctionByContent(
+                property.typeForLombok(), OperatorNameConventions.EQUALS, DEEP_EQUALS_NAME, parameterCount = 2,
             )
+            val comparison = if (arraysEquals != null) {
+                irCall(arraysEquals.symbol).apply {
+                    arguments[0] = thisProp
+                    arguments[1] = otherProp
+                }
+            } else {
+                irEquals(thisProp, otherProp, origin = IrStatementOrigin.EXCLEQ)
+            }
+            +irIfThenReturnFalse(primitiveBooleanNot(comparison))
         }
 
         +irReturnTrue()
@@ -169,7 +181,15 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         property: IrProperty,
     ): IrExpression {
         val value = irGetPropertyValue(irGetThis(thisParam), property)
-        val type = property.backingField?.type ?: property.getter?.returnType
+        val type = property.typeForLombok()
+
+        // `java.util.Arrays` accepts null itself - `deepHashCode(null)` is 0 - and Lombok relies on that rather
+        // than guarding an array property, so no `HASHCODE_NULL` branch here.
+        val arraysHashCode = findArraysFunctionByContent(type, HASHCODE_NAME, DEEP_HASHCODE_NAME, parameterCount = 1)
+        if (arraysHashCode != null) {
+            return irCall(arraysHashCode.symbol).apply { arguments[0] = value }
+        }
+
         val isNullable = type?.isNullable() == true
         return if (isNullable) {
             irIfNull(
@@ -182,6 +202,8 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             callHashCodeOn(value)
         }
     }
+
+    private fun IrProperty.typeForLombok(): IrType? = backingField?.type ?: getter?.returnType
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.callHashCodeOn(receiver: IrExpression): IrExpression {
