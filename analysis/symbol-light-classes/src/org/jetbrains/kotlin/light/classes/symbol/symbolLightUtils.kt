@@ -202,7 +202,7 @@ internal fun AnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiAnn
 
     is AnnotationValue.Annotation -> {
         SymbolLightSimpleAnnotation(
-            fqName = classId?.asFqNameString(),
+            fqName = classId.asFqNameString(),
             parent = parent,
             arguments = normalizedArguments(),
             kotlinOrigin = sourcePsi,
