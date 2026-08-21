@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
@@ -33,6 +36,8 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_PARAM
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REPLACES
 import org.jetbrains.kotlin.lombok.config.getAccessLevel
+import org.jetbrains.kotlin.lombok.generators.isExcludedByDollarPrefix
+import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -231,6 +236,40 @@ fun checkLombokAnnotations(annotations: List<FirAnnotation>, defaultTargets: Lis
                 classId.shortClassName,
                 context,
             )
+        }
+    }
+}
+
+/**
+ * Validates the `@Include`/`@Exclude` pair of [annotationClassId] - `@ToString` or `@EqualsAndHashCode` - on every
+ * property of [declaredMemberScope]. Both ids are derived from the outer one exactly as [LombokNames] derives
+ * them, so the pair can never be mismatched at a call site.
+ */
+context(context: CheckerContext, reporter: DiagnosticReporter)
+fun checkIncludeAndExcludeAnnotations(declaredMemberScope: FirContainingNamesAwareScope, annotationClassId: ClassId) {
+    val includeClassId = annotationClassId.createNestedClassId(LombokNames.INCLUDE_NAME)
+    val excludeClassId = annotationClassId.createNestedClassId(LombokNames.EXCLUDE_NAME)
+    val annotationName = annotationClassId.shortClassName
+
+    declaredMemberScope.processAllProperties { variableSymbol ->
+        val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
+        val includeAnnotation = property.findAnnotationOnPropertyOrField(includeClassId, context.session)
+        val excludeAnnotation = property.findAnnotationOnPropertyOrField(excludeClassId, context.session)
+
+        // Mirrors Lombok Java behaviour: "Having both @Exclude and @Include on a member generates a warning;
+        // the member will be excluded in this case."
+        if (includeAnnotation != null && excludeAnnotation != null) {
+            includeAnnotation.source?.let {
+                reporter.reportOn(it, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, annotationName)
+            }
+        }
+
+        // Mirrors Lombok Java behaviour: "The @Exclude annotation is not needed; fields that start with $ aren't
+        // included anyway". Reported independently of the clash above, exactly as Lombok does.
+        if (excludeAnnotation != null && property.isExcludedByDollarPrefix) {
+            excludeAnnotation.source?.let {
+                reporter.reportOn(it, LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY, annotationName)
+            }
         }
     }
 }

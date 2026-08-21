@@ -16,15 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.isExcludedByDollarPrefix
 import org.jetbrains.kotlin.lombok.generators.isToString
-import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 
 object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
@@ -68,35 +64,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
             functionNames,
         )
 
-        /**
-         * Mirrors Lombok Java behaviour: "Having both @ToString.Exclude and @ToString.Include on a member
-         * generates a warning; the member will be excluded in this case."
-         */
-        declaredMemberScope.processAllProperties { variableSymbol ->
-            val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
-            val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, context.session)
-            val excludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, context.session)
-
-            if (includeAnnotation != null && excludeAnnotation != null) {
-                includeAnnotation.source?.let {
-                    reporter.reportOn(it, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName())
-                }
-            }
-
-            /**
-             * Mirrors Lombok Java behaviour: "The @Exclude annotation is not needed; fields that start with $
-             * aren't included anyway". Reported independently of the clash above, exactly as Lombok does.
-             */
-            if (excludeAnnotation != null && property.isExcludedByDollarPrefix) {
-                excludeAnnotation.source?.let {
-                    reporter.reportOn(
-                        it,
-                        LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY,
-                        LombokNames.TO_STRING.shortName(),
-                    )
-                }
-            }
-        }
+        checkIncludeAndExcludeAnnotations(declaredMemberScope, LombokNames.TO_STRING_ID)
     }
 
     /**
