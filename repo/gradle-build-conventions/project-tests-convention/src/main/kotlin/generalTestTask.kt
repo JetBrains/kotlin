@@ -152,16 +152,10 @@ internal fun Project.createGeneralTestTask(
             "-Djna.nosys=true"
         )
 
-        val effectiveGC = effectiveGC.orNull
-        if (effectiveGC != null) {
-            jvmArgs(
-                when (effectiveGC) {
-                    GarbageCollector.G1 -> "-XX:+UseG1GC"
-                    GarbageCollector.Parallel -> "-XX:+UseParallelGC"
-                },
-                "-XX:MaxHeapFreeRatio=30",
-                "-XX:MinHeapFreeRatio=10",
-            )
+        when (effectiveGC.orNull) {
+            GarbageCollector.G1 -> jvmArgs("-XX:+UseG1GC")
+            GarbageCollector.Parallel -> jvmArgs("-XX:+UseParallelGC")
+            null -> Unit
         }
 
         val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
