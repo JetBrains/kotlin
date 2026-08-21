@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 // ------------------------------ diagnostics ------------------------------
@@ -90,6 +92,9 @@ abstract class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnosticWithSource(
 
 interface KtRegularDiagnostic : DiagnosticMarker {
     val element: AbstractKtSourceElement
+
+    override val psiElement: PsiElement
+        get() = (element as KtPsiSourceElement).psi
 }
 
 data class KtRegularSimpleDiagnostic(

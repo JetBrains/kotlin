@@ -15,7 +15,6 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
-    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:psi:psi-frontend-utils"))

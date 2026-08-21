@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 
 internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
-    private val firDiagnostic: KtPsiDiagnostic,
+    private val firDiagnostic: KtDiagnosticWithSource,
     override val token: KaLifetimeToken,
 ) : KaDiagnosticWithPsi<PSI>, KaLifetimeOwner {
 

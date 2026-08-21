@@ -362,9 +362,6 @@ internal class KaFirCompilerFacility(
 
                 override val languageVersionSettings: LanguageVersionSettings
                     get() = analysisSession.firSession.languageVersionSettings
-
-                override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper =
-                    PsiSourceToDiagnosticInstanceMapper()
             }
 
             lambda.accept(object : FirDefaultVisitorVoid() {
@@ -1198,7 +1195,7 @@ internal class KaFirCompilerFacility(
             for (diagnostic in diagnostics) {
                 if (diagnostic.severity == Severity.ERROR) {
                     val ktDiagnostic = when (diagnostic) {
-                        is KtPsiDiagnostic -> diagnostic.asKaDiagnostic()
+                        is KtDiagnosticWithSource -> diagnostic.asKaDiagnostic()
                         else -> {
                             val message = diagnostic.renderMessage()
                             KaNonBoundToPsiErrorDiagnostic(diagnostic.factoryName, message, analysisSession.token)
@@ -1436,7 +1433,7 @@ private class KaFirDirectoryBasedCompiledCodeProvider(private val outputDirector
 
 private class SyntaxErrorReportingVisitor(
     private val useSiteSession: FirSession,
-    private val diagnosticConverter: (KtPsiDiagnostic) -> KaDiagnosticWithPsi<*>
+    private val diagnosticConverter: (KtDiagnosticWithSource) -> KaDiagnosticWithPsi<*>
 ) : KtTreeVisitorVoid() {
     private val collectedDiagnostics = mutableListOf<KaDiagnostic>()
 
@@ -1446,7 +1443,7 @@ private class SyntaxErrorReportingVisitor(
     override fun visitErrorElement(element: PsiErrorElement) {
         collectedDiagnostics += ConeSyntaxDiagnostic(element.errorDescription)
             .toFirDiagnostics(useSiteSession, KtRealPsiSourceElement(element), callOrAssignmentSource = null)
-            .map { diagnosticConverter(it as KtPsiDiagnostic) }
+            .map { diagnosticConverter(it as KtDiagnosticWithSource) }
 
         super.visitErrorElement(element)
     }

@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -499,22 +497,13 @@ private class DebugDiagnosticConsumer(
             return
         }
 
-        val diagnostic = when (sourceElement) {
-            is KtPsiSourceElement -> KtPsiSimpleDiagnostic(
-                sourceElement,
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                SyntaxErrorReporter.PsiDefaultDiagnosticContext,
-            )
-            is KtLightSourceElement -> KtRegularSimpleDiagnostic(
-                sourceElement,
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                DiagnosticContext.Default,
-            )
-        }
+        val diagnostic = KtRegularSimpleDiagnostic(
+            sourceElement,
+            factory.severity,
+            factory,
+            factory.defaultPositioningStrategy,
+            DiagnosticContext.Default,
+        )
 
         result.add(diagnostic)
     }
@@ -535,24 +524,14 @@ private class DebugDiagnosticConsumer(
             return
         }
 
-        val diagnostic = when (positionedElement) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
-                positionedElement,
-                argumentFactory(),
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                SyntaxErrorReporter.PsiDefaultDiagnosticContext,
-            )
-            is KtLightSourceElement -> KtRegularDiagnosticWithParameters1(
-                positionedElement,
-                argumentFactory(),
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                DiagnosticContext.Default,
-            )
-        }
+        val diagnostic = KtRegularDiagnosticWithParameters1(
+            positionedElement,
+            argumentFactory(),
+            factory.severity,
+            factory,
+            factory.defaultPositioningStrategy,
+            DiagnosticContext.Default,
+        )
 
         result.add(diagnostic)
     }
@@ -801,7 +780,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         KtRealPsiSourceElement(it),
                         it.errorDescription,
                         positioningStrategy = null,
-                        SyntaxErrorReporter.PsiDefaultDiagnosticContext, // syntax errors couldn't be suppressed anyway
+                        DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
                     )!!
                 }
             } else {

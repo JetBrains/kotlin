@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.builder.KtSourceToDiagnosticInstanceMapperComponent
-import org.jetbrains.kotlin.fir.builder.PsiSourceToDiagnosticInstanceMapperComponent
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -161,10 +158,7 @@ class LLFirSessionCache(
             is KaDanglingFileModule -> {
                 //  Dangling file context must have an analyzable session, so we can properly compile code against it.
                 val contextSession = getSession(module.contextModule, preferBinary = false)
-                sessionFactory.createDanglingFileSession(module, contextSession).apply {
-                    @OptIn(SessionConfiguration::class)
-                    register(KtSourceToDiagnosticInstanceMapperComponent::class, PsiSourceToDiagnosticInstanceMapperComponent())
-                }
+                sessionFactory.createDanglingFileSession(module, contextSession)
             }
             is KaNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
             else -> error("Unexpected module kind: ${module::class.simpleName}")

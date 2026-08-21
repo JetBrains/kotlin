@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -215,9 +215,9 @@ internal val KaSymbolModality.isOpenFromInterface: Boolean
     get() = this == KaSymbolModality.OPEN && (callable.containingClassOrObject as? KtClass)?.isInterface() == true
 
 context(analysisSession: KaFirSession)
-internal fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
+internal fun KtDiagnosticWithSource.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
 
-internal fun KtPsiDiagnostic.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
+internal fun KtDiagnosticWithSource.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
     @OptIn(KaUnstableDiagnosticApi::class)
     return KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 }

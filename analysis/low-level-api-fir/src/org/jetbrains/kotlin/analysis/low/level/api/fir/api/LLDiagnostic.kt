@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 
 /**
  * A [diagnostic] reported by compiler checkers, together with its [suppression status][isSuppressed].
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
  */
 @KaImplementationDetail
 class LLDiagnostic(
-    val diagnostic: KtPsiDiagnostic,
+    val diagnostic: KtDiagnosticWithSource,
 
     /**
      * Whether the diagnostic is suppressed at its use site, e.g., by a `@Suppress` annotation.

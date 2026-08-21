@@ -41,7 +41,7 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
         if (diagnostic.isAboutImplicitImport()) return
 
         val psiDiagnostic = when (diagnostic) {
-            is KtPsiDiagnostic -> diagnostic
+            is KtDiagnosticWithSource -> diagnostic
             else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
         }
 
@@ -71,14 +71,14 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
         }
     }
 
-    private class PendingDiagnostic(val diagnostic: KtPsiDiagnostic, var isSuppressed: Boolean)
+    private class PendingDiagnostic(val diagnostic: KtDiagnosticWithSource, var isSuppressed: Boolean)
 }
 
 /**
  * PSI ancestry is checked instead of text range containment, as walking the parent chain is cheaper than computing text ranges:
  * [PsiElement.getTextRange] has to traverse preceding siblings to compute the start offset.
  */
-private fun KtPsiDiagnostic.isInside(element: AbstractKtSourceElement): Boolean {
+private fun KtDiagnosticWithSource.isInside(element: AbstractKtSourceElement): Boolean {
     if (this.element == element) return true
 
     val elementPsi = (element as? KtPsiSourceElement)?.psi
@@ -89,6 +89,6 @@ private fun KtPsiDiagnostic.isInside(element: AbstractKtSourceElement): Boolean 
 
 @OptIn(SuspiciousFakeSourceCheck::class)
 private fun KtDiagnostic.isAboutImplicitImport(): Boolean {
-    if (this !is KtPsiDiagnostic) return false
+    if (this !is KtDiagnosticWithSource) return false
     return (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
 }
