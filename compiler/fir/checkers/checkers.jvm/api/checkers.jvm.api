@@ -47,6 +47,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmError
 	public final fun getJVM_PACKAGE_NAME_CANNOT_BE_EMPTY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJVM_PACKAGE_NAME_MUST_BE_VALID_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getJVM_RECORDS_ILLEGAL_BYTECODE_TARGET ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJVM_RECORD_EXTENDS_CLASS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getJVM_RECORD_NOT_LAST_VARARG_PARAMETER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJVM_RECORD_NOT_VAL_PARAMETER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;

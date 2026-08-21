@@ -18,7 +18,6 @@ public final class org/jetbrains/kotlin/ir/generator/CommonTypesKt {
 	public static final fun getIrSymbolWithSignatureType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrTransformerType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrTreeSymbolsVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getIrTypeAbbreviationType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrTypeProjectionType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrTypeType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;

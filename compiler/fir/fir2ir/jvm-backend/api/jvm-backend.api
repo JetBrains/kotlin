@@ -193,7 +193,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmBackendExtension :
 public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmElementAwareStringTable : org/jetbrains/kotlin/metadata/jvm/serialization/JvmStringTable, org/jetbrains/kotlin/fir/serialization/FirElementAwareStringTable {
 	public fun <init> (Lorg/jetbrains/kotlin/backend/jvm/mapping/IrTypeMapper;Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/metadata/jvm/deserialization/JvmNameResolver;)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/backend/jvm/mapping/IrTypeMapper;Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/metadata/jvm/deserialization/JvmNameResolver;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun getLocalClassIdReplacement (Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getLocalClassLikeDeclarationIdReplacement (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Lorg/jetbrains/kotlin/name/ClassId;
 }
 
 public class org/jetbrains/kotlin/fir/backend/jvm/FirJvmSerializerExtension : org/jetbrains/kotlin/fir/serialization/FirSerializerExtension {
@@ -277,6 +277,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirMetadataSerializerKt 
 public final class org/jetbrains/kotlin/fir/backend/jvm/JvmFir2IrExtensions : org/jetbrains/kotlin/backend/jvm/JvmGeneratorExtensions, org/jetbrains/kotlin/fir/backend/Fir2IrExtensions {
 	public fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/backend/jvm/JvmIrDeserializer;)V
 	public fun deserializeToplevelClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;)Z
+	public fun findInjectedInlineLambdaArgument (Lorg/jetbrains/kotlin/fir/symbols/impl/FirValueParameterSymbol;)Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
 	public fun findInjectedValue (Lorg/jetbrains/kotlin/fir/references/FirReference;Lorg/jetbrains/kotlin/fir/backend/Fir2IrConversionScope;)Lorg/jetbrains/kotlin/fir/backend/utils/InjectedValue;
 	public fun generateRawTypeAnnotationCall ()Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;
 	public fun getCachedFields ()Lorg/jetbrains/kotlin/backend/jvm/CachedFieldsForObjectInstances;
@@ -286,5 +287,6 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/JvmFir2IrExtensions : or
 	public fun hasBackingField (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/FirSession;)Z
 	public fun initializeIrBuiltInsAndSymbolTable (Lorg/jetbrains/kotlin/ir/IrBuiltIns;Lorg/jetbrains/kotlin/ir/util/SymbolTable;)V
 	public fun shouldGenerateDelegatedMember (Lorg/jetbrains/kotlin/ir/declarations/IrOverridableDeclaration;)Z
+	public fun specialBackingFieldVisibility (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/FirSession;)Lorg/jetbrains/kotlin/descriptors/Visibility;
 }
 

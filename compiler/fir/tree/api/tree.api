@@ -28,7 +28,7 @@ public final class org/jetbrains/kotlin/fir/BuiltinTypes {
 
 public final class org/jetbrains/kotlin/fir/ClassMembersKt {
 	public static final fun containingClass (Lorg/jetbrains/kotlin/fir/declarations/FirDanglingModifierList;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
-	public static final fun containingClassForLocal (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public static final fun containingClassForLocal (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public static final fun containingClassLookupTag (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public static final fun containingClassLookupTag (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public static final fun containingClassLookupTag (Lorg/jetbrains/kotlin/fir/symbols/impl/FirDanglingModifierSymbol;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
@@ -38,15 +38,17 @@ public final class org/jetbrains/kotlin/fir/ClassMembersKt {
 	public static final fun dispatchReceiverClassTypeOrNull (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
 	public static final fun getCanHaveDeferredReturnTypeCalculation (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Z
 	public static final fun getContainingClassAttr (Lorg/jetbrains/kotlin/fir/declarations/FirDanglingModifierList;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
-	public static final fun getContainingClassForLocalAttr (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
-	public static final fun getContainingClassForLocalAttr (Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public static final fun getContainingClassForLocalAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public static final fun getContainingClassForStaticMemberAttr (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public static final fun getContainingClassLookupTag (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public static final fun getContainingReplSymbolAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirReplSnippetSymbol;
 	public static final fun getContainingScriptSymbolAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirScriptSymbol;
 	public static final fun getCorrespondingProperty (Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static final fun getDeclarationNameInvalidChars (Lorg/jetbrains/kotlin/fir/FirSession;)Ljava/util/Set;
 	public static final fun getDelegatedWrapperData (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Lorg/jetbrains/kotlin/fir/DelegatedWrapperData;
 	public static final fun getDelegatedWrapperData (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Lorg/jetbrains/kotlin/fir/DelegatedWrapperData;
+	public static final fun getGeneratedContextParameterName (Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getGeneratedContextParameterName (Lorg/jetbrains/kotlin/fir/symbols/impl/FirValueParameterSymbol;)Lorg/jetbrains/kotlin/name/Name;
 	public static final fun getHasEnumEntries (Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Z
 	public static final fun getHasNoEnumEntriesAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Ljava/lang/Boolean;
 	public static final fun getInitialSignatureAttr (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirNamedFunctionSymbol;
@@ -63,6 +65,7 @@ public final class org/jetbrains/kotlin/fir/ClassMembersKt {
 	public static final fun isForLoopParameter (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Ljava/lang/Boolean;
 	public static final fun isIntersectionOverride (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Z
 	public static final fun isIntersectionOverride (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
+	public static final fun isJavaNonAbstractSealed (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)Ljava/lang/Boolean;
 	public static final fun isJavaRecord (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)Ljava/lang/Boolean;
 	public static final fun isJavaRecordComponent (Lorg/jetbrains/kotlin/fir/declarations/FirFunction;)Ljava/lang/Boolean;
 	public static final fun isNewPlaceForBodyGeneration (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)Ljava/lang/Boolean;
@@ -72,15 +75,17 @@ public final class org/jetbrains/kotlin/fir/ClassMembersKt {
 	public static final fun isSubstitutionOverride (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
 	public static final fun setCatchParameter (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
 	public static final fun setContainingClassAttr (Lorg/jetbrains/kotlin/fir/declarations/FirDanglingModifierList;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;)V
-	public static final fun setContainingClassForLocalAttr (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;)V
+	public static final fun setContainingClassForLocalAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;)V
 	public static final fun setContainingClassForStaticMemberAttr (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;)V
 	public static final fun setContainingReplSymbolAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;Lorg/jetbrains/kotlin/fir/symbols/impl/FirReplSnippetSymbol;)V
 	public static final fun setContainingScriptSymbolAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;Lorg/jetbrains/kotlin/fir/symbols/impl/FirScriptSymbol;)V
 	public static final fun setCorrespondingProperty (Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)V
 	public static final fun setDelegatedWrapperData (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;Lorg/jetbrains/kotlin/fir/DelegatedWrapperData;)V
 	public static final fun setForLoopParameter (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
+	public static final fun setGeneratedContextParameterName (Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;Lorg/jetbrains/kotlin/name/Name;)V
 	public static final fun setHasNoEnumEntriesAttr (Lorg/jetbrains/kotlin/fir/declarations/FirClass;Ljava/lang/Boolean;)V
 	public static final fun setInitialSignatureAttr (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;Lorg/jetbrains/kotlin/fir/symbols/impl/FirNamedFunctionSymbol;)V
+	public static final fun setJavaNonAbstractSealed (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Ljava/lang/Boolean;)V
 	public static final fun setJavaRecord (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Ljava/lang/Boolean;)V
 	public static final fun setJavaRecordComponent (Lorg/jetbrains/kotlin/fir/declarations/FirFunction;Ljava/lang/Boolean;)V
 	public static final fun setMatchingParameterFunctionType (Lorg/jetbrains/kotlin/fir/declarations/FirAnonymousFunction;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
@@ -188,6 +193,11 @@ public final class org/jetbrains/kotlin/fir/FirCliExceptionHandler : org/jetbrai
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/fir/FirContractViolation : java/lang/annotation/Annotation {
+}
+
+public final class org/jetbrains/kotlin/fir/FirDeclarationNameInvalidCharsProvider : org/jetbrains/kotlin/fir/FirSessionComponent {
+	public fun <init> (Ljava/util/Set;)V
+	public final fun getInvalidChars ()Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/fir/FirElement {
@@ -348,6 +358,7 @@ public abstract class org/jetbrains/kotlin/fir/FirModuleData : org/jetbrains/kot
 }
 
 public final class org/jetbrains/kotlin/fir/FirModuleDataKt {
+	public static final fun canSeeInternalsOf (Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/FirModuleData;)Z
 	public static final fun getModuleData (Lorg/jetbrains/kotlin/fir/FirSession;)Lorg/jetbrains/kotlin/fir/FirModuleData;
 	public static final fun getNullableModuleData (Lorg/jetbrains/kotlin/fir/FirSession;)Lorg/jetbrains/kotlin/fir/FirModuleData;
 }
@@ -547,8 +558,16 @@ public final class org/jetbrains/kotlin/fir/StandardTypes {
 	public final fun getFloat ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
 	public final fun getInt ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
 	public final fun getLong ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getNothing ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
 	public final fun getNullableAny ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getNullableNothing ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
 	public final fun getShort ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getString ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getUByte ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getUInt ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getULong ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getUShort ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getUnit ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/fir/ThreadSafeMutableState : java/lang/annotation/Annotation {
@@ -556,8 +575,8 @@ public abstract interface annotation class org/jetbrains/kotlin/fir/ThreadSafeMu
 
 public final class org/jetbrains/kotlin/fir/UtilsKt {
 	public static final fun buildWhenSubjectAccess (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/fir/declarations/FirVariable;)Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;
-	public static final fun copy (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZZZZZZZZZZZZZZZ)Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZZZZZZZZZZZZZZZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
+	public static final fun copy (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZZZZZZZZZZZZZZLorg/jetbrains/kotlin/resolve/ReturnValueStatus;)Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZZZZZZZZZZZZZZLorg/jetbrains/kotlin/resolve/ReturnValueStatus;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
 	public static final fun copyWithNewDefaults (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;)Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
 	public static synthetic fun copyWithNewDefaults$default (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/descriptors/Visibility;Lorg/jetbrains/kotlin/descriptors/Modality;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
 	public static final fun copyWithNewSource (Lorg/jetbrains/kotlin/fir/types/FirTypeRef;Lorg/jetbrains/kotlin/KtSourceElement;)Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
@@ -575,6 +594,7 @@ public final class org/jetbrains/kotlin/fir/UtilsKt {
 	public static final fun packageFqName (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Lorg/jetbrains/kotlin/name/FqName;
 	public static final fun render (Lorg/jetbrains/kotlin/fir/FirElement;)Ljava/lang/String;
 	public static final fun renderWithType (Lorg/jetbrains/kotlin/fir/FirElement;)Ljava/lang/String;
+	public static final fun shouldSuppressInlineContextAt (Lorg/jetbrains/kotlin/fir/FirElement;Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Z
 	public static final fun smartPlus (Ljava/util/List;Ljava/util/List;)Ljava/util/List;
 	public static final fun toAugmentedAssignSourceKind (Lorg/jetbrains/kotlin/fir/expressions/FirOperation;)Lorg/jetbrains/kotlin/KtFakeSourceElementKind$DesugaredAugmentedAssign;
 	public static final fun toFirResolvedTypeRef (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/fir/types/FirTypeRef;)Lorg/jetbrains/kotlin/fir/types/FirResolvedTypeRef;
@@ -643,8 +663,12 @@ public final class org/jetbrains/kotlin/fir/builder/FirPackageDirectiveBuilderKt
 
 public abstract class org/jetbrains/kotlin/fir/caches/FirCache {
 	public fun <init> ()V
+	public abstract fun getCachedValues ()Ljava/util/Collection;
 	public abstract fun getValue (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getValueIfComputed (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/fir/caches/FirCacheInternals : java/lang/annotation/Annotation {
 }
 
 public final class org/jetbrains/kotlin/fir/caches/FirCacheWithPostComputeKt {
@@ -717,6 +741,7 @@ public final class org/jetbrains/kotlin/fir/caches/NullableMap {
 	public static final fun equals-impl0 (Ljava/util/Map;Ljava/util/Map;)Z
 	public final fun getMap ()Ljava/util/Map;
 	public static final fun getOrElse-impl (Ljava/util/Map;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getValuesSnapshot-impl (Ljava/util/Map;)Ljava/util/Collection;
 	public fun hashCode ()I
 	public static fun hashCode-impl (Ljava/util/Map;)I
 	public static final fun set-impl (Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)V
@@ -1080,6 +1105,7 @@ public abstract class org/jetbrains/kotlin/fir/declarations/FirAnonymousObject :
 	public abstract fun getSuperTypeRefs ()Ljava/util/List;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirAnonymousObjectSymbol;
 	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun isLocal ()Z
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
 	public abstract fun replaceControlFlowGraphReference (Lorg/jetbrains/kotlin/fir/references/FirControlFlowGraphReference;)V
 	public abstract fun replaceDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
@@ -1191,6 +1217,7 @@ public abstract class org/jetbrains/kotlin/fir/declarations/FirClass : org/jetbr
 	public abstract fun getSuperTypeRefs ()Ljava/util/List;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;
 	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun isLocal ()Z
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
 	public abstract fun replaceControlFlowGraphReference (Lorg/jetbrains/kotlin/fir/references/FirControlFlowGraphReference;)V
 	public abstract fun replaceDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
@@ -1216,6 +1243,7 @@ public abstract class org/jetbrains/kotlin/fir/declarations/FirClassLikeDeclarat
 	public abstract fun getStatus ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
 	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun isLocal ()Z
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
 	public abstract fun replaceDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
 	public abstract fun replaceStatus (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;)V
@@ -1566,9 +1594,9 @@ public abstract interface class org/jetbrains/kotlin/fir/declarations/FirDeclara
 	public fun accept (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getDefaultModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
 	public abstract fun getDefaultVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
-	public abstract fun getHasMustUseReturnValue ()Z
 	public abstract fun getHasStableParameterNames ()Z
 	public abstract fun getModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
+	public abstract fun getReturnValueStatus ()Lorg/jetbrains/kotlin/resolve/ReturnValueStatus;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun getVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
 	public abstract fun isActual ()Z
@@ -2135,6 +2163,7 @@ public abstract class org/jetbrains/kotlin/fir/declarations/FirRegularClass : or
 	public abstract fun getSuperTypeRefs ()Ljava/util/List;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;
 	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun isLocal ()Z
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
 	public abstract fun replaceCompanionObjectSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;)V
 	public abstract fun replaceControlFlowGraphReference (Lorg/jetbrains/kotlin/fir/references/FirControlFlowGraphReference;)V
@@ -2225,9 +2254,9 @@ public abstract interface class org/jetbrains/kotlin/fir/declarations/FirResolve
 	public abstract fun getDefaultModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
 	public abstract fun getDefaultVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
 	public abstract fun getEffectiveVisibility ()Lorg/jetbrains/kotlin/descriptors/EffectiveVisibility;
-	public abstract fun getHasMustUseReturnValue ()Z
 	public abstract fun getHasStableParameterNames ()Z
 	public abstract fun getModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
+	public abstract fun getReturnValueStatus ()Lorg/jetbrains/kotlin/resolve/ReturnValueStatus;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun getVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
 	public abstract fun isActual ()Z
@@ -2381,6 +2410,7 @@ public abstract class org/jetbrains/kotlin/fir/declarations/FirTypeAlias : org/j
 	public abstract fun getStatus ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirTypeAliasSymbol;
 	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun isLocal ()Z
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
 	public abstract fun replaceDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
 	public abstract fun replaceExpandedTypeRef (Lorg/jetbrains/kotlin/fir/types/FirTypeRef;)V
@@ -2772,9 +2802,11 @@ public final class org/jetbrains/kotlin/fir/declarations/builder/FirAnonymousObj
 	public fun getSuperTypeRefs ()Ljava/util/List;
 	public final fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirAnonymousObjectSymbol;
 	public fun getTypeParameters ()Ljava/util/List;
+	public synthetic fun isLocal ()Z
 	public fun setAttributes (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationAttributes;)V
 	public fun setClassKind (Lorg/jetbrains/kotlin/descriptors/ClassKind;)V
 	public fun setDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
+	public synthetic fun setLocal (Z)V
 	public fun setModuleData (Lorg/jetbrains/kotlin/fir/FirModuleData;)V
 	public fun setOrigin (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationOrigin;)V
 	public fun setResolvePhase (Lorg/jetbrains/kotlin/fir/declarations/FirResolvePhase;)V
@@ -2866,9 +2898,11 @@ public abstract interface class org/jetbrains/kotlin/fir/declarations/builder/Fi
 	public abstract fun getStatus ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationStatus;
 	public abstract fun getSuperTypeRefs ()Ljava/util/List;
 	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun isLocal ()Z
 	public abstract fun setAttributes (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationAttributes;)V
 	public abstract fun setClassKind (Lorg/jetbrains/kotlin/descriptors/ClassKind;)V
 	public abstract fun setDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
+	public abstract fun setLocal (Z)V
 	public abstract fun setModuleData (Lorg/jetbrains/kotlin/fir/FirModuleData;)V
 	public abstract fun setOrigin (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationOrigin;)V
 	public abstract fun setResolvePhase (Lorg/jetbrains/kotlin/fir/declarations/FirResolvePhase;)V
@@ -3644,10 +3678,12 @@ public class org/jetbrains/kotlin/fir/declarations/builder/FirRegularClassBuilde
 	public fun getSuperTypeRefs ()Ljava/util/List;
 	public fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;
 	public fun getTypeParameters ()Ljava/util/List;
+	public synthetic fun isLocal ()Z
 	public fun setAttributes (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationAttributes;)V
 	public fun setClassKind (Lorg/jetbrains/kotlin/descriptors/ClassKind;)V
 	public fun setCompanionObjectSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;)V
 	public fun setDeprecationsProvider (Lorg/jetbrains/kotlin/fir/declarations/DeprecationsProvider;)V
+	public synthetic fun setLocal (Z)V
 	public fun setModuleData (Lorg/jetbrains/kotlin/fir/FirModuleData;)V
 	public fun setName (Lorg/jetbrains/kotlin/name/Name;)V
 	public fun setOrigin (Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationOrigin;)V
@@ -4164,9 +4200,9 @@ public class org/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl
 	public fun getDefaultModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
 	public fun getDefaultVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
 	protected final fun getFlags ()I
-	public fun getHasMustUseReturnValue ()Z
 	public fun getHasStableParameterNames ()Z
 	public fun getModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
+	public fun getReturnValueStatus ()Lorg/jetbrains/kotlin/resolve/ReturnValueStatus;
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public fun getVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
 	public fun isActual ()Z
@@ -4200,7 +4236,6 @@ public class org/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl
 	public fun setFromEnumClass (Z)V
 	public fun setFromSealedClass (Z)V
 	public fun setFun (Z)V
-	public fun setHasMustUseReturnValue (Z)V
 	public fun setHasStableParameterNames (Z)V
 	public fun setInfix (Z)V
 	public fun setInline (Z)V
@@ -4208,6 +4243,7 @@ public class org/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl
 	public fun setLateInit (Z)V
 	public fun setOperator (Z)V
 	public fun setOverride (Z)V
+	public fun setReturnValueStatus (Lorg/jetbrains/kotlin/resolve/ReturnValueStatus;)V
 	public fun setStatic (Z)V
 	public fun setSuspend (Z)V
 	public fun setTailRec (Z)V
@@ -4226,6 +4262,7 @@ public final class org/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStat
 	public static final field FROM_ENUM Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
 	public static final field FROM_SEALED Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
 	public static final field FUN Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
+	public static final field HAS_IGNORABLE_RETURN_VALUE Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
 	public static final field HAS_MUST_USE_RETURN_VALUE Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
 	public static final field HAS_STABLE_PARAMETER_NAMES Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
 	public static final field INFIX Lorg/jetbrains/kotlin/fir/declarations/impl/FirDeclarationStatusImpl$Modifier;
@@ -4941,6 +4978,7 @@ public final class org/jetbrains/kotlin/fir/declarations/utils/DeclarationAttrib
 	public static final fun getDanglingTypeConstraintsOrEmpty (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)Ljava/util/List;
 	public static final fun getEvaluatedInitializer (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Lorg/jetbrains/kotlin/fir/FirEvaluatorResult;
 	public static final fun getExplicitBackingField (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Lorg/jetbrains/kotlin/fir/declarations/FirBackingField;
+	public static final fun getFileNameForPluginGeneratedCallable (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Ljava/lang/String;
 	public static final fun getFromPrimaryConstructor (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Ljava/lang/Boolean;
 	public static final fun getFromPrimaryConstructor (Lorg/jetbrains/kotlin/fir/symbols/impl/FirPropertySymbol;)Z
 	public static final fun getHasBackingField (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Z
@@ -4963,12 +5001,14 @@ public final class org/jetbrains/kotlin/fir/declarations/utils/DeclarationAttrib
 	public static final fun isReferredViaField (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Ljava/lang/Boolean;
 	public static final fun isReplSnippetDeclaration (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)Ljava/lang/Boolean;
 	public static final fun isReplSnippetDeclaration (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Ljava/lang/Boolean;
+	public static final fun isScriptTopLevelDeclaration (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)Ljava/lang/Boolean;
 	public static final fun setCompilerPluginMetadata (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Ljava/util/Map;)V
 	public static final fun setComponentFunctionSymbol (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/symbols/impl/FirNamedFunctionSymbol;)V
 	public static final fun setDanglingTypeConstraints (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Ljava/util/List;)V
 	public static final fun setDelegatedPropertyAttr (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
 	public static final fun setDeserializedPropertyFromAnnotation (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
 	public static final fun setEvaluatedInitializer (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/FirEvaluatorResult;)V
+	public static final fun setFileNameForPluginGeneratedCallable (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;Ljava/lang/String;)V
 	public static final fun setFromPrimaryConstructor (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
 	public static final fun setFromVararg (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
 	public static final fun setHasBackingFieldAttr (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
@@ -4978,6 +5018,7 @@ public final class org/jetbrains/kotlin/fir/declarations/utils/DeclarationAttrib
 	public static final fun setOriginalReplSnippetSymbol (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/fir/symbols/impl/FirReplSnippetSymbol;)V
 	public static final fun setReferredViaField (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Boolean;)V
 	public static final fun setReplSnippetDeclaration (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Ljava/lang/Boolean;)V
+	public static final fun setScriptTopLevelDeclaration (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Ljava/lang/Boolean;)V
 	public static final fun setSourceElement (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;Lorg/jetbrains/kotlin/descriptors/SourceElement;)V
 }
 
@@ -4998,6 +5039,7 @@ public final class org/jetbrains/kotlin/fir/declarations/utils/FirDeclarationUti
 	public static final fun getMemberDeclarationNameOrNull (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Lorg/jetbrains/kotlin/name/Name;
 	public static final fun getNameOrSpecialName (Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;)Lorg/jetbrains/kotlin/name/Name;
 	public static final fun getSuperConeTypes (Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Ljava/util/List;
+	public static final fun hasGeneratedDelegateBody (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;)Z
 	public static final fun isDestructuredParameter (Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)Z
 	public static final fun isErrorPrimaryConstructor (Lorg/jetbrains/kotlin/fir/symbols/impl/FirConstructorSymbol;)Z
 	public static final fun isExtension (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)Z
@@ -5053,12 +5095,7 @@ public final class org/jetbrains/kotlin/fir/declarations/utils/FirStatusUtilsKt 
 	public static final fun isInner (Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;)Z
 	public static final fun isInterface (Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Z
 	public static final fun isLateInit (Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;)Z
-	public static final fun isLocal (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Z
 	public static final fun isLocal (Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;)Z
-	public static final fun isLocalInFunction (Lorg/jetbrains/kotlin/fir/declarations/FirClassLikeDeclaration;)Z
-	public static final fun isLocalInFunction (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Z
-	public static final fun isLocalInFunction (Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;)Z
-	public static final fun isLocalInFunction (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;)Z
 	public static final fun isOpen (Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;)Z
 	public static final fun isOperator (Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;)Z
 	public static final fun isOverridable (Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;)Z
@@ -5109,7 +5146,7 @@ public final class org/jetbrains/kotlin/fir/declarations/utils/FirSymbolStatusUt
 	public static final fun isLateInit (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
 	public static final fun isLocal (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;)Z
 	public static final fun isLocal (Lorg/jetbrains/kotlin/fir/symbols/impl/FirFunctionSymbol;)Z
-	public static final fun isLocalClassOrAnonymousObject (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;)Z
+	public static final fun isLocalClassLike (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Z
 	public static final fun isOpen (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
 	public static final fun isOperator (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
 	public static final fun isOverride (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
@@ -5207,6 +5244,11 @@ public final class org/jetbrains/kotlin/fir/diagnostics/ConeNoConstructorError :
 	public fun getReason ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/fir/diagnostics/ConeNoImplicitDefaultConstructorOnExpectClass : org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/diagnostics/ConeNoImplicitDefaultConstructorOnExpectClass;
+	public fun getReason ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/fir/diagnostics/ConeNotAnnotationContainer : org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic {
 	public fun <init> (Ljava/lang/String;)V
 	public fun getReason ()Ljava/lang/String;
@@ -5290,6 +5332,7 @@ public final class org/jetbrains/kotlin/fir/diagnostics/DiagnosticKind : java/la
 	public static final field SuperNotAllowed Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
 	public static final field SuperNotAvailable Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
 	public static final field TooManyCharactersInCharacterLiteral Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
+	public static final field UnderscoreWithoutRenamingInDestructuring Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
 	public static final field UnresolvedExpandedType Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
 	public static final field UnresolvedLabel Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
 	public static final field UnresolvedSupertype Lorg/jetbrains/kotlin/fir/diagnostics/DiagnosticKind;
@@ -5898,6 +5941,7 @@ public abstract class org/jetbrains/kotlin/fir/expressions/FirErrorResolvedQuali
 	public abstract fun getNonFatalDiagnostics ()Ljava/util/List;
 	public abstract fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public abstract fun getRelativeClassFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getResolvedToCompanionObject ()Z
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
@@ -5908,6 +5952,7 @@ public abstract class org/jetbrains/kotlin/fir/expressions/FirErrorResolvedQuali
 	public abstract fun replaceCanBeValue (Z)V
 	public abstract fun replaceConeTypeOrNull (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
 	public abstract fun replaceIsNullableLHSForCallableReference (Z)V
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public abstract fun replaceResolvedToCompanionObject (Z)V
 	public abstract fun replaceTypeArguments (Ljava/util/List;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
@@ -5953,6 +5998,7 @@ public final class org/jetbrains/kotlin/fir/expressions/FirExpressionUtilKt {
 	public static final fun replaceFirstStatement (Lorg/jetbrains/kotlin/fir/expressions/FirBlock;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public static final fun transformStatementsIndexed (Lorg/jetbrains/kotlin/fir/expressions/FirBlock;Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/expressions/FirBlock;
 	public static final fun unwrapAndFlattenArgument (Lorg/jetbrains/kotlin/fir/expressions/FirExpression;Z)Ljava/util/List;
+	public static final fun unwrapAnonymousFunctionExpression (Lorg/jetbrains/kotlin/fir/expressions/FirExpression;)Lorg/jetbrains/kotlin/fir/declarations/FirAnonymousFunction;
 	public static final fun unwrapArgument (Lorg/jetbrains/kotlin/fir/expressions/FirExpression;)Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
 	public static final fun unwrapDesugaredAssignmentValueRef (Lorg/jetbrains/kotlin/fir/expressions/FirExpression;)Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
 	public static final fun unwrapErrorExpression (Lorg/jetbrains/kotlin/fir/expressions/FirExpression;)Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
@@ -6060,6 +6106,7 @@ public abstract class org/jetbrains/kotlin/fir/expressions/FirInaccessibleReceiv
 	public abstract fun getAnnotations ()Ljava/util/List;
 	public abstract fun getCalleeReference ()Lorg/jetbrains/kotlin/fir/references/FirThisReference;
 	public abstract fun getConeTypeOrNull ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public abstract fun getKind ()Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
 	public abstract fun replaceCalleeReference (Lorg/jetbrains/kotlin/fir/references/FirReference;)V
@@ -6406,6 +6453,7 @@ public abstract class org/jetbrains/kotlin/fir/expressions/FirResolvedQualifier 
 	public abstract fun getNonFatalDiagnostics ()Ljava/util/List;
 	public abstract fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public abstract fun getRelativeClassFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getResolvedToCompanionObject ()Z
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
@@ -6416,6 +6464,7 @@ public abstract class org/jetbrains/kotlin/fir/expressions/FirResolvedQualifier 
 	public abstract fun replaceCanBeValue (Z)V
 	public abstract fun replaceConeTypeOrNull (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
 	public abstract fun replaceIsNullableLHSForCallableReference (Z)V
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public abstract fun replaceResolvedToCompanionObject (Z)V
 	public abstract fun replaceTypeArguments (Ljava/util/List;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
@@ -6818,6 +6867,14 @@ public abstract class org/jetbrains/kotlin/fir/expressions/FirWrappedExpression 
 	public abstract fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirWrappedExpression;
 }
 
+public final class org/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind : java/lang/Enum {
+	public static final field OuterClassOfNonInner Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
+	public static final field SecondaryConstructor Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/fir/expressions/RawFirApi : java/lang/annotation/Annotation {
 }
 
@@ -6858,6 +6915,7 @@ public abstract interface class org/jetbrains/kotlin/fir/expressions/builder/Fir
 	public abstract fun getNonFatalDiagnostics ()Ljava/util/List;
 	public abstract fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public abstract fun getRelativeClassFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getResolvedToCompanionObject ()Z
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
@@ -6872,6 +6930,7 @@ public abstract interface class org/jetbrains/kotlin/fir/expressions/builder/Fir
 	public abstract fun setNullableLHSForCallableReference (Z)V
 	public abstract fun setPackageFqName (Lorg/jetbrains/kotlin/name/FqName;)V
 	public abstract fun setRelativeClassFqName (Lorg/jetbrains/kotlin/name/FqName;)V
+	public abstract fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public abstract fun setResolvedToCompanionObject (Z)V
 	public abstract fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 	public abstract fun setSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;)V
@@ -7294,6 +7353,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirComponentCall
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirConstExpressionBuilderKt {
 	public static final fun buildLiteralExpression (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/types/ConstantValueKind;Ljava/lang/Object;Ljava/util/List;ZLjava/lang/String;)Lorg/jetbrains/kotlin/fir/expressions/FirLiteralExpression;
 	public static synthetic fun buildLiteralExpression$default (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/types/ConstantValueKind;Ljava/lang/Object;Ljava/util/List;ZLjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirLiteralExpression;
+	public static final fun toConeType (Lorg/jetbrains/kotlin/types/ConstantValueKind;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 }
 
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirContinueExpressionBuilder : org/jetbrains/kotlin/fir/builder/FirAnnotationContainerBuilder, org/jetbrains/kotlin/fir/expressions/builder/FirExpressionBuilder, org/jetbrains/kotlin/fir/expressions/builder/FirLoopJumpBuilder {
@@ -7566,6 +7626,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirErrorResolved
 	public fun getNonFatalDiagnostics ()Ljava/util/List;
 	public fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public fun getRelativeClassFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public fun getResolvedToCompanionObject ()Z
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
@@ -7581,6 +7642,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirErrorResolved
 	public fun setNullableLHSForCallableReference (Z)V
 	public fun setPackageFqName (Lorg/jetbrains/kotlin/name/FqName;)V
 	public fun setRelativeClassFqName (Lorg/jetbrains/kotlin/name/FqName;)V
+	public fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun setResolvedToCompanionObject (Z)V
 	public fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 	public fun setSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;)V
@@ -7726,6 +7788,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirImplicitInvok
 
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirInaccessibleReceiverExpressionBuilder : org/jetbrains/kotlin/fir/builder/FirAnnotationContainerBuilder, org/jetbrains/kotlin/fir/expressions/builder/FirExpressionBuilder {
 	public field calleeReference Lorg/jetbrains/kotlin/fir/references/FirThisReference;
+	public field kind Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
 	public fun <init> ()V
 	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/FirAnnotationContainer;
 	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
@@ -7733,14 +7796,17 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirInaccessibleR
 	public fun getAnnotations ()Ljava/util/List;
 	public final fun getCalleeReference ()Lorg/jetbrains/kotlin/fir/references/FirThisReference;
 	public fun getConeTypeOrNull ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun getKind ()Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setCalleeReference (Lorg/jetbrains/kotlin/fir/references/FirThisReference;)V
 	public fun setConeTypeOrNull (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public final fun setKind (Lorg/jetbrains/kotlin/fir/expressions/InaccessibleReceiverKind;)V
 	public fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirInaccessibleReceiverExpressionBuilderKt {
 	public static final fun buildInaccessibleReceiverExpression (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/expressions/FirInaccessibleReceiverExpression;
+	public static final fun buildInaccessibleReceiverExpressionCopy (Lorg/jetbrains/kotlin/fir/expressions/FirInaccessibleReceiverExpression;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/expressions/FirInaccessibleReceiverExpression;
 }
 
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirIncrementDecrementExpressionBuilder : org/jetbrains/kotlin/fir/builder/FirAnnotationContainerBuilder, org/jetbrains/kotlin/fir/expressions/builder/FirExpressionBuilder {
@@ -8047,6 +8113,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirResolvedQuali
 	public fun getNonFatalDiagnostics ()Ljava/util/List;
 	public fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public fun getRelativeClassFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public fun getResolvedToCompanionObject ()Z
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public fun getSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
@@ -8061,6 +8128,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirResolvedQuali
 	public fun setNullableLHSForCallableReference (Z)V
 	public fun setPackageFqName (Lorg/jetbrains/kotlin/name/FqName;)V
 	public fun setRelativeClassFqName (Lorg/jetbrains/kotlin/name/FqName;)V
+	public fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun setResolvedToCompanionObject (Z)V
 	public fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 	public fun setSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;)V
@@ -8189,6 +8257,7 @@ public final class org/jetbrains/kotlin/fir/expressions/builder/FirSmartCastExpr
 
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirSmartCastExpressionBuilderKt {
 	public static final fun buildSmartCastExpression (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/expressions/FirSmartCastExpression;
+	public static final fun buildSmartCastExpressionCopy (Lorg/jetbrains/kotlin/fir/expressions/FirSmartCastExpression;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/expressions/FirSmartCastExpression;
 }
 
 public final class org/jetbrains/kotlin/fir/expressions/builder/FirSpreadArgumentExpressionBuilder : org/jetbrains/kotlin/fir/builder/FirAnnotationContainerBuilder, org/jetbrains/kotlin/fir/expressions/builder/FirExpressionBuilder {
@@ -9296,7 +9365,9 @@ public abstract class org/jetbrains/kotlin/fir/references/FirBackingFieldReferen
 	public fun accept (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirBackingFieldSymbol;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 }
 
@@ -9312,7 +9383,9 @@ public abstract class org/jetbrains/kotlin/fir/references/FirDelegateFieldRefere
 	public fun accept (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirDelegateFieldSymbol;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 }
 
@@ -9350,6 +9423,18 @@ public abstract class org/jetbrains/kotlin/fir/references/FirNamedReferenceWithC
 	public abstract fun getCandidateSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
+}
+
+public abstract class org/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference : org/jetbrains/kotlin/fir/references/FirResolvedNamedReference {
+	public fun <init> ()V
+	public fun accept (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getHasVisibleBackingField ()Z
+	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public abstract fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 }
 
@@ -9395,7 +9480,9 @@ public abstract class org/jetbrains/kotlin/fir/references/FirResolvedCallableRef
 	public abstract fun getMappedArguments ()Ljava/util/Map;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 }
 
@@ -9405,7 +9492,9 @@ public abstract class org/jetbrains/kotlin/fir/references/FirResolvedErrorRefere
 	public abstract fun getDiagnostic ()Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 }
 
@@ -9414,7 +9503,9 @@ public abstract class org/jetbrains/kotlin/fir/references/FirResolvedNamedRefere
 	public fun accept (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public abstract fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 }
 
@@ -9446,8 +9537,10 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirBackingFieldRe
 	public fun <init> ()V
 	public final fun build ()Lorg/jetbrains/kotlin/fir/references/FirBackingFieldReference;
 	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirBackingFieldSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirBackingFieldSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
@@ -9460,8 +9553,10 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirDelegateFieldR
 	public fun <init> ()V
 	public final fun build ()Lorg/jetbrains/kotlin/fir/references/FirDelegateFieldReference;
 	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirDelegateFieldSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/impl/FirDelegateFieldSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
@@ -9558,14 +9653,37 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirPropertyFromPa
 	public final fun build ()Lorg/jetbrains/kotlin/fir/references/FirResolvedNamedReference;
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setName (Lorg/jetbrains/kotlin/name/Name;)V
 	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
 public final class org/jetbrains/kotlin/fir/references/builder/FirPropertyFromParameterResolvedNamedReferenceBuilderKt {
 	public static final fun buildPropertyFromParameterResolvedNamedReference (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/references/FirResolvedNamedReference;
+}
+
+public final class org/jetbrains/kotlin/fir/references/builder/FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder {
+	public field name Lorg/jetbrains/kotlin/name/Name;
+	public field resolvedSymbol Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public fun <init> ()V
+	public final fun build ()Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;
+	public final fun getHasVisibleBackingField ()Z
+	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public final fun setHasVisibleBackingField (Z)V
+	public final fun setName (Lorg/jetbrains/kotlin/name/Name;)V
+	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
+	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
+}
+
+public final class org/jetbrains/kotlin/fir/references/builder/FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilderKt {
+	public static final fun buildPropertyWithExplicitBackingFieldResolvedNamedReference (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;
 }
 
 public final class org/jetbrains/kotlin/fir/references/builder/FirResolvedCallableReferenceBuilder {
@@ -9578,10 +9696,12 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirResolvedCallab
 	public final fun getMappedArguments ()Ljava/util/Map;
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setMappedArguments (Ljava/util/Map;)V
 	public final fun setName (Lorg/jetbrains/kotlin/name/Name;)V
 	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
@@ -9598,10 +9718,12 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirResolvedErrorR
 	public final fun getDiagnostic ()Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setDiagnostic (Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;)V
 	public final fun setName (Lorg/jetbrains/kotlin/name/Name;)V
 	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
@@ -9616,9 +9738,11 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirResolvedNamedR
 	public final fun build ()Lorg/jetbrains/kotlin/fir/references/FirResolvedNamedReference;
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setName (Lorg/jetbrains/kotlin/name/Name;)V
 	public final fun setResolvedSymbol (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
@@ -9641,11 +9765,14 @@ public final class org/jetbrains/kotlin/fir/references/builder/FirSimpleNamedRef
 }
 
 public final class org/jetbrains/kotlin/fir/references/impl/FirPropertyFromParameterResolvedNamedReference : org/jetbrains/kotlin/fir/references/FirResolvedNamedReference {
-	public fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)V
+	public fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun acceptChildren (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)V
 	public fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public fun getResolvedSymbol ()Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;
+	public fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	public fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
+	public fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public synthetic fun transformChildren (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 	public fun transformChildren (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/references/impl/FirPropertyFromParameterResolvedNamedReference;
 }
@@ -9969,6 +10096,7 @@ public final class org/jetbrains/kotlin/fir/renderer/FirRenderer$Visitor : org/j
 	public fun visitProperty (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)V
 	public fun visitPropertyAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;)V
 	public fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;)V
+	public fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;)V
 	public fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)V
 	public fun visitQualifiedErrorAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedErrorAccessExpression;)V
 	public fun visitReceiverParameter (Lorg/jetbrains/kotlin/fir/declarations/FirReceiverParameter;)V
@@ -10056,6 +10184,18 @@ public class org/jetbrains/kotlin/fir/renderer/FirSymbolRenderer {
 
 public final class org/jetbrains/kotlin/fir/renderer/FirSymbolRendererWithStaticFlag : org/jetbrains/kotlin/fir/renderer/FirSymbolRenderer {
 	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin : java/lang/Enum {
+	public static final field ContextSensitive Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static final field DefaultImport Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static final field ExplicitImport Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static final field Package Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static final field Qualified Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static final field StarImport Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
+	public static fun values ()[Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 }
 
 public final class org/jetbrains/kotlin/fir/resolve/ScopeSession {
@@ -10312,6 +10452,11 @@ public final class org/jetbrains/kotlin/fir/symbols/ConeTypeParameterLookupTag :
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/fir/symbols/ConeTypeParameterLookupTagKt {
+	public static final fun asCone (Lorg/jetbrains/kotlin/fir/symbols/ConeTypeParameterLookupTag;)Lorg/jetbrains/kotlin/fir/symbols/ConeTypeParameterLookupTag;
+	public static final fun asCone (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/fir/symbols/ConeTypeParameterLookupTag;
+}
+
 public abstract class org/jetbrains/kotlin/fir/symbols/FirBasedSymbol : org/jetbrains/kotlin/mpp/DeclarationSymbolMarker {
 	public fun <init> ()V
 	public final fun bind (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
@@ -10528,8 +10673,9 @@ public class org/jetbrains/kotlin/fir/symbols/impl/FirFieldSymbol : org/jetbrain
 	public final fun getHasInitializer ()Z
 }
 
-public final class org/jetbrains/kotlin/fir/symbols/impl/FirFileSymbol : org/jetbrains/kotlin/fir/symbols/FirBasedSymbol {
+public final class org/jetbrains/kotlin/fir/symbols/impl/FirFileSymbol : org/jetbrains/kotlin/fir/symbols/FirBasedSymbol, org/jetbrains/kotlin/constant/EvaluatedConstTracker$Key {
 	public fun <init> ()V
+	public fun asStringBasedKey ()Lorg/jetbrains/kotlin/constant/EvaluatedConstTracker$Key$StringBased;
 	public final fun getSourceFile ()Lorg/jetbrains/kotlin/KtSourceFile;
 	public fun toString ()Ljava/lang/String;
 }
@@ -10792,8 +10938,10 @@ public abstract class org/jetbrains/kotlin/fir/types/FirErrorTypeRef : org/jetbr
 	public abstract fun getDelegatedTypeRef ()Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
 	public abstract fun getDiagnostic ()Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;
 	public abstract fun getPartiallyResolvedTypeRef ()Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 	public abstract fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirErrorTypeRef;
 	public abstract fun transformPartiallyResolvedTypeRef (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirErrorTypeRef;
@@ -10878,8 +11026,10 @@ public abstract class org/jetbrains/kotlin/fir/types/FirResolvedTypeRef : org/je
 	public abstract fun getConeType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 	public abstract fun getCustomRenderer ()Z
 	public abstract fun getDelegatedTypeRef ()Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
+	public abstract fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public abstract fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public abstract fun replaceAnnotations (Ljava/util/List;)V
+	public abstract fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun transform (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirElement;
 	public abstract fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirResolvedTypeRef;
 }
@@ -11146,9 +11296,11 @@ public final class org/jetbrains/kotlin/fir/types/builder/FirResolvedTypeRefBuil
 	public fun getAnnotations ()Ljava/util/List;
 	public final fun getConeType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 	public final fun getDelegatedTypeRef ()Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
+	public final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public final fun setConeType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
 	public final fun setDelegatedTypeRef (Lorg/jetbrains/kotlin/fir/types/FirTypeRef;)V
+	public final fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
 }
 
@@ -11226,6 +11378,7 @@ public final class org/jetbrains/kotlin/fir/types/impl/FirImplicitBooleanTypeRef
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/impl/FirImplicitBuiltinTypeRef : org/jetbrains/kotlin/fir/types/FirResolvedTypeRef {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/name/ClassId;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/name/ClassId;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun acceptChildren (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)V
@@ -11235,8 +11388,10 @@ public abstract class org/jetbrains/kotlin/fir/types/impl/FirImplicitBuiltinType
 	public fun getCustomRenderer ()Z
 	public fun getDelegatedTypeRef ()Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
 	public final fun getId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public fun replaceAnnotations (Ljava/util/List;)V
+	public fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public synthetic fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirAnnotationContainer;
 	public fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirResolvedTypeRef;
 	public synthetic fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
@@ -11380,17 +11535,20 @@ public final class org/jetbrains/kotlin/fir/types/impl/FirQualifierPartImpl : or
 }
 
 public final class org/jetbrains/kotlin/fir/types/impl/FirResolvedTypeRefImpl : org/jetbrains/kotlin/fir/types/FirResolvedTypeRef {
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Ljava/util/List;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/FirTypeRef;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/KtSourceElement;Ljava/util/List;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/FirTypeRef;Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun acceptChildren (Lorg/jetbrains/kotlin/fir/visitors/FirVisitor;Ljava/lang/Object;)V
 	public synthetic fun getAnnotations ()Ljava/util/List;
 	public fun getAnnotations-5e3fPpI ()Ljava/util/List;
 	public fun getConeType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 	public fun getCustomRenderer ()Z
 	public fun getDelegatedTypeRef ()Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
+	public fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;
 	public fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
 	public fun replaceAnnotations (Ljava/util/List;)V
+	public fun replaceResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public fun setAnnotations-GqUYU-s (Ljava/util/List;)V
 	public fun setDelegatedTypeRef (Lorg/jetbrains/kotlin/fir/types/FirTypeRef;)V
+	public fun setResolvedSymbolOrigin (Lorg/jetbrains/kotlin/fir/resolve/FirResolvedSymbolOrigin;)V
 	public synthetic fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirAnnotationContainer;
 	public synthetic fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirResolvedTypeRef;
 	public synthetic fun transformAnnotations (Lorg/jetbrains/kotlin/fir/visitors/FirTransformer;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/FirTypeRef;
@@ -11494,6 +11652,7 @@ public abstract class org/jetbrains/kotlin/fir/visitors/FirDefaultVisitor : org/
 	public fun visitOuterClassTypeParameterRef (Lorg/jetbrains/kotlin/fir/declarations/FirOuterClassTypeParameterRef;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitPlaceholderProjection (Lorg/jetbrains/kotlin/fir/types/FirPlaceholderProjection;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitPropertyAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitRawContractDescription (Lorg/jetbrains/kotlin/fir/contracts/FirRawContractDescription;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitReceiverParameter (Lorg/jetbrains/kotlin/fir/declarations/FirReceiverParameter;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitRegularClass (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Ljava/lang/Object;)Ljava/lang/Object;
@@ -11586,6 +11745,7 @@ public abstract class org/jetbrains/kotlin/fir/visitors/FirDefaultVisitorVoid : 
 	public fun visitOuterClassTypeParameterRef (Lorg/jetbrains/kotlin/fir/declarations/FirOuterClassTypeParameterRef;)V
 	public fun visitPlaceholderProjection (Lorg/jetbrains/kotlin/fir/types/FirPlaceholderProjection;)V
 	public fun visitPropertyAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;)V
+	public fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;)V
 	public fun visitRawContractDescription (Lorg/jetbrains/kotlin/fir/contracts/FirRawContractDescription;)V
 	public fun visitReceiverParameter (Lorg/jetbrains/kotlin/fir/declarations/FirReceiverParameter;)V
 	public fun visitRegularClass (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)V
@@ -11729,6 +11889,7 @@ public abstract class org/jetbrains/kotlin/fir/visitors/FirTransformer : org/jet
 	public fun transformProperty (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public fun transformPropertyAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public fun transformPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
+	public fun transformPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/references/FirReference;
 	public fun transformQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public fun transformQualifiedErrorAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedErrorAccessExpression;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public fun transformRawContractDescription (Lorg/jetbrains/kotlin/fir/contracts/FirRawContractDescription;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/contracts/FirContractDescription;
@@ -11988,6 +12149,8 @@ public abstract class org/jetbrains/kotlin/fir/visitors/FirTransformer : org/jet
 	public final fun visitPropertyAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public synthetic fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
+	public synthetic fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/references/FirReference;
 	public synthetic fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/expressions/FirStatement;
 	public synthetic fun visitQualifiedErrorAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedErrorAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
@@ -12214,6 +12377,7 @@ public abstract class org/jetbrains/kotlin/fir/visitors/FirVisitor {
 	public fun visitProperty (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitPropertyAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirPropertyAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitQualifiedErrorAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedErrorAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitRawContractDescription (Lorg/jetbrains/kotlin/fir/contracts/FirRawContractDescription;Ljava/lang/Object;)Ljava/lang/Object;
@@ -12578,6 +12742,9 @@ public abstract class org/jetbrains/kotlin/fir/visitors/FirVisitorVoid : org/jet
 	public fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;)V
 	public synthetic fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitPropertyAccessor (Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;Ljava/lang/Void;)V
+	public fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;)V
+	public synthetic fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun visitPropertyWithExplicitBackingFieldResolvedNamedReference (Lorg/jetbrains/kotlin/fir/references/FirPropertyWithExplicitBackingFieldResolvedNamedReference;Ljava/lang/Void;)V
 	public fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)V
 	public synthetic fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitQualifiedAccessExpression (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;Ljava/lang/Void;)V

@@ -83,8 +83,8 @@ public final class org/jetbrains/kotlin/fir/analysis/js/checkers/FirJsIdentityLe
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/js/checkers/FirJsModuleKind : org/jetbrains/kotlin/fir/FirSessionComponent {
-	public fun <init> (Lorg/jetbrains/kotlin/serialization/js/ModuleKind;)V
-	public final fun getModuleKind ()Lorg/jetbrains/kotlin/serialization/js/ModuleKind;
+	public fun <init> (Lorg/jetbrains/kotlin/js/config/ModuleKind;)V
+	public final fun getModuleKind ()Lorg/jetbrains/kotlin/js/config/ModuleKind;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/js/checkers/FirJsPlatformDiagnosticSuppressor : org/jetbrains/kotlin/fir/analysis/checkers/FirPlatformDiagnosticSuppressor {

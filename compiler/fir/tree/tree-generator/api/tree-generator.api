@@ -105,6 +105,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getProperty ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getPropertyAccessExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getPropertyAccessor ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
+	public final fun getPropertyWithExplicitBackingFieldResolvedNamedReference ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getQualifiedAccessExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getQualifiedErrorAccessExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getRawContractDescription ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
@@ -182,6 +183,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/ImportablesKt {
 	public static final fun getToLookupTagImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 	public static final fun getToMutableOrEmptyImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 	public static final fun getTransformInPlaceImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
+	public static final fun getVisibilitiesImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 }
 
 public final class org/jetbrains/kotlin/fir/tree/generator/MainKt {
@@ -204,7 +206,6 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getClassSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getCodeFragmentSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getConeClassLikeTypeImplType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getConeClassLikeTypeType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getConeContractElementType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getConeDiagnosticType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getConeEffectDeclarationType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -256,6 +257,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getImplicitNothingTypeRefType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getImplicitStringTypeRefType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getImplicitUnitTypeRefType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getInaccessibleReceiverKindType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getInlineStatusType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getJumpTargetType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getModalityType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -276,6 +278,8 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getResolveStateAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getResolveStateType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getResolvedDeclarationStatusImplType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getReturnValueStatusType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getSafeCallCheckedSubjectReferenceType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getScriptSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getSimpleNamedReferenceType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -284,6 +288,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getSourceFileLinesMappingType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getSourceFileType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getStandardClassIdsType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getStandardTypes ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getStringType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getStubReferenceType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getToSymbolUtilityFunction ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
