@@ -540,7 +540,6 @@ public final class org/jetbrains/kotlin/fir/types/ConeIntegerLiteralType$Compani
 
 public final class org/jetbrains/kotlin/fir/types/ConeIntersectionType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType, org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker, org/jetbrains/kotlin/types/model/IntersectionTypeConstructorMarker {
 	public fun <init> (Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
-	public synthetic fun <init> (Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
 	public final fun getIntersectedTypes ()Ljava/util/Collection;
@@ -752,6 +751,9 @@ public final class org/jetbrains/kotlin/fir/types/ConeTypesKt {
 	public static final fun asCone (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 	public static final fun asCone (Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;)Lorg/jetbrains/kotlin/fir/types/ConeRigidType;
 	public static final fun unwrapToSimpleTypeUsingLowerBound (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/fir/types/DelicateIntersectionConstructor : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/fir/types/DynamicTypeConstructor : java/lang/annotation/Annotation {

@@ -226,7 +226,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getDelegateFieldSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDeprecationsProviderType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDfaType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getDirectDeclarationsAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDirectDeclarationsAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getEffectiveVisibilityType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getEmptyAnnotationArgumentMappingType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getEmptyArgumentListType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -241,11 +241,11 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getFieldSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getFileSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getFirBasedSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getFirBuilderDslAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getFirBuilderDslAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getFirDefaultVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getFirDefaultVisitorVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getFirIdeOnlyAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getFirImplementationDetailType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getFirIdeOnlyAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
+	public static final fun getFirImplementationDetailType ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getFirImplicitTypeWithoutSourceType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getFirModuleDataType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getFirPropertySymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -276,13 +276,13 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getPropertyBodyResolveStateType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getPropertySymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getPureAbstractElementType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getRawFirApi ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getRawFirApi ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getReceiverParameterSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getReferenceToSimpleExpressionType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getRegularClassSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getReplSnippetSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getResolvePhaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getResolveStateAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getResolveStateAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getResolveStateType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getResolvedDeclarationStatusImplType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getResolvedSymbolOrigin ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -303,7 +303,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getTypeParameterSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getTypeRefMarkerType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getUnresolvedDeprecationsProviderType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getUnresolvedExpressionTypeAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getUnresolvedExpressionTypeAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getValueParameterKindType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getValueParameterSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getVariableSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;

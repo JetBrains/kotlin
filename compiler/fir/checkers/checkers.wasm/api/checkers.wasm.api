@@ -78,7 +78,7 @@ public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmBaseTypeC
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmJsDeclarationCheckers : org/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmJsDeclarationCheckers;
 	public fun getBasicDeclarationCheckers ()Ljava/util/Set;
-	public fun getSimpleFunctionCheckers ()Ljava/util/Set;
+	public fun getNamedFunctionCheckers ()Ljava/util/Set;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmJsExpressionCheckers : org/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers {

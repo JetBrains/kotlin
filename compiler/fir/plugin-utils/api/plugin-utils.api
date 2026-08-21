@@ -29,6 +29,7 @@ public final class org/jetbrains/kotlin/fir/plugin/ConstructorBuildingContextKt 
 	public static synthetic fun createConstructor$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
 	public static final fun createDefaultPrivateConstructor (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Z)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
 	public static synthetic fun createDefaultPrivateConstructor$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
+	public static final fun tryGeneratingNoArgDelegatingConstructorCall (Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Lorg/jetbrains/kotlin/fir/expressions/FirDelegatedConstructorCall;
 }
 
 public abstract class org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext {

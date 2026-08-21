@@ -31,6 +31,32 @@ public final class org/jetbrains/kotlin/ir/BuiltInOperatorNames {
 public abstract interface annotation class org/jetbrains/kotlin/ir/InternalSymbolFinderAPI : java/lang/annotation/Annotation {
 }
 
+public abstract class org/jetbrains/kotlin/ir/IrAbstractFunctionFactory {
+	public static final field Companion Lorg/jetbrains/kotlin/ir/IrAbstractFunctionFactory$Companion;
+	public fun <init> ()V
+	public fun functionClassDescriptor (I)Lorg/jetbrains/kotlin/builtins/functions/FunctionClassDescriptor;
+	public fun functionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public final fun functionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public abstract fun functionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public fun kFunctionClassDescriptor (I)Lorg/jetbrains/kotlin/builtins/functions/FunctionClassDescriptor;
+	public fun kFunctionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public final fun kFunctionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public abstract fun kFunctionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public fun kSuspendFunctionClassDescriptor (I)Lorg/jetbrains/kotlin/builtins/functions/FunctionClassDescriptor;
+	public fun kSuspendFunctionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public final fun kSuspendFunctionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public abstract fun kSuspendFunctionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public fun suspendFunctionClassDescriptor (I)Lorg/jetbrains/kotlin/builtins/functions/FunctionClassDescriptor;
+	public fun suspendFunctionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public final fun suspendFunctionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public abstract fun suspendFunctionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+}
+
+public final class org/jetbrains/kotlin/ir/IrAbstractFunctionFactory$Companion {
+	public final fun getClassOrigin ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOriginImpl;
+	public final fun getMemberOrigin ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
+}
+
 public final class org/jetbrains/kotlin/ir/IrAttribute {
 	public final fun getCopyByDefault ()Z
 	public final fun getName ()Ljava/lang/String;
@@ -61,6 +87,26 @@ public final class org/jetbrains/kotlin/ir/IrAttributeKt {
 	public static final fun irAttribute (Z)Lorg/jetbrains/kotlin/ir/IrAttribute$Delegate;
 	public static final fun irFlag (Z)Lorg/jetbrains/kotlin/ir/IrAttribute$Flag$Delegate;
 	public static final fun set (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/IrAttribute;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/ir/IrBasedFunctionFactory : org/jetbrains/kotlin/ir/IrAbstractFunctionFactory {
+	public static final field Companion Lorg/jetbrains/kotlin/ir/IrBasedFunctionFactory$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Lorg/jetbrains/kotlin/ir/util/SymbolTable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public fun functionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public fun functionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public final fun getTypeSystem ()Lorg/jetbrains/kotlin/ir/types/IrTypeSystemContext;
+	public fun kFunctionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public fun kFunctionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public fun kSuspendFunctionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public fun kSuspendFunctionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public final fun makePackageAccessor (Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/ir/declarations/IrFile;
+	public final fun setTypeSystem (Lorg/jetbrains/kotlin/ir/types/IrTypeSystemContext;)V
+	public fun suspendFunctionClassSignature (I)Lorg/jetbrains/kotlin/ir/util/IdSignature;
+	public fun suspendFunctionN (ILkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+}
+
+public final class org/jetbrains/kotlin/ir/IrBasedFunctionFactory$Companion {
+	public final fun isFunctionInterfaceFile (Lorg/jetbrains/kotlin/ir/declarations/IrPackageFragment;)Z
 }
 
 public abstract class org/jetbrains/kotlin/ir/IrBuiltIns : org/jetbrains/kotlin/ir/SymbolFinderHolder {
@@ -111,6 +157,7 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltIns : org/jetbrains/kotlin/
 	public abstract fun getFloatIterator ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public abstract fun getFloatType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public abstract fun getFunctionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getFunctionFactory ()Lorg/jetbrains/kotlin/ir/IrAbstractFunctionFactory;
 	public abstract fun getGreaterFunByOperandType ()Ljava/util/Map;
 	public abstract fun getGreaterOrEqualFunByOperandType ()Ljava/util/Map;
 	public abstract fun getIeee754equalsFunByOperandType ()Ljava/util/Map;
@@ -203,6 +250,7 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltIns : org/jetbrains/kotlin/
 	public abstract fun getUshortType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public abstract fun kFunctionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
 	public abstract fun kSuspendFunctionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public fun setFunctionFactory (Lorg/jetbrains/kotlin/ir/IrAbstractFunctionFactory;)V
 	public abstract fun suspendFunctionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
 }
 
@@ -214,6 +262,7 @@ public final class org/jetbrains/kotlin/ir/IrBuiltIns$Companion {
 public abstract class org/jetbrains/kotlin/ir/IrBuiltInsOverSymbolFinder : org/jetbrains/kotlin/ir/IrBuiltIns {
 	public fun <init> (Lorg/jetbrains/kotlin/ir/SymbolFinder;)V
 	public fun functionN (I)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
+	public fun getAndandSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getAnnotationClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getAnnotationType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getAnyClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
@@ -236,8 +285,11 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltInsOverSymbolFinder : org/j
 	public fun getCharIterator ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getCharSequenceClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getCharType ()Lorg/jetbrains/kotlin/ir/types/IrType;
+	public fun getCheckNotNullSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getCollectionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getComparableClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getDataClassArrayMemberHashCodeSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public fun getDataClassArrayMemberToStringSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getDeprecatedSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getDeprecationLevelSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getDoubleArray ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
@@ -245,11 +297,17 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltInsOverSymbolFinder : org/j
 	public fun getDoubleIterator ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getDoubleType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getEnumClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getEqeqSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public fun getEqeqeqSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getFloatArray ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getFloatClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getFloatIterator ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getFloatType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getFunctionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getGreaterFunByOperandType ()Ljava/util/Map;
+	public fun getGreaterOrEqualFunByOperandType ()Ljava/util/Map;
+	public fun getIeee754equalsFunByOperandType ()Ljava/util/Map;
+	public fun getIllegalArgumentExceptionSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getIntAndSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getIntArray ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getIntClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
@@ -272,6 +330,9 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltInsOverSymbolFinder : org/j
 	public fun getKPropertyClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getKPropertyClass (ZI)Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getKTypeClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getLessFunByOperandType ()Ljava/util/Map;
+	public fun getLessOrEqualFunByOperandType ()Ljava/util/Map;
+	public fun getLinkageErrorSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getListClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getListIteratorClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getLongArray ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
@@ -288,11 +349,13 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltInsOverSymbolFinder : org/j
 	public fun getMutableMapClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getMutableMapEntryClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getMutableSetClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getNoWhenBranchMatchedExceptionSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getNothingClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getNothingNType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getNothingType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getNumberClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getNumberType ()Lorg/jetbrains/kotlin/ir/types/IrType;
+	public fun getOrorSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getPrimitiveArrayElementTypes ()Ljava/util/Map;
 	public fun getPrimitiveArrayForType ()Ljava/util/Map;
 	public fun getPrimitiveArraysToPrimitiveTypes ()Ljava/util/Map;
@@ -309,6 +372,8 @@ public abstract class org/jetbrains/kotlin/ir/IrBuiltInsOverSymbolFinder : org/j
 	public fun getStringClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getStringType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getSymbolFinder ()Lorg/jetbrains/kotlin/ir/SymbolFinder;
+	public fun getThrowCceSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public fun getThrowIseSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public fun getThrowableClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getThrowableType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getUbyteArray ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
@@ -346,7 +411,8 @@ public abstract interface class org/jetbrains/kotlin/ir/IrDiagnosticReporter {
 	public abstract fun at (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Lorg/jetbrains/kotlin/ir/IrDiagnosticReporter$IrDiagnosticContext;
 	public abstract fun at (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Lorg/jetbrains/kotlin/ir/IrDiagnosticReporter$IrDiagnosticContext;
 	public abstract fun getHasErrors ()Z
-	public abstract fun report (Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;Ljava/lang/String;)V
+	public abstract fun report (Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
+	public static synthetic fun report$default (Lorg/jetbrains/kotlin/ir/IrDiagnosticReporter;Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;ILjava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/ir/IrDiagnosticReporter$IrDiagnosticContext : org/jetbrains/kotlin/diagnostics/DiagnosticContext {
@@ -420,6 +486,50 @@ public abstract interface class org/jetbrains/kotlin/ir/IrProvider {
 public abstract interface class org/jetbrains/kotlin/ir/IrStatement : org/jetbrains/kotlin/ir/IrElement {
 }
 
+public final class org/jetbrains/kotlin/ir/IrSyntheticProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/ir/IrSyntheticProvider$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/descriptors/PackageFragmentDescriptor;Lorg/jetbrains/kotlin/ir/util/SymbolTable;Lkotlin/jvm/functions/Function1;)V
+	public final fun finish ()V
+	public final fun getAndandSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getCheckNotNullSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getDataClassArrayMemberHashCodeSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getDataClassArrayMemberToStringSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getEqeqSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getEqeqeqSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getGreaterFunByOperandType ()Ljava/util/Map;
+	public final fun getGreaterOrEqualFunByOperandType ()Ljava/util/Map;
+	public final fun getIeee754equalsFunByOperandType ()Ljava/util/Map;
+	public final fun getIllegalArgumentExceptionSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getLessFunByOperandType ()Ljava/util/Map;
+	public final fun getLessOrEqualFunByOperandType ()Ljava/util/Map;
+	public final fun getLinkageErrorSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getNoWhenBranchMatchedExceptionSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getOperatorsPackageFragment ()Lorg/jetbrains/kotlin/ir/declarations/impl/IrExternalPackageFragmentImpl;
+	public final fun getOrorSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getThrowCceSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public final fun getThrowIseSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+}
+
+public final class org/jetbrains/kotlin/ir/IrSyntheticProvider$Companion {
+	public final fun getAndand ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getCheckNotNull ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getDataClassArrayMemberHashCode ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getDataClassArrayMemberToString ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getEqeq ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getEqeqeq ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getGreater ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getGreaterOrEqual ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getIeee754equals ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getIllegalArgumentException ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getLess ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getLessOrEqual ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getLinkageError ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getNoWhenBranchMatchedException ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getOror ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getThrowCce ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getThrowIse ()Lorg/jetbrains/kotlin/name/CallableId;
+}
+
 public final class org/jetbrains/kotlin/ir/KtDiagnosticReporterWithImplicitIrBasedContext : org/jetbrains/kotlin/diagnostics/DiagnosticReporter, org/jetbrains/kotlin/ir/IrDiagnosticReporter {
 	public fun <init> (Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)V
 	public fun at (Lorg/jetbrains/kotlin/AbstractKtSourceElement;Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Lorg/jetbrains/kotlin/ir/IrDiagnosticReporter$IrDiagnosticContext;
@@ -431,7 +541,7 @@ public final class org/jetbrains/kotlin/ir/KtDiagnosticReporterWithImplicitIrBas
 	public fun getHasWarningsForWError ()Z
 	public final fun getLanguageVersionSettings ()Lorg/jetbrains/kotlin/config/LanguageVersionSettings;
 	public fun report (Lorg/jetbrains/kotlin/diagnostics/KtDiagnostic;Lorg/jetbrains/kotlin/diagnostics/DiagnosticContext;)V
-	public fun report (Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;Ljava/lang/String;)V
+	public fun report (Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
 }
 
 public final class org/jetbrains/kotlin/ir/LineAndColumn {
@@ -511,12 +621,12 @@ public final class org/jetbrains/kotlin/ir/SymbolFinderKt {
 	public static final fun classSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public static final fun classSymbolOrNull (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public static final fun defaultType (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/ClassId;)Lkotlin/Lazy;
-	public static final fun functionSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public static final fun functionSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lkotlin/Lazy;
 	public static final fun functionSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;)Lkotlin/Lazy;
 	public static final fun functionSymbolAssociatedBy (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lkotlin/Lazy;
 	public static synthetic fun functionSymbolAssociatedBy$default (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/Lazy;
-	public static final fun functionSymbolOrNull (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
-	public static final fun functionSymbols (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public static final fun functionSymbolOrNull (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lkotlin/Lazy;
+	public static final fun functionSymbols (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lkotlin/Lazy;
 	public static final fun getExtensionReceiverClass (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public static final fun getExtensionReceiverType (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Lorg/jetbrains/kotlin/ir/types/IrType;
 	public static final fun getterSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lkotlin/Lazy;
@@ -524,9 +634,11 @@ public final class org/jetbrains/kotlin/ir/SymbolFinderKt {
 	public static final fun lazyClassSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/config/LanguageFeature;)Lkotlin/Lazy;
 	public static final fun noParametersConstructorSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/ClassId;)Lkotlin/Lazy;
 	public static final fun primaryConstructorSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/ClassId;)Lkotlin/Lazy;
-	public static final fun propertySymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;
-	public static final fun propertySymbols (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public static final fun propertySymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lkotlin/Lazy;
 	public static final fun setterSymbol (Lorg/jetbrains/kotlin/ir/SymbolFinderHolder;Lorg/jetbrains/kotlin/name/CallableId;)Lkotlin/Lazy;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/ir/UnstableBuiltInsApi : java/lang/annotation/Annotation {
 }
 
 public final class org/jetbrains/kotlin/ir/builders/ExpressionHelpersKt {
@@ -1132,6 +1244,12 @@ public abstract class org/jetbrains/kotlin/ir/declarations/IrConstructor : org/j
 	public abstract fun setPrimary (Z)V
 }
 
+public abstract class org/jetbrains/kotlin/ir/declarations/IrConstructorWithLateBinding : org/jetbrains/kotlin/ir/declarations/IrConstructor {
+	public fun <init> ()V
+	public abstract fun acquireSymbol (Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;)Lorg/jetbrains/kotlin/ir/declarations/IrConstructorWithLateBinding;
+	public abstract fun isBound ()Z
+}
+
 public abstract interface class org/jetbrains/kotlin/ir/declarations/IrDeclaration : org/jetbrains/kotlin/ir/IrStatement, org/jetbrains/kotlin/ir/declarations/IrMutableAnnotationContainer, org/jetbrains/kotlin/ir/declarations/IrSymbolOwner {
 	public abstract fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/DeclarationDescriptor;
 	public abstract fun getFactory ()Lorg/jetbrains/kotlin/ir/declarations/IrFactory;
@@ -1191,10 +1309,10 @@ public final class org/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin$Comp
 	public final fun getFUNCTION_FOR_DEFAULT_PARAMETER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getFUNCTION_INTERFACE_MEMBER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getGENERATED_DATA_CLASS_MEMBER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
-	public final fun getGENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
+	public final fun getGENERATED_FULL_VALUE_CLASS_MEMBER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
+	public final fun getGENERATED_INLINE_CLASS_MEMBER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getGENERATED_SAM_IMPLEMENTATION ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getGENERATED_SETTER_GETTER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
-	public final fun getGENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getINLINE_LAMBDA ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getINSTANCE_RECEIVER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getIR_BUILTINS_STUB ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
@@ -1205,6 +1323,7 @@ public final class org/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin$Comp
 	public final fun getIR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getIR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getJVM_MULTIFILE_CLASS ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
+	public final fun getLAMBDA_EXTENSION_RECEIVER ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getLOCAL_FUNCTION ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getLOCAL_FUNCTION_FOR_LAMBDA ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public final fun getLOWERED_SUSPEND_FUNCTION ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
@@ -1297,15 +1416,14 @@ public final class org/jetbrains/kotlin/ir/declarations/IrDeclarationsKt {
 	public static final fun copyAttributes (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/IrElement;)Lorg/jetbrains/kotlin/ir/IrElement;
 	public static final fun copyAttributes (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/IrElement;Z)V
 	public static synthetic fun copyAttributes$default (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/IrElement;ZILjava/lang/Object;)V
-	public static final fun getInlineClassRepresentation (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/descriptors/InlineClassRepresentation;
-	public static final fun getMultiFieldValueClassRepresentation (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/descriptors/MultiFieldValueClassRepresentation;
 	public static final fun getName (Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Ljava/lang/String;
 	public static final fun getNameWithPackage (Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Ljava/lang/String;
 	public static final fun getPackagePartClassName (Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Ljava/lang/String;
 	public static final fun getPath (Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Ljava/lang/String;
-	public static final fun isMultiFieldValueClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Z
+	public static final fun inlineClassRepresentation (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Z)Lorg/jetbrains/kotlin/descriptors/InlineClassRepresentation;
+	public static final fun isFullValueClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Z
+	public static final fun isInlineClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Z)Z
 	public static final fun isPropertyAccessor (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
-	public static final fun isSingleFieldValueClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Z
 	public static final fun isStaticMethodOfClass (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
 }
 
@@ -1341,19 +1459,21 @@ public class org/jetbrains/kotlin/ir/declarations/IrFactory {
 	public static synthetic fun createClass$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Lorg/jetbrains/kotlin/descriptors/ClassKind;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZZLorg/jetbrains/kotlin/descriptors/SourceElement;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
 	public final fun createConstructor (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;ZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;)Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;
 	public static synthetic fun createConstructor$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;ZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;
+	public final fun createConstructorWithLateBinding (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;ZZ)Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;
+	public static synthetic fun createConstructorWithLateBinding$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;ZZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;
 	public final fun createEnumEntry (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/symbols/IrEnumEntrySymbol;)Lorg/jetbrains/kotlin/ir/declarations/IrEnumEntry;
 	public final fun createExpressionBody (IILorg/jetbrains/kotlin/ir/expressions/IrExpression;)Lorg/jetbrains/kotlin/ir/expressions/IrExpressionBody;
 	public final fun createField (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/ir/symbols/IrFieldSymbol;Lorg/jetbrains/kotlin/ir/types/IrType;ZZZ)Lorg/jetbrains/kotlin/ir/declarations/IrField;
 	public static synthetic fun createField$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/ir/symbols/IrFieldSymbol;Lorg/jetbrains/kotlin/ir/types/IrType;ZZZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrField;
-	public final fun createFunctionWithLateBinding (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZ)Lorg/jetbrains/kotlin/ir/declarations/IrFunctionWithLateBinding;
-	public static synthetic fun createFunctionWithLateBinding$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrFunctionWithLateBinding;
+	public final fun createFunctionWithLateBinding (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZLorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lorg/jetbrains/kotlin/ir/declarations/IrFunctionWithLateBinding;
+	public static synthetic fun createFunctionWithLateBinding$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZLorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrFunctionWithLateBinding;
 	public final fun createLocalDelegatedProperty (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/symbols/IrLocalDelegatedPropertySymbol;Lorg/jetbrains/kotlin/ir/types/IrType;Z)Lorg/jetbrains/kotlin/ir/declarations/IrLocalDelegatedProperty;
 	public final fun createProperty (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;ZZZZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZZ)Lorg/jetbrains/kotlin/ir/declarations/IrProperty;
 	public static synthetic fun createProperty$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;ZZZZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrProperty;
 	public final fun createPropertyWithLateBinding (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZ)Lorg/jetbrains/kotlin/ir/declarations/IrPropertyWithLateBinding;
 	public static synthetic fun createPropertyWithLateBinding$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/descriptors/Modality;ZZZZZZZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrPropertyWithLateBinding;
-	public final fun createSimpleFunction (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;ZZZZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;Z)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
-	public static synthetic fun createSimpleFunction$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;ZZZZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
+	public final fun createSimpleFunction (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;ZZZZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZLorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
+	public static synthetic fun createSimpleFunction$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;ZZZZZLorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZLorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
 	public final fun createTypeAlias (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/ir/symbols/IrTypeAliasSymbol;ZLorg/jetbrains/kotlin/ir/types/IrType;)Lorg/jetbrains/kotlin/ir/declarations/IrTypeAlias;
 	public final fun createTypeParameter (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/symbols/IrTypeParameterSymbol;Lorg/jetbrains/kotlin/types/Variance;IZ)Lorg/jetbrains/kotlin/ir/declarations/IrTypeParameter;
 	public final fun createValueParameter (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrParameterKind;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/types/IrType;ZLorg/jetbrains/kotlin/ir/symbols/IrValueParameterSymbol;Lorg/jetbrains/kotlin/ir/types/IrType;ZZZ)Lorg/jetbrains/kotlin/ir/declarations/IrValueParameter;
@@ -1502,6 +1622,7 @@ public abstract class org/jetbrains/kotlin/ir/declarations/IrPackageFragment : o
 
 public final class org/jetbrains/kotlin/ir/declarations/IrPackageFragmentsKt {
 	public static final fun createEmptyExternalPackageFragment (Lorg/jetbrains/kotlin/descriptors/ModuleDescriptor;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/ir/declarations/IrExternalPackageFragment;
+	public static final fun createEmptyExternalPackageFragment (Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/ir/declarations/IrExternalPackageFragment;
 	public static final fun getContainerSource (Lorg/jetbrains/kotlin/ir/declarations/IrExternalPackageFragment;)Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	public static final fun getModuleDescriptor (Lorg/jetbrains/kotlin/ir/declarations/IrPackageFragment;)Lorg/jetbrains/kotlin/descriptors/ModuleDescriptor;
 	public static final fun getPackageFragmentDescriptor (Lorg/jetbrains/kotlin/ir/declarations/IrPackageFragment;)Lorg/jetbrains/kotlin/descriptors/PackageFragmentDescriptor;
@@ -1618,6 +1739,7 @@ public abstract class org/jetbrains/kotlin/ir/declarations/IrScript : org/jetbra
 public abstract class org/jetbrains/kotlin/ir/declarations/IrSimpleFunction : org/jetbrains/kotlin/ir/declarations/IrFunction, org/jetbrains/kotlin/ir/declarations/IrOverridableDeclaration {
 	public fun <init> ()V
 	public fun accept (Lorg/jetbrains/kotlin/ir/visitors/IrVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getCompanionExtensionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public abstract fun getCorrespondingPropertySymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;
 	public synthetic fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/DeclarationDescriptor;
 	public abstract fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/FunctionDescriptor;
@@ -1630,6 +1752,7 @@ public abstract class org/jetbrains/kotlin/ir/declarations/IrSimpleFunction : or
 	public abstract fun isOperator ()Z
 	public abstract fun isSuspend ()Z
 	public abstract fun isTailrec ()Z
+	public abstract fun setCompanionExtensionClass (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public abstract fun setCorrespondingPropertySymbol (Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;)V
 	public abstract fun setInfix (Z)V
 	public abstract fun setOperator (Z)V
@@ -1912,6 +2035,52 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrConstructorImpl :
 	public fun setVisibility (Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;)V
 }
 
+public final class org/jetbrains/kotlin/ir/declarations/impl/IrConstructorWithLateBindingImpl : org/jetbrains/kotlin/ir/declarations/IrConstructorWithLateBinding {
+	public field returnType Lorg/jetbrains/kotlin/ir/types/IrType;
+	public fun <init> (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/Name;ZLorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZZ)V
+	public fun acquireSymbol (Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;)Lorg/jetbrains/kotlin/ir/declarations/IrConstructorWithLateBinding;
+	public fun getAnnotations ()Ljava/util/List;
+	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
+	public fun getBody ()Lorg/jetbrains/kotlin/ir/expressions/IrBody;
+	public fun getContainerSource ()Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
+	public fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/ClassConstructorDescriptor;
+	public synthetic fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/DeclarationDescriptor;
+	public synthetic fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/FunctionDescriptor;
+	public fun getEndOffset ()I
+	public fun getFactory ()Lorg/jetbrains/kotlin/ir/declarations/IrFactory;
+	public fun getMetadata ()Lorg/jetbrains/kotlin/ir/declarations/MetadataSource;
+	public fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public fun getOrigin ()Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
+	public fun getReturnType ()Lorg/jetbrains/kotlin/ir/types/IrType;
+	public fun getStartOffset ()I
+	public fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;
+	public synthetic fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrFunctionSymbol;
+	public synthetic fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrReturnTargetSymbol;
+	public synthetic fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;
+	public fun getTypeParameters ()Ljava/util/List;
+	public fun getVisibility ()Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;
+	public fun isBound ()Z
+	public fun isExpect ()Z
+	public fun isExternal ()Z
+	public fun isInline ()Z
+	public fun isPrimary ()Z
+	public fun setAnnotations (Ljava/util/List;)V
+	public fun setAttributeOwnerId (Lorg/jetbrains/kotlin/ir/IrElement;)V
+	public fun setBody (Lorg/jetbrains/kotlin/ir/expressions/IrBody;)V
+	public fun setEndOffset (I)V
+	public fun setExpect (Z)V
+	public fun setExternal (Z)V
+	public fun setInline (Z)V
+	public fun setMetadata (Lorg/jetbrains/kotlin/ir/declarations/MetadataSource;)V
+	public fun setName (Lorg/jetbrains/kotlin/name/Name;)V
+	public fun setOrigin (Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;)V
+	public fun setPrimary (Z)V
+	public fun setReturnType (Lorg/jetbrains/kotlin/ir/types/IrType;)V
+	public fun setStartOffset (I)V
+	public fun setTypeParameters (Ljava/util/List;)V
+	public fun setVisibility (Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;)V
+}
+
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrEnumEntryImpl : org/jetbrains/kotlin/ir/declarations/IrEnumEntry {
 	public fun <init> (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/symbols/IrEnumEntrySymbol;)V
 	public fun getAnnotations ()Ljava/util/List;
@@ -1938,7 +2107,6 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrEnumEntryImpl : o
 }
 
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrExternalPackageFragmentImpl : org/jetbrains/kotlin/ir/declarations/IrExternalPackageFragment {
-	public static final field Companion Lorg/jetbrains/kotlin/ir/declarations/impl/IrExternalPackageFragmentImpl$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/ir/symbols/IrExternalPackageFragmentSymbol;Lorg/jetbrains/kotlin/name/FqName;)V
 	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
 	public fun getDeclarations ()Ljava/util/List;
@@ -1952,10 +2120,6 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrExternalPackageFr
 	public fun setEndOffset (I)V
 	public fun setPackageFqName (Lorg/jetbrains/kotlin/name/FqName;)V
 	public fun setStartOffset (I)V
-}
-
-public final class org/jetbrains/kotlin/ir/declarations/impl/IrExternalPackageFragmentImpl$Companion {
-	public final fun createEmptyExternalPackageFragment (Lorg/jetbrains/kotlin/descriptors/ModuleDescriptor;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/ir/declarations/IrExternalPackageFragment;
 }
 
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrFactoryImpl : org/jetbrains/kotlin/ir/declarations/IrFactory {
@@ -2006,8 +2170,7 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrFieldImpl : org/j
 }
 
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrFileImpl : org/jetbrains/kotlin/ir/declarations/IrFile {
-	public field module Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;
-	public fun <init> (Lorg/jetbrains/kotlin/ir/IrFileEntry;Lorg/jetbrains/kotlin/ir/symbols/IrFileSymbol;Lorg/jetbrains/kotlin/name/FqName;)V
+	public fun <init> (Lorg/jetbrains/kotlin/ir/IrFileEntry;Lorg/jetbrains/kotlin/ir/symbols/IrFileSymbol;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;)V
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
 	public fun getDeclarations ()Ljava/util/List;
@@ -2031,17 +2194,16 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrFileImpl : org/je
 }
 
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrFileImplKt {
-	public static final fun IrFileImpl (Lorg/jetbrains/kotlin/ir/IrFileEntry;Lorg/jetbrains/kotlin/descriptors/PackageFragmentDescriptor;)Lorg/jetbrains/kotlin/ir/declarations/impl/IrFileImpl;
 	public static final fun IrFileImpl (Lorg/jetbrains/kotlin/ir/IrFileEntry;Lorg/jetbrains/kotlin/descriptors/PackageFragmentDescriptor;Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;)Lorg/jetbrains/kotlin/ir/declarations/impl/IrFileImpl;
-	public static final fun IrFileImpl (Lorg/jetbrains/kotlin/ir/IrFileEntry;Lorg/jetbrains/kotlin/ir/symbols/IrFileSymbol;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;)Lorg/jetbrains/kotlin/ir/declarations/impl/IrFileImpl;
 }
 
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrFunctionImpl : org/jetbrains/kotlin/ir/declarations/IrSimpleFunction {
 	public field returnType Lorg/jetbrains/kotlin/ir/types/IrType;
-	public fun <init> (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/Name;ZLorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZZLorg/jetbrains/kotlin/descriptors/Modality;ZLorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;ZZZZ)V
+	public fun <init> (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/Name;ZLorg/jetbrains/kotlin/descriptors/DescriptorVisibility;Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;ZZLorg/jetbrains/kotlin/descriptors/Modality;ZLorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;ZZZZLorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
 	public fun getBody ()Lorg/jetbrains/kotlin/ir/expressions/IrBody;
+	public fun getCompanionExtensionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getContainerSource ()Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	public fun getCorrespondingPropertySymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;
 	public synthetic fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/DeclarationDescriptor;
@@ -2072,6 +2234,7 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrFunctionImpl : or
 	public fun setAnnotations (Ljava/util/List;)V
 	public fun setAttributeOwnerId (Lorg/jetbrains/kotlin/ir/IrElement;)V
 	public fun setBody (Lorg/jetbrains/kotlin/ir/expressions/IrBody;)V
+	public fun setCompanionExtensionClass (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public fun setCorrespondingPropertySymbol (Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;)V
 	public fun setEndOffset (I)V
 	public fun setExpect (Z)V
@@ -2095,11 +2258,12 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrFunctionImpl : or
 
 public final class org/jetbrains/kotlin/ir/declarations/impl/IrFunctionWithLateBindingImpl : org/jetbrains/kotlin/ir/declarations/IrFunctionWithLateBinding {
 	public field returnType Lorg/jetbrains/kotlin/ir/types/IrType;
-	public fun <init> (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/Name;ZLorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/descriptors/Modality;ZZZZZ)V
+	public fun <init> (IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/Name;ZLorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLorg/jetbrains/kotlin/descriptors/Modality;ZZZZZLorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public fun acquireSymbol (Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;)Lorg/jetbrains/kotlin/ir/declarations/IrFunctionWithLateBinding;
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
 	public fun getBody ()Lorg/jetbrains/kotlin/ir/expressions/IrBody;
+	public fun getCompanionExtensionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getContainerSource ()Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	public fun getCorrespondingPropertySymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;
 	public synthetic fun getDescriptor ()Lorg/jetbrains/kotlin/descriptors/DeclarationDescriptor;
@@ -2131,6 +2295,7 @@ public final class org/jetbrains/kotlin/ir/declarations/impl/IrFunctionWithLateB
 	public fun setAnnotations (Ljava/util/List;)V
 	public fun setAttributeOwnerId (Lorg/jetbrains/kotlin/ir/IrElement;)V
 	public fun setBody (Lorg/jetbrains/kotlin/ir/expressions/IrBody;)V
+	public fun setCompanionExtensionClass (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public fun setCorrespondingPropertySymbol (Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;)V
 	public fun setEndOffset (I)V
 	public fun setExpect (Z)V
@@ -2689,7 +2854,8 @@ public class org/jetbrains/kotlin/ir/descriptors/IrBasedClassDescriptor : org/je
 	public fun isExpect ()Z
 	public fun isExternal ()Z
 	public fun isFun ()Z
-	public fun isInline ()Z
+	public fun isInline ()Ljava/lang/Void;
+	public synthetic fun isInline ()Z
 	public fun isInner ()Z
 	public fun isValue ()Z
 	public fun substitute (Lorg/jetbrains/kotlin/types/TypeSubstitutor;)Lorg/jetbrains/kotlin/descriptors/ClassifierDescriptorWithTypeParameters;
@@ -3383,9 +3549,10 @@ public abstract class org/jetbrains/kotlin/ir/expressions/IrAnnotation : org/jet
 	public fun <init> ()V
 	public fun accept (Lorg/jetbrains/kotlin/ir/visitors/IrVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getArgumentMapping ()Ljava/util/Map;
-	public abstract fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
-	public abstract fun setArgumentMapping (Ljava/util/Map;)V
-	public abstract fun setClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+	public abstract fun getClassSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;
+	public synthetic fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;
+	public abstract fun setSymbol (Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;)V
 }
 
 public abstract class org/jetbrains/kotlin/ir/expressions/IrBlock : org/jetbrains/kotlin/ir/expressions/IrContainerExpression {
@@ -3855,6 +4022,36 @@ public abstract class org/jetbrains/kotlin/ir/expressions/IrInstanceInitializerC
 	public abstract fun setClassSymbol (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 }
 
+public final class org/jetbrains/kotlin/ir/expressions/IrLazilyBoundAnnotationImpl : org/jetbrains/kotlin/ir/expressions/IrAnnotation {
+	public static final field Companion Lorg/jetbrains/kotlin/ir/expressions/IrLazilyBoundAnnotationImpl$Companion;
+	public fun <init> (IILorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;Lorg/jetbrains/kotlin/descriptors/SourceElement;ILorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Ljava/util/Map;Lorg/jetbrains/kotlin/ir/IrProvider;)V
+	public fun getArgumentMapping ()Ljava/util/Map;
+	public fun getArguments ()Lorg/jetbrains/kotlin/ir/expressions/IrMemberAccessExpression$ValueArgumentsList;
+	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
+	public fun getClassSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
+	public fun getConstructorTypeArgumentsCount ()I
+	public fun getEndOffset ()I
+	public fun getOrigin ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;
+	public fun getSource ()Lorg/jetbrains/kotlin/descriptors/SourceElement;
+	public fun getStartOffset ()I
+	public fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;
+	public synthetic fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;
+	public fun getType ()Lorg/jetbrains/kotlin/ir/types/IrType;
+	public fun getTypeArguments ()Ljava/util/List;
+	public fun setArgumentMapping (Ljava/util/Map;)V
+	public fun setAttributeOwnerId (Lorg/jetbrains/kotlin/ir/IrElement;)V
+	public fun setConstructorTypeArgumentsCount (I)V
+	public fun setEndOffset (I)V
+	public fun setOrigin (Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;)V
+	public fun setSource (Lorg/jetbrains/kotlin/descriptors/SourceElement;)V
+	public fun setStartOffset (I)V
+	public fun setSymbol (Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;)V
+	public fun setType (Lorg/jetbrains/kotlin/ir/types/IrType;)V
+}
+
+public final class org/jetbrains/kotlin/ir/expressions/IrLazilyBoundAnnotationImpl$Companion {
+}
+
 public abstract class org/jetbrains/kotlin/ir/expressions/IrLocalDelegatedPropertyReference : org/jetbrains/kotlin/ir/expressions/IrCallableReference {
 	public fun <init> ()V
 	public fun accept (Lorg/jetbrains/kotlin/ir/visitors/IrVisitor;Ljava/lang/Object;)Ljava/lang/Object;
@@ -3881,7 +4078,7 @@ public abstract class org/jetbrains/kotlin/ir/expressions/IrLoop : org/jetbrains
 public abstract class org/jetbrains/kotlin/ir/expressions/IrMemberAccessExpression : org/jetbrains/kotlin/ir/expressions/IrDeclarationReference {
 	public fun <init> ()V
 	public fun acceptChildren (Lorg/jetbrains/kotlin/ir/visitors/IrVisitor;Ljava/lang/Object;)V
-	public final fun getArguments ()Lorg/jetbrains/kotlin/ir/expressions/IrMemberAccessExpression$ValueArgumentsList;
+	public fun getArguments ()Lorg/jetbrains/kotlin/ir/expressions/IrMemberAccessExpression$ValueArgumentsList;
 	public final fun getDispatchReceiver ()Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
 	public abstract fun getOrigin ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;
@@ -4064,6 +4261,7 @@ public final class org/jetbrains/kotlin/ir/expressions/IrStatementOrigin$Compani
 	public final fun getFOR_LOOP_INNER_WHILE ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getFOR_LOOP_ITERATOR ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getFOR_LOOP_NEXT ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
+	public final fun getFUNCTION_TYPE_EXPRESSION_CONVERSION ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getFUN_INTERFACE_CONSTRUCTOR_REFERENCE ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getGET_ARRAY_ELEMENT ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getGET_LOCAL_PROPERTY ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
@@ -4103,7 +4301,6 @@ public final class org/jetbrains/kotlin/ir/expressions/IrStatementOrigin$Compani
 	public final fun getRANGE_UNTIL ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getSAFE_CALL ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getSTATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
-	public final fun getSUSPEND_CONVERSION ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getSYNTHESIZED_INIT_BLOCK ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getSYNTHETIC_NOT_AUTOBOXED_CHECK ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
 	public final fun getUMINUS ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOriginImpl;
@@ -4408,7 +4605,7 @@ public final class org/jetbrains/kotlin/ir/expressions/impl/IrAnnotationImpl : o
 	public static final field Companion Lorg/jetbrains/kotlin/ir/expressions/impl/IrAnnotationImpl$Companion;
 	public fun getArgumentMapping ()Ljava/util/Map;
 	public fun getAttributeOwnerId ()Lorg/jetbrains/kotlin/ir/IrElement;
-	public fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getClassSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getConstructorTypeArgumentsCount ()I
 	public fun getEndOffset ()I
 	public fun getOrigin ()Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;
@@ -4418,9 +4615,7 @@ public final class org/jetbrains/kotlin/ir/expressions/impl/IrAnnotationImpl : o
 	public synthetic fun getSymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;
 	public fun getType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun getTypeArguments ()Ljava/util/List;
-	public fun setArgumentMapping (Ljava/util/Map;)V
 	public fun setAttributeOwnerId (Lorg/jetbrains/kotlin/ir/IrElement;)V
-	public fun setClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
 	public fun setConstructorTypeArgumentsCount (I)V
 	public fun setEndOffset (I)V
 	public fun setOrigin (Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;)V
@@ -5921,12 +6116,13 @@ public abstract interface class org/jetbrains/kotlin/ir/types/IrTypeSystemContex
 	public fun getPrimitiveArrayType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
 	public fun getPrimitiveType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
 	public fun getRepresentativeUpperBound (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
+	public fun getTreatFullValueClassesWithOneFieldAsBasic ()Z
 	public fun getType (Lorg/jetbrains/kotlin/types/model/TypeArgumentMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getTypeConstructor (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/ir/symbols/IrTypeParameterSymbol;
 	public synthetic fun getTypeConstructor (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
 	public fun getTypeParameter (Lorg/jetbrains/kotlin/types/model/TypeVariableTypeConstructorMarker;)Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
 	public fun getTypeParameterClassifier (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
-	public fun getUnsubstitutedUnderlyingType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
+	public fun getUnsubstitutedUnderlyingTypeInJvm (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getUpperBound (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;I)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getUpperBounds (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Ljava/util/List;
 	public fun getValueClassProperties (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Ljava/util/List;
@@ -5957,7 +6153,6 @@ public abstract interface class org/jetbrains/kotlin/ir/types/IrTypeSystemContex
 	public fun isIntersection (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isLocalType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isMarkedNullable (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
-	public fun isMultiFieldValueClass (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isNothingConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isNullableType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
 	public fun isOldCapturedType (Lorg/jetbrains/kotlin/types/model/CapturedTypeMarker;)Z
@@ -6083,12 +6278,13 @@ public final class org/jetbrains/kotlin/ir/types/IrTypeSystemContextWithAddition
 	public fun getPrimitiveArrayType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
 	public fun getPrimitiveType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
 	public fun getRepresentativeUpperBound (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
+	public fun getTreatFullValueClassesWithOneFieldAsBasic ()Z
 	public fun getType (Lorg/jetbrains/kotlin/types/model/TypeArgumentMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getTypeConstructor (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/ir/symbols/IrTypeParameterSymbol;
 	public synthetic fun getTypeConstructor (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
 	public fun getTypeParameter (Lorg/jetbrains/kotlin/types/model/TypeVariableTypeConstructorMarker;)Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
 	public fun getTypeParameterClassifier (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
-	public fun getUnsubstitutedUnderlyingType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
+	public fun getUnsubstitutedUnderlyingTypeInJvm (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getUpperBound (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;I)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getUpperBounds (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Ljava/util/List;
 	public fun getValueClassProperties (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Ljava/util/List;
@@ -6131,7 +6327,6 @@ public final class org/jetbrains/kotlin/ir/types/IrTypeSystemContextWithAddition
 	public fun isIntersection (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isLocalType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isMarkedNullable (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
-	public fun isMultiFieldValueClass (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
 	public fun isNotNullTypeParameter (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
 	public fun isNothing (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
 	public fun isNothingConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Z
@@ -6238,6 +6433,7 @@ public final class org/jetbrains/kotlin/ir/types/IrTypesKt {
 	public static final fun getDefaultType (Lorg/jetbrains/kotlin/ir/declarations/IrTypeParameter;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
 	public static final fun getDefaultType (Lorg/jetbrains/kotlin/ir/symbols/IrClassifierSymbol;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
 	public static final fun getDefaultType (Lorg/jetbrains/kotlin/ir/symbols/IrTypeParameterSymbol;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
+	public static final fun getDefaultTypeWithoutArguments (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
 	public static final fun getStarProjectedType (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
 	public static final fun getTypeConstructorParameters (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lkotlin/sequences/Sequence;
 	public static final fun getTypeOrFail (Lorg/jetbrains/kotlin/ir/types/IrTypeArgument;)Lorg/jetbrains/kotlin/ir/types/IrType;
@@ -6399,7 +6595,7 @@ public abstract class org/jetbrains/kotlin/ir/util/AbstractTypeRemapper : org/je
 public final class org/jetbrains/kotlin/ir/util/AdditionalIrUtilsKt {
 	public static final field SYNTHETIC_OFFSET I
 	public static final fun companionObject (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
-	public static final fun filterOutAnnotations (Lorg/jetbrains/kotlin/name/FqName;Ljava/util/List;)Ljava/util/List;
+	public static final fun filterOutAnnotations (Lorg/jetbrains/kotlin/name/ClassId;Ljava/util/List;)Ljava/util/List;
 	public static final fun findAnnotation (Ljava/util/List;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;
 	public static final fun getAnnotationTargets (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/Set;
 	public static final fun getCallableId (Lorg/jetbrains/kotlin/ir/declarations/IrEnumEntry;)Lorg/jetbrains/kotlin/name/CallableId;
@@ -6408,6 +6604,7 @@ public final class org/jetbrains/kotlin/ir/util/AdditionalIrUtilsKt {
 	public static final fun getCallableId (Lorg/jetbrains/kotlin/ir/declarations/IrProperty;)Lorg/jetbrains/kotlin/name/CallableId;
 	public static final fun getClassId (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getClassId (Lorg/jetbrains/kotlin/ir/declarations/IrTypeAlias;)Lorg/jetbrains/kotlin/name/ClassId;
+	public static final fun getClassId (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getClassIdOrFail (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getClassIdOrFail (Lorg/jetbrains/kotlin/ir/declarations/IrTypeAlias;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getConstructedClass (Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
@@ -6423,8 +6620,11 @@ public final class org/jetbrains/kotlin/ir/util/AdditionalIrUtilsKt {
 	public static final fun getPropertySetter (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public static final fun getSimpleFunction (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
 	public static final fun getSimpleFunction (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;
+	public static final fun getSingleExpressionOrNull (Lorg/jetbrains/kotlin/ir/expressions/IrBlock;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public static final fun getSinglePropertyReference (Lorg/jetbrains/kotlin/ir/expressions/IrExpression;Lorg/jetbrains/kotlin/ir/symbols/IrReturnableBlockSymbol;)Lorg/jetbrains/kotlin/ir/expressions/IrRichPropertyReference;
 	public static final fun hasAnnotation (Ljava/util/List;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public static final fun hasAnnotation (Ljava/util/List;Lorg/jetbrains/kotlin/name/FqName;)Z
+	public static final fun hasEqualClassId (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public static final fun hasEqualFqName (Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationWithName;Lorg/jetbrains/kotlin/name/FqName;)Z
 	public static final fun hasEqualFqName (Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;Lorg/jetbrains/kotlin/name/FqName;)Z
 	public static final fun hasTopLevelEqualFqName (Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationWithName;Ljava/lang/String;Ljava/lang/String;)Z
@@ -6436,6 +6636,7 @@ public final class org/jetbrains/kotlin/ir/util/AdditionalIrUtilsKt {
 	public static final fun isArrayOrPrimitiveArray (Lorg/jetbrains/kotlin/ir/symbols/IrClassifierSymbol;Lorg/jetbrains/kotlin/ir/IrBuiltIns;)Z
 	public static final fun isBuiltInSuspendCoroutine (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
 	public static final fun isBuiltInSuspendCoroutineUninterceptedOrReturn (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
+	public static final fun isClassSignature (Lorg/jetbrains/kotlin/ir/util/IdSignature$CommonSignature;)Z
 	public static final fun isFunctionalTypeInvoke (Lorg/jetbrains/kotlin/ir/symbols/IrFunctionSymbol;)Z
 	public static final fun isGetter (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Z
 	public static final fun isInlineArrayConstructor (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
@@ -6448,11 +6649,14 @@ public final class org/jetbrains/kotlin/ir/util/AdditionalIrUtilsKt {
 	public static final fun isReal (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
 	public static final fun isSetter (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Z
 	public static final fun isSuspend (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
+	public static final fun isTypeOfIntrinsic (Lorg/jetbrains/kotlin/ir/symbols/IrFunctionSymbol;)Z
+	public static final fun isTypeOfIntrinsicCall (Lorg/jetbrains/kotlin/ir/IrElement;)Z
 	public static final fun isVararg (Lorg/jetbrains/kotlin/ir/declarations/IrValueParameter;)Z
 	public static final fun overrides (Lorg/jetbrains/kotlin/ir/declarations/IrOverridableDeclaration;Lorg/jetbrains/kotlin/ir/declarations/IrOverridableDeclaration;)Z
 	public static final fun selectSAMOverriddenFunction (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
 	public static final fun selectSAMOverriddenFunctionOrNull (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
 	public static final fun setOriginallyLocalDeclaration (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;Z)V
+	public static final fun toIdSignature (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/ir/util/IdSignature;
 }
 
 public final class org/jetbrains/kotlin/ir/util/BodyPrintingStrategy : java/lang/Enum {
@@ -6475,10 +6679,8 @@ public abstract class org/jetbrains/kotlin/ir/util/ConstantValueGenerator {
 }
 
 public abstract interface class org/jetbrains/kotlin/ir/util/CustomKotlinLikeDumpStrategy {
-	public fun didPrintElement (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;Lorg/jetbrains/kotlin/utils/Printer;)V
-	public fun shouldPrintAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;)Z
-	public fun transformModifiersForDeclaration (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;Lorg/jetbrains/kotlin/ir/util/CustomKotlinLikeDumpStrategy$Modifiers;)Lorg/jetbrains/kotlin/ir/util/CustomKotlinLikeDumpStrategy$Modifiers;
-	public fun willPrintElement (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;Lorg/jetbrains/kotlin/utils/Printer;Lorg/jetbrains/kotlin/ir/util/KotlinLikeDumpOptions;)Z
+	public fun nameOf (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationWithName;)Ljava/lang/String;
+	public fun shouldPrintAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;)Z
 }
 
 public final class org/jetbrains/kotlin/ir/util/CustomKotlinLikeDumpStrategy$Default : org/jetbrains/kotlin/ir/util/CustomKotlinLikeDumpStrategy {
@@ -7008,8 +7210,8 @@ public final class org/jetbrains/kotlin/ir/util/DumpIrTreeKt {
 
 public final class org/jetbrains/kotlin/ir/util/DumpIrTreeOptions {
 	public fun <init> ()V
-	public fun <init> (ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;)V
-	public synthetic fun <init> (ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;)V
+	public synthetic fun <init> (ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
 	public final fun component11 ()Z
@@ -7019,13 +7221,12 @@ public final class org/jetbrains/kotlin/ir/util/DumpIrTreeOptions {
 	public final fun component15 ()Z
 	public final fun component16 ()Z
 	public final fun component17 ()Z
-	public final fun component18 ()Z
-	public final fun component19 ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun component18 ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun component19 ()Lkotlin/jvm/functions/Function1;
 	public final fun component2 ()Z
-	public final fun component20 ()Lkotlin/jvm/functions/Function1;
-	public final fun component21 ()Lkotlin/jvm/functions/Function2;
-	public final fun component22 ()Z
-	public final fun component23 ()Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;
+	public final fun component20 ()Lkotlin/jvm/functions/Function2;
+	public final fun component21 ()Z
+	public final fun component22 ()Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
 	public final fun component5 ()Z
@@ -7033,13 +7234,12 @@ public final class org/jetbrains/kotlin/ir/util/DumpIrTreeOptions {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;)Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;
+	public final fun copy (ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;)Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;ZZZZZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;ZZZZZZZZZZZLorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ZLorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$ReferenceRenderingStrategy;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDeclarationFlagsFilter ()Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions$FlagsFilter;
 	public final fun getFilePathRenderer ()Lkotlin/jvm/functions/Function2;
 	public final fun getNormalizeNames ()Z
-	public final fun getPrintAnnotationsInFakeOverrides ()Z
 	public final fun getPrintAnnotationsWithSourceRetention ()Z
 	public final fun getPrintDispatchReceiverTypeInFakeOverrides ()Z
 	public final fun getPrintExpectDeclarations ()Z
@@ -7377,7 +7577,49 @@ public final class org/jetbrains/kotlin/ir/util/IdSignatureRendererKt {
 
 public final class org/jetbrains/kotlin/ir/util/InlineClassesKt {
 	public static final fun getInlineClassBackingField (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/ir/declarations/IrField;
-	public static final fun getInlineClassUnderlyingType (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
+	public static final fun getInlineClassUnderlyingType (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Z)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
+}
+
+public final class org/jetbrains/kotlin/ir/util/IrAnnotationArgsView : java/util/Map, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (Ljava/util/ArrayList;Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;)V
+	public fun clear ()V
+	public synthetic fun compute (Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
+	public fun compute (Lorg/jetbrains/kotlin/name/Name;Ljava/util/function/BiFunction;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public synthetic fun computeIfAbsent (Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;
+	public fun computeIfAbsent (Lorg/jetbrains/kotlin/name/Name;Ljava/util/function/Function;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public synthetic fun computeIfPresent (Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
+	public fun computeIfPresent (Lorg/jetbrains/kotlin/name/Name;Ljava/util/function/BiFunction;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public final fun containsKey (Ljava/lang/Object;)Z
+	public fun containsKey (Lorg/jetbrains/kotlin/name/Name;)Z
+	public final fun containsValue (Ljava/lang/Object;)Z
+	public fun containsValue (Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Z
+	public final fun entrySet ()Ljava/util/Set;
+	public final synthetic fun get (Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun get (Ljava/lang/Object;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public fun get (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public fun getEntries ()Ljava/util/Set;
+	public fun getKeys ()Ljava/util/Set;
+	public fun getSize ()I
+	public fun getValues ()Ljava/util/Collection;
+	public fun isEmpty ()Z
+	public final fun keySet ()Ljava/util/Set;
+	public synthetic fun merge (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
+	public fun merge (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;Ljava/util/function/BiFunction;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public synthetic fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun put (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public fun putAll (Ljava/util/Map;)V
+	public synthetic fun putIfAbsent (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun putIfAbsent (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public synthetic fun remove (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public fun remove (Ljava/lang/Object;Ljava/lang/Object;)Z
+	public synthetic fun replace (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun replace (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z
+	public fun replace (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
+	public fun replace (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Z
+	public fun replaceAll (Ljava/util/function/BiFunction;)V
+	public final fun size ()I
+	public final fun values ()Ljava/util/Collection;
 }
 
 public abstract class org/jetbrains/kotlin/ir/util/IrBasedDataClassMembersGenerator : org/jetbrains/kotlin/ir/util/DataClassMembersGenerator {
@@ -7462,7 +7704,7 @@ public final class org/jetbrains/kotlin/ir/util/IrInlineUtilsKt {
 public abstract class org/jetbrains/kotlin/ir/util/IrTreeSymbolsVisitor : org/jetbrains/kotlin/ir/visitors/IrTypeVisitorVoid, org/jetbrains/kotlin/ir/util/SymbolVisitor {
 	public fun <init> ()V
 	public fun visitAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)V
-	public fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;)V
+	public fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)V
 	public fun visitAnonymousInitializer (Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;)V
 	public fun visitBlock (Lorg/jetbrains/kotlin/ir/expressions/IrBlock;)V
 	public fun visitBlockBody (Lorg/jetbrains/kotlin/ir/expressions/IrBlockBody;)V
@@ -7569,6 +7811,7 @@ public class org/jetbrains/kotlin/ir/util/IrTypeParameterRemapper : org/jetbrain
 public final class org/jetbrains/kotlin/ir/util/IrTypeUtilsKt {
 	public static final fun getAllSubstitutedSupertypes (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/Set;
 	public static final fun getAllSuperclasses (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/Set;
+	public static final fun getArguments (Lorg/jetbrains/kotlin/ir/types/IrType;)Ljava/util/List;
 	public static final fun getArrayElementType (Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/IrBuiltIns;)Lorg/jetbrains/kotlin/ir/types/IrType;
 	public static final fun getKotlinPackageFqn ()Lorg/jetbrains/kotlin/name/FqName;
 	public static final fun getPrimitiveArrayElementType (Lorg/jetbrains/kotlin/ir/types/IrType;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
@@ -7657,8 +7900,8 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static final fun createImplicitParameterDeclarationWithWrappedDescriptor (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)V
 	public static final fun createParameterDeclarations (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)V
 	public static final fun createSpecialAnnotationClass (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/ir/declarations/IrPackageFragment;)Lorg/jetbrains/kotlin/ir/declarations/IrClass;
-	public static final fun createStaticFunctionWithReceivers (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLjava/util/List;Lkotlin/jvm/functions/Function3;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
-	public static synthetic fun createStaticFunctionWithReceivers$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLjava/util/List;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
+	public static final fun createStaticFunctionWithReceivers (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLjava/util/List;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
+	public static synthetic fun createStaticFunctionWithReceivers$default (Lorg/jetbrains/kotlin/ir/declarations/IrFactory;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/descriptors/Modality;Lorg/jetbrains/kotlin/descriptors/DescriptorVisibility;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;
 	public static final fun createStubDefaultValue (Lorg/jetbrains/kotlin/ir/declarations/IrValueParameter;)Lorg/jetbrains/kotlin/ir/expressions/IrExpressionBody;
 	public static final fun createThisReceiverParameter (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)V
 	public static final fun defaultValueForType (Lorg/jetbrains/kotlin/ir/expressions/impl/IrConstImpl$Companion;IILorg/jetbrains/kotlin/ir/types/IrType;)Lorg/jetbrains/kotlin/ir/expressions/impl/IrConstImpl;
@@ -7669,12 +7912,9 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static final fun getAllParametersCount (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)I
 	public static final fun getAllTypeParameters (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Ljava/util/List;
 	public static final fun getAnnotation (Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;
-	public static final fun getAnnotationArgumentValueImpl (Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;Lorg/jetbrains/kotlin/name/FqName;Ljava/lang/String;)Ljava/lang/Object;
 	public static final fun getAnnotationRetention (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/descriptors/annotations/KotlinRetention;
-	public static final fun getAnnotationStringValue (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)Ljava/lang/String;
-	public static final fun getAnnotationStringValue (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/String;)Ljava/lang/String;
-	public static final fun getAnnotationValueOrNullImpl (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/String;)Ljava/lang/Object;
 	public static final fun getArgumentsWithIr (Lorg/jetbrains/kotlin/ir/expressions/IrMemberAccessExpression;)Ljava/util/List;
+	public static final fun getClassIdWhenAvailable (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getClassIfConstructor (Lorg/jetbrains/kotlin/ir/declarations/IrTypeParametersContainer;)Lorg/jetbrains/kotlin/ir/declarations/IrTypeParametersContainer;
 	public static final fun getConstructedClassType (Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;)Lorg/jetbrains/kotlin/ir/types/IrType;
 	public static final fun getConstructors (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lkotlin/sequences/Sequence;
@@ -7688,6 +7928,7 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static final fun getFile (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Lorg/jetbrains/kotlin/ir/declarations/IrFile;
 	public static final fun getFileOrNull (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Lorg/jetbrains/kotlin/ir/declarations/IrFile;
 	public static final fun getFqNameWhenAvailable (Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationWithName;)Lorg/jetbrains/kotlin/name/FqName;
+	public static final fun getFqNameWhenAvailable (Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;)Lorg/jetbrains/kotlin/name/FqName;
 	public static final fun getFqNameWithoutFileClassesWhenAvailable (Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationWithName;)Lorg/jetbrains/kotlin/name/FqName;
 	public static final fun getFunctions (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lkotlin/sequences/Sequence;
 	public static final fun getFunctions (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lkotlin/sequences/Sequence;
@@ -7717,7 +7958,6 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static final fun getTypeSubstitutionMap (Lorg/jetbrains/kotlin/ir/expressions/IrFunctionAccessExpression;)Ljava/util/Map;
 	public static final fun getTypeSubstitutionMap (Lorg/jetbrains/kotlin/ir/expressions/IrFunctionReference;)Ljava/util/Map;
 	public static final fun getTypeSubstitutionMap (Lorg/jetbrains/kotlin/ir/expressions/IrMemberAccessExpression;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Ljava/util/Map;
-	public static final fun getValueArgument (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
 	public static final fun hasAnnotation (Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Z
 	public static final fun hasAnnotation (Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public static final fun hasAnnotation (Lorg/jetbrains/kotlin/ir/declarations/IrAnnotationContainer;Lorg/jetbrains/kotlin/name/FqName;)Z
@@ -7735,6 +7975,7 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static synthetic fun irCall$default (Lorg/jetbrains/kotlin/ir/expressions/IrFunctionAccessExpression;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;Lorg/jetbrains/kotlin/ir/types/IrType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/expressions/IrCall;
 	public static final fun irCastIfNeeded (Lorg/jetbrains/kotlin/ir/builders/IrBuilderWithScope;Lorg/jetbrains/kotlin/ir/expressions/IrExpression;Lorg/jetbrains/kotlin/ir/types/IrType;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
 	public static final fun irConstructorCall (Lorg/jetbrains/kotlin/ir/expressions/IrFunctionAccessExpression;Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;)Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;
+	public static final fun isAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public static final fun isAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Lorg/jetbrains/kotlin/name/FqName;)Z
 	public static final fun isAnnotationClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Z
 	public static final fun isAnonymousObject (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Z
@@ -7780,7 +8021,7 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static final fun isToString (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;)Z
 	public static final fun isTopLevel (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Z
 	public static final fun isTopLevelDeclaration (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Z
-	public static final fun isTopLevelInPackage (Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Ljava/lang/String;Lorg/jetbrains/kotlin/name/FqName;)Z
+	public static final fun isTopLevelInPackage (Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationWithName;Ljava/lang/String;Lorg/jetbrains/kotlin/name/FqName;)Z
 	public static final fun isTrivial (Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Z
 	public static final fun isTrivialGetter (Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;)Z
 	public static final fun isTrueConst (Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Z
@@ -7797,6 +8038,7 @@ public final class org/jetbrains/kotlin/ir/util/IrUtilsKt {
 	public static final fun remapSymbolParent (Lorg/jetbrains/kotlin/ir/expressions/IrGetValue;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/expressions/IrGetValue;
 	public static final fun remapTypeParameters (Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/declarations/IrTypeParametersContainer;Lorg/jetbrains/kotlin/ir/declarations/IrTypeParametersContainer;Ljava/util/Map;)Lorg/jetbrains/kotlin/ir/types/IrType;
 	public static synthetic fun remapTypeParameters$default (Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/ir/declarations/IrTypeParametersContainer;Lorg/jetbrains/kotlin/ir/declarations/IrTypeParametersContainer;Ljava/util/Map;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/types/IrType;
+	public static final fun removeProjectionsToMakeValidSuperType (Lorg/jetbrains/kotlin/ir/types/IrType;)Lorg/jetbrains/kotlin/ir/types/IrType;
 	public static final fun setDeclarationsParent (Lorg/jetbrains/kotlin/ir/IrElement;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;)Lorg/jetbrains/kotlin/ir/IrElement;
 	public static final fun shallowCopy (Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
 	public static final fun shallowCopyOrNull (Lorg/jetbrains/kotlin/ir/expressions/IrExpression;)Lorg/jetbrains/kotlin/ir/expressions/IrExpression;
@@ -8021,11 +8263,13 @@ public final class org/jetbrains/kotlin/ir/util/RenderIrElementVisitor : org/jet
 	public fun <init> ()V
 	public fun <init> (Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;Z)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/ir/util/DumpIrTreeOptions;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun renderAsAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;)Ljava/lang/String;
+	public final fun renderAsAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)Ljava/lang/String;
 	public final fun renderFileEntry (Lorg/jetbrains/kotlin/ir/IrFileEntry;)Ljava/lang/String;
 	public final fun renderFilePath (Lorg/jetbrains/kotlin/ir/IrFileEntry;)Ljava/lang/String;
 	public final fun renderSymbolReference (Lorg/jetbrains/kotlin/ir/symbols/IrSymbol;)Ljava/lang/String;
 	public final fun renderType (Lorg/jetbrains/kotlin/ir/types/IrType;)Ljava/lang/String;
+	public synthetic fun visitAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Void;)Ljava/lang/String;
 	public synthetic fun visitAnonymousInitializer (Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitAnonymousInitializer (Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;Ljava/lang/Void;)Ljava/lang/String;
 	public synthetic fun visitBlock (Lorg/jetbrains/kotlin/ir/expressions/IrBlock;Ljava/lang/Object;)Ljava/lang/Object;
@@ -8197,7 +8441,6 @@ public class org/jetbrains/kotlin/ir/util/StubGeneratorExtensions {
 	public fun generateRawTypeAnnotation ()Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;
 	public fun getContainerSource (Lorg/jetbrains/kotlin/descriptors/DeclarationDescriptor;)Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	public fun getEnhancedNullability ()Lorg/jetbrains/kotlin/ir/util/StubGeneratorExtensions$EnhancedNullability;
-	public fun isAccessorWithExplicitImplementation (Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;)Z
 	public fun isPropertyWithPlatformField (Lorg/jetbrains/kotlin/descriptors/PropertyDescriptor;)Z
 }
 
@@ -9340,7 +9583,7 @@ public abstract class org/jetbrains/kotlin/ir/visitors/IrTypeTransformerVoid : o
 
 public abstract class org/jetbrains/kotlin/ir/visitors/IrTypeVisitor : org/jetbrains/kotlin/ir/visitors/IrVisitor {
 	public fun <init> ()V
-	public fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;Ljava/lang/Object;)V
+	public fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Object;)V
 	public fun visitClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitClassReference (Lorg/jetbrains/kotlin/ir/expressions/IrClassReference;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitConstantObject (Lorg/jetbrains/kotlin/ir/expressions/IrConstantObject;Ljava/lang/Object;)Ljava/lang/Object;
@@ -9367,9 +9610,9 @@ public abstract class org/jetbrains/kotlin/ir/visitors/IrTypeVisitorVoid : org/j
 	public fun visitAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)V
 	public synthetic fun visitAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitAnnotation (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Void;)V
-	public fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;)V
-	public synthetic fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;Ljava/lang/Object;)V
-	public final fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;Ljava/lang/Void;)V
+	public fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;)V
+	public synthetic fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Object;)V
+	public final fun visitAnnotationUsage (Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;Ljava/lang/Void;)V
 	public fun visitAnonymousInitializer (Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;)V
 	public synthetic fun visitAnonymousInitializer (Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitAnonymousInitializer (Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;Ljava/lang/Void;)V

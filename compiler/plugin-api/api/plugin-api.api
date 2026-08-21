@@ -84,16 +84,6 @@ public abstract interface class org/jetbrains/kotlin/compiler/plugin/CompilerPlu
 	public abstract fun dispose ()V
 }
 
-public abstract interface class org/jetbrains/kotlin/compiler/plugin/ComponentRegistrar {
-	public static final field Companion Lorg/jetbrains/kotlin/compiler/plugin/ComponentRegistrar$Companion;
-	public fun getSupportsK2 ()Z
-	public abstract fun registerProjectComponents (Lcom/intellij/mock/MockProject;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
-}
-
-public final class org/jetbrains/kotlin/compiler/plugin/ComponentRegistrar$Companion {
-	public final fun getPLUGIN_COMPONENT_REGISTRARS ()Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/compiler/plugin/ExperimentalCompilerApi : java/lang/annotation/Annotation {
 }
 

@@ -268,7 +268,7 @@ public final class org/jetbrains/kotlin/fir/backend/Fir2IrConfiguration {
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/diagnostics/impl/BaseDiagnosticsCollector;Lorg/jetbrains/kotlin/cli/common/messages/MessageCollector;Lorg/jetbrains/kotlin/incremental/components/InlineConstTracker;Lorg/jetbrains/kotlin/incremental/components/ExpectActualTracker;ZZLorg/jetbrains/kotlin/fir/backend/Fir2IrConfiguration$IrVerificationSettings;ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getAllowNonCachedDeclarations ()Z
 	public final fun getCarefulApproximationOfContravariantProjectionForSam ()Z
-	public final fun getDiagnosticReporter ()Lorg/jetbrains/kotlin/diagnostics/impl/BaseDiagnosticsCollector;
+	public final fun getDiagnosticReporter ()Lorg/jetbrains/kotlin/ir/IrDiagnosticReporter;
 	public final fun getExpectActualTracker ()Lorg/jetbrains/kotlin/incremental/components/ExpectActualTracker;
 	public final fun getInlineConstTracker ()Lorg/jetbrains/kotlin/incremental/components/InlineConstTracker;
 	public final fun getIrVerificationSettings ()Lorg/jetbrains/kotlin/fir/backend/Fir2IrConfiguration$IrVerificationSettings;
@@ -286,10 +286,9 @@ public final class org/jetbrains/kotlin/fir/backend/Fir2IrConfiguration$Companio
 }
 
 public final class org/jetbrains/kotlin/fir/backend/Fir2IrConfiguration$IrVerificationSettings {
-	public fun <init> (Lorg/jetbrains/kotlin/config/IrVerificationMode;ZZZZ)V
-	public final fun getEnableIrNestedOffsetsChecks ()Z
-	public final fun getEnableIrVarargTypesChecks ()Z
-	public final fun getEnableIrVisibilityChecks ()Z
+	public fun <init> (Lorg/jetbrains/kotlin/config/IrVerificationMode;ZLjava/util/List;Ljava/util/List;)V
+	public final fun getAdditionalIrCheckers ()Ljava/util/List;
+	public final fun getDisableIrCheckers ()Ljava/util/List;
 	public final fun getMode ()Lorg/jetbrains/kotlin/config/IrVerificationMode;
 	public final fun getValidateForKlibSerialization ()Z
 }
@@ -538,7 +537,7 @@ public final class org/jetbrains/kotlin/fir/backend/Fir2IrExtensions$Default : o
 
 public final class org/jetbrains/kotlin/fir/backend/Fir2IrImplicitCastInserter : org/jetbrains/kotlin/fir/backend/Fir2IrComponents {
 	public static final field Companion Lorg/jetbrains/kotlin/fir/backend/Fir2IrImplicitCastInserter$Companion;
-	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;)V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/fir/backend/Fir2IrConversionScope;)V
 	public final fun coerceStatementsToUnit (Lorg/jetbrains/kotlin/ir/expressions/IrStatementContainer;Z)Lorg/jetbrains/kotlin/ir/expressions/IrStatementContainer;
 	public fun getAdapterGenerator ()Lorg/jetbrains/kotlin/fir/backend/generators/AdapterGenerator;
 	public fun getAnnotationGenerator ()Lorg/jetbrains/kotlin/fir/backend/generators/AnnotationGenerator;
@@ -587,8 +586,10 @@ public final class org/jetbrains/kotlin/fir/backend/Fir2IrIrGeneratedDeclaration
 	public final fun createAdditionalMetadataProvider ()Lorg/jetbrains/kotlin/fir/serialization/FirAdditionalMetadataProvider;
 	public fun getCustomMetadataExtension (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;Ljava/lang/String;)[B
 	public fun getMetadataVisibleAnnotationsForElement (Lorg/jetbrains/kotlin/ir/declarations/IrDeclaration;)Ljava/util/List;
+	public fun registerClassAsMetadataVisible (Lorg/jetbrains/kotlin/ir/declarations/IrClass;)V
 	public fun registerConstructorAsMetadataVisible (Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;)V
 	public fun registerFunctionAsMetadataVisible (Lorg/jetbrains/kotlin/ir/declarations/IrSimpleFunction;)V
+	public fun registerPropertyAsMetadataVisible (Lorg/jetbrains/kotlin/ir/declarations/IrProperty;)V
 }
 
 public final class org/jetbrains/kotlin/fir/backend/Fir2IrLocalCallableStorage {
@@ -615,7 +616,7 @@ public final class org/jetbrains/kotlin/fir/backend/Fir2IrLocalClassStorage {
 }
 
 public final class org/jetbrains/kotlin/fir/backend/Fir2IrPluginContext : org/jetbrains/kotlin/backend/common/extensions/IrPluginContext {
-	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/ir/IrBuiltIns;Lorg/jetbrains/kotlin/descriptors/ModuleDescriptor;Lorg/jetbrains/kotlin/ir/util/ReferenceSymbolTable;Lorg/jetbrains/kotlin/cli/common/messages/MessageCollector;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/ir/IrBuiltIns;Lorg/jetbrains/kotlin/descriptors/ModuleDescriptor;Lorg/jetbrains/kotlin/ir/util/ReferenceSymbolTable;Lorg/jetbrains/kotlin/cli/common/messages/MessageCollector;Lorg/jetbrains/kotlin/ir/IrDiagnosticReporter;)V
 	public fun finderForBuiltins ()Lorg/jetbrains/kotlin/backend/common/extensions/DeclarationFinder;
 	public fun finderForSource (Lorg/jetbrains/kotlin/ir/declarations/IrFile;)Lorg/jetbrains/kotlin/backend/common/extensions/DeclarationFinder;
 	public fun getAfterK2 ()Z
@@ -1278,7 +1279,8 @@ public final class org/jetbrains/kotlin/fir/backend/generators/CallAndReferenceG
 public final class org/jetbrains/kotlin/fir/backend/generators/Fir2IrCallableDeclarationsGenerator : org/jetbrains/kotlin/fir/backend/Fir2IrComponents {
 	public static final field Companion Lorg/jetbrains/kotlin/fir/backend/generators/Fir2IrCallableDeclarationsGenerator$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;)V
-	public final fun addContextParametersTo (Ljava/util/List;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Ljava/util/List;)V
+	public final fun addContextParametersTo (Ljava/util/List;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Ljava/util/List;Lorg/jetbrains/kotlin/fir/backend/utils/ConversionTypeOrigin;)V
+	public static synthetic fun addContextParametersTo$default (Lorg/jetbrains/kotlin/fir/backend/generators/Fir2IrCallableDeclarationsGenerator;Ljava/util/List;Lorg/jetbrains/kotlin/ir/declarations/IrFunction;Ljava/util/List;Lorg/jetbrains/kotlin/fir/backend/utils/ConversionTypeOrigin;ILjava/lang/Object;)V
 	public final fun createIrAnonymousInitializer (Lorg/jetbrains/kotlin/fir/declarations/FirAnonymousInitializer;Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Lorg/jetbrains/kotlin/ir/declarations/IrAnonymousInitializer;
 	public final fun createIrConstructor (Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;Lorg/jetbrains/kotlin/ir/declarations/IrClass;Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Z)Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;
 	public static synthetic fun createIrConstructor$default (Lorg/jetbrains/kotlin/fir/backend/generators/Fir2IrCallableDeclarationsGenerator;Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;Lorg/jetbrains/kotlin/ir/declarations/IrClass;Lorg/jetbrains/kotlin/ir/symbols/IrConstructorSymbol;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrConstructor;
@@ -1391,8 +1393,8 @@ public final class org/jetbrains/kotlin/fir/backend/generators/Fir2IrDataClassGe
 public final class org/jetbrains/kotlin/fir/backend/generators/Fir2IrDataClassMembersGenerator : org/jetbrains/kotlin/fir/backend/Fir2IrComponents {
 	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Ljava/util/Map;)V
 	public final fun generateDataClassMembers (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/List;
-	public final fun generateMultiFieldValueClassMembers (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/List;
-	public final fun generateSingleFieldValueClassMembers (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/List;
+	public final fun generateFullValueClassMembers (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/List;
+	public final fun generateInlineClassMembers (Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/declarations/IrClass;)Ljava/util/List;
 	public fun getAdapterGenerator ()Lorg/jetbrains/kotlin/fir/backend/generators/AdapterGenerator;
 	public fun getAnnotationGenerator ()Lorg/jetbrains/kotlin/fir/backend/generators/AnnotationGenerator;
 	public fun getAnnotationsFromPluginRegistrar ()Lorg/jetbrains/kotlin/fir/backend/Fir2IrIrGeneratedDeclarationsRegistrar;
@@ -1553,9 +1555,9 @@ public final class org/jetbrains/kotlin/fir/backend/utils/OriginUtilsKt {
 	public static final fun computeIrOrigin (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;)Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public static synthetic fun computeIrOrigin$default (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 	public static final fun getAugmentedAssignSourceKindToIrStatementOrigin ()Ljava/util/Map;
-	public static final fun getIncOrDecSourceKindToIrStatementOrigin ()Ljava/util/Map;
 	public static final fun getIrAssignmentOrigin (Lorg/jetbrains/kotlin/fir/expressions/FirVariableAssignment;)Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;
 	public static final fun getIrPrefixPostfixOriginIfAny (Lorg/jetbrains/kotlin/fir/expressions/FirVariableAssignment;)Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;
+	public static final fun incOrDecSourceKindToIrStatementOrigin (Lorg/jetbrains/kotlin/KtSourceElementKind;)Lorg/jetbrains/kotlin/ir/expressions/IrStatementOrigin;
 	public static final fun irOrigin (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;
 }
 
@@ -1576,10 +1578,9 @@ public final class org/jetbrains/kotlin/fir/backend/utils/SymbolConversionUtilsK
 public final class org/jetbrains/kotlin/fir/backend/utils/VariousUtilsKt {
 	public static final fun extractFirDeclarations (Ljava/util/List;)Ljava/util/Set;
 	public static final fun getArrayElementType (Lorg/jetbrains/kotlin/ir/types/IrType;Lorg/jetbrains/kotlin/fir/backend/Fir2IrBuiltinSymbolsContainer;)Lorg/jetbrains/kotlin/ir/types/IrType;
-	public static final fun getDefaultTypeWithoutArguments (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)Lorg/jetbrains/kotlin/ir/types/IrSimpleType;
 	public static final fun getIrSymbolsForSealedSubclasses (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)Ljava/util/List;
 	public static final fun isConstructorCallOnTypealiasWithInnerRhs (Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)Z
-	public static final fun isInlineClassProperty (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
+	public static final fun isPotentialInlineClassProperty (Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Z
 	public static final fun shouldHaveReceiver (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Z
 }
 
@@ -2046,6 +2047,7 @@ public final class org/jetbrains/kotlin/fir/lazy/Fir2IrLazyProperty : org/jetbra
 public final class org/jetbrains/kotlin/fir/lazy/Fir2IrLazyPropertyAccessor : org/jetbrains/kotlin/fir/lazy/AbstractFir2IrLazyFunction {
 	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/fir/declarations/FirPropertyAccessor;ZLorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;ZLorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;)V
 	public fun getAnnotations ()Ljava/util/List;
+	public fun getCompanionExtensionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getContainerSource ()Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	public fun getCorrespondingPropertySymbol ()Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;
 	public fun getFir ()Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;
@@ -2058,6 +2060,7 @@ public final class org/jetbrains/kotlin/fir/lazy/Fir2IrLazyPropertyAccessor : or
 	public fun isInline ()Z
 	public final fun isSetter ()Z
 	public fun setAnnotations (Ljava/util/List;)V
+	public fun setCompanionExtensionClass (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public fun setCorrespondingPropertySymbol (Lorg/jetbrains/kotlin/ir/symbols/IrPropertySymbol;)V
 	public fun setInline (Z)V
 	public fun setName (Lorg/jetbrains/kotlin/name/Name;)V
@@ -2145,6 +2148,7 @@ public final class org/jetbrains/kotlin/fir/lazy/Fir2IrLazyPropertyForPureField 
 public final class org/jetbrains/kotlin/fir/lazy/Fir2IrLazySimpleFunction : org/jetbrains/kotlin/fir/lazy/AbstractFir2IrLazyFunction {
 	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;IILorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;Lorg/jetbrains/kotlin/fir/declarations/FirNamedFunction;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;Lorg/jetbrains/kotlin/ir/symbols/IrSimpleFunctionSymbol;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationParent;Z)V
 	public fun getAnnotations ()Ljava/util/List;
+	public fun getCompanionExtensionClass ()Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;
 	public fun getContainerSource ()Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	public synthetic fun getFir ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;
 	public synthetic fun getFir ()Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;
@@ -2154,6 +2158,7 @@ public final class org/jetbrains/kotlin/fir/lazy/Fir2IrLazySimpleFunction : org/
 	public fun getOverriddenSymbols ()Ljava/util/List;
 	public fun getReturnType ()Lorg/jetbrains/kotlin/ir/types/IrType;
 	public fun setAnnotations (Ljava/util/List;)V
+	public fun setCompanionExtensionClass (Lorg/jetbrains/kotlin/ir/symbols/IrClassSymbol;)V
 	public fun setName (Lorg/jetbrains/kotlin/name/Name;)V
 	public fun setOverriddenSymbols (Ljava/util/List;)V
 	public fun setReturnType (Lorg/jetbrains/kotlin/ir/types/IrType;)V

@@ -267,8 +267,8 @@ public abstract class org/jetbrains/kotlin/fir/session/AbstractFirKlibSessionFac
 	protected fun createPlatformSpecificSharedProviders (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/scopes/FirKotlinScopeProvider;Ljava/lang/Object;)Ljava/util/List;
 	public final fun createSharedLibrarySession (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Ljava/util/List;)Lorg/jetbrains/kotlin/fir/FirSession;
 	protected abstract fun createSourceContext (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Ljava/lang/Object;
-	public final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;ZLorg/jetbrains/kotlin/fir/session/KlibIcData;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/FirSession;
-	public static synthetic fun createSourceSession$default (Lorg/jetbrains/kotlin/fir/session/AbstractFirKlibSessionFactory;Lorg/jetbrains/kotlin/fir/FirModuleData;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;ZLorg/jetbrains/kotlin/fir/session/KlibIcData;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirSession;
+	public final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;Lorg/jetbrains/kotlin/fir/session/KlibIcData;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/FirSession;
+	public static synthetic fun createSourceSession$default (Lorg/jetbrains/kotlin/fir/session/AbstractFirKlibSessionFactory;Lorg/jetbrains/kotlin/fir/FirModuleData;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;Lorg/jetbrains/kotlin/fir/session/KlibIcData;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirSession;
 	protected fun getRequiresSpecialSetupOfSourceProvidersInHmppCompilation ()Z
 	protected fun isFactoryForMetadataCompilation ()Z
 }
@@ -280,8 +280,8 @@ public abstract class org/jetbrains/kotlin/fir/session/AbstractFirMetadataSessio
 	public final fun createLibrarySession (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;Ljava/util/List;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$JarMetadataProviderComponents;Ljava/util/List;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;Lkotlin/jvm/functions/Function4;)Lorg/jetbrains/kotlin/fir/FirSession;
 	public static synthetic fun createLibrarySession$default (Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory;Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;Ljava/util/List;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$JarMetadataProviderComponents;Ljava/util/List;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;Lkotlin/jvm/functions/Function4;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirSession;
 	public final fun createSharedLibrarySession (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Ljava/util/List;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;)Lorg/jetbrains/kotlin/fir/FirSession;
-	public final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;ZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/FirSession;
-	public static synthetic fun createSourceSession$default (Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirSession;
+	public final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/FirSession;
+	public static synthetic fun createSourceSession$default (Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/AbstractFirMetadataSessionFactory$Context;Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/FirSession;
 	protected abstract fun getCreateSeparateSharedProvidersInHmppCompilation ()Z
 	protected fun getRequiresSpecialSetupOfSourceProvidersInHmppCompilation ()Z
 	public final fun getTargetPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
@@ -335,7 +335,7 @@ public abstract class org/jetbrains/kotlin/fir/session/FirAbstractSessionFactory
 	protected final fun createLibrarySession (Ljava/lang/Object;Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Ljava/util/List;ZLkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/fir/FirSession;
 	protected abstract fun createPlatformSpecificSharedProviders (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/scopes/FirKotlinScopeProvider;Ljava/lang/Object;)Ljava/util/List;
 	protected final fun createSharedLibrarySession (Lorg/jetbrains/kotlin/name/Name;Ljava/lang/Object;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Ljava/util/List;)Lorg/jetbrains/kotlin/fir/FirSession;
-	protected final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Ljava/lang/Object;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;)Lorg/jetbrains/kotlin/fir/FirSession;
+	protected final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Ljava/lang/Object;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;)Lorg/jetbrains/kotlin/fir/FirSession;
 	public final fun flattenAndFilterOwnProviders (Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)Ljava/util/List;
 	protected abstract fun getRequiresSpecialSetupOfSourceProvidersInHmppCompilation ()Z
 	protected abstract fun isFactoryForMetadataCompilation ()Z
@@ -346,14 +346,16 @@ public abstract class org/jetbrains/kotlin/fir/session/FirAbstractSessionFactory
 }
 
 protected final class org/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders {
-	public fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)V
-	public synthetic fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)V
+	public synthetic fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
-	public final fun copy (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)Lorg/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders;Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders;
+	public final fun component3 ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
+	public final fun copy (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)Lorg/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders;Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/session/FirAbstractSessionFactory$SourceProviders;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAdditionalOptionalAnnotationsProvider ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
+	public final fun getIncrementalProvider ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
 	public final fun getSourceProviders ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -379,21 +381,20 @@ public final class org/jetbrains/kotlin/fir/session/FirJsSessionFactory$Context 
 }
 
 public final class org/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders {
-	public fun <init> (Lorg/jetbrains/kotlin/fir/java/deserialization/JvmClassFileBasedSymbolProvider;Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/fir/java/deserialization/JvmClassFileBasedSymbolProvider;
-	public final fun component2 ()Ljava/util/Collection;
-	public final fun component3 ()Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;
-	public final fun copy (Lorg/jetbrains/kotlin/fir/java/deserialization/JvmClassFileBasedSymbolProvider;Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;)Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;Lorg/jetbrains/kotlin/fir/java/deserialization/JvmClassFileBasedSymbolProvider;Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;
+	public fun <init> (Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
+	public final fun component2 ()Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;
+	public final fun copy (Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;)Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getOptionalAnnotationClassesProviderForBinariesFromIncrementalCompilation ()Lorg/jetbrains/kotlin/fir/java/deserialization/OptionalAnnotationClassesProvider;
-	public final fun getPreviousFirSessionsSymbolProviders ()Ljava/util/Collection;
-	public final fun getSymbolProviderForBinariesFromIncrementalCompilation ()Lorg/jetbrains/kotlin/fir/java/deserialization/JvmClassFileBasedSymbolProvider;
+	public final fun getSymbolProviderForBinariesFromIncrementalCompilation ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProvidersKt {
+	public static final fun createIncrementalProvidersForNonLeafMppModules (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;
 	public static final fun createSymbolProviders (Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;)Lorg/jetbrains/kotlin/fir/session/FirJvmIncrementalCompilationSymbolProviders;
 }
 
@@ -402,7 +403,7 @@ public final class org/jetbrains/kotlin/fir/session/FirJvmSessionFactory : org/j
 	public final fun createLibrarySession (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;Ljava/util/List;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/fir/session/FirJvmSessionFactory$Context;)Lorg/jetbrains/kotlin/fir/FirSession;
 	public synthetic fun createPlatformSpecificSharedProviders (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/scopes/FirKotlinScopeProvider;Ljava/lang/Object;)Ljava/util/List;
 	public final fun createSharedLibrarySession (Lorg/jetbrains/kotlin/name/Name;Ljava/util/List;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/fir/session/FirJvmSessionFactory$Context;)Lorg/jetbrains/kotlin/fir/FirSession;
-	public final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;Lkotlin/jvm/functions/Function1;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/FirJvmSessionFactory$Context;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/FirSession;
+	public final fun createSourceSession (Lorg/jetbrains/kotlin/fir/FirModuleData;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;Lkotlin/jvm/functions/Function1;Ljava/util/List;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/FirJvmSessionFactory$Context;ZLorg/jetbrains/kotlin/fir/session/KmpModuleKind;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/FirSession;
 	public fun registerExtraPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
 	public synthetic fun registerLibrarySessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/lang/Object;)V
 	public fun registerLibrarySessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/session/FirJvmSessionFactory$Context;)V
@@ -485,7 +486,7 @@ public abstract class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory : o
 	protected fun createLibraryContext (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Ljava/lang/Void;
 	public synthetic fun createSourceContext (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Ljava/lang/Object;
 	protected fun createSourceContext (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Ljava/lang/Void;
-	protected abstract fun getDefaultImportsProvider ()Lorg/jetbrains/kotlin/resolve/DefaultImportsProvider;
+	public abstract fun getDefaultImportsProvider ()Lorg/jetbrains/kotlin/resolve/DefaultImportsProvider;
 	protected final fun registerCommonWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 	public fun registerExtraPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
 	public synthetic fun registerLibrarySessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/lang/Object;)V
@@ -502,27 +503,27 @@ public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$Compan
 
 public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmJs : org/jetbrains/kotlin/fir/session/FirWasmSessionFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmJs;
+	public fun getDefaultImportsProvider ()Lorg/jetbrains/kotlin/resolve/DefaultImportsProvider;
 	public fun registerPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
 	public fun registerWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 }
 
 public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmWasi : org/jetbrains/kotlin/fir/session/FirWasmSessionFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmWasi;
+	public fun getDefaultImportsProvider ()Lorg/jetbrains/kotlin/resolve/DefaultImportsProvider;
 	public fun registerPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
 	public fun registerWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 }
 
 public final class org/jetbrains/kotlin/fir/session/IncrementalCompilationContext {
-	public fun <init> (Ljava/util/Collection;Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;)V
-	public final fun component1 ()Ljava/util/Collection;
-	public final fun component2 ()Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
-	public final fun component3 ()Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;
-	public final fun copy (Ljava/util/Collection;Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;)Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Ljava/util/Collection;Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;
+	public fun <init> (Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
+	public final fun component2 ()Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;
+	public final fun copy (Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;)Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/session/IncrementalCompilationContext;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getPrecompiledBinariesFileScope ()Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;
 	public final fun getPrecompiledBinariesPackagePartProvider ()Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
-	public final fun getPreviousFirSessionsSymbolProviders ()Ljava/util/Collection;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -601,6 +602,23 @@ public final class org/jetbrains/kotlin/fir/session/KlibIcDeserializedContainerS
 	public fun getPresentableString ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/fir/session/KmpModuleKind : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/session/KmpModuleKind$Companion;
+	public static final field LeafHmppModule Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public static final field LeafRegularModule Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public static final field NonLeafHmppModule Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public static final field NonLeafRegularModule Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public static final field SingleModule Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+}
+
+public final class org/jetbrains/kotlin/fir/session/KmpModuleKind$Companion {
+	public final fun leafModule (Z)Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+	public final fun nonLeafModule (Z)Lorg/jetbrains/kotlin/fir/session/KmpModuleKind;
+}
+
 public abstract class org/jetbrains/kotlin/fir/session/MetadataLibraryBasedSymbolProvider : org/jetbrains/kotlin/fir/deserialization/AbstractFirDeserializedSymbolProvider {
 	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;Lorg/jetbrains/kotlin/fir/scopes/FirKotlinScopeProvider;Lorg/jetbrains/kotlin/fir/deserialization/FirTypeDeserializer$FlexibleTypeFactory;Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationOrigin;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;Lorg/jetbrains/kotlin/fir/scopes/FirKotlinScopeProvider;Lorg/jetbrains/kotlin/fir/deserialization/FirTypeDeserializer$FlexibleTypeFactory;Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationOrigin;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -608,7 +626,7 @@ public abstract class org/jetbrains/kotlin/fir/session/MetadataLibraryBasedSymbo
 	protected fun computePackageSetWithNonClassDeclarations ()Ljava/util/Set;
 	protected abstract fun createDeserializedContainerSource (Ljava/lang/Object;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;
 	protected fun extractClassMetadata (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/fir/deserialization/FirDeserializationContext;)Lorg/jetbrains/kotlin/fir/deserialization/AbstractFirDeserializedSymbolProvider$ClassMetadataFindResult;
-	protected final fun getDeserializationConfiguration ()Lorg/jetbrains/kotlin/resolve/KlibCompilerDeserializationConfiguration;
+	protected final fun getDeserializationConfiguration ()Lorg/jetbrains/kotlin/resolve/CommonCompilerDeserializationConfiguration;
 	protected abstract fun getFragmentNamesInLibraries ()Ljava/util/Map;
 	protected abstract fun getKnownPackagesInLibraries ()Ljava/util/Set;
 	protected final fun getMetadataProvider ()Lkotlin/jvm/functions/Function1;
@@ -654,8 +672,9 @@ public final class org/jetbrains/kotlin/fir/session/SourcesToPathsMapperKt {
 }
 
 public final class org/jetbrains/kotlin/fir/session/StructuredProviders : org/jetbrains/kotlin/fir/FirSessionComponent {
-	public fun <init> (Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)V
+	public fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;)V
 	public final fun getDependencyProviders ()Ljava/util/List;
+	public final fun getIncrementalProvider ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
 	public final fun getSharedProvider ()Lorg/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider;
 	public final fun getSourceProviders ()Ljava/util/List;
 }

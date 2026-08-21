@@ -4,6 +4,7 @@ public final class org/jetbrains/kotlin/ir/generator/CommonTypesKt {
 	public static final fun getDeclaredSymbolVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDeepCopyIrTreeWithSymbolsType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDeepCopyTypeRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDeprecatedCompilerApi ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getElementBaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getElementTransformerVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getEmptySymbolRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -12,7 +13,7 @@ public final class org/jetbrains/kotlin/ir/generator/CommonTypesKt {
 	public static final fun getIrDeepCopyBaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrElementConstructorIndicatorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrFactoryType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getIrImplementationDetailType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrImplementationDetailType ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getIrSimpleTypeType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrSymbolBaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrSymbolWithSignatureType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -22,7 +23,7 @@ public final class org/jetbrains/kotlin/ir/generator/CommonTypesKt {
 	public static final fun getIrTypeType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getIrVisitorVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getObsoleteDescriptorBasedApiAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getObsoleteDescriptorBasedApiAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 	public static final fun getReferencedSymbolRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getReferencedSymbolVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getStageControllerType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
@@ -34,7 +35,7 @@ public final class org/jetbrains/kotlin/ir/generator/CommonTypesKt {
 	public static final fun getTypeTransformerVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getTypeVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getTypeVisitorVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
-	public static final fun getUnsafeDuringIrConstructionApiAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getUnsafeDuringIrConstructionApiAnnotation ()Lorg/jetbrains/kotlin/generators/tree/PrintableAnnotation;
 }
 
 public final class org/jetbrains/kotlin/ir/generator/ImplementationConfigurator : org/jetbrains/kotlin/ir/generator/config/AbstractIrTreeImplementationConfigurator {
@@ -94,6 +95,7 @@ public final class org/jetbrains/kotlin/ir/generator/IrTree : org/jetbrains/kotl
 	public final fun getConstantValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getConstructor ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getConstructorCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstructorWithLateBinding ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getContainerExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getContinue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getDeclaration ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
@@ -195,6 +197,7 @@ public final class org/jetbrains/kotlin/ir/generator/Packages {
 	public static final field declarations Ljava/lang/String;
 	public static final field descriptors Ljava/lang/String;
 	public static final field exprs Ljava/lang/String;
+	public static final field kotlin Ljava/lang/String;
 	public static final field symbols Ljava/lang/String;
 	public static final field symbolsImpl Ljava/lang/String;
 	public static final field tree Ljava/lang/String;
@@ -224,6 +227,8 @@ public abstract class org/jetbrains/kotlin/ir/generator/config/AbstractTreeBuild
 	public static synthetic fun field$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
 	protected final fun listField (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;ZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/ListField;
 	public static synthetic fun listField$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/ListField;
+	protected final fun mapField (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;ZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/MapField;
+	public static synthetic fun mapField$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/MapField;
 	protected final fun needAcceptMethod (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
 	protected final fun needTransformMethod (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
 	protected final fun noAcceptMethod (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
@@ -349,6 +354,31 @@ public final class org/jetbrains/kotlin/ir/generator/model/ListField$Mutability 
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
 	public static fun values ()[Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/MapField : org/jetbrains/kotlin/ir/generator/model/Field, org/jetbrains/kotlin/generators/tree/MapField {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;Z)V
+	public fun getKeyType ()Lorg/jetbrains/kotlin/generators/tree/TypeRef;
+	public fun getMapType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public final fun getMutability ()Lorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;
+	public fun getSymbolClass ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public fun getTypeRef ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public synthetic fun getTypeRef ()Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;
+	public fun getValueType ()Lorg/jetbrains/kotlin/generators/tree/TypeRef;
+	public synthetic fun internalCopy ()Lorg/jetbrains/kotlin/generators/tree/AbstractField;
+	public fun isChild ()Z
+	public fun setKeyType (Lorg/jetbrains/kotlin/generators/tree/TypeRef;)V
+	public fun setValueType (Lorg/jetbrains/kotlin/generators/tree/TypeRef;)V
+	public fun substituteType (Ljava/util/Map;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/MapField$Mutability : java/lang/Enum {
+	public static final field ImmutableMap Lorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;
+	public static final field MutableMap Lorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;
+	public static final field Var Lorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;
+	public static fun values ()[Lorg/jetbrains/kotlin/ir/generator/model/MapField$Mutability;
 }
 
 public final class org/jetbrains/kotlin/ir/generator/model/SimpleField : org/jetbrains/kotlin/ir/generator/model/Field {

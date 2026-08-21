@@ -93,6 +93,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/DIAGN
 public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/JS_DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/JS_DIAGNOSTICS_LIST;
 	public final fun getANNOTATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCONSTRUCTOR_PROBLEMS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getDYNAMICS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getEXPORT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getEXTERNAL ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
@@ -341,7 +342,6 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model
 	public static final field UNREACHABLE_CODE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field USELESS_ELVIS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field USELESS_ELVIS_LEFT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
-	public static final field VALUE_ARGUMENTS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field VALUE_ARGUMENTS_LIST Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field VAL_OR_VAR_NODE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field VARIABLE_INITIALIZER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
