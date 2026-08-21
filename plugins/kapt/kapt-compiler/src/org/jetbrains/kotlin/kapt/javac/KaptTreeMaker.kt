@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.kapt.javac
 
 import com.intellij.openapi.Disposable
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.psi.search.GlobalSearchScope
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeMaker
@@ -27,7 +24,11 @@ import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
@@ -103,31 +104,33 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
         }
 
         // Search in the classpath
-        val javaPsiFacade = JavaPsiFacade.getInstance(kaptContext.project)
-        val scope = GlobalSearchScope.allScope(javaPsiFacade.project)
-
-        val fqNameFromClassWithPreciseName = javaPsiFacade.findClass(nameWithDots, scope)?.qualifiedName
-        if (fqNameFromClassWithPreciseName != null) {
-            return fqNameFromClassWithPreciseName
+        val firSession = kaptContext.firSession!!
+        val topLevelClassId = ClassId.topLevel(org.jetbrains.kotlin.name.FqName(nameWithDots))
+        if (firSession.getRegularClassSymbolByClassId(topLevelClassId) != null) {
+            return nameWithDots
         }
 
         nameWithDots.iterateDollars { outerName, innerName ->
             if (innerName.isEmpty()) return@iterateDollars // We already checked an exact match
 
-            val outerClass = javaPsiFacade.findClass(outerName, scope) ?: return@iterateDollars
-            return tryToFindNestedClass(outerClass, innerName)?.qualifiedName ?: return@iterateDollars
+            val classId = ClassId.topLevel(org.jetbrains.kotlin.name.FqName(outerName))
+            val outerClass = firSession.getRegularClassSymbolByClassId(classId) ?: return@iterateDollars
+            with(firSession) {
+                return tryToFindNestedClass(outerClass, innerName)?.asSingleFqName()?.asString() ?: return@iterateDollars
+            }
         }
 
         return nameWithDots
     }
 
-    private fun tryToFindNestedClass(outerClass: PsiClass, innerClassName: String): PsiClass? {
-        outerClass.findInnerClassByName(innerClassName, false)?.let { return it }
+    context(session: FirSession)
+    private fun tryToFindNestedClass(outerClass: FirRegularClassSymbol, innerClassName: String): ClassId? {
+        outerClass.findInnerClassByName(innerClassName)?.let { return it.classId }
 
         innerClassName.iterateDollars { name1, name2 ->
-            if (name2.isEmpty()) return outerClass.findInnerClassByName(name1, false)
+            if (name2.isEmpty()) return outerClass.findInnerClassByName(name1)?.classId
 
-            val nestedClass = outerClass.findInnerClassByName(name1, false)
+            val nestedClass = outerClass.findInnerClassByName(name1)
             if (nestedClass != null) {
                 tryToFindNestedClass(nestedClass, name2)?.let { return it }
             }
@@ -135,6 +138,10 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
         return null
     }
+
+    context(session: FirSession)
+    private fun FirRegularClassSymbol.findInnerClassByName(name: String): FirRegularClassSymbol? =
+        session.getRegularClassSymbolByClassId(classId.createNestedClassId(org.jetbrains.kotlin.name.Name.identifier(name)))
 
     private inline fun String.iterateDollars(variantHandler: (outerName: String, innerName: String) -> Unit) {
         var dollarIndex = this.indexOf('$', startIndex = 1)
