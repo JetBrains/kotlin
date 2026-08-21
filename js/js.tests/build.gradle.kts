@@ -186,6 +186,7 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/typescript-export/js/")
     testData(project(":compiler").isolated, "testData/debug/stepping")
     testData(project(":compiler").isolated, "testData/debug/localVariables")
+    testData(isolated, "testData/dataflow")
 
     testGenerator(
         "org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt",

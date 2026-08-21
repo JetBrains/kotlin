@@ -1,0 +1,40 @@
+// FUNCTION: box
+// blocks=13 entry=BB0
+BB0:
+  val flag: Boolean = true
+  val n: Int = 42
+  val c: Char = <Char__<init>-impl>(value = 65)
+  val s: String = "OK"
+  val z: String? = null
+  val u: Unit = Unit_getInstance()
+  terminator: MultiCond(jsNot(a = flag) -> BB1, else -> BB2)
+  succs: BB1, BB2
+BB1:
+  terminator: Return("FAIL")
+BB2:
+  terminator: MultiCond(jsNot(a = jsEqeqeq(a = n, b = 42)) -> BB3, else -> BB4)
+  succs: BB3, BB4
+BB3:
+  terminator: Return("FAIL")
+BB4:
+  terminator: MultiCond(jsNot(a = jsEqeqeq(a = c, b = <Char__<init>-impl>(value = 65))) -> BB5, else -> BB6)
+  succs: BB5, BB6
+BB5:
+  terminator: Return("FAIL")
+BB6:
+  terminator: MultiCond(jsNot(a = jsEqeqeq(a = s, b = "OK")) -> BB7, else -> BB8)
+  succs: BB7, BB8
+BB7:
+  terminator: Return("FAIL")
+BB8:
+  terminator: MultiCond(jsNot(a = jsEqeq(a = z, b = null)) -> BB9, else -> BB10)
+  succs: BB9, BB10
+BB9:
+  terminator: Return("FAIL")
+BB10:
+  terminator: MultiCond(jsNot(a = equals(obj1 = Unit_getInstance(), obj2 = Unit_getInstance())) -> BB11, else -> BB12)
+  succs: BB11, BB12
+BB11:
+  terminator: Return("FAIL")
+BB12:
+  terminator: Return("OK")

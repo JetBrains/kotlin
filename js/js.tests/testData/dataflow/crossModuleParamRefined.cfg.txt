@@ -1,0 +1,27 @@
+// FUNCTION: take
+// blocks=4 entry=BB0
+BB0:
+  var tmp: String
+  terminator: MultiCond(jsInstanceOfIntrinsic(a = p, b = jsClassIntrinsic<Child>()) -> BB1, true -> BB2)
+  succs: BB1, BB2
+BB1:
+  tmp = "OK"
+  terminator: Goto(BB3)
+  succs: BB3
+BB2:
+  tmp = "FAIL"
+  terminator: Goto(BB3)
+  succs: BB3
+BB3:
+  terminator: Return(tmp)
+
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Any()
+  terminator: Return(Unit)
+
+// FUNCTION: box
+// blocks=1 entry=BB0
+BB0:
+  terminator: Return(take(p = Child()))

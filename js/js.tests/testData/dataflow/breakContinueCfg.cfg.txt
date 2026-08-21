@@ -1,0 +1,29 @@
+// FUNCTION: box
+// blocks=8 entry=BB0
+BB0:
+  var i: Int = 0
+  terminator: Goto(BB1)
+  succs: BB1
+BB1:
+  terminator: Cond(jsLt(a = i, b = 3), then=BB2, else=BB3)
+  succs: BB2, BB3
+BB2:
+  val <unary>: Int = i
+  i = jsBitOr(a = jsPlus(a = <unary>, b = 1), b = 0)
+  Unit_getInstance()
+  terminator: MultiCond(jsEqeqeq(a = i, b = 2) -> BB4, else -> BB5)
+  succs: BB4, BB5
+BB3:
+  terminator: Return(when { jsGtEq(a = i, b = 2) -> "OK" else -> "FAIL" })
+BB4:
+  terminator: Goto(BB3)
+  succs: BB3
+BB5:
+  terminator: MultiCond(jsEqeqeq(a = i, b = 1) -> BB6, else -> BB7)
+  succs: BB6, BB7
+BB6:
+  terminator: Goto(BB1)
+  succs: BB1
+BB7:
+  terminator: Goto(BB1)
+  succs: BB1

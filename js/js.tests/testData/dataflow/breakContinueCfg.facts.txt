@@ -1,0 +1,3 @@
+// FUNCTION: box
+local <unary>: value=Top type=Exact(Int) final
+local i: value=Top type=Exact(Int) final

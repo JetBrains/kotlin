@@ -1,0 +1,89 @@
+// FUNCTION: static_init
+// blocks=3 entry=BB0
+BB0:
+  terminator: MultiCond(#static_init_called -> BB1, else -> BB2)
+  succs: BB1, BB2
+BB1:
+  terminator: Return(Unit_getInstance())
+BB2:
+  #static_init_called = true
+  #Color_RED_instance = Color(name = "RED", ordinal = 0)
+  #Color_GREEN_instance = Color(name = "GREEN", ordinal = 1)
+  terminator: Return(Unit)
+
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Enum<Color>(name = name, ordinal = ordinal)
+  terminator: Return(Unit)
+
+// FUNCTION: values
+// blocks=1 entry=BB0
+BB0:
+  static_init()
+  terminator: Return(arrayLiteral(a = [Color_RED_getInstance(), Color_GREEN_getInstance()]))
+
+// FUNCTION: valueOf
+// blocks=5 entry=BB0
+BB0:
+  static_init()
+  terminator: MultiCond(jsEqeqeq(a = value, b = "RED") -> BB1, jsEqeqeq(a = value, b = "GREEN") -> BB2, true -> BB3)
+  succs: BB1, BB2, BB3
+BB1:
+  terminator: Return(Color_RED_getInstance())
+BB2:
+  terminator: Return(Color_GREEN_getInstance())
+BB3:
+  THROW_IAE(msg = "No enum constant Color." + value)
+  terminator: Goto(BB4)
+  succs: BB4
+BB4:
+  terminator: Return(Unit)
+
+// FUNCTION: <get-entries>
+// blocks=3 entry=BB0
+BB0:
+  static_init()
+  terminator: MultiCond(jsEqeq(a = #$ENTRIES, b = null) -> BB1, else -> BB2)
+  succs: BB1, BB2
+BB1:
+  #$ENTRIES = enumEntries</* null */>(entries = values())
+  terminator: Goto(BB2)
+  succs: BB2
+BB2:
+  terminator: Return(#$ENTRIES)
+
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Any()
+  terminator: Return(Unit)
+
+// FUNCTION: box
+// blocks=5 entry=BB0
+BB0:
+  val e: Color = Color_RED_getInstance()
+  val x: Base = Child()
+  terminator: MultiCond(jsNot(a = e.equals(other = Color_RED_getInstance())) -> BB1, else -> BB2)
+  succs: BB1, BB2
+BB1:
+  terminator: Return("FAIL")
+BB2:
+  terminator: MultiCond(jsNot(a = jsInstanceOfIntrinsic(a = x, b = jsClassIntrinsic<Child>())) -> BB3, else -> BB4)
+  succs: BB3, BB4
+BB3:
+  terminator: Return("FAIL")
+BB4:
+  terminator: Return("OK")
+
+// FUNCTION: Color_RED_getInstance
+// blocks=1 entry=BB0
+BB0:
+  static_init()
+  terminator: Return(#Color_RED_instance)
+
+// FUNCTION: Color_GREEN_getInstance
+// blocks=1 entry=BB0
+BB0:
+  static_init()
+  terminator: Return(#Color_GREEN_instance)
