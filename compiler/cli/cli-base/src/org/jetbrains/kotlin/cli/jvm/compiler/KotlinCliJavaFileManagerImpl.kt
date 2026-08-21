@@ -59,7 +59,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<PackagePartProvider>
 
-    var javaModuleFinder: JavaModuleFinder? = null
+    lateinit var javaModuleFinder: JavaModuleFinder
         private set
 
     /**
@@ -277,7 +277,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     override fun findModules(moduleName: String, scope: GlobalSearchScope): Collection<PsiJavaModule> {
         // Module import declarations (`import module M;` in Java sources, JEP 511) are resolved by the platform via
         // `JavaPsiFacade.findModules`, which delegates here.
-        val moduleInfoFile = javaModuleFinder?.findModule(moduleName)?.moduleInfoFile ?: return emptySet()
+        val moduleInfoFile = javaModuleFinder.findModule(moduleName)?.moduleInfoFile ?: return emptySet()
         if (moduleInfoFile !in scope) return emptySet()
         val moduleDeclaration = (myPsiManager.findFile(moduleInfoFile) as? PsiJavaFile)?.moduleDeclaration ?: return emptySet()
         return listOf(moduleDeclaration)
