@@ -1,0 +1,31 @@
+/NullableAtomicProperties.kt:7:18: error: Nullable atomic properties are prohibited: `'private val tai: AtomicInt? = null'`.
+
+/NullableAtomicProperties.kt:8:18: error: Nullable atomic properties are prohibited: `'private val tal: AtomicLong? = null'`.
+
+/NullableAtomicProperties.kt:9:18: error: Nullable atomic properties are prohibited: `'private val tab: AtomicBoolean? = null'`.
+
+/NullableAtomicProperties.kt:10:18: error: Nullable atomic properties are prohibited: `'private val tar: AtomicRef<Any>? = null'`.
+
+/NullableAtomicProperties.kt:12:19: error: Nullable atomic properties are prohibited: `'private val taia: AtomicIntArray? = null'`.
+
+/NullableAtomicProperties.kt:13:19: error: Nullable atomic properties are prohibited: `'private val tala: AtomicLongArray? = null'`.
+
+/NullableAtomicProperties.kt:14:19: error: Nullable atomic properties are prohibited: `'private val taba: AtomicBooleanArray? = null'`.
+
+/NullableAtomicProperties.kt:15:19: error: Nullable atomic properties are prohibited: `'private val tara: AtomicArray<Any>? = null'`.
+
+/NullableAtomicProperties.kt:18:21: error: Nullable atomic properties are prohibited: `'private val ai: AtomicInt? = null'`.
+
+/NullableAtomicProperties.kt:19:21: error: Nullable atomic properties are prohibited: `'private val al: AtomicLong? = null'`.
+
+/NullableAtomicProperties.kt:20:21: error: Nullable atomic properties are prohibited: `'private val ab: AtomicBoolean? = null'`.
+
+/NullableAtomicProperties.kt:21:21: error: Nullable atomic properties are prohibited: `'private val ar: AtomicRef<Any>? = null'`.
+
+/NullableAtomicProperties.kt:23:22: error: Nullable atomic properties are prohibited: `'private val aia: AtomicIntArray? = null'`.
+
+/NullableAtomicProperties.kt:24:22: error: Nullable atomic properties are prohibited: `'private val ala: AtomicLongArray? = null'`.
+
+/NullableAtomicProperties.kt:25:22: error: Nullable atomic properties are prohibited: `'private val aba: AtomicBooleanArray? = null'`.
+
+/NullableAtomicProperties.kt:26:22: error: Nullable atomic properties are prohibited: `'private val ara: AtomicArray<Any>? = null'`.

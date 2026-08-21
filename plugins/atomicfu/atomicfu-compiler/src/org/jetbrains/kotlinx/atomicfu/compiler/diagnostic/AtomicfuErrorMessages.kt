@@ -65,6 +65,30 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         "\nTo prevent atomic properties defined in companion blocks or as companion extensions " +
                 "from being referenced outside the current Kotlin file, they must be declared as private."
 
+    private const val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE =
+        "Taking a reference to an atomic member or extension function is prohibited: `''{0}''`."
+
+    private const val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE =
+        "Atomic factories can only be called to initialize a property or as delegates: `''{0}''`."
+
+    private const val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE = "Atomic properties must have a backing field.\n" +
+            "Consider declaring `''{0}''` as a property with a backing field."
+
+    private const val ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE =
+        "Local variables could not have kotlinx.atomicfu.Atomic* type: `''{0}''`."
+
+    private const val ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN_MESSAGE =
+        "Function parameters could not have kotlinx.atomicfu.Atomic* type: `''{0}''`."
+
+    private const val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE =
+        "Atomic extension functions and properties must be inline and non-public: `''{0}''`"
+
+    private const val ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE =
+        "Atomic array extension properties are prohibited: `''{0}''`."
+
+    private const val NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN_MESSAGE =
+        "Nullable atomic properties are prohibited: `''{0}''`."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -77,6 +101,30 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN, NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN, ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY, ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD, ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN, ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN, ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE, ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN, ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN, NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
     }
 

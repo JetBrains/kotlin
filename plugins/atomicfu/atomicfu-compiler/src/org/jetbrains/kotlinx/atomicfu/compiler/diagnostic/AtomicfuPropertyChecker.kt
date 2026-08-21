@@ -13,11 +13,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.hasEnhancedNullability
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.text
 
 private const val KOTLINX_ATOMICFU = "kotlinx.atomicfu"
@@ -30,7 +36,35 @@ private val FirProperty.resolvedVisibility: EffectiveVisibility
 object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
+        // Check extension properties with atomic receiver
+        if (declaration.isExtension) {
+            val receiverClassId = declaration.receiverParameter?.symbol?.resolvedType?.classId
+            if (receiverClassId?.isAtomicArrayType() == true) {
+                reporter.reportOn(
+                    declaration.source,
+                    AtomicfuErrors.ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN,
+                    declaration.source.text.toString()
+                )
+            } else if (receiverClassId?.isAtomicType() == true) {
+                if (declaration.getter?.isInline != true || declaration.resolvedVisibility.publicApi) {
+                    reporter.reportOn(
+                        declaration.source,
+                        AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE,
+                        declaration.source.text.toString()
+                    )
+                }
+            }
+        }
+        // Check all other properties having atomic type
         if (!declaration.isKotlinxAtomicfu()) return
+        if (declaration.isLocal) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN,
+                declaration.source.text.toString()
+            )
+            return
+        }
         if (!declaration.resolvedVisibility.privateApi &&
             (declaration.isCompanionBlockMember || declaration.isCompanionExtension)
         ) {
@@ -59,6 +93,20 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL,
+                declaration.source.text.toString()
+            )
+        }
+        if (!declaration.hasBackingField) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD,
+                declaration.source.text.toString()
+            )
+        }
+        if (declaration.returnTypeRef.coneType.isMarkedNullable) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN,
                 declaration.source.text.toString()
             )
         }

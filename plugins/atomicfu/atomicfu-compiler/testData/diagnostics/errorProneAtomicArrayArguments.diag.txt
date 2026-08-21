@@ -1,3 +1,5 @@
+/K.kt:16:21: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'foo: AtomicArray<Any>'`.
+
 /K.kt:17:26: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
 
 /K.kt:17:31: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.

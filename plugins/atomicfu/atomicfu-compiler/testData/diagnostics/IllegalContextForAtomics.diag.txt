@@ -1,0 +1,68 @@
+/IllegalContextForAtomics.kt:7:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val i = atomic(0)'`.
+
+/IllegalContextForAtomics.kt:8:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val l = atomic(0L)'`.
+
+/IllegalContextForAtomics.kt:9:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val r = atomic("ref")'`.
+
+/IllegalContextForAtomics.kt:10:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val b = atomic(true)'`.
+
+/IllegalContextForAtomics.kt:11:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val ia = AtomicIntArray(0)'`.
+
+/IllegalContextForAtomics.kt:12:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val la = AtomicLongArray(0)'`.
+
+/IllegalContextForAtomics.kt:13:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val ra = atomicArrayOfNulls<String?>(0)'`.
+
+/IllegalContextForAtomics.kt:14:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val ba = AtomicBooleanArray(0)'`.
+
+/IllegalContextForAtomics.kt:16:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val ni: AtomicInt? = null'`.
+
+/IllegalContextForAtomics.kt:17:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val nl: AtomicLong? = null'`.
+
+/IllegalContextForAtomics.kt:18:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val nb: AtomicBoolean? = null'`.
+
+/IllegalContextForAtomics.kt:19:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val nr: AtomicRef<Any?>? = null'`.
+
+/IllegalContextForAtomics.kt:21:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val nia: AtomicIntArray? = null'`.
+
+/IllegalContextForAtomics.kt:22:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val nla: AtomicLongArray? = null'`.
+
+/IllegalContextForAtomics.kt:23:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val nba: AtomicBooleanArray? = null'`.
+
+/IllegalContextForAtomics.kt:24:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val naa: AtomicArray<Any?>? = null'`.
+
+/IllegalContextForAtomics.kt:29:22: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/IllegalContextForAtomics.kt:29:33: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(1)'`.
+
+/IllegalContextForAtomics.kt:30:17: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic("$it")'`.
+
+/IllegalContextForAtomics.kt:31:25: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicIntArray(10)'`.
+
+/IllegalContextForAtomics.kt:36:5: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(42)'`.
+
+/IllegalContextForAtomics.kt:37:5: error: Atomic factories can only be called to initialize a property or as delegates: `'atomicArrayOfNulls<String?>(1)'`.
+
+/IllegalContextForAtomics.kt:38:5: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(2)'`.
+
+/IllegalContextForAtomics.kt:42:57: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicInt = atomic(0)'`.
+
+/IllegalContextForAtomics.kt:42:72: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/IllegalContextForAtomics.kt:43:32: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicLong = atomic(0L)'`.
+
+/IllegalContextForAtomics.kt:43:48: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.
+
+/IllegalContextForAtomics.kt:47:5: error:
+To prevent atomic properties from being referenced outside the current Kotlin module, they must be declared as either private or internal. Note, that `@kotlin.PublishedApi` annotation, when applied to a class or a member with internal visibility, makes it effectively public.
+Consider setting the visibility of the property `'// Non private property, has no backing field
+    protected abstract val a: AtomicInt'` to private or internal or limit the scope of the containing class.
+Alternatively, if you need to expose the atomic property value to the public, you can use a delegated property declared within the same scope, e.g:
+```
+private val _a = atomic<T>(initial)
+public val a: T by _a
+```
+
+
+/IllegalContextForAtomics.kt:47:24: error: Atomic properties must have a backing field.
+Consider declaring `'// Non private property, has no backing field
+    protected abstract val a: AtomicInt'` as a property with a backing field.

@@ -1,0 +1,79 @@
+/NoBackingField.kt:8:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAI: AtomicInt get() = atomic(0)'` as a property with a backing field.
+
+/NoBackingField.kt:8:43: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/NoBackingField.kt:9:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAL: AtomicLong get() = atomic(0L)'` as a property with a backing field.
+
+/NoBackingField.kt:9:44: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.
+
+/NoBackingField.kt:10:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAR: AtomicRef<Any?> get() = atomic("")'` as a property with a backing field.
+
+/NoBackingField.kt:10:49: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic("")'`.
+
+/NoBackingField.kt:11:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAB: AtomicBoolean get() = atomic(true)'` as a property with a backing field.
+
+/NoBackingField.kt:11:47: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(true)'`.
+
+/NoBackingField.kt:13:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAIA: AtomicIntArray get() = AtomicIntArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:13:49: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicIntArray(1)'`.
+
+/NoBackingField.kt:14:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelALA: AtomicLongArray get() = AtomicLongArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:14:50: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicLongArray(1)'`.
+
+/NoBackingField.kt:15:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelABA: AtomicBooleanArray get() = AtomicBooleanArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:15:53: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(1)'`.
+
+/NoBackingField.kt:16:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelARA: AtomicArray<Any?> get() = atomicArrayOfNulls(1)'` as a property with a backing field.
+
+/NoBackingField.kt:16:52: error: Atomic factories can only be called to initialize a property or as delegates: `'atomicArrayOfNulls(1)'`.
+
+/NoBackingField.kt:19:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ai: AtomicInt get() = atomic(0)'` as a property with a backing field.
+
+/NoBackingField.kt:19:39: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/NoBackingField.kt:20:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val al: AtomicLong get() = atomic(0L)'` as a property with a backing field.
+
+/NoBackingField.kt:20:40: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.
+
+/NoBackingField.kt:21:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ar: AtomicRef<Any?> get() = atomic("")'` as a property with a backing field.
+
+/NoBackingField.kt:21:45: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic("")'`.
+
+/NoBackingField.kt:22:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ab: AtomicBoolean get() = atomic(true)'` as a property with a backing field.
+
+/NoBackingField.kt:22:43: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(true)'`.
+
+/NoBackingField.kt:24:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val aia: AtomicIntArray get() = AtomicIntArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:24:45: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicIntArray(1)'`.
+
+/NoBackingField.kt:25:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ala: AtomicLongArray get() = AtomicLongArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:25:46: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicLongArray(1)'`.
+
+/NoBackingField.kt:26:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val aba: AtomicBooleanArray get() = AtomicBooleanArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:26:49: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(1)'`.
+
+/NoBackingField.kt:27:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ara: AtomicArray<Any?> get() = atomicArrayOfNulls(1)'` as a property with a backing field.
+
+/NoBackingField.kt:27:48: error: Atomic factories can only be called to initialize a property or as delegates: `'atomicArrayOfNulls(1)'`.
