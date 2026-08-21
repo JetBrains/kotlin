@@ -39,6 +39,18 @@ object ObjectWithProperties {
 @EqualsAndHashCode
 class WithNullable(val a: String?, val b: Int)
 
+// A null property must not hash to what a present one can hash to: `0.hashCode()` and `"".hashCode()` are both
+// 0, so a null field hashing to 0 collided with them and made non-equal instances share a hash, KT-88532.
+@EqualsAndHashCode
+class SingleNullableInt(val optionalId: Int?)
+
+@EqualsAndHashCode
+class SingleNullableString(val optional: String?)
+
+// The same, on the path that folds several properties into `result`, not the single-property shortcut.
+@EqualsAndHashCode
+class TwoNullableInts(val first: Int?, val second: Int?)
+
 @EqualsAndHashCode
 class Empty
 
@@ -104,6 +116,21 @@ fun box(): String {
     assertEquals(false, WithNullable("a", 1) == WithNullable(null, 1))
     // hashCode does not NPE on a null property
     WithNullable(null, 1).hashCode()
+
+    // KT-88532: `optionalId = 0` and `optionalId = null` are not equal, so they must not share a hash.
+    assertEquals(false, SingleNullableInt(0) == SingleNullableInt(null))
+    assertEquals(true, SingleNullableInt(0).hashCode() != SingleNullableInt(null).hashCode())
+
+    assertEquals(false, SingleNullableString("") == SingleNullableString(null))
+    assertEquals(true, SingleNullableString("").hashCode() != SingleNullableString(null).hashCode())
+
+    assertEquals(false, TwoNullableInts(0, 1) == TwoNullableInts(null, 1))
+    assertEquals(true, TwoNullableInts(0, 1).hashCode() != TwoNullableInts(null, 1).hashCode())
+
+    // Equal instances still agree, null properties included.
+    assertEquals(true, SingleNullableInt(null) == SingleNullableInt(null))
+    assertEquals(true, SingleNullableInt(null).hashCode() == SingleNullableInt(null).hashCode())
+    assertEquals(true, TwoNullableInts(null, null).hashCode() == TwoNullableInts(null, null).hashCode())
 
     assertEquals(true, Empty() == Empty())
     assertEquals(0, Empty().hashCode())
