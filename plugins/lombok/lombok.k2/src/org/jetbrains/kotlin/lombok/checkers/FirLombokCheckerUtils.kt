@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -42,11 +41,11 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_PARAM
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REPLACES
 import org.jetbrains.kotlin.lombok.config.getAccessLevel
+import org.jetbrains.kotlin.lombok.generators.hasNonTrivialSuperclass
 import org.jetbrains.kotlin.lombok.generators.isExcludedByDollarPrefix
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private class ImplementedAnnotationsInfo(
@@ -310,14 +309,6 @@ fun FirRegularClass.findSuperclassWithFinalFunction(
 }
 
 /**
- * Whether [this] extends a class other than [Any] - Lombok's `isDirectDescendantOfObject`, inverted. It decides
- * whether chaining a generated `toString`/`equals`/`hashCode` to `super` carries any information at all.
- */
-context(context: CheckerContext)
-val FirRegularClass.hasNonTrivialSuperclass: Boolean
-    get() = symbol.getSuperClassSymbolOrAny(context.session).let { it != null && it.classId != StandardClassIds.Any }
-
-/**
  * Mirrors Lombok behavior: when `*.callSuper=warn` is configured and the
  * annotated class has a non-trivial superclass, warn that the generated function (`toString` or `equals`/`hashCode`) will
  * not chain to it.
@@ -329,7 +320,7 @@ fun checkCallSuper(
     declaration: FirRegularClass,
     functionNames: Set<Name>,
 ) {
-    if (callSuperMode == CallSuperMode.Warn && declaration.hasNonTrivialSuperclass) {
+    if (callSuperMode == CallSuperMode.Warn && declaration.symbol.hasNonTrivialSuperclass(context.session)) {
         reporter.reportOn(
             annotationInfo.annotation.source,
             LombokFirDiagnostics.CALL_SUPER_NOT_CALLED,

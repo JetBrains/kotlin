@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.lombok.LombokNames
-import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
@@ -132,7 +131,11 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
 
             EqualsAndHashCodeGeneratorKey(
                 propertyInfos = propertyInfos,
-                callSuper = annotation.callSuper == CallSuperMode.Call,
+                callSuper = annotation.shouldCallSuper(
+                    session.lombokService.config.equalsAndHashCodeCallSuper,
+                    classSymbol,
+                    session,
+                ),
             )
         }
 

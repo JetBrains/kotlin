@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -35,8 +37,11 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.lombok.AccessorNames
+import org.jetbrains.kotlin.lombok.config.CallSuperMode
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -229,5 +234,39 @@ val FirCallableSymbol<*>.hasReceiverOrContextParameters: Boolean
  */
 val FirPropertySymbol.isExcludedByDollarPrefix: Boolean
     get() = name.asString().startsWith('$')
+
+/**
+ * Whether [this] extends a class other than [Any] - Lombok's `isDirectDescendantOfObject`, inverted.
+ *
+ * It decides whether chaining a generated `toString`/`equals`/`hashCode` to `super` carries any information at
+ * all: `Any` renders as a bare identity hash, compares by identity and hashes by it, so nothing it returns
+ * belongs in a member that is supposed to speak about a class's own state.
+ */
+fun FirClassSymbol<*>.hasNonTrivialSuperclass(session: FirSession): Boolean =
+    getSuperClassSymbolOrAny(session).let { it != null && it.classId != StandardClassIds.Any }
+
+/**
+ * Whether the member `@ToString`/`@EqualsAndHashCode` generates for [classSymbol] chains to the superclass one.
+ *
+ * This is the whole of that decision: the IR body builders chain whenever it says so, [Any] included.
+ *
+ * The annotation's own `callSuper` argument decides whenever it is there, and is never second-guessed. Lombok
+ * honors an explicit `callSuper = true` on a class extending nothing but [Any] as well, even though [Any]
+ * renders as a bare identity hash and compares by identity - `@ToString` only calls that "pretty much
+ * meaningless" in its javadoc, while `@EqualsAndHashCode` refuses to generate at all, which
+ * `CALL_SUPER_TO_ANY_IS_POINTLESS` reports.
+ *
+ * Otherwise [configCallSuperMode] - the `lombok.<feature>.callSuper` setting - decides, and only its `call`
+ * chains, and only for a class that has a superclass worth chaining to: a project-wide setting cannot know that
+ * this particular class extends nothing but [Any], so Lombok gates it on that and so does this (KT-88771).
+ */
+fun ConeLombokAnnotations.CallSuper.shouldCallSuper(
+    configCallSuperMode: CallSuperMode,
+    classSymbol: FirClassSymbol<*>,
+    session: FirSession,
+): Boolean = when (val explicitMode = callSuper) {
+    null -> configCallSuperMode == CallSuperMode.Call && classSymbol.hasNonTrivialSuperclass(session)
+    else -> explicitMode == CallSuperMode.Call
+}
 
 abstract class LombokDeclarationKey : GeneratedDeclarationKey()

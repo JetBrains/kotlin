@@ -77,7 +77,7 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         +irIfThenReturnTrue(irEqeqeq(irGetThis(thisParam), irGetOther(otherParam)))
         +irIfThenReturnFalse(irNotIs(irGetOther(otherParam), irClass.defaultTypeForLombok()))
 
-        val superEquals = runIf(key.callSuper) { buildSuperEqualsCall(irClass, thisParam, otherParam, context) }
+        val superEquals = runIf(key.callSuper) { buildSuperEqualsCall(irClass, thisParam, otherParam) }
         if (superEquals != null) {
             +irIfThenReturnFalse(
                 primitiveBooleanNot(superEquals)
@@ -123,7 +123,7 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
     ) {
         val includedProperties = extractIncludedProperties(key, irClass)
 
-        val superHashCode = runIf(key.callSuper) { buildSuperHashCodeCall(irClass, thisParam, context) }
+        val superHashCode = runIf(key.callSuper) { buildSuperHashCodeCall(irClass, thisParam) }
 
         // Always the `result = 1` (or `result = super.hashCode()`) accumulator Lombok emits, folding in every
         // property, with no shortcut for an empty or single-property class: Lombok has none either, so returning
@@ -252,9 +252,8 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         irClass: IrClass,
         thisParam: IrValueParameter,
         otherParam: IrValueParameter,
-        context: IrGeneratorContext,
     ): IrExpression? {
-        val superClass = irClass.nonAnyNonInterfaceSuperclass(context) ?: return null
+        val superClass = irClass.nonInterfaceSuperclass() ?: return null
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superEquals = superClass.functions.firstOrNull {
@@ -277,8 +276,8 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun buildSuperHashCodeCall(irClass: IrClass, thisParam: IrValueParameter, context: IrGeneratorContext): IrExpression? {
-        val superClass = irClass.nonAnyNonInterfaceSuperclass(context) ?: return null
+    private fun buildSuperHashCodeCall(irClass: IrClass, thisParam: IrValueParameter): IrExpression? {
+        val superClass = irClass.nonInterfaceSuperclass() ?: return null
         val superHashCode = superClass.functions.firstOrNull {
             it.name == HASHCODE_NAME &&
                     it.parameters.count { p -> p.kind == IrParameterKind.Regular } == 0 &&
@@ -297,10 +296,16 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         }
     }
 
+    /**
+     * The superclass a generated `equals`/`hashCode` chains to, interfaces skipped - `Any` when there is no other.
+     *
+     * Whether to chain at all is `shouldCallSuper`'s call, not this one's: its config branch already rules out a
+     * class extending nothing but `Any`, and an explicit `callSuper = true` on one never reaches codegen, being
+     * reported as `CALL_SUPER_TO_ANY_IS_POINTLESS` - the error Lombok raises before generating either member.
+     */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrClass.nonAnyNonInterfaceSuperclass(context: IrGeneratorContext): IrClass? =
+    private fun IrClass.nonInterfaceSuperclass(): IrClass? =
         superTypes.firstNotNullOfOrNull { type -> type.classOrNull?.owner?.takeIf { !it.isInterface } }
-            ?.takeIf { it.symbol != context.irBuiltIns.anyClass }
 
     private fun IrClass.defaultTypeForLombok() = thisReceiver!!.type
 }
