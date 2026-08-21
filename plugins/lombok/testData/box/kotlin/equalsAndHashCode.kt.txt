@@ -298,6 +298,124 @@ class Simple {
 }
 
 @EqualsAndHashCode
+class SingleNullableInt {
+  val optionalId: Int?
+    field = optionalId
+    get
+
+  constructor(optionalId: Int?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is SingleNullableInt -> return false
+    }
+    val tmp_10: SingleNullableInt = other /*as SingleNullableInt */
+    when {
+      EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = tmp_10.<get-optionalId>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = null) -> 43
+      else -> <this>.<get-optionalId>().hashCode()
+    }
+  }
+
+}
+
+@EqualsAndHashCode
+class SingleNullableString {
+  val optional: String?
+    field = optional
+    get
+
+  constructor(optional: String?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is SingleNullableString -> return false
+    }
+    val tmp_11: SingleNullableString = other /*as SingleNullableString */
+    when {
+      EQEQ(arg0 = <this>.<get-optional>(), arg1 = tmp_11.<get-optional>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.<get-optional>(), arg1 = null) -> 43
+      else -> <this>.<get-optional>().hashCode()
+    }
+  }
+
+}
+
+@EqualsAndHashCode
+class TwoNullableInts {
+  val first: Int?
+    field = first
+    get
+
+  val second: Int?
+    field = second
+    get
+
+  constructor(first: Int?, second: Int?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TwoNullableInts -> return false
+    }
+    val tmp_12: TwoNullableInts = other /*as TwoNullableInts */
+    when {
+      EQEQ(arg0 = <this>.<get-first>(), arg1 = tmp_12.<get-first>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-second>(), arg1 = tmp_12.<get-second>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_13: Int = 1
+    tmp_13 = tmp_13.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-first>(), arg1 = null) -> 43
+      else -> <this>.<get-first>().hashCode()
+    })
+    tmp_13 = tmp_13.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-second>(), arg1 = null) -> 43
+      else -> <this>.<get-second>().hashCode()
+    })
+    return tmp_13
+  }
+
+}
+
+@EqualsAndHashCode
 class WithComputedProperties {
   val real: String
     field = real
@@ -316,9 +434,9 @@ class WithComputedProperties {
     when {
       other !is WithComputedProperties -> return false
     }
-    val tmp_10: WithComputedProperties = other /*as WithComputedProperties */
+    val tmp_14: WithComputedProperties = other /*as WithComputedProperties */
     when {
-      EQEQ(arg0 = <this>.<get-real>(), arg1 = tmp_10.<get-real>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-real>(), arg1 = tmp_14.<get-real>()).not() -> return false
     }
     return true
   }
@@ -357,9 +475,9 @@ class WithExclude {
     when {
       other !is WithExclude -> return false
     }
-    val tmp_11: WithExclude = other /*as WithExclude */
+    val tmp_15: WithExclude = other /*as WithExclude */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_11.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_15.<get-a>()).not() -> return false
     }
     return true
   }
@@ -393,24 +511,24 @@ class WithNullable {
     when {
       other !is WithNullable -> return false
     }
-    val tmp_12: WithNullable = other /*as WithNullable */
+    val tmp_16: WithNullable = other /*as WithNullable */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_12.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_16.<get-a>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_12.<get-b>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_16.<get-b>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_13: Int = 1
-    tmp_13 = tmp_13.times(other = 59).plus(other = when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 0
+    var tmp_17: Int = 1
+    tmp_17 = tmp_17.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 43
       else -> <this>.<get-a>().hashCode()
     })
-    tmp_13 = tmp_13.times(other = 59).plus(other = <this>.<get-b>().hashCode())
-    return tmp_13
+    tmp_17 = tmp_17.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_17
   }
 
 }
@@ -499,6 +617,15 @@ fun box(): String {
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNullable(a = null, b = 1), arg1 = WithNullable(a = null, b = 1)))
   assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithNullable(a = "a", b = 1), arg1 = WithNullable(a = null, b = 1)))
   WithNullable(a = null, b = 1).hashCode() /*~> Unit */
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = SingleNullableInt(optionalId = 0), arg1 = SingleNullableInt(optionalId = null)))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableInt(optionalId = 0).hashCode(), arg1 = SingleNullableInt(optionalId = null).hashCode()).not())
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = SingleNullableString(optional = ""), arg1 = SingleNullableString(optional = null)))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableString(optional = "").hashCode(), arg1 = SingleNullableString(optional = null).hashCode()).not())
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = TwoNullableInts(first = 0, second = 1), arg1 = TwoNullableInts(first = null, second = 1)))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = TwoNullableInts(first = 0, second = 1).hashCode(), arg1 = TwoNullableInts(first = null, second = 1).hashCode()).not())
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableInt(optionalId = null), arg1 = SingleNullableInt(optionalId = null)))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableInt(optionalId = null).hashCode(), arg1 = SingleNullableInt(optionalId = null).hashCode()))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = TwoNullableInts(first = null, second = null).hashCode(), arg1 = TwoNullableInts(first = null, second = null).hashCode()))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Empty(), arg1 = Empty()))
   assertEquals<Int>(a = 0, b = Empty().hashCode())
   val cd1: CallSuperDerived = CallSuperDerived(ownProp = "x")
@@ -525,9 +652,9 @@ fun box(): String {
       when {
         other !is LocalClass -> return false
       }
-      val tmp_14: LocalClass = other /*as LocalClass */
+      val tmp_18: LocalClass = other /*as LocalClass */
       when {
-        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_14.<get-x>()).not() -> return false
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_18.<get-x>()).not() -> return false
       }
       return true
     }
@@ -545,3 +672,4 @@ fun box(): String {
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Color.RED.hashCode(), arg1 = Color.RED.hashCode()))
   return "OK"
 }
+

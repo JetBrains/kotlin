@@ -33,6 +33,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGeneratorKey>() {
     const val HASHCODE_PRIME = 59 // Mirrors Lombok default value
 
+    /**
+     * What a null property contributes to the hash, mirroring Lombok's `$field == null ? 43 : $field.hashCode()`.
+     *
+     * Any non-zero constant would do, and zero would not: `0.hashCode()` and `"".hashCode()` are both 0, so a
+     * null property hashing to 0 collided with a present one and gave non-equal instances the same hash
+     * (KT-88532).
+     */
+    const val HASHCODE_NULL = 43
+
     override fun IrBlockBodyBuilder.build(
         key: EqualsAndHashCodeGeneratorKey,
         declaration: IrSimpleFunction,
@@ -169,7 +178,7 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             irIfNull(
                 context.irBuiltIns.intType,
                 value,
-                irInt(0),
+                irInt(HASHCODE_NULL),
                 callHashCodeOn(irGetPropertyValue(irGetThis(thisParam), property)),
             )
         } else {
