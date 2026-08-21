@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 class B {
     var x: Int = 0
         set(<!INVALID_VERSIONING_ON_NON_OPTIONAL!>@IntroducedAt("1")<!> value) {

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 private val ok = "OK"
 
 internal inline fun internalInlineFun(

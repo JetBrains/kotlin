@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // LANGUAGE: +ContextParameters
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 sealed class SealedClass{
     fun <!INVALID_VERSIONING_ON_NONFINAL_CLASS!>foo<!>(a: String = "", @IntroducedAt("1") x: Int = 1) { }

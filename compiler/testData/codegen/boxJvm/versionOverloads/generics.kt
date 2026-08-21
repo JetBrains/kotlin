@@ -2,7 +2,6 @@
 // CHECK_BYTECODE_LISTING
 // WITH_SIGNATURES
 // WITH_STDLIB
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 class C {
     fun <A> foo(

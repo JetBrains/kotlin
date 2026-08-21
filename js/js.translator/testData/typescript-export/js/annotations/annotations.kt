@@ -7,7 +7,6 @@
 // MODULE: JS_TESTS
 // FILE: annotations.kt
 
-@file:OptIn(ExperimentalVersionOverloading::class)
 package foo
 
 @JsExport

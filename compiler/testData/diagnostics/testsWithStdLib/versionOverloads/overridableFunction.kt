@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 open class C {
     open fun <!INVALID_VERSIONING_ON_NONFINAL_CLASS!>foo<!>(

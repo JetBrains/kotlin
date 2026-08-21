@@ -2,8 +2,7 @@
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 
-
-@file:OptIn(ExperimentalVersionOverloading::class, ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalStdlibApi::class)
 
 class ExposedC {
     @Suppress("CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION")

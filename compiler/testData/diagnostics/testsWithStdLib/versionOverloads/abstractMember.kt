@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 abstract class A {
     abstract fun <!INVALID_VERSIONING_ON_NONFINAL_CLASS!>foo<!>(a: Int = 0, @IntroducedAt("1") b: Int = 1)
 }

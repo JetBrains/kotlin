@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -NON_ASCENDING_VERSION_ANNOTATION
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 class C {
     fun foo(

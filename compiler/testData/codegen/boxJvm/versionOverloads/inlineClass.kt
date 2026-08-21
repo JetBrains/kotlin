@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
-@file:OptIn(ExperimentalVersionOverloading::class, ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalStdlibApi::class)
 
 @JvmInline value class PositiveInt(val n: Int = 0)
 

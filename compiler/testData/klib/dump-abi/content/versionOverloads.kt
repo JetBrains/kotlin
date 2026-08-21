@@ -1,7 +1,5 @@
 // MODULE: versionOverloads_library
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 open class A(
     val a: Int = 1,
     @IntroducedAt("1") val b: String = "A1",

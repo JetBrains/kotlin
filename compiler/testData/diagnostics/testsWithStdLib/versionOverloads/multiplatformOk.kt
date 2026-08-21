@@ -3,8 +3,6 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 expect fun foo(
     x: String = "O",
     @IntroducedAt("2") y: String = "foo",
@@ -12,8 +10,6 @@ expect fun foo(
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 actual fun foo(
     x: String,

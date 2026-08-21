@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -ERROR_SUPPRESSION
-@file:OptIn(ExperimentalVersionOverloading::class)
 @file:Suppress("NON_ASCENDING_VERSION_ANNOTATION")
 
 class C {

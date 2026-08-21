@@ -1,4 +1,3 @@
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalVersionOverloading.class})
 @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
 public final class WithJvmOverloadsAndNonAscendingKt /* WithJvmOverloadsAndNonAscendingKt*/ {
   @<error>()

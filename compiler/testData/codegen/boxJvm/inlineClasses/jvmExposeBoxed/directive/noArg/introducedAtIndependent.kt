@@ -3,8 +3,6 @@
 // JVM_EXPOSE_BOXED
 
 // FILE: Test.kt
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 @JvmInline
 value class Token(val value: String)
 

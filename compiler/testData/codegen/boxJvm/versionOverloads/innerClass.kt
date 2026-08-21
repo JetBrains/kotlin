@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 class C {
     inner class A(
