@@ -81,7 +81,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun test(body: Action<KotlinJsBrowserTestDsl>) = body.execute(test)
 
-    fun usedJsBrowserTestDsl() = testDsl.isInitialized()
+    internal fun usedJsBrowserTestDsl() = testDsl.isInitialized()
 
     companion object {
         internal const val WEBPACK_TASK_NAME = "webpack"
