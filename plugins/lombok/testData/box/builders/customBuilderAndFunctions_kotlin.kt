@@ -1,3 +1,5 @@
+// DUMP_KT_IR
+
 import lombok.Builder
 
 @Builder(toBuilder = true, builderClassName = "MyClassBuilder")

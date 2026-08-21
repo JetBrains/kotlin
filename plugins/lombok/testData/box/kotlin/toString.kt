@@ -1,3 +1,5 @@
+// DUMP_KT_IR
+
 import lombok.ToString
 
 @ToString
