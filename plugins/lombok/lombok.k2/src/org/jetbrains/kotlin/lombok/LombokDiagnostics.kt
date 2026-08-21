@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_ERROR
@@ -85,6 +86,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
     val STATIC_CONSTRUCTOR_ALREADY_EXISTS by warning2<KtAnnotationEntry, Name, Name>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST by error0<KtAnnotationEntry>()
+    val EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
 
     val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
     val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
@@ -175,6 +177,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST,
             "Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated)."
+        )
+        map.put(
+            EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS,
+            "Cannot generate ''equals'' and ''hashCode'': one of them is final in ''{0}'' and cannot be overridden.",
+            CommonRenderers.NAME,
         )
         map.put(
             BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION,
