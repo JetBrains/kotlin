@@ -68,8 +68,18 @@ internal constructor(private val rawValue: Long) :
         @Suppress("DEPRECATION_ERROR") // A temporary workaround for KT-81995.
         internal val INVALID = Duration(INVALID_RAW_VALUE)
 
-        /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
+        /**
+         * Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit].
+         *
+         * @see DurationUnit.convertToWhole
+         * @see DurationUnit.convert
+         */
         @ExperimentalTime
+        @Deprecated(
+            "Use DurationUnit.convert instead.",
+            replaceWith = ReplaceWith("DurationUnit.convert(value, sourceUnit, targetUnit)"),
+        )
+        @DeprecatedSinceKotlin(warningSince = "2.5")
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
             convertDurationUnit(value, sourceUnit, targetUnit)
 
