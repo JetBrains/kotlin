@@ -154,7 +154,8 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                     pluginVersion,
                     isProjectIsolationEnabled,
                     isProjectIsolationRequested,
-                    isConfigurationCacheRequested
+                    isConfigurationCacheRequested,
+                    gradle.startParameter.isBuildCacheEnabled
                 )
             }
 
