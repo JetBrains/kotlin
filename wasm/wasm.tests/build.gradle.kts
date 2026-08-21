@@ -16,6 +16,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("test-batches-convention")
     id("wasmtime-configuration")
 }
 

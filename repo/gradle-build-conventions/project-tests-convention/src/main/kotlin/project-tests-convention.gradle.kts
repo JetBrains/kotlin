@@ -1,5 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 
+plugins.apply("test-batches-convention")
+
 val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 
 tasks.withType<Test>().configureEach {
