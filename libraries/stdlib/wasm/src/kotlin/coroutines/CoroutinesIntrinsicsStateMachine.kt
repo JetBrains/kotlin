@@ -47,7 +47,6 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 }
 
 // Is not used by Stack Switching implementation
-@PublishedApi
 @Suppress("UNCHECKED_CAST")
 @UsedFromCompilerGeneratedCode
 internal fun <T> createSimpleCoroutineFromSuspendFunction(

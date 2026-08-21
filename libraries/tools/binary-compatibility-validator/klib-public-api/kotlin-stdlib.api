@@ -14474,10 +14474,6 @@ final value class kotlin.wasm.unsafe/Pointer { // kotlin.wasm.unsafe/Pointer|nul
 }
 
 // Targets: [wasmJs, wasmWasi]
-final val kotlin.wasm.internal/EmptyContinuation // kotlin.wasm.internal/EmptyContinuation|{}EmptyContinuation[0]
-    final fun <get-EmptyContinuation>(): kotlin.coroutines/Continuation<kotlin/Any?> // kotlin.wasm.internal/EmptyContinuation.<get-EmptyContinuation>|<get-EmptyContinuation>(){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final var kotlin.wasm.unsafe/currentAllocator // kotlin.wasm.unsafe/currentAllocator|{}currentAllocator[0]
     final fun <get-currentAllocator>(): kotlin.wasm.unsafe/ScopedMemoryAllocator? // kotlin.wasm.unsafe/currentAllocator.<get-currentAllocator>|<get-currentAllocator>(){}[0]
     final fun <set-currentAllocator>(kotlin.wasm.unsafe/ScopedMemoryAllocator?) // kotlin.wasm.unsafe/currentAllocator.<set-currentAllocator>|<set-currentAllocator>(kotlin.wasm.unsafe.ScopedMemoryAllocator?){}[0]
@@ -14495,28 +14491,10 @@ final fun (kotlin/Float.Companion).kotlin/fromBits(kotlin/Int): kotlin/Float // 
 final fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Short(kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines/SuspendFunction2<#A, #B, #C>, #A, #B, kotlin.coroutines/Continuation<#C>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2|startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines.SuspendFunction2<0:0,0:1,0:2>;0:0;0:1;kotlin.coroutines.Continuation<0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.coroutines/SuspendFunction1<#A, #B>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl(#A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl|startCoroutineUninterceptedOrReturnImpl@kotlin.coroutines.SuspendFunction1<0:0,0:1>(0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic1(kotlin.coroutines/SuspendFunction1<#A, #B>, #A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic1|startCoroutineUninterceptedOrReturnIntrinsic1(kotlin.coroutines.SuspendFunction1<0:0,0:1>;0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?> (kotlin.coroutines/SuspendFunction0<#A>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl(kotlin.coroutines/Continuation<#A>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl|startCoroutineUninterceptedOrReturnImpl@kotlin.coroutines.SuspendFunction0<0:0>(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/createSimpleCoroutineFromSuspendFunction(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/CoroutineImpl<kotlin/Any?, kotlin/Any?> // kotlin.coroutines.intrinsics/createSimpleCoroutineFromSuspendFunction|createSimpleCoroutineFromSuspendFunction(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?> kotlin.wasm.internal/getContinuation(): kotlin.coroutines/Continuation<#A> // kotlin.wasm.internal/getContinuation|getContinuation(){0§<kotlin.Any?>}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?> kotlin.wasm.internal/interceptContinuationIfNeeded(kotlin.coroutines/CoroutineContext, kotlin.coroutines/Continuation<#A>): kotlin.coroutines/Continuation<#A> // kotlin.wasm.internal/interceptContinuationIfNeeded|interceptContinuationIfNeeded(kotlin.coroutines.CoroutineContext;kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic0(kotlin.coroutines/SuspendFunction0<#A>, kotlin.coroutines/Continuation<#A>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic0|startCoroutineUninterceptedOrReturnIntrinsic0(kotlin.coroutines.SuspendFunction0<0:0>;kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValueOfIntrinsic(kotlin/String): #A // kotlin.wasm.internal/enumValueOfIntrinsic|enumValueOfIntrinsic(kotlin.String){0§<kotlin.Enum<0:0>>}[0]
@@ -14579,10 +14557,10 @@ final inline fun (kotlin/Long).kotlin/countTrailingZeroBits(): kotlin/Int // kot
 final inline fun <#A: kotlin/Any?> kotlin.wasm.unsafe/withScopedMemoryAllocator(kotlin/Function1<kotlin.wasm.unsafe/MemoryAllocator, #A>): #A // kotlin.wasm.unsafe/withScopedMemoryAllocator|withScopedMemoryAllocator(kotlin.Function1<kotlin.wasm.unsafe.MemoryAllocator,0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnIntrinsic(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnIntrinsic|suspendCoroutineUninterceptedOrReturnIntrinsic(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnIntrinsic(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnIntrinsic|suspendCoroutineUninterceptedOrReturnIntrinsic(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
+final suspend fun kotlin.wasm.internal/getCoroutineContextImpl(): kotlin.coroutines/CoroutineContext // kotlin.wasm.internal/getCoroutineContextImpl|getCoroutineContextImpl(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final suspend inline fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn(noinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
