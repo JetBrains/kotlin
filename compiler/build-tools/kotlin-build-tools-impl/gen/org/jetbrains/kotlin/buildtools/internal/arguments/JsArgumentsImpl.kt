@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Comp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_SUSPEND_LAMBDA_EXPORTING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments
@@ -80,7 +83,7 @@ internal class JsArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
@@ -232,8 +235,23 @@ internal class JsArgumentsImpl(
     return arguments
   }
 
+  @Deprecated(
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
+    applyCompilerArguments(compilerArgs)
+  }
+
+  @DelicateBuildToolsApi
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    val compilerArgs = toCompilerArguments()
+    parseCommandLineArguments(arguments, compilerArgs, false)
+    handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }

@@ -25,13 +25,13 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Argument-parsing warnings are reported through the Build Tools API")
 class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument passed multiple times within a single applyArgumentStrings call is reported")
+    @DisplayName("An argument passed multiple times within a single applyCommandLineArguments call is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentPassedMultipleTimesInOneCallReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=11", "-jvm-target=17"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=11", "-jvm-target=17"))
             }) {
                 assertPassedMultipleTimes("-jvm-target", "11", "17")
             }
@@ -39,14 +39,14 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via the typed API and then via applyArgumentStrings is reported")
+    @DisplayName("An argument set via the typed API and then via applyCommandLineArguments is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaTypedApiThenArgumentStringsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[JVM_TARGET] = JvmTarget.JVM_11
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=17"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=17"))
             }) {
                 assertPassedMultipleTimes("-jvm-target", "11", "17")
             }
@@ -54,7 +54,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via applyArgumentStrings and then via the typed API is reported")
+    @DisplayName("An argument set via applyCommandLineArguments and then via the typed API is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaArgumentStringsThenTypedApiReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         // this is the shape reported in KT-88381: the Kotlin Gradle plugin derives -jvm-target from the toolchain,
@@ -62,7 +62,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=17"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=17"))
                 it.compilerArguments[JVM_TARGET] = JvmTarget.JVM_11
             }) {
                 assertPassedMultipleTimes("-jvm-target", "17", "11")
@@ -71,13 +71,13 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set just once via applyArgumentStrings is not reported")
+    @DisplayName("An argument set just once via applyCommandLineArguments is not reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetOnlyViaApplyArgumentStringsReportsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testArgumentSetOnlyViaapplyCommandLineArgumentsReportsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=17"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=17"))
             }) {
                 assertNoWarnings()
             }
@@ -105,7 +105,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xnot-a-real-flag"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xnot-a-real-flag"))
             }) {
                 // an unknown -X flag is not an error, the compilation is expected to succeed
                 assertLogContainsPatternExactlyTimes(
@@ -124,7 +124,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xjsr305-annotations=strict"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xjsr305-annotations=strict"))
             }) {
                 assertLogContainsPatternExactlyTimes(
                     LogLevel.WARN,
@@ -142,7 +142,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xcontext-receivers"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xcontext-receivers"))
             }) {
                 assertLogContainsPatternExactlyTimes(
                     LogLevel.WARN,
@@ -162,7 +162,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xsuppress-warning=NOTHING_TO_INLINE"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xsuppress-warning=NOTHING_TO_INLINE"))
             }) {
                 assertLogContainsSubstringExactlyTimes(
                     LogLevel.WARN,
@@ -180,7 +180,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-no-stdlib"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-no-stdlib"))
             }) {
                 assertNoWarnings()
             }
@@ -188,16 +188,16 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via applyArgumentStrings, the typed API and applyArgumentStrings again is reported")
+    @DisplayName("An argument set via applyCommandLineArguments, the typed API and applyCommandLineArguments again is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaArgumentStringsAroundTypedApiReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        // a value configured through the typed API in between two applyArgumentStrings calls has to keep its position
+        // a value configured through the typed API in between two applyCommandLineArguments calls has to keep its position
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=11"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=11"))
                 it.compilerArguments[JVM_TARGET] = JvmTarget.JVM_17
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=21"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=21"))
             }) {
                 assertPassedMultipleTimes("-jvm-target", "11", "17", "21")
             }
@@ -205,14 +205,14 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via two separate applyArgumentStrings calls is reported")
+    @DisplayName("An argument set via two separate applyCommandLineArguments calls is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaTwoArgumentStringsCallsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=11"))
-                it.compilerArguments.applyArgumentStrings(listOf("-jvm-target=17"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=11"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target=17"))
             }) {
                 assertPassedMultipleTimes("-jvm-target", "11", "17")
             }

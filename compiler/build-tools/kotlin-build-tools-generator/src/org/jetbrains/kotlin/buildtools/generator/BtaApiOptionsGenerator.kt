@@ -27,7 +27,7 @@ internal class BtaApiOptionsGenerator(
     override fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: ClassName?,
-        additionalInterfaces: List<ClassName>
+        additionalInterfaces: List<ClassName>,
     ): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
@@ -69,7 +69,8 @@ internal class BtaApiOptionsGenerator(
                         returns(ClassName(targetPackage, className))
                     }
                     if (parentClass == null) {
-                        addApplyArgumentStringsFun()
+                        addApplyArgumentStringsFun(kotlinVersion)
+                        addApplyCommandLineArgumentsFun()
                     } else {
                         addSuperinterface(parentClass.nestedClass("Builder"))
                         additionalInterfaces.forEach { addSuperinterface(it.nestedClass("Builder")) }
@@ -351,20 +352,73 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
-    function("applyArgumentStrings") {
-        addKdoc(
-            """
+private fun TypeSpec.Builder.addApplyArgumentStringsFun(kotlinVersion: KotlinReleaseVersion) {
+    withDeprecationCycle(
+        kotlinVersion,
+        warnFrom = KotlinReleaseVersion.v2_5_0,
+        errorFrom = KotlinReleaseVersion.v2_6_0,
+        removeFrom = KotlinReleaseVersion.v2_7_0,
+        deprecationMessage = "This method is deprecated. Use applyCommandLineArguments instead. This will become an error in Kotlin 2.6.0, and will be removed in 2.7.0."
+    ) { annotation ->
+        function("applyArgumentStrings") {
+            addKdoc(
+                """
+        Deprecated. Use applyCommandLineArguments instead. This will become an error in Kotlin 2.6.0, and will be removed in 2.7.0.
+        
+        This method is unsafe to use - it wipes all options previously set on this instance to defaults before applying the passed [arguments].
+        
         Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
         
         When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
         @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed, or when an unsupported argument has become an error
+        """.trimIndent()
+            )
+            addParameter(
+                ParameterSpec.builder("arguments", listTypeNameOf<String>())
+                    .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
+            )
+            annotation?.let {
+                addAnnotation(
+                    it.toBuilder().addMember("replaceWith = %T(%S)", ReplaceWith::class, "applyCommandLineArguments(arguments)").build()
+                )
+            }
+            this.addModifiers(KModifier.ABSTRACT)
+        }
+    }
+}
+
+private fun TypeSpec.Builder.addApplyCommandLineArgumentsFun() {
+    function("applyCommandLineArguments") {
+        addKdoc(
+            """
+        Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+        
+        Arguments passed into this function will replace existing values for these arguments that were previously set.
+        
+        In case of arguments with array type, it's allowed to pass the argument multiple times. In that case, the passed arguments will be
+        gathered into a new array, and the new array will replace the previous array contents, if any were set on this object.
+        
+        In general, using this method should be avoided if possible, and the type-safe [set] method should be used instead. It is provided 
+        only to make migration from previous non-BTA integrations to BTA easier. 
+        
+        Please note that after calling this method, some BTA type-safe synthetic arguments might be lost (though their values will still 
+        be accessible through string arguments). 
+        Currently, [CommonCompilerArguments.COMPILER_PLUGINS] is one such example where its contents may be translated to related string arguments (-P, -Xplugin and
+         -Xcompiler-plugin-order) and the original `COMPILER_PLUGINS` value will be cleared.
+        
+        When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
+        
+        Even though this method was introduced in Build Tools API 2.5.0, it's usable when compiling with all supported Kotlin compiler versions.
+        
+        @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
+        @since 2.5.0
         """.trimIndent()
         )
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
                 .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
         )
+        addAnnotation(ANNOTATION_DELICATE_BUILDTOOLS_API)
         this.addModifiers(KModifier.ABSTRACT)
     }
 }

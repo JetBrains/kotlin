@@ -107,6 +107,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerAr
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -141,7 +142,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
@@ -345,10 +346,19 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
+  @Deprecated(
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
     validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
     applyCompilerArguments(compilerArgs)
+  }
+
+  @DelicateBuildToolsApi
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    TODO("To be handled in v1 wrapper")
   }
 
   override fun toArgumentStrings(): List<String> {
