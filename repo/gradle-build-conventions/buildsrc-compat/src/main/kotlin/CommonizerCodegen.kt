@@ -61,10 +61,12 @@ abstract class GenerateSupportSources : DefaultTask() {
         val classesThatNeedVar = mutableSetOf<String>()
 
         val kotlinxCinteropFilesMapByDestination = mutableMapOf<File, File>()
+        val kotlinRangesFilesMapByDestination = mutableMapOf<File, File>()
 
         traverseRawSources(rawSourceDir.get().asFile) { file, destination, destinationRoot ->
             var contents = file.readText().replace("package support.raw", "package support")
             val kotlinxXCinteropFileContents = mutableListOf<String>()
+            val kotlinRangesFileContents = mutableListOf<String>()
 
             for (nextMatch in expectNumberClassPattern.findAll(contents)) {
                 val (entireMatch, name) = nextMatch.groupValues
@@ -84,6 +86,18 @@ abstract class GenerateSupportSources : DefaultTask() {
                 val adjustedContent = similarToContent.replace(similarToName, name)
                     .withAppendixIfMentioned(ranges, similarToSearchIndex) { rangeName ->
                         classesThatNeedRange.add(name)
+
+                        val untilFunction = """
+                            @Suppress(
+                                "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
+                                "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "CONFLICTING_OVERLOADS",
+                            )
+                            @OptIn(ExperimentalMultiplatform::class)
+                            @kotlin.experimental.ExpectRefinement
+                            expect inline infix fun support.$name.until(to: support.$name): support.${name}Range
+                        """.trimIndent()
+
+                        kotlinRangesFileContents += untilFunction
                         replace(rangeName, "${name}Range")
                     }
                     .withAppendixIfMentioned(iterators, similarToSearchIndex) { iteratorName ->
@@ -148,6 +162,15 @@ abstract class GenerateSupportSources : DefaultTask() {
                 }
 
                 cinteropFile.appendText("\n" + kotlinxXCinteropFileContents.joinToString("\n") + "\n")
+            }
+
+            if (kotlinRangesFileContents.isNotEmpty()) {
+                val rangesFile = kotlinRangesFilesMapByDestination.getOrPut(destinationRoot) {
+                    val cinteropFolder = destinationRoot.resolve("kotlin").resolve("ranges").also { it.mkdirs() }
+                    cinteropFolder.resolve("Bridges.kt").also { it.writeText("package kotlin.ranges\n") }
+                }
+
+                rangesFile.appendText("\n" + kotlinRangesFileContents.joinToString("\n") + "\n")
             }
         }
 
