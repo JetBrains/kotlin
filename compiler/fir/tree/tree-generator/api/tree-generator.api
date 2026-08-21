@@ -15,7 +15,6 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getAnonymousObject ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getAnonymousObjectExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getArgumentList ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
-	public final fun getArrayLiteral ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getAugmentedAssignment ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getBackingField ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getBackingFieldReference ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
@@ -31,6 +30,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getClassLikeDeclaration ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getClassReferenceExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getCodeFragment ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
+	public final fun getCollectionLiteral ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getComparisonExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getComponentCall ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getConstructedClassTypeParameterRef ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
@@ -97,6 +97,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getMemberDeclaration ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getMultiDelegatedConstructorCall ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getNamedArgumentExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
+	public final fun getNamedFunction ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getNamedReference ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getNamedReferenceWithCandidateBase ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getOuterClassTypeParameterRef ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
@@ -112,6 +113,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getReference ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getRegularClass ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
+	public final fun getReplDeclarationReference ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getReplSnippet ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getResolvable ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getResolvedCallableReference ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
@@ -130,7 +132,6 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getSamConversionExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getScript ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getScriptReceiverParameter ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
-	public final fun getSimpleFunction ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getSmartCastExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getSpreadArgumentExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getStarProjection ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;

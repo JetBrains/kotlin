@@ -50,7 +50,6 @@ public abstract interface class org/jetbrains/kotlin/compiler/plugin/CommandLine
 	public abstract fun getPluginId ()Ljava/lang/String;
 	public abstract fun getPluginOptions ()Ljava/util/Collection;
 	public fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/AbstractCliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
-	public fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/CliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
 }
 
 public final class org/jetbrains/kotlin/compiler/plugin/CommandLineProcessor$DefaultImpls {
@@ -58,7 +57,6 @@ public final class org/jetbrains/kotlin/compiler/plugin/CommandLineProcessor$Def
 	public static fun appendList (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/util/List;)V
 	public static fun applyOptionsFrom (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Ljava/util/Map;Ljava/util/Collection;)V
 	public static fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/compiler/plugin/AbstractCliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
-	public static fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/compiler/plugin/CliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
 }
 
 public abstract class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar {

@@ -20,7 +20,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativ
 	public final fun getINCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getINCOMPATIBLE_THROWS_INHERITED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINCOMPATIBLE_THROWS_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
-	public final fun getINVALID_CHARACTERS_NATIVE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation1;
+	public final fun getINVALID_CHARACTERS_NATIVE_ERROR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINVALID_OBJC_HIDES_TARGETS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_OBJC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_OBJC_NAME_CHARS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;

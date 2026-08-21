@@ -1,5 +1,6 @@
 public final class org/jetbrains/kotlin/fir/analysis/diagnostics/web/common/FirWebCommonErrors : org/jetbrains/kotlin/diagnostics/KtDiagnosticsContainer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/web/common/FirWebCommonErrors;
+	public final fun getCALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCANNOT_CHECK_FOR_EXTERNAL_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getEXTERNAL_ANONYMOUS_INITIALIZER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getEXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -7,14 +8,18 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/web/common/FirW
 	public final fun getEXTERNAL_DELEGATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getEXTERNAL_INTERFACE_AS_CLASS_LITERAL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getEXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getEXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINLINE_EXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJSCODE_ARGUMENT_NON_CONST_EXPRESSION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getJS_MODULE_PROHIBITED_ON_VAR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getMULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNAMED_COMPANION_IN_EXTERNAL_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNESTED_CLASS_IN_EXTERNAL_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNESTED_EXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNESTED_JS_EXPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getNESTED_JS_MODULE_PROHIBITED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getNON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public fun getRendererFactory ()Lorg/jetbrains/kotlin/diagnostics/rendering/BaseDiagnosticRendererFactory;
 	public final fun getUNCHECKED_CAST_TO_EXTERNAL_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getUNSUPPORTED_REFLECTION_API ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
@@ -44,6 +49,13 @@ public final class org/jetbrains/kotlin/fir/analysis/web/common/checkers/declara
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/web/common/checkers/declaration/FirMultipleJsExportDefaultAnnotationChecker;
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirFile;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/analysis/web/common/checkers/declaration/FirWebCommonAbstractNativeAnnotationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public fun <init> (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirNamedFunction;)V
+	protected final fun hasRequiredAnnotation (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/declarations/FirFunction;)Z
 }
 
 public abstract class org/jetbrains/kotlin/fir/analysis/web/common/checkers/declaration/FirWebCommonExternalChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -92,5 +104,8 @@ public final class org/jetbrains/kotlin/fir/analysis/web/common/checkers/express
 
 public final class org/jetbrains/kotlin/fir/declarations/utils/FirWebCommonHelpersKt {
 	public static final fun isEffectivelyExternal (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Z
+	public static final fun isEffectivelyExternalOrOverridingExternal (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)Z
+	public static final fun isNativeInterface (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Z
+	public static final fun isNativeObject (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Z
 }
 

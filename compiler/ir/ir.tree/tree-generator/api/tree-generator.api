@@ -73,6 +73,7 @@ public final class org/jetbrains/kotlin/ir/generator/IrSymbolTree : org/jetbrain
 
 public final class org/jetbrains/kotlin/ir/generator/IrTree : org/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/ir/generator/IrTree;
+	public final fun getAnnotation ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getAnonymousInitializer ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getBlock ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
 	public final fun getBlockBody ()Lorg/jetbrains/kotlin/ir/generator/model/Element;

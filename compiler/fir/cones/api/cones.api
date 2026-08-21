@@ -1,4 +1,5 @@
 public abstract interface class org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic {
+	public fun getReadableDescriptionAsTypeConstructor ()Ljava/lang/String;
 	public abstract fun getReason ()Ljava/lang/String;
 }
 
@@ -28,6 +29,12 @@ public final class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ToStr
 	public fun render (Ljava/lang/Iterable;)Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/fir/renderer/ConeFullyQualifiedIdRenderer : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
+	public fun <init> ()V
+	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
+	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+}
+
 public final class org/jetbrains/kotlin/fir/renderer/ConeIdFullRenderer : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
 	public fun <init> ()V
 	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
@@ -49,12 +56,6 @@ public final class org/jetbrains/kotlin/fir/renderer/ConeIdRendererForDebugging 
 	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
 }
 
-public final class org/jetbrains/kotlin/fir/renderer/ConeIdRendererForDiagnostics : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
-	public fun <init> ()V
-	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
-	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
-}
-
 public class org/jetbrains/kotlin/fir/renderer/ConeIdShortRenderer : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
 	public fun <init> ()V
 	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
@@ -67,6 +68,7 @@ public class org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
 	public fun <init> ()V
 	public fun <init> (Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer;Z)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun couldBenefitFromParenthesizing (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)Z
 	public final fun getBuilder ()Ljava/lang/StringBuilder;
 	public final fun getIdRenderer ()Lorg/jetbrains/kotlin/fir/renderer/ConeIdRenderer;
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType;)V
@@ -74,13 +76,16 @@ public class org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntegerLiteralType;)V
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;)V
 	public final fun render (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/lang/String;)V
+	protected final fun render (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)V
 	public static synthetic fun render$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/lang/String;ILjava/lang/Object;)V
 	public fun renderAsPossibleFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun renderAsPossibleFunctionType$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	protected fun renderAttributes (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
-	public fun renderConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/lang/String;)V
-	public static synthetic fun renderConstructor$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/lang/String;ILjava/lang/Object;)V
+	public final fun renderConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)V
+	public fun renderDiagnostic (Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public static synthetic fun renderDiagnostic$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
 	protected final fun renderNonCompilerAttributes (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	protected fun renderSimpleType (Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;Ljava/lang/String;)V
 	public final fun setBuilder (Ljava/lang/StringBuilder;)V
 	public final fun setIdRenderer (Lorg/jetbrains/kotlin/fir/renderer/ConeIdRenderer;)V
 }
@@ -108,8 +113,10 @@ public class org/jetbrains/kotlin/fir/renderer/ConeTypeRendererForReadability : 
 	public synthetic fun <init> (Ljava/lang/StringBuilder;Ljava/util/Map;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/util/Map;Lkotlin/jvm/functions/Function0;)V
 	public synthetic fun <init> (Ljava/util/Map;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun couldBenefitFromParenthesizing (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)Z
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeFlexibleType;)V
-	public fun renderConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/lang/String;)V
+	public fun renderDiagnostic (Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	protected fun renderSimpleType (Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;Ljava/lang/String;)V
 }
 
 public abstract class org/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutor : org/jetbrains/kotlin/types/model/TypeSubstitutorMarker {
@@ -137,7 +144,9 @@ public final class org/jetbrains/kotlin/fir/symbols/SyntheticCallableId {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/symbols/SyntheticCallableId;
 	public final fun getACCEPT_SPECIFIC_TYPE ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getCHECK_NOT_NULL ()Lorg/jetbrains/kotlin/name/CallableId;
-	public final fun getELVIS_NOT_NULL ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getDANGLING_COLLECTION_LITERAL ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getELVIS ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getEQUALITY ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getID ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getTRY ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getWHEN ()Lorg/jetbrains/kotlin/name/CallableId;
@@ -200,6 +209,7 @@ public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$Enhance
 	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
 	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
 	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getImplementsEquality ()Z
 	public fun getKeepInInferredDeclarationType ()Z
 	public fun getKey ()Lkotlin/reflect/KClass;
 	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
@@ -381,6 +391,7 @@ public final class org/jetbrains/kotlin/fir/types/ConeBuiltinTypeUtilsKt {
 	public static final fun isPrimitiveNumberOrNullableType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public static final fun isPrimitiveOrNullablePrimitive (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public static final fun isPrimitiveOrUnsignedArray (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isSequence (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public static final fun isSet (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public static final fun isShort (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public static final fun isString (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
@@ -693,6 +704,7 @@ public final class org/jetbrains/kotlin/fir/types/ConeTypeUtilsKt {
 	public static final fun renderReadableWithFqNames (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/util/Map;)Ljava/lang/String;
 	public static synthetic fun renderReadableWithFqNames$default (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/util/Map;ILjava/lang/Object;)Ljava/lang/String;
 	public static final fun replaceArgumentsWithStarProjections (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public static final fun replaceArgumentsWithStarProjectionsOrNull (Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
 	public static final fun toTypeProjection (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ProjectionKind;)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
 	public static final fun toTypeProjection (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/types/Variance;)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
 	public static final fun unwrapLowerBound (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;

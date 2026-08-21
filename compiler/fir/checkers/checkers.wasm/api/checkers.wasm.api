@@ -1,20 +1,16 @@
 public final class org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrors : org/jetbrains/kotlin/diagnostics/KtDiagnosticsContainer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrors;
 	public final fun getASSOCIATED_OBJECT_INVALID_BINDING ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getCALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getEXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getEXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getEXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getJSCODE_INVALID_PARAMETER_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJSCODE_UNSUPPORTED_FUNCTION_KIND ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getJSCODE_WRONG_CONTEXT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJS_AND_WASM_EXPORTS_ON_SAME_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getJS_MODULE_PROHIBITED_ON_NON_EXTERNAL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getJS_MODULE_PROHIBITED_ON_VAR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getNESTED_JS_MODULE_PROHIBITED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getNATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getNESTED_WASM_EXPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNESTED_WASM_IMPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getNON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getNON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public fun getRendererFactory ()Lorg/jetbrains/kotlin/diagnostics/rendering/BaseDiagnosticRendererFactory;
 	public final fun getWASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -35,8 +31,8 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErr
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/FirWasmJsCodeHelpersKt {
+	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/declarations/FirNamedFunction;)Z
 	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Z
-	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;)Z
 	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/symbols/impl/FirNamedFunctionSymbol;)Z
 	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/symbols/impl/FirPropertySymbol;)Z
 }
@@ -71,6 +67,7 @@ public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmBaseTypeC
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmJsDeclarationCheckers : org/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmJsDeclarationCheckers;
 	public fun getBasicDeclarationCheckers ()Ljava/util/Set;
+	public fun getSimpleFunctionCheckers ()Ljava/util/Set;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/WasmJsExpressionCheckers : org/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers {

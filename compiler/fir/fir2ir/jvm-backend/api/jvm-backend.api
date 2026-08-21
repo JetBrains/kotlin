@@ -154,6 +154,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/ConeTypeSystemCommonBack
 	public fun upperBoundCount (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)I
 	public fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;
 	public fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;)Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;
+	public fun withNewTypeSince (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;Ljava/lang/Object;Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun withNullability (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;Z)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun withNullability (Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;Z)Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;
 }
@@ -198,11 +199,10 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmElementAwareString
 
 public class org/jetbrains/kotlin/fir/backend/jvm/FirJvmSerializerExtension : org/jetbrains/kotlin/fir/serialization/FirSerializerExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/fir/backend/jvm/FirJvmSerializerExtension$Companion;
-	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/codegen/serialization/JvmSerializationBindings;Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/ScopeSession;Lorg/jetbrains/kotlin/codegen/serialization/JvmSerializationBindings;ZLjava/lang/String;Lorg/jetbrains/kotlin/codegen/ClassBuilderMode;ZZLorg/jetbrains/kotlin/metadata/deserialization/BinaryVersion;Lorg/jetbrains/kotlin/config/JvmDefaultMode;Lorg/jetbrains/kotlin/fir/serialization/FirElementAwareStringTable;Lorg/jetbrains/kotlin/fir/serialization/constant/ConstValueProvider;Lorg/jetbrains/kotlin/fir/serialization/FirAdditionalMetadataProvider;)V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/codegen/serialization/JvmSerializationBindings;Ljava/util/List;Lorg/jetbrains/kotlin/fir/resolve/ScopeSession;Lorg/jetbrains/kotlin/codegen/serialization/JvmSerializationBindings;ZLjava/lang/String;Lorg/jetbrains/kotlin/codegen/ClassBuilderMode;ZZLorg/jetbrains/kotlin/metadata/deserialization/BinaryVersion;Lorg/jetbrains/kotlin/config/JvmDefaultMode;Lorg/jetbrains/kotlin/fir/serialization/FirElementAwareStringTable;Lorg/jetbrains/kotlin/fir/serialization/FirAdditionalMetadataProvider;)V
 	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/codegen/serialization/JvmSerializationBindings;Lorg/jetbrains/kotlin/codegen/state/GenerationState;Ljava/util/List;Lorg/jetbrains/kotlin/types/AbstractTypeApproximator;Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;Lorg/jetbrains/kotlin/fir/serialization/FirElementAwareStringTable;)V
 	public fun getAdditionalMetadataProvider ()Lorg/jetbrains/kotlin/fir/serialization/FirAdditionalMetadataProvider;
 	public fun getClassSupertypes (Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Ljava/util/List;
-	public fun getConstValueProvider ()Lorg/jetbrains/kotlin/fir/serialization/constant/ConstValueProvider;
 	protected fun getLocalClassIdOracle ()Lorg/jetbrains/kotlin/fir/serialization/LocalClassIdOracle;
 	public fun getMetadataVersion ()Lorg/jetbrains/kotlin/metadata/deserialization/BinaryVersion;
 	public fun getScopeSession ()Lorg/jetbrains/kotlin/fir/resolve/ScopeSession;
@@ -279,7 +279,8 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/JvmFir2IrExtensions : or
 	public fun deserializeToplevelClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;)Z
 	public fun findInjectedInlineLambdaArgument (Lorg/jetbrains/kotlin/fir/symbols/impl/FirValueParameterSymbol;)Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
 	public fun findInjectedValue (Lorg/jetbrains/kotlin/fir/references/FirReference;Lorg/jetbrains/kotlin/fir/backend/Fir2IrConversionScope;)Lorg/jetbrains/kotlin/fir/backend/utils/InjectedValue;
-	public fun generateRawTypeAnnotationCall ()Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;
+	public fun generateRawTypeAnnotationCall ()Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;
+	public synthetic fun generateRawTypeAnnotationCall ()Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;
 	public fun getCachedFields ()Lorg/jetbrains/kotlin/backend/jvm/CachedFieldsForObjectInstances;
 	public fun getExternalOverridabilityConditions ()Ljava/util/List;
 	public fun getIrNeedsDeserialization ()Z

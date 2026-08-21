@@ -85,6 +85,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/DIAGN
 	public final fun getTYPE_ALIAS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getUNRESOLVED ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getVALUE_CLASSES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getVERSION_OVERLOADS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getWHEN_EXPRESSIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 }
 
