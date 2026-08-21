@@ -314,6 +314,21 @@ constructor(
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", KotlinReleaseVersion(2, 3, 0))
 
         /**
+         * Controls whether the common sources of a multiplatform module are compiled incrementally.
+         *
+         * When this option is disabled, the whole module is recompiled as soon as any of its common sources has to be recompiled.
+         * Enabling this option restores incremental compilation of common sources, which speeds up such builds.
+         *
+         * This option is experimental.
+         *
+         * @since 2.5.0
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES: Option<Boolean> =
+            Option("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES", KotlinReleaseVersion(2, 5, 0))
+
+        /**
          * Controls whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
          * This runner only works with Kotlin Language Version 2.0+ and is disabled by default.
          */

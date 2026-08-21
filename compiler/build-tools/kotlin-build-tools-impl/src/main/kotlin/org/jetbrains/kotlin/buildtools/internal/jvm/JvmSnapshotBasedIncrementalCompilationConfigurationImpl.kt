@@ -114,6 +114,9 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
 
         val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
 
+        val ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES: Option<Boolean> =
+            Option("ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES", false)
+
         // copied from BaseCompilationConfigurationImpl so initializeOptions works
 
         val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)

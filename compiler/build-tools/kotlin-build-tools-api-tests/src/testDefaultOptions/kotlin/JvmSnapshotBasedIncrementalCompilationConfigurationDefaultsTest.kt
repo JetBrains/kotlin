@@ -51,6 +51,11 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         )
         @OptIn(ExperimentalCompilerArgument::class)
         assertEquals(
+            false,
+            icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES]
+        )
+        @OptIn(ExperimentalCompilerArgument::class)
+        assertEquals(
             true,
             icConfiguration[BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]
         )

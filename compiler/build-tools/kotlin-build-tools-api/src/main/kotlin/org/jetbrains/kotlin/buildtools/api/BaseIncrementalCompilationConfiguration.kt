@@ -100,6 +100,9 @@ public interface BaseIncrementalCompilationConfiguration {
          * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
          * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
          * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
+         *
+         * This option has no effect on the JVM target. Use
+         * `JvmSnapshotBasedIncrementalCompilationConfiguration.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES` instead.
          */
         @JvmField
         @ExperimentalCompilerArgument

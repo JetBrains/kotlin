@@ -1798,6 +1798,7 @@ public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncremental
 	public static final field ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field BACKUP_CLASSES Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Companion;
+	public static final field ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field FORCE_RECOMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field KEEP_IC_CACHES_IN_MEMORY Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field MODULE_BUILD_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
