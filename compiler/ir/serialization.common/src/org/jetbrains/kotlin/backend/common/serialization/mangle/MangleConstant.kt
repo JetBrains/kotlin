@@ -42,5 +42,18 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val LOCAL_DECLARATION_INDEX_PREFIX = '$'
 
         const val JAVA_FIELD_SUFFIX = "#jf"
+
+        private val COMPANION_EXTENSION_RECEIVER_TERMINATORS = charArrayOf(
+            VALUE_PARAMETERS.prefix,
+            TYPE_PARAMETERS.prefix,
+            FUNCTION_NAME_PREFIX,
+            PLATFORM_FUNCTION_MARKER,
+            EXTENSION_RECEIVER_PREFIX,
+        )
+
+        fun extractCompanionExtensionReceiver(mangledName: String): String? =
+            mangledName.substringAfter("$COMPANION_EXTENSION_MARK$EXTENSION_RECEIVER_PREFIX", missingDelimiterValue = "")
+                .takeWhile { it !in COMPANION_EXTENSION_RECEIVER_TERMINATORS }
+                .takeIf { it.isNotEmpty() }
     }
 }

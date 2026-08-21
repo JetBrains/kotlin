@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.UNKNOWN_NAME
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -218,7 +219,7 @@ private fun IrSymbol.guessName(): String? {
 private fun Appendable.signature(symbol: IrSymbol): Appendable {
     var file: String? = null
 
-    val symbolRepresentation = symbol.signature?.render()
+    val symbolRepresentation = symbol.signature?.withCompanionExtensionReceiverForRendering()?.render()
         ?: symbol.privateSignature?.let {
             // Try to extract symbol name from private signature if no public signature is available.
             // This could happen during visiting local IR entities declared inside function body.
@@ -244,6 +245,15 @@ private fun Appendable.signature(symbol: IrSymbol): Appendable {
     append('\'').append(symbolRepresentation).append('\'')
     if (file != null) append(" declared in file ").append(file)
     return this
+}
+
+private fun IdSignature.withCompanionExtensionReceiverForRendering(): IdSignature {
+    val signature = asPublic() ?: return this
+    val receiver = signature.description
+        ?.let(MangleConstant::extractCompanionExtensionReceiver)
+        ?.substringAfterLast('/')
+    if (receiver.isNullOrEmpty()) return this
+    return with(signature) { CommonSignature(packageFqName, "$receiver.$declarationFqName", id, mask, description) }
 }
 
 private const val UNKNOWN_SYMBOL = "<unknown symbol>"
