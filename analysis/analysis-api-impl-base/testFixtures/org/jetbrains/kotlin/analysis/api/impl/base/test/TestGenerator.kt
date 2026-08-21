@@ -509,13 +509,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
         }
     }
 
-    component("symbolDeclarationRenderer") {
+    component("renderer") {
         test<AbstractRendererTest> {
-            model(it, "renderDeclaration")
+            model(it, "entireFile")
         }
 
         test<AbstractSymbolRenderingByReferenceTest>(analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone)) {
-            model(it, "symbolRenderingByReference")
+            model(it, "symbolByReference")
         }
     }
 
