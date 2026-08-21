@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
@@ -19,16 +20,22 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import java.lang.annotation.RetentionPolicy
 
@@ -307,6 +314,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
             val constraint = constraints.parameters[methodParameter]
             if (!checkTypeCompliesWithConstraint(implParameter.type, constraint))
                 return false
+            if (!isReferenceParameterAdaptable(implParameter.type, methodParameter.type))
+                return false
         }
         if (!checkTypeCompliesWithConstraint(implFun.returnType, constraints.returnType))
             return false
@@ -352,6 +361,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             if (parameterConstraint.requiresImplLambdaBoxing()) {
                 makeLambdaParameterNullable(implFun, implParameter)
             }
+            adaptReferenceLambdaParameter(implFun, implParameter, methodParameter.type)
         }
         if (constraints.returnType.requiresImplLambdaBoxing() ||
             implFun.returnType.isUnit() && !fakeInstanceMethod.returnType.isUnit()
@@ -374,6 +384,41 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 super.visitGetValue(expression)
             }
         }, null)
+    }
+
+    private fun isReferenceParameterAdaptable(implType: IrType, methodType: IrType): Boolean {
+        if (implType == methodType) return true
+        if (implType.isPrimitiveType() || methodType.isPrimitiveType()) return false
+        if (implType.isInlineClassType() || methodType.isInlineClassType()) return false
+        return isSubtypeOf(implType, methodType) || isSubtypeOf(methodType, implType)
+    }
+
+    private fun isSubtypeOf(subType: IrType, superType: IrType): Boolean =
+        AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(context.typeSystem), subType, superType)
+
+    private fun adaptReferenceLambdaParameter(function: IrFunction, parameter: IrValueParameter, methodType: IrType) {
+        val implementationType = parameter.type
+        if (implementationType == methodType || !isReferenceParameterAdaptable(implementationType, methodType)) return
+        if (!isSubtypeOf(implementationType, methodType)) return
+
+        // LambdaMetafactory passes the erased SAM parameter type to the implementation method.
+        // Keep the lambda's original Kotlin type at each use site and insert the required JVM cast.
+        parameter.type = methodType
+        function.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                if (expression.symbol != parameter.symbol) return super.visitGetValue(expression)
+                val transformed = super.visitGetValue(expression) as IrGetValue
+                transformed.type = methodType
+                return IrTypeOperatorCallImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    implementationType,
+                    IrTypeOperator.IMPLICIT_CAST,
+                    implementationType,
+                    transformed,
+                )
+            }
+        })
     }
 
     private fun validateMethodParameters(
