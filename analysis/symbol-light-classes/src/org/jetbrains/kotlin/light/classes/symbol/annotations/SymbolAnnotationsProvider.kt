@@ -21,16 +21,19 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
-        val indices = mutableMapOf<ClassId?, Int>()
-        annotatedSymbol.annotations.map { annotation ->
+        val indices = mutableMapOf<ClassId, Int>()
+        annotatedSymbol.annotations.mapNotNull { annotation ->
+            // Unresolved annotations have no ClassId, so they cannot be represented in a light class
+            val classId = annotation.classId ?: return@mapNotNull null
+
             // to preserve the initial annotations order
-            val index = indices.merge(annotation.classId, 0) { old, _ -> old + 1 }!!
+            val index = indices.merge(classId, 0) { old, _ -> old + 1 }!!
             annotation.toDumbLightClassAnnotationApplication(index, ktModule)
         }
     }
 
     override fun get(classId: ClassId): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotations[classId].mapIndexed { index, annotation ->
+        annotatedSymbol.annotations[classId].mapIndexedNotNull { index, annotation ->
             annotation.toLightClassAnnotationApplication(
                 index,
                 ktModule

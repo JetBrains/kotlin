@@ -20,11 +20,7 @@ internal class SymbolLightLazyAnnotation(
     private val annotationApplication: AnnotationApplication,
     owner: PsiElement,
 ) : SymbolLightAbstractAnnotation(owner) {
-    init {
-        requireNotNull(annotationApplication.annotation.classId)
-    }
-
-    private val classId: ClassId get() = annotationApplication.annotation.classId!!
+    private val classId: ClassId get() = annotationApplication.annotation.classId
 
     private val fqName: FqName = classId.asSingleFqName()
 
