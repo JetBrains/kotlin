@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
@@ -31,7 +31,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
+    constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtNodeTypes.PROPERTY_ACCESSOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitPropertyAccessor(this, data)
@@ -64,8 +64,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
      */
     open val parameterList: KtParameterList?
         get() =
-            @Suppress("DEPRECATION") // KT-78356
-            getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+            getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList::class.java)
 
     /**
      * The single parameter of a setter (the new value), or `null` for a getter or when it is absent.
@@ -113,15 +112,13 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
         findChildByType(KtTokens.EQ)
 
     override fun getContractDescription(): KtContractEffectList? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
+        getStubOrPsiChild(KtNodeTypes.CONTRACT_EFFECT_LIST, KtContractEffectList::class.java)
 
     /** Always `true`: an accessor's return type is always known (it is the property's type). */
     override fun hasDeclaredReturnType(): Boolean = true
 
     override fun getTypeReference(): KtTypeReference? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
+        getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference::class.java)
 
     /**
      * The `get` or `set` keyword, which stands in for the accessor's name (an accessor has no name of its own).
@@ -175,4 +172,10 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     )
     open val rightParenthesis: PsiElement?
         get() = parameterList?.rightParenthesis
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtPropertyAccessor> = emptyArray()
+    }
 }

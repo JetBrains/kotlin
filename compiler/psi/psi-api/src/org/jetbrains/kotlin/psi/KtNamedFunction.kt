@@ -9,7 +9,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
@@ -37,7 +37,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinFunctionStub) : super(stub, /* nodeType = */ KtStubBasedElementTypes.FUNCTION)
+    constructor(stub: KotlinFunctionStub) : super(stub, /* nodeType = */ KtNodeTypes.FUN)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
@@ -84,8 +84,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         ItemPresentationProviders.getItemPresentation(/* element = */ this)
 
     override fun getValueParameterList(): KtParameterList? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+        getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList::class.java)
 
     override fun getValueParameters(): List<KtParameter> =
         valueParameterList?.parameters.orEmpty()
@@ -129,7 +128,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         if (!stub.isExtension) {
             return null
         }
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).firstOrNull()
+        return typeReferences().firstOrNull()
     }
 
     private val receiverTypeRefByTree: KtTypeReference?
@@ -150,10 +149,13 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     override fun getTypeReference(): KtTypeReference? {
         val stub = greenStub ?: return getTypeReference(declaration = this)
 
-        val typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE)
+        val typeReferences = typeReferences()
         val returnTypeIndex = if (stub.isExtension) 1 else 0
         return if (returnTypeIndex < typeReferences.size) typeReferences[returnTypeIndex] else null
     }
+
+    private fun typeReferences(): Array<out KtTypeReference> =
+        getStubOrPsiChildren(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.EMPTY_ARRAY)
 
     @Deprecated(
         message = "Use setFunctionTypeReference(typeRef) instead",
@@ -208,8 +210,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         false
 
     override fun getContractDescription(): KtContractEffectList? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
+        getStubOrPsiChild(KtNodeTypes.CONTRACT_EFFECT_LIST, KtContractEffectList::class.java)
 
     @OptIn(KtImplementationDetail::class)
     override fun mayHaveContract(): Boolean {
@@ -228,5 +229,11 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             return it.mayHaveContract
         }
         return isContractPresentPsiCheck(isAllowedOnMembers)
+    }
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtNamedFunction> = emptyArray()
     }
 }

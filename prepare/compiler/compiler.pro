@@ -199,6 +199,9 @@
 # for j2k
 -keep class com.intellij.codeInsight.NullableNotNullManager { public protected *; }
 
+# for Swift Export
+-keep class com.intellij.lang.LanguageExtensionPoint { *; }
+
 # for gradle (see KT-12549)
 -keep class com.intellij.lang.properties.charset.Native2AsciiCharsetProvider { *; }
 

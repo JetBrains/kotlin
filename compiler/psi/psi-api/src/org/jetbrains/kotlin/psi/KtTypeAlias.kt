@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
@@ -30,7 +30,7 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinTypeAliasStub) : super(stub, KtStubBasedElementTypes.TYPEALIAS)
+    constructor(stub: KotlinTypeAliasStub) : super(stub, KtNodeTypes.TYPEALIAS)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)
@@ -52,8 +52,7 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
      */
     @IfNotParsed
     fun getTypeReference(): KtTypeReference? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild<KtTypeReference>(KtStubBasedElementTypes.TYPE_REFERENCE)
+        getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference::class.java)
 
     override fun getClassId(): ClassId? {
         greenStub?.let { return it.classId }

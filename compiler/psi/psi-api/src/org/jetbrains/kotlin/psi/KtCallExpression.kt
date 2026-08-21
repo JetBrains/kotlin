@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -27,25 +27,23 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtStubBasedElementTypes.CALL_EXPRESSION)
+    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtNodeTypes.CALL_EXPRESSION)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitCallExpression(this, data)
     }
 
     override fun getCalleeExpression(): KtExpression? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION) ?: findChildByClass(KtExpression::class.java)
+        return getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression::class.java)
+            ?: findChildByClass(KtExpression::class.java)
     }
 
     override fun getValueArgumentList(): KtValueArgumentList? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_LIST, KtValueArgumentList::class.java)
     }
 
     override fun getTypeArgumentList(): KtTypeArgumentList? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtNodeTypes.TYPE_ARGUMENT_LIST, KtTypeArgumentList::class.java)
     }
 
     /**
@@ -56,7 +54,7 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
      * than one element.
      */
     override fun getLambdaArguments(): List<KtLambdaArgument> {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.LAMBDA_ARGUMENT)
+        return getStubOrPsiChildren(KtNodeTypes.LAMBDA_ARGUMENT, KtLambdaArgument.EMPTY_ARRAY).asList()
     }
 
     override fun getValueArguments(): List<KtValueArgument> {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceH
 
     @KtImplementationDetail
     public KtObjectLiteralExpression(@NotNull KotlinPlaceHolderStub<KtObjectLiteralExpression> stub) {
-        super(stub, KtStubBasedElementTypes.OBJECT_LITERAL);
+        super(stub, KtNodeTypes.OBJECT_LITERAL);
     }
 
     @Override
@@ -42,8 +42,7 @@ public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceH
 
     /** Returns the anonymous object declaration wrapped by this expression. */
     @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
     public KtObjectDeclaration getObjectDeclaration() {
-        return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OBJECT_DECLARATION));
+        return Objects.requireNonNull(getStubOrPsiChild(KtNodeTypes.OBJECT_DECLARATION, KtObjectDeclaration.class));
     }
 }

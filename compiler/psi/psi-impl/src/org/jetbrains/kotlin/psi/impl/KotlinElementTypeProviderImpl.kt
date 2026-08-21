@@ -13,6 +13,7 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.ILazyParseableElementType
 import org.jetbrains.kotlin.BlockExpressionElementType
 import org.jetbrains.kotlin.KotlinElementTypeProvider
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.LambdaExpressionElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocLexer
@@ -20,9 +21,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser
 import org.jetbrains.kotlin.kdoc.parser.KDocParser
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @KtImplementationDetail
@@ -32,182 +31,182 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     // Classifiers
 
-    override val classType: KtStubElementType<out KotlinClassStub, KtClass>
+    override val classType: KtNodeType
         get() = KtStubElementTypes.CLASS
 
-    override val objectType: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration>
+    override val objectType: KtNodeType
         get() = KtStubElementTypes.OBJECT_DECLARATION
 
-    override val typeAliasType: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias>
+    override val typeAliasType: KtNodeType
         get() = KtStubElementTypes.TYPEALIAS
 
-    override val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
+    override val classBodyType: KtNodeType
         get() = KtStubElementTypes.CLASS_BODY
 
     @KtExperimentalApi
-    override val companionBlockType: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock>
+    override val companionBlockType: KtNodeType
         get() = KtStubElementTypes.COMPANION_BLOCK
 
     // Initializers
 
-    override val classInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
+    override val classInitializerType: KtNodeType
         get() = KtStubElementTypes.CLASS_INITIALIZER
 
-    override val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
+    override val scriptInitializerType: KtNodeType
         get() = KtStubElementTypes.SCRIPT_INITIALIZER
 
     // Callables
 
-    override val functionType: KtStubElementType<out KotlinFunctionStub, KtNamedFunction>
+    override val functionType: KtNodeType
         get() = KtStubElementTypes.FUNCTION
 
-    override val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>
+    override val propertyType: KtNodeType
         get() = KtStubElementTypes.PROPERTY
 
-    override val enumEntryType: KtStubElementType<out KotlinClassStub, KtEnumEntry>
+    override val enumEntryType: KtNodeType
         get() = KtStubElementTypes.ENUM_ENTRY
 
-    override val primaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>
+    override val primaryConstructorType: KtNodeType
         get() = KtStubElementTypes.PRIMARY_CONSTRUCTOR
 
-    override val secondaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor>
+    override val secondaryConstructorType: KtNodeType
         get() = KtStubElementTypes.SECONDARY_CONSTRUCTOR
 
-    override val constructorCalleeType: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>
+    override val constructorCalleeType: KtNodeType
         get() = KtStubElementTypes.CONSTRUCTOR_CALLEE
 
-    override val propertyAccessorType: KtStubElementType<out KotlinPropertyAccessorStub, KtPropertyAccessor>
+    override val propertyAccessorType: KtNodeType
         get() = KtStubElementTypes.PROPERTY_ACCESSOR
 
-    override val backingFieldType: KtStubElementType<out KotlinBackingFieldStub, KtBackingField>
+    override val backingFieldType: KtNodeType
         get() = KtStubElementTypes.BACKING_FIELD
 
-    override val destructuringDeclarationType: KtStubElementType<out KotlinDestructuringDeclarationStub, KtDestructuringDeclaration>
+    override val destructuringDeclarationType: KtNodeType
         get() = KtStubElementTypes.DESTRUCTURING_DECLARATION
 
-    override val initializerListType: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList>
+    override val initializerListType: KtNodeType
         get() = KtStubElementTypes.INITIALIZER_LIST
 
 
     // Value parameters
-    override val valueParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtParameterList>, KtParameterList>
+    override val valueParameterListType: KtNodeType
         get() = KtStubElementTypes.VALUE_PARAMETER_LIST
 
-    override val valueParameterType: KtStubElementType<out KotlinParameterStub, KtParameter>
+    override val valueParameterType: KtNodeType
         get() = KtStubElementTypes.VALUE_PARAMETER
 
-    override val contextParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextParameterList>, KtContextParameterList>
+    override val contextParameterListType: KtNodeType
         get() = KtStubElementTypes.CONTEXT_PARAMETER_LIST
 
-    override val contextReceiverType: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver>
+    override val contextReceiverType: KtNodeType
         get() = KtStubElementTypes.CONTEXT_RECEIVER
 
 
     // Type parameters
-    override val typeParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList>
+    override val typeParameterListType: KtNodeType
         get() = KtStubElementTypes.TYPE_PARAMETER_LIST
 
-    override val typeParameterType: KtStubElementType<out KotlinTypeParameterStub, KtTypeParameter>
+    override val typeParameterType: KtNodeType
         get() = KtStubElementTypes.TYPE_PARAMETER
 
-    override val typeConstraintListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList>
+    override val typeConstraintListType: KtNodeType
         get() = KtStubElementTypes.TYPE_CONSTRAINT_LIST
 
-    override val typeConstraintType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint>
+    override val typeConstraintType: KtNodeType
         get() = KtStubElementTypes.TYPE_CONSTRAINT
 
 
     // Supertypes
-    override val superTypeListType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeList>, KtSuperTypeList>
+    override val superTypeListType: KtNodeType
         get() = KtStubElementTypes.SUPER_TYPE_LIST
 
-    override val delegatedSuperTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry>
+    override val delegatedSuperTypeEntryType: KtNodeType
         get() = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY
 
-    override val superTypeCallEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry>
+    override val superTypeCallEntryType: KtNodeType
         get() = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY
 
-    override val superTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry>
+    override val superTypeEntryType: KtNodeType
         get() = KtStubElementTypes.SUPER_TYPE_ENTRY
 
 
     // Modifiers and annotations
 
-    override val modifierListType: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList>
+    override val modifierListType: KtNodeType
         get() = KtStubElementTypes.MODIFIER_LIST
 
-    override val annotationType: KtStubElementType<out KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation>
+    override val annotationType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION
 
-    override val annotationEntryType: KtStubElementType<out KotlinAnnotationEntryStub, KtAnnotationEntry>
+    override val annotationEntryType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION_ENTRY
 
-    override val annotationTargetType: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>
+    override val annotationTargetType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION_TARGET
 
 
     // Type references
 
-    override val typeReferenceType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference>
+    override val typeReferenceType: KtNodeType
         get() = KtStubElementTypes.TYPE_REFERENCE
 
-    override val userTypeType: KtStubElementType<out KotlinUserTypeStub, KtUserType>
+    override val userTypeType: KtNodeType
         get() = KtStubElementTypes.USER_TYPE
 
-    override val dynamicTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtDynamicType>, KtDynamicType>
+    override val dynamicTypeType: KtNodeType
         get() = KtStubElementTypes.DYNAMIC_TYPE
 
-    override val functionTypeType: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType>
+    override val functionTypeType: KtNodeType
         get() = KtStubElementTypes.FUNCTION_TYPE
 
-    override val functionTypeReceiverType: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>
+    override val functionTypeReceiverType: KtNodeType
         get() = KtStubElementTypes.FUNCTION_TYPE_RECEIVER
 
-    override val nullableTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtNullableType>, KtNullableType>
+    override val nullableTypeType: KtNodeType
         get() = KtStubElementTypes.NULLABLE_TYPE
 
-    override val intersectionTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType>
+    override val intersectionTypeType: KtNodeType
         get() = KtStubElementTypes.INTERSECTION_TYPE
 
-    override val typeProjectionType: KtStubElementType<out KotlinTypeProjectionStub, KtTypeProjection>
+    override val typeProjectionType: KtNodeType
         get() = KtStubElementTypes.TYPE_PROJECTION
 
 
     // Constants
-    override val nullType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val nullType: KtNodeType
         get() = KtStubElementTypes.NULL
 
-    override val booleanConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val booleanConstantType: KtNodeType
         get() = KtStubElementTypes.BOOLEAN_CONSTANT
 
-    override val floatConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val floatConstantType: KtNodeType
         get() = KtStubElementTypes.FLOAT_CONSTANT
 
-    override val characterConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val characterConstantType: KtNodeType
         get() = KtStubElementTypes.CHARACTER_CONSTANT
 
-    override val integerConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val integerConstantType: KtNodeType
         get() = KtStubElementTypes.INTEGER_CONSTANT
 
 
     // String templates
 
-    override val stringTemplateType: KtStubElementType<out KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression>
+    override val stringTemplateType: KtNodeType
         get() = KtStubElementTypes.STRING_TEMPLATE
 
-    override val longStringTemplateEntryType: KtStubElementType<out KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry>
+    override val longStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY
 
-    override val shortStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry>
+    override val shortStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY
 
-    override val literalStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry>
+    override val literalStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY
 
-    override val escapeStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry>
+    override val escapeStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
 
-    override val stringInterpolationPrefixType: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
+    override val stringInterpolationPrefixType: KtNodeType
         get() = KtStubElementTypes.STRING_INTERPOLATION_PREFIX
 
 
@@ -217,83 +216,83 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     override val lambdaExpressionType: IElementType = LambdaExpressionElementType()
 
-    override val referenceExpressionType: KtStubElementType<out KotlinNameReferenceExpressionStub, KtNameReferenceExpression>
+    override val referenceExpressionType: KtNodeType
         get() = KtStubElementTypes.REFERENCE_EXPRESSION
 
-    override val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
+    override val enumEntrySuperclassReferenceExpressionType: KtNodeType
         get() = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
 
-    override val dotQualifiedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression>
+    override val dotQualifiedExpressionType: KtNodeType
         get() = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
 
-    override val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
+    override val callExpressionType: KtNodeType
         get() = KtStubElementTypes.CALL_EXPRESSION
 
-    override val operationReferenceType: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression>
+    override val operationReferenceType: KtNodeType
         get() = KtStubElementTypes.OPERATION_REFERENCE
 
-    override val prefixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression>
+    override val prefixExpressionType: KtNodeType
         get() = KtStubElementTypes.PREFIX_EXPRESSION
 
-    override val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
+    override val postfixExpressionType: KtNodeType
         get() = KtStubElementTypes.POSTFIX_EXPRESSION
 
-    override val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
+    override val binaryExpressionType: KtNodeType
         get() = KtStubElementTypes.BINARY_EXPRESSION
 
-    override val parenthesizedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression>
+    override val parenthesizedExpressionType: KtNodeType
         get() = KtStubElementTypes.PARENTHESIZED
 
-    override val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
+    override val classLiteralExpressionType: KtNodeType
         get() = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 
-    override val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
+    override val collectionLiteralExpressionType: KtNodeType
         get() = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
 
-    override val objectLiteralType: KtStubElementType<out KotlinPlaceHolderStub<KtObjectLiteralExpression>, KtObjectLiteralExpression>
+    override val objectLiteralType: KtNodeType
         get() = KtStubElementTypes.OBJECT_LITERAL
 
     // Arguments
-    override val typeArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList>
+    override val typeArgumentListType: KtNodeType
         get() = KtStubElementTypes.TYPE_ARGUMENT_LIST
 
-    override val valueArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList>
+    override val valueArgumentListType: KtNodeType
         get() = KtStubElementTypes.VALUE_ARGUMENT_LIST
 
-    override val valueArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtValueArgument>, KtValueArgument>
+    override val valueArgumentType: KtNodeType
         get() = KtStubElementTypes.VALUE_ARGUMENT
 
-    override val contractEffectListType: KtStubElementType<out KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList>
+    override val contractEffectListType: KtNodeType
         get() = KtStubElementTypes.CONTRACT_EFFECT_LIST
 
-    override val contractEffectType: KtStubElementType<out KotlinContractEffectStub, KtContractEffect>
+    override val contractEffectType: KtNodeType
         get() = KtStubElementTypes.CONTRACT_EFFECT
 
-    override val lambdaArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument>
+    override val lambdaArgumentType: KtNodeType
         get() = KtStubElementTypes.LAMBDA_ARGUMENT
 
-    override val valueArgumentNameType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName>
+    override val valueArgumentNameType: KtNodeType
         get() = KtStubElementTypes.VALUE_ARGUMENT_NAME
 
 
     // Special
 
-    override val packageDirectiveType: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective>
+    override val packageDirectiveType: KtNodeType
         get() = KtStubElementTypes.PACKAGE_DIRECTIVE
 
-    override val fileAnnotationListType: KtStubElementType<out KotlinPlaceHolderStub<KtFileAnnotationList>, KtFileAnnotationList>
+    override val fileAnnotationListType: KtNodeType
         get() = KtStubElementTypes.FILE_ANNOTATION_LIST
 
-    override val importListType: KtStubElementType<out KotlinPlaceHolderStub<KtImportList>, KtImportList>
+    override val importListType: KtNodeType
         get() = KtStubElementTypes.IMPORT_LIST
 
-    override val importDirectiveType: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective>
+    override val importDirectiveType: KtNodeType
         get() = KtStubElementTypes.IMPORT_DIRECTIVE
 
-    override val importAliasType: KtStubElementType<out KotlinImportAliasStub, KtImportAlias>
+    override val importAliasType: KtNodeType
         get() = KtStubElementTypes.IMPORT_ALIAS
 
-    override val scriptType: KtStubElementType<out KotlinScriptStub, KtScript>
+    override val scriptType: KtNodeType
         get() = KtStubElementTypes.SCRIPT
 
 

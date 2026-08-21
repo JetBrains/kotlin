@@ -11,7 +11,7 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
@@ -30,6 +30,9 @@ import java.util.List;
  * }</pre>
  */
 public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtAnnotationEntry[] EMPTY_ARRAY = new KtAnnotationEntry[0];
+
     @KtImplementationDetail
     public KtAnnotationEntry(@NotNull ASTNode node) {
         super(node);
@@ -37,7 +40,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
 
     @KtImplementationDetail
     public KtAnnotationEntry(@NotNull KotlinAnnotationEntryStub stub) {
-        super(stub, KtStubBasedElementTypes.ANNOTATION_ENTRY);
+        super(stub, KtNodeTypes.ANNOTATION_ENTRY);
     }
 
     @Override
@@ -58,15 +61,13 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public KtConstructorCalleeExpression getCalleeExpression() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
+        return getStubOrPsiChild(KtNodeTypes.CONSTRUCTOR_CALLEE, KtConstructorCalleeExpression.class);
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentList getValueArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_LIST, KtValueArgumentList.class);
     }
 
     @NotNull
@@ -126,9 +127,8 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
      * from an enclosing {@link KtAnnotation} group, or {@code null} if there is none.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
-        KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
+        KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtNodeTypes.ANNOTATION_TARGET, KtAnnotationUseSiteTarget.class);
 
         if (target == null) {
             PsiElement parent = getParentByStub();

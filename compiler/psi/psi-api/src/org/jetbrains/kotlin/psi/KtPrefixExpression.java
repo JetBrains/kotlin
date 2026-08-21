@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -29,7 +29,7 @@ public class KtPrefixExpression extends KtUnaryExpression {
 
     @KtImplementationDetail
     public KtPrefixExpression(@NotNull KotlinPlaceHolderStub<KtPrefixExpression> stub) {
-        super(stub, KtStubBasedElementTypes.PREFIX_EXPRESSION);
+        super(stub, KtNodeTypes.PREFIX_EXPRESSION);
     }
 
     @Override

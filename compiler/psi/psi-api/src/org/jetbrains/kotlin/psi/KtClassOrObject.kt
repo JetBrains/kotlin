@@ -13,7 +13,7 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
@@ -55,8 +55,7 @@ abstract class KtClassOrObject :
      * Returns the supertype list (the types after the `:`), or `null` if this declaration has no explicit supertypes.
      */
     fun getSuperTypeList(): KtSuperTypeList? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.SUPER_TYPE_LIST)
+        getStubOrPsiChild(KtNodeTypes.SUPER_TYPE_LIST, KtSuperTypeList::class.java)
 
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
@@ -81,8 +80,7 @@ abstract class KtClassOrObject :
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
     override fun getBody(): KtClassBody? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
+        getStubOrPsiChild(KtNodeTypes.CLASS_BODY, KtClassBody::class.java)
 
     @Deprecated(
         message = "Use addMemberDeclaration(declaration) instead",
@@ -147,8 +145,7 @@ abstract class KtClassOrObject :
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 
     override fun getPrimaryConstructor(): KtPrimaryConstructor? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
+        getStubOrPsiChild(KtNodeTypes.PRIMARY_CONSTRUCTOR, KtPrimaryConstructor::class.java)
 
     override fun getPrimaryConstructorModifierList(): KtModifierList? = primaryConstructor?.modifierList
 

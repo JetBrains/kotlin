@@ -259,7 +259,7 @@ org.jetbrains.kotlin.psi.KtClassBody:constructor(KotlinPlaceHolderStub<KtClassBo
 org.jetbrains.kotlin.psi.KtClassInitializer:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtClassInitializer:constructor(KotlinPlaceHolderStub<KtClassInitializer>)
 org.jetbrains.kotlin.psi.KtClassLiteralExpression:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtClassLiteralExpression:constructor(KotlinClassLiteralExpressionStub)
+org.jetbrains.kotlin.psi.KtClassLiteralExpression:constructor(KotlinPlaceHolderStub<KtClassLiteralExpression>)
 org.jetbrains.kotlin.psi.KtClassOrObject.addDeclaration(T)
 org.jetbrains.kotlin.psi.KtClassOrObject.addDeclarationAfter(T, PsiElement?)
 org.jetbrains.kotlin.psi.KtClassOrObject.addDeclarationBefore(T, PsiElement?)
@@ -272,8 +272,6 @@ org.jetbrains.kotlin.psi.KtCodeFragment.addImport(String)
 org.jetbrains.kotlin.psi.KtCodeFragment:constructor(Project, String, CharSequence, String?, IElementType, PsiElement?)
 org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:constructor(KotlinCollectionLiteralExpressionStub)
-org.jetbrains.kotlin.psi.KtCommonFile.findChildByTypeOrClass(KtStubElementType<out S, P>, Class<P>)
-org.jetbrains.kotlin.psi.KtCommonFile.findChildrenByTypeOrClass(KtStubElementType<*, T>, Class<T>)
 org.jetbrains.kotlin.psi.KtCommonFile.greenStub
 org.jetbrains.kotlin.psi.KtCommonFile.importLists
 org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(ASTNode)
@@ -281,7 +279,7 @@ org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(KotlinPlaceHolderStub<KtCo
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(KotlinConstantExpressionStub)
 org.jetbrains.kotlin.psi.KtConstructor:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtConstructor:constructor(KotlinConstructorStub<T>, KtStubElementType<out KotlinConstructorStub<T>, T>)
+org.jetbrains.kotlin.psi.KtConstructor:constructor(KotlinConstructorStub<T>, IElementType)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(KotlinPlaceHolderStub<KtConstructorCalleeExpression>)
 org.jetbrains.kotlin.psi.KtConstructorDelegationCall:constructor(ASTNode)
@@ -296,7 +294,7 @@ org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(KotlinPlaceHolderStub<KtContextParameterList>)
 org.jetbrains.kotlin.psi.KtContinueExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContractEffect:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtContractEffect:constructor(KotlinContractEffectStub)
+org.jetbrains.kotlin.psi.KtContractEffect:constructor(KotlinPlaceHolderStub<KtContractEffect>)
 org.jetbrains.kotlin.psi.KtContractEffectList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContractEffectList:constructor(KotlinPlaceHolderStub<KtContractEffectList>)
 org.jetbrains.kotlin.psi.KtDeclarationImpl:constructor(ASTNode)
@@ -856,7 +854,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isExtension
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isTopLevel
-org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isLocal
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isTopLevel
@@ -874,7 +871,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.label
-org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.hasInitializer
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.isVar
@@ -928,12 +924,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub.projectionKind
 org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub.isSpread
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:constructor(String, Class<PsiT>, Class<?>)
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:createPsiFromAst(ASTNode)
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:getArrayFactory()
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:CONSTANT_EXPRESSIONS
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_AND_COMPANION_BLOCK_TYPES
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_TYPES
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:INSIDE_DIRECTIVE_EXPRESSIONS

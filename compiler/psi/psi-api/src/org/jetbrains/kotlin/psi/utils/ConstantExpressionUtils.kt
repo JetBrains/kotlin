@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,15 +8,13 @@
 package org.jetbrains.kotlin.psi.utils
 
 import com.intellij.util.text.LiteralFormatUtil
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtStubBasedElementTypes.BOOLEAN_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.CHARACTER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.FLOAT_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.INTEGER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.NULL
-import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
-import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.utils.extractRadix
 
 /**
@@ -160,27 +158,12 @@ fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Bo
 /**
  * Converts the given [ConstantValueKind] to the corresponding [com.intellij.psi.tree.IElementType].
  */
-fun ConstantValueKind.toConstantExpressionElementType(): KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> {
+fun ConstantValueKind.toConstantExpressionElementType(): KtNodeType {
     return when (this) {
         ConstantValueKind.NULL -> NULL
         ConstantValueKind.BOOLEAN_CONSTANT -> BOOLEAN_CONSTANT
         ConstantValueKind.FLOAT_CONSTANT -> FLOAT_CONSTANT
         ConstantValueKind.CHARACTER_CONSTANT -> CHARACTER_CONSTANT
         ConstantValueKind.INTEGER_CONSTANT -> INTEGER_CONSTANT
-    }
-}
-
-/**
- * Converts the given [com.intellij.psi.tree.IElementType] to the corresponding [ConstantValueKind].
- * The element type must be one of the constant expression types. Otherwise, an [IllegalArgumentException] is thrown.
- */
-fun KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>.toConstantValueKind(): ConstantValueKind {
-    return when (this) {
-        NULL -> ConstantValueKind.NULL
-        BOOLEAN_CONSTANT -> ConstantValueKind.BOOLEAN_CONSTANT
-        FLOAT_CONSTANT -> ConstantValueKind.FLOAT_CONSTANT
-        CHARACTER_CONSTANT -> ConstantValueKind.CHARACTER_CONSTANT
-        INTEGER_CONSTANT -> ConstantValueKind.INTEGER_CONSTANT
-        else -> throw IllegalArgumentException("Unknown constant node type: $this")
     }
 }

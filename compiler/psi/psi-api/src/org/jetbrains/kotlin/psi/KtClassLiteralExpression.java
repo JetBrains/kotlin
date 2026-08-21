@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
  * Represents a class literal expression that gets a class reference.
@@ -23,10 +23,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
  * //          ^__________^
  * }</pre>
  */
-public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiteralExpressionStub> implements KtDoubleColonExpression {
+public class KtClassLiteralExpression extends KtElementImplStub<KotlinPlaceHolderStub<KtClassLiteralExpression>>
+        implements KtDoubleColonExpression {
     @KtImplementationDetail
-    public KtClassLiteralExpression(KotlinClassLiteralExpressionStub stub) {
-        super(stub, KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION);
+    public KtClassLiteralExpression(KotlinPlaceHolderStub<KtClassLiteralExpression> stub) {
+        super(stub, KtNodeTypes.CLASS_LITERAL_EXPRESSION);
     }
 
     @KtImplementationDetail
@@ -36,14 +37,14 @@ public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiter
 
 
     private static final TokenSet CLASS_REFS = TokenSet.create(
-            KtStubBasedElementTypes.REFERENCE_EXPRESSION,
-            KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION
+            KtNodeTypes.REFERENCE_EXPRESSION,
+            KtNodeTypes.DOT_QUALIFIED_EXPRESSION
     );
 
     @Nullable
     @Override
     public KtExpression getReceiverExpression() {
-        KotlinClassLiteralExpressionStub stub = getStub();
+        KotlinPlaceHolderStub<KtClassLiteralExpression> stub = getStub();
         if (stub != null) {
             KtExpression[] expressions = stub.getChildrenByType(CLASS_REFS, KtExpression.EMPTY_ARRAY);
             if (expressions.length == 1) {

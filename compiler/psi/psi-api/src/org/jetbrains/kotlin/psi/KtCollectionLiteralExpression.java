@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
@@ -37,7 +37,7 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
         implements KtReferenceExpression, KtResolvableCall {
     @KtImplementationDetail
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
-        super(stub, KtStubBasedElementTypes.COLLECTION_LITERAL_EXPRESSION);
+        super(stub, KtNodeTypes.COLLECTION_LITERAL_EXPRESSION);
     }
 
     @KtImplementationDetail

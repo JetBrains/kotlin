@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
@@ -57,7 +57,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
 
     @KtImplementationDetail
     public KtUserType(@NotNull KotlinUserTypeStub stub) {
-        super(stub, KtStubBasedElementTypes.USER_TYPE);
+        super(stub, KtNodeTypes.USER_TYPE);
     }
 
     @Override
@@ -67,9 +67,8 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
 
     /** Returns the angle-bracketed type argument list, or {@code null} if this type has no type arguments. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeArgumentList getTypeArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_ARGUMENT_LIST, KtTypeArgumentList.class);
     }
 
     /** Returns the type arguments (as projections), or an empty list if this type has none. */
@@ -95,10 +94,16 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
      * incomplete code.
      */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getReferenceExpression() {
-        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
-        return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
+        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
+        if (nameRefExpr != null) {
+            return nameRefExpr;
+        }
+
+        return getStubOrPsiChild(
+                KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION,
+                KtEnumEntrySuperclassReferenceExpression.class
+        );
     }
 
     /**
@@ -106,9 +111,8 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
      * {@code null} if the type name is unqualified.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtUserType getQualifier() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.USER_TYPE);
+        return getStubOrPsiChild(KtNodeTypes.USER_TYPE, KtUserType.class);
     }
 
     /**

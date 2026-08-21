@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.resolution.KtResolvable;
  * }</pre>
  */
 public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>> implements KtResolvable {
-    private static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
 
     /** A factory for creating arrays of {@link KtSuperTypeListEntry}, used by the PSI child-access machinery. */
     public static ArrayFactory<KtSuperTypeListEntry> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtSuperTypeListEntry[count];
@@ -48,9 +49,8 @@ public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStu
 
     /** Returns the type reference of the supertype named by this entry, or {@code null} if it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /**

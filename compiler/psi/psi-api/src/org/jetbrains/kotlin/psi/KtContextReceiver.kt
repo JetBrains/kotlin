@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -31,7 +30,7 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubBasedElementTypes.CONTEXT_RECEIVER)
+    constructor(stub: KotlinContextReceiverStub) : super(stub, KtNodeTypes.CONTEXT_RECEIVER)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitContextReceiver(this, data)
@@ -63,8 +62,7 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     /**
      * Returns the type reference of this context receiver, or `null` if it is absent in incomplete code.
      */
-    @Suppress("DEPRECATION") // KT-78356
-    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
+    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference::class.java)
 
     /**
      * Returns the effective name used to reference this context receiver: the explicit [labelName] if present, otherwise the receiver
@@ -91,4 +89,10 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
 
             return contextReceiverList.ownerDeclaration
         }
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtContextReceiver> = emptyArray()
+    }
 }

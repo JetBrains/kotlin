@@ -9,12 +9,12 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 /**
  * Represents a constructor of a class or object.
@@ -43,7 +43,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     @KtImplementationDetail
     protected constructor(
         stub: KotlinConstructorStub<T>,
-        nodeType: KtStubElementType<out KotlinConstructorStub<T>, T>,
+        nodeType: IElementType,
     ) : super(stub, nodeType)
 
     /**
@@ -55,8 +55,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun isLocal() = false
 
     override fun getValueParameterList() =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+        getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList::class.java)
 
     override fun getValueParameters() = valueParameterList?.parameters ?: emptyList()
 

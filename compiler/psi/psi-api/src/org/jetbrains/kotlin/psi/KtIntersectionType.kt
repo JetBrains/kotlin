@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -25,7 +25,7 @@ class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectio
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtStubBasedElementTypes.INTERSECTION_TYPE)
+    constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtNodeTypes.INTERSECTION_TYPE)
 
     /** Always empty: an intersection type has no type arguments (its operands are [getLeftTypeRef] and [getRightTypeRef]). */
     override fun getTypeArgumentsAsTypes(): List<KtTypeReference> = emptyList()
@@ -33,12 +33,15 @@ class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectio
     /**
      * Returns the left operand type of the intersection (the part before `&`), or `null` if it is absent in incomplete code.
      */
-    fun getLeftTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).getOrNull(0)
+    fun getLeftTypeRef(): KtTypeReference? = typeReferences().getOrNull(0)
 
     /**
      * Returns the right operand type of the intersection (the part after `&`), or `null` if it is absent in incomplete code.
      */
-    fun getRightTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).getOrNull(1)
+    fun getRightTypeRef(): KtTypeReference? = typeReferences().getOrNull(1)
+
+    private fun typeReferences(): Array<out KtTypeReference> =
+        getStubOrPsiChildren(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.EMPTY_ARRAY)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitIntersectionType(this, data)

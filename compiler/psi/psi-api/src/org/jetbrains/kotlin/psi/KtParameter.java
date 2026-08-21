@@ -17,7 +17,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
 
@@ -72,6 +71,8 @@ import java.util.List;
  * @see #hasValOrVar()
  */
 public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration, KtValVarKeywordOwner {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtParameter[] EMPTY_ARRAY = new KtParameter[0];
 
     @KtImplementationDetail
     public KtParameter(@NotNull ASTNode node) {
@@ -80,7 +81,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     @KtImplementationDetail
     public KtParameter(@NotNull KotlinParameterStub stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_PARAMETER);
+        super(stub, KtNodeTypes.VALUE_PARAMETER);
     }
 
     @Override
@@ -90,9 +91,8 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /**

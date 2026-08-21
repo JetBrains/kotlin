@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
@@ -39,7 +39,7 @@ public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStu
 
     @KtImplementationDetail
     public KtNullableType(@NotNull KotlinPlaceHolderStub<KtNullableType> stub) {
-        super(stub, KtStubBasedElementTypes.NULLABLE_TYPE);
+        super(stub, KtNodeTypes.NULLABLE_TYPE);
     }
 
     /** Returns the AST node of the {@code ?} token that marks the type as nullable. */

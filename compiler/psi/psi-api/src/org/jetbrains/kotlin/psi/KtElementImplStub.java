@@ -16,11 +16,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Base implementation of {@link KtElement} that may be backed either by the AST tree or by a stub.
@@ -44,6 +41,11 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @KtImplementationDetail
     public KtElementImplStub(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    public IElementType getIElementType() {
+        return getElementTypeImpl();
     }
 
     @NotNull
@@ -121,7 +123,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
+    @SuppressWarnings("deprecation") // the overridden KtElement#getReference is deprecated
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
         return (references.length > 0) ? references[0] : null;
@@ -131,14 +133,6 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public PsiReference[] getReferences() {
         return KotlinReferenceProvidersService.getReferencesFromProviders(this);
-    }
-
-    @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
-    protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement<?>> List<PsiT> getStubOrPsiChildrenAsList(
-            @NotNull KtStubElementType<StubT, PsiT> elementType
-    ) {
-        return Arrays.asList(getStubOrPsiChildren(elementType, elementType.getArrayFactory()));
     }
 
     @NotNull

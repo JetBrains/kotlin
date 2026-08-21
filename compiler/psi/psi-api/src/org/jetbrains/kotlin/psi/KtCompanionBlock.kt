@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 @KtExperimentalApi
 class KtCompanionBlock : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlock>>, KtDeclarationContainer {
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtCompanionBlock>) : super(stub, KtStubBasedElementTypes.COMPANION_BLOCK)
+    constructor(stub: KotlinPlaceHolderStub<KtCompanionBlock>) : super(stub, KtNodeTypes.COMPANION_BLOCK)
 
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
@@ -42,15 +42,19 @@ class KtCompanionBlock : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBloc
      * The body of the companion block.
      */
     val body: KtClassBody
-        get() {
-            @Suppress("DEPRECATION") // KT-78356
-            return getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)!!
-        }
+        get() = getRequiredStubOrPsiChild(KtNodeTypes.CLASS_BODY, KtClassBody::class.java)
 
     /**
      * The list of declarations inside the companion block.
      */
     override fun getDeclarations(): List<KtDeclaration> {
         return body.declarations
+    }
+
+    @KtExperimentalApi
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtCompanionBlock> = emptyArray()
     }
 }

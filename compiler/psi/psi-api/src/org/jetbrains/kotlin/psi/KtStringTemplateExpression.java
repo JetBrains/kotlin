@@ -13,7 +13,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -37,7 +37,7 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
 
     @KtImplementationDetail
     public KtStringTemplateExpression(@NotNull KotlinPlaceHolderStub<KtStringTemplateExpression> stub) {
-        super(stub, KtStubBasedElementTypes.STRING_TEMPLATE);
+        super(stub, KtNodeTypes.STRING_TEMPLATE);
     }
 
     @Override
@@ -46,10 +46,10 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
     }
 
     private static final TokenSet STRING_ENTRIES_TYPES = TokenSet.create(
-            KtStubBasedElementTypes.LONG_STRING_TEMPLATE_ENTRY,
-            KtStubBasedElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
-            KtStubBasedElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
-            KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+            KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY,
+            KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY,
+            KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY,
+            KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
     );
 
     /**
@@ -58,9 +58,8 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
      * @see KtStringInterpolationPrefix
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtStringInterpolationPrefix getInterpolationPrefix() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX);
+        return getStubOrPsiChild(KtNodeTypes.STRING_INTERPOLATION_PREFIX, KtStringInterpolationPrefix.class);
     }
 
     /**

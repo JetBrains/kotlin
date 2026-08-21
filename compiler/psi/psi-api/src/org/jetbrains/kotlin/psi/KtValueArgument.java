@@ -12,7 +12,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
  * }</pre>
  */
 public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<? extends KtValueArgument>> implements ValueArgument {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtValueArgument[] EMPTY_ARRAY = new KtValueArgument[0];
+
     @KtImplementationDetail
     public KtValueArgument(@NotNull ASTNode node) {
         super(node);
@@ -34,7 +37,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
 
     @KtImplementationDetail
     public KtValueArgument(@NotNull KotlinValueArgumentStub<KtValueArgument> stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT);
+        super(stub, KtNodeTypes.VALUE_ARGUMENT);
     }
 
     @KtImplementationDetail
@@ -48,7 +51,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     }
 
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(
-            KtStubBasedElementTypes.STRING_TEMPLATE
+            KtNodeTypes.STRING_TEMPLATE
     );
 
     @Override
@@ -83,9 +86,8 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentName getArgumentName() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_NAME, KtValueArgumentName.class);
     }
 
     /** Returns the {@code =} token of a named argument ({@code name = value}), or {@code null} if this argument is positional. */

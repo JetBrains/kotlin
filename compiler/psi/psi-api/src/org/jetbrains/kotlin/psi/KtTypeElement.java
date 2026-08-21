@@ -31,7 +31,7 @@ import java.util.List;
  * @see KtTypeReference
  */
 public interface KtTypeElement extends KtElement {
-    /** A shared empty array, useful as a zero-length return value. */
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
     KtTypeElement[] EMPTY_ARRAY = new KtTypeElement[0];
 
     /** A factory for creating arrays of {@link KtTypeElement}, used by the PSI child-access machinery. */

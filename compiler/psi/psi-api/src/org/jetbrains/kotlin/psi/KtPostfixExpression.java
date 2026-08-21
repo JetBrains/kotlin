@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -30,7 +30,7 @@ public class KtPostfixExpression extends KtUnaryExpression {
 
     @KtImplementationDetail
     public KtPostfixExpression(@NotNull KotlinPlaceHolderStub<KtPostfixExpression> stub) {
-        super(stub, KtStubBasedElementTypes.POSTFIX_EXPRESSION);
+        super(stub, KtNodeTypes.POSTFIX_EXPRESSION);
     }
 
     @Override

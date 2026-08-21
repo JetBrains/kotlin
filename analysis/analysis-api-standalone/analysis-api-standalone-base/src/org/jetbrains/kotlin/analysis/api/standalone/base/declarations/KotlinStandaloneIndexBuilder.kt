@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -273,11 +273,10 @@ private class IndexableFile(
 }
 
 /**
- * [PsiFileImpl.getGreenStubTree] is cheaper if it is available since it doesn't require computing the AST tree
+ * An already available stub tree is cheaper than [PsiFileImpl.calcStubTree] since it doesn't require computing the AST tree
  */
 private val KtFile.forcedStub: KotlinFileStubImpl
     get() {
-        @Suppress("DEPRECATION") // KT-78356
-        val stubTree = greenStubTree ?: calcStubTree()
+        val stubTree = stubTreeOrFileElement.first ?: calcStubTree()
         return stubTree.root as KotlinFileStubImpl
     }

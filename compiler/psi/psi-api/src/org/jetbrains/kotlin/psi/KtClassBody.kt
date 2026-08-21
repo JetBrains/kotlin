@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -36,7 +36,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, KtStubBasedElementTypes.CLASS_BODY)
+    constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, KtNodeTypes.CLASS_BODY)
 
     override fun getDeclarations() = stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
         ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
@@ -55,42 +55,42 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * The `init` blocks declared directly in this body, in source order; empty if there are none.
      */
     val anonymousInitializers: List<KtAnonymousInitializer>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CLASS_INITIALIZER)
+        get() = getStubOrPsiChildren(KtNodeTypes.CLASS_INITIALIZER, KtClassInitializer.EMPTY_ARRAY).asList()
 
     internal val secondaryConstructors: List<KtSecondaryConstructor>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR)
+        get() = getStubOrPsiChildren(KtNodeTypes.SECONDARY_CONSTRUCTOR, KtSecondaryConstructor.EMPTY_ARRAY).asList()
 
     /**
      * The properties declared directly in this body, in source order; empty if there are none.
      */
     val properties: List<KtProperty>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY)
+        get() = getStubOrPsiChildren(KtNodeTypes.PROPERTY, KtProperty.EMPTY_ARRAY).asList()
 
     /**
      * The named functions declared directly in this body, in source order; empty if there are none.
      */
     val functions: List<KtNamedFunction>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.FUNCTION)
+        get() = getStubOrPsiChildren(KtNodeTypes.FUN, KtNamedFunction.EMPTY_ARRAY).asList()
 
     /**
      * The enum entries declared in this body, in source order; empty if the owner is not an enum class.
      */
     val enumEntries: List<KtEnumEntry>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ENUM_ENTRY)
+        get() = getStubOrPsiChildren(KtNodeTypes.ENUM_ENTRY, KtEnumEntry.EMPTY_ARRAY).asList()
 
     /**
      * The companion objects declared in this body, in source order; empty if there are none. Valid Kotlin allows at most one, but several
      * may appear in erroneous code.
      */
     val allCompanionObjects: List<KtObjectDeclaration>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
+        get() = getStubOrPsiChildren(KtNodeTypes.OBJECT_DECLARATION, KtObjectDeclaration.EMPTY_ARRAY).filter { it.isCompanion() }
 
     /**
      * The list of all companion blocks.
      */
     @KtExperimentalApi
     val companionBlocks: List<KtCompanionBlock>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.COMPANION_BLOCK)
+        get() = getStubOrPsiChildren(KtNodeTypes.COMPANION_BLOCK, KtCompanionBlock.EMPTY_ARRAY).asList()
 
     /**
      * The closing brace `}` of the body, or `null` if it is absent in incomplete code.
@@ -114,5 +114,5 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingModifierLists: List<KtModifierList>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST)
+        get() = getStubOrPsiChildren(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.EMPTY_ARRAY).asList()
 }

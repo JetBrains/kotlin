@@ -14,19 +14,18 @@ stub infrastructure. It covers source stubs, binary (compiled) stubs, and the de
 - A stub tree mirrors the structural PSI for declarations and references but omits statement bodies and trivia. In Kotlin, only declarations
   (and selected modifiers/annotations/references)
   are stubbed.
-- Each PSI element that can be stubbed has an element type. In Kotlin these extend
-  `IStubElementType` (platform API) via `KtStubElementType`; an element type knows how to create PSI from an AST node or from a stub,
-  serialize/deserialize the stub, and decide whether a stub should be created.
-    - Note: the Kotlin code uses the platform's `IStubElementType` API. The newer platform
-      `StubElementFactory`/`StubSerializer` API is not used here.
+- Each PSI element that can be stubbed has an element type. In Kotlin these are plain `KtNodeType`s, which only know how to create PSI from
+  an AST node. Stub support lives in a separate `StubSerializingElementFactory` per element type, which creates PSI from a stub,
+  serializes/deserializes the stub, and decides whether a stub should be created.
+    - The factories are bound to their element types by `KotlinStubRegistryExtension`, a `StubRegistryExtension`.
 - File-level stubs implement `PsiFileStub` and are the roots consumed by indexes.
 
 ## Where things live
 
 | Area                             | Module / package                                                        | What it contains                                                                                                                                                                                                              |
 |----------------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Stub interfaces & contracts      | `compiler/psi/psi-api` → `org.jetbrains.kotlin.psi.stubs`               | `StubInterfaces.kt`, `KotlinFileStubKind.kt`, `KotlinStubVersions.kt`; element-type base `elements/KtStubElementType.java`; API registry `KtStubBasedElementTypes.kt`; base PSI `KtElementImplStub.java`                      |
-| Element-type & stub impls        | `compiler/psi/psi-impl` → `…psi.stubs.elements` / `…psi.stubs.impl`     | `Kt*ElementType` impls, registry `KtStubElementTypes.java`, indexing glue `StubIndexService.kt`; stub data classes in `…psi.stubs.impl` (`KotlinPropertyStubImpl`, …), `StubUtils`, `KotlinStubOrigin`, `createConstantValue` |
+| Stub interfaces & contracts      | `compiler/psi/psi-api` → `org.jetbrains.kotlin.psi.stubs`               | `StubInterfaces.kt`, `KotlinFileStubKind.kt`, `KotlinStubVersions.kt`; API registry `KtStubBasedElementTypes.kt`; base PSI `KtElementImplStub.java`                      |
+| Element-type & stub impls        | `compiler/psi/psi-impl` → `…psi.stubs.elements` / `…psi.stubs.impl`     | registry `KtStubElementTypes.java`, stub factories in `…psi.stubs.factories`, their registration in `…psi.stubs`, indexing glue `StubIndexService.kt`; stub data classes in `…psi.stubs.impl` (`KotlinPropertyStubImpl`, …), `StubUtils`, `KotlinStubOrigin`, `createConstantValue` |
 | Shared cls stub builders         | `analysis/decompiled/decompiler-to-stubs` → `…analysis.decompiler.stub` | Metadata(proto)→stub builders shared by all binary formats: `ClassClsStubBuilder`, `CallableClsStubBuilder`, `TypeClsStubBuilder`, `typeAliasClsStubBuilding`, `ClsContractBuilder`, …                                        |
 | JVM `.class` entry point         | `analysis/decompiled/decompiler-to-file-stubs`                          | `KotlinClsStubBuilder` (`ClsStubBuilder` for `.class`), plus the private `JvmClsAnnotationLoader`                                                                                                                             |
 | Decompiled PSI / text & builtins | `analysis/decompiled/decompiler-to-psi`                                 | `KotlinClassFileDecompiler`, `KotlinDecompiledFileViewProvider`, `KtDecompiledFile`, and the built-ins stub builder `KotlinBuiltInMetadataStubBuilder`                                                                        |
@@ -43,14 +42,15 @@ but exposed due to the current technical limitations.
 
 ## Element types and stub creation
 
-- `KtStubElementType<StubT, PsiT>` (`compiler/psi/psi-api/.../elements/KtStubElementType.java`) extends `IStubElementType`. It bridges AST/PSI/stub.
+- `KtStubSerializingElementFactory<Stub, Psi>` (`compiler/psi/psi-impl/.../stubs/factories/`) is the base class of all Kotlin stub factories.
+  It implements the platform's `StubSerializingElementFactory`, so a single object both builds PSI from a stub and (de)serializes it.
 - Base PSI for stub-backed elements is `KtElementImplStub`.
-- Element types are registered in `KtStubElementTypes` (psi-impl, the `IStubElementType`
-  instances). API consumers reference element-type constants through `KtStubBasedElementTypes`
-  (psi-api).
-- **Serialization** — each element type writes/reads its fields via `StubOutputStream`/
-  `StubInputStream` (see e.g. `KtFunctionElementType.serialize/deserialize`). Stub data classes live in
-  `org.jetbrains.kotlin.psi.stubs.impl`.
+- Element types are registered in `KtStubElementTypes` (psi-impl, the `KtNodeType` instances), and
+  `KotlinStubRegistryExtension` (`…psi.stubs`) binds a factory to each of them. API consumers
+  reference element-type constants through `KtStubBasedElementTypes` (psi-api).
+- **Serialization** — each factory writes/reads its fields via `StubOutputStream`/
+  `StubInputStream` (see e.g. `KtPropertyStubSerializingElementFactory.serialize/deserialize`).
+  Stub data classes live in `org.jetbrains.kotlin.psi.stubs.impl`.
 - `KotlinElementTypeProvider` (`compiler/psi/psi-api/.../KotlinElementTypeProvider.kt`) is a bridge between element types and their
   implementations (`KotlinElementTypeProviderImpl`).
 
@@ -70,7 +70,7 @@ kind on the next IDE start.
 
 ### 1) Source stubs
 
-Built for `.kt`/`.kts` from the parsed PSI via `KtStubElementType` and the registered element types. Carry package, imports, declarations,
+Built for `.kt`/`.kts` from the parsed PSI via the registered stub factories. Carry package, imports, declarations,
 modifiers, annotations, signatures, and selected flags — but no statement bodies. Consumed by indexes (Go To, Find Usages) and by analysis
 to locate declarations quickly.
 
@@ -138,8 +138,9 @@ and names.
 - `compiler/psi/psi-api/.../psi/stubs/StubInterfaces.kt` — all Kotlin stub contracts.
 - `compiler/psi/psi-api/.../psi/stubs/KotlinFileStubKind.kt` — file stub classification.
 - `compiler/psi/psi-api/.../psi/stubs/KotlinStubVersions.kt` — versioning.
-- `compiler/psi/psi-api/.../psi/stubs/elements/KtStubElementType.java` — AST/PSI/stub bridge.
-- `compiler/psi/psi-impl/.../psi/stubs/elements/` — element-type impls, `KtStubElementTypes`,
+- `compiler/psi/psi-impl/.../psi/stubs/factories/` — the stub factories, with `KtStubSerializingElementFactory` as their base class.
+- `compiler/psi/psi-impl/.../psi/stubs/KotlinStubRegistryExtension.kt` — binds factories to element types.
+- `compiler/psi/psi-impl/.../psi/stubs/elements/` — `KtStubElementTypes`,
   `StubIndexService`; stub data classes in `…/psi/stubs/impl/`.
 - `analysis/decompiled/decompiler-to-stubs/...` — shared cls builders (`ClassClsStubBuilder`, `CallableClsStubBuilder`,
   `TypeClsStubBuilder`).

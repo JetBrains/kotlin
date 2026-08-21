@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -84,7 +84,7 @@ class KtOperationReferenceExpression :
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinOperationReferenceExpressionStub) : super(stub, KtStubBasedElementTypes.OPERATION_REFERENCE)
+    constructor(stub: KotlinOperationReferenceExpressionStub) : super(stub, KtNodeTypes.OPERATION_REFERENCE)
 
     private companion object {
         private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.stubs.StubElementTypeHolderEP;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.*;
 
@@ -19,173 +20,145 @@ import org.jetbrains.kotlin.psi.*;
  */
 @KtImplementationDetail
 public interface KtStubElementTypes {
-    @NotNull KtClassElementType CLASS = KtClassElementType.INSTANCE;
-    @NotNull KtFunctionElementType FUNCTION = new KtFunctionElementType();
-    @NotNull KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
-    @NotNull KtPropertyAccessorElementType PROPERTY_ACCESSOR = KtPropertyAccessorElementType.INSTANCE;
-    @NotNull KtBackingFieldElementType BACKING_FIELD = new KtBackingFieldElementType("BACKING_FIELD");
-    @NotNull KtDestructuringDeclarationElementType DESTRUCTURING_DECLARATION = KtDestructuringDeclarationElementType.INSTANCE;
-    @NotNull KtTypeAliasElementType TYPEALIAS = new KtTypeAliasElementType("TYPEALIAS");
+    @NotNull KtNodeType CLASS = new KtNodeType("CLASS", KtClass::new);
+    @NotNull KtNodeType FUNCTION = new KtNodeType("FUNCTION", KtNamedFunction::new);
+    @NotNull KtNodeType PROPERTY = new KtNodeType("PROPERTY", KtProperty::new);
+    @NotNull KtNodeType PROPERTY_ACCESSOR = new KtNodeType("PROPERTY_ACCESSOR", KtPropertyAccessor::new);
+    @NotNull KtNodeType BACKING_FIELD = new KtNodeType("BACKING_FIELD", KtBackingField::new);
+    @NotNull KtNodeType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration::new);
+    @NotNull KtNodeType TYPEALIAS = new KtNodeType("TYPEALIAS", KtTypeAlias::new);
 
-    @NotNull KtEnumEntryElementType ENUM_ENTRY = KtEnumEntryElementType.INSTANCE;
-    @NotNull KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
-    @NotNull KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
-            new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
-    @NotNull KtPlaceHolderStubElementType<KtScriptInitializer> SCRIPT_INITIALIZER = KtScriptInitializerElementType.INSTANCE;
-    @NotNull KtSecondaryConstructorElementType SECONDARY_CONSTRUCTOR =
-            new KtSecondaryConstructorElementType("SECONDARY_CONSTRUCTOR");
-    @NotNull KtPrimaryConstructorElementType PRIMARY_CONSTRUCTOR =
-            new KtPrimaryConstructorElementType("PRIMARY_CONSTRUCTOR");
+    @NotNull KtNodeType ENUM_ENTRY = new KtNodeType("ENUM_ENTRY", KtEnumEntry::new);
+    @NotNull KtNodeType OBJECT_DECLARATION = new KtNodeType("OBJECT_DECLARATION", KtObjectDeclaration::new);
+    @NotNull KtNodeType CLASS_INITIALIZER = new KtNodeType("CLASS_INITIALIZER", KtClassInitializer::new);
+    @NotNull KtNodeType SCRIPT_INITIALIZER = new KtNodeType("SCRIPT_INITIALIZER", KtScriptInitializer::new);
+    @NotNull KtNodeType SECONDARY_CONSTRUCTOR = new KtNodeType("SECONDARY_CONSTRUCTOR", KtSecondaryConstructor::new);
+    @NotNull KtNodeType PRIMARY_CONSTRUCTOR = new KtNodeType("PRIMARY_CONSTRUCTOR", KtPrimaryConstructor::new);
 
-    @NotNull KtParameterElementType VALUE_PARAMETER = new KtParameterElementType("VALUE_PARAMETER");
-    @NotNull KtPlaceHolderStubElementType<KtParameterList> VALUE_PARAMETER_LIST =
-            new KtPlaceHolderStubElementType<>("VALUE_PARAMETER_LIST", KtParameterList.class);
+    @NotNull KtNodeType VALUE_PARAMETER = new KtNodeType("VALUE_PARAMETER", KtParameter::new);
+    @NotNull KtNodeType VALUE_PARAMETER_LIST = new KtNodeType("VALUE_PARAMETER_LIST", KtParameterList::new);
 
-    @NotNull KtTypeParameterElementType TYPE_PARAMETER = new KtTypeParameterElementType("TYPE_PARAMETER");
-    @NotNull KtPlaceHolderStubElementType<KtTypeParameterList> TYPE_PARAMETER_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_PARAMETER_LIST", KtTypeParameterList.class);
+    @NotNull KtNodeType TYPE_PARAMETER = new KtNodeType("TYPE_PARAMETER", KtTypeParameter::new);
+    @NotNull KtNodeType TYPE_PARAMETER_LIST = new KtNodeType("TYPE_PARAMETER_LIST", KtTypeParameterList::new);
 
-    @NotNull KtAnnotationEntryElementType ANNOTATION_ENTRY = KtAnnotationEntryElementType.INSTANCE;
-    @NotNull KtPlaceHolderStubElementType<KtAnnotation> ANNOTATION =
-            new KtPlaceHolderStubElementType<>("ANNOTATION", KtAnnotation.class);
+    @NotNull KtNodeType ANNOTATION_ENTRY = new KtNodeType("ANNOTATION_ENTRY", KtAnnotationEntry::new);
+    @NotNull KtNodeType ANNOTATION = new KtNodeType("ANNOTATION", KtAnnotation::new);
 
-    @NotNull KtAnnotationUseSiteTargetElementType ANNOTATION_TARGET = new KtAnnotationUseSiteTargetElementType("ANNOTATION_TARGET");
+    @NotNull KtNodeType ANNOTATION_TARGET = new KtNodeType("ANNOTATION_TARGET", KtAnnotationUseSiteTarget::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtClassBody> CLASS_BODY =
-            new KtPlaceHolderStubElementType<>("CLASS_BODY", KtClassBody.class);
+    @NotNull KtNodeType CLASS_BODY = new KtNodeType("CLASS_BODY", KtClassBody::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtCompanionBlock> COMPANION_BLOCK =
-            new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock.class);
+    @NotNull KtNodeType COMPANION_BLOCK = new KtNodeType("COMPANION_BLOCK", KtCompanionBlock::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtImportList> IMPORT_LIST =
-            new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList.class);
+    @NotNull KtNodeType IMPORT_LIST = new KtNodeType("IMPORT_LIST", KtImportList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtFileAnnotationList> FILE_ANNOTATION_LIST =
-            new KtPlaceHolderStubElementType<>("FILE_ANNOTATION_LIST", KtFileAnnotationList.class);
+    @NotNull KtNodeType FILE_ANNOTATION_LIST = new KtNodeType("FILE_ANNOTATION_LIST", KtFileAnnotationList::new);
 
-    @NotNull KtImportDirectiveElementType IMPORT_DIRECTIVE = new KtImportDirectiveElementType("IMPORT_DIRECTIVE");
+    @NotNull KtNodeType IMPORT_DIRECTIVE = new KtNodeType("IMPORT_DIRECTIVE", KtImportDirective::new);
 
-    @NotNull KtImportAliasElementType IMPORT_ALIAS = new KtImportAliasElementType("IMPORT_ALIAS");
+    @NotNull KtNodeType IMPORT_ALIAS = new KtNodeType("IMPORT_ALIAS", KtImportAlias::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtPackageDirective> PACKAGE_DIRECTIVE =
-            new KtPlaceHolderStubElementType<>("PACKAGE_DIRECTIVE", KtPackageDirective.class);
+    @NotNull KtNodeType PACKAGE_DIRECTIVE = new KtNodeType("PACKAGE_DIRECTIVE", KtPackageDirective::new);
 
-    @NotNull KtModifierListElementType<KtDeclarationModifierList> MODIFIER_LIST =
-            new KtModifierListElementType<>("MODIFIER_LIST", KtDeclarationModifierList.class);
+    @NotNull KtNodeType MODIFIER_LIST = new KtNodeType("MODIFIER_LIST", KtDeclarationModifierList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeConstraintList> TYPE_CONSTRAINT_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT_LIST", KtTypeConstraintList.class);
+    @NotNull KtNodeType TYPE_CONSTRAINT_LIST = new KtNodeType("TYPE_CONSTRAINT_LIST", KtTypeConstraintList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeConstraint> TYPE_CONSTRAINT =
-            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT", KtTypeConstraint.class);
+    @NotNull KtNodeType TYPE_CONSTRAINT = new KtNodeType("TYPE_CONSTRAINT", KtTypeConstraint::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtNullableType> NULLABLE_TYPE =
-            new KtPlaceHolderStubElementType<>("NULLABLE_TYPE", KtNullableType.class);
+    @NotNull KtNodeType NULLABLE_TYPE = new KtNodeType("NULLABLE_TYPE", KtNullableType::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtIntersectionType> INTERSECTION_TYPE =
-            new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType.class);
+    @NotNull KtNodeType INTERSECTION_TYPE = new KtNodeType("INTERSECTION_TYPE", KtIntersectionType::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
-            new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
+    @NotNull KtNodeType TYPE_REFERENCE = new KtNodeType("TYPE_REFERENCE", KtTypeReference::new);
 
-    @NotNull KtUserTypeElementType USER_TYPE = new KtUserTypeElementType("USER_TYPE");
-    @NotNull KtPlaceHolderStubElementType<KtDynamicType> DYNAMIC_TYPE =
-            new KtPlaceHolderStubElementType<>("DYNAMIC_TYPE", KtDynamicType.class);
+    @NotNull KtNodeType USER_TYPE = new KtNodeType("USER_TYPE", KtUserType::new);
 
-    @NotNull KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
+    @NotNull KtNodeType DYNAMIC_TYPE = new KtNodeType("DYNAMIC_TYPE", KtDynamicType::new);
 
-    @NotNull KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
+    @NotNull KtNodeType FUNCTION_TYPE = new KtNodeType("FUNCTION_TYPE", KtFunctionType::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
-            new KtPlaceHolderStubElementType<>("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver.class);
+    @NotNull KtNodeType TYPE_PROJECTION = new KtNodeType("TYPE_PROJECTION", KtTypeProjection::new);
 
-    @NotNull KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
-    @NotNull KtPlaceHolderStubElementType<KtDotQualifiedExpression> DOT_QUALIFIED_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("DOT_QUALIFIED_EXPRESSION", KtDotQualifiedExpression.class);
-    @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("CALL_EXPRESSION", KtCallExpression.class);
-    @NotNull KtOperationReferenceExpressionElementType OPERATION_REFERENCE = KtOperationReferenceExpressionElementType.INSTANCE;
+    @NotNull KtNodeType FUNCTION_TYPE_RECEIVER = new KtNodeType("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtPrefixExpression> PREFIX_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
-    @NotNull KtPlaceHolderStubElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
-    @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("BINARY_EXPRESSION", KtBinaryExpression.class);
-    @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED =
-            new KtPlaceHolderStubElementType<>("PARENTHESIZED", KtParenthesizedExpression.class);
-    @NotNull KtPlaceHolderStubElementType<KtObjectLiteralExpression> OBJECT_LITERAL =
-            new KtPlaceHolderStubElementType<>("OBJECT_LITERAL", KtObjectLiteralExpression.class);
+    @NotNull KtNodeType REFERENCE_EXPRESSION = new KtNodeType("REFERENCE_EXPRESSION", KtNameReferenceExpression::new);
 
-    @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
-            new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
-    @NotNull KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
+    @NotNull KtNodeType DOT_QUALIFIED_EXPRESSION = new KtNodeType("DOT_QUALIFIED_EXPRESSION", KtDotQualifiedExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_LIST", KtValueArgumentList.class);
+    @NotNull KtNodeType CALL_EXPRESSION = new KtNodeType("CALL_EXPRESSION", KtCallExpression::new);
 
-    @NotNull KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
-            new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
+    @NotNull KtNodeType OPERATION_REFERENCE = new KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtContractEffectList> CONTRACT_EFFECT_LIST =
-            new KtContractEffectListElementType("CONTRACT_EFFECT_LIST");
+    @NotNull KtNodeType PREFIX_EXPRESSION = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression::new);
 
-    @NotNull KtContractEffectElementType CONTRACT_EFFECT =
-            new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect.class);
+    @NotNull KtNodeType POSTFIX_EXPRESSION = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression::new);
 
-    @NotNull KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
-            new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
+    @NotNull KtNodeType BINARY_EXPRESSION = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtValueArgumentName> VALUE_ARGUMENT_NAME =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
+    @NotNull KtNodeType PARENTHESIZED = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList.class);
+    @NotNull KtNodeType OBJECT_LITERAL = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtInitializerList> INITIALIZER_LIST =
-            new KtPlaceHolderStubElementType<>("INITIALIZER_LIST", KtInitializerList.class);
+    @NotNull KtNodeType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
+            new KtNodeType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION", KtEnumEntrySuperclassReferenceExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtDelegatedSuperTypeEntry> DELEGATED_SUPER_TYPE_ENTRY =
-            new KtPlaceHolderStubElementType<>("DELEGATED_SUPER_TYPE_ENTRY", KtDelegatedSuperTypeEntry.class);
+    @NotNull KtNodeType TYPE_ARGUMENT_LIST = new KtNodeType("TYPE_ARGUMENT_LIST", KtTypeArgumentList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtSuperTypeCallEntry> SUPER_TYPE_CALL_ENTRY =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_CALL_ENTRY", KtSuperTypeCallEntry.class);
-    @NotNull KtPlaceHolderStubElementType<KtSuperTypeEntry> SUPER_TYPE_ENTRY =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_ENTRY", KtSuperTypeEntry.class);
-    @NotNull KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
-            new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
+    @NotNull KtNodeType VALUE_ARGUMENT_LIST = new KtNodeType("VALUE_ARGUMENT_LIST", KtValueArgumentList::new);
 
-    @NotNull KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
+    @NotNull KtNodeType VALUE_ARGUMENT = new KtNodeType("VALUE_ARGUMENT", KtValueArgument::new);
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @NotNull KtPlaceHolderStubElementType<KtContextParameterList> CONTEXT_PARAMETER_LIST =
-            new KtPlaceHolderStubElementType("CONTEXT_PARAMETER_LIST", KtContextReceiverList.class);
+    @NotNull KtNodeType CONTRACT_EFFECT_LIST = new KtNodeType("CONTRACT_EFFECT_LIST", KtContractEffectList::new);
 
-    @NotNull KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
-    @NotNull KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
-    @NotNull KtConstantExpressionElementType FLOAT_CONSTANT      = new KtConstantExpressionElementType("FLOAT_CONSTANT");
-    @NotNull KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
-    @NotNull KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
-    @NotNull KtClassLiteralExpressionElementType CLASS_LITERAL_EXPRESSION = new KtClassLiteralExpressionElementType("CLASS_LITERAL_EXPRESSION");
-    @NotNull KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
+    @NotNull KtNodeType CONTRACT_EFFECT = new KtNodeType("CONTRACT_EFFECT", KtContractEffect::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
-            new KtPlaceHolderStubElementType<>("STRING_TEMPLATE", KtStringTemplateExpression.class);
+    @NotNull KtNodeType LAMBDA_ARGUMENT = new KtNodeType("LAMBDA_ARGUMENT", KtLambdaArgument::new);
 
-    @NotNull KtBlockStringTemplateEntryElementType LONG_STRING_TEMPLATE_ENTRY =
-            new KtBlockStringTemplateEntryElementType("LONG_STRING_TEMPLATE_ENTRY");
+    @NotNull KtNodeType VALUE_ARGUMENT_NAME = new KtNodeType("VALUE_ARGUMENT_NAME", KtValueArgumentName::new);
 
-    @NotNull KtPlaceHolderWithTextStubElementType<KtSimpleNameStringTemplateEntry> SHORT_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);
+    @NotNull KtNodeType SUPER_TYPE_LIST = new KtNodeType("SUPER_TYPE_LIST", KtSuperTypeList::new);
 
-    @NotNull KtPlaceHolderWithTextStubElementType<KtLiteralStringTemplateEntry> LITERAL_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry.class);
+    @NotNull KtNodeType INITIALIZER_LIST = new KtNodeType("INITIALIZER_LIST", KtInitializerList::new);
 
-    @NotNull KtPlaceHolderWithTextStubElementType<KtEscapeStringTemplateEntry> ESCAPE_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
+    @NotNull KtNodeType DELEGATED_SUPER_TYPE_ENTRY =
+            new KtNodeType("DELEGATED_SUPER_TYPE_ENTRY", KtDelegatedSuperTypeEntry::new);
 
-    @NotNull KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
+    @NotNull KtNodeType SUPER_TYPE_CALL_ENTRY = new KtNodeType("SUPER_TYPE_CALL_ENTRY", KtSuperTypeCallEntry::new);
 
-    @NotNull KtStringInterpolationPrefixElementType STRING_INTERPOLATION_PREFIX = new KtStringInterpolationPrefixElementType("STRING_INTERPOLATION_PREFIX");
+    @NotNull KtNodeType SUPER_TYPE_ENTRY = new KtNodeType("SUPER_TYPE_ENTRY", KtSuperTypeEntry::new);
+
+    @NotNull KtNodeType CONSTRUCTOR_CALLEE = new KtNodeType("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression::new);
+
+    @NotNull KtNodeType CONTEXT_RECEIVER = new KtNodeType("CONTEXT_RECEIVER", KtContextReceiver::new);
+
+    @NotNull KtNodeType CONTEXT_PARAMETER_LIST = new KtNodeType("CONTEXT_PARAMETER_LIST", KtContextReceiverList::new);
+
+    @NotNull KtNodeType NULL               = new KtNodeType("NULL", KtConstantExpression::new);
+    @NotNull KtNodeType BOOLEAN_CONSTANT   = new KtNodeType("BOOLEAN_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType FLOAT_CONSTANT     = new KtNodeType("FLOAT_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType CHARACTER_CONSTANT = new KtNodeType("CHARACTER_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType INTEGER_CONSTANT   = new KtNodeType("INTEGER_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType CLASS_LITERAL_EXPRESSION = new KtNodeType("CLASS_LITERAL_EXPRESSION", KtClassLiteralExpression::new);
+    @NotNull KtNodeType COLLECTION_LITERAL_EXPRESSION =
+            new KtNodeType("COLLECTION_LITERAL_EXPRESSION", KtCollectionLiteralExpression::new);
+
+    @NotNull KtNodeType STRING_TEMPLATE = new KtNodeType("STRING_TEMPLATE", KtStringTemplateExpression::new);
+
+    @NotNull KtNodeType LONG_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry::new);
+
+    @NotNull KtNodeType SHORT_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry::new);
+
+    @NotNull KtNodeType LITERAL_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry::new);
+
+    @NotNull KtNodeType ESCAPE_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry::new);
+
+    @NotNull KtNodeType SCRIPT = new KtNodeType("SCRIPT", KtScript::new);
+
+    @NotNull KtNodeType STRING_INTERPOLATION_PREFIX =
+            new KtNodeType("STRING_INTERPOLATION_PREFIX", KtStringInterpolationPrefix::new);
 }

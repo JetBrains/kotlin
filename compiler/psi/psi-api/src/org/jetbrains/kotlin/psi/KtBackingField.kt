@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 
@@ -30,7 +30,7 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinBackingFieldStub) : super(stub, KtStubBasedElementTypes.BACKING_FIELD)
+    constructor(stub: KotlinBackingFieldStub) : super(stub, KtNodeTypes.BACKING_FIELD)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitBackingField(this, data)
@@ -42,8 +42,7 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
         get() = findChildByType(KtTokens.EQ)
 
     override fun getTypeReference(): KtTypeReference? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
+        getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference::class.java)
 
     /**
      * The `field` keyword that stands in for the declaration's name, or the element itself if the keyword is absent.

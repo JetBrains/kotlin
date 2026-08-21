@@ -9,9 +9,10 @@ import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,6 +27,8 @@ import java.util.List;
  * For a single annotation entry, see {@link KtAnnotationEntry}.
  */
 public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnnotation>> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtAnnotation[] EMPTY_ARRAY = new KtAnnotation[0];
 
     @KtImplementationDetail
     public KtAnnotation(@NotNull ASTNode node) {
@@ -34,7 +37,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
 
     @KtImplementationDetail
     public KtAnnotation(KotlinPlaceHolderStub<KtAnnotation> stub) {
-        super(stub, KtStubBasedElementTypes.ANNOTATION);
+        super(stub, KtNodeTypes.ANNOTATION);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
 
     /** Returns the individual annotation entries in this bracketed group, in source order. */
     public List<KtAnnotationEntry> getEntries() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION_ENTRY);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.ANNOTATION_ENTRY, KtAnnotationEntry.EMPTY_ARRAY));
     }
 
     /**
@@ -52,9 +55,8 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
      * target is specified.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
+        return getStubOrPsiChild(KtNodeTypes.ANNOTATION_TARGET, KtAnnotationUseSiteTarget.class);
     }
 
     /**

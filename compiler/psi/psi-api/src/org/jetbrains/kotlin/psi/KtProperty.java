@@ -16,12 +16,12 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +44,9 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     private static final Logger LOG = Logger.getInstance(KtProperty.class);
 
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtProperty[] EMPTY_ARRAY = new KtProperty[0];
+
     @KtImplementationDetail
     public KtProperty(@NotNull ASTNode node) {
         super(node);
@@ -51,7 +54,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @KtImplementationDetail
     public KtProperty(@NotNull KotlinPropertyStub stub) {
-        super(stub, KtStubBasedElementTypes.PROPERTY);
+        super(stub, KtNodeTypes.PROPERTY);
     }
 
     @Override
@@ -112,7 +115,6 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getReceiverTypeReference() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
@@ -120,7 +122,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return null;
             }
             else {
-                return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+                return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
             }
         }
         return getReceiverTypeRefByTree();
@@ -151,7 +153,8 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return null;
             }
             else {
-                List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
+                List<KtTypeReference> typeReferences =
+                        Arrays.asList(getStubOrPsiChildren(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.EMPTY_ARRAY));
                 int returnTypeRefPositionInPsi = stub.isExtension() ? 1 : 0;
                 if (typeReferences.size() <= returnTypeRefPositionInPsi) {
                     LOG.error("Invalid stub structure built for property:\n" + getText());
@@ -196,7 +199,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     /** Returns the explicitly declared accessors (getter and/or setter), in source order; empty if none are declared. */
     @NotNull
     public List<KtPropertyAccessor> getAccessors() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY_ACCESSOR);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.PROPERTY_ACCESSOR, KtPropertyAccessor.EMPTY_ARRAY));
     }
 
     /** Returns the explicitly declared getter, or {@code null} if the property uses the default getter. */
@@ -222,11 +225,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     /** Returns the explicit backing field declaration ({@code field ...}), or {@code null} if this property has none. */
     @Nullable
     public KtBackingField getFieldDeclaration() {
-        for (KtBackingField field : getStubOrPsiChildrenAsList(KtStubBasedElementTypes.BACKING_FIELD)) {
-            return field;
-        }
-
-        return null;
+        return getStubOrPsiChild(KtNodeTypes.BACKING_FIELD, KtBackingField.class);
     }
 
     /** Returns {@code true} if this property is delegated (declared with {@code by}). */

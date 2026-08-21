@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -42,7 +42,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
 
     @KtImplementationDetail
     public KtPackageDirective(@NotNull KotlinPlaceHolderStub<KtPackageDirective> stub) {
-        super(stub, KtStubBasedElementTypes.PACKAGE_DIRECTIVE);
+        super(stub, KtNodeTypes.PACKAGE_DIRECTIVE);
     }
 
     /**

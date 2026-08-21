@@ -1,5 +1,7 @@
 FILE: nameBasedDestructuringScript.kts
     SCRIPT: <script-nameBasedDestructuringScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ContainingScriptKey=FirScriptSymbol <script-nameBasedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
             public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.first] first: String, [CorrespondingProperty=/Tuple.second] second: Int): R|Tuple| {

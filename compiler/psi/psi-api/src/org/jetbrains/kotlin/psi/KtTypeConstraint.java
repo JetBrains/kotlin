@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,6 +26,9 @@ import java.util.List;
  */
 public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraint>>
         implements KtAnnotated, KtAnnotationsContainer {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtTypeConstraint[] EMPTY_ARRAY = new KtTypeConstraint[0];
+
     @KtImplementationDetail
     public KtTypeConstraint(@NotNull ASTNode node) {
         super(node);
@@ -32,7 +36,7 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
 
     @KtImplementationDetail
     public KtTypeConstraint(@NotNull KotlinPlaceHolderStub<KtTypeConstraint> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT);
+        super(stub, KtNodeTypes.TYPE_CONSTRAINT);
     }
 
     @Override
@@ -45,22 +49,20 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
      * incomplete code.
      */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getSubjectTypeParameterName() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
+        return getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
     }
 
     /** Returns the upper bound type reference (the part after {@code :}), or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getBoundTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     @Override
     @NotNull
     public List<KtAnnotation> getAnnotations() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.ANNOTATION, KtAnnotation.EMPTY_ARRAY));
     }
 
     @Override
