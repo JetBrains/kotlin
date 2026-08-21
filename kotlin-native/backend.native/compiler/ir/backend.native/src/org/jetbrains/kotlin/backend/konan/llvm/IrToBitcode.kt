@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
@@ -2472,7 +2471,7 @@ internal class CodeGeneratorVisitor(
                 ib.eqeqeqSymbol -> icmpEq(args[0], args[1])
                 ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
                 else -> {
-                    val isFloatingPoint = args[0].type.isFloatingPoint()
+                    val isFloatingPoint = args[0].type.isFloatingPoint
                     // LLVM does not distinguish between signed/unsigned integers, so we must check
                     // the parameter type.
                     val shouldUseUnsignedComparison = function.parameters[0].type.isChar()
@@ -2904,6 +2903,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleR
         setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.PAGED_ALLOCATOR, config.pagedAllocator.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.HOT_RELOAD, config.isUsingSplitCompilationScheme.toLlvmConstInt32())
     }
 
     return llvmModule

@@ -17,6 +17,9 @@ class RuntimeModulesConfig(private val config: NativeSecondStageCompilationConfi
     internal val containsDebuggingRuntime: Boolean
         get() = config.debug
 
+    internal val isCompilingWithSplitScheme: Boolean
+        get() = config.isUsingSplitCompilationScheme
+
     private val RuntimeModule.absolutePath: String
         get() = Path(config.distribution.defaultNatives(config.target)).resolve(filename).absolutePathString()
 

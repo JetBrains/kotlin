@@ -20,6 +20,10 @@ where advanced options include:
   -Xcheck-dependencies       Check dependencies and download the missing ones.
   -Xcheck-state-at-external-calls
                              Ensure that all calls of possibly long external functions are done in the native thread state.
+  -Xcompilation-scheme=<closed|split>
+                             Compilation scheme used by the compiler to produce final binaries.
+                             1. 'closed': default compilation scheme. It produces one single artifact containing all the Kotlin code.
+                             2. 'split': hot-reload enable artifacts. It produces one single executable (the host) and a bootstrap object (loaded by host) containing Kotlin code.
   -Xcompile-from-bitcode=<path> Continue compilation from the given bitcode file.
   -Xdebug-info-version       Generate debug info of the given version (1, 2).
   -Xdebug-prefix-map=<old1=new1,old2=new2,...>

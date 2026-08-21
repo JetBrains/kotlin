@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.io.PrintWriter
-import java.io.File
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.konan.util.printWriter
+import java.nio.file.Path
+import kotlin.io.path.forEachLine
 
 /**
  * Third phase of C export:
@@ -24,15 +26,15 @@ import org.jetbrains.kotlin.K1Deprecation
  *  2. Create a header file with API
  *  3. (MinGW only) create EXPORTS def file.
  *
- *  @param headerFile C header file that will be populated with the exported C API.
- *  @param defFile DLL module definition file
- *  @param cppAdapterFile C++ source that will be populated with glue code between K/N runtime and exported API.
+ *  @param headerPath C header file that will be populated with the exported C API.
+ *  @param defPath DLL module definition file
+ *  @param cppAdapterPath C++ source that will be populated with glue code between K/N runtime and exported API.
  */
 internal class CAdapterApiExporter(
         private val elements: CAdapterExportedElements,
-        private val headerFile: File,
-        private val defFile: File?,
-        private val cppAdapterFile: File,
+        private val headerPath: Path,
+        private val defPath: Path?,
+        private val cppAdapterPath: Path,
         private val target: KonanTarget,
 ) {
     private val typeTranslator = elements.typeTranslator
@@ -51,7 +53,7 @@ internal class CAdapterApiExporter(
             builtIns.floatType, builtIns.doubleType,
             builtIns.charType, builtIns.booleanType,
             builtIns.unitType
-    ) + UnsignedType.values().map {
+    ) + UnsignedType.entries.map {
         // Unfortunately, `context.symbols` and `context.irBuiltins` are not initialized, so `context.symbols.ubyte`, etc, are unreachable.
         builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
     }
@@ -167,7 +169,7 @@ internal class CAdapterApiExporter(
     // TODO: Pass temp and output files explicitly and untie from `NativeGenerationState`.
     fun makeGlobalStruct() {
         val top = elements.scopes.first()
-        outputStreamWriter = headerFile.printWriter()
+        outputStreamWriter = headerPath.printWriter()
 
         val exportedSymbol = "${prefix}_symbols"
         exportedSymbols += exportedSymbol
@@ -250,10 +252,10 @@ internal class CAdapterApiExporter(
 
         outputStreamWriter.close()
 
-        outputStreamWriter = cppAdapterFile.printWriter()
+        outputStreamWriter = cppAdapterPath.printWriter()
 
         // Include header into C++ source.
-        headerFile.forEachLine { it -> output(it) }
+        headerPath.forEachLine { output(it) }
 
         output("""
     |struct KObjHeader;
@@ -390,8 +392,8 @@ internal class CAdapterApiExporter(
         output("RUNTIME_EXPORT ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
-        if (defFile != null) {
-            outputStreamWriter = defFile.printWriter()
+        if (defPath != null) {
+            outputStreamWriter = defPath.printWriter()
             output("EXPORTS")
             exportedSymbols.forEach { output(it) }
             outputStreamWriter.close()
@@ -407,7 +409,7 @@ private val KotlinType.createGetNonNullValueOfPredefinedType
 
 private operator fun String.times(count: Int): String {
     val builder = StringBuilder()
-    repeat(count, { builder.append(this) })
+    repeat(count) { builder.append(this) }
     return builder.toString()
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -17,6 +17,10 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLVMModuleRef? {
     val config = generationState.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
+
+    // TODO(Gabriele): review if we actually need this line
+    // ObjCExport may not be initialized yet (e..g, during split-compilation)
+    if (!generationState.hasObjCExport()) return null
 
     val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()

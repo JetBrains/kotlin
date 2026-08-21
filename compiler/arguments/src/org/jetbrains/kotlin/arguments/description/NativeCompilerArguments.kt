@@ -404,6 +404,22 @@ By default caches will be placed into the kotlin-native system cache directory."
     }
 
     compilerArgument {
+        name = "Xcompilation-scheme"
+        compilerName = "compilationScheme"
+        description = """
+            Compilation scheme used by the compiler to produce final binaries. 
+            1. 'closed': default compilation scheme. It produces one single artifact containing all the Kotlin code.
+            2. 'split': hot-reload enable artifacts. It produces one single executable (the host) and a bootstrap object (loaded by host) containing Kotlin code.
+        """.trimIndent().asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<closed|split>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
         name = "Xcheck-dependencies"
         deprecatedName = "-check_dependencies"
         description = "Check dependencies and download the missing ones.".asReleaseDependent()

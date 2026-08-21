@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -75,6 +75,7 @@ internal class NativeTestGroupingMessageCollector(
                     || isContextReceiversWarning(message)
                     || isK1LanguageVersionWarning(message)
                     || isArgumentPassedMultipleTimesWarning(message)
+                    || isSplitCompilationWarning(message)
                 -> {
                 // These warnings are known and should not be reported as errors.
                 severity
@@ -129,6 +130,8 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isArgumentPassedMultipleTimesWarning(message: String): Boolean = message.matches(ARGUMENT_PASSED_MULTIPLE_TIMES_WARNING_REGEX)
 
+    private fun isSplitCompilationWarning(message: String): Boolean = message.startsWith(SPLIT_COMPILATION_WARNING_PREFIX)
+
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
     companion object {
@@ -139,6 +142,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
         private const val KLIB_LOADER_WARNING_PREFIX = "KLIB loader: "
         private const val CONTEXT_RECEIVERS_WARNING_PREFIX = "Experimental context receivers are superseded by context parameters"
+        private const val SPLIT_COMPILATION_WARNING_PREFIX = "Split compilation is an experimental feature"
 
         private val K1_LANGUAGE_VERSIONS_WARNING_REGEX = Regex("Language version 1.[0-9.]+ is deprecated and its support will be removed in a future version of Kotlin")
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")

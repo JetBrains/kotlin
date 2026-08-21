@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -54,6 +53,7 @@ data class LlvmPipelineConfig(
         val saveIrDirectory: java.io.File? = null,
         val runLLVMPassesInCompiler: Boolean,
         val shouldInlineSafepoints: Boolean = false,
+        val isUsingSplitCompilationScheme: Boolean = false
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -150,10 +150,10 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
 internal fun createLTOFinalPipelineConfig(
-    context: NativeBackendPhaseContext,
-    targetTriple: String,
-    closedWorld: Boolean,
-    timePasses: Boolean = false,
+        context: NativeBackendPhaseContext,
+        targetTriple: String,
+        closedWorld: Boolean,
+        timePasses: Boolean = false,
 ): LlvmPipelineConfig {
     val config = context.config
     val target = config.target
@@ -186,7 +186,8 @@ internal fun createLTOFinalPipelineConfig(
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
-    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
+    // In the context of split compilation we want declarations to be visible, so the host runtime can resolve symbols easily.
+    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE && !config.isUsingSplitCompilationScheme
     val objcPasses = configurables is AppleConfigurables
 
     // Null value means that LLVM should use default inliner params
@@ -217,6 +218,7 @@ internal fun createLTOFinalPipelineConfig(
             sspMode = config.stackProtectorMode,
             runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
             shouldInlineSafepoints = context.shouldInlineSafepoints(),
+            isUsingSplitCompilationScheme = config.isUsingSplitCompilationScheme
     )
 }
 
@@ -338,8 +340,13 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
     }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.runLLVMPassesInCompiler && config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(module)
+        when {
+            config.isUsingSplitCompilationScheme -> {
+                module.makeSymbolsVisibilityDefault()
+            }
+            config.runLLVMPassesInCompiler && config.makeDeclarationsHidden -> {
+                module.makeSymbolsVisibilityHiddenLikeLlvmInternalizePass()
+            }
         }
     }
 }
@@ -356,11 +363,11 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
     override val passes =
             if (config.ltoPasses != null) listOf(config.ltoPasses)
             else buildList {
-                if (config.internalize) {
+                if (config.internalize && !config.isUsingSplitCompilationScheme) {
                     add("internalize")
                 }
 
-                if (config.globalDce) {
+                if (config.globalDce && !config.isUsingSplitCompilationScheme) {
                     add("globaldce")
                 }
 
@@ -384,7 +391,7 @@ class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: Pe
         if (!config.runLLVMPassesInCompiler)
             return
         getFunctions(module)
-                .filter { LLVMIsDeclaration(it) == 0 }
+                .filter { it.isDefinition }
                 .forEach { addLlvmFunctionEnumAttribute(it, LlvmFunctionAttribute.SanitizeThread) }
     }
 }

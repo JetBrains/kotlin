@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Linker
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.util.absoluteNormalizedPathString
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import java.io.File
+import java.nio.file.Path
 
 internal data class LinkerPhaseInput(
         val outputFile: String,
@@ -44,15 +45,15 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseCont
 }
 
 internal data class PreLinkCachesInput(
-        val objectFiles: List<File>,
+        val objectPaths: List<Path>,
         val caches: ResolvedCacheBinaries,
-        val outputObjectFile: File,
+        val outputObjectPath: Path,
 )
 
 internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, PreLinkCachesInput>(
         name = "PreLinkCaches",
 ) { context, input ->
-    val inputFiles = input.objectFiles.map { it.absoluteFile.normalize().path } + input.caches.static
-    val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectFile.absoluteFile.normalize().path)
+    val inputFiles = input.objectPaths.map { it.absoluteNormalizedPathString() } + input.caches.static
+    val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectPath.absoluteNormalizedPathString())
     runLinkerCommands(context, commands, cachingInvolved = true)
 }

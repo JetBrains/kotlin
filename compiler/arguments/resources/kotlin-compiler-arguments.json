@@ -16445,6 +16445,51 @@
                                         "deprecatedMessage": null
                                     },
                                     {
+                                        "name": "Xcompilation-scheme",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Compilation scheme used by the compiler to produce final binaries. \n1. 'closed': default compilation scheme. It produces one single artifact containing all the Kotlin code.\n2. 'split': hot-reload enable artifacts. It produces one single executable (the host) and a bootstrap object (loaded by host) containing Kotlin code.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": "None",
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<closed|split>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
                                         "name": "Xcompile-from-bitcode",
                                         "shortName": null,
                                         "deprecatedName": null,

@@ -82,9 +82,9 @@ class CacheSupport(
             }
 
     private val implicitCacheDirectories = buildList {
-        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
-            add(Path(it).takeIf { it.isDirectory() }
-                    ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory"))
+        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach { directoryPathString ->
+            add(Path(directoryPathString).takeIf { it.isDirectory() }
+                    ?: configuration.reportCompilationErrorAndThrow("cache directory $directoryPathString is not found or is not a directory"))
         }
         systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
         autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }

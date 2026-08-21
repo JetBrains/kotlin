@@ -1,0 +1,2 @@
+error: split compilation requires debugging information enabled. Please compile by passing '-g' as argument.
+COMPILATION_ERROR

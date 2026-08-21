@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 package org.jetbrains.kotlin.backend.konan
@@ -33,6 +33,7 @@ enum class LoggingTag(val ord: Int) {
     GCMark(9),
     GCScheduler(10),
     MemoryDump(11),
+    HotReload(12)
     ;
 
     companion object {

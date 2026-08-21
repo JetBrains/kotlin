@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.CacheSupport
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.temporaryFilesDir
-import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
@@ -30,9 +30,9 @@ internal fun createTempFiles(config: NativeSecondStageCompilationConfig, cacheDe
  * TODO: At some point this class and it usages can be generalized to all possible compiler outputs,
  *  so instead of OutputFiles we will create a series of classes for each specific compiler output kit.
  */
-internal class CExportFiles(
-        val cppAdapter: File,
-        val bitcodeAdapter: File,
-        val header: File,
-        val def: File?,
+internal class CExportPaths(
+        val cppAdapter: Path,
+        val bitcodeAdapter: Path,
+        val header: Path,
+        val def: Path?,
 )

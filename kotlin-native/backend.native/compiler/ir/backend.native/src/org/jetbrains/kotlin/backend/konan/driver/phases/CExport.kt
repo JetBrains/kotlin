@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import java.io.File
+import java.nio.file.Path
 
 internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
         "BuildCExports",
@@ -29,9 +29,9 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, Fr
 
 internal data class CExportGenerateApiInput(
         val elements: CAdapterExportedElements,
-        val headerFile: File,
-        val defFile: File?,
-        val cppAdapterFile: File,
+        val headerPath: Path,
+        val defPath: Path?,
+        val cppAdapterPath: Path,
 )
 
 internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, CExportGenerateApiInput>(
@@ -39,20 +39,20 @@ internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<NativeBack
 ) { context, input ->
     CAdapterApiExporter(
             elements = input.elements,
-            headerFile = input.headerFile,
-            defFile = input.defFile,
-            cppAdapterFile = input.cppAdapterFile,
+            headerPath = input.headerPath,
+            defPath = input.defPath,
+            cppAdapterPath = input.cppAdapterPath,
             target = context.config.target,
     ).makeGlobalStruct()
 }
 
 internal class CExportCompileAdapterInput(
-        val cppAdapterFile: File,
-        val bitcodeAdapterFile: File,
+        val cppAdapterPath: Path,
+        val bitcodeAdapterPath: Path,
 )
 
 internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, CExportCompileAdapterInput>(
         name = "CExportCompileAdapter",
 ) { context, input ->
-    produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile)
+    produceCAdapterBitcode(context.config.clang, input.cppAdapterPath, input.bitcodeAdapterPath)
 }

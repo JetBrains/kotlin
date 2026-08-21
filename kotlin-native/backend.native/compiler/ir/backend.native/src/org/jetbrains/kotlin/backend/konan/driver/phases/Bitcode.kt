@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import llvm.LLVMDumpModule
-import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.config.LoggingContext
@@ -24,18 +23,20 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleA
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
+import org.jetbrains.kotlin.backend.konan.llvm.isDefinition
 import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.util.PerformanceManager
-import java.io.File
+import java.nio.file.Path
 import kotlin.sequences.forEach
 
 
 internal data class WriteBitcodeFileInput(
         override val llvmModule: LLVMModuleRef,
-        val outputFile: File,
+        val outputFile: Path,
 ) : LlvmIrHolder
 
 internal data class InsertEntryPointAliasInput(
@@ -57,7 +58,7 @@ internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBacken
         "WriteBitcodeFile",
         postactions = getDefaultLlvmModuleActions(),
 ) { _, (llvmModule, outputFile) ->
-    LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
+    LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPathString())
 }
 
 internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -120,7 +121,7 @@ internal val StackProtectorPhaseInCompiler = createSimpleNamedCompilerPhase<Opti
             }
             attribute?.let { sspAttribute ->
                 getFunctions(module)
-                        .filter { LLVMIsDeclaration(it) == 0 && it.valueName != "__clang_call_terminate" }
+                        .filter { it.isDefinition && it.valueName != "__clang_call_terminate" }
                         .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
             }
         }
@@ -153,7 +154,7 @@ internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState,
         op = { context, _ -> produceCStubs(context) }
 )
 
-internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<File>>(
+internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<Path>>(
         name = "LinkBitcodeDependencies",
         postactions = getDefaultLlvmModuleActions(),
         op = { context, input -> linkBitcodeDependencies(context, input) }
