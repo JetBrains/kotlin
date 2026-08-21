@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+// Used AGP 9.0 as the minimal stable version supporting the external Android target plugin (com.android.kotlin.multiplatform.library).
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
 @AndroidGradlePluginTests
 class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
