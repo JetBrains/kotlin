@@ -602,11 +602,16 @@ class Fir2IrVisitor(
             return convertToIrExpression(result)
         }
         val irTarget = conversionScope.returnTarget(returnExpression, declarationStorage)
-        return returnExpression.convertWithOffsets { startOffset, endOffset ->
-            // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
-            val returnStartOffset = if (returnExpression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
-            val value = convertToIrExpression(result, expectedType = returnExpression.target.labeledElement.returnTypeRef.coneType)
-            IrReturnImpl(returnStartOffset, endOffset, builtins.nothingType, irTarget, value)
+        val expectedType = returnExpression.target.labeledElement.returnTypeRef.coneType
+        with(callGenerator) {
+            return returnExpression.convertWithOffsets { startOffset, endOffset ->
+                // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
+                val returnStartOffset = if (returnExpression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
+                val value = convertToIrExpression(result, expectedType = expectedType)
+                    .applyBuiltinToNumericClassCoercionIfNeeded(result, expectedType)
+                    .applyNumericClassToBuiltinCoercionIfNeeded(result, expectedType)
+                IrReturnImpl(returnStartOffset, endOffset, builtins.nothingType, irTarget, value)
+            }
         }
     }
 

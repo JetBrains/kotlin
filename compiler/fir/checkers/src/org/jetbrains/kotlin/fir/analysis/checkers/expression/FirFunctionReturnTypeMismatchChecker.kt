@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.supportsNumericClassConversionFrom
+import org.jetbrains.kotlin.fir.supportsNumericClassConversionTo
 import org.jetbrains.kotlin.fir.types.*
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
@@ -85,6 +88,11 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
 
         val typeContext = context.session.typeContext
         val returnExpressionType = resultExpression.resolvedType
+
+        if (
+            functionReturnType.toSymbol()?.supportsNumericClassConversionFrom(returnExpressionType, context.session) == true ||
+            returnExpressionType.toSymbol()?.supportsNumericClassConversionTo(functionReturnType, context.session) == true
+        ) return
 
         if (!isSubtypeForTypeMismatch(typeContext, subtype = returnExpressionType, supertype = functionReturnType)) {
             if (resultExpression.isNullLiteral && !functionReturnType.isMarkedOrFlexiblyNullable) {

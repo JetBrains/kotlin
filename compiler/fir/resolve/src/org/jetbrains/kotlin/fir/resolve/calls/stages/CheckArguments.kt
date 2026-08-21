@@ -256,12 +256,16 @@ fun Candidate.getExpectedTypeWithBuiltinToNumericClassConversion(
     session: FirSession,
     argumentType: ConeKotlinType,
     candidateExpectedType: ConeKotlinType,
-): ConeKotlinType? {
-    val expectedTypeSymbol = candidateExpectedType.fullyExpandedType(session).toSymbol(session) ?: return null
-    if (!expectedTypeSymbol.supportsNumericClassConversionFrom(argumentType, session)) return null
+): ConeKotlinType? = candidateExpectedType.applyBuiltinToNumericClassConversionIfNeeded(session, argumentType)
+    ?.also { markUseOfNumericClassConversion() }
 
-    return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
-        .also { markUseOfNumericClassConversion() }
+fun ConeKotlinType.applyBuiltinToNumericClassConversionIfNeeded(
+    session: FirSession,
+    argumentType: ConeKotlinType,
+): ConeKotlinType? {
+    val expectedTypeSymbol = fullyExpandedType(session).toSymbol(session) ?: return null
+    if (!expectedTypeSymbol.supportsNumericClassConversionFrom(argumentType, session)) return null
+    return argumentType.withNullabilityOf(this, session.typeContext)
 }
 
 context(context: ResolutionContext)
@@ -283,10 +287,15 @@ fun Candidate.getExpectedTypeWithNumericClassToBuiltinConversion(
     session: FirSession,
     argumentType: ConeKotlinType,
     candidateExpectedType: ConeKotlinType,
+): ConeKotlinType? = candidateExpectedType.applyNumericClassToBuiltinConversionIfNeeded(session, argumentType)
+    ?.also { markUseOfNumericClassConversion() }
+
+fun ConeKotlinType.applyNumericClassToBuiltinConversionIfNeeded(
+    session: FirSession,
+    argumentType: ConeKotlinType,
 ): ConeKotlinType? {
-    if (argumentType.toSymbol(session)?.supportsNumericClassConversionTo(candidateExpectedType, session) != true) return null
-    return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
-        .also { markUseOfNumericClassConversion() }
+    if (argumentType.toSymbol(session)?.supportsNumericClassConversionTo(this, session) != true) return null
+    return argumentType.withNullabilityOf(this, session.typeContext)
 }
 
 private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCandidate? =

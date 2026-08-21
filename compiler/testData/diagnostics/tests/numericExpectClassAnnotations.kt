@@ -74,7 +74,7 @@ expect value class SizeT {
 fun acceptSizeT(num: SizeT) {}
 expect fun getSizeT(): SizeT
 
-fun produceNSInteger(): NSInteger = <!RETURN_TYPE_MISMATCH!>30<!>
+fun produceNSInteger(): NSInteger = 30
 
 fun main() {
     acceptNSInteger(10)
