@@ -48,8 +48,11 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.IOException
+import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.io.path.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.name
 import kotlin.io.path.readText
 
 @CacheableTask
@@ -131,7 +134,7 @@ constructor(
                 versions.webpackCli,
                 versions.sourceMapLoader,
                 versions.kotlinWebHelpers,
-                // TODO: KT-86683 Add mocha as npm dependency instead of URL
+                versions.mocha,
             )
         }
 
@@ -142,6 +145,7 @@ constructor(
 
         val runnerModule = modules.require("kotlin-web-helpers/dist/kotlin-test-mocha-browser-runner.js")
         val staticHtml = modules.require("kotlin-web-helpers/dist/static/test.html")
+        val mochaAssets = modules.resolveMochaBrowserAssets()
         modules.require("playwright-core")
 
 
@@ -165,7 +169,6 @@ constructor(
 
         // FIXME: KT-86694 we don't actually need to bundle it, just fix 'format-util' bundling on kotlin-web-utils side
         config.extraJs += "config.entry.kotlinTestRunner = ${runnerModule.jsQuoted()}"
-        // FIXME: KT-86683 add mocha as npm dependency
         config.extraJs += """config.externals = { "mocha": "Mocha" }"""
 
         if (isWasm) {
@@ -190,8 +193,16 @@ constructor(
 
         runner.execute()
 
-        // Write should happen after webpack build, because of 'clean' policy
+        copyMochaBrowserAssets(mochaAssets)
+        // Writes should happen after webpack build, because of 'clean' policy
         writeTestHtmlFile(staticHtml)
+    }
+
+    private fun copyMochaBrowserAssets(assets: List<Path>) {
+        val outputDir = outputBundleDir.get().asFile.toPath()
+        assets.forEach { asset ->
+            asset.copyTo(outputDir.resolve(asset.name), overwrite = true)
+        }
     }
 
     private fun writeTestHtmlFile(staticHtmlPath: String) {
@@ -209,6 +220,16 @@ constructor(
     companion object {
         private const val TEST_HTML_FILE_NAME = "test.html"
     }
+}
+
+private val MOCHA_ASSET_FILE_NAMES = listOf("mocha.js", "mocha.css")
+
+private const val MOCHA_SOURCE_MAP_FILE_NAME = "mocha.js.map"
+
+private fun NpmProjectModules.resolveMochaBrowserAssets(): List<Path> {
+    val assets = MOCHA_ASSET_FILE_NAMES.map { Path(require("mocha/$it")) }
+    val sourceMap = resolve("mocha/$MOCHA_SOURCE_MAP_FILE_NAME")?.toPath()
+    return assets + listOfNotNull(sourceMap)
 }
 
 internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
