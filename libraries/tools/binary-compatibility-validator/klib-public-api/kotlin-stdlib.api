@@ -360,6 +360,10 @@ open annotation class kotlin/UnsafeVariance : kotlin/Annotation { // kotlin/Unsa
     constructor <init>() // kotlin/UnsafeVariance.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/WillBecomeValue : kotlin/Annotation { // kotlin/WillBecomeValue|null[0]
+    constructor <init>() // kotlin/WillBecomeValue.<init>|<init>(){}[0]
+}
+
 final enum class kotlin.annotation/AnnotationRetention : kotlin/Enum<kotlin.annotation/AnnotationRetention> { // kotlin.annotation/AnnotationRetention|null[0]
     enum entry BINARY // kotlin.annotation/AnnotationRetention.BINARY|null[0]
     enum entry RUNTIME // kotlin.annotation/AnnotationRetention.RUNTIME|null[0]

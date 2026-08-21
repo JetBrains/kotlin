@@ -66,16 +66,18 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (!declaration.symbol.isInlineOrValue) {
+        val isWillBecomeValueClass = !declaration.symbol.isInlineOrValue && declaration.symbol.willBecomeValueClass(context.session)
+        if (!declaration.symbol.isInlineOrValue && !isWillBecomeValueClass) {
             return
         }
         val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
-        if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && supportsFullValueClasses)) {
+        val valueObjectsAllowed = supportsFullValueClasses || isWillBecomeValueClass
+        if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && valueObjectsAllowed)) {
             return
         }
 
         val valueModifierPrefix = if (supportsFullValueClasses) "@JvmInline value" else "Value"
-        val isFullValueClass = declaration.symbol.isFullValueClass
+        val isFullValueClass = declaration.symbol.isFullValueClass || isWillBecomeValueClass
 
         if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
@@ -103,7 +105,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId()) {
+            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId() &&
+                !(isWillBecomeValueClass && supertypeSymbol.promisedToBecomeValueClass(context.session))
+            ) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
         }
@@ -325,7 +329,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
             }
 
-            if (equalsFromAnyOverriding != null && typedEquals == null) {
+            if (equalsFromAnyOverriding != null && typedEquals == null && !isWillBecomeValueClass) {
                 reporter.reportOn(
                     equalsFromAnyOverriding.source,
                     FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
