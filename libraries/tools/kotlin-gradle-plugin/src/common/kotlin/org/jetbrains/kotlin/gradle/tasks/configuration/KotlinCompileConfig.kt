@@ -170,11 +170,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             project.kotlinPropertiesProvider.expandTypeAliasesInClasspathSnapshots.map { it && isMultiplatform }
         )
 
-        val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
-        if (!suppressVersionInconsistencyChecks) {
-            parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
-        }
-        parameters.suppressVersionInconsistencyChecks.set(suppressVersionInconsistencyChecks)
+        parameters.suppressVersionInconsistencyChecks.set(
+            project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
+        )
+
+        parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
         parameters.buildSessionService.set(buildSessionService)
     }
 

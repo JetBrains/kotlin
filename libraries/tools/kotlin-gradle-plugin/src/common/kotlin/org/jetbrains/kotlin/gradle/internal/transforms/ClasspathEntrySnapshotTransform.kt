@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TransformActionUsingKotlinToolingDiagnostics
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
@@ -71,11 +73,13 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 
+    // workaround for incorrect nullability of `map`
+    private val buildToolsImplVersion: String?
+        get() = parameters.buildToolsImplVersion.orNull.takeIf { it != "null" }
+
     private fun checkVersionConsistency() {
         if (parameters.suppressVersionInconsistencyChecks.get()) return
         val kgpVersion = parameters.kgpVersion.get()
-        val buildToolsImplVersion = parameters.buildToolsImplVersion.orNull
-            .takeIf { it != "null" } // workaround for incorrect nullability of `map`
         if (kgpVersion != buildToolsImplVersion) {
             reportDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency(kgpVersion, buildToolsImplVersion))
         }
@@ -111,7 +115,10 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
             .apply {
                 this[GRANULARITY] = granularity
                 this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
-                this[EXPAND_TYPE_ALIASES] = expandTypeAliases
+
+                if (supportsExpandTypeAliases()) {
+                    this[EXPAND_TYPE_ALIASES] = expandTypeAliases
+                }
             }.build()
         val snapshot = buildSession.executeOperation(snapshotOperation)
         snapshot.saveSnapshot(snapshotOutputFile)
@@ -135,5 +142,13 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
             classpathEntryDirOrJar.name == "android.jar"
         ) CLASS_LEVEL
         else CLASS_MEMBER_LEVEL
+    }
+
+    private fun supportsExpandTypeAliases(): Boolean {
+        val implVersionString = buildToolsImplVersion ?: return false
+        val implVersion = KotlinToolingVersion(implVersionString)
+
+        return implVersion.toKotlinVersion()
+            .isAtLeast(EXPAND_TYPE_ALIASES.availableSinceVersion.major, EXPAND_TYPE_ALIASES.availableSinceVersion.minor)
     }
 }

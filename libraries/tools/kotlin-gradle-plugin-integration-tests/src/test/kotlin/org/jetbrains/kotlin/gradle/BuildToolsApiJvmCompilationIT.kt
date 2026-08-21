@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.writeText
 
 @DisplayName("JVM compilation via the Build Tools API")
@@ -25,7 +24,8 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     @DisplayName("Build Tools version consistency checker works if the old way of compilation is used together with the build tools API transform")
     fun versionConsistencyDiagnosticWorks(gradleVersion: GradleVersion) {
         project(
-            "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
                 runViaBuildToolsApi = false,
                 incremental = false,
             ),
@@ -56,7 +56,8 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
                 kotlin {
                     coreLibrariesVersion = "${TestVersions.Kotlin.STABLE_RELEASE}"
                 }
-                """.trimIndent())
+                """.trimIndent()
+            )
             buildGradle.append( // FIXME: this is a workaround for KT-68107
                 // language=Gradle
                 """
@@ -69,6 +70,31 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             )
             build("assemble") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Classpath snapshotting works with a compiler older than the snapshotting options known to KGP")
+    fun classpathSnapshottingWithOlderCompilerVersion(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(expandTypeAliasesInClasspathSnapshots = true),
+        ) {
+            listOf("lib", "app").forEach { subProjectName ->
+                subProject(subProjectName).buildGradle.append(
+                    // language=Gradle
+                    """
+                    kotlin {
+                        compilerVersion.set("${"2.4.20-RC"}")
+                        coreLibrariesVersion = "${"2.4.20-RC"}"
+                    }
+                    """.trimIndent()
+                )
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":lib:compileKotlin", ":app:compileKotlin")
             }
         }
     }
@@ -146,4 +172,5 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             }
         }
     }
+
 }
