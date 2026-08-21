@@ -100,10 +100,9 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             COMPANION_OBJECT_IN_EXTERNAL_INTERFACE,
             """
             Reading a companion object of an external interface currently produces an empty JS object.
-            This will change in the future: it will produce the JS value that the interface
-            name refers to, and will fail at runtime if there is no such value.
-                - To keep the current behavior, annotate the interface with '@JsName("Object")'.
-                - To emulate JavaScript IDLs without a companion object, use companion extensions.
+            This will change in the future: it will produce the JS value referenced by the interface's
+            JS name, and will fail at runtime if no such value exists.
+            To keep the current behavior, annotate the interface with `@JsName("Object")`.
 
             See https://kotl.in/e4vlc5 for more details.
             """.trimIndent()
