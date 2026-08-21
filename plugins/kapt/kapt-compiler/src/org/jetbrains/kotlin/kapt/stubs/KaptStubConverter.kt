@@ -35,23 +35,19 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
-import org.jetbrains.kotlin.constant.*
+import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
@@ -75,11 +71,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.*
@@ -95,22 +87,17 @@ import org.jetbrains.kotlin.kapt.stubs.SignatureParser.ClassGenericSignature
 import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.name.isOneSegmentFQN
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.io.File
 import java.lang.Deprecated
-import java.util.IdentityHashMap
+import java.util.*
 import javax.lang.model.element.ElementKind
 import kotlin.math.sign
 import com.sun.tools.javac.util.List as JavacList
@@ -553,7 +540,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         fun MethodNode.isImplicitEnumMethod() = isEnum && (
                 name == "values" && desc == "()[L${clazz.name};" ||
-                name == "valueOf" && desc == "(Ljava/lang/String;)L${clazz.name};")
+                        name == "valueOf" && desc == "(Ljava/lang/String;)L${clazz.name};")
 
         val convertedMethodsWithNode: List<Pair<MethodNode, Pair<JCMethodDecl, String>>> =
             clazz.methods.filter { !it.isImplicitEnumMethod() }.mapNotNull { methodNode ->
@@ -614,16 +601,16 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
             append(" {\n")
             if (isEnum) {
-                for (enumValue in enumValues)
-                    append(enumValue.second)
+                for ([_, enumValue] in enumValues)
+                    append(enumValue)
                 append(";\n")
             }
-            for (field in sortedConvertedFields)
-                append(field.second).append("\n")
-            for (method in sortedConvertedMethods)
-                append(method.second).append("\n")
-            for (nestedClass in nestedClasses)
-                append(nestedClass.second).append("\n")
+            for ([_, field] in sortedConvertedFields)
+                append(field).append("\n")
+            for ([_, method] in sortedConvertedMethods)
+                append(method).append("\n")
+            for ([_, nestedClass] in nestedClasses)
+                append(nestedClass).append("\n")
             append("}\n")
         }
 
@@ -936,7 +923,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return null
     }
 
-    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
+    @OptIn(SymbolInternals::class)
     private fun convertNonConstPropertyInitializerFir(property: FirProperty, containingClass: ClassNode): Pair<JCExpression, String>? {
         val propertyInitializer = property.initializer ?: return null
         val reference = propertyInitializer.toReference(kaptContext.firSession!!)
@@ -956,7 +943,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session)
             else initialExpression
 
-        @OptIn(PrivateConstantEvaluatorAPI::class, PrivateForInline::class)
         val result = try {
             expression.evaluateAs<FirElement>(session)
         } catch (_: Exception) {
@@ -986,6 +972,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
     }
 
+    @Suppress("RedundantIf")
     private fun IrElement.isInsideCompanionObject(): Boolean {
         val parent = (this as? IrDeclaration)?.parent ?: return false
         if (parent is IrClass && parent.isCompanion) return true
@@ -1231,9 +1218,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                                 psiElement?.getCallableDeclaration()?.receiverTypeReference
                             }
                         }
-                      else -> {
-                          lazyType()
-                      }
+                        else -> {
+                            lazyType()
+                        }
                     }
                 }
                 declaration.isSetter -> {
@@ -1316,7 +1303,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val refinedReturnType = getNonErrorType(
             declaration.returnType.containsErrorTypes(), RETURN_TYPE,
             ktTypeProvider = { returnTypeReference },
-            ifNonError = { projectLegacyFunctionTypeKindsIfNeeded(returnTypeReference, returnTypeMappingMode) ?: genericSignature.returnType }
+            ifNonError = {
+                projectLegacyFunctionTypeKindsIfNeeded(returnTypeReference, returnTypeMappingMode) ?: genericSignature.returnType
+            }
         )
 
         return genericSignature.withRefinedReturnType(refinedReturnType)
