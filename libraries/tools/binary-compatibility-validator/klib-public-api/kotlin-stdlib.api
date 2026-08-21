@@ -4467,8 +4467,13 @@ final value class kotlin/UShortArray : kotlin.collections/Collection<kotlin/USho
 open class kotlin.coroutines.cancellation/CancellationException : kotlin/IllegalStateException { // kotlin.coroutines.cancellation/CancellationException|null[0]
     constructor <init>() // kotlin.coroutines.cancellation/CancellationException.<init>|<init>(){}[0]
     constructor <init>(kotlin/String?) // kotlin.coroutines.cancellation/CancellationException.<init>|<init>(kotlin.String?){}[0]
-    constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin.coroutines.cancellation/CancellationException.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
     constructor <init>(kotlin/Throwable?) // kotlin.coroutines.cancellation/CancellationException.<init>|<init>(kotlin.Throwable?){}[0]
+
+    // Targets: [native, wasmJs, wasmWasi]
+    constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin.coroutines.cancellation/CancellationException.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
+
+    // Targets: [js]
+    constructor <init>(kotlin/String? = ..., kotlin/Throwable? = ...) // kotlin.coroutines.cancellation/CancellationException.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 open class kotlin.io.encoding/Base64 { // kotlin.io.encoding/Base64|null[0]
