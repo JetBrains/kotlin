@@ -1,6 +1,9 @@
 KaLocalVariableSymbol:
   anchorPsi: KtProperty
-  annotations: []
+  annotations: [
+    MyAnnotation()
+      psi: KtAnnotationEntry
+  ]
   callableId: null
   contextParameters: []
   contextReceivers: []

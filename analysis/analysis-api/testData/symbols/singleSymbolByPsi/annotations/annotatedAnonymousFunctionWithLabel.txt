@@ -1,6 +1,9 @@
 KaAnonymousFunctionSymbol:
   anchorPsi: KtNamedFunction
-  annotations: []
+  annotations: [
+    MyAnnotation()
+      psi: KtAnnotationEntry
+  ]
   callableId: null
   contextParameters: []
   contextReceivers: []
