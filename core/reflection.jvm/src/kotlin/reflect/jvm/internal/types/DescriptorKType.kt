@@ -26,10 +26,12 @@ import kotlin.reflect.jvm.jvmErasure
 
 internal class DescriptorKType(
     val type: KotlinType,
-    computeJavaType: (() -> Type)?,
+    computeJavaType: Lazy<Type>?,
     private val isAbbreviation: Boolean,
 ) : AbstractKType(computeJavaType) {
-    constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(type, computeJavaType, isAbbreviation = false)
+    constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(
+        type, computeJavaType?.let { lazy(PUBLICATION, it) }, isAbbreviation = false,
+    )
 
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 

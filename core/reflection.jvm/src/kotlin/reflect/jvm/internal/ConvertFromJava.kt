@@ -142,7 +142,7 @@ private fun createJavaSimpleType(
     isNothingType = false,
     isSuspendFunctionType = false,
     mutableCollectionClass = mutableCollectionClass,
-    computeJavaType = { type },
+    computeJavaType = lazyOf(type),
 )
 
 private fun createRawJavaType(
