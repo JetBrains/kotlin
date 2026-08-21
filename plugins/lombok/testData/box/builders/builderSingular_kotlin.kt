@@ -1,4 +1,5 @@
 // FULL_JDK
+// DUMP_KT_IR
 
 import lombok.Builder
 import lombok.Singular

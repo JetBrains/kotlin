@@ -1,0 +1,113 @@
+@Builder(builderClassName = "MyClassBuilder", toBuilder = true)
+class MyClass {
+  val aString: String
+    field = aString
+    get
+
+  class CustomMyClassBuilder : MyClassBuilder {
+    constructor() /* primary */ {
+      super/*MyClassBuilder*/()
+      /* <init>() */
+
+    }
+
+    override fun build(): MyClass {
+      Companion.<set-myStaticField>(<set-?> = 100)
+      return super<MyClassBuilder>.build()
+    }
+
+  }
+
+  open class MyClassBuilder {
+    private var aString: String
+      private get
+      private set
+
+    companion object Companion {
+      var myStaticField: Int
+        field = 42
+        get
+        set
+
+      private constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun aString(aString: String): MyClassBuilder {
+      <this>.#aString = aString
+      return <this>
+    }
+
+    open fun build(): MyClass {
+      val tmp_0: String = <this>.#aString
+      return MyClass(aString = tmp_0)
+    }
+
+  }
+
+  class MyCustomClass {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(x: Int): MyClassBuilder {
+      return CustomMyClassBuilder()
+    }
+
+  }
+
+  constructor(aString: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun toBuilder(): MyClassBuilder {
+    val tmp_1: MyClassBuilder = MyClassBuilder()
+    tmp_1.#aString = <this>.<get-aString>()
+    return tmp_1
+  }
+
+}
+
+fun box(): String {
+  Companion.<set-myStaticField>(<set-?> = 84)
+  val myClassBuilder: MyClassBuilder = Companion.builder(x = 0)
+  val myClass: MyClass = myClassBuilder.aString(aString = "test").build()
+  return when {
+    when {
+      when {
+        myClassBuilder is CustomMyClassBuilder -> EQEQ(arg0 = Companion.<get-myStaticField>(), arg1 = 100)
+        else -> false
+      } -> EQEQ(arg0 = myClass.<get-aString>(), arg1 = "test")
+      else -> false
+    } -> { // BLOCK
+      "OK"
+    }
+    else -> { // BLOCK
+      "Error: " + myClass
+    }
+  }
+}

@@ -1,0 +1,547 @@
+@EqualsAndHashCode
+open class CallSuperBase {
+  val baseProp: Int
+    field = baseProp
+    get
+
+  constructor(baseProp: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperBase -> return false
+    }
+    val tmp_0: CallSuperBase = other /*as CallSuperBase */
+    when {
+      EQEQ(arg0 = <this>.<get-baseProp>(), arg1 = tmp_0.<get-baseProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.<get-baseProp>().hashCode()
+  }
+
+}
+
+@EqualsAndHashCode(callSuper = true)
+class CallSuperDerived : CallSuperBase {
+  val ownProp: String
+    field = ownProp
+    get
+
+  constructor(ownProp: String) /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperDerived -> return false
+    }
+    when {
+      super<CallSuperBase>.equals(other = other).not() -> return false
+    }
+    val tmp_1: CallSuperDerived = other /*as CallSuperDerived */
+    when {
+      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_1.<get-ownProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_2: Int = super<CallSuperBase>.hashCode()
+    tmp_2 = tmp_2.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
+    return tmp_2
+  }
+
+}
+
+@EqualsAndHashCode
+data class DataClassWithExclude {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  val customProp: Char
+    field = customProp
+    get
+
+  constructor(name: String, age: Int, customProp: Char) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassWithExclude -> return false
+    }
+    val tmp_3: DataClassWithExclude = other /*as DataClassWithExclude */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_3.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_3.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_4: Int = 1
+    tmp_4 = tmp_4.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_4 = tmp_4.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_4
+  }
+
+  operator fun component1(): String {
+    return <this>.#name
+  }
+
+  operator fun component2(): Int {
+    return <this>.#age
+  }
+
+  operator fun component3(): Char {
+    return <this>.#customProp
+  }
+
+  fun copy(name: String = <this>.#name, age: Int = <this>.#age, customProp: Char = <this>.#customProp): DataClassWithExclude {
+    return DataClassWithExclude(name = name, age = age, customProp = customProp)
+  }
+
+  override fun toString(): String {
+    return "DataClassWithExclude(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ", " + "customProp=" + <this>.#customProp + ")"
+  }
+
+}
+
+@EqualsAndHashCode
+class Empty {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Empty -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 0
+  }
+
+}
+
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+class OnlyIncluded {
+  val included: String
+    field = included
+    get
+
+  val excluded: String
+    field = excluded
+    get
+
+  constructor(included: String, excluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is OnlyIncluded -> return false
+    }
+    val tmp_5: OnlyIncluded = other /*as OnlyIncluded */
+    when {
+      EQEQ(arg0 = <this>.<get-included>(), arg1 = tmp_5.<get-included>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.<get-included>().hashCode()
+  }
+
+}
+
+@EqualsAndHashCode
+data class PlainDataClass {
+  val a: String
+    field = a
+    get
+
+  val b: Int
+    field = b
+    get
+
+  constructor(a: String, b: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is PlainDataClass -> return false
+    }
+    val tmp_6: PlainDataClass = other /*as PlainDataClass */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_6.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_6.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_7: Int = 1
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_7
+  }
+
+  operator fun component1(): String {
+    return <this>.#a
+  }
+
+  operator fun component2(): Int {
+    return <this>.#b
+  }
+
+  fun copy(a: String = <this>.#a, b: Int = <this>.#b): PlainDataClass {
+    return PlainDataClass(a = a, b = b)
+  }
+
+  override fun toString(): String {
+    return "PlainDataClass(" + "a=" + <this>.#a + ", " + "b=" + <this>.#b + ")"
+  }
+
+}
+
+@EqualsAndHashCode
+class Simple {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  val megaName: String
+    field = "Super " + <this>.<get-name>()
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Simple -> return false
+    }
+    val tmp_8: Simple = other /*as Simple */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_8.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_8.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_9: Int = 1
+    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_9
+  }
+
+}
+
+@EqualsAndHashCode
+class WithComputedProperties {
+  val real: String
+    field = real
+    get
+
+  constructor(real: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithComputedProperties -> return false
+    }
+    val tmp_10: WithComputedProperties = other /*as WithComputedProperties */
+    when {
+      EQEQ(arg0 = <this>.<get-real>(), arg1 = tmp_10.<get-real>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.<get-real>().hashCode()
+  }
+
+  val computedProp: String
+    get(): String {
+      return "computed"
+    }
+
+}
+
+@EqualsAndHashCode
+class WithExclude {
+  val a: String
+    field = a
+    get
+
+  val b: String
+    field = b
+    get
+
+  constructor(a: String, b: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithExclude -> return false
+    }
+    val tmp_11: WithExclude = other /*as WithExclude */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_11.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.<get-a>().hashCode()
+  }
+
+}
+
+@EqualsAndHashCode
+class WithNullable {
+  val a: String?
+    field = a
+    get
+
+  val b: Int
+    field = b
+    get
+
+  constructor(a: String?, b: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNullable -> return false
+    }
+    val tmp_12: WithNullable = other /*as WithNullable */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_12.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_12.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_13: Int = 1
+    tmp_13 = tmp_13.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 0
+      else -> <this>.<get-a>().hashCode()
+    })
+    tmp_13 = tmp_13.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_13
+  }
+
+}
+
+@EqualsAndHashCode
+enum class Color : Enum<Color> {
+  val hex: String
+    field = hex
+    get
+
+  RED = Color(hex = "#FF0000")
+
+  GREEN = Color(hex = "#00FF00")
+
+  private constructor(hex: String) /* primary */ {
+    super/*Enum*/<Color>()
+    /* <init>() */
+
+  }
+
+  companion fun valueOf(value: String): Color /* Synthetic body for ENUM_VALUEOF */
+
+  companion fun values(): Array<Color> /* Synthetic body for ENUM_VALUES */
+
+  companion val entries: EnumEntries<Color>
+    companion get(): EnumEntries<Color> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+@EqualsAndHashCode
+object ObjectWithProperties {
+  val version: String
+    field = "2.0"
+    get
+
+  val label: String
+    field = "release"
+    get
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@EqualsAndHashCode
+object SingletonObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val s1: Simple = Simple(name = "Alice", age = 30)
+  val s2: Simple = Simple(name = "Alice", age = 30)
+  val s3: Simple = Simple(name = "Bob", age = 30)
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = s1, arg1 = s2))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = s1, arg1 = s3))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = s1.hashCode(), arg1 = s2.hashCode()))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Simple(name = "Alice", age = 30), arg1 = Simple(name = "Alice", age = 30)))
+  val we1: WithExclude = WithExclude(a = "a", b = "b1")
+  val we2: WithExclude = WithExclude(a = "a", b = "b2")
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = we1, arg1 = we2))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = we1.hashCode(), arg1 = we2.hashCode()))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = OnlyIncluded(included = "yes", excluded = "no"), arg1 = OnlyIncluded(included = "yes", excluded = "different")))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = OnlyIncluded(included = "yes", excluded = "no"), arg1 = OnlyIncluded(included = "no", excluded = "no")))
+  val d1: DataClassWithExclude = DataClassWithExclude(name = "Alice", age = 30, customProp = 'a')
+  val d2: DataClassWithExclude = DataClassWithExclude(name = "Alice", age = 30, customProp = 'b')
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = d1, arg1 = d2))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = d1.hashCode(), arg1 = d2.hashCode()))
+  val d3: DataClassWithExclude = DataClassWithExclude(name = "Alice", age = 31, customProp = 'a')
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = d1, arg1 = d3))
+  val p1: PlainDataClass = PlainDataClass(a = "x", b = 1)
+  val p2: PlainDataClass = PlainDataClass(a = "x", b = 1)
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = p1, arg1 = p2))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = p1.hashCode(), arg1 = p2.hashCode()))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingletonObject, arg1 = SingletonObject))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = ObjectWithProperties, arg1 = ObjectWithProperties))
+  SingletonObject.hashCode() /*~> Unit */
+  ObjectWithProperties.hashCode() /*~> Unit */
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNullable(a = null, b = 1), arg1 = WithNullable(a = null, b = 1)))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithNullable(a = "a", b = 1), arg1 = WithNullable(a = null, b = 1)))
+  WithNullable(a = null, b = 1).hashCode() /*~> Unit */
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Empty(), arg1 = Empty()))
+  assertEquals<Int>(a = 0, b = Empty().hashCode())
+  val cd1: CallSuperDerived = CallSuperDerived(ownProp = "x")
+  val cd2: CallSuperDerived = CallSuperDerived(ownProp = "x")
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = cd1, arg1 = cd2))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = cd1.hashCode(), arg1 = cd2.hashCode()))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithComputedProperties(real = "X"), arg1 = WithComputedProperties(real = "X")))
+  @EqualsAndHashCode
+  local class LocalClass {
+    val x: Int
+      field = x
+      get
+
+    constructor(x: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun equals(other: Any?): Boolean {
+      when {
+        EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+      }
+      when {
+        other !is LocalClass -> return false
+      }
+      val tmp_14: LocalClass = other /*as LocalClass */
+      when {
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_14.<get-x>()).not() -> return false
+      }
+      return true
+    }
+
+    override fun hashCode(): Int {
+      return <this>.<get-x>().hashCode()
+    }
+
+  }
+
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = LocalClass(x = 7), arg1 = LocalClass(x = 7)))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = LocalClass(x = 7), arg1 = LocalClass(x = 8)))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Color.RED, arg1 = Color.RED))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = Color.RED, arg1 = Color.GREEN))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Color.RED.hashCode(), arg1 = Color.RED.hashCode()))
+  return "OK"
+}

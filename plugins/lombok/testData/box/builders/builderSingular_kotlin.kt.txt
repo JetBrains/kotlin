@@ -1,0 +1,1199 @@
+@Builder
+class BoundedTypeParameterSingular<T : CharSequence> {
+  val items: List<T>
+    field = items
+    get
+
+  open class BoundedTypeParameterSingularBuilder<T : CharSequence> {
+    private var items: MutableList<T>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): BoundedTypeParameterSingular<T> {
+      val tmp_0: MutableList<T>? = <this>.#items
+      val tmp_1: Int = when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> 0
+        else -> tmp_0 /*as MutableList<T> */.<get-size>()
+      }
+      val tmp_2: List<T> = when {
+        EQEQ(arg0 = tmp_1, arg1 = 0) -> emptyList<T>()
+        EQEQ(arg0 = tmp_1, arg1 = 1) -> listOf<T>(element = tmp_0 /*as MutableList<T> */.iterator().next())
+        else -> unmodifiableList<T>(p0 = { // BLOCK
+          val tmp_3: ArrayList<T> = ArrayList<T>()
+          tmp_3.addAll(elements = tmp_0 /*as MutableList<T> */)
+          tmp_3
+        })
+      }
+      return BoundedTypeParameterSingular<T>(items = tmp_2)
+    }
+
+    open fun clearItems(): BoundedTypeParameterSingularBuilder<T> {
+      val tmp_4: MutableList<T>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_4, arg1 = null).not() -> tmp_4 /*as MutableList<T> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: T): BoundedTypeParameterSingularBuilder<T> {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<T>()
+      }
+      <this>.#items /*as MutableList<T> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<T>): BoundedTypeParameterSingularBuilder<T> {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<T>()
+      }
+      <this>.#items /*as MutableList<T> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <T : CharSequence> builder(): BoundedTypeParameterSingularBuilder<T> {
+      return BoundedTypeParameterSingularBuilder<T>()
+    }
+
+  }
+
+  constructor(@Singular items: List<T>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class GenericSingular<K : Any?, V : Any?> {
+  val items: List<V>
+    field = items
+    get
+
+  val pairs: Map<K, V>
+    field = pairs
+    get
+
+  open class GenericSingularBuilder<K : Any?, V : Any?> {
+    private var items: MutableList<V>?
+      private get
+      private set
+
+    private var pairs: MutableMap<K, V>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): GenericSingular<K, V> {
+      val tmp_5: MutableList<V>? = <this>.#items
+      val tmp_6: Int = when {
+        EQEQ(arg0 = tmp_5, arg1 = null) -> 0
+        else -> tmp_5 /*as MutableList<V> */.<get-size>()
+      }
+      val tmp_7: List<V> = when {
+        EQEQ(arg0 = tmp_6, arg1 = 0) -> emptyList<V>()
+        EQEQ(arg0 = tmp_6, arg1 = 1) -> listOf<V>(element = tmp_5 /*as MutableList<V> */.iterator().next())
+        else -> unmodifiableList<V>(p0 = { // BLOCK
+          val tmp_8: ArrayList<V> = ArrayList<V>()
+          tmp_8.addAll(elements = tmp_5 /*as MutableList<V> */)
+          tmp_8
+        })
+      }
+      val tmp_9: MutableMap<K, V>? = <this>.#pairs
+      val tmp_10: Int = when {
+        EQEQ(arg0 = tmp_9, arg1 = null) -> 0
+        else -> tmp_9 /*as MutableMap<K, V> */.<get-size>()
+      }
+      val tmp_11: Map<K, V> = when {
+        EQEQ(arg0 = tmp_10, arg1 = 0) -> emptyMap<K, V>()
+        else -> unmodifiableMap<K, V>(p0 = { // BLOCK
+          val tmp_12: LinkedHashMap<K, V> = LinkedHashMap<K, V>()
+          tmp_12.putAll(from = tmp_9 /*as MutableMap<K, V> */)
+          tmp_12
+        })
+      }
+      return GenericSingular<K, V>(items = tmp_7, pairs = tmp_11)
+    }
+
+    open fun clearItems(): GenericSingularBuilder<K, V> {
+      val tmp_13: MutableList<V>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_13, arg1 = null).not() -> tmp_13 /*as MutableList<V> */.clear()
+      }
+      return <this>
+    }
+
+    open fun clearPairs(): GenericSingularBuilder<K, V> {
+      val tmp_14: MutableMap<K, V>? = <this>.#pairs
+      when {
+        EQEQ(arg0 = tmp_14, arg1 = null).not() -> tmp_14 /*as MutableMap<K, V> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: V): GenericSingularBuilder<K, V> {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<V>()
+      }
+      <this>.#items /*as MutableList<V> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<V>): GenericSingularBuilder<K, V> {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<V>()
+      }
+      <this>.#items /*as MutableList<V> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+    open fun pair(key: K, value: V): GenericSingularBuilder<K, V> {
+      when {
+        EQEQ(arg0 = <this>.#pairs, arg1 = null) -> <this>.#pairs = LinkedHashMap<K, V>()
+      }
+      <this>.#pairs /*as MutableMap<K, V> */.put(key = key, value = value)
+      return <this>
+    }
+
+    open fun pairs(pairs: Map<K, V>): GenericSingularBuilder<K, V> {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#pairs, arg1 = null) -> <this>.#pairs = LinkedHashMap<K, V>()
+      }
+      <this>.#pairs /*as MutableMap<K, V> */.putAll(from = pairs)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <K : Any?, V : Any?> builder(): GenericSingularBuilder<K, V> {
+      return GenericSingularBuilder<K, V>()
+    }
+
+  }
+
+  constructor(@Singular items: List<V>, @Singular pairs: Map<K, V>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class IgnoreNullCollections {
+  val items: List<Int>
+    field = items
+    get
+
+  open class IgnoreNullCollectionsBuilder {
+    private var items: MutableList<Int>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): IgnoreNullCollections {
+      val tmp_15: MutableList<Int>? = <this>.#items
+      val tmp_16: Int = when {
+        EQEQ(arg0 = tmp_15, arg1 = null) -> 0
+        else -> tmp_15 /*as MutableList<Int> */.<get-size>()
+      }
+      val tmp_17: List<Int> = when {
+        EQEQ(arg0 = tmp_16, arg1 = 0) -> emptyList<Int>()
+        EQEQ(arg0 = tmp_16, arg1 = 1) -> listOf<Int>(element = tmp_15 /*as MutableList<Int> */.iterator().next())
+        else -> unmodifiableList<Int>(p0 = { // BLOCK
+          val tmp_18: ArrayList<Int> = ArrayList<Int>()
+          tmp_18.addAll(elements = tmp_15 /*as MutableList<Int> */)
+          tmp_18
+        })
+      }
+      return IgnoreNullCollections(items = tmp_17)
+    }
+
+    open fun clearItems(): IgnoreNullCollectionsBuilder {
+      val tmp_19: MutableList<Int>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_19, arg1 = null).not() -> tmp_19 /*as MutableList<Int> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: Int): IgnoreNullCollectionsBuilder {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int>()
+      }
+      <this>.#items /*as MutableList<Int> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<Int>?): IgnoreNullCollectionsBuilder {
+      when {
+        EQEQ(arg0 = items, arg1 = null).not() -> // COMPOSITE {
+        when {
+          EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int>()
+        }
+        <this>.#items /*as MutableList<Int> */.addAll(elements = items /*as Collection<Int> */)
+        // }
+      }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): IgnoreNullCollectionsBuilder {
+      return IgnoreNullCollectionsBuilder()
+    }
+
+  }
+
+  constructor(@Singular(ignoreNullCollections = true) items: List<Int>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class IgnoreNullCollectionsWithNullableCollections {
+  val items: List<Int>?
+    field = items
+    get
+
+  open class IgnoreNullCollectionsWithNullableCollectionsBuilder {
+    private var items: MutableList<Int>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): IgnoreNullCollectionsWithNullableCollections {
+      val tmp_20: MutableList<Int>? = <this>.#items
+      val tmp_21: Int = when {
+        EQEQ(arg0 = tmp_20, arg1 = null) -> 0
+        else -> tmp_20 /*as MutableList<Int> */.<get-size>()
+      }
+      val tmp_22: List<Int> = when {
+        EQEQ(arg0 = tmp_21, arg1 = 0) -> emptyList<Int>()
+        EQEQ(arg0 = tmp_21, arg1 = 1) -> listOf<Int>(element = tmp_20 /*as MutableList<Int> */.iterator().next())
+        else -> unmodifiableList<Int>(p0 = { // BLOCK
+          val tmp_23: ArrayList<Int> = ArrayList<Int>()
+          tmp_23.addAll(elements = tmp_20 /*as MutableList<Int> */)
+          tmp_23
+        })
+      }
+      return IgnoreNullCollectionsWithNullableCollections(items = tmp_22)
+    }
+
+    open fun clearItems(): IgnoreNullCollectionsWithNullableCollectionsBuilder {
+      val tmp_24: MutableList<Int>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_24, arg1 = null).not() -> tmp_24 /*as MutableList<Int> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: Int): IgnoreNullCollectionsWithNullableCollectionsBuilder {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int>()
+      }
+      <this>.#items /*as MutableList<Int> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<Int>?): IgnoreNullCollectionsWithNullableCollectionsBuilder {
+      when {
+        EQEQ(arg0 = items, arg1 = null).not() -> // COMPOSITE {
+        when {
+          EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int>()
+        }
+        <this>.#items /*as MutableList<Int> */.addAll(elements = items /*as Collection<Int> */)
+        // }
+      }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): IgnoreNullCollectionsWithNullableCollectionsBuilder {
+      return IgnoreNullCollectionsWithNullableCollectionsBuilder()
+    }
+
+  }
+
+  constructor(@Singular(ignoreNullCollections = true) items: List<Int>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class NullableCollection {
+  val items: List<Int>?
+    field = items
+    get
+
+  open class NullableCollectionBuilder {
+    private var items: MutableList<Int>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): NullableCollection {
+      val tmp_25: MutableList<Int>? = <this>.#items
+      val tmp_26: Int = when {
+        EQEQ(arg0 = tmp_25, arg1 = null) -> 0
+        else -> tmp_25 /*as MutableList<Int> */.<get-size>()
+      }
+      val tmp_27: List<Int> = when {
+        EQEQ(arg0 = tmp_26, arg1 = 0) -> emptyList<Int>()
+        EQEQ(arg0 = tmp_26, arg1 = 1) -> listOf<Int>(element = tmp_25 /*as MutableList<Int> */.iterator().next())
+        else -> unmodifiableList<Int>(p0 = { // BLOCK
+          val tmp_28: ArrayList<Int> = ArrayList<Int>()
+          tmp_28.addAll(elements = tmp_25 /*as MutableList<Int> */)
+          tmp_28
+        })
+      }
+      return NullableCollection(items = tmp_27)
+    }
+
+    open fun clearItems(): NullableCollectionBuilder {
+      val tmp_29: MutableList<Int>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_29, arg1 = null).not() -> tmp_29 /*as MutableList<Int> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: Int): NullableCollectionBuilder {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int>()
+      }
+      <this>.#items /*as MutableList<Int> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<Int>): NullableCollectionBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int>()
+      }
+      <this>.#items /*as MutableList<Int> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): NullableCollectionBuilder {
+      return NullableCollectionBuilder()
+    }
+
+  }
+
+  constructor(@Singular items: List<Int>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class NullableElements {
+  val items: List<Int?>
+    field = items
+    get
+
+  open class NullableElementsBuilder {
+    private var items: MutableList<Int?>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): NullableElements {
+      val tmp_30: MutableList<Int?>? = <this>.#items
+      val tmp_31: Int = when {
+        EQEQ(arg0 = tmp_30, arg1 = null) -> 0
+        else -> tmp_30 /*as MutableList<Int?> */.<get-size>()
+      }
+      val tmp_32: List<Int?> = when {
+        EQEQ(arg0 = tmp_31, arg1 = 0) -> emptyList<Int?>()
+        EQEQ(arg0 = tmp_31, arg1 = 1) -> listOf<Int?>(element = tmp_30 /*as MutableList<Int?> */.iterator().next())
+        else -> unmodifiableList<Int?>(p0 = { // BLOCK
+          val tmp_33: ArrayList<Int?> = ArrayList<Int?>()
+          tmp_33.addAll(elements = tmp_30 /*as MutableList<Int?> */)
+          tmp_33
+        })
+      }
+      return NullableElements(items = tmp_32)
+    }
+
+    open fun clearItems(): NullableElementsBuilder {
+      val tmp_34: MutableList<Int?>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_34, arg1 = null).not() -> tmp_34 /*as MutableList<Int?> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: Int?): NullableElementsBuilder {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int?>()
+      }
+      <this>.#items /*as MutableList<Int?> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<Int?>): NullableElementsBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<Int?>()
+      }
+      <this>.#items /*as MutableList<Int?> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): NullableElementsBuilder {
+      return NullableElementsBuilder()
+    }
+
+  }
+
+  constructor(@Singular items: List<Int?>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class NullableTypeParameterSingular<T : Any?> {
+  val items: List<T?>
+    field = items
+    get
+
+  open class NullableTypeParameterSingularBuilder<T : Any?> {
+    private var items: MutableList<T?>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): NullableTypeParameterSingular<T> {
+      val tmp_35: MutableList<T?>? = <this>.#items
+      val tmp_36: Int = when {
+        EQEQ(arg0 = tmp_35, arg1 = null) -> 0
+        else -> tmp_35 /*as MutableList<T?> */.<get-size>()
+      }
+      val tmp_37: List<T?> = when {
+        EQEQ(arg0 = tmp_36, arg1 = 0) -> emptyList<T?>()
+        EQEQ(arg0 = tmp_36, arg1 = 1) -> listOf<T?>(element = tmp_35 /*as MutableList<T?> */.iterator().next())
+        else -> unmodifiableList<T?>(p0 = { // BLOCK
+          val tmp_38: ArrayList<T?> = ArrayList<T?>()
+          tmp_38.addAll(elements = tmp_35 /*as MutableList<T?> */)
+          tmp_38
+        })
+      }
+      return NullableTypeParameterSingular<T>(items = tmp_37)
+    }
+
+    open fun clearItems(): NullableTypeParameterSingularBuilder<T> {
+      val tmp_39: MutableList<T?>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_39, arg1 = null).not() -> tmp_39 /*as MutableList<T?> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: T?): NullableTypeParameterSingularBuilder<T> {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<T?>()
+      }
+      <this>.#items /*as MutableList<T?> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<T?>): NullableTypeParameterSingularBuilder<T> {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<T?>()
+      }
+      <this>.#items /*as MutableList<T?> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <T : Any?> builder(): NullableTypeParameterSingularBuilder<T> {
+      return NullableTypeParameterSingularBuilder<T>()
+    }
+
+  }
+
+  constructor(@Singular items: List<T?>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder(setterPrefix = "with")
+class Other {
+  val some: List<Int>
+    field = some
+    get
+
+  val names: Iterable<String>
+    field = names
+    get
+
+  open class OtherBuilder {
+    private var some: MutableList<Int>?
+      private get
+      private set
+
+    private var names: MutableList<String>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): Other {
+      val tmp_40: MutableList<Int>? = <this>.#some
+      val tmp_41: Int = when {
+        EQEQ(arg0 = tmp_40, arg1 = null) -> 0
+        else -> tmp_40 /*as MutableList<Int> */.<get-size>()
+      }
+      val tmp_42: List<Int> = when {
+        EQEQ(arg0 = tmp_41, arg1 = 0) -> emptyList<Int>()
+        EQEQ(arg0 = tmp_41, arg1 = 1) -> listOf<Int>(element = tmp_40 /*as MutableList<Int> */.iterator().next())
+        else -> unmodifiableList<Int>(p0 = { // BLOCK
+          val tmp_43: ArrayList<Int> = ArrayList<Int>()
+          tmp_43.addAll(elements = tmp_40 /*as MutableList<Int> */)
+          tmp_43
+        })
+      }
+      val tmp_44: MutableList<String>? = <this>.#names
+      val tmp_45: Int = when {
+        EQEQ(arg0 = tmp_44, arg1 = null) -> 0
+        else -> tmp_44 /*as MutableList<String> */.<get-size>()
+      }
+      val tmp_46: List<String> = when {
+        EQEQ(arg0 = tmp_45, arg1 = 0) -> emptyList<String>()
+        EQEQ(arg0 = tmp_45, arg1 = 1) -> listOf<String>(element = tmp_44 /*as MutableList<String> */.iterator().next())
+        else -> unmodifiableList<String>(p0 = { // BLOCK
+          val tmp_47: ArrayList<String> = ArrayList<String>()
+          tmp_47.addAll(elements = tmp_44 /*as MutableList<String> */)
+          tmp_47
+        })
+      }
+      return Other(some = tmp_42, names = tmp_46)
+    }
+
+    open fun clearNames(): OtherBuilder {
+      val tmp_48: MutableList<String>? = <this>.#names
+      when {
+        EQEQ(arg0 = tmp_48, arg1 = null).not() -> tmp_48 /*as MutableList<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun clearSome(): OtherBuilder {
+      val tmp_49: MutableList<Int>? = <this>.#some
+      when {
+        EQEQ(arg0 = tmp_49, arg1 = null).not() -> tmp_49 /*as MutableList<Int> */.clear()
+      }
+      return <this>
+    }
+
+    open fun withName(name: String): OtherBuilder {
+      when {
+        EQEQ(arg0 = <this>.#names, arg1 = null) -> <this>.#names = ArrayList<String>()
+      }
+      <this>.#names /*as MutableList<String> */.add(element = name)
+      return <this>
+    }
+
+    open fun withNames(names: Collection<String>): OtherBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#names, arg1 = null) -> <this>.#names = ArrayList<String>()
+      }
+      <this>.#names /*as MutableList<String> */.addAll(elements = names)
+      // }
+      return <this>
+    }
+
+    open fun withSingleSome(singleSome: Int): OtherBuilder {
+      when {
+        EQEQ(arg0 = <this>.#some, arg1 = null) -> <this>.#some = ArrayList<Int>()
+      }
+      <this>.#some /*as MutableList<Int> */.add(element = singleSome)
+      return <this>
+    }
+
+    open fun withSome(some: Collection<Int>): OtherBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#some, arg1 = null) -> <this>.#some = ArrayList<Int>()
+      }
+      <this>.#some /*as MutableList<Int> */.addAll(elements = some)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): OtherBuilder {
+      return OtherBuilder()
+    }
+
+  }
+
+  constructor(@Singular(value = "singleSome") some: List<Int>, @Singular names: Iterable<String>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class SingularCollections {
+  val items: List<String>
+    field = items
+    get
+
+  val tags: Set<String>
+    field = tags
+    get
+
+  val pairs: Map<String, Int>
+    field = pairs
+    get
+
+  open class SingularCollectionsBuilder {
+    private var items: MutableList<String>?
+      private get
+      private set
+
+    private var tags: MutableSet<String>?
+      private get
+      private set
+
+    private var pairs: MutableMap<String, Int>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): SingularCollections {
+      val tmp_50: MutableList<String>? = <this>.#items
+      val tmp_51: Int = when {
+        EQEQ(arg0 = tmp_50, arg1 = null) -> 0
+        else -> tmp_50 /*as MutableList<String> */.<get-size>()
+      }
+      val tmp_52: List<String> = when {
+        EQEQ(arg0 = tmp_51, arg1 = 0) -> emptyList<String>()
+        EQEQ(arg0 = tmp_51, arg1 = 1) -> listOf<String>(element = tmp_50 /*as MutableList<String> */.iterator().next())
+        else -> unmodifiableList<String>(p0 = { // BLOCK
+          val tmp_53: ArrayList<String> = ArrayList<String>()
+          tmp_53.addAll(elements = tmp_50 /*as MutableList<String> */)
+          tmp_53
+        })
+      }
+      val tmp_54: MutableSet<String>? = <this>.#tags
+      val tmp_55: Int = when {
+        EQEQ(arg0 = tmp_54, arg1 = null) -> 0
+        else -> tmp_54 /*as MutableSet<String> */.<get-size>()
+      }
+      val tmp_56: Set<String> = when {
+        EQEQ(arg0 = tmp_55, arg1 = 0) -> emptySet<String>()
+        EQEQ(arg0 = tmp_55, arg1 = 1) -> setOf<String>(element = tmp_54 /*as MutableSet<String> */.iterator().next())
+        else -> unmodifiableSet<String>(p0 = { // BLOCK
+          val tmp_57: LinkedHashSet<String> = LinkedHashSet<String>()
+          tmp_57.addAll(elements = tmp_54 /*as MutableSet<String> */)
+          tmp_57
+        })
+      }
+      val tmp_58: MutableMap<String, Int>? = <this>.#pairs
+      val tmp_59: Int = when {
+        EQEQ(arg0 = tmp_58, arg1 = null) -> 0
+        else -> tmp_58 /*as MutableMap<String, Int> */.<get-size>()
+      }
+      val tmp_60: Map<String, Int> = when {
+        EQEQ(arg0 = tmp_59, arg1 = 0) -> emptyMap<String, Int>()
+        else -> unmodifiableMap<String, Int>(p0 = { // BLOCK
+          val tmp_61: LinkedHashMap<String, Int> = LinkedHashMap<String, Int>()
+          tmp_61.putAll(from = tmp_58 /*as MutableMap<String, Int> */)
+          tmp_61
+        })
+      }
+      return SingularCollections(items = tmp_52, tags = tmp_56, pairs = tmp_60)
+    }
+
+    open fun clearItems(): SingularCollectionsBuilder {
+      val tmp_62: MutableList<String>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_62, arg1 = null).not() -> tmp_62 /*as MutableList<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun clearPairs(): SingularCollectionsBuilder {
+      val tmp_63: MutableMap<String, Int>? = <this>.#pairs
+      when {
+        EQEQ(arg0 = tmp_63, arg1 = null).not() -> tmp_63 /*as MutableMap<String, Int> */.clear()
+      }
+      return <this>
+    }
+
+    open fun clearTags(): SingularCollectionsBuilder {
+      val tmp_64: MutableSet<String>? = <this>.#tags
+      when {
+        EQEQ(arg0 = tmp_64, arg1 = null).not() -> tmp_64 /*as MutableSet<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: String): SingularCollectionsBuilder {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<String>()
+      }
+      <this>.#items /*as MutableList<String> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<String>): SingularCollectionsBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<String>()
+      }
+      <this>.#items /*as MutableList<String> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+    open fun pair(key: String, value: Int): SingularCollectionsBuilder {
+      when {
+        EQEQ(arg0 = <this>.#pairs, arg1 = null) -> <this>.#pairs = LinkedHashMap<String, Int>()
+      }
+      <this>.#pairs /*as MutableMap<String, Int> */.put(key = key, value = value)
+      return <this>
+    }
+
+    open fun pairs(pairs: Map<String, Int>): SingularCollectionsBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#pairs, arg1 = null) -> <this>.#pairs = LinkedHashMap<String, Int>()
+      }
+      <this>.#pairs /*as MutableMap<String, Int> */.putAll(from = pairs)
+      // }
+      return <this>
+    }
+
+    open fun tag(tag: String): SingularCollectionsBuilder {
+      when {
+        EQEQ(arg0 = <this>.#tags, arg1 = null) -> <this>.#tags = LinkedHashSet<String>()
+      }
+      <this>.#tags /*as MutableSet<String> */.add(element = tag)
+      return <this>
+    }
+
+    open fun tags(tags: Collection<String>): SingularCollectionsBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#tags, arg1 = null) -> <this>.#tags = LinkedHashSet<String>()
+      }
+      <this>.#tags /*as MutableSet<String> */.addAll(elements = tags)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): SingularCollectionsBuilder {
+      return SingularCollectionsBuilder()
+    }
+
+  }
+
+  constructor(@Singular items: List<String>, @Singular tags: Set<String>, @Singular pairs: Map<String, Int>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class User {
+  val numbers: Map<String, Int>
+    field = numbers
+    get
+
+  val statuses: List<String>
+    field = statuses
+    get
+
+  val tags: Set<String>
+    field = tags
+    get
+
+  open class UserBuilder {
+    private var numbers: MutableMap<String, Int>?
+      private get
+      private set
+
+    private var statuses: MutableList<String>?
+      private get
+      private set
+
+    private var tags: MutableSet<String>?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): User {
+      val tmp_65: MutableMap<String, Int>? = <this>.#numbers
+      val tmp_66: Int = when {
+        EQEQ(arg0 = tmp_65, arg1 = null) -> 0
+        else -> tmp_65 /*as MutableMap<String, Int> */.<get-size>()
+      }
+      val tmp_67: Map<String, Int> = when {
+        EQEQ(arg0 = tmp_66, arg1 = 0) -> emptyMap<String, Int>()
+        else -> unmodifiableMap<String, Int>(p0 = { // BLOCK
+          val tmp_68: LinkedHashMap<String, Int> = LinkedHashMap<String, Int>()
+          tmp_68.putAll(from = tmp_65 /*as MutableMap<String, Int> */)
+          tmp_68
+        })
+      }
+      val tmp_69: MutableList<String>? = <this>.#statuses
+      val tmp_70: Int = when {
+        EQEQ(arg0 = tmp_69, arg1 = null) -> 0
+        else -> tmp_69 /*as MutableList<String> */.<get-size>()
+      }
+      val tmp_71: List<String> = when {
+        EQEQ(arg0 = tmp_70, arg1 = 0) -> emptyList<String>()
+        EQEQ(arg0 = tmp_70, arg1 = 1) -> listOf<String>(element = tmp_69 /*as MutableList<String> */.iterator().next())
+        else -> unmodifiableList<String>(p0 = { // BLOCK
+          val tmp_72: ArrayList<String> = ArrayList<String>()
+          tmp_72.addAll(elements = tmp_69 /*as MutableList<String> */)
+          tmp_72
+        })
+      }
+      val tmp_73: MutableSet<String>? = <this>.#tags
+      val tmp_74: Int = when {
+        EQEQ(arg0 = tmp_73, arg1 = null) -> 0
+        else -> tmp_73 /*as MutableSet<String> */.<get-size>()
+      }
+      val tmp_75: Set<String> = when {
+        EQEQ(arg0 = tmp_74, arg1 = 0) -> emptySet<String>()
+        EQEQ(arg0 = tmp_74, arg1 = 1) -> setOf<String>(element = tmp_73 /*as MutableSet<String> */.iterator().next())
+        else -> unmodifiableSet<String>(p0 = { // BLOCK
+          val tmp_76: LinkedHashSet<String> = LinkedHashSet<String>()
+          tmp_76.addAll(elements = tmp_73 /*as MutableSet<String> */)
+          tmp_76
+        })
+      }
+      return User(numbers = tmp_67, statuses = tmp_71, tags = tmp_75)
+    }
+
+    open fun clearNumbers(): UserBuilder {
+      val tmp_77: MutableMap<String, Int>? = <this>.#numbers
+      when {
+        EQEQ(arg0 = tmp_77, arg1 = null).not() -> tmp_77 /*as MutableMap<String, Int> */.clear()
+      }
+      return <this>
+    }
+
+    open fun clearStatuses(): UserBuilder {
+      val tmp_78: MutableList<String>? = <this>.#statuses
+      when {
+        EQEQ(arg0 = tmp_78, arg1 = null).not() -> tmp_78 /*as MutableList<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun clearTags(): UserBuilder {
+      val tmp_79: MutableSet<String>? = <this>.#tags
+      when {
+        EQEQ(arg0 = tmp_79, arg1 = null).not() -> tmp_79 /*as MutableSet<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun number(key: String, value: Int): UserBuilder {
+      when {
+        EQEQ(arg0 = <this>.#numbers, arg1 = null) -> <this>.#numbers = LinkedHashMap<String, Int>()
+      }
+      <this>.#numbers /*as MutableMap<String, Int> */.put(key = key, value = value)
+      return <this>
+    }
+
+    open fun numbers(numbers: Map<String, Int>): UserBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#numbers, arg1 = null) -> <this>.#numbers = LinkedHashMap<String, Int>()
+      }
+      <this>.#numbers /*as MutableMap<String, Int> */.putAll(from = numbers)
+      // }
+      return <this>
+    }
+
+    open fun status(status: String): UserBuilder {
+      when {
+        EQEQ(arg0 = <this>.#statuses, arg1 = null) -> <this>.#statuses = ArrayList<String>()
+      }
+      <this>.#statuses /*as MutableList<String> */.add(element = status)
+      return <this>
+    }
+
+    open fun statuses(statuses: Collection<String>): UserBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#statuses, arg1 = null) -> <this>.#statuses = ArrayList<String>()
+      }
+      <this>.#statuses /*as MutableList<String> */.addAll(elements = statuses)
+      // }
+      return <this>
+    }
+
+    open fun tag(tag: String): UserBuilder {
+      when {
+        EQEQ(arg0 = <this>.#tags, arg1 = null) -> <this>.#tags = LinkedHashSet<String>()
+      }
+      <this>.#tags /*as MutableSet<String> */.add(element = tag)
+      return <this>
+    }
+
+    open fun tags(tags: Collection<String>): UserBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#tags, arg1 = null) -> <this>.#tags = LinkedHashSet<String>()
+      }
+      <this>.#tags /*as MutableSet<String> */.addAll(elements = tags)
+      // }
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): UserBuilder {
+      return UserBuilder()
+    }
+
+  }
+
+  constructor(@Singular numbers: Map<String, Int>, @Singular statuses: List<String>, @Singular tags: Set<String>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val userBuilder: UserBuilder = Companion.builder().status(status = "wrong").clearStatuses().status(status = "hello").statuses(statuses = listOf<String>(elements = ["world", "!"])).number(key = "1", value = 1).numbers(numbers = mapOf<String, Int>(pairs = [to<String, Int>(/* <this> = "2", */ that = 2), to<String, Int>(/* <this> = "3", */ that = 3)])).tag(tag = "a").tags(tags = setOf<String>(elements = ["b", "c"]))
+  val user: User = userBuilder.build()
+  val other: Other = Companion.builder().withSingleSome(singleSome = 1).withSome(some = listOf<Int>(elements = [2, 3])).withName(name = "John").withNames(names = setOf<String>(element = "Peter")).build()
+  assertEquals<Map<String, Int>>(a = mapOf<String, Int>(pairs = [to<String, Int>(/* <this> = "1", */ that = 1), to<String, Int>(/* <this> = "2", */ that = 2), to<String, Int>(/* <this> = "3", */ that = 3)]), b = user.<get-numbers>())
+  assertEquals<List<String>>(a = listOf<String>(elements = ["hello", "world", "!"]), b = user.<get-statuses>())
+  assertEquals<Set<String>>(a = setOf<String>(elements = ["a", "b", "c"]), b = user.<get-tags>())
+  assertEquals<List<Int>>(a = listOf<Int>(elements = [1, 2, 3]), b = other.<get-some>())
+  assertEquals<List<String>>(a = listOf<String>(elements = ["John", "Peter"]), b = toList<String>(/* <this> = other.<get-names>() */))
+  val nullableCollection: NullableCollection = Companion.builder().items(items = listOf<Int>(element = 1)).item(item = 2).build()
+  assertEquals<List<Int>?>(a = listOf<Int>(elements = [1, 2]), b = nullableCollection.<get-items>())
+  val nullableCollection2: NullableCollection = Companion.builder().item(item = 2).items(items = listOf<Int>(element = 1)).build()
+  assertEquals<List<Int>?>(a = listOf<Int>(elements = [2, 1]), b = nullableCollection2.<get-items>())
+  val ignoreNullCollections: IgnoreNullCollections = Companion.builder().items(items = listOf<Int>(element = 3)).item(item = 4).items(items = null).build()
+  assertEquals<List<Int>>(a = listOf<Int>(elements = [3, 4]), b = ignoreNullCollections.<get-items>())
+  val ignoreNullCollectionsWithNullableCollections: IgnoreNullCollectionsWithNullableCollections = Companion.builder().items(items = listOf<Int>(element = 5)).item(item = 6).items(items = null).build()
+  assertEquals<List<Int>?>(a = listOf<Int>(elements = [5, 6]), b = ignoreNullCollectionsWithNullableCollections.<get-items>())
+  val nullableElements: NullableElements = Companion.builder().items(items = listOf<Int>(element = 7)).item(item = 8).item(item = null).build()
+  assertEquals<List<Int?>>(a = listOf<Int?>(elements = [7, 8, null]), b = nullableElements.<get-items>())
+  val empty: SingularCollections = Companion.builder().build()
+  assertEquals<List<String>>(a = emptyList<String>(), b = empty.<get-items>())
+  assertEquals<Set<String>>(a = emptySet<String>(), b = empty.<get-tags>())
+  assertEquals<Map<String, Int>>(a = emptyMap<String, Int>(), b = empty.<get-pairs>())
+  val single: SingularCollections = Companion.builder().item(item = "a").tag(tag = "x").pair(key = "k", value = 1).build()
+  assertEquals<List<String>>(a = listOf<String>(element = "a"), b = single.<get-items>())
+  assertEquals<Set<String>>(a = setOf<String>(element = "x"), b = single.<get-tags>())
+  assertEquals<Map<String, Int>>(a = mapOf<String, Int>(pair = to<String, Int>(/* <this> = "k", */ that = 1)), b = single.<get-pairs>())
+  val multiBuilder: SingularCollectionsBuilder = Companion.builder().item(item = "a").item(item = "b").tag(tag = "x").tag(tag = "y").pair(key = "k", value = 1).pair(key = "l", value = 2)
+  val multi: SingularCollections = multiBuilder.build()
+  assertEquals<List<String>>(a = listOf<String>(elements = ["a", "b"]), b = multi.<get-items>())
+  assertEquals<Set<String>>(a = setOf<String>(elements = ["x", "y"]), b = multi.<get-tags>())
+  assertEquals<Map<String, Int>>(a = mapOf<String, Int>(pairs = [to<String, Int>(/* <this> = "k", */ that = 1), to<String, Int>(/* <this> = "l", */ that = 2)]), b = multi.<get-pairs>())
+  try { // BLOCK
+    multi.<get-items>() as MutableList<String>.add(element = "c") /*~> Unit */
+    return "FAIL: multi.items is not unmodifiable"
+  }
+  catch (e: UnsupportedOperationException){ // BLOCK
+  }
+
+  multiBuilder.item(item = "c") /*~> Unit */
+  val multi2: SingularCollections = multiBuilder.build()
+  assertEquals<List<String>>(a = listOf<String>(elements = ["a", "b"]), b = multi.<get-items>())
+  assertEquals<List<String>>(a = listOf<String>(elements = ["a", "b", "c"]), b = multi2.<get-items>())
+  val cleared: SingularCollections = Companion.builder().item(item = "a").item(item = "b").clearItems().item(item = "z").build()
+  assertEquals<List<String>>(a = listOf<String>(element = "z"), b = cleared.<get-items>())
+  val emptyGeneric: GenericSingular<String, Int> = Companion.builder<String, Int>().build()
+  assertEquals<List<Int>>(a = emptyList<Int>(), b = emptyGeneric.<get-items>())
+  assertEquals<Map<String, Int>>(a = emptyMap<String, Int>(), b = emptyGeneric.<get-pairs>())
+  val genericSingleton: GenericSingular<String, Int> = Companion.builder<String, Int>().item(item = 1).pair(key = "k", value = 1).build()
+  assertEquals<List<Int>>(a = listOf<Int>(element = 1), b = genericSingleton.<get-items>())
+  assertEquals<Map<String, Int>>(a = mapOf<String, Int>(pair = to<String, Int>(/* <this> = "k", */ that = 1)), b = genericSingleton.<get-pairs>())
+  val generic: GenericSingular<String, Int> = Companion.builder<String, Int>().item(item = 1).item(item = 2).pair(key = "k", value = 1).pair(key = "l", value = 2).items(items = listOf<Int>(element = 3)).pairs(pairs = mapOf<String, Int>(pair = to<String, Int>(/* <this> = "m", */ that = 3))).build()
+  assertEquals<List<Int>>(a = listOf<Int>(elements = [1, 2, 3]), b = generic.<get-items>())
+  assertEquals<Map<String, Int>>(a = mapOf<String, Int>(pairs = [to<String, Int>(/* <this> = "k", */ that = 1), to<String, Int>(/* <this> = "l", */ that = 2), to<String, Int>(/* <this> = "m", */ that = 3)]), b = generic.<get-pairs>())
+  val nullableTypeParameter: NullableTypeParameterSingular<Int> = Companion.builder<Int>().item(item = 1).item(item = null).items(items = listOf<Int?>(elements = [2, null])).build()
+  assertEquals<List<Int?>>(a = listOf<Int?>(elements = [1, null, 2, null]), b = nullableTypeParameter.<get-items>())
+  val boundedTypeParameter: BoundedTypeParameterSingular<String> = Companion.builder<String>().item(item = "a").item(item = "b").items(items = listOf<String>(element = "c")).build()
+  assertEquals<List<String>>(a = listOf<String>(elements = ["a", "b", "c"]), b = boundedTypeParameter.<get-items>())
+  return "OK"
+}
