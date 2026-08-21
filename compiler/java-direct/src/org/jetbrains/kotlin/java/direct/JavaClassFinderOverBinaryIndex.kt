@@ -151,8 +151,10 @@ private class BinaryIndexJavaPackage(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
         annotations.find { it.classId?.asSingleFqName() == fqName }
 
+    @K1Deprecation
     override val subPackages: Collection<JavaPackage>
         get() = emptyList()
 
+    @K1Deprecation
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> = emptyList()
 }
