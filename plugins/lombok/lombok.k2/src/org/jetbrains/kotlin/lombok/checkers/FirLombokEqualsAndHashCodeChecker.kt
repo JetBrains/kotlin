@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.CallSuperMode
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
 import org.jetbrains.kotlin.lombok.generators.isPlainClass
@@ -42,6 +44,7 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         val config = context.session.lombokService.config
 
         val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
+        val isPlainClass = declaration.symbol.isPlainClass
         if (declaredMemberScope.hasUserDeclaredEqualsOrHashCode()) {
             /**
              * The user has overridden one of `equals`/`hashCode`. Generating only the
@@ -49,7 +52,7 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
              * may use a different field set, so we refuse to generate either and ask for both or neither.
              */
             reporter.reportOn(source, LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST, context)
-        } else if (declaration.symbol.isPlainClass) {
+        } else if (isPlainClass) {
             /**
              * Mirrors javac's reaction to the members Lombok generates here: "equals(Object) in Child cannot
              * override equals(Object) in Parent; overridden method is final". Only relevant when nothing is
@@ -68,12 +71,35 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
             }
         }
 
-        checkCallSuper(
-            annotationInfo.callSuper ?: config.equalsAndHashCodeCallSuper,
-            annotationInfo,
-            declaration,
-            functionNames,
-        )
+        // Both `callSuper` diagnostics are about members that are only ever generated for a plain class, so
+        // anything else is left to `ANNOTATION_HAS_NO_EFFECT` alone. Lombok stops at "@EqualsAndHashCode is only
+        // supported on a class" before it even looks at `callSuper`; an enum, whose superclass is `Enum`, would
+        // otherwise be told off for not chaining to a superclass it never generates a member for.
+        if (isPlainClass) {
+            if (annotationInfo.callSuper == CallSuperMode.Call && !declaration.hasNonTrivialSuperclass) {
+                /**
+                 * Mirrors Lombok: "Generating equals/hashCode with a supercall to java.lang.Object is pointless."
+                 * `Any.equals` compares by identity, so chaining to it makes the generated pair reject every
+                 * instance but the receiver itself - the opposite of what `@EqualsAndHashCode` is for.
+                 *
+                 * Only an explicit `callSuper = true` counts, `annotationInfo.callSuper` being `null` otherwise,
+                 * so a `lombok.equalsAndHashCode.callSuper=call` config is left alone as Lombok leaves it: the
+                 * config speaks for a whole project and cannot be meant as a claim about this one class.
+                 */
+                reporter.reportOn(
+                    annotationInfo.annotation.argumentMapping.mapping[CALL_SUPER]?.source ?: source,
+                    LombokFirDiagnostics.CALL_SUPER_TO_ANY_IS_POINTLESS,
+                    functionNames.joinToString("/"),
+                )
+            }
+
+            checkCallSuper(
+                annotationInfo.callSuper ?: config.equalsAndHashCodeCallSuper,
+                annotationInfo,
+                declaration,
+                functionNames,
+            )
+        }
 
         checkIncludeAndExcludeAnnotations(declaredMemberScope, LombokNames.EQUALS_AND_HASH_CODE_ID)
     }

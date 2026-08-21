@@ -310,6 +310,14 @@ fun FirRegularClass.findSuperclassWithFinalFunction(
 }
 
 /**
+ * Whether [this] extends a class other than [Any] - Lombok's `isDirectDescendantOfObject`, inverted. It decides
+ * whether chaining a generated `toString`/`equals`/`hashCode` to `super` carries any information at all.
+ */
+context(context: CheckerContext)
+val FirRegularClass.hasNonTrivialSuperclass: Boolean
+    get() = symbol.getSuperClassSymbolOrAny(context.session).let { it != null && it.classId != StandardClassIds.Any }
+
+/**
  * Mirrors Lombok behavior: when `*.callSuper=warn` is configured and the
  * annotated class has a non-trivial superclass, warn that the generated function (`toString` or `equals`/`hashCode`) will
  * not chain to it.
@@ -321,9 +329,7 @@ fun checkCallSuper(
     declaration: FirRegularClass,
     functionNames: Set<Name>,
 ) {
-    if (callSuperMode == CallSuperMode.Warn &&
-        declaration.symbol.getSuperClassSymbolOrAny(context.session).let { it != null && it.classId != StandardClassIds.Any }
-    ) {
+    if (callSuperMode == CallSuperMode.Warn && declaration.hasNonTrivialSuperclass) {
         reporter.reportOn(
             annotationInfo.annotation.source,
             LombokFirDiagnostics.CALL_SUPER_NOT_CALLED,
