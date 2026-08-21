@@ -35,8 +35,7 @@ dependencies {
     embedded(project(":analysis:analysis-api-impl-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-platform-interface")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base")) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-base")) { isTransitive = false }
+    embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir")) { isTransitive = false }
     embedded(project(lowLevelApiFir)) { isTransitive = false }
     embedded(project(":analysis:light-classes-base")) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }

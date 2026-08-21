@@ -68,7 +68,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesApi(libs.opentest4j)
-    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

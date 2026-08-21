@@ -10,7 +10,6 @@ plugins {
 
 dependencies {
     testFixturesApi(project(":analysis:low-level-api-fir"))
-    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))

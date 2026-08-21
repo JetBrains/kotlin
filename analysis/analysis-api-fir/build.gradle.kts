@@ -38,14 +38,13 @@ dependencies {
     implementation(libs.opentelemetry.api)
 
     testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
-    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
 
-    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesImplementation(kotlinTest("junit5"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 

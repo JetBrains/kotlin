@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 @OptIn(KaImplementationDetail::class)
 object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
-    private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fir-standalone-base.xml"
+    private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-standalone-fir.xml"
 
     override fun registerApplicationServices(application: MockApplication, disposable: Disposable) {
         with(FileTypeRegistry.getInstance() as CoreFileTypeRegistry) {
