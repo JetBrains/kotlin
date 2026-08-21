@@ -136,6 +136,33 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testValueRecordInnerClass(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("test")
+        pkgDir.toFile().mkdirs()
+        pkgDir.resolve("Outer.java").writeText(
+            """
+            package test;
+            public class Outer {
+                public static value record V(int x) {}
+                public static record NV(int x) {}
+            }
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+        val outerClassId = ClassId(FqName("test"), Name.identifier("Outer"))
+        val outerClass = finder.findClass(JavaClassFinder.Request(outerClassId))
+        assertNotNull(outerClass, "Expected to find test.Outer class")
+
+        val innerNames = outerClass.innerClassNames.map { it.asString() }
+        assertTrue("NV" in innerNames, "Expected NV in inner class names, found: $innerNames")
+        assertTrue("V" in innerNames, "Expected V in inner class names, found: $innerNames")
+
+        assertNotNull(outerClass.findInnerClass(Name.identifier("NV")), "Expected to find inner class NV")
+        assertNotNull(outerClass.findInnerClass(Name.identifier("V")), "Expected to find inner class V")
+    }
+
+    @Test
     fun testMultiFileClassFinder(@TempDir tempDir: Path) {
         // Simulate the test scenario: J.java uses star import for org.jetbrains.annotations.*
         // NotNull.java defines the annotation in that package

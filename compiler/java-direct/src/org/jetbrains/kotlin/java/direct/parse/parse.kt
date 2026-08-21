@@ -18,7 +18,8 @@ fun parseJavaToSyntaxTreeBuilder(
     charSequence: CharSequence,
     start: Int,
 ): SyntaxTreeBuilder {
-    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.HIGHEST)
+    // `JDK_X` enables experimental features too
+    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.JDK_X)
 
     val syntaxTreeBuilder = SyntaxTreeBuilderFactory.builder(
         charSequence,
@@ -36,7 +37,7 @@ fun parseJavaToSyntaxTreeBuilder(
     // The builder always skips trivia in that path once a remapper is installed.
     syntaxTreeBuilder.setTokenTypeRemapper { source, _, _, _ -> source }
 
-    parse(LanguageLevel.HIGHEST, syntaxTreeBuilder)
+    parse(LanguageLevel.JDK_X, syntaxTreeBuilder)
     return syntaxTreeBuilder
 }
 

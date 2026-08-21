@@ -36,6 +36,20 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-21 — `value` classes/records dropped as members: parser pinned below Valhalla's feature gate
+- **Change**: `parseJavaToSyntaxTreeBuilder`/`parse` (`parse.kt`) and `extractFileInfoLightweight`
+  (`JavaSourceIndex.kt`) used `LanguageLevel.HIGHEST`, which excludes `JavaFeature.VALUE_CLASSES`
+  (gated on `JDK_X`, the level above `HIGHEST`). A `value class`/`value record` member was reparsed
+  with `value` as a plain identifier and the declaration lost entirely, so any Kotlin reference to it
+  (e.g. `Outer.V`) failed with `UNRESOLVED_REFERENCE`. Both switched to `JDK_X`, matching PSI's
+  `JavaLanguageLevel.setupHighestLanguageLevel` parity requirement.
+- **Files**: `parse/parse.kt`, `util/JavaSourceIndex.kt`; new
+  `JavaParsingClassFinderTest.testValueRecordInnerClass`.
+- **Tests**: full box+phased suite green (2793 executed, 0 FAILED); `JavaParsing*` unit tests green.
+- **Result**: regression fixed. Not Valhalla-runtime-specific — reproduces on a plain JDK with no
+  `-Xvalhalla-support`/JDK 27 toolchain, since it is a pure source-parsing/model gap: any modifier or
+  syntax gated above `HIGHEST` would have been silently dropped the same way.
+
 ### 2026-08-19 — a lookup says which part of the classpath it may see; both arms pinned
 - **Change**: `findClassImpl` took a `restrictToClasspath: Boolean`, which reads as "whether to bother
   filtering" and invites reading the unfiltered arm as a fast path. It is not one: the arms answer different
