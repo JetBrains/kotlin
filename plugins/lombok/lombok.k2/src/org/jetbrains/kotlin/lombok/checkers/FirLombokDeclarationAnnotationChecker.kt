@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 
 /**
  * Validates the Lombok annotations written on a declaration.
@@ -19,6 +21,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 object FirLombokDeclarationAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        checkLombokAnnotations(declaration.annotations, getActualTargetList(declaration).defaultTargets)
+        checkLombokAnnotations(
+            declaration.annotations,
+            getActualTargetList(declaration).defaultTargets,
+            isValueClass = (declaration as? FirRegularClass)?.isInlineOrValue == true,
+        )
     }
 }
