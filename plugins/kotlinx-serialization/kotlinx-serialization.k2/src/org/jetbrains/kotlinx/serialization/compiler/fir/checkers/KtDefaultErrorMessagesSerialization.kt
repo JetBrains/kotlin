@@ -65,6 +65,19 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(
+            FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
+            "Function ''{0}()'' clashes with the one that the serialization plugin generates here, " +
+                    "which makes the generated function unreachable. Rename this function or change its signature.",
+            CommonRenderers.STRING
+        )
+        map.put(
+            FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
+            "The companion object of serializable class ''{0}'' is private, which makes the generated " +
+                    "''Companion.serializer()'' function inaccessible from other classes, from ''serializer<T>()'', " +
+                    "and from reflective serializer lookup. Make the companion object non-private.",
+            FirDiagnosticRenderers.DECLARATION_NAME
+        )
+        map.put(
             FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
             "Explicit @Serializable annotation on enum class is required when @SerialName or @SerialInfo annotations are used on its members."
         )
@@ -144,6 +157,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(
+            FirSerializationErrors.SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT,
+            "@Serializable(with = ...) on a type is only taken into account for types of serializable class properties. " +
+                    "Here it has no effect: 'serializer<T>()' and the reflective serializer lookup ignore type annotations, " +
+                    "so the default serializer is used instead. Pass the serializer explicitly."
+        )
+        map.put(
             FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER,
             "This property is marked as @Transient and therefore must have an initializing expression."
         )
@@ -158,6 +177,11 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         map.put(
             FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
             "Serialization of arrays with generic type arguments is impossible because of an unknown compile-time type."
+        )
+        map.put(
+            FirSerializationErrors.DYNAMIC_TYPE_NOT_SUPPORTED,
+            "Properties of the 'dynamic' type cannot be serialized, because there is no compile-time type to pick a serializer for. " +
+                    "Use a statically typed property, or mark this one with @Transient."
         )
         map.put(
             FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
@@ -186,6 +210,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         map.put(
             FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
             "@MetaSerializable annotation can be used only on top-level annotation classes."
+        )
+        map.put(
+            FirSerializationErrors.SERIALIZABLE_ANNOTATION_TYPEALIAS_UNSUPPORTED,
+            "Classes annotated through a typealias of @Serializable are not processed by the serialization plugin, " +
+                    "because annotation typealiases are not expanded when the plugin runs. " +
+                    "Use the @Serializable annotation directly, or declare your own annotation marked with @MetaSerializable."
         )
         map.put(
             FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE,
@@ -233,6 +263,14 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             "The value specified in the @ProtoNumber annotation on field ''{0}'' duplicates field numbers of fields: {1}",
             CommonRenderers.STRING,
             CommonRenderers.STRING
+        )
+
+        map.put(
+            FirSerializationErrors.PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE,
+            "@{0} has no effect on a property of type ''{2}'': it is only applicable to {1}.",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.RENDER_TYPE
         )
 
         map.put(

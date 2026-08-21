@@ -43,6 +43,18 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("CompanionSerializerClash.kt")
+    public void testCompanionSerializerClash() {
+      run("CompanionSerializerClash.kt");
+    }
+
+    @Test
+    @TestMetadata("CustomSerializerParamCount.kt")
+    public void testCustomSerializerParamCount() {
+      run("CustomSerializerParamCount.kt");
+    }
+
+    @Test
     @TestMetadata("customSerializers.kt")
     public void testCustomSerializers() {
       run("customSerializers.kt");
@@ -70,6 +82,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     @TestMetadata("externalSerialierJava.kt")
     public void testExternalSerialierJava() {
       run("externalSerialierJava.kt");
+    }
+
+    @Test
+    @TestMetadata("ExternalSerializerInheritedMembers.kt")
+    public void testExternalSerializerInheritedMembers() {
+      run("ExternalSerializerInheritedMembers.kt");
     }
 
     @Test
@@ -193,9 +211,21 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("PrivateCompanion.kt")
+    public void testPrivateCompanion() {
+      run("PrivateCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("privateSerializer.kt")
     public void testPrivateSerializer() {
       run("privateSerializer.kt");
+    }
+
+    @Test
+    @TestMetadata("ProtobufAnnotationTargets.kt")
+    public void testProtobufAnnotationTargets() {
+      run("ProtobufAnnotationTargets.kt");
     }
 
     @Test
@@ -226,6 +256,18 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     @TestMetadata("SerializableIgnored.kt")
     public void testSerializableIgnored() {
       run("SerializableIgnored.kt");
+    }
+
+    @Test
+    @TestMetadata("SerializableTypealias.kt")
+    public void testSerializableTypealias() {
+      run("SerializableTypealias.kt");
+    }
+
+    @Test
+    @TestMetadata("SerializableWithOnTypeUsage.kt")
+    public void testSerializableWithOnTypeUsage() {
+      run("SerializableWithOnTypeUsage.kt");
     }
 
     @Test

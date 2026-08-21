@@ -5,16 +5,24 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.declaredFunctions
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 // Extracted from FirSerializationPluginClassChecker to keep it reasonably small
 internal fun CheckerContext.checkCompanionOfSerializableClass(
@@ -37,6 +45,74 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
         FirSerializationErrors.COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS,
         classSymbol
     )
+}
+
+internal fun CheckerContext.checkPrivateCompanion(
+    classSymbol: FirClassSymbol<*>,
+    reporter: DiagnosticReporter,
+) {
+    if (classSymbol !is FirRegularClassSymbol) return
+    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
+    if (classSymbol.visibility == Visibilities.Private || classSymbol.visibility == Visibilities.Internal) return
+    val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
+    if (companionObjectSymbol.visibility != Visibilities.Private) return
+
+    reporter.reportOn(
+        companionObjectSymbol.source,
+        FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
+        classSymbol,
+        positioningStrategy = SourceElementPositioningStrategies.VISIBILITY_MODIFIER
+    )
+}
+
+/**
+ * The signature predicate here must stay in sync with
+ * `SerializableCompanionIrGenerator.getSerializerGetterFunction`, which is what actually picks the
+ * function to generate a body for in the backend.
+ */
+internal fun CheckerContext.checkCompanionSerializerClash(
+    classSymbol: FirClassSymbol<*>,
+    reporter: DiagnosticReporter,
+) {
+    if (classSymbol !is FirRegularClassSymbol) return
+    if (!classSymbol.shouldHaveGeneratedMethodsInCompanion(session)) return
+    // For a serializable object the backend looks the getter up in the object itself rather than in a companion,
+    // see SerializableCompanionIrGenerator.getSerializerGetterFunction.
+    val containerSymbol = when {
+        classSymbol.isSerializableObject(session) -> classSymbol
+        else -> classSymbol.resolvedCompanionObjectSymbol ?: return
+    }
+
+    val generatedNames = buildSet {
+        add(SerialEntityNames.SERIALIZER_PROVIDER_NAME)
+        if (classSymbol.keepGeneratedSerializer(session)) add(SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME)
+    }
+
+    for (functionSymbol in containerSymbol.declaredFunctions(session)) {
+        if (functionSymbol.name !in generatedNames) continue
+        if (functionSymbol.origin != FirDeclarationOrigin.Source) continue
+        // The backend matches one serializer parameter per type parameter of the serializable class, counting every
+        // parameter but the dispatch receiver — so an extension or context receiver makes the signature not match.
+        val nonDispatchParameterTypes = buildList {
+            functionSymbol.contextParameterSymbols.mapTo(this) { it.resolvedReturnType }
+            functionSymbol.resolvedReceiverType?.let { add(it) }
+            functionSymbol.valueParameterSymbols.mapTo(this) { it.resolvedReturnType }
+        }
+        if (nonDispatchParameterTypes.size != classSymbol.typeParameterSymbols.size) continue
+        if (!nonDispatchParameterTypes.all { isAnyKSerializer(it) }) continue
+        if (!isAnyKSerializer(functionSymbol.resolvedReturnType)) continue
+
+        reporter.reportOn(
+            functionSymbol.source,
+            FirSerializationErrors.SERIALIZER_FUNCTION_CLASH_IN_COMPANION,
+            functionSymbol.name.asString()
+        )
+    }
+}
+
+private fun CheckerContext.isAnyKSerializer(type: ConeKotlinType): Boolean {
+    val expanded = type.fullyExpandedType()
+    return expanded.isKSerializer || expanded.classId == SerializersClassIds.generatedSerializerId
 }
 
 internal fun CheckerContext.checkCompanionSerializerDependency(

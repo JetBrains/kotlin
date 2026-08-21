@@ -29,6 +29,8 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
 
     val COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS by error1<KtElement, FirRegularClassSymbol>()
+    val SERIALIZER_FUNCTION_CLASH_IN_COMPANION by error1<KtElement, String>()
+    val PRIVATE_COMPANION_OF_SERIALIZABLE by warning1<KtElement, FirClassSymbol<*>>()
 
     val SERIALIZABLE_ANNOTATION_IGNORED by error0<KtAnnotationEntry>()
     val NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR by error0<KtAnnotationEntry>()
@@ -43,8 +45,10 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT by error3<KtElement, ConeKotlinType, ConeKotlinType, String>()
     val CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE by error3<KtElement, ConeKotlinType, ConeKotlinType, String>()
     val CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE by warning2<KtElement, FirClassLikeSymbol<*>, FirClassLikeSymbol<*>>()
+    val SERIALIZABLE_WITH_ON_TYPE_HAS_NO_EFFECT by warning0<KtElement>()
 
     val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<KtElement>()
+    val DYNAMIC_TYPE_NOT_SUPPORTED by error0<KtElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<KtElement>()
 
     val TRANSIENT_IS_REDUNDANT by warning0<KtElement>()
@@ -55,6 +59,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
 
     val INCONSISTENT_INHERITABLE_SERIALINFO by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val META_SERIALIZABLE_NOT_APPLICABLE by error0<KtElement>()
+    val SERIALIZABLE_ANNOTATION_TYPEALIAS_UNSUPPORTED by warning0<KtElement>()
     val INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE by error0<KtElement>()
 
     val EXTERNAL_SERIALIZER_USELESS by warning1<KtElement, FirClassSymbol<*>>()
@@ -66,6 +71,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC by error0<KtElement>()
 
     val PROTOBUF_PROTO_NUM_DUPLICATED by warning2<KtAnnotationEntry, String, String>()
+    val PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE by warning3<KtElement, String, String, ConeKotlinType>()
 
     val JSON_FORMAT_REDUNDANT_DEFAULT by warning0<KtElement>()
     val JSON_FORMAT_REDUNDANT by warning0<KtElement>()
