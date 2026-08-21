@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 /**
  * The non-empty value of the `nonVirtualTargetMethod` argument of the `@ExportedBridge` annotation on
  * this function, or `null` if the function is not an exported bridge or does not request non-virtual
- * dispatch. See [kotlin.native.internal.ExportedBridge] and `ExportedBridgeNonVirtualLowering`.
+ * dispatch. See [kotlin.native.internal.ExportedBridge] and `NativeExportedBridgeCallDispatchLowering`.
  */
 val IrSimpleFunction.exportedBridgeNonVirtualTargetMethod: String?
     get() = annotations

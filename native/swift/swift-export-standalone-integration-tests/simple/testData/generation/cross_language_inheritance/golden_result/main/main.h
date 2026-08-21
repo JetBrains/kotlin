@@ -171,6 +171,8 @@ NSString * ThrowingMembers_compute__TypesOfArguments__Swift_Int32__(void * self,
 
 NSString * ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct(void * self, int32_t x, void *_Nullable * _Nonnull _out_error);
 
+_Bool __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___Base_init_allocate();
 
 _Bool __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

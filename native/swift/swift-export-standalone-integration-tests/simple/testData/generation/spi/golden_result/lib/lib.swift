@@ -92,7 +92,12 @@ public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
 open class OpenClass: KotlinRuntime.KotlinBase {
     @_spi(OpenClassOptIn)
     public init() {
-        let __kt = __root___OpenClass_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == lib.OpenClass.self {
+             __kt = __root___OpenClass_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }

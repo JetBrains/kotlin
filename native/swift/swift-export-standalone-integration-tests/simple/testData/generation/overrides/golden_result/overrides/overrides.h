@@ -281,6 +281,14 @@ NSNumber * _Nullable Parent_subtypeOptionalPrimitiveVar_get_direct(void * self);
 
 NSString * Parent_value_get(void * self);
 
+_Bool __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t x);
+
+_Bool __root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool __root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t x);
+
 void * __root___Child_init_allocate();
 
 _Bool __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t value);

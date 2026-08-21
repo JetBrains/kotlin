@@ -4548,26 +4548,46 @@ extension ExportedKotlinPackages.kotlin {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_Throwable_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
+                 __kt = kotlin_Throwable_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public init(
             message: Swift.String?
         ) {
-            let __kt = kotlin_Throwable_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
+                 __kt = kotlin_Throwable_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_Throwable_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
+                 __kt = kotlin_Throwable_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public init() {
-            let __kt = kotlin_Throwable_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
+                 __kt = kotlin_Throwable_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -4580,14 +4600,24 @@ extension ExportedKotlinPackages.kotlin {
     }
     open class Exception: ExportedKotlinPackages.kotlin.Throwable {
         public override init() {
-            let __kt = kotlin_Exception_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Exception.self {
+                 __kt = kotlin_Exception_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
-            let __kt = kotlin_Exception_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Exception.self {
+                 __kt = kotlin_Exception_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
@@ -4595,14 +4625,24 @@ extension ExportedKotlinPackages.kotlin {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_Exception_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Exception.self {
+                 __kt = kotlin_Exception_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_Exception_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.Exception.self {
+                 __kt = kotlin_Exception_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
@@ -4615,14 +4655,24 @@ extension ExportedKotlinPackages.kotlin {
     }
     open class RuntimeException: ExportedKotlinPackages.kotlin.Exception {
         public override init() {
-            let __kt = kotlin_RuntimeException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self {
+                 __kt = kotlin_RuntimeException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
-            let __kt = kotlin_RuntimeException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self {
+                 __kt = kotlin_RuntimeException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
@@ -4630,14 +4680,24 @@ extension ExportedKotlinPackages.kotlin {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_RuntimeException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self {
+                 __kt = kotlin_RuntimeException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_RuntimeException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self {
+                 __kt = kotlin_RuntimeException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
@@ -4650,14 +4710,24 @@ extension ExportedKotlinPackages.kotlin {
     }
     open class IllegalArgumentException: ExportedKotlinPackages.kotlin.RuntimeException {
         public override init() {
-            let __kt = kotlin_IllegalArgumentException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self {
+                 __kt = kotlin_IllegalArgumentException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
-            let __kt = kotlin_IllegalArgumentException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self {
+                 __kt = kotlin_IllegalArgumentException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
@@ -4665,14 +4735,24 @@ extension ExportedKotlinPackages.kotlin {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_IllegalArgumentException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self {
+                 __kt = kotlin_IllegalArgumentException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlin_IllegalArgumentException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self {
+                 __kt = kotlin_IllegalArgumentException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
@@ -6762,8 +6842,11 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toByte': a Swift subclass must override it and must not call super.")
             }
         }
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.Number.self, "ExportedKotlinPackages.kotlin.Number is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -6820,8 +6903,11 @@ extension ExportedKotlinPackages.kotlin.collections {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.nextByte': a Swift subclass must override it and must not call super.")
             }
         }
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.ByteIterator.self, "ExportedKotlinPackages.kotlin.collections.ByteIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -6841,8 +6927,11 @@ extension ExportedKotlinPackages.kotlin.collections {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.nextInt': a Swift subclass must override it and must not call super.")
             }
         }
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -6862,8 +6951,11 @@ extension ExportedKotlinPackages.kotlin.collections {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.CharIterator.nextChar': a Swift subclass must override it and must not call super.")
             }
         }
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.CharIterator.self, "ExportedKotlinPackages.kotlin.collections.CharIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

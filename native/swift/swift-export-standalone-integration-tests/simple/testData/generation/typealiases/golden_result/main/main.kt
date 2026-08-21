@@ -284,6 +284,13 @@ public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, ABSTRACT_CLASS()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___DATA_CLASS_WITH_REF_init_allocate")
 public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_REF>() }

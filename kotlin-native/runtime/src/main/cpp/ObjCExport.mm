@@ -1015,6 +1015,16 @@ extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclas
   return result;
 }
 
+extern "C" const TypeInfo* Kotlin_SwiftExport_getBoundKotlinTypeInfoForClass(Class clazz) {
+  for (int i = 0; i < Kotlin_ObjCExport_sortedClassAdaptersNum; ++i) {
+    const ObjCTypeAdapter* adapter = Kotlin_ObjCExport_sortedClassAdapters[i];
+    if (adapter->objCName != nullptr && objc_getClass(adapter->objCName) == clazz) {
+      return adapter->kotlinTypeInfo;
+    }
+  }
+  return nullptr;
+}
+
 const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz, const TypeInfo* fieldsInfo) {
   Class superClass = class_getSuperclass(clazz);
   RuntimeCheck(superClass != nullptr, "");

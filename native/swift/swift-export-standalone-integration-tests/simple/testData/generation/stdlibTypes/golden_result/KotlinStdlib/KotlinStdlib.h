@@ -41,9 +41,13 @@ int32_t kotlin_CharSequence_length_get(void * self);
 
 void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t startIndex, int32_t endIndex);
 
+_Bool kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 int8_t kotlin_collections_ByteIterator_next(void * self);
 
 int8_t kotlin_collections_ByteIterator_nextByte(void * self);
+
+_Bool kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 uint16_t kotlin_collections_CharIterator_next(void * self);
 

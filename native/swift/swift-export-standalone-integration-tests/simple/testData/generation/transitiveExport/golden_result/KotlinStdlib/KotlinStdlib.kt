@@ -102,6 +102,13 @@ public fun kotlin_ByteArray_size_get(self: kotlin.native.internal.NativePtr): In
     return _result
 }
 
+@ExportedBridge("kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.ByteIterator()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("kotlin_collections_ByteIterator_next")
 public fun kotlin_collections_ByteIterator_next(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator

@@ -82,7 +82,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_Bar_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.Bar.self {
+                 __kt = namespace_Bar_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -111,7 +116,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public init() {
-            let __kt = namespace_Foo_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.Foo.self {
+                 __kt = namespace_Foo_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -141,7 +151,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_MutableSharedFoo_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.MutableSharedFoo.self {
+                 __kt = namespace_MutableSharedFoo_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_MutableSharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -171,7 +186,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_MutableStateFoo_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.MutableStateFoo.self {
+                 __kt = namespace_MutableStateFoo_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_MutableStateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -201,7 +221,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_Nar_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.Nar.self {
+                 __kt = namespace_Nar_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -231,7 +256,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_SharedFoo_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.SharedFoo.self {
+                 __kt = namespace_SharedFoo_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_SharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -261,7 +291,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_StateFoo_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.StateFoo.self {
+                 __kt = namespace_StateFoo_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -291,7 +326,12 @@ extension ExportedKotlinPackages.namespace {
             }
         }
         public override init() {
-            let __kt = namespace_Zar_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.namespace.Zar.self {
+                 __kt = namespace_Zar_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_Zar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
