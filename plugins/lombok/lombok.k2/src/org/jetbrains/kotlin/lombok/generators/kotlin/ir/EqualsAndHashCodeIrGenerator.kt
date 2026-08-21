@@ -42,6 +42,9 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
      */
     const val HASHCODE_NULL = 43
 
+    /** What the hash starts from before any property is folded in, mirroring Lombok's `int result = 1`. */
+    const val HASHCODE_INITIAL = 1
+
     override fun IrBlockBodyBuilder.build(
         key: EqualsAndHashCodeGeneratorKey,
         declaration: IrSimpleFunction,
@@ -110,17 +113,11 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
 
         val superHashCode = runIf(key.callSuper) { buildSuperHashCodeCall(irClass, thisParam, context) }
 
-        if (includedProperties.isEmpty()) {
-            +irReturn(superHashCode ?: irInt(0))
-            return
-        }
-
-        if (superHashCode == null && includedProperties.size == 1) {
-            +irReturn(hashCodeOfProperty(thisParam, includedProperties.single()))
-            return
-        }
-
-        val initial: IrExpression = superHashCode ?: irInt(1)
+        // Always the `result = 1` (or `result = super.hashCode()`) accumulator Lombok emits, folding in every
+        // property, with no shortcut for an empty or single-property class: Lombok has none either, so returning
+        // `0` for the former and a bare `property.hashCode()` for the latter produced a different hash than the
+        // same class gets in Java, for no gain.
+        val initial: IrExpression = superHashCode ?: irInt(HASHCODE_INITIAL)
         val resultVar = irTemporary(initial, nameHint = "result", isMutable = true)
 
         for (property in includedProperties) {

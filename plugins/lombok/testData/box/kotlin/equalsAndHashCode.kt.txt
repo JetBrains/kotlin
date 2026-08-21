@@ -25,7 +25,9 @@ open class CallSuperBase {
   }
 
   override fun hashCode(): Int {
-    return <this>.<get-baseProp>().hashCode()
+    var tmp_1: Int = 1
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-baseProp>().hashCode())
+    return tmp_1
   }
 
 }
@@ -52,17 +54,17 @@ class CallSuperDerived : CallSuperBase {
     when {
       super<CallSuperBase>.equals(other = other).not() -> return false
     }
-    val tmp_1: CallSuperDerived = other /*as CallSuperDerived */
+    val tmp_2: CallSuperDerived = other /*as CallSuperDerived */
     when {
-      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_1.<get-ownProp>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_2.<get-ownProp>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_2: Int = super<CallSuperBase>.hashCode()
-    tmp_2 = tmp_2.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
-    return tmp_2
+    var tmp_3: Int = super<CallSuperBase>.hashCode()
+    tmp_3 = tmp_3.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
+    return tmp_3
   }
 
 }
@@ -94,21 +96,21 @@ data class DataClassWithExclude {
     when {
       other !is DataClassWithExclude -> return false
     }
-    val tmp_3: DataClassWithExclude = other /*as DataClassWithExclude */
+    val tmp_4: DataClassWithExclude = other /*as DataClassWithExclude */
     when {
-      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_3.<get-name>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_4.<get-name>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_3.<get-age>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_4.<get-age>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_4: Int = 1
-    tmp_4 = tmp_4.times(other = 59).plus(other = <this>.<get-name>().hashCode())
-    tmp_4 = tmp_4.times(other = 59).plus(other = <this>.<get-age>().hashCode())
-    return tmp_4
+    var tmp_5: Int = 1
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_5
   }
 
   operator fun component1(): String {
@@ -152,7 +154,8 @@ class Empty {
   }
 
   override fun hashCode(): Int {
-    return 0
+    var tmp_6: Int = 1
+    return tmp_6
   }
 
 }
@@ -180,15 +183,17 @@ class OnlyIncluded {
     when {
       other !is OnlyIncluded -> return false
     }
-    val tmp_5: OnlyIncluded = other /*as OnlyIncluded */
+    val tmp_7: OnlyIncluded = other /*as OnlyIncluded */
     when {
-      EQEQ(arg0 = <this>.<get-included>(), arg1 = tmp_5.<get-included>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-included>(), arg1 = tmp_7.<get-included>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    return <this>.<get-included>().hashCode()
+    var tmp_8: Int = 1
+    tmp_8 = tmp_8.times(other = 59).plus(other = <this>.<get-included>().hashCode())
+    return tmp_8
   }
 
 }
@@ -216,21 +221,21 @@ data class PlainDataClass {
     when {
       other !is PlainDataClass -> return false
     }
-    val tmp_6: PlainDataClass = other /*as PlainDataClass */
+    val tmp_9: PlainDataClass = other /*as PlainDataClass */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_6.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_9.<get-a>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_6.<get-b>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_9.<get-b>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_7: Int = 1
-    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-a>().hashCode())
-    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-b>().hashCode())
-    return tmp_7
+    var tmp_10: Int = 1
+    tmp_10 = tmp_10.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    tmp_10 = tmp_10.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_10
   }
 
   operator fun component1(): String {
@@ -278,21 +283,21 @@ class Simple {
     when {
       other !is Simple -> return false
     }
-    val tmp_8: Simple = other /*as Simple */
+    val tmp_11: Simple = other /*as Simple */
     when {
-      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_8.<get-name>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_11.<get-name>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_8.<get-age>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_11.<get-age>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_9: Int = 1
-    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-name>().hashCode())
-    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-age>().hashCode())
-    return tmp_9
+    var tmp_12: Int = 1
+    tmp_12 = tmp_12.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_12 = tmp_12.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_12
   }
 
 }
@@ -316,18 +321,20 @@ class SingleNullableInt {
     when {
       other !is SingleNullableInt -> return false
     }
-    val tmp_10: SingleNullableInt = other /*as SingleNullableInt */
+    val tmp_13: SingleNullableInt = other /*as SingleNullableInt */
     when {
-      EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = tmp_10.<get-optionalId>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = tmp_13.<get-optionalId>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    return when {
+    var tmp_14: Int = 1
+    tmp_14 = tmp_14.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = null) -> 43
       else -> <this>.<get-optionalId>().hashCode()
-    }
+    })
+    return tmp_14
   }
 
 }
@@ -351,18 +358,20 @@ class SingleNullableString {
     when {
       other !is SingleNullableString -> return false
     }
-    val tmp_11: SingleNullableString = other /*as SingleNullableString */
+    val tmp_15: SingleNullableString = other /*as SingleNullableString */
     when {
-      EQEQ(arg0 = <this>.<get-optional>(), arg1 = tmp_11.<get-optional>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-optional>(), arg1 = tmp_15.<get-optional>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    return when {
+    var tmp_16: Int = 1
+    tmp_16 = tmp_16.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-optional>(), arg1 = null) -> 43
       else -> <this>.<get-optional>().hashCode()
-    }
+    })
+    return tmp_16
   }
 
 }
@@ -390,27 +399,27 @@ class TwoNullableInts {
     when {
       other !is TwoNullableInts -> return false
     }
-    val tmp_12: TwoNullableInts = other /*as TwoNullableInts */
+    val tmp_17: TwoNullableInts = other /*as TwoNullableInts */
     when {
-      EQEQ(arg0 = <this>.<get-first>(), arg1 = tmp_12.<get-first>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-first>(), arg1 = tmp_17.<get-first>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-second>(), arg1 = tmp_12.<get-second>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-second>(), arg1 = tmp_17.<get-second>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_13: Int = 1
-    tmp_13 = tmp_13.times(other = 59).plus(other = when {
+    var tmp_18: Int = 1
+    tmp_18 = tmp_18.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-first>(), arg1 = null) -> 43
       else -> <this>.<get-first>().hashCode()
     })
-    tmp_13 = tmp_13.times(other = 59).plus(other = when {
+    tmp_18 = tmp_18.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-second>(), arg1 = null) -> 43
       else -> <this>.<get-second>().hashCode()
     })
-    return tmp_13
+    return tmp_18
   }
 
 }
@@ -434,15 +443,17 @@ class WithComputedProperties {
     when {
       other !is WithComputedProperties -> return false
     }
-    val tmp_14: WithComputedProperties = other /*as WithComputedProperties */
+    val tmp_19: WithComputedProperties = other /*as WithComputedProperties */
     when {
-      EQEQ(arg0 = <this>.<get-real>(), arg1 = tmp_14.<get-real>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-real>(), arg1 = tmp_19.<get-real>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    return <this>.<get-real>().hashCode()
+    var tmp_20: Int = 1
+    tmp_20 = tmp_20.times(other = 59).plus(other = <this>.<get-real>().hashCode())
+    return tmp_20
   }
 
   val computedProp: String
@@ -475,15 +486,17 @@ class WithExclude {
     when {
       other !is WithExclude -> return false
     }
-    val tmp_15: WithExclude = other /*as WithExclude */
+    val tmp_21: WithExclude = other /*as WithExclude */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_15.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_21.<get-a>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    return <this>.<get-a>().hashCode()
+    var tmp_22: Int = 1
+    tmp_22 = tmp_22.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_22
   }
 
 }
@@ -511,24 +524,24 @@ class WithNullable {
     when {
       other !is WithNullable -> return false
     }
-    val tmp_16: WithNullable = other /*as WithNullable */
+    val tmp_23: WithNullable = other /*as WithNullable */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_16.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_23.<get-a>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_16.<get-b>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_23.<get-b>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_17: Int = 1
-    tmp_17 = tmp_17.times(other = 59).plus(other = when {
+    var tmp_24: Int = 1
+    tmp_24 = tmp_24.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 43
       else -> <this>.<get-a>().hashCode()
     })
-    tmp_17 = tmp_17.times(other = 59).plus(other = <this>.<get-b>().hashCode())
-    return tmp_17
+    tmp_24 = tmp_24.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_24
   }
 
 }
@@ -627,7 +640,7 @@ fun box(): String {
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableInt(optionalId = null).hashCode(), arg1 = SingleNullableInt(optionalId = null).hashCode()))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = TwoNullableInts(first = null, second = null).hashCode(), arg1 = TwoNullableInts(first = null, second = null).hashCode()))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Empty(), arg1 = Empty()))
-  assertEquals<Int>(a = 0, b = Empty().hashCode())
+  assertEquals<Int>(a = 1, b = Empty().hashCode())
   val cd1: CallSuperDerived = CallSuperDerived(ownProp = "x")
   val cd2: CallSuperDerived = CallSuperDerived(ownProp = "x")
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = cd1, arg1 = cd2))
@@ -652,15 +665,17 @@ fun box(): String {
       when {
         other !is LocalClass -> return false
       }
-      val tmp_18: LocalClass = other /*as LocalClass */
+      val tmp_25: LocalClass = other /*as LocalClass */
       when {
-        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_18.<get-x>()).not() -> return false
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_25.<get-x>()).not() -> return false
       }
       return true
     }
 
     override fun hashCode(): Int {
-      return <this>.<get-x>().hashCode()
+      var tmp_26: Int = 1
+      tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+      return tmp_26
     }
 
   }
