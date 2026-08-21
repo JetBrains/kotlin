@@ -16,14 +16,6 @@ fun main(args: Array<String>) {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractRawFirBuilderLazyBodiesByAstTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractRawFirBuilderLazyBodiesByStubTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
             testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
                 model("sourceElementMapping")
             }

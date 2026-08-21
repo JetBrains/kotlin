@@ -1,5 +1,7 @@
 FILE: scriptStatementLevelDestructuringWithAnnotation.kts
     SCRIPT: <script-scriptStatementLevelDestructuringWithAnnotation.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        lval args: R|kotlin/Array<kotlin/String>|
 
         [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
