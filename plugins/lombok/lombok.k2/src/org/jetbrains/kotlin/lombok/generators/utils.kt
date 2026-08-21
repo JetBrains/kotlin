@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -216,5 +217,17 @@ val FirClassSymbol<*>.isPlainClass: Boolean
  */
 val FirCallableSymbol<*>.hasReceiverOrContextParameters: Boolean
     get() = isExtension || hasContextParameters
+
+/**
+ * Whether `@ToString` and `@EqualsAndHashCode` leave [this] property out of what they generate unless it is
+ * explicitly opted in with their `@Include`.
+ *
+ * A `$` prefix marks a name as generated or internal by convention - Lombok's own generated fields use it - so
+ * such a field is never part of a class's rendering or identity by default. See the "small print" of both
+ * features: "any variables that start with a $ symbol are excluded automatically. You can only include them by
+ * using the @Include annotation." An `@Exclude` on one is therefore redundant, which both checkers report.
+ */
+val FirPropertySymbol.isExcludedByDollarPrefix: Boolean
+    get() = name.asString().startsWith('$')
 
 abstract class LombokDeclarationKey : GeneratedDeclarationKey()

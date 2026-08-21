@@ -464,6 +464,52 @@ class WithComputedProperties {
 }
 
 @EqualsAndHashCode
+class WithDollarPrefixedProperties {
+  val regular: String
+    field = regular
+    get
+
+  val $excludedByDefault: String
+    field = $excludedByDefault
+    get
+
+  val $explicitlyIncluded: String
+    field = $explicitlyIncluded
+    get
+
+  constructor(regular: String, $excludedByDefault: String, $explicitlyIncluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithDollarPrefixedProperties -> return false
+    }
+    val tmp_21: WithDollarPrefixedProperties = other /*as WithDollarPrefixedProperties */
+    when {
+      EQEQ(arg0 = <this>.<get-regular>(), arg1 = tmp_21.<get-regular>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-$explicitlyIncluded>(), arg1 = tmp_21.<get-$explicitlyIncluded>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_22: Int = 1
+    tmp_22 = tmp_22.times(other = 59).plus(other = <this>.<get-regular>().hashCode())
+    tmp_22 = tmp_22.times(other = 59).plus(other = <this>.<get-$explicitlyIncluded>().hashCode())
+    return tmp_22
+  }
+
+}
+
+@EqualsAndHashCode
 class WithExclude {
   val a: String
     field = a
@@ -486,17 +532,17 @@ class WithExclude {
     when {
       other !is WithExclude -> return false
     }
-    val tmp_21: WithExclude = other /*as WithExclude */
+    val tmp_23: WithExclude = other /*as WithExclude */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_21.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_23.<get-a>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_22: Int = 1
-    tmp_22 = tmp_22.times(other = 59).plus(other = <this>.<get-a>().hashCode())
-    return tmp_22
+    var tmp_24: Int = 1
+    tmp_24 = tmp_24.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_24
   }
 
 }
@@ -520,17 +566,17 @@ class WithNestedArray {
     when {
       other !is WithNestedArray -> return false
     }
-    val tmp_23: WithNestedArray = other /*as WithNestedArray */
+    val tmp_25: WithNestedArray = other /*as WithNestedArray */
     when {
-      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_23.<get-array>()).not() -> return false
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_25.<get-array>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_24: Int = 1
-    tmp_24 = tmp_24.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
-    return tmp_24
+    var tmp_26: Int = 1
+    tmp_26 = tmp_26.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_26
   }
 
 }
@@ -558,24 +604,24 @@ class WithNullable {
     when {
       other !is WithNullable -> return false
     }
-    val tmp_25: WithNullable = other /*as WithNullable */
+    val tmp_27: WithNullable = other /*as WithNullable */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_25.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_27.<get-a>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_25.<get-b>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_27.<get-b>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_26: Int = 1
-    tmp_26 = tmp_26.times(other = 59).plus(other = when {
+    var tmp_28: Int = 1
+    tmp_28 = tmp_28.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 43
       else -> <this>.<get-a>().hashCode()
     })
-    tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-b>().hashCode())
-    return tmp_26
+    tmp_28 = tmp_28.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_28
   }
 
 }
@@ -599,17 +645,17 @@ class WithNullableArray {
     when {
       other !is WithNullableArray -> return false
     }
-    val tmp_27: WithNullableArray = other /*as WithNullableArray */
+    val tmp_29: WithNullableArray = other /*as WithNullableArray */
     when {
-      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_27.<get-array>()).not() -> return false
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_29.<get-array>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_28: Int = 1
-    tmp_28 = tmp_28.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
-    return tmp_28
+    var tmp_30: Int = 1
+    tmp_30 = tmp_30.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_30
   }
 
 }
@@ -633,17 +679,17 @@ class WithObjectArray {
     when {
       other !is WithObjectArray -> return false
     }
-    val tmp_29: WithObjectArray = other /*as WithObjectArray */
+    val tmp_31: WithObjectArray = other /*as WithObjectArray */
     when {
-      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_29.<get-array>()).not() -> return false
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_31.<get-array>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_30: Int = 1
-    tmp_30 = tmp_30.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
-    return tmp_30
+    var tmp_32: Int = 1
+    tmp_32 = tmp_32.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_32
   }
 
 }
@@ -667,17 +713,17 @@ class WithPrimitiveArray {
     when {
       other !is WithPrimitiveArray -> return false
     }
-    val tmp_31: WithPrimitiveArray = other /*as WithPrimitiveArray */
+    val tmp_33: WithPrimitiveArray = other /*as WithPrimitiveArray */
     when {
-      equals(p0 = <this>.<get-array>(), p1 = tmp_31.<get-array>()).not() -> return false
+      equals(p0 = <this>.<get-array>(), p1 = tmp_33.<get-array>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_32: Int = 1
-    tmp_32 = tmp_32.times(other = 59).plus(other = hashCode(p0 = <this>.<get-array>()))
-    return tmp_32
+    var tmp_34: Int = 1
+    tmp_34 = tmp_34.times(other = 59).plus(other = hashCode(p0 = <this>.<get-array>()))
+    return tmp_34
   }
 
 }
@@ -787,6 +833,10 @@ fun box(): String {
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNullableArray(array = null), arg1 = WithNullableArray(array = null)))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNullableArray(array = null).hashCode(), arg1 = WithNullableArray(array = null).hashCode()))
   assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithNullableArray(array = null), arg1 = WithNullableArray(array = arrayOf<String>(elements = ["a"]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i"), arg1 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "b", $explicitlyIncluded = "i")))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i").hashCode(), arg1 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "b", $explicitlyIncluded = "i").hashCode()))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i"), arg1 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "j")))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i"), arg1 = WithDollarPrefixedProperties(regular = "s", $excludedByDefault = "a", $explicitlyIncluded = "i")))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Empty(), arg1 = Empty()))
   assertEquals<Int>(a = 1, b = Empty().hashCode())
   val cd1: CallSuperDerived = CallSuperDerived(ownProp = "x")
@@ -813,17 +863,17 @@ fun box(): String {
       when {
         other !is LocalClass -> return false
       }
-      val tmp_33: LocalClass = other /*as LocalClass */
+      val tmp_35: LocalClass = other /*as LocalClass */
       when {
-        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_33.<get-x>()).not() -> return false
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_35.<get-x>()).not() -> return false
       }
       return true
     }
 
     override fun hashCode(): Int {
-      var tmp_34: Int = 1
-      tmp_34 = tmp_34.times(other = 59).plus(other = <this>.<get-x>().hashCode())
-      return tmp_34
+      var tmp_36: Int = 1
+      tmp_36 = tmp_36.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+      return tmp_36
     }
 
   }

@@ -379,6 +379,32 @@ class WithComputedPropertyInTheMiddle {
 }
 
 @ToString
+class WithDollarPrefixedProperties {
+  val regular: String
+    field = regular
+    get
+
+  val $excludedByDefault: String
+    field = $excludedByDefault
+    get
+
+  val $explicitlyIncluded: String
+    field = $explicitlyIncluded
+    get
+
+  constructor(regular: String, $excludedByDefault: String, $explicitlyIncluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithDollarPrefixedProperties(" + "regular=" + <this>.<get-regular>() + ", $explicitlyIncluded=" + <this>.<get-$explicitlyIncluded>() + ')'
+  }
+
+}
+
+@ToString
 class WithExclude {
   val a: String
     field = a
@@ -688,5 +714,7 @@ fun box(): String {
   assertEquals<String>(a = "CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", b = CallSuperDerived(ownProp = "hello").toString())
   assertEquals<String>(a = "CallSuperWithOnlyAnyParent(x=5)", b = CallSuperWithOnlyAnyParent(x = 5).toString())
   assertEquals<String>(a = "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)", b = WithArrays().toString())
+  assertEquals<String>(a = "WithDollarPrefixedProperties(regular=r, " + '$' + "explicitlyIncluded=i)", b = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "e", $explicitlyIncluded = "i").toString())
   return "OK"
 }
+

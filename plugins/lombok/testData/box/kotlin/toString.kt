@@ -129,6 +129,15 @@ class WithArrays {
     val nullArray: Array<String>? = null
 }
 
+// A `$`-prefixed name is generated or internal by convention, so Lombok leaves such a property out unless it is
+// explicitly opted in with `@ToString.Include`, KT-88636.
+@ToString
+class WithDollarPrefixedProperties(
+    val regular: String,
+    val `$excludedByDefault`: String,
+    @ToString.Include val `$explicitlyIncluded`: String,
+)
+
 fun box(): String {
     assertEquals("Simple(name=Alice, age=30)", Simple("Alice", 30).toString())
     assertEquals("NoFieldNames(1, 2)", NoFieldNames(1, 2).toString())
@@ -170,6 +179,11 @@ fun box(): String {
     assertEquals(
         "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)",
         WithArrays().toString()
+    )
+
+    assertEquals(
+        "WithDollarPrefixedProperties(regular=r, ${'$'}explicitlyIncluded=i)",
+        WithDollarPrefixedProperties("r", "e", "i").toString()
     )
 
     return "OK"

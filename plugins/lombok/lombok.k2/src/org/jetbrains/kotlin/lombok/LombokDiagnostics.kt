@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPOR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
@@ -74,6 +75,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE by error1<KtAnnotationEntry, Name>()
+    val EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY by warning1<KtAnnotationEntry, Name>()
     val DO_NOT_USE_GETTERS_IRRELEVANT by warning0<KtExpression>()
     val CALL_SUPER_NOT_CALLED by warning2<KtAnnotationEntry, String, Name>()
 
@@ -144,6 +146,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE,
             "''@{0}.Exclude'' and ''@{0}.Include'' are mutually exclusive; the ''@Include'' annotation will be ignored.",
+            CommonRenderers.NAME,
+        )
+        map.put(
+            EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY,
+            "''@{0}.Exclude'' is not needed: a property whose name starts with ''$'' is not included anyway.",
             CommonRenderers.NAME,
         )
         map.put(

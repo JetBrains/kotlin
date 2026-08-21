@@ -52,6 +52,28 @@ class WithOnlyInclude(@ToString.Include val included: String)
 @ToString
 class WithOnlyExclude(@ToString.Exclude val excluded: String, val normal: String)
 
+// A `$`-prefixed property is left out of what Lombok generates unless it is explicitly included, so an
+// `@Exclude` on one says nothing the name does not already say, KT-88636.
+@ToString
+class WithDollarPrefixedProperties(
+    val regular: String,
+    val `$excludedByDefault`: String,
+    @ToString.Include val `$explicitlyIncluded`: String,
+    <!EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY!>@ToString.Exclude<!> val `$redundantlyExcluded`: String,
+)
+
+// Both diagnostics are reported, exactly as Lombok reports both.
+@ToString
+class WithDollarPrefixedPropertyIncludedAndExcluded(
+    <!EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE!>@ToString.Include<!>
+    <!EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY!>@ToString.Exclude<!>
+    val `$both`: String,
+)
+
+// No warning: the name does not start with `$`, so the `@Exclude` is doing the work.
+@ToString
+class WithRegularExcludedProperty(val regular: String, @ToString.Exclude val excluded: String)
+
 // No warning: doNotUseGetters not specified
 @ToString
 class Normal(val x: Int)
