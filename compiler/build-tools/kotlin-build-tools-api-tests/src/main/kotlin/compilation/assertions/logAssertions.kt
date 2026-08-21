@@ -44,7 +44,8 @@ fun CompilationOutcome.assertLogContainsPatterns(logLevel: LogLevel, vararg expe
 
 fun CompilationOutcome.assertLogContainsPatterns(logLevel: LogLevel, expectedLines: Set<Regex>) {
     requireLogLevel(logLevel)
-    val absentLines = expectedLines.filter { regex -> logLines.getValue(logLevel).none { line -> regex.matches(line) } }
+    val absentLines = expectedLines.map { Regex(it.pattern, RegexOption.DOT_MATCHES_ALL) }
+        .filter { regex -> logLines.getValue(logLevel).none { line -> regex.matches(line) } }
     assert(absentLines.isEmpty()) {
         """
         |The following lines were expected to be printed on $logLevel level, however they were not:

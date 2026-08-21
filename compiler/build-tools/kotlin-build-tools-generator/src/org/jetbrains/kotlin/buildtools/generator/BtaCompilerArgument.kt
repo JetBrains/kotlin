@@ -12,9 +12,12 @@ import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.PathListType
 import org.jetbrains.kotlin.arguments.dsl.types.SearchPathType
+import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import java.io.File
@@ -53,7 +56,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         constructor(origin: KotlinCompilerArgument) : this(origin.calculateName(), origin)
     }
 
-    class CustomCompilerArgument(
+    open class CustomCompilerArgument(
         name: String,
         description: String,
         valueType: BtaCompilerArgumentValueType.CustomArgumentValueType,
@@ -64,6 +67,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         val defaultValue: CodeBlock,
         affectsCompilationOutcome: Boolean = true,
         delimiter: String? = null,
+        val origin: KotlinCompilerArgument? = null,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
         description = description,
@@ -90,8 +94,33 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
                 origin.calculateName().replaceFirstChar { it.uppercase() }
             }",
             affectsCompilationOutcome = origin.affectsCompilationOutcome,
+            origin = origin,
         )
     }
+
+    class OverridenCompilerArgument(
+        name: String,
+        description: String,
+        valueType: BtaCompilerArgumentValueType.CustomArgumentValueType,
+        introducedSinceVersion: KotlinReleaseVersion,
+        deprecatedSinceVersion: KotlinReleaseVersion?,
+        removedSinceVersion: KotlinReleaseVersion?,
+        applierSimpleName: String,
+        defaultValue: CodeBlock,
+        affectsCompilationOutcome: Boolean = true,
+        delimiter: String? = null,
+    ) : CustomCompilerArgument(
+        name,
+        description,
+        valueType,
+        introducedSinceVersion,
+        deprecatedSinceVersion,
+        removedSinceVersion,
+        applierSimpleName,
+        defaultValue,
+        affectsCompilationOutcome,
+        delimiter
+    )
 }
 
 /**
@@ -107,9 +136,14 @@ sealed class BtaCompilerArgumentValueType(
             get() = origin::class.allSupertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
     }
 
-    class CustomArgumentValueType(
+    open class CustomArgumentValueType(
         val type: TypeName,
     ) : BtaCompilerArgumentValueType(isNullable = type.isNullable)
+
+//    class OverriddenCompilerArgumentValueType(
+//        type: TypeName,
+//        val origin: KotlinArgumentValueType<*>,
+//    ) : CustomArgumentValueType(type)
 }
 
 object CustomCompilerArguments {

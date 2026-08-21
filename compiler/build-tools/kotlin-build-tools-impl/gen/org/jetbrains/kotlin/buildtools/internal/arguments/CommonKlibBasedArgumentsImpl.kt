@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.lang.IllegalStateException
+import java.lang.NoSuchMethodError
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
@@ -19,22 +20,10 @@ import kotlin.collections.Set
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.map
-import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_FAKE_OVERRIDE_VALIDATOR
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ABI_VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_IR_INLINER
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_NORMALIZE_ABSOLUTE_PATH
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_RELATIVE_PATH_BASE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
@@ -50,70 +39,156 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonKlibBasedArgumentsImpl(
+  protected override val compilerArguments: CommonKlibBasedCompilerArguments,
+  protected override val optionsMap: MutableMap<String, Any?>,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
   argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
+) : CommonCompilerArgumentsImpl(compilerArguments, optionsMap, argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
     CommonKlibBasedArguments,
     CommonKlibBasedArguments.Builder,
     CommonKlibBasedArgumentsKlibArguments,
     CommonKlibBasedArgumentsKlibArguments.Builder,
     CommonKlibBasedArgumentsLinkingArguments,
     CommonKlibBasedArgumentsLinkingArguments.Builder {
-  private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
-
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = getOption(key.id) as V
 
   private operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    setOption(key.id, value)
   }
 
-  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
+  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = isArgumentKnown(key.id) 
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V = getOption(key.id) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    setOption(key.id, value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V = getOption(key.id) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    setOption(key.id, value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
-  }
+  override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V = getOption(key.id) as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    setOption(key.id, value)
+  }
+
+  @Suppress(
+    "UNCHECKED_CAST",
+    "DEPRECATION",
+  )
+  private fun getOption(keyId: String): Any? = when (keyId) {
+    "X_FAKE_OVERRIDE_VALIDATOR" -> {
+    try { this.compilerArguments.getUsingReflection<Boolean>("fakeOverrideValidator") } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_FAKE_OVERRIDE_VALIDATOR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    }
+    "X_KLIB_ABI_VERSION" -> {
+    this.compilerArguments.customKlibAbiVersion
+    }
+    "X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" -> {
+    this.compilerArguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, this.compilerArguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") }
+    }
+    "X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" -> {
+    this.compilerArguments.enableSignatureClashChecks
+    }
+    "X_KLIB_IR_INLINER" -> {
+    this.compilerArguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, this.compilerArguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") }
+    }
+    "X_KLIB_NORMALIZE_ABSOLUTE_PATH" -> {
+    try { this.compilerArguments.getUsingReflection<Boolean>("normalizeAbsolutePath") } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_KLIB_NORMALIZE_ABSOLUTE_PATH. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    }
+    "X_KLIB_RELATIVE_PATH_BASE" -> {
+    this.compilerArguments.relativePathBases.mapOrEmpty { Path(it) }
+    }
+    "X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT" -> {
+    try {
+    this.compilerArguments.klibZipFileAccessorCacheLimit.let { it.toInt() }
+    } catch (_: NoSuchMethodError) { null }
+    }
+    "X_PARTIAL_LINKAGE" -> {
+    this.compilerArguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, this.compilerArguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") }
+    }
+    "X_PARTIAL_LINKAGE_LOGLEVEL" -> {
+    this.compilerArguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, this.compilerArguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") }
+    }
+    "X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS" -> {
+    try {
+    this.compilerArguments.skipLibrarySpecialCompatibilityChecks
+    } catch (_: NoSuchMethodError) { null }
+    }
+    else -> {
+      check(keyId in optionsMap) { "Argument ${keyId} is not set and has no default value" }
+      optionsMap[keyId]
+    }
+  }
+
+  @Suppress(
+    "UNCHECKED_CAST",
+    "DEPRECATION",
+  )
+  private fun setOption(keyId: String, `value`: Any?) {
+    when (keyId) {
+      "X_FAKE_OVERRIDE_VALIDATOR" -> {
+      try { this.compilerArguments.setUsingReflection("fakeOverrideValidator", (value as Boolean))
+       } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_FAKE_OVERRIDE_VALIDATOR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }}
+      "X_KLIB_ABI_VERSION" -> {
+      this.compilerArguments.customKlibAbiVersion = (value as String?)
+      }
+      "X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" -> {
+      this.compilerArguments.duplicatedUniqueNameStrategy = (value as DuplicatedUniqueNameStrategy?)?.stringValue
+      }
+      "X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" -> {
+      this.compilerArguments.enableSignatureClashChecks = (value as Boolean)
+      }
+      "X_KLIB_IR_INLINER" -> {
+      this.compilerArguments.irInlinerBeforeKlibSerialization = (value as KlibIrInlinerMode).stringValue
+      }
+      "X_KLIB_NORMALIZE_ABSOLUTE_PATH" -> {
+      try { this.compilerArguments.setUsingReflection("normalizeAbsolutePath", (value as Boolean))
+       } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_KLIB_NORMALIZE_ABSOLUTE_PATH. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }}
+      "X_KLIB_RELATIVE_PATH_BASE" -> {
+      this.compilerArguments.relativePathBases = (value as List<java.nio.`file`.Path>).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()
+      }
+      "X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT" -> {
+      try {
+      this.compilerArguments.klibZipFileAccessorCacheLimit = (value as Int).toString()
+      } catch (_: NoSuchMethodError) { }
+      }
+      "X_PARTIAL_LINKAGE" -> {
+      this.compilerArguments.partialLinkageMode = (value as PartialLinkageMode?)?.stringValue
+      }
+      "X_PARTIAL_LINKAGE_LOGLEVEL" -> {
+      this.compilerArguments.partialLinkageLogLevel = (value as PartialLinkageLogLevel?)?.stringValue
+      }
+      "X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS" -> {
+      try {
+      this.compilerArguments.skipLibrarySpecialCompatibilityChecks = (value as Boolean)
+      } catch (_: NoSuchMethodError) { }
+      }
+      else -> optionsMap[keyId] = value
+    }
   }
 
   abstract override fun build(): CommonKlibBasedArgumentsImpl
@@ -121,55 +196,29 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     super.toCompilerArguments(arguments)
-    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
-    if (unknownArgs.isNotEmpty()) {
-      throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
-    }
-    try { if (X_FAKE_OVERRIDE_VALIDATOR in this) { arguments.setUsingReflection("fakeOverrideValidator", get(X_FAKE_OVERRIDE_VALIDATOR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_FAKE_OVERRIDE_VALIDATOR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    if (X_KLIB_ABI_VERSION in this) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION)}
-    if (X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY in this) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)?.stringValue}
-    if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
-    if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
-    try { if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.setUsingReflection("normalizeAbsolutePath", get(X_KLIB_NORMALIZE_ABSOLUTE_PATH))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_KLIB_NORMALIZE_ABSOLUTE_PATH. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
-    if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
-    if (X_PARTIAL_LINKAGE in this) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)?.stringValue}
-    if (X_PARTIAL_LINKAGE_LOGLEVEL in this) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)?.stringValue}
-    if (X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS in this) { arguments.skipLibrarySpecialCompatibilityChecks = get(X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS)}
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonKlibBasedCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.getUsingReflection<Boolean>("fakeOverrideValidator") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.getUsingReflection<Boolean>("normalizeAbsolutePath") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
-    try { this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS] = arguments.skipLibrarySpecialCompatibilityChecks } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
+
+  protected override fun isArgumentKnown(name: String): Boolean = name in knownArguments || super.isArgumentKnown(name)
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    try { if (X_FAKE_OVERRIDE_VALIDATOR in this) { arguments.setUsingReflection("fakeOverrideValidator", get(X_FAKE_OVERRIDE_VALIDATOR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_FAKE_OVERRIDE_VALIDATOR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    if (X_KLIB_ABI_VERSION in this) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION)}
-    if (X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY in this) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)?.stringValue}
-    if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
-    if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
-    try { if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.setUsingReflection("normalizeAbsolutePath", get(X_KLIB_NORMALIZE_ABSOLUTE_PATH))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_KLIB_NORMALIZE_ABSOLUTE_PATH. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
-    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
-    if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
-    if (X_PARTIAL_LINKAGE in this) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)?.stringValue}
-    if (X_PARTIAL_LINKAGE_LOGLEVEL in this) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)?.stringValue}
-    if (X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS in this) { arguments.skipLibrarySpecialCompatibilityChecks = get(X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS)}
+    try { arguments.setUsingReflection("fakeOverrideValidator", this.compilerArguments.getUsingReflection<Boolean>("fakeOverrideValidator")) } catch (_: NoSuchMethodError) { }
+    arguments.customKlibAbiVersion = this.compilerArguments.customKlibAbiVersion
+    arguments.duplicatedUniqueNameStrategy = this.compilerArguments.duplicatedUniqueNameStrategy
+    arguments.enableSignatureClashChecks = this.compilerArguments.enableSignatureClashChecks
+    arguments.irInlinerBeforeKlibSerialization = this.compilerArguments.irInlinerBeforeKlibSerialization
+    try { arguments.setUsingReflection("normalizeAbsolutePath", this.compilerArguments.getUsingReflection<Boolean>("normalizeAbsolutePath")) } catch (_: NoSuchMethodError) { }
+    arguments.relativePathBases = this.compilerArguments.relativePathBases
+    arguments.klibZipFileAccessorCacheLimit = this.compilerArguments.klibZipFileAccessorCacheLimit
+    arguments.partialLinkageMode = this.compilerArguments.partialLinkageMode
+    arguments.partialLinkageLogLevel = this.compilerArguments.partialLinkageLogLevel
+    arguments.skipLibrarySpecialCompatibilityChecks = this.compilerArguments.skipLibrarySpecialCompatibilityChecks
     return arguments
   }
 

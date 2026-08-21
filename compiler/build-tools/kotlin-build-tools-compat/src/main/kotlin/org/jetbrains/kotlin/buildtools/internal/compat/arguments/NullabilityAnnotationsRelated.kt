@@ -18,7 +18,7 @@ internal fun K2JVMCompilerArguments.applyNullabilityAnnotations(settings: List<N
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal fun applyNullabilityAnnotations(
-    currentValue: List<NullabilityAnnotation>,
+    currentValue: List<NullabilityAnnotation>?,
     compilerArgs: K2JVMCompilerArguments,
 ): List<NullabilityAnnotation> =
     compilerArgs.nullabilityAnnotations.mapOrEmpty { item ->

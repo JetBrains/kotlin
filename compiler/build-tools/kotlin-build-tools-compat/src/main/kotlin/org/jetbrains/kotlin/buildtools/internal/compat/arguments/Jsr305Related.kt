@@ -23,7 +23,7 @@ internal fun K2JVMCompilerArguments.applyJsr305(settings: List<Jsr305>) {
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal fun applyJsr305(
-    currentValue: List<Jsr305>,
+    currentValue: List<Jsr305>?,
     compilerArgs: K2JVMCompilerArguments,
 ): List<Jsr305> =
     compilerArgs.jsr305.mapOrEmpty { fullEntry ->

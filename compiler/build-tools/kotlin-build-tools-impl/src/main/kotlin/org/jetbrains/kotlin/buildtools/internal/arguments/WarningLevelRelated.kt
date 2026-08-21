@@ -17,7 +17,7 @@ internal fun CommonCompilerArguments.applyWarningLevels(levels: List<WarningLeve
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal fun applyWarningLevels(
-    currentValue: List<WarningLevel>,
+    currentValue: List<WarningLevel>?,
     compilerArgs: CommonCompilerArguments,
 ): List<WarningLevel> =
     compilerArgs.warningLevels.mapOrEmpty { item ->
