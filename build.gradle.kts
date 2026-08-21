@@ -571,14 +571,12 @@ tasks {
     fun registerSpecialPublishingTasks(nameSuffix: String, artifactProjectList: List<String>, latch: Project.(() -> Unit) -> Unit) {
         register("publish$nameSuffix") {
             latch {
-                @Suppress("UNCHECKED_CAST")
                 dependsOn(artifactProjectList.map { "$it:publish" })
             }
         }
 
         register("install$nameSuffix") {
             latch {
-                @Suppress("UNCHECKED_CAST")
                 dependsOn(artifactProjectList.map { "$it:install" })
             }
         }
@@ -586,13 +584,13 @@ tasks {
 
     registerSpecialPublishingTasks(
         nameSuffix = "IdeArtifacts",
-        artifactProjectList = @Suppress("UNCHECKED_CAST") (CompilerModules.compilerArtifactsForIde),
+        artifactProjectList = CompilerModules.compilerArtifactsForIde,
         latch = Project::idePluginPublishingLatch
     )
 
     registerSpecialPublishingTasks(
         nameSuffix = "AnalysisApiArtifacts",
-        artifactProjectList = @Suppress("UNCHECKED_CAST") (CompilerModules.analysisApiArtifacts),
+        artifactProjectList = CompilerModules.analysisApiArtifacts,
         latch = Project::analysisApiPublishingLatch
     )
 

@@ -58,10 +58,8 @@ fun Project.checkNoApiDependenciesOnK1Modules() {
     afterEvaluate {
         val apiConfiguration = configurations.findByName("api") ?: return@afterEvaluate
 
-        @Suppress("UNCHECKED_CAST")
         val fe10CompilerModules = CompilerModules.fe10CompilerModules
 
-        @Suppress("UNCHECKED_CAST")
         val descriptorModules = CompilerModules.descriptorsCompilerModules
 
         val k1Modules = (fe10CompilerModules + descriptorModules).toSet()
@@ -516,7 +514,7 @@ fun Project.configureMigratedRootSettings() {
                 val isReflect = requested.name == "kotlin-reflect"
                 // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
                 // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
-                if (project.path in @Suppress("UNCHECKED_CAST") (CompilerModules.compilerModules)) {
+                if (project.path in CompilerModules.compilerModules) {
                     val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
                     if (isReflect) {
                         check(requested.version == expectedReflectVersion) {
