@@ -182,9 +182,9 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             // This doesn't allow to use companion objects properties, if they exist in runtime.
             // At the next Kotlin versions, this hack should be removed.
             //
-            // Libraries, implementing JavaScript IDLs, may:
-            //  - keep the current behavior by annotating interface with @JsName("Object")
-            //  - emulate JavaScript IDLs without a companion object by using companion extensions
+            // Libraries, implementing JavaScript IDLs, may keep the current behavior
+            // by annotating interface with @JsName("Object"). In the future, they could
+            // adopt companion extensions to emulate JavaScript IDLs without a companion object.
             //
             // TODO: Remove (KT-76462)
             if (parent.isInterface) {
@@ -192,16 +192,11 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 val jsName = parent.getJsNameOrKotlinName().identifier
 
                 val deprecationMessage =
-                    "Reading a companion object of an external interface '$kotlinName' currently produces an empty JS object.\\n" +
+                    "Reading a companion object of the external interface `$kotlinName` currently produces an empty JS object.\\n" +
                     "\\n" +
-                    "This will change in the future: it will produce the JS value that the interface " +
-                    "name refers to ('$jsName'), and will fail at runtime if there is no such value." +
-                    "\\n" +
-                    " - To keep the current behavior, annotate the interface with `@JsName(\\\"Object\\\")`.\\n" +
-                    " - To emulate JavaScript IDLs without a companion object, use companion extensions " +
-                    "(experimental, -Xcompanion-blocks-and-extensions):\\n" +
-                    "     external interface $kotlinName: JsAny\\n" +
-                    "     companion val $kotlinName.MEMBER: $kotlinName get() = ...\\n" +
+                    "This will change in a future version: it will produce the JS value referenced by the interface's " +
+                    "JS name, `$jsName`, and will fail at runtime if no such value exists. " +
+                    "To keep the current behavior, annotate the interface with `@JsName(\\\"Object\\\")`.\\n" +
                     "\\n" +
                     "Read more: https://kotl.in/e4vlc5"
 
