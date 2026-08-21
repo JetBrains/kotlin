@@ -188,6 +188,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/ImportablesKt {
 	public static final fun getToLookupTagImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 	public static final fun getToMutableOrEmptyImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 	public static final fun getTransformInPlaceImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
+	public static final fun getTransformSingleImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 	public static final fun getVisibilitiesImport ()Lorg/jetbrains/kotlin/generators/tree/imports/ArbitraryImportable;
 }
 
@@ -347,6 +348,7 @@ public abstract class org/jetbrains/kotlin/fir/tree/generator/context/AbstractFi
 	public synthetic fun createImplementation (Lorg/jetbrains/kotlin/generators/tree/AbstractElement;Ljava/lang/String;)Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;
 	protected final fun defaultBuiltInType (Lorg/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator$ImplementationContext;Ljava/lang/String;)V
 	protected final fun noSource (Lorg/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator$ImplementationContext;)V
+	protected final fun useAssignableList (Lorg/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator$ImplementationContext;[Ljava/lang/String;)V
 }
 
 public final class org/jetbrains/kotlin/fir/tree/generator/model/Element : org/jetbrains/kotlin/generators/tree/AbstractElement {
@@ -444,12 +446,14 @@ public final class org/jetbrains/kotlin/fir/tree/generator/model/ListField : org
 	public fun getWithReplace ()Z
 	public fun getWithTransform ()Z
 	public synthetic fun internalCopy ()Lorg/jetbrains/kotlin/generators/tree/AbstractField;
+	public final fun isAssignableList ()Z
 	public fun isChild ()Z
 	public fun isFinal ()Z
 	public fun isMutable ()Z
 	public final fun isMutableOrEmptyList ()Z
 	public fun isParameter ()Z
 	public fun isVolatile ()Z
+	public final fun setAssignableList (Z)V
 	public fun setBaseType (Lorg/jetbrains/kotlin/generators/tree/TypeRef;)V
 	public fun setFinal (Z)V
 	public fun setMutable (Z)V

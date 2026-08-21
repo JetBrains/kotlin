@@ -56,6 +56,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/DIAGN
 	public final fun getCONTROL_FLOW ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getCONVENTIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getENUM_ENTRIES_DEPRECATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEQUALITY_BOUND ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getEXPOSED_VISIBILITY ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getEXTRA_CHECKERS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getFUNCTIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
@@ -324,6 +325,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model
 	public static final field REDUNDANT_NULLABLE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field REFERENCED_NAME_BY_QUALIFIED Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field REFERENCE_BY_QUALIFIED Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field REFERENCE_OR_OPERATOR Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field REIFIED_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field RETURN_WITH_LABEL Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field SAFE_ACCESS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;

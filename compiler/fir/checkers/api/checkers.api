@@ -83,7 +83,7 @@ public final class org/jetbrains/kotlin/fir/analysis/cfa/FirPropertyInitializati
 	public static final fun getEvaluatedInPlace (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)Z
 	public static final fun getEvaluatedInPlace (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Z
 	public static final fun nearestNonInPlaceGraph (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/ControlFlowGraph;)Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/ControlFlowGraph;
-	public static final fun requiresInitialization (Lorg/jetbrains/kotlin/fir/symbols/impl/FirPropertySymbol;Z)Z
+	public static final fun requiresInitialization (Lorg/jetbrains/kotlin/fir/symbols/impl/FirVariableSymbol;Z)Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/cfa/PropertyInitializationCheckProcessor : org/jetbrains/kotlin/fir/analysis/cfa/VariableInitializationCheckProcessor {
@@ -181,6 +181,8 @@ public final class org/jetbrains/kotlin/fir/analysis/cfa/util/PropertyInitializa
 	public fun <init> (Ljava/util/Set;Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/util/SetMultimap;)V
 	public synthetic fun <init> (Ljava/util/Set;Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/util/SetMultimap;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun visitEdge (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/CFGNode;Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/CFGNode;Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/Edge;Lkotlinx/collections/immutable/PersistentMap;)Lkotlinx/collections/immutable/PersistentMap;
+	public synthetic fun visitEnumEntryExitNode (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/EnumEntryExitNode;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitEnumEntryExitNode (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/EnumEntryExitNode;Lkotlinx/collections/immutable/PersistentMap;)Lkotlinx/collections/immutable/PersistentMap;
 	public synthetic fun visitPropertyInitializerExitNode (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/PropertyInitializerExitNode;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitPropertyInitializerExitNode (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/PropertyInitializerExitNode;Lkotlinx/collections/immutable/PersistentMap;)Lkotlinx/collections/immutable/PersistentMap;
 	public synthetic fun visitQualifiedAccessNode (Lorg/jetbrains/kotlin/fir/resolve/dfa/cfg/QualifiedAccessNode;Ljava/lang/Object;)Ljava/lang/Object;
@@ -489,10 +491,10 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/FirHelpersKt {
 	public static final fun processOverriddenPropertiesWithActionSafe (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/symbols/impl/FirPropertySymbol;Lkotlin/jvm/functions/Function1;)V
 	public static final fun projectionKindAsString (Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;)Ljava/lang/String;
 	public static final fun redundantModalities (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/declarations/FirMemberDeclaration;Lorg/jetbrains/kotlin/descriptors/Modality;)Ljava/util/Set;
-	public static final fun requireFeatureSupport (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;)V
-	public static final fun requireFeatureSupport (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/FirElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;)V
-	public static synthetic fun requireFeatureSupport$default (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;ILjava/lang/Object;)V
-	public static synthetic fun requireFeatureSupport$default (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/FirElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;ILjava/lang/Object;)V
+	public static final fun requireFeatureSupport (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;Lkotlin/jvm/functions/Function0;)V
+	public static final fun requireFeatureSupport (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/FirElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun requireFeatureSupport$default (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/KtSourceElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun requireFeatureSupport$default (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/FirElement;Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategy;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static final fun resolvedSymbolOrCompanionSymbol (Lorg/jetbrains/kotlin/fir/expressions/FirResolvedQualifier;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
 	public static final fun toClassLikeSymbol (Lorg/jetbrains/kotlin/fir/types/FirTypeRef;Lorg/jetbrains/kotlin/fir/FirSession;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassLikeSymbol;
 	public static final fun unsubstitutedScope (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)Lorg/jetbrains/kotlin/fir/scopes/FirTypeScope;
@@ -835,12 +837,6 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/config/ComposedLan
 	public final fun register (Lorg/jetbrains/kotlin/fir/analysis/checkers/LanguageVersionSettingsCheckers;)V
 }
 
-public final class org/jetbrains/kotlin/fir/analysis/checkers/config/FirContextParametersLanguageVersionSettingsChecker : org/jetbrains/kotlin/fir/analysis/checkers/config/FirLanguageVersionSettingsChecker {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/config/FirContextParametersLanguageVersionSettingsChecker;
-	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
-	public final fun getDIAGNOSTIC_MESSAGE ()Ljava/lang/String;
-}
-
 public abstract class org/jetbrains/kotlin/fir/analysis/checkers/config/FirLanguageVersionSettingsChecker {
 	public fun <init> ()V
 	public abstract fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
@@ -1160,11 +1156,6 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/Filter
 	public fun getValueParameterCheckers ()Ljava/util/Set;
 }
 
-public abstract class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirAbstractOverrideChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
-	public fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;)V
-	protected final fun checkReturnType (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;Ljava/util/List;Lorg/jetbrains/kotlin/types/TypeCheckerState;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;
-}
-
 public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirActualTypeAliasChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirActualTypeAliasChecker;
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
@@ -1290,11 +1281,6 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirCon
 
 public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirContextParametersDeclarationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirContextParametersDeclarationChecker;
-	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
-}
-
-public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirContextReceiversDeprecatedDeclarationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirContextReceiversDeprecatedDeclarationChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 }
 
@@ -1429,10 +1415,22 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEnu
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)V
 }
 
-public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundAnnotationApplicabilityChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundAnnotationApplicabilityChecker;
+public abstract class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
-	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker$ForExpect : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker$ForExpect;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker$Regular : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirEqualityBoundOverrideChecker$Regular;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirExpectActualClassifiersAreInBetaChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -1466,6 +1464,12 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirExp
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirExplicitBackingFieldsUnsupportedChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirBackingField;)V
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirExplicitEqualityBoundAnnotationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirExplicitEqualityBoundAnnotationChecker;
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;)V
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirExposedVisibilityDeclarationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -1886,7 +1890,7 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirOut
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)V
 }
 
-public abstract class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirOverrideChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirAbstractOverrideChecker {
+public abstract class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirOverrideChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
@@ -2164,6 +2168,12 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirVol
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/FirVolatileAnnotationChecker;
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/OverrideCheckerUtils {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/OverrideCheckerUtils;
+	public final fun checkReturnType (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;Ljava/util/List;Lorg/jetbrains/kotlin/types/TypeCheckerState;)Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;
+	public final fun getCheckedOrigins ()Ljava/util/Set;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/checkers/declaration/PlatformClassMappedToKotlinImportsChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -2724,6 +2734,9 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqua
 	public static final field GENERALLY_INAPPLICABLE Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
 	public static final field INAPPLICABLE_AS_ENUMS Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
 	public static final field INAPPLICABLE_AS_IDENTITY_LESS Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
+	public static final field INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
+	public static final field INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
+	public static final field INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
 	public static fun values ()[Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirEqualityCompatibilityChecker$Applicability;
@@ -3195,6 +3208,18 @@ public final class org/jetbrains/kotlin/fir/analysis/checkers/expression/FirType
 public final class org/jetbrains/kotlin/fir/analysis/checkers/expression/FirTypeParameterInQualifiedAccessChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirTypeParameterInQualifiedAccessChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/checkers/expression/FirTypeVariableSurvivesUntilDfaQualifiedAccessExpressionChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirTypeVariableSurvivesUntilDfaQualifiedAccessExpressionChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/checkers/expression/FirTypeVariableSurvivesUntilDfaResolvedQualifierChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirTypeVariableSurvivesUntilDfaResolvedQualifierChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirResolvedQualifier;)V
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
 }
 
@@ -3951,7 +3976,6 @@ public final class org/jetbrains/kotlin/fir/analysis/collectors/components/Repor
 
 public final class org/jetbrains/kotlin/fir/analysis/diagnostics/CliFrontendDiagnostics : org/jetbrains/kotlin/diagnostics/KtDiagnosticsContainer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/CliFrontendDiagnostics;
-	public final fun getCONTEXT_PARAMETERS_ARE_DEPRECATED ()Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;
 	public final fun getERROR_SEVERITY_CHANGED ()Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;
 	public final fun getMISSING_DIAGNOSTIC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;
 	public final fun getNOT_AN_OPT_IN_REQUIREMENT_MARKER ()Lorg/jetbrains/kotlin/diagnostics/KtSourcelessDiagnosticFactory;
@@ -4010,6 +4034,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getACTUAL_WITHOUT_EXPECT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getAMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getAMBIGUOUS_ALTERED_ASSIGN ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getAMBIGUOUS_ANNOTATION_ARGUMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getAMBIGUOUS_ANONYMOUS_TYPE_INFERRED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
@@ -4125,12 +4150,10 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getCONST_VAL_WITH_GETTER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCONST_VAL_WITH_NON_CONST_INITIALIZER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCONTEXTUAL_OVERLOAD_SHADOWED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
-	public final fun getCONTEXT_CLASS_OR_CONSTRUCTOR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCONTEXT_PARAMETERS_WITH_BACKING_FIELD ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCONTEXT_PARAMETER_MUST_BE_NOINLINE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getCONTEXT_PARAMETER_WITHOUT_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCONTEXT_PARAMETER_WITH_DEFAULT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getCONTEXT_RECEIVERS_DEPRECATED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getCONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getCONTRACT_NOT_ALLOWED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getCOROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4208,8 +4231,14 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getEMPTY_RANGE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getENUM_CLASS_CONSTRUCTOR_CALL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getENUM_ENTRY_AS_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getEQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getEQUALITY_BOUND_MISMATCH_BY_DELEGATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getEQUALITY_BOUND_MISMATCH_ON_INHERITANCE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getEQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getEQUALITY_NOT_APPLICABLE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
+	public final fun getEQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
 	public final fun getEQUALITY_NOT_APPLICABLE_WARNING ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
+	public final fun getEQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
 	public final fun getERROR_FROM_JAVA_RESOLUTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getERROR_IN_CONTRACT_DESCRIPTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getERROR_SUPPRESSION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
@@ -4239,6 +4268,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_UPPER_BOUNDS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
 	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
 	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
+	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
 	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_DIFFERENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
 	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
 	public final fun getEXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
@@ -4341,8 +4371,12 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getIMPLICIT_NOTHING_RETURN_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getIMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getIMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
-	public final fun getIMPOSSIBLE_IS_CHECK ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation1;
-	public final fun getIMPOSSIBLE_IS_CHECK_RELYING_ON_NULL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation1;
+	public final fun getIMPOSSIBLE_IS_CHECK_DEPRECATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation1;
+	public final fun getIMPOSSIBLE_IS_CHECK_ERROR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getIMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_DEPRECATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation1;
+	public final fun getIMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_ERROR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getIMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_WARNING ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getIMPOSSIBLE_IS_CHECK_WARNING ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINACCESSIBLE_OUTER_CLASS_RECEIVER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINAPPLICABLE_ALL_TARGET ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4386,6 +4420,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getINFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation4;
 	public final fun getINFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
 	public final fun getINFIX_MODIFIER_REQUIRED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getINHERITED_INTERSECTION_EQUALITY_BOUND ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getINITIALIZATION_BEFORE_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINITIALIZATION_BEFORE_DECLARATION_WARNING ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getINITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4415,7 +4450,6 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getINVALID_VERSIONING_ON_ANNOTATION_CLASS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_VERSIONING_ON_LOCAL_FUNCTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_VERSIONING_ON_NONFINAL_CLASS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getINVALID_VERSIONING_ON_NONFINAL_FUNCTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_VERSIONING_ON_NON_OPTIONAL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getINVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4607,6 +4641,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getPARAMETER_NAME_CHANGED_ON_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getPARENTHESIZED_PACKAGE_QUALIFIER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation0;
 	public final fun getPLACEHOLDER_PROJECTION_IN_QUALIFIER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getPLACEHOLDER_PROJECTION_IN_TYPEREF ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getPLATFORM_CLASS_MAPPED_TO_KOTLIN ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getPLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getPOTENTIALLY_NON_REPORTED_ANNOTATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4614,6 +4649,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getPRE_RELEASE_CLASS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getPRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getPRIVATE_CLASS_MEMBER_FROM_INLINE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getPRIVATE_CONST_IN_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getPRIVATE_FUNCTION_WITH_NO_BODY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getPRIVATE_PROPERTY_IN_INTERFACE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getPRIVATE_SETTER_FOR_ABSTRACT_PROPERTY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4705,6 +4741,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getSINGLE_ANONYMOUS_FUNCTION_WITH_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation0;
 	public final fun getSMARTCAST_IMPOSSIBLE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
 	public final fun getSMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
+	public final fun getSMARTCAST_TO_TYPE_VARIABLE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getSPREAD_OF_NULLABLE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getSUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getSUBCLASS_OPT_IN_INAPPLICABLE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
@@ -4776,10 +4813,11 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getUNNECESSARY_SAFE_CALL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getUNREACHABLE_CODE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getUNRESOLVED_COLLECTION_LITERAL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getUNRESOLVED_EQUALITY_BOUND_ARGUMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getUNRESOLVED_IMPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getUNRESOLVED_LABEL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getUNRESOLVED_REFERENCE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
-	public final fun getUNRESOLVED_REFERENCE_WRONG_RECEIVER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getUNRESOLVED_REFERENCE_WRONG_RECEIVER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory3;
 	public final fun getUNSAFE_CALL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getUNSAFE_CALLABLE_REFERENCE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getUNSAFE_CAST_RELYING_ON_NULL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -4820,7 +4858,6 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getVALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation0;
 	public final fun getVALUE_CLASS_CANNOT_EXTEND_CLASSES ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getVALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
-	public final fun getVALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getVALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getVALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getVALUE_CLASS_EMPTY_CONSTRUCTOR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
@@ -4849,7 +4886,6 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors : org
 	public final fun getVAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getVAR_TYPE_MISMATCH_ON_INHERITANCE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
 	public final fun getVAR_TYPE_MISMATCH_ON_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
-	public final fun getVERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getVERSION_REQUIREMENT_DEPRECATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
 	public final fun getVERSION_REQUIREMENT_DEPRECATION_ERROR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory4;
 	public final fun getVIRTUAL_MEMBER_HIDDEN ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;

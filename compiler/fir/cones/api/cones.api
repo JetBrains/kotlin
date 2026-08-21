@@ -448,9 +448,20 @@ public abstract class org/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag : or
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/ConeClassLikeType : org/jetbrains/kotlin/fir/types/ConeLookupTagBasedType {
-	public fun <init> ()V
 	public abstract fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
 	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeClassLikeTypeImpl : org/jetbrains/kotlin/fir/types/ConeClassLikeType {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getCachedExpandedType ()Lorg/jetbrains/kotlin/util/WeakPair;
+	public fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun isMarkedNullable ()Z
+	public final fun setCachedExpandedType (Lorg/jetbrains/kotlin/util/WeakPair;)V
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/ConeClassifierLookupTag : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker {
@@ -601,7 +612,6 @@ public final class org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionOut : 
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/ConeLookupTagBasedType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType {
-	public fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public abstract fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
 	public fun hashCode ()I
@@ -615,6 +625,12 @@ public final class org/jetbrains/kotlin/fir/types/ConeRawType : org/jetbrains/ko
 
 public final class org/jetbrains/kotlin/fir/types/ConeRawType$Companion {
 	public final fun create (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)Lorg/jetbrains/kotlin/fir/types/ConeRawType;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeReceiverInfo {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Z)V
+	public final fun getCouldBePositionalDestructuring ()Z
+	public final fun getType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/ConeRigidType : org/jetbrains/kotlin/fir/types/ConeKotlinType, org/jetbrains/kotlin/types/model/RigidTypeMarker {
@@ -660,6 +676,20 @@ public final class org/jetbrains/kotlin/fir/types/ConeStubTypeForTypeVariableInS
 }
 
 public abstract interface class org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker : org/jetbrains/kotlin/types/model/TypeConstructorMarker {
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeTypeParameterLookupTag : org/jetbrains/kotlin/fir/types/ConeClassifierLookupTag, org/jetbrains/kotlin/types/model/TypeParameterMarker {
+	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypeParameterType : org/jetbrains/kotlin/fir/types/ConeLookupTagBasedType {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeParameterLookupTag;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeParameterLookupTag;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+	public fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeTypeParameterLookupTag;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun isMarkedNullable ()Z
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/ConeTypeProjection : org/jetbrains/kotlin/types/model/TypeArgumentMarker {
@@ -790,18 +820,6 @@ public final class org/jetbrains/kotlin/fir/types/RefinedTypeForDataFlowTypeAttr
 public final class org/jetbrains/kotlin/fir/types/RefinedTypeForDataFlowTypeAttributeKt {
 	public static final fun getRefinedTypeForDataFlow (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/RefinedTypeForDataFlowTypeAttribute;
 	public static final fun getRefinedTypeForDataFlowOrSelf (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
-}
-
-public final class org/jetbrains/kotlin/fir/types/impl/ConeClassLikeTypeImpl : org/jetbrains/kotlin/fir/types/ConeClassLikeType {
-	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
-	public final fun getCachedExpandedType ()Lorg/jetbrains/kotlin/util/WeakPair;
-	public fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
-	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
-	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
-	public fun isMarkedNullable ()Z
-	public final fun setCachedExpandedType (Lorg/jetbrains/kotlin/util/WeakPair;)V
 }
 
 public abstract class org/jetbrains/kotlin/fir/util/BaseMultimap : org/jetbrains/kotlin/fir/util/MutableMultimap {

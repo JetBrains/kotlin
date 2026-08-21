@@ -181,7 +181,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirDirectJavaActualDecla
 public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmBackendClassResolver : org/jetbrains/kotlin/codegen/JvmBackendClassResolver {
 	public fun <init> (Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;)V
 	public final fun getComponents ()Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;
-	public fun resolveToClassDescriptors (Lorg/jetbrains/org/objectweb/asm/Type;)Ljava/util/List;
+	public fun resolveToClasses (Lorg/jetbrains/org/objectweb/asm/Type;)Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmBackendExtension : org/jetbrains/kotlin/backend/jvm/JvmBackendExtension {
@@ -258,7 +258,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirMetadataSerializer : 
 	public fun bindFieldMetadata (Lorg/jetbrains/kotlin/ir/declarations/MetadataSource$Property;Lkotlin/Pair;)V
 	public fun bindMethodMetadata (Lorg/jetbrains/kotlin/ir/declarations/MetadataSource$Function;Lorg/jetbrains/org/objectweb/asm/commons/Method;)V
 	public fun bindPropertyMetadata (Lorg/jetbrains/kotlin/ir/declarations/MetadataSource$Property;Lorg/jetbrains/org/objectweb/asm/commons/Method;Lorg/jetbrains/kotlin/ir/declarations/IrDeclarationOrigin;)V
-	public fun serialize (Lorg/jetbrains/kotlin/ir/declarations/MetadataSource;Lorg/jetbrains/kotlin/ir/declarations/MetadataSource$File;)Lkotlin/Pair;
+	public fun serialize (Lorg/jetbrains/kotlin/ir/declarations/MetadataSource;)Lkotlin/Pair;
 }
 
 public final class org/jetbrains/kotlin/fir/backend/jvm/FirMetadataSerializerKt {
