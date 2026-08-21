@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.ir.getPwInstallBrowserTaskName
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
+import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
@@ -144,6 +145,35 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             val installTask = setup.project.tasks.findByName(it.getPwInstallBrowserTaskName())
             assertNull(installTask, "Expected no ${it.getPwInstallBrowserTaskName()} task when no runners declared")
         }
+    }
+
+    @Test
+    fun `without touching the test DSL no playwright test framework is created`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {}
+                }
+            }
+        }
+        project.evaluate()
+
+        val testTask = project.tasks.getByName("jsBrowserTest") as KotlinJsTest
+        assertIs<KotlinKarma>(
+            testTask.testFramework,
+            "Expected karma to stay the test framework when browser.test was never touched"
+        )
+
+        PwBrowserKind.entries.forEach {
+            assertNull(
+                project.tasks.findByName(it.getPwInstallBrowserTaskName()),
+                "Expected no ${it.getPwInstallBrowserTaskName()} task when the new browser test DSL is not used"
+            )
+        }
+        assertNull(
+            project.tasks.findByName("prepareWebpackBundleForKotlinJsTests"),
+            "Expected no test bundle task when the new browser test DSL is not used"
+        )
     }
 
     @Test
