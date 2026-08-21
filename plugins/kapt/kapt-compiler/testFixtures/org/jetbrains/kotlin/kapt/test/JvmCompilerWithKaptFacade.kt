@@ -61,7 +61,8 @@ class JvmCompilerWithKaptFacade(
             logger,
             classBuilderFactory.compiledClasses,
             classBuilderFactory.origins,
-            generationState,
+            compilerConfiguration,
+            generationState.factory,
             components.fir,
             IrBuiltInsOverFir(components, Fir2IrSyntheticIrBuiltinsSymbolsContainer()),
         )

@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.registerExtensionStorage
+import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -221,7 +221,8 @@ open class FirKaptAnalysisHandlerExtension(
         val generationState = backendOutput.outputs.singleOrNull() ?: return null
 
         return KaptContextForStubGeneration(
-            options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
+            options, false, logger, builderFactory.compiledClasses, builderFactory.origins, configurationForBackend,
+            generationState.factory,
             frontendOutput.frontendOutput.outputs.flatMap { it.fir },
             fir2IrOutput.result.irBuiltIns,
         )
@@ -265,8 +266,8 @@ open class FirKaptAnalysisHandlerExtension(
         kaptContext: KaptContextForStubGeneration,
         stubs: List<KaptStub>,
     ) {
-        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
-        val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
+        val reportOutputFiles = kaptContext.configuration.reportOutputFiles
+        val outputFiles = if (reportOutputFiles) kaptContext.classFileFactory.asList().associateBy {
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
 
@@ -304,10 +305,7 @@ open class FirKaptAnalysisHandlerExtension(
                 if (classFilePathWithoutExtension == "error/NonExistentClass") return
                 val sourceFiles = (outputFiles?.get(classFilePathWithoutExtension)
                     ?: error("The `outputFiles` map is not properly initialized (key = $classFilePathWithoutExtension)")).sourceFiles
-                kaptContext.generationState.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
-                    sourceFiles,
-                    generatedFile
-                )
+                kaptContext.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(sourceFiles, generatedFile)
                 logger.configuration.reportOutput(OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
             }
 
@@ -331,9 +329,9 @@ open class FirKaptAnalysisHandlerExtension(
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
-        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
-        kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
-            kaptContext.generationState.configuration.fileMappingTracker?.let {
+        val reportOutputFiles = kaptContext.configuration.reportOutputFiles
+        kaptContext.classFileFactory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
+            kaptContext.configuration.fileMappingTracker?.let {
                 when (outputInfo.generatedForCompilerPlugin) {
                     false -> it.recordSourceFilesToOutputFileMapping(
                         outputInfo.sourceFiles,
