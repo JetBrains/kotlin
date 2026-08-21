@@ -147,15 +147,17 @@ fun Test.forwardProperties() {
 }
 
 projectTests {
-    jsTestTask {
+    // The JS codegen box tests are migrated to the two-stage grouping test infrastructure
+    // (`AbstractJsCodegenBoxTestBase`), so the grouping test engine must be enabled.
+    jsTestTask(enableGroupingTestEngine = true) {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true, enableGroupingTestEngine = true) {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true, enableGroupingTestEngine = true) {
         setUpJsBoxTests()
     }
 

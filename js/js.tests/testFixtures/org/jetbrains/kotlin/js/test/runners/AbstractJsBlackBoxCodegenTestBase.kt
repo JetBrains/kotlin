@@ -145,15 +145,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     testGroupOutputDirPrefix: String,
     backendFacades: JsBackendFacades,
 ) {
-    val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
-    defaultDirectives {
-        JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-        JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-        JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
-        +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-        if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
-        LANGUAGE with "+JsAllowValueClassesInExternals"
-    }
+    defaultDirectivesForJsBackendSecondStageTest(pathToTestDir, testGroupOutputDirPrefix)
 
     when (val backendFacades = backendFacades) {
         is JsBackendFacades.WithRecompilation -> {
@@ -176,6 +168,29 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 
     useFailureSuppressors(JsArtifactsDumpHandler::Suppressor)
     useAfterAnalysisCheckers(JsArtifactsDumpHandler::Checker)
+}
+
+/**
+ * The directives every JS second-stage (KLib to JS) compilation needs: where its artifacts go, and which language
+ * features the generated JS may use.
+ *
+ * Split out of [commonConfigurationForJsBackendSecondStageTest] because the two-stage grouping configuration has to
+ * apply them to *both* of its builders — the grouping stage compiles the batch, but the non-grouping stage resolves the
+ * per-test output directories these directives define — while the facade steps below belong to one stage only.
+ */
+fun TestConfigurationBuilderBase<*, *>.defaultDirectivesForJsBackendSecondStageTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) {
+    val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    defaultDirectives {
+        JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
+        JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
+        JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
+        +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+        if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
+        LANGUAGE with "+JsAllowValueClassesInExternals"
+    }
 }
 
 /**
@@ -206,7 +221,7 @@ fun TestConfigurationBuilder.configureJsBoxHandlers(
  * - environment configurators
  * - additional source providers
  */
-fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(
+fun TestConfigurationBuilderBase<*, *>.commonServicesConfigurationForJsCodegenTest(
     customConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>? = null,
 ) {
     globalDefaults {
@@ -285,9 +300,22 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
         useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpHandler)
     }
 
+    useBlackBoxCodegenSuppressorForJsTest(customIgnoreDirective, additionalIgnoreDirectives)
+
+    enableMetaInfoHandler()
+}
+
+/**
+ * Registers the `IGNORE_BACKEND`-style failure suppressor.
+ *
+ * On a base builder, so that the two-stage grouping configuration can register it on both of its builders: an expected
+ * failure may equally happen while compiling the test and while running the batch it was linked into.
+ */
+fun TestConfigurationBuilderBase<*, *>.useBlackBoxCodegenSuppressorForJsTest(
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+    additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
+) {
     useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
-
-    enableMetaInfoHandler()
 }

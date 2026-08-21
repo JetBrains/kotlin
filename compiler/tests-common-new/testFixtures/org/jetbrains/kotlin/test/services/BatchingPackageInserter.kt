@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -91,7 +92,15 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
     @TestInfrastructureInternals
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
-        val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
+        val targetPlatform = testServices.targetPlatformProvider.getTargetPlatform(module)
+        // K/Wasm hoists the `WITH_COROUTINES` helpers out of every test into a `helpers` module of their own
+        // (`WasmCoroutineHelpersModuleTransformer`) and links a batch against just one of those modules, so there the
+        // `helpers` package has to keep its name — patching it would give each test its own, mutually invisible copy.
+        // Everywhere else the helpers are compiled into the test's own artifact, so a shared `helpers` package would
+        // make every test of a batch redeclare them, which fails the link with "IrClassSymbolImpl is already bound".
+        // The mapping and the patcher must agree on this: the mapping decides whether a new FQN exists at all, and
+        // `transformHelpersPackage` whether the import side follows.
+        val transformHelpersPackage = !targetPlatform.isWasm()
         if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) {
             return // Without grouping, packages are not altered, since no clashes can happen.
         }
@@ -104,19 +113,15 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             additionalBasePackage.child(packageFqName).takeUnless {
                 packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
                         || packageFqName == StandardNames.KOTLIN_INTERNAL_FQ_NAME
-                        // On Native the `helpers` package directive IS patched (`transformHelpersPackage = isNative`
-                        // below), so we must allow the mapping to actually produce a new FQN for it. On non-Native
-                        // (Wasm/JS) the `helpers` package stays unpatched because `transformHelpersPackage = false`
-                        // skips it on the import side as well — keeping the original FQN here is consistent in that case.
-                        || (!isNative && packageFqName == HELPERS_PACKAGE_FQNAME)
+                        || (!transformHelpersPackage && packageFqName == HELPERS_PACKAGE_FQNAME)
             }
         }
         val patcher = PackageNamePatcher(
-            testServices.targetPlatformProvider.getTargetPlatform(module),
+            targetPlatform,
             psiFactory,
             packageMapping,
             additionalBasePackage,
-            transformHelpersPackage = isNative
+            transformHelpersPackage = transformHelpersPackage
         )
         ktFiles.values.forEach { it.accept(patcher, emptySet()) }
         for ([testFile, ktFile] in ktFiles) {

@@ -26,6 +26,14 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val JS_STANDALONE by directive(
+        description = "Compile and run this test on its own instead of grouping it with others (see JsGroupingTestIsolator). " +
+                "Grouping renames the packages of the tests sharing a compilation, so a test observing its own " +
+                "fully qualified names at runtime — through reflection, or through a compiler-generated `toString()` — " +
+                "needs this. The K/Wasm and K/Native counterparts are WASM_STANDALONE and NATIVE_STANDALONE.",
+        applicability = DirectiveApplicability.Global
+    )
+
     val INFER_MAIN_MODULE by directive(
         description = "Infer main module automatically using dependency graph",
         applicability = DirectiveApplicability.Global
