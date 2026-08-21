@@ -14,11 +14,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
+import org.jetbrains.kotlin.fir.resolve.getSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
@@ -272,6 +278,35 @@ fun checkIncludeAndExcludeAnnotations(declaredMemberScope: FirContainingNamesAwa
             }
         }
     }
+}
+
+/**
+ * The closest superclass that declares a `final` function named by [functionNames] and accepted by [isCandidate],
+ * or `null` when nothing the generator produces would have to override a final member. Interfaces are skipped:
+ * they cannot declare one.
+ *
+ * A generated member overriding a final one is not caught by the platform - the plugin adds it after those checks
+ * have run - and the JVM then refuses to load the class with "overrides final method" (KT-88420, KT-88511), so
+ * `@ToString` and `@EqualsAndHashCode` have to look for one themselves.
+ */
+context(context: CheckerContext)
+fun FirRegularClass.findSuperclassWithFinalFunction(
+    functionNames: Set<Name>,
+    isCandidate: (FirNamedFunctionSymbol) -> Boolean,
+): FirRegularClassSymbol? {
+    return symbol.getSuperTypes(context.session, lookupInterfaces = false)
+        .firstNotNullOfOrNull { superType ->
+            superType.toRegularClassSymbol(context.session)?.let { superClassSymbol ->
+                val declaredMemberScope = context.session.declaredMemberScope(superClassSymbol, memberRequiredPhase = null)
+                var isFinal = false
+                for (functionName in functionNames) {
+                    declaredMemberScope.processFunctionsByName(functionName) {
+                        isFinal = isFinal || it.isFinal && isCandidate(it)
+                    }
+                }
+                superClassSymbol.takeIf { isFinal }
+            }
+        }
 }
 
 /**
