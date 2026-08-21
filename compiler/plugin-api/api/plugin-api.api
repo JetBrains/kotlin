@@ -73,21 +73,15 @@ public final class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$
 
 public final class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage {
 	public fun <init> ()V
+	public final fun get (Lorg/jetbrains/kotlin/extensions/ExtensionPointDescriptor;)Ljava/util/List;
 	public final fun getDisposables ()Ljava/util/List;
 	public final fun getRegisteredExtensions ()Ljava/util/Map;
 	public final fun registerDisposable (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$PluginDisposable;)V
-	public final fun registerExtension (Lorg/jetbrains/kotlin/extensions/ProjectExtensionDescriptor;Ljava/lang/Object;)V
+	public final fun registerExtension (Lorg/jetbrains/kotlin/extensions/ExtensionPointDescriptor;Ljava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$PluginDisposable {
 	public abstract fun dispose ()V
-}
-
-public final class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrarKt {
-	public static final fun getTEST_ONLY_PLUGIN_REGISTRATION_CALLBACK ()Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;
-	public static final fun registerExtensionsForTest (Lcom/intellij/openapi/project/Project;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lkotlin/jvm/functions/Function2;)V
-	public static final fun registerInProject (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun registerInProject$default (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/compiler/plugin/ComponentRegistrar {

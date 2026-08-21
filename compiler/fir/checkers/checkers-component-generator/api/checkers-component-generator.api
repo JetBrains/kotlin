@@ -48,6 +48,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/DIAGN
 	public final fun getBUILDER_INFERENCE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getCALL_RESOLUTION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getCASTS_AND_IS_CHECKS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCOMPANION_BLOCKS_AND_EXTENSIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getCOMPATIBILITY_ISSUES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getCONSTRUCTOR_PROBLEMS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getCONTEXT_PARAMETERS_RESOLUTION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
@@ -96,6 +97,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/JS_DI
 	public final fun getEXPORT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getEXTERNAL ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getFUN_INTERFACES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getNO_RUNTIME ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getSTATIC ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getSUPERTYPES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 }
@@ -334,6 +336,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model
 	public static final field TAILREC_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field TYPEALIAS_TYPE_REFERENCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field TYPE_ARGUMENT_LIST_OR_SELF Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field TYPE_PARAMETERS_LIST Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field UNREACHABLE_CODE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
 	public static final field USELESS_ELVIS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;

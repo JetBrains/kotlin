@@ -1,5 +1,7 @@
 public final class org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrors : org/jetbrains/kotlin/diagnostics/KtDiagnosticsContainer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrors;
+	public final fun getCALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getCALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getCANNOT_CHECK_FOR_FORWARD_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getCONFLICTING_OBJC_OVERLOADS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getCONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
@@ -33,13 +35,18 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativ
 	public final fun getMUST_NOT_HAVE_EXTENSION_RECEIVER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getNATIVE_SPECIFIC_ATOMIC ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getNON_LITERAL_OBJC_NAME_ARG ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getOVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getPROPERTY_MUST_BE_VAR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getREDUNDANT_SWIFT_REFINEMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public fun getRendererFactory ()Lorg/jetbrains/kotlin/diagnostics/rendering/BaseDiagnosticRendererFactory;
+	public final fun getSTRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getSUBTYPE_OF_HIDDEN_FROM_OBJC ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getTHROWS_LIST_EMPTY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getTWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getUNCHECKED_CAST_TO_FORWARD_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getVARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getVARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getVARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages : org/jetbrains/kotlin/diagnostics/rendering/BaseDiagnosticRendererFactory {
@@ -55,26 +62,29 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeAt
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeAtomicReferenceToPrimitiveCallChecker;
 }
 
-public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeCastChecker : org/jetbrains/kotlin/fir/FirPlatformSpecificCastChecker {
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeCastChecker : org/jetbrains/kotlin/fir/analysis/checkers/FirPlatformSpecificCastChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeCastChecker;
-	public fun shouldSuppressImpossibleCast (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public fun runApplicabilityCheck (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/fir/expressions/FirTypeOperatorCall;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirCastOperatorsChecker;)Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/FirCastOperatorsChecker$Applicability;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeExternalDeclarationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeExternalDeclarationChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationGetClassCallChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationGetClassCallChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirGetClassCall;)V
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationReifiedChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationReifiedChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)V
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationTypeOperatorChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
@@ -85,7 +95,9 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeFo
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeHelpersKt {
 	public static final fun forwardDeclarationKindOrNull (Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;)Lorg/jetbrains/kotlin/name/NativeForwardDeclarationKind;
+	public static final fun isArrayOfCall (Lorg/jetbrains/kotlin/fir/expressions/FirFunctionCall;Lorg/jetbrains/kotlin/fir/FirSession;)Z
 	public static final fun reportIfHasAnnotation (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;)V
+	public static final fun tryGetIntrinsicType (Lorg/jetbrains/kotlin/fir/expressions/FirFunctionCall;)Lorg/jetbrains/kotlin/backend/konan/IntrinsicType;
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeHiddenFromObjCInheritanceChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -97,6 +109,7 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeHi
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeIdentifierChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeIdentifierChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCActionChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -125,6 +138,7 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeOb
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public abstract class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -152,7 +166,7 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeOb
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameUtilities$ObjCName {
-	public fun <init> (Lorg/jetbrains/kotlin/fir/expressions/FirAnnotation;Lorg/jetbrains/kotlin/fir/FirSession;)V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/expressions/FirAnnotation;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAnnotation ()Lorg/jetbrains/kotlin/fir/expressions/FirAnnotation;
 	public final fun getExact ()Z
@@ -220,11 +234,13 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativePa
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativePackageDirectiveChecker;
 	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirFile;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSharedImmutableChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSharedImmutableChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSpecificAtomicChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -236,6 +252,7 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSp
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThreadLocalChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThreadLocalChecker;
 	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun getPlatformSpecificCheckerEnabledInMetadataCompilation ()Z
 }
 
 public abstract class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -279,6 +296,7 @@ public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeDecla
 
 public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers : org/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers;
+	public fun getCallableReferenceAccessCheckers ()Ljava/util/Set;
 	public fun getFunctionCallCheckers ()Ljava/util/Set;
 	public fun getGetClassCallCheckers ()Ljava/util/Set;
 	public fun getQualifiedAccessExpressionCheckers ()Ljava/util/Set;

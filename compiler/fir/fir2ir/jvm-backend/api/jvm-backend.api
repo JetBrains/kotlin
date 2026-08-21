@@ -36,6 +36,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/ConeTypeSystemCommonBack
 	public fun getAttributes (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Ljava/util/List;
 	public fun getClassFqNameUnsafe (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/name/FqNameUnsafe;
 	public final fun getContext ()Lorg/jetbrains/kotlin/fir/types/ConeTypeContext;
+	public fun getCustomSubtypingCallback ()Lkotlin/jvm/functions/Function2;
 	public fun getName (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/name/Name;
 	public fun getNameForErrorType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Ljava/lang/String;
 	public fun getParameter (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;I)Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
@@ -275,18 +276,14 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirMetadataSerializerKt 
 }
 
 public final class org/jetbrains/kotlin/fir/backend/jvm/JvmFir2IrExtensions : org/jetbrains/kotlin/backend/jvm/JvmGeneratorExtensions, org/jetbrains/kotlin/fir/backend/Fir2IrExtensions {
-	public fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/backend/jvm/JvmIrDeserializer;)V
-	public fun deserializeToplevelClass (Lorg/jetbrains/kotlin/ir/declarations/IrClass;Lorg/jetbrains/kotlin/fir/backend/Fir2IrComponents;)Z
+	public fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
 	public fun findInjectedInlineLambdaArgument (Lorg/jetbrains/kotlin/fir/symbols/impl/FirValueParameterSymbol;)Lorg/jetbrains/kotlin/fir/expressions/FirExpression;
 	public fun findInjectedValue (Lorg/jetbrains/kotlin/fir/references/FirReference;Lorg/jetbrains/kotlin/fir/backend/Fir2IrConversionScope;)Lorg/jetbrains/kotlin/fir/backend/utils/InjectedValue;
-	public fun generateRawTypeAnnotationCall ()Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;
-	public synthetic fun generateRawTypeAnnotationCall ()Lorg/jetbrains/kotlin/ir/expressions/IrConstructorCall;
+	public fun generateRawTypeAnnotation ()Lorg/jetbrains/kotlin/ir/expressions/IrAnnotation;
 	public fun getCachedFields ()Lorg/jetbrains/kotlin/backend/jvm/CachedFieldsForObjectInstances;
 	public fun getExternalOverridabilityConditions ()Ljava/util/List;
-	public fun getIrNeedsDeserialization ()Z
 	public fun getParametersAreAssignable ()Z
 	public fun hasBackingField (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/FirSession;)Z
-	public fun initializeIrBuiltInsAndSymbolTable (Lorg/jetbrains/kotlin/ir/IrBuiltIns;Lorg/jetbrains/kotlin/ir/util/SymbolTable;)V
 	public fun shouldGenerateDelegatedMember (Lorg/jetbrains/kotlin/ir/declarations/IrOverridableDeclaration;)Z
 	public fun specialBackingFieldVisibility (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Lorg/jetbrains/kotlin/fir/FirSession;)Lorg/jetbrains/kotlin/descriptors/Visibility;
 }

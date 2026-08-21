@@ -1,3 +1,8 @@
+public final class org/jetbrains/kotlin/compiler/plugin/FirExtensionRegistrarConfigurationUtilKt {
+	public static final fun getCompilerExtensions (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar$Companion;)Ljava/util/List;
+	public static final fun registerExtension (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lorg/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar$Companion;Lorg/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar;)V
+}
+
 public final class org/jetbrains/kotlin/fir/DependencyListForCliModule {
 	public static final field Companion Lorg/jetbrains/kotlin/fir/DependencyListForCliModule$Companion;
 	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/fir/deserialization/ModuleDataProvider;)V
@@ -99,7 +104,6 @@ public abstract class org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar 
 }
 
 public final class org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar$Companion {
-	public final fun getInstances (Lcom/intellij/openapi/project/Project;)Ljava/util/List;
 }
 
 protected final class org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar$ExtensionRegistrarContext {
@@ -130,8 +134,6 @@ protected final class org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar$
 	public final fun plusMetadataSerializerPlugin (Lorg/jetbrains/kotlin/fir/serialization/FirMetadataSerializerPlugin$Factory;)V
 	public final fun plusReplSnippetConfiguratorExtension (Lkotlin/jvm/functions/Function1;)V
 	public final fun plusReplSnippetConfiguratorExtension (Lorg/jetbrains/kotlin/fir/builder/FirReplSnippetConfiguratorExtension$Factory;)V
-	public final fun plusReplSnippetResolveExtension (Lkotlin/jvm/functions/Function1;)V
-	public final fun plusReplSnippetResolveExtension (Lorg/jetbrains/kotlin/fir/extensions/FirReplSnippetResolveExtension$Factory;)V
 	public final fun plusSamConversionTransformerExtension (Lkotlin/jvm/functions/Function1;)V
 	public final fun plusSamConversionTransformerExtension (Lorg/jetbrains/kotlin/fir/resolve/FirSamConversionTransformerExtension$Factory;)V
 	public final fun plusScriptConfiguratorExtension (Lkotlin/jvm/functions/Function1;)V
@@ -169,6 +171,11 @@ public final class org/jetbrains/kotlin/fir/pipeline/AnalyseKt {
 	public static final fun runResolution (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/List;)Lkotlin/Pair;
 }
 
+public final class org/jetbrains/kotlin/fir/pipeline/ConstInlinerKt {
+	public static final fun getWasInlined (Lorg/jetbrains/kotlin/ir/expressions/IrConst;)Ljava/lang/Boolean;
+	public static final fun setWasInlined (Lorg/jetbrains/kotlin/ir/expressions/IrConst;Ljava/lang/Boolean;)V
+}
+
 public final class org/jetbrains/kotlin/fir/pipeline/ConvertToIrKt {
 	public static final fun convertToIrAndActualize-MT2kVtw (Ljava/util/List;Lorg/jetbrains/kotlin/fir/backend/Fir2IrExtensions;Lorg/jetbrains/kotlin/fir/backend/Fir2IrConfiguration;Ljava/util/Collection;Lorg/jetbrains/kotlin/ir/util/KotlinMangler$IrMangler;Lorg/jetbrains/kotlin/fir/backend/Fir2IrVisibilityConverter;Lorg/jetbrains/kotlin/builtins/KotlinBuiltIns;Lkotlin/jvm/functions/Function1;Lorg/jetbrains/kotlin/backend/common/IrSpecialAnnotationsProvider;Lkotlin/jvm/functions/Function1;Lorg/jetbrains/kotlin/fir/backend/Fir2IrCommonMemberStorage;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult;
 	public static synthetic fun convertToIrAndActualize-MT2kVtw$default (Ljava/util/List;Lorg/jetbrains/kotlin/fir/backend/Fir2IrExtensions;Lorg/jetbrains/kotlin/fir/backend/Fir2IrConfiguration;Ljava/util/Collection;Lorg/jetbrains/kotlin/ir/util/KotlinMangler$IrMangler;Lorg/jetbrains/kotlin/fir/backend/Fir2IrVisibilityConverter;Lorg/jetbrains/kotlin/builtins/KotlinBuiltIns;Lkotlin/jvm/functions/Function1;Lorg/jetbrains/kotlin/backend/common/IrSpecialAnnotationsProvider;Lkotlin/jvm/functions/Function1;Lorg/jetbrains/kotlin/fir/backend/Fir2IrCommonMemberStorage;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult;
@@ -197,6 +204,7 @@ public final class org/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult {
 }
 
 public final class org/jetbrains/kotlin/fir/pipeline/Fir2KlibMetadataSerializer : org/jetbrains/kotlin/backend/common/serialization/metadata/KlibSingleFileMetadataSerializer {
+	public fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Ljava/util/List;Lorg/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult;Z)V
 	public fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Ljava/util/List;Lorg/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult;ZZ)V
 	public fun forEachFile (Lorg/jetbrains/kotlin/backend/common/serialization/metadata/FileVisitor;)V
 	public fun getSourceFiles ()Ljava/util/Set;
@@ -208,7 +216,7 @@ public final class org/jetbrains/kotlin/fir/pipeline/FirUtilsKt {
 	public static final fun buildFirFromKtFiles (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/Collection;)Ljava/util/List;
 	public static final fun buildFirViaLightTree (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/Collection;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun buildResolveAndCheckFirFromKtFiles (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/List;Lorg/jetbrains/kotlin/diagnostics/impl/BaseDiagnosticsCollector;)Lorg/jetbrains/kotlin/fir/pipeline/SingleModuleFrontendOutput;
-	public static final fun buildResolveAndCheckFirViaLightTree (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/Collection;Lorg/jetbrains/kotlin/diagnostics/impl/BaseDiagnosticsCollector;Lkotlin/reflect/KFunction;)Lorg/jetbrains/kotlin/fir/pipeline/SingleModuleFrontendOutput;
+	public static final fun buildResolveAndCheckFirViaLightTree (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/Collection;Lorg/jetbrains/kotlin/diagnostics/impl/BaseDiagnosticsCollector;Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/fir/pipeline/SingleModuleFrontendOutput;
 	public static final fun resolveAndCheckFir (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/util/List;Lorg/jetbrains/kotlin/diagnostics/impl/BaseDiagnosticsCollector;)Lorg/jetbrains/kotlin/fir/pipeline/SingleModuleFrontendOutput;
 }
 
@@ -313,8 +321,8 @@ public final class org/jetbrains/kotlin/fir/session/ComponentsContainersKt {
 	public static final fun registerCliCompilerOnlyResolveComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 	public static final fun registerCommonComponents (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Z)V
 	public static final fun registerCommonComponentsAfterExtensionsAreConfigured (Lorg/jetbrains/kotlin/fir/FirSession;)V
-	public static final fun registerJavaComponents (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/resolve/jvm/modules/JavaModuleResolver;Lorg/jetbrains/kotlin/fir/session/FirSharableJavaComponents;Z)V
-	public static synthetic fun registerJavaComponents$default (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/resolve/jvm/modules/JavaModuleResolver;Lorg/jetbrains/kotlin/fir/session/FirSharableJavaComponents;ZILjava/lang/Object;)V
+	public static final fun registerJavaComponents (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/resolve/jvm/modules/JavaModuleResolver;Lorg/jetbrains/kotlin/fir/session/FirSharableJavaComponents;ZLorg/jetbrains/kotlin/incremental/components/InlineConstTracker;)V
+	public static synthetic fun registerJavaComponents$default (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/resolve/jvm/modules/JavaModuleResolver;Lorg/jetbrains/kotlin/fir/session/FirSharableJavaComponents;ZLorg/jetbrains/kotlin/incremental/components/InlineConstTracker;ILjava/lang/Object;)V
 	public static final fun registerModuleData (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/FirModuleData;)V
 	public static final fun registerResolveComponents (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/diagnostics/KtRegisteredDiagnosticFactoriesStorage;Lorg/jetbrains/kotlin/incremental/components/LookupTracker;Lorg/jetbrains/kotlin/incremental/components/EnumWhenTracker;Lorg/jetbrains/kotlin/incremental/components/ImportTracker;Lorg/jetbrains/kotlin/incremental/components/ICFileMappingTracker;)V
 	public static synthetic fun registerResolveComponents$default (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/diagnostics/KtRegisteredDiagnosticFactoriesStorage;Lorg/jetbrains/kotlin/incremental/components/LookupTracker;Lorg/jetbrains/kotlin/incremental/components/EnumWhenTracker;Lorg/jetbrains/kotlin/incremental/components/ImportTracker;Lorg/jetbrains/kotlin/incremental/components/ICFileMappingTracker;ILjava/lang/Object;)V
@@ -406,7 +414,8 @@ public final class org/jetbrains/kotlin/fir/session/FirJvmSessionFactory : org/j
 public final class org/jetbrains/kotlin/fir/session/FirJvmSessionFactory$Context {
 	public fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;Z)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lorg/jetbrains/kotlin/config/JvmTarget;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;Z)V
+	public fun <init> (Lorg/jetbrains/kotlin/config/JvmTarget;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectEnvironment;Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;ZLorg/jetbrains/kotlin/incremental/components/InlineConstTracker;)V
+	public final fun getInlineConstTracker ()Lorg/jetbrains/kotlin/incremental/components/InlineConstTracker;
 	public final fun getJvmTarget ()Lorg/jetbrains/kotlin/config/JvmTarget;
 	public final fun getLibrariesScope ()Lorg/jetbrains/kotlin/fir/session/environment/AbstractProjectFileSearchScope;
 	public final fun getPackagePartProviderForLibraries ()Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
@@ -459,6 +468,7 @@ public final class org/jetbrains/kotlin/fir/session/FirSessionConfigurator {
 	public final fun useCheckers (Lorg/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers;)V
 	public final fun useCheckers (Lorg/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers;)V
 	public final fun useCheckers (Lorg/jetbrains/kotlin/fir/analysis/checkers/type/TypeCheckers;)V
+	public final fun withOnlyPlatformSpecificCheckersEnabledInMetadataCompilation (Lkotlin/jvm/functions/Function0;)V
 }
 
 public final class org/jetbrains/kotlin/fir/session/FirSharableJavaComponents {
@@ -476,13 +486,14 @@ public abstract class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory : o
 	public synthetic fun createSourceContext (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Ljava/lang/Object;
 	protected fun createSourceContext (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)Ljava/lang/Void;
 	protected abstract fun getDefaultImportsProvider ()Lorg/jetbrains/kotlin/resolve/DefaultImportsProvider;
+	protected final fun registerCommonWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 	public fun registerExtraPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
 	public synthetic fun registerLibrarySessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/lang/Object;)V
 	public fun registerLibrarySessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/lang/Void;)V
 	public abstract fun registerPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
 	public synthetic fun registerSourceSessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/lang/Object;)V
 	public fun registerSourceSessionComponents (Lorg/jetbrains/kotlin/fir/FirSession;Ljava/lang/Void;)V
-	public final fun registerWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
+	public abstract fun registerWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 }
 
 public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$Companion {
@@ -492,11 +503,13 @@ public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$Compan
 public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmJs : org/jetbrains/kotlin/fir/session/FirWasmSessionFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmJs;
 	public fun registerPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
+	public fun registerWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 }
 
 public final class org/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmWasi : org/jetbrains/kotlin/fir/session/FirWasmSessionFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/session/FirWasmSessionFactory$WasmWasi;
 	public fun registerPlatformCheckers (Lorg/jetbrains/kotlin/fir/session/FirSessionConfigurator;)V
+	public fun registerWasmComponents (Lorg/jetbrains/kotlin/fir/FirSession;)V
 }
 
 public final class org/jetbrains/kotlin/fir/session/IncrementalCompilationContext {
@@ -546,6 +559,14 @@ public final class org/jetbrains/kotlin/fir/session/KlibBasedAnnotationDeseriali
 	public fun loadTypeAnnotations (Lorg/jetbrains/kotlin/metadata/ProtoBuf$Type;Lorg/jetbrains/kotlin/metadata/deserialization/NameResolver;)Ljava/util/List;
 	public fun loadTypeParameterAnnotations (Lorg/jetbrains/kotlin/metadata/ProtoBuf$TypeParameter;Lorg/jetbrains/kotlin/metadata/deserialization/NameResolver;)Ljava/util/List;
 	public fun loadValueParameterAnnotations (Lorg/jetbrains/kotlin/serialization/deserialization/descriptors/DeserializedContainerSource;Lorg/jetbrains/kotlin/protobuf/MessageLite;Lorg/jetbrains/kotlin/metadata/ProtoBuf$ValueParameter;Lorg/jetbrains/kotlin/metadata/ProtoBuf$Class;Lorg/jetbrains/kotlin/metadata/deserialization/NameResolver;Lorg/jetbrains/kotlin/metadata/deserialization/TypeTable;Lorg/jetbrains/kotlin/fir/deserialization/AnnotationDeserializer$CallableKind;I)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/fir/session/KlibBasedKDocDeserializer : org/jetbrains/kotlin/fir/deserialization/FirKDocDeserializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/session/KlibBasedKDocDeserializer;
+	public fun loadClassKDoc (Lorg/jetbrains/kotlin/metadata/ProtoBuf$Class;)Ljava/lang/String;
+	public fun loadConstructorKDoc (Lorg/jetbrains/kotlin/metadata/ProtoBuf$Constructor;)Ljava/lang/String;
+	public fun loadFunctionKDoc (Lorg/jetbrains/kotlin/metadata/ProtoBuf$Function;)Ljava/lang/String;
+	public fun loadPropertyKDoc (Lorg/jetbrains/kotlin/metadata/ProtoBuf$Property;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/fir/session/KlibBasedSymbolProvider : org/jetbrains/kotlin/fir/session/MetadataLibraryBasedSymbolProvider {

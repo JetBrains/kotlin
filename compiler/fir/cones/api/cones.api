@@ -144,7 +144,6 @@ public final class org/jetbrains/kotlin/fir/symbols/SyntheticCallableId {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/symbols/SyntheticCallableId;
 	public final fun getACCEPT_SPECIFIC_TYPE ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getCHECK_NOT_NULL ()Lorg/jetbrains/kotlin/name/CallableId;
-	public final fun getDANGLING_COLLECTION_LITERAL ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getELVIS ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getEQUALITY ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getID ()Lorg/jetbrains/kotlin/name/CallableId;
@@ -451,6 +450,7 @@ public abstract class org/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag : or
 public abstract class org/jetbrains/kotlin/fir/types/ConeClassLikeType : org/jetbrains/kotlin/fir/types/ConeLookupTagBasedType {
 	public fun <init> ()V
 	public abstract fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
 }
 
 public abstract class org/jetbrains/kotlin/fir/types/ConeClassifierLookupTag : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker {
@@ -689,7 +689,7 @@ public final class org/jetbrains/kotlin/fir/types/ConeTypeUtilsKt {
 	public static final fun getClassId (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getClassId (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getClassLikeLookupTagIfAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
-	public static final fun getConstructor (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
+	public static final fun getConstructor (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)Lorg/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker;
 	public static final fun getHasFlexibleMarkedNullability (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public static final fun getLookupTagIfAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
 	public static final fun hasCapture (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
