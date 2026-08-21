@@ -133,7 +133,8 @@ fun box(): String {
     assertEquals(true, TwoNullableInts(null, null).hashCode() == TwoNullableInts(null, null).hashCode())
 
     assertEquals(true, Empty() == Empty())
-    assertEquals(0, Empty().hashCode())
+    // The accumulator Lombok starts every `hashCode` from, with nothing folded into it.
+    assertEquals(1, Empty().hashCode())
 
     val cd1 = CallSuperDerived("x")
     val cd2 = CallSuperDerived("x")
