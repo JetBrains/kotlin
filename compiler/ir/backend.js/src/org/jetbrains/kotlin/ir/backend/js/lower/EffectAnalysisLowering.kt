@@ -49,7 +49,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
         context.effectAnalysisFinished = true
     }
 
-    inner class BodyVisitor : IrVisitor<Unit, EffectsKindCell.Lazy>() {
+    private inner class BodyVisitor : IrVisitor<Unit, EffectsKindCell.Lazy>() {
         fun IrFunction.getConstructedClass(): IrClass? = when {
             this is IrConstructor -> this.constructedClass
             isEs6ConstructorReplacement -> parent as IrClass
@@ -76,7 +76,6 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
                 }
             }
             if (owner.isExternal) {
-                // add warning if symbol is in stdlib?
                 return EffectsKindCell.Exact(EffectsKind.WRITE)
             }
             return EffectsKindCell.Lazy(context, owner, owner).also {
@@ -92,6 +91,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
 
         override fun visitGetValue(expression: IrGetValue, data: EffectsKindCell.Lazy) {
             if (expression.symbol.owner.parent != data.function) {
+                // reading a non-local variable.
                 data.dependOnNew(expression) { effects ->
                     effects.setAtLeast(EffectsKind.READ)
                 }
@@ -146,6 +146,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
         override fun visitSetValue(expression: IrSetValue, data: EffectsKindCell.Lazy) {
             data.dependOnNew(expression) { effects ->
                 if (expression.symbol.owner.parent != effects.function) {
+                    // writing to non-local variable.
                     effects.setAtLeast(EffectsKind.WRITE)
                 }
                 super.visitSetValue(expression, effects)
@@ -153,14 +154,14 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: EffectsKindCell.Lazy) {
-            val called = expression.symbol.owner
-            // exception for Unit_getInstance?
-            if (called.origin == OBJECT_GET_INSTANCE_FUNCTION && called.returnType.isUnit()) {
+            val callee = expression.symbol.owner
+            // exception for Unit$getInstance, although it might not be needed.
+            if (callee.origin == OBJECT_GET_INSTANCE_FUNCTION && callee.returnType.isUnit()) {
                 return
             }
             data.dependOnNew(expression) { effects ->
-                if (called.isFinal) {
-                    effects.dependOn(maybeVisit(called))
+                if (callee.isFinal) {
+                    effects.dependOn(maybeVisit(callee))
                 } else {
                     effects.setAtLeast(EffectsKind.WRITE)
                 }
