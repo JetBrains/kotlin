@@ -60,4 +60,59 @@ class AnalyzerTests {
         assertTrue(abs(ratio.mean - expectedMean) < eps)
         assertTrue(abs(ratio.variance - expectedVariance) < eps)
     }
+
+    private fun samples(vararg scores: Double, warmups: Int = 5): Map<String, List<BenchmarkResult>> = mapOf(
+            "benchmark" to scores.mapIndexed { index, score ->
+                BenchmarkResult(
+                        "benchmark", BenchmarkResult.Status.PASSED, score, BenchmarkResult.Metric.EXECUTION_TIME,
+                        runtimeInUs = score, repeat = index + 1, warmup = warmups,
+                )
+            }
+    )
+
+    @Test
+    fun stableBenchmarkNeedsNoChanges() {
+        val result = analyzeBenchmarkStability(samples(10.0, 10.0, 10.0, 10.0)).single()
+
+        assertTrue(result.stable)
+        assertEquals(result.samples, result.recommendedIterations)
+        assertFalse(result.needsMoreWarmups)
+    }
+
+    @Test
+    fun noisyBenchmarkNeedsMoreIterations() {
+        val result = analyzeBenchmarkStability(samples(8.0, 12.0, 9.0, 11.0)).single()
+
+        assertFalse(result.stable)
+        assertTrue(result.recommendedIterations > result.samples)
+    }
+
+    @Test
+    fun measurementDriftSuggestsMoreWarmups() {
+        val result = analyzeBenchmarkStability(samples(8.0, 8.0, 12.0, 12.0)).single()
+
+        assertFalse(result.stable)
+        assertTrue(result.needsMoreWarmups)
+    }
+
+    @Test
+    fun nonExecutionMetricsAreIgnored() {
+        val measurements = samples(10.0, 10.0, 10.0, 10.0).getValue("benchmark")
+        val codeSize = BenchmarkResult(
+                "benchmark", BenchmarkResult.Status.PASSED, 1_000_000.0, BenchmarkResult.Metric.CODE_SIZE,
+                runtimeInUs = 0.0, repeat = 0, warmup = 0,
+        )
+
+        val result = analyzeBenchmarkStability(mapOf("benchmark" to measurements + codeSize)).single()
+
+        assertTrue(result.stable)
+        assertEquals(measurements.size, result.samples)
+    }
+
+    @Test
+    fun targetRelativeErrorMustBeFiniteAndPositive() {
+        assertFailsWith<IllegalArgumentException> {
+            analyzeBenchmarkStability(samples(10.0, 10.0), Double.POSITIVE_INFINITY)
+        }
+    }
 }

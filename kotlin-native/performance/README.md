@@ -22,6 +22,10 @@ Passing a single file (e.g. `build/benchmarksAnalyzer.kexe <report.json>`) prett
 Passing 2 files (e.g. `build/benchmarksAnalyzer.kexe <report.json> <baseline-report>.json`) will compare
 2 reports.
 
+Use `--stability` with a single report to find noisy benchmarks and get recommendations for warmup and
+measurement iteration counts. The default target is a 1% relative error at 95% confidence; customize it with
+`--target-relative-error=<percent>`.
+
 ## Configuration options
 
 Pass as Gradle Properties (i.e. as `-P<option>=<value>`):
@@ -29,7 +33,7 @@ Pass as Gradle Properties (i.e. as `-P<option>=<value>`):
 * `nativeWarmup`, `attempts` - configure the warmup and the iteration count of each benchmark
 * `buildType` - whether to build in `debug` or `release` (default) mode
 * `filter`, `filterRegex` - comma-separated list of benchmarks to run
-* `druRun` - only compile the benchmarks, do not run them
+* `dryRun` - only compile the benchmarks, do not run them
 
 The full list can be found [here](buildSrc/src/main/kotlin/Properties.kt).
 
@@ -38,7 +42,8 @@ Running with `--info` will enable debugging output in the benchmarks allowing to
 ## Benchmark groups
 
 The benchmarks are split into several groups:
-* `ring` - regular benchmarks
+* `ring` - microbenchmarks; automatic GC scheduling is disabled and collection happens between measurement iterations
+* `macro` - larger, allocation-heavy benchmarks that exercise the GC and use its regular scheduler
 * `startup` - benchmarks for startup performance and for once-initialized stuff (e.g. Kotlin `object {}`)
 * `numerical` - compares performance of computational code between pure Kotlin and cinterop-called C code
 * `cinterop` - benchmarks using C import
@@ -56,6 +61,10 @@ Except `swiftInterop`, all other benchmarks are written with [kotlinx-benchmark]
 
 See [the official documentation](https://github.com/Kotlin/kotlinx-benchmark/blob/master/docs/writing-benchmarks.md) how to write
 benchmarks using `kotlinx-benchmark`. Additionally:
+- put focused microbenchmarks in `ring` when automatic GC during a measurement would be noise; put application-sized or
+  allocation-heavy workloads in `macro` when GC behavior is part of what the benchmark measures
+- after adding or changing a benchmark, analyze a representative report with `--stability`; increase warmups when measurement
+  drift is reported, and increase `attempts` when the confidence interval is wider than the target
 - use `skipWhenBaseOnly()` for long benchmarks. This will disable a benchmark, when running debug builds on CI
 - some benchmarks have `HideName` postfix; this is a hack to preserve old benchmark names. There's no need to use it for the new benchmarks
 - package names are currently absent from the final benchmark reports
