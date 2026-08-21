@@ -8,7 +8,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByWasm
 
+@AffectedByWasm
 @MppGradlePluginTests
 class MppDslWasmIT : KGPBaseTest() {
 
