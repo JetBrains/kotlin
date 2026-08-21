@@ -697,16 +697,18 @@ class BuildReportsIT : KGPBaseTest() {
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
         ) {
-            assertNoErrorFilesCreated {
-                build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                    assertNoErrorFileCreatedInOutput()
-                }
-                val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
-                kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
-                buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                    assertNoErrorFileCreatedInOutput()
-                }
-            }
+            validateFusDirectory(
+                "compileKotlin",
+                buildAction = BuildActions.build,
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            )
+            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
+            validateFusDirectory(
+                "compileKotlin",
+                buildAction = BuildActions.buildAndFail,
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            )
         }
     }
 
