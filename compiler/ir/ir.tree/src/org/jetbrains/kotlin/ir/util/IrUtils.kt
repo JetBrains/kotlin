@@ -106,6 +106,8 @@ private fun IrExpression.castIfNeededTo(type: IrType, operator: IrTypeOperator):
     else
         IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, type, this)
 
+fun IrExpression.explicitCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.CAST)
+
 fun IrExpression.implicitCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.IMPLICIT_CAST)
 
 fun IrExpression.reinterpretCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.REINTERPRET_CAST)
