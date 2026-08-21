@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import kotlin.collections.forEach
 
 /** NOTE: The order and names are important. */
 enum class EffectsKind {
@@ -25,7 +24,7 @@ enum class EffectsKind {
 
 /**
  * Each function (and element that can be impure) has this cell attached to it via the [IrElement.effects] attribute.
- * The attribute is set in EffectAnalysisLowering.
+ * The attribute is set in [org.jetbrains.kotlin.ir.backend.js.lower.EffectAnalysisLowering].
  *
  * The effects of one function can depend on another; a dependency can be established before
  * the dependent's effects are fully resolved. This means that we can't just use a plain enum value
@@ -33,17 +32,17 @@ enum class EffectsKind {
  *
  * After effect analysis is finished though, we can cache the computed value because the dependencies won't change.
  *
- * There are two kinds of cells. `Exact` cells just have a constant value and are used when a function is annotated with `@Effects`.
- * The `Lazy` cells have dependencies as described above.
+ * There are two kinds of cells. [Exact] cells just have a constant value and are used when a function is annotated with `@Effects`.
+ * The [Lazy] cells have dependencies as described above.
  */
-sealed interface EffectsKindCell {
-    fun compute(): EffectsKind
+sealed class Effects {
+    abstract fun compute(): EffectsKind
 
-    class Exact(val exact: EffectsKind) : EffectsKindCell {
+    class Exact(val exact: EffectsKind) : Effects() {
         override fun compute() = exact
     }
 
-    class Lazy(val context: JsCommonBackendContext, val function: IrFunction, val owner: IrElement) : EffectsKindCell {
+    class Lazy(val context: JsCommonBackendContext, val function: IrFunction, val owner: IrElement) : Effects() {
         private var minimum = EffectsKind.PURE
 
         private val dependencies = hashSetOf<Lazy>()
@@ -56,7 +55,7 @@ sealed interface EffectsKindCell {
             frozen = true
         }
 
-        private fun compute(visited: HashSet<EffectsKindCell>): EffectsKind {
+        private fun compute(visited: HashSet<Effects>): EffectsKind {
             if (visited.contains(this)) return EffectsKind.PURE
             visited.add(this)
             var result = minimum
@@ -68,15 +67,12 @@ sealed interface EffectsKindCell {
         }
 
         override fun compute(): EffectsKind = if (context.effectAnalysisFinished) {
-            if (cachedValue == null) {
-                cachedValue = compute(hashSetOf())
-            }
-            cachedValue!!
+            cachedValue ?: compute(hashSetOf()).also { cachedValue = it }
         } else {
             compute(hashSetOf())
         }
 
-        fun dependOn(cell: EffectsKindCell) {
+        fun dependOn(cell: Effects) {
             if (frozen) throw IllegalStateException("Called dependOn on frozen cell")
             if (cell == this) return
             when (cell) {
@@ -99,7 +95,7 @@ sealed interface EffectsKindCell {
     }
 }
 
-class ExpressionEffectVisitor : IrVisitorVoid() {
+private class ExpressionEffectVisitor : IrVisitorVoid() {
     var result = EffectsKind.PURE
 
     override fun visitElement(element: IrElement) {

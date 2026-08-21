@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.EffectAnalysisClassIds
 import org.jetbrains.kotlin.ir.backend.js.EffectsKind
-import org.jetbrains.kotlin.ir.backend.js.EffectsKindCell
+import org.jetbrains.kotlin.ir.backend.js.Effects
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
@@ -49,15 +49,15 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
         context.effectAnalysisFinished = true
     }
 
-    private inner class BodyVisitor : IrVisitor<Unit, EffectsKindCell.Lazy>() {
+    private inner class BodyVisitor : IrVisitor<Unit, Effects.Lazy>() {
         fun IrFunction.getConstructedClass(): IrClass? = when {
             this is IrConstructor -> this.constructedClass
             isEs6ConstructorReplacement -> parent as IrClass
             else -> null
         }
 
-        inline fun EffectsKindCell.Lazy.dependOnNew(other: IrElement, with: (EffectsKindCell.Lazy) -> Unit) =
-            EffectsKindCell.Lazy(context, function, other).also {
+        inline fun Effects.Lazy.dependOnNew(other: IrElement, with: (Effects.Lazy) -> Unit) =
+            Effects.Lazy(context, function, other).also {
                 with(it)
                 // this can happen if the lowering is ran multiple times over the same code.
                 if (other.effects != null) throw IllegalStateException("element already has effects")
@@ -66,30 +66,30 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
                 dependOn(it)
             }
 
-        fun maybeVisit(owner: IrFunction): EffectsKindCell {
+        fun maybeVisit(owner: IrFunction): Effects {
             owner.effects?.let { return it }
             val effectsAnnotation = owner.getAnnotation(EffectAnalysisClassIds.annotation.asSingleFqName())
             if (effectsAnnotation != null) {
                 val arg = effectsAnnotation.argumentMapping[EffectAnalysisClassIds.kindParameter]
                 if (arg is IrGetEnumValue) {
-                    return EffectsKindCell.Exact(EffectsKind.valueOf(arg.symbol.owner.name.asString())).also { owner.effects = it }
+                    return Effects.Exact(EffectsKind.valueOf(arg.symbol.owner.name.asString())).also { owner.effects = it }
                 }
             }
             if (owner.isExternal) {
-                return EffectsKindCell.Exact(EffectsKind.WRITE)
+                return Effects.Exact(EffectsKind.WRITE)
             }
-            return EffectsKindCell.Lazy(context, owner, owner).also {
+            return Effects.Lazy(context, owner, owner).also {
                 owner.effects = it
                 owner.accept(this, it)
                 it.freeze()
             }
         }
 
-        override fun visitElement(element: IrElement, data: EffectsKindCell.Lazy) {
+        override fun visitElement(element: IrElement, data: Effects.Lazy) {
             element.acceptChildren(this, data)
         }
 
-        override fun visitGetValue(expression: IrGetValue, data: EffectsKindCell.Lazy) {
+        override fun visitGetValue(expression: IrGetValue, data: Effects.Lazy) {
             if (expression.symbol.owner.parent != data.function) {
                 // reading a non-local variable.
                 data.dependOnNew(expression) { effects ->
@@ -98,7 +98,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
-        override fun visitGetField(expression: IrGetField, data: EffectsKindCell.Lazy) {
+        override fun visitGetField(expression: IrGetField, data: Effects.Lazy) {
             if (expression.symbol.owner.origin == PROPERTY_BACKING_FIELD) {
                 // we can ignore reads from global constants here.
                 if (expression.symbol.owner.isFinal && expression.symbol.owner.parent is IrFile) {
@@ -117,7 +117,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
-        override fun visitSetField(expression: IrSetField, data: EffectsKindCell.Lazy) {
+        override fun visitSetField(expression: IrSetField, data: Effects.Lazy) {
             // we ignore writes to the object instance field because there are never any reads before them.
             if (expression.symbol.owner.origin == FIELD_FOR_OBJECT_INSTANCE) {
                 return
@@ -143,7 +143,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
-        override fun visitSetValue(expression: IrSetValue, data: EffectsKindCell.Lazy) {
+        override fun visitSetValue(expression: IrSetValue, data: Effects.Lazy) {
             data.dependOnNew(expression) { effects ->
                 if (expression.symbol.owner.parent != effects.function) {
                     // writing to non-local variable.
@@ -153,7 +153,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: EffectsKindCell.Lazy) {
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Effects.Lazy) {
             val callee = expression.symbol.owner
             // exception for Unit$getInstance, although it might not be needed.
             if (callee.origin == OBJECT_GET_INSTANCE_FUNCTION && callee.returnType.isUnit()) {

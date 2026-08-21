@@ -42,9 +42,9 @@ interface JsCommonBackendContext : CommonBackendContext {
     val bodilessBuiltInsPackageFragment: IrPackageFragment
 
     /**
-     * This exists to allow caching in [EffectsKindCell]s. During an effect analysis pass,
+     * This exists to allow caching in [Effects]. During an effect analysis pass,
      * we can't cache the values of cells because their dependencies can change (invalidating the cache).
-     * @see EffectsKindCell
+     * @see Effects
      * @see org.jetbrains.kotlin.ir.backend.js.lower.EffectAnalysisLowering
      */
     var effectAnalysisFinished: Boolean
