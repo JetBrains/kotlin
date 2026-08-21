@@ -45,6 +45,11 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
         else -> copy(enableJvmUnsafeIncrementalCompilationForMultiplatform = enabled)
     }
 
+    private fun BuildOptions.withoutJvmClasspathMetadata(): BuildOptions = when (platformType) {
+        KotlinPlatformType.jvm -> copy(jvmClasspathMetadata = false)
+        else -> this
+    }
+
     private val platformSourceSet = "${platformType.name}Main"
 
     @GradleTest
@@ -54,7 +59,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
         project(
             "kt-62686-mpp-source-set-boundary",
             gradleVersion,
-            buildOptions = defaultBuildOptions.withUnsafeOptimizationsForMultiplatform(true)
+            buildOptions = defaultBuildOptions.withUnsafeOptimizationsForMultiplatform(true).withoutJvmClasspathMetadata()
         ) {
             buildScriptInjection(setupBuildScript)
 
