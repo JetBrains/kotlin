@@ -116,6 +116,8 @@ open class CallSuperBase(val baseProp: Int)
 @ToString(callSuper = true)
 class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 
+// An explicit `callSuper` is never gated on there being a superclass worth chaining to - only the
+// `lombok.toString.callSuper` config is, see `callSuperConfig.kt`.
 @ToString(callSuper = true)
 class CallSuperWithOnlyAnyParent(val x: Int)
 
@@ -174,7 +176,15 @@ fun box(): String {
 
     assertEquals("CallSuperBase(baseProp=10)", CallSuperBase(10).toString())
     assertEquals("CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", CallSuperDerived("hello").toString())
-    assertEquals("CallSuperWithOnlyAnyParent(x=5)", CallSuperWithOnlyAnyParent(5).toString())
+    // An explicit `callSuper = true` is honored even against `Any`, whose `toString` is the bare identity hash
+    // `Object.toString` renders - "pretty much meaningless", as `@ToString`'s own javadoc puts it, but asked
+    // for, and Lombok has no error for it the way `@EqualsAndHashCode` does. The hash rules out `assertEquals`.
+    val onlyAnyParent = CallSuperWithOnlyAnyParent(5).toString()
+    if (!onlyAnyParent.startsWith("CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@") ||
+        !onlyAnyParent.endsWith(", x=5)")
+    ) {
+        return "FAIL: $onlyAnyParent"
+    }
 
     assertEquals(
         "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)",

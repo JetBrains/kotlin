@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_RANK
@@ -117,7 +116,11 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 ToStringGeneratorKey(
                     className = classSymbol.classId.shortClassName.asString(),
                     propertyInfos = this.computePropertiesToInclude(toStringConfig, declaredScope),
-                    callSuper = toStringConfig.callSuper == CallSuperMode.Call,
+                    callSuper = toStringConfig.shouldCallSuper(
+                        session.lombokService.config.toStringCallSuper,
+                        classSymbol,
+                        session,
+                    ),
                 )
             }
         )

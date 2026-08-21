@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.config.lombokService
+import org.jetbrains.kotlin.lombok.generators.hasNonTrivialSuperclass
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
 import org.jetbrains.kotlin.lombok.generators.isPlainClass
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
@@ -76,7 +77,9 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         // supported on a class" before it even looks at `callSuper`; an enum, whose superclass is `Enum`, would
         // otherwise be told off for not chaining to a superclass it never generates a member for.
         if (isPlainClass) {
-            if (annotationInfo.callSuper == CallSuperMode.Call && !declaration.hasNonTrivialSuperclass) {
+            if (annotationInfo.callSuper == CallSuperMode.Call &&
+                !declaration.symbol.hasNonTrivialSuperclass(context.session)
+            ) {
                 /**
                  * Mirrors Lombok: "Generating equals/hashCode with a supercall to java.lang.Object is pointless."
                  * `Any.equals` compares by identity, so chaining to it makes the generated pair reject every

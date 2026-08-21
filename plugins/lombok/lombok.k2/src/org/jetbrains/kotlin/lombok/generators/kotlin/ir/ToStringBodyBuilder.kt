@@ -108,14 +108,19 @@ object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
         return irCall(toStringFunction.symbol).apply { arguments[0] = value }
     }
 
+    /**
+     * The `super.toString()` call a `callSuper` key asks for, with no say in whether it belongs there:
+     * `shouldCallSuper` has already decided, `Any` included. Lombok honors an explicit `callSuper = true` on a
+     * direct descendant of `Object` too, rendering the identity hash its `toString` returns - "pretty much
+     * meaningless", as `@ToString` puts it, but asked for.
+     */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrBuilderWithScope.buildSuperToStringCall(
+    private fun buildSuperToStringCall(
         irClass: IrClass,
         thisParam: IrValueParameter,
     ): IrExpression? {
         val superClass = irClass.superTypes
             .firstNotNullOfOrNull { type -> type.classOrNull?.owner?.takeIf { !it.isInterface } }
-            ?.takeIf { it.symbol != context.irBuiltIns.anyClass }
             ?: return null
 
         val superToStringFun = superClass.functions
