@@ -69,6 +69,29 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testReportFromTestSourceSet(gradleVersion: GradleVersion) {
+        val consumer = project("empty", gradleVersion) {
+            val preHmppLibrary = publishPreHmppLibrary(gradleVersion)
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    js()
+                    linuxX64()
+
+                    sourceSets.commonTest.dependencies {
+                        implementation(preHmppLibrary.rootCoordinate)
+                    }
+                }
+            }
+        }
+
+        consumer.checkDiagnostics(expectReportForDependency = true)
+    }
+
+    @GradleTest
     fun testTransitiveDependencyUpgradesVersion(gradleVersion: GradleVersion) {
         val consumer = project("empty", gradleVersion) {
             // 0.1
@@ -256,7 +279,7 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun testNoWarningsInPlatformSpecificSourceSetsOrTests(gradleVersion: GradleVersion) {
+    fun testNoWarningsInPlatformSpecificSourceSets(gradleVersion: GradleVersion) {
         val consumer = project("empty", gradleVersion) {
             val preHmppLibrary = publishPreHmppLibrary(gradleVersion)
             plugins {
@@ -272,11 +295,6 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
                         sourceSets.getByName(it).dependencies {
                             implementation(preHmppLibrary.rootCoordinate)
                         }
-                    }
-
-                    // see KT-60724
-                    sourceSets.commonTest.dependencies {
-                        implementation(preHmppLibrary.rootCoordinate)
                     }
                 }
             }
