@@ -217,9 +217,100 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            flattenPackage.set("com.github.jetbrains.swiftexport")
+                            rootPackages.add("com.github.jetbrains.swiftexport")
                             export(dependencies.project(mapOf("path" to ":subproject"))) {
-                                flattenPackage.set("com.subproject.library")
+                                rootPackages.add("com.subproject.library")
+                                rootPackages.add("com.subproject.library.bar")
+                            }
+                        }
+
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                    package com.github.jetbrains.swiftexport
+                                    class MyKotlinClass()
+                                """.trimIndent()
+                            )
+
+                            dependencies {
+                                implementation(project(":subproject"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                    package com.subproject.library
+                                    class LibFoo()
+                                """.trimIndent()
+                            )
+                            compileSource(
+                                """
+                                    package com.subproject.library.bar
+                                    class LibBar()
+                                """.trimIndent()
+                            )
+                        }
+                    }
+                }
+            }
+
+            include(subproject, "subproject")
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                assertContains(
+                    sharedSwiftPath.readText(),
+                    "public typealias MyKotlinClass = ExportedKotlinPackages.com.github.jetbrains.swiftexport.MyKotlinClass"
+                )
+
+                val subprojectSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Subproject/Subproject.swift")
+                assertContains(
+                    subprojectSwiftPath.readText(),
+                    "public typealias LibFoo = ExportedKotlinPackages.com.subproject.library.LibFoo"
+                )
+                assertContains(
+                    subprojectSwiftPath.readText(),
+                    "public typealias LibBar = ExportedKotlinPackages.com.subproject.library.bar.LibBar"
+                )
+            }
+        }
+    }
+
+    @DisplayName("embedSwiftExport executes normally when packages are disabled in Swift Export DSL")
+    @GradleTest
+    fun testSwiftExportDSLWithPackagesDisabled(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) {
+                            disablePackages()
+                            export(dependencies.project(mapOf("path" to ":subproject"))) {
+                                disablePackages()
                             }
                         }
 
@@ -260,16 +351,12 @@ class SwiftExportDslIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
-                assertContains(
-                    sharedSwiftPath.readText(),
-                    "public typealias MyKotlinClass = ExportedKotlinPackages.com.github.jetbrains.swiftexport.MyKotlinClass"
-                )
+                assertFileDoesNotContain(sharedSwiftPath, "com.github.jetbrains.swiftexport")
+                assertFileContains(sharedSwiftPath, "public final class MyKotlinClass")
 
                 val subprojectSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Subproject/Subproject.swift")
-                assertContains(
-                    subprojectSwiftPath.readText(),
-                    "public typealias LibFoo = ExportedKotlinPackages.com.subproject.library.LibFoo"
-                )
+                assertFileDoesNotContain(subprojectSwiftPath, "com.subproject.library")
+                assertFileContains(subprojectSwiftPath, "public final class LibFoo")
             }
         }
     }

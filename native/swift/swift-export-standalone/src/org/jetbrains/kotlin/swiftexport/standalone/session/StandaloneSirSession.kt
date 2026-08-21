@@ -32,7 +32,7 @@ internal class StandaloneSirSession(
     enableCoroutinesSupport: Boolean,
     override val moduleProvider: SirModuleProvider,
     val hiddenModules: List<KaModule>,
-    val targetPackageFqName: FqName? = null,
+    val rootPackageFqNames: Set<FqName>? = emptySet(),
     val referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
 
@@ -50,17 +50,20 @@ internal class StandaloneSirSession(
         )
     )
 
-    override val enumGenerator: SirEnumGenerator = targetPackageFqName?.let {
+    private val _enumGenerator = SirEnumGeneratorImpl(moduleForPackageEnums)
+
+    override val enumGenerator: SirEnumGenerator = run {
+        if (rootPackageFqNames.isNullOrEmpty()) return@run _enumGenerator
         PackageFlatteningSirEnumGenerator(
             sirSession = this,
-            enumGenerator = SirEnumGeneratorImpl(moduleForPackageEnums),
+            enumGenerator = _enumGenerator,
             moduleForTrampolines = moduleToTranslate.sirModule(),
         )
-    } ?: SirEnumGeneratorImpl(moduleForPackageEnums)
+    }
 
-    override val parentProvider = SirParentProviderImpl(sirSession, enumGenerator)
+    override val parentProvider = SirParentProviderImpl(sirSession, enumGenerator.takeIf { rootPackageFqNames != null })
 
-    override val trampolineDeclarationsProvider = SirTrampolineDeclarationsProviderImpl(sirSession, targetPackageFqName)
+    override val trampolineDeclarationsProvider = SirTrampolineDeclarationsProviderImpl(_enumGenerator, rootPackageFqNames.orEmpty())
 
     override val typeProvider = SirTypeProviderImpl(
         sirSession,

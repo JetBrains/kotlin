@@ -1,4 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.bar.Bar::class, "22ExportedKotlinPackages3orgO6kotlinO3barO4mainE3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.Clazz::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO4mainE5ClazzC")
 
 import kotlin.native.internal.ExportedBridge
@@ -6,6 +7,19 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import org.kotlin.foo.x as org_kotlin_foo_x
 import org.kotlin.foo.y as org_kotlin_foo_y
+
+@ExportedBridge("org_kotlin_bar_Bar_init_allocate")
+public fun org_kotlin_bar_Bar_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<org.kotlin.bar.Bar>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_bar_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun org_kotlin_bar_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, org.kotlin.bar.Bar()) }
+    return run { _result; true }
+}
 
 @ExportedBridge("org_kotlin_foo_Clazz_init_allocate")
 public fun org_kotlin_foo_Clazz_init_allocate(): kotlin.native.internal.NativePtr {

@@ -31,7 +31,7 @@ abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecuti
             path = testLibraryAKlibFile,
             konanTarget = targets.testTarget,
             swiftModuleName = "LibraryA",
-            rootPackage = "org.jetbrains.a",
+            rootPackages = setOf("org.jetbrains.a"),
         )
         runTestsAgainstKlib(setOf(klibSettings), testPath)
     }
@@ -43,13 +43,13 @@ abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecuti
             path = testLibraryAKlibFile,
             konanTarget = targets.testTarget,
             swiftModuleName = "LibraryA",
-            rootPackage = "org.jetbrains.a",
+            rootPackages = setOf("org.jetbrains.a"),
         )
         val klibSettingsB = KlibExportSettings(
             path = testLibraryBKlibFile,
             konanTarget = targets.testTarget,
             swiftModuleName = "LibraryB",
-            rootPackage = "org.jetbrains.b",
+            rootPackages = setOf("org.jetbrains.b"),
         )
         runTestsAgainstKlib(setOf(klibSettingsA, klibSettingsB), testPath)
     }
@@ -57,7 +57,7 @@ abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecuti
     private fun runTestsAgainstKlib(klibSettings: Set<KlibExportSettings>, testPath: File) {
         val testModules = klibSettings.map { TestModule.Given(it.path.toFile()) }.toSet()
         val inputModules = klibSettings.map {
-            it.createInputModule(SwiftModuleConfig(rootPackage = it.rootPackage, exportMode = SwiftModuleExportMode.Full))
+            it.createInputModule(SwiftModuleConfig(rootPackages = it.rootPackages, exportMode = SwiftModuleExportMode.Full))
         }.toSet()
 
         val swiftConfig = SwiftExportConfig(

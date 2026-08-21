@@ -43,8 +43,17 @@ interface SwiftExportedModuleMetadata {
 
     /**
      * Configure package collapsing rule.
+     * @see disablePackages
      */
-    val flattenPackage: Property<String>
+    val rootPackages: SetProperty<String>
+
+    /**
+     * Disable package generation.
+     * @see rootPackages
+     */
+    fun disablePackages() {
+        rootPackages.set(null as MutableSet<String>?)
+    }
 }
 
 /**

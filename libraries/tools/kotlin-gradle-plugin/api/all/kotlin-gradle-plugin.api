@@ -1499,6 +1499,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/S
 	public final fun configure (Lkotlin/jvm/functions/Function1;)V
 	public final fun configure (Lorg/gradle/api/Action;)V
 	public static synthetic fun configure$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public fun disablePackages ()V
 	public final fun export (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public final fun export (Ljava/lang/Object;Lorg/gradle/api/Action;)V
 	public static synthetic fun export$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
@@ -1508,8 +1509,13 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/S
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
-	public abstract fun getFlattenPackage ()Lorg/gradle/api/provider/Property;
+	public abstract fun disablePackages ()V
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getRootPackages ()Lorg/gradle/api/provider/SetProperty;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata$DefaultImpls {
+	public static fun disablePackages (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization : java/io/Serializable {

@@ -1,7 +1,7 @@
 // KIND: STANDALONE
 // APPLE_ONLY_VALIDATION
 // MODULE: main
-// SWIFT_EXPORT_CONFIG: packageRoot=flattened
+// SWIFT_EXPORT_CONFIG: rootPackages=flattened
 // FILE: coroutines_demo.kt
 
 package flattened
