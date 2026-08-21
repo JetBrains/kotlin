@@ -645,7 +645,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * giving each non-leaf fragment an isolated dependency view while jvmMain keeps the full JVM classpath.
      */
     val enableJvmClasspathMetadata: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(false)
+        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(enableJvmUnsafeOptimizationsForMultiplatform)
 
     val enableKlibsCrossCompilation: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
