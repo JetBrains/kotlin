@@ -172,7 +172,7 @@ abstract class AbstractAtomicfuIrBuilder(
             volatileField,
             atomicfuProperty.visibility,
             isVar = true,
-            isStatic = false,
+            isStatic = atomicfuProperty.hasStaticBackingField,
             parentContainer
         )
         return VolatilePropertyReference(volatileProperty)
@@ -331,7 +331,7 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun irPropertyReference(property: IrProperty, classReceiver: IrExpression?): IrPropertyReferenceImpl {
         val backingField = requireNotNull(property.backingField) { "Backing field of the property $property should not be null" }
-        val isInstanceProperty = property.parentClassOrNull != null
+        val isInstanceProperty = property.parentClassOrNull != null && !backingField.isStatic
         val receiversCount = if (isInstanceProperty && classReceiver == null) 1 else 0
         val kPropertyClass = irBuiltIns.getKPropertyClass(property.isVar, receiversCount).owner
         val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
