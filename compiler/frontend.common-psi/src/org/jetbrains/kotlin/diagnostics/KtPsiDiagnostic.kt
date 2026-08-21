@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 private const val CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS = true
 
-private fun KtDiagnosticWithSource.checkPsiTypeConsistency() {
+fun KtDiagnosticWithSource.checkPsiTypeConsistency() {
     if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
+        val element = this.element as? KtPsiSourceElement ?: return
+        val psiElement = element.psi
         requireWithAttachment(
             factory.psiType.isInstance(psiElement),
             { "${psiElement::class} is not a subtype of ${factory.psiType} for factory $factory" }

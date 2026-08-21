@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.diagnostics.checkPsiTypeConsistency
 
 /**
  * A [diagnostic] reported by compiler checkers, together with its [suppression status][isSuppressed].
@@ -28,5 +29,9 @@ class LLDiagnostic(
      */
     val isSuppressed: Boolean,
 ) {
+    init {
+        diagnostic.checkPsiTypeConsistency()
+    }
+
     override fun toString(): String = if (isSuppressed) "$diagnostic (suppressed)" else diagnostic.toString()
 }
