@@ -179,12 +179,10 @@ class FusPluginIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
-            validateFusDirectory(
-                "test-fus",
-                "-Pkotlin.session.logger.root.path=",
-                buildOptions = buildOptions.copy(pathToFusReportDirectory = { null })
-            ) { fusDirectory ->
-                assertTrue(fusDirectory.toFile().listFiles().isNullOrEmpty())
+            //invalid path for FUS reports should not break the build
+            build("test-fus", "-Pkotlin.session.logger.root.path=",
+                  buildOptions = buildOptions.copy(pathToFusReportDirectory = { null })) {
+                assertOutputContains("Failed to create directory '/kotlin-profile' for FUS report. FUS report won't be created")
             }
         }
     }
