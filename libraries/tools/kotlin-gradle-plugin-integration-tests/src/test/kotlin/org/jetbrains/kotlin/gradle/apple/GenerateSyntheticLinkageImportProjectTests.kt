@@ -28,10 +28,14 @@ import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.condition.OS
+import java.nio.file.Path
 import kotlin.String
 import kotlin.io.path.createDirectories
+import kotlin.io.path.isWritable
 import kotlin.io.path.pathString
+import kotlin.io.path.relativeTo
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 
 @OsCondition(
@@ -271,6 +275,120 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `KT-82823 - stale subpackages are removed and generated files are read-only`(version: GradleVersion) {
+        val includeStaleDependency = "includeStaleDependency"
+
+        val syntheticImportSubpackagesDir = GenerateSyntheticLinkageImportProject.Companion.SUBPACKAGES
+        val syntheticImportManifestName = GenerateSyntheticLinkageImportProject.Companion.MANIFEST_NAME
+
+        val retainedSubpackage = "retained"
+        val stateSubpackage = "stale"
+
+        fun syntheticSubpackageDir(packageRoot: Path, identifier: String): Path =
+            packageRoot.resolve(syntheticImportSubpackagesDir).resolve(identifier)
+
+        fun generatedFiles(root: Path, identifier: String): List<Path> = listOf(
+            syntheticImportManifestName,
+            "Sources/$identifier/$identifier.m",
+            "Sources/$identifier/include/$identifier.h",
+            "Sources/$identifier/include/module.modulemap",
+        ).map { root.resolve(it) }
+
+        fun syntheticPackageGeneratedFiles(packageRoot: Path, subpackages: List<String> = emptyList()): List<Path> =
+            generatedFiles(packageRoot, SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) +
+                    subpackages.flatMap { generatedFiles(syntheticSubpackageDir(packageRoot, it), it) }
+
+        project("empty", version) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.createKotlinExtension(KotlinMultiplatformExtension::class)
+                val extension = project.locateOrRegisterSwiftPMDependenciesExtension()
+                val includeStale = project.providers.gradleProperty(includeStaleDependency).isPresent
+                val subpackages = if (includeStale) {
+                    listOf(retainedSubpackage, stateSubpackage)
+                } else {
+                    listOf(retainedSubpackage)
+                }
+                project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGeneration") {
+                    configureWithExtension(extension)
+                    konanTargets.set(setOf(KonanTarget.IOS_ARM64))
+                    syntheticProductType.set(SyntheticProductType.INFERRED)
+                    transitiveSwiftPMMetadata.set(
+                        TransitiveSwiftPMMetadata(
+                            subpackages.associate { identifier ->
+                                SwiftPMDependencyIdentifier(identifier, false) to SwiftPMImportMetadata(
+                                    konanTargets = setOf("ios_arm64"),
+                                    iosDeploymentVersion = "123.0",
+                                    macosDeploymentVersion = null,
+                                    watchosDeploymentVersion = null,
+                                    tvosDeploymentVersion = null,
+                                    isModulesDiscoveryEnabled = true,
+                                    dependencies = setOf(
+                                        SwiftPMDependency.Remote(
+                                            repository = SwiftPMDependency.Remote.Repository.Url("https://foo.bar/$identifier"),
+                                            version = SwiftPMDependency.Remote.Version.Exact("1.0.0"),
+                                            products = listOf(SwiftPMDependency.Product(identifier)),
+                                            cinteropClangModules = emptyList(),
+                                            packageName = identifier,
+                                            traits = emptySet(),
+                                        )
+                                    ),
+                                )
+                            }
+                        )
+                    )
+                }
+            }
+
+            val packageRoot = projectPath.resolve("build/kotlin/swiftImport")
+
+            build("packageGeneration", "-P$includeStaleDependency=true") {
+                assertTasksExecuted(":packageGeneration")
+                assertEquals(
+                    listOf(retainedSubpackage, stateSubpackage),
+                    describeSwiftPackage(packageRoot).dependencies.map { it.identity },
+                    "Both subpackages should be declared in the generated manifest",
+                )
+                assertDirectoryExists(syntheticSubpackageDir(packageRoot, retainedSubpackage))
+                assertDirectoryExists(syntheticSubpackageDir(packageRoot, stateSubpackage))
+
+                syntheticPackageGeneratedFiles(packageRoot, listOf(retainedSubpackage, stateSubpackage))
+                    .forEach { generatedFile ->
+                        assertFalse(
+                            generatedFile.isWritable(),
+                            "Generated file '${generatedFile.relativeTo(packageRoot)}' should be read-only",
+                        )
+                    }
+            }
+
+            // Regenerating over the read-only files of the previous run has to work
+            build("packageGeneration") {
+                assertTasksExecuted(":packageGeneration")
+                assertEquals(
+                    listOf(retainedSubpackage),
+                    describeSwiftPackage(packageRoot).dependencies.map { it.identity },
+                    "The stale subpackage should be dropped from the generated manifest",
+                )
+                assertDirectoryExists(syntheticSubpackageDir(packageRoot, retainedSubpackage))
+
+                assertDirectoryDoesNotExist(
+                    syntheticSubpackageDir(packageRoot, stateSubpackage),
+                    message = "Subpackage directory should be removed together with the dependency",
+                )
+
+                syntheticPackageGeneratedFiles(packageRoot, listOf(retainedSubpackage)).forEach { generatedFile ->
+                    assertFalse(
+                        generatedFile.isWritable(),
+                        "Regenerated file '${generatedFile.relativeTo(packageRoot)}' should be read-only again",
+                    )
+                }
+            }
+        }
+    }
+
+    @GradleTest
     fun `generate task generates same package given the same synthetic package fingerprint`(version: GradleVersion) {
         val subProjectName = "subProject"
 
@@ -430,7 +548,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
         val dependencies: List<PackageDependency>,
         val platforms: List<PackagePlatform>,
         val products: List<PackageProduct>,
-        val targets: List<PackageTarget>
+        val targets: List<PackageTarget>,
     ) {
         @Serializable
         data class PackageProduct(
@@ -468,5 +586,4 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
             explicitNulls = false
         }
     }
-
 }

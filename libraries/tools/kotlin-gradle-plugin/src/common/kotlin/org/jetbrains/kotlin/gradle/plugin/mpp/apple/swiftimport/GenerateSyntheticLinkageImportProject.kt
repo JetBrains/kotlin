@@ -171,9 +171,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         require(source.isDirectory) {
             "Expected shared synthetic package root is missing: $source"
         }
+        val sourceFiles = source.walkTopDown().filter { it.isFile }.toList()
+        sourceFiles.forEach { destination.resolve(it.toRelativeString(source)).setWritable(true) }
         fs.sync {
             it.from(source)
             it.into(destination)
+        }
+        sourceFiles.forEach {
+            if (!it.canWrite()) destination.resolve(it.toRelativeString(source)).setReadOnly()
         }
     }
 
@@ -197,12 +202,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
 
         failOnNonIdempotentChangesIfNeeded {
             val packageRoot = syntheticImportProjectRoot.normalizedAbsoluteFile()
+            val generatedSubpackages = mutableSetOf<String>()
             val binaryTarget = if (xcframeworkPath.isPresent) BinaryTarget(
                 name = xcframeworkPath.get().nameWithoutExtension,
                 relativePath = xcframeworkPath.get().toRelativeString(packageRoot)
             ) else null
             when (syntheticProductType.get()) {
                 SyntheticProductType.DYNAMIC -> {
+                    generatedSubpackages += SYNTHETIC_IMPORT_DYLIB
                     generatePackageManifest(
                         identifier = SYNTHETIC_IMPORT_DYLIB,
                         packageRoot = packageRoot.resolve("${SUBPACKAGES}/${SYNTHETIC_IMPORT_DYLIB}"),
@@ -246,6 +253,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 val implicitConstraints: Set<SwiftPMDependency.Platform>? =
                     swiftPMDependencies.konanTargets.toSwiftPMPlatforms().takeIf { it.isNotEmpty() }
 
+                generatedSubpackages += dependencyIdentifier.identifier
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
                     packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
@@ -262,7 +270,20 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     implicitPlatformConstraints = implicitConstraints,
                 )
             }
+            removeStaleSubpackages(packageRoot, generatedSubpackages)
         }
+    }
+
+    private fun removeStaleSubpackages(
+        packageRoot: File,
+        generatedSubpackages: Set<String>,
+    ) {
+        val staleSubpackages = packageRoot.resolve(SUBPACKAGES)
+            .listFiles()
+            .orEmpty()
+            .filter { it.isDirectory && it.name !in generatedSubpackages }
+        if (staleSubpackages.isEmpty()) return
+        fs.delete { it.delete(staleSubpackages) }
     }
 
     private fun failOnNonIdempotentChangesIfNeeded(work: () -> Unit) {
@@ -420,10 +441,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             SyntheticProductType.INFERRED -> ".none"
         }
 
-        val manifest = packageRoot.resolve(MANIFEST_NAME)
-        manifest.also {
-            it.parentFile.mkdirs()
-        }.writeText(
+        packageRoot.resolve(MANIFEST_NAME).writeGeneratedFile(
             SwiftImportManifestGenerator.generateManifest(
                 identifier = identifier,
                 productType = productType,
@@ -437,20 +455,18 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         val objcSource = "Sources/${identifier}/${identifier}.m"
         val objcHeader = "Sources/${identifier}/include/${identifier}.h"
         // Generate ObjC sources specifically because the next CC-overriding step relies on passing a clang shim to dump compiler arguments
-        packageRoot.resolve(objcSource).also {
-            it.parentFile.mkdirs()
-        }.writeText("")
-        packageRoot.resolve(objcHeader).also {
-            it.parentFile.mkdirs()
-        }.writeText("")
+        packageRoot.resolve(objcSource).writeGeneratedFile("")
+        packageRoot.resolve(objcHeader).writeGeneratedFile("")
 
         val moduleMap = "Sources/${identifier}/include/module.modulemap"
-        packageRoot.resolve(moduleMap).also {
-            it.parentFile.mkdirs()
-        }.writeText(
-            ""
-        )
+        packageRoot.resolve(moduleMap).writeGeneratedFile("")
+    }
 
+    private fun File.writeGeneratedFile(content: String) {
+        parentFile.mkdirs()
+        setWritable(true)
+        writeText(content)
+        setReadOnly()
     }
 
     /**
