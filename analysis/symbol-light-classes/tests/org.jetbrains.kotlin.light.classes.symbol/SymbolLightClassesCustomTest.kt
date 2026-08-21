@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -20,7 +24,9 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnum
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPathString = "testData/custom") {
     override val configurator = LLSourceLikeTestConfigurator()
@@ -98,5 +104,26 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
         val nameReference = (argument as KtLightElementBase).kotlinOrigin as KtNameReferenceExpression
         testServices.assertions.assertEquals("MY_CONST", nameReference.getReferencedName())
+    }
+
+    @Test
+    fun findSuperMethods(file: KtFile) {
+        val testFunction = file.declarations.findIsInstanceAnd<KtNamedFunction> { it.name == "test" }
+            ?: error("Function 'test()' not found")
+
+        analyze(file) {
+            val javaImplSymbol = testFunction.valueParameters.single().symbol.returnType.symbol
+                ?: error("'JavaImpl' parameter type not resolved")
+
+            val psiJavaImplClass = javaImplSymbol.psi as PsiClass
+            val psiFooMethod = psiJavaImplClass.findMethodsByName("foo", /* checkBases = */ false).single()
+
+            val psiFooMethodSupers = PsiSuperMethodImplUtil.findSuperMethods(psiFooMethod)
+
+            assertEquals(1, psiFooMethodSupers.size)
+
+            val psiJavaBaseClass = psiFooMethodSupers[0].parent as PsiClass
+            assertEquals("lib.JavaBase", psiJavaBaseClass.qualifiedName)
+        }
     }
 }

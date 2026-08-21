@@ -61,6 +61,7 @@ dependencies {
     testImplementation(project(":core:deserialization.common.jvm"))
     testImplementation(project(":core:language.targets.jvm"))
     testImplementation(intellijCore())
+    testImplementation(libs.opentelemetry.api)
     testImplementation(libs.guava)
 
     // Compose compiler deps

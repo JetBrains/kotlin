@@ -1,0 +1,19 @@
+# Entries which are allowed to be present in more than one JAR of the Analysis API runtime classpath.
+# One entry name per line. Blank lines and lines starting with '#' are ignored.
+#
+# Prefer fixing the dependency declarations over adding an exception here: for every entry listed below,
+# which of the copies wins is decided by the classpath order.
+
+# An index of the IntelliJ fat JARs, so there is one per archive by design.
+__index__
+
+# Copy-pasted into ':compiler:cli'. Should be moved to ':dependencies:intellij-java-psi-api' instead.
+com/intellij/openapi/fileTypes/BinaryFileTypeDecompilers.class
+
+# Bundled both by the IntelliJ 'util' JARs and by the embedded 'org.jetbrains.intellij.deps:log4j'.
+org/apache/log4j/Level.class
+
+# ':core:util.runtime' intentionally ships a newer 'Nls' than the 'annotations' version the build depends on.
+# See 'core/util.runtime/src/org/jetbrains/annotations/Nls.java'.
+org/jetbrains/annotations/Nls.class
+org/jetbrains/annotations/Nls$Capitalization.class

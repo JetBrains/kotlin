@@ -1,4 +1,6 @@
 import GeneratorInputKind.RuntimeClasspath
+import org.gradle.kotlin.dsl.embedded
+import org.gradle.kotlin.dsl.testRuntimeOnly
 
 plugins {
     id("common-configuration")
@@ -37,9 +39,16 @@ val (nativeInteropRuntimeSourceSet, nativeInteropRuntimeApi) = extraSourceSet("n
 dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":core:util.runtime"))
-    api(intellijPlatformUtil()) {
-        exclude(module = "annotations")
-    }
+
+    api(intellijCore())
+    api(libs.intellij.patched.kotlinx.coroutines.core.jvm)
+    implementation(intellijJDom())
+
+    // Dependencies of 'intellijCore()' available on Maven Central
+    implementation(libs.apache.commons.lang)
+    implementation(libs.apache.commons.compress)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.opentelemetry.api) { isTransitive = false }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))

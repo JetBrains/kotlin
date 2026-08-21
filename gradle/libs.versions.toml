@@ -18,7 +18,7 @@ kotlinx-serialization-min = "1.7.3"
 kotlinx-schema = "0.5.0"
 # Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. IntelliJ IDEA uses 1.6 since 2022.3
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
-# Should be synchronized with 'analysis-api-kotlinx-coroutines'
+# Should be synchronized with 'intellij-kotlinx-coroutines'
 kotlinx-coroutines = "1.8.0"
 shadow = "9.3.2"
 spdx = "0.11.0"
@@ -51,6 +51,7 @@ ant = "1.10.14"
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
 kotlin-for-gradle-plugins-compilation = "2.2.21"
 intellij-asm = "9.6.1"
+intellij-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 auto-value-annotations = "1.11.0" # Used in opentelemetry-api
@@ -101,7 +102,6 @@ fileLeakDetector = "1.21"
 jmh = "0.7.3"
 
 analysis-api-kotlin = "2.3.21"
-analysis-api-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -189,6 +189,8 @@ android-gradle-plugin-builder-model = { module = "com.android.tools.build:builde
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
 intellij-fastutil = { module = "org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil", version.ref = "fastutil" }
+intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "intellij-kotlinx-coroutines" }
+intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "intellij-kotlinx-coroutines" }
 rwmutex-idea = { module = "org.jetbrains.intellij.deps:rwmutex-idea", version.ref = "rwmutex-idea" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
@@ -243,8 +245,6 @@ playwright = { module = "com.microsoft.playwright:playwright", version.ref = "pl
 analysis-api-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "analysis-api-kotlin" }
 analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "analysis-api-kotlin" }
 analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "analysis-api-kotlin" }
-analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
-analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
 
 fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
 

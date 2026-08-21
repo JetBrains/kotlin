@@ -9,6 +9,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
@@ -25,7 +27,10 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.component.external.model.TestFixturesSupport
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.jvm.JvmLibrary
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
 import plugins.KotlinBuildPublishingPlugin
@@ -241,6 +246,55 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         }
         from({ allSources })
     }
+}
+
+/**
+ * Adds the published sources of all projects resolved through the [configuration] to this (sources) [Jar].
+ * Unlike [addEmbeddedSources], this uses the published `sourcesElements` JAR – this approach is generally more correct as it
+ * transparently supports source processing and fat-JARs.
+ */
+fun Jar.addEmbeddedProjectSourcesJars(configuration: Configuration) {
+    val archiveOperations = project.serviceOf<ArchiveOperations>()
+    val objectFactory = project.objects
+    val sourcesJars = configuration.incoming.artifactView {
+        withVariantReselection()
+        isLenient = true
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objectFactory.named(Category::class.java, Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objectFactory.named(DocsType::class.java, DocsType.SOURCES))
+        }
+    }.files
+
+    // Build the producing `sourcesElements` tasks (e.g. the modules' fat sources jars) before packing them:
+    // `zipTree` below only carries a file path, not its producer task, so without this the reselected jars
+    // may not exist yet (fails with "Cannot expand ZIP ... as it does not exist").
+    dependsOn(sourcesJars)
+    from({ sourcesJars.map { archiveOperations.zipTree(it) } })
+}
+
+/**
+ * Adds the resolved `-sources.jar` artifacts of every component resolved through [configuration] to this
+ * (sources) jar. Unlike [addEmbeddedSources], which embeds the sources of included *projects*, this embeds
+ * the sources of external Maven *libraries*.
+ */
+fun Jar.addEmbeddedLibrarySources(configuration: Configuration) {
+    val archiveOperations = project.serviceOf<ArchiveOperations>()
+    val dependencyHandler = project.dependencies
+    val allLibrarySources by lazy {
+        val moduleComponentIds = configuration.incoming.resolutionResult.allComponents.map { it.id }
+
+        // Resolve Maven artifacts directly as for non-Gradle artifacts, metadata isn't available
+        dependencyHandler.createArtifactResolutionQuery()
+            .forComponents(moduleComponentIds)
+            .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java)
+            .execute()
+            .resolvedComponents
+            .flatMap { it.getArtifacts(SourcesArtifact::class.java) }
+            .filterIsInstance<ResolvedArtifactResult>()
+            .map { archiveOperations.zipTree(it.file) }
+    }
+
+    from({ allLibrarySources })
 }
 
 @JvmOverloads
