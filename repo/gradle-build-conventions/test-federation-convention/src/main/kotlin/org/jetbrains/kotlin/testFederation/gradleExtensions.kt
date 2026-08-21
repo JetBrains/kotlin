@@ -83,10 +83,13 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
             .map(TestFederationMode::valueOf)
             .orNull?.let { return@provider it }
 
-        /* Actually check if the affected domains intersect with the domains this test task belongs to */
-        if (testFederationDomains.get().intersect(project.testFederationAffectedDomains.get()).isNotEmpty()) TestFederationMode.Full
-        else TestFederationMode.Smoke
-    }
+        null
+    }.orElse(
+        testFederationDomains.zip(project.testFederationAffectedDomains) { testFederationDomains, testFederationAffectedDomains ->
+            if (testFederationDomains.intersect(testFederationAffectedDomains).isNotEmpty()) TestFederationMode.Full
+            else TestFederationMode.Smoke
+        }
+    )
 }
 
 /**
