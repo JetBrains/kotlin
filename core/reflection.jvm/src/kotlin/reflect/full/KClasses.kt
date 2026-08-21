@@ -70,7 +70,7 @@ val KClass<*>.companionObjectInstance: Any?
 val KClass<*>.defaultType: KType
     get() = createDefaultType()
 
-internal fun KClass<*>.createDefaultType(computeJavaType: (() -> Type)? = null): KType =
+internal fun KClass<*>.createDefaultType(computeJavaType: Lazy<Type>? = null): KType =
     createTypeImpl(allTypeParameters().map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
     }, computeJavaType = computeJavaType)
