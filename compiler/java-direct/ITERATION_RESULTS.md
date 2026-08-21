@@ -36,6 +36,19 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-21 — a jar opened via `CoreJarFileSystem` outlived its `@TempDir` on Windows
+- **Change**: `ClasspathRestrictionTest` opens a `lib.jar` written under JUnit's `@TempDir` through
+  `CoreJarFileSystem`, which caches the opened archive's file handle (`ZipHandler`) process-wide, well past
+  the test method returning. Unix tolerates deleting a file that a process still has open; Windows does not,
+  so the leftover handle raced `@TempDir`'s post-test cleanup and failed it with "used by another process"
+  (`testClassFileInArchiveRoot`, `testRootIdentityIsTheSameForAPathAndAVirtualFile` — the only two tests that
+  open a jar). Added an `@AfterEach` calling `ZipHandler.clearFileAccessorCache()`, the same release used in
+  production (`CompilationServiceImpl.finishProjectCompilation`) and in `FastJarFSTest`'s teardown.
+- **Files**: `ClasspathRestrictionTest.kt` (+teardown only).
+- **Tests**: `ClasspathRestrictionTest` 5/5 green.
+- **Result**: fixed. Windows-only failure mode — the cache is harmless on macOS/Linux, where an unlinked-but-open
+  file is simply orphaned rather than blocking the directory's removal.
+
 ### 2026-08-21 — `value` classes/records dropped as members: parser pinned below Valhalla's feature gate
 - **Change**: `parseJavaToSyntaxTreeBuilder`/`parse` (`parse.kt`) and `extractFileInfoLightweight`
   (`JavaSourceIndex.kt`) used `LanguageLevel.HIGHEST`, which excludes `JavaFeature.VALUE_CLASSES`

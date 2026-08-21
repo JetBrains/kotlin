@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -44,6 +46,17 @@ import kotlin.io.path.writeBytes
  * What the restriction then decides is in [JavaClassFinderOverBinaryIndexTest].
  */
 class ClasspathRestrictionTest {
+
+    /**
+     * `CoreJarFileSystem`/`ZipHandler` cache an opened archive's file handle process-wide, well past the
+     * `TempDir` this test wrote it under going out of scope. Unix tolerates deleting a file that is still
+     * open; Windows does not, so a leftover handle turns `TempDir`'s post-test cleanup into a "used by
+     * another process" failure. Releasing the cache once a test is done keeps that cleanup from racing it.
+     */
+    @AfterEach
+    fun clearJarHandleCaches() {
+        ZipHandler.clearFileAccessorCache()
+    }
 
     @Test
     fun testClassFileInDirectoryRoot(@TempDir tempDir: Path) {
