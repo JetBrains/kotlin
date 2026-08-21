@@ -24,6 +24,7 @@ import java.io.File
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.absolute
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.invariantSeparatorsPathString
 
 val DEFAULT_LOG_LEVEL = LogLevel.INFO
@@ -102,6 +103,7 @@ data class BuildOptions(
     val jvmClasspathMetadata: Boolean? = null,
     val separateCompilation: Boolean? = null,
     val expandTypeAliasesInClasspathSnapshots: Boolean? = null,
+    val pathToFusReportDirectory: () -> Path? = { null }
 ) {
     enum class ConfigurationCacheValue {
 
@@ -385,6 +387,10 @@ data class BuildOptions(
 
         if (generateCompilerRefIndex != null) {
             arguments.add("-Pkotlin.compiler.generateCompilerRefIndex=$generateCompilerRefIndex")
+        }
+
+        pathToFusReportDirectory()?.let {
+            arguments.add("-Pkotlin.session.logger.root.path=${it.absolutePathString()}")
         }
 
         arguments.addAll(freeArgs)
