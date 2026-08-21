@@ -298,10 +298,13 @@ internal fun Visibility.toKVisibility(): KVisibility? = when (this) {
     Visibility.LOCAL -> null
 }
 
-internal fun KmProperty.computeJvmSignature(container: KDeclarationContainerImpl): String? =
-    getterSignature?.toString() ?: fieldSignature?.let { fieldSignature ->
-        JvmAbi.getterName(fieldSignature.name) + getManglingSuffix(container) + "()" + fieldSignature.descriptor
-    }
+internal fun KmProperty.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
+    getterSignature?.let { return it }
+    val fieldSignature = mapSignature((container as? KClassImpl<*>)?.kmClass)
+    val getterName = getBuiltinSpecialPropertyGetterName(name, container)
+        ?: (JvmAbi.getterName(fieldSignature.name) + getManglingSuffix(container))
+    return JvmMethodSignature(getterName, "()" + fieldSignature.descriptor)
+}
 
 // For the complete set of mangling required to compute JVM signatures correctly, see the JVM backend implementation in
 // `MethodSignatureMapper.mapFunctionName`. However, note that there are cases which are not applicable to kotlin-reflect.
@@ -319,25 +322,29 @@ private fun KmProperty.getManglingSuffix(container: KDeclarationContainerImpl): 
 }
 
 internal fun createUnboundProperty(property: KmProperty, container: KDeclarationContainerImpl): KotlinKProperty<*> {
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
     val receiverCount = when {
         property.contextParameters.isNotEmpty() -> -1
-        property.receiverParameterType != null -> 1
-        else -> 0
+        property.isStatic -> 0
+        else ->
+            (if (property.receiverParameterType != null) 1 else 0) +
+                    (if (container is KClassImpl<*>) 1 else 0)
     }
-    val signature = property.computeJvmSignature(container)
-        ?: throw KotlinReflectionInternalError("No field or getter signature for property: ${property.name}")
+    val signature = property.computeJvmSignature(container).toString()
     val boundReceiver = CallableReference.NO_RECEIVER
     return when {
         !property.isVar -> when (receiverCount) {
             -1 -> KotlinKPropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             0 -> KotlinKProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            2 -> KotlinKProperty2<Any?, Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             else -> null
         }
         else -> when (receiverCount) {
             -1 -> KotlinKMutablePropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             0 -> KotlinKMutableProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            2 -> KotlinKMutableProperty2<Any?, Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             else -> null
         }
     } ?: throw KotlinReflectionInternalError(
