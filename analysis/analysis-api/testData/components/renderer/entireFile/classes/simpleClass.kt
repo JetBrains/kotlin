@@ -12,4 +12,3 @@ class SomeClass : SomeInterface {
         set(value) {}
     lateinit var fau: Double
 }
-inline class InlineClass
