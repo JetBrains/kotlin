@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("all")
-public class IncrementalK2JvmCompilerRunnerTestCustom extends AbstractIncrementalK2JvmCompilerRunnerTest {
+public class IncrementalJvmCompilerRunnerTestCustom extends AbstractIncrementalJvmCompilerRunnerTest {
     @Nested
     @TestMetadata("jps/jps-plugin/testData/incremental/custom")
     @TestDataPath("$PROJECT_ROOT")
-    public class Custom extends AbstractIncrementalK2JvmCompilerRunnerTest {
+    public class Custom extends AbstractIncrementalJvmCompilerRunnerTest {
         @Test
         @TestMetadata("companionWithSyntaxError")
         public void testCompanionWithSyntaxError() throws Exception {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.utils.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayOutputStream
@@ -151,6 +152,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             moduleName = testDir.name
             destination = destinationDir.path
             classpath = compileClasspath
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString
         }
 
     private val compileClasspath =
@@ -158,4 +160,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             ForTestCompileRuntime.runtimeJarForTests(),
             KtTestUtil.getAnnotationsJar()
         ).joinToString(File.pathSeparator) { it.absolutePath }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isGradleEnabled = true, isFirEnabled = true) // TODO: investigate cases that need isGradleEnabled - the combination looks fragile
 }

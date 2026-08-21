@@ -13,7 +13,7 @@ import org.junit.jupiter.api.fail
 
 import java.io.File
 
-abstract class AbstractIncrementalK2JVMWithAtomicfuRunnerTest : AbstractIncrementalK2JvmCompilerRunnerTest() {
+abstract class AbstractIncrementalJVMWithAtomicfuRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     companion object {
         private const val PLUGIN_JAR_DIR = "build/libs/"
         private const val PLUGIN_JAR_NAME = "kotlin-atomicfu-compiler-plugin"

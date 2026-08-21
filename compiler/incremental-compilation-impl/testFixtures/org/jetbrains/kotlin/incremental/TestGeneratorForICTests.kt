@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
             // K2
-            testClass<AbstractIncrementalK2JvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2
@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalK2FirICJvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalFirICJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2,
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
                     )
                 )
             )
-            testClass<AbstractIncrementalK2PsiJvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalPsiJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2

@@ -10,14 +10,10 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
-abstract class AbstractIncrementalK2PsiJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
+abstract class AbstractIncrementalPsiJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
-            languageVersion = LanguageVersion.LATEST_STABLE.versionString
             @Suppress("DEPRECATION")
             useFirLT = false
         }
-
-    override val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isGradleEnabled = true, isFirEnabled = true) // TODO: investigate cases that need isGradleEnabled - the combination looks fragile
 }
