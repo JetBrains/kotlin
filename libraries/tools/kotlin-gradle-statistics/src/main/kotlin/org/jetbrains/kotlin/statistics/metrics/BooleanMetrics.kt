@@ -65,7 +65,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED(OR, SAFE),
     // kotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation, reported per KMP JVM compilation
     KMP_JVM_CLASSPATH_METADATA_ENABLED(OR, SAFE),
-    // kotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform, reported per KMP JVM compilation
+    // kotlin.jvm.enableUnsafeOptimizationsForMultiplatform, reported per KMP JVM compilation
     KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED(OR, SAFE),
     KMP_TOP_LEVEL_DEPENDENCIES_BLOCK(OR, SAFE),
     KOTLIN_NATIVE_CACHE_DISABLED(OR, SAFE),

@@ -913,7 +913,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableUnsafeOptimizationsForMultiplatform")
+            property("kotlin.jvm.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =

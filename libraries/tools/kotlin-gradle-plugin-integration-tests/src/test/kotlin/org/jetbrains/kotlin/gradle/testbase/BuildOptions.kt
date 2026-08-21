@@ -312,7 +312,7 @@ data class BuildOptions(
         }
 
         if (enableJvmUnsafeIncrementalCompilationForMultiplatform != null) {
-            arguments.add("-Pkotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform=$enableJvmUnsafeIncrementalCompilationForMultiplatform")
+            arguments.add("-Pkotlin.jvm.enableUnsafeOptimizationsForMultiplatform=$enableJvmUnsafeIncrementalCompilationForMultiplatform")
         }
 
         if (enableJsUnsafeIncrementalCompilationForMultiplatform != null) {

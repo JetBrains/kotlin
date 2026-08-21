@@ -30,7 +30,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun jvmPropertyAffectsOnlyJvmTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform",
+            enabledProperty = "kotlin.jvm.enableUnsafeOptimizationsForMultiplatform",
             expectedJvm = true, expectedJs = false, expectedWasm = false,
         )
     }
