@@ -104,13 +104,20 @@ private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
     }
 
 context(context: CheckerContext)
-internal fun FirExpression.toArgumentInfo(): ArgumentInfo =
-    ArgumentInfo(
-        this,
-        userType = resolvedType.finalApproximationOrSelf(),
-        originalType = mostOriginalTypeIfSmartCast.fullyExpandedType().finalApproximationOrSelf(),
+internal fun FirExpression.toArgumentInfo(): ArgumentInfo {
+    // Don't report any warnings based on unstable smart casts.
+    val expressionWithStableType = when (this) {
+        is FirSmartCastExpression -> this.takeIf { isStable } ?: originalExpression
+        else -> this
+    }
+
+    return ArgumentInfo(
+        expressionWithStableType,
+        userType = expressionWithStableType.resolvedType.finalApproximationOrSelf(),
+        originalType = expressionWithStableType.mostOriginalTypeIfSmartCast.fullyExpandedType().finalApproximationOrSelf(),
         context.session,
     )
+}
 
 private fun ConeKotlinType.getCounterpartRelativelyToPlatform(session: FirSession): ConeKotlinType? =
     toKotlinTypeIfPlatform(session) ?: toPlatformTypeIfKotlin(session)
