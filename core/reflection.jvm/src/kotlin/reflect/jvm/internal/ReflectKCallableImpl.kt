@@ -5,14 +5,15 @@
 
 package kotlin.reflect.jvm.internal
 
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.Modality
 
 internal abstract class ReflectKCallableImpl<out R>(
     override val overriddenStorage: KCallableOverriddenStorage,
 ) : ReflectKCallable<R> {
-    private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
+    private val _absentArguments: Lazy<Array<Any?>> = lazy(PUBLICATION, ::computeAbsentArguments)
 
-    override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
+    override fun getAbsentArguments(): Array<Any?> = _absentArguments.value.clone()
 
     final override val isFinal: Boolean
         get() = modality == Modality.FINAL
