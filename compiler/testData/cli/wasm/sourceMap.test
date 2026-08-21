@@ -1,0 +1,3 @@
+// EXISTS: out.wasm
+// CONTAINS: out.wasm.map, "sourceRoot":"./"
+// CONTAINS: out.wasm.map, "sourceMap.kt"
