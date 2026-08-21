@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.gradle.kotlin.dsl.kotlin
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.listDirectoryEntries
 
@@ -31,26 +29,21 @@ class ComposeCompilerPluginExternalAndroidTargetIT : KGPBaseTest() {
         androidVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        val testProject = project(
-            "empty",
+        val testProject = externalAndroidLibraryProject(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-            buildJdk = jdkVersion.location,
-        ) {
-            plugins {
-                kotlin("multiplatform")
-                id("com.android.kotlin.multiplatform.library")
+            androidVersion = androidVersion,
+            jdkVersion = jdkVersion,
+            namespace = "org.jetbrains.sample.compose.android",
+            additionalPlugins = {
                 id("org.jetbrains.kotlin.plugin.compose")
-            }
-
+            },
+            androidLibraryConfiguration = {
+                withHostTest {}
+                withDeviceTest {}
+            },
+        ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
-                    targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
-                        target.compileSdk = 34
-                        target.namespace = "org.jetbrains.sample.compose.android"
-                        target.withHostTest {}
-                        target.withDeviceTest {}
-                    }
                     iosArm64()
                     sourceSets.getByName("commonMain").dependencies {
                         implementation("org.jetbrains.compose.runtime:runtime:1.9.1")
