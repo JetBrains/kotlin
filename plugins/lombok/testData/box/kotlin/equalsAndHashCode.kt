@@ -51,6 +51,20 @@ class SingleNullableString(val optional: String?)
 @EqualsAndHashCode
 class TwoNullableInts(val first: Int?, val second: Int?)
 
+// An array property is compared and hashed by content, not by identity: Lombok routes one through
+// `java.util.Arrays`, deeply for an object array and shallowly for a primitive one, KT-88656.
+@EqualsAndHashCode
+class WithObjectArray(val array: Array<String>)
+
+@EqualsAndHashCode
+class WithPrimitiveArray(val array: IntArray)
+
+@EqualsAndHashCode
+class WithNestedArray(val array: Array<Array<String>>)
+
+@EqualsAndHashCode
+class WithNullableArray(val array: Array<String>?)
+
 @EqualsAndHashCode
 class Empty
 
@@ -131,6 +145,25 @@ fun box(): String {
     assertEquals(true, SingleNullableInt(null) == SingleNullableInt(null))
     assertEquals(true, SingleNullableInt(null).hashCode() == SingleNullableInt(null).hashCode())
     assertEquals(true, TwoNullableInts(null, null).hashCode() == TwoNullableInts(null, null).hashCode())
+
+    // KT-88656: equal contents in distinct array instances must compare equal and hash alike.
+    assertEquals(true, WithObjectArray(arrayOf("a", "b")) == WithObjectArray(arrayOf("a", "b")))
+    assertEquals(true, WithObjectArray(arrayOf("a", "b")).hashCode() == WithObjectArray(arrayOf("a", "b")).hashCode())
+    assertEquals(false, WithObjectArray(arrayOf("a", "b")) == WithObjectArray(arrayOf("a", "c")))
+
+    assertEquals(true, WithPrimitiveArray(intArrayOf(1, 2)) == WithPrimitiveArray(intArrayOf(1, 2)))
+    assertEquals(true, WithPrimitiveArray(intArrayOf(1, 2)).hashCode() == WithPrimitiveArray(intArrayOf(1, 2)).hashCode())
+    assertEquals(false, WithPrimitiveArray(intArrayOf(1, 2)) == WithPrimitiveArray(intArrayOf(1, 3)))
+
+    // A one-dimensional object array is already compared deeply, so a nested one needs nothing extra.
+    assertEquals(true, WithNestedArray(arrayOf(arrayOf("a"))) == WithNestedArray(arrayOf(arrayOf("a"))))
+    assertEquals(true, WithNestedArray(arrayOf(arrayOf("a"))).hashCode() == WithNestedArray(arrayOf(arrayOf("a"))).hashCode())
+    assertEquals(false, WithNestedArray(arrayOf(arrayOf("a"))) == WithNestedArray(arrayOf(arrayOf("b"))))
+
+    // `java.util.Arrays` accepts null itself, so a null array needs no separate guard.
+    assertEquals(true, WithNullableArray(null) == WithNullableArray(null))
+    assertEquals(true, WithNullableArray(null).hashCode() == WithNullableArray(null).hashCode())
+    assertEquals(false, WithNullableArray(null) == WithNullableArray(arrayOf("a")))
 
     assertEquals(true, Empty() == Empty())
     // The accumulator Lombok starts every `hashCode` from, with nothing folded into it.

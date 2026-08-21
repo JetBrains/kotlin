@@ -502,6 +502,40 @@ class WithExclude {
 }
 
 @EqualsAndHashCode
+class WithNestedArray {
+  val array: Array<Array<String>>
+    field = array
+    get
+
+  constructor(array: Array<Array<String>>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNestedArray -> return false
+    }
+    val tmp_23: WithNestedArray = other /*as WithNestedArray */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_23.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_24: Int = 1
+    tmp_24 = tmp_24.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_24
+  }
+
+}
+
+@EqualsAndHashCode
 class WithNullable {
   val a: String?
     field = a
@@ -524,24 +558,126 @@ class WithNullable {
     when {
       other !is WithNullable -> return false
     }
-    val tmp_23: WithNullable = other /*as WithNullable */
+    val tmp_25: WithNullable = other /*as WithNullable */
     when {
-      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_23.<get-a>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_25.<get-a>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_23.<get-b>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_25.<get-b>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_24: Int = 1
-    tmp_24 = tmp_24.times(other = 59).plus(other = when {
+    var tmp_26: Int = 1
+    tmp_26 = tmp_26.times(other = 59).plus(other = when {
       EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 43
       else -> <this>.<get-a>().hashCode()
     })
-    tmp_24 = tmp_24.times(other = 59).plus(other = <this>.<get-b>().hashCode())
-    return tmp_24
+    tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_26
+  }
+
+}
+
+@EqualsAndHashCode
+class WithNullableArray {
+  val array: Array<String>?
+    field = array
+    get
+
+  constructor(array: Array<String>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNullableArray -> return false
+    }
+    val tmp_27: WithNullableArray = other /*as WithNullableArray */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_27.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_28: Int = 1
+    tmp_28 = tmp_28.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_28
+  }
+
+}
+
+@EqualsAndHashCode
+class WithObjectArray {
+  val array: Array<String>
+    field = array
+    get
+
+  constructor(array: Array<String>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithObjectArray -> return false
+    }
+    val tmp_29: WithObjectArray = other /*as WithObjectArray */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_29.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_30: Int = 1
+    tmp_30 = tmp_30.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_30
+  }
+
+}
+
+@EqualsAndHashCode
+class WithPrimitiveArray {
+  val array: IntArray
+    field = array
+    get
+
+  constructor(array: IntArray) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithPrimitiveArray -> return false
+    }
+    val tmp_31: WithPrimitiveArray = other /*as WithPrimitiveArray */
+    when {
+      equals(p0 = <this>.<get-array>(), p1 = tmp_31.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_32: Int = 1
+    tmp_32 = tmp_32.times(other = 59).plus(other = hashCode(p0 = <this>.<get-array>()))
+    return tmp_32
   }
 
 }
@@ -639,6 +775,18 @@ fun box(): String {
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableInt(optionalId = null), arg1 = SingleNullableInt(optionalId = null)))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = SingleNullableInt(optionalId = null).hashCode(), arg1 = SingleNullableInt(optionalId = null).hashCode()))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = TwoNullableInts(first = null, second = null).hashCode(), arg1 = TwoNullableInts(first = null, second = null).hashCode()))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])), arg1 = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])).hashCode(), arg1 = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])).hashCode()))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])), arg1 = WithObjectArray(array = arrayOf<String>(elements = ["a", "c"]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])), arg1 = WithPrimitiveArray(array = intArrayOf(elements = [1, 2]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])).hashCode(), arg1 = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])).hashCode()))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])), arg1 = WithPrimitiveArray(array = intArrayOf(elements = [1, 3]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])), arg1 = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])).hashCode(), arg1 = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])).hashCode()))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])), arg1 = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["b"])]))))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNullableArray(array = null), arg1 = WithNullableArray(array = null)))
+  assertEquals<Boolean>(a = true, b = EQEQ(arg0 = WithNullableArray(array = null).hashCode(), arg1 = WithNullableArray(array = null).hashCode()))
+  assertEquals<Boolean>(a = false, b = EQEQ(arg0 = WithNullableArray(array = null), arg1 = WithNullableArray(array = arrayOf<String>(elements = ["a"]))))
   assertEquals<Boolean>(a = true, b = EQEQ(arg0 = Empty(), arg1 = Empty()))
   assertEquals<Int>(a = 1, b = Empty().hashCode())
   val cd1: CallSuperDerived = CallSuperDerived(ownProp = "x")
@@ -665,17 +813,17 @@ fun box(): String {
       when {
         other !is LocalClass -> return false
       }
-      val tmp_25: LocalClass = other /*as LocalClass */
+      val tmp_33: LocalClass = other /*as LocalClass */
       when {
-        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_25.<get-x>()).not() -> return false
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_33.<get-x>()).not() -> return false
       }
       return true
     }
 
     override fun hashCode(): Int {
-      var tmp_26: Int = 1
-      tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-x>().hashCode())
-      return tmp_26
+      var tmp_34: Int = 1
+      tmp_34 = tmp_34.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+      return tmp_34
     }
 
   }
