@@ -97,6 +97,17 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xexport-kdoc",
+        description = "Export KDoc entries in the framework header.",
+    )
+    @Enables(LanguageFeature.ExportKDocDocumentationToKlib)
+    var exportKDoc: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xgenerate-polyfills",
         description = "Generate polyfills for features from the ES6+ standards.",
     )

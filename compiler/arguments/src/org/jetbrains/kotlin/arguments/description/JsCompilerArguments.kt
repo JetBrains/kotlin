@@ -279,6 +279,18 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xexport-kdoc"
+        compilerName = "exportKDoc"
+        description = "Export KDoc entries in the framework header.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.ExportKDocDocumentationToKlib))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xdts-use-unknown-instead-any"
         compilerName = "useUnknownInsteadAny"
         description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type (instead of `any`).".asReleaseDependent()
