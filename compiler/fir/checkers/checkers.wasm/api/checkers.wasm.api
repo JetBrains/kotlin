@@ -1,4 +1,4 @@
-public final class org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrors {
+public final class org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrors : org/jetbrains/kotlin/diagnostics/KtDiagnosticsContainer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrors;
 	public final fun getASSOCIATED_OBJECT_INVALID_BINDING ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getCALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -16,6 +16,7 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErr
 	public final fun getNESTED_WASM_IMPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getNON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
 	public final fun getNON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public fun getRendererFactory ()Lorg/jetbrains/kotlin/diagnostics/rendering/BaseDiagnosticRendererFactory;
 	public final fun getWASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getWASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
 	public final fun getWASM_EXPORT_ON_EXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
@@ -36,6 +37,8 @@ public final class org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErr
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/FirWasmJsCodeHelpersKt {
 	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;)Z
 	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;)Z
+	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/symbols/impl/FirNamedFunctionSymbol;)Z
+	public static final fun hasValidJsCodeBody (Lorg/jetbrains/kotlin/fir/symbols/impl/FirPropertySymbol;)Z
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/FirWasmJsExportHelpersKt {
@@ -88,11 +91,11 @@ public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/F
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/FirWasmExternalChecker : org/jetbrains/kotlin/fir/analysis/web/common/checkers/declaration/FirWebCommonExternalChecker {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/FirWasmExternalChecker;
-	public fun additionalCheck (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
+	public fun additionalCheck (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 	public fun hasExternalLikeAnnotations (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/fir/FirSession;)Z
 	public fun isDefinedExternallyCallableId (Lorg/jetbrains/kotlin/name/CallableId;)Z
 	public fun isNativeOrEffectivelyExternal (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Z
-	public fun reportExternalEnum (Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
+	public fun reportExternalEnum (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/FirWasmExternalFileChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
@@ -124,7 +127,7 @@ public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/F
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/FirWasmImportAnnotationCheckerKt {
-	public static final fun checkWasmInteropSignature (Lorg/jetbrains/kotlin/fir/declarations/FirFunction;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
+	public static final fun checkWasmInteropSignature (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirFunction;)V
 }
 
 public final class org/jetbrains/kotlin/fir/analysis/wasm/checkers/declaration/FirWasmJsAssociatedObjectChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {

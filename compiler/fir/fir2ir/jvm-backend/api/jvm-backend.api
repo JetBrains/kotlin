@@ -43,7 +43,6 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/ConeTypeSystemCommonBack
 	public fun getPrimitiveArrayType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
 	public fun getPrimitiveType (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/builtins/PrimitiveType;
 	public fun getRepresentativeUpperBound (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
-	public fun getSubstitutedUnderlyingType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getType (Lorg/jetbrains/kotlin/types/model/TypeArgumentMarker;)Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;
 	public fun getTypeConstructor (Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
 	public fun getTypeParameter (Lorg/jetbrains/kotlin/types/model/TypeVariableTypeConstructorMarker;)Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
@@ -99,6 +98,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/ConeTypeSystemCommonBack
 	public fun isNullableAny (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
 	public fun isNullableNothing (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
 	public fun isNullableType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Z
+	public fun isNullableType (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;Z)Z
 	public fun isOldCapturedType (Lorg/jetbrains/kotlin/types/model/CapturedTypeMarker;)Z
 	public fun isPrimitiveType (Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;)Z
 	public fun isPrimitiveType (Lorg/jetbrains/kotlin/types/model/SimpleTypeMarker;)Z
@@ -146,6 +146,7 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/ConeTypeSystemCommonBack
 	public fun typeConstructor (Lorg/jetbrains/kotlin/types/model/KotlinTypeMarker;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
 	public fun typeConstructor (Lorg/jetbrains/kotlin/types/model/RigidTypeMarker;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
 	public fun typeSubstitutorByTypeConstructor (Ljava/util/Map;)Lorg/jetbrains/kotlin/types/model/TypeSubstitutorMarker;
+	public fun typeSubstitutorForUnderlyingType (Ljava/util/Map;)Lorg/jetbrains/kotlin/types/model/TypeSubstitutorMarker;
 	public fun typeWithArguments (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/util/List;)Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
 	public synthetic fun typeWithArguments (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/util/List;)Lorg/jetbrains/kotlin/types/model/SimpleTypeMarker;
 	public fun unwrapStubTypeVariableConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
@@ -238,10 +239,10 @@ public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmSignatureSerialize
 	public fun requiresPropertySignature (Lorg/jetbrains/kotlin/fir/declarations/FirProperty;Ljava/lang/String;)Z
 }
 
-public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmTypeMapper : org/jetbrains/kotlin/fir/FirSessionComponent {
+public final class org/jetbrains/kotlin/fir/backend/jvm/FirJvmTypeMapper : org/jetbrains/kotlin/fir/FirSessionComponent, org/jetbrains/kotlin/fir/SessionHolder {
 	public static final field Companion Lorg/jetbrains/kotlin/fir/backend/jvm/FirJvmTypeMapper$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;)V
-	public final fun getSession ()Lorg/jetbrains/kotlin/fir/FirSession;
+	public fun getSession ()Lorg/jetbrains/kotlin/fir/FirSession;
 	public final fun getTypeContext ()Lorg/jetbrains/kotlin/types/TypeSystemCommonBackendContext;
 	public final fun isPrimitiveBacked (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
 	public final fun mapType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/load/kotlin/TypeMappingMode;Lorg/jetbrains/kotlin/codegen/signature/JvmSignatureWriter;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/org/objectweb/asm/Type;

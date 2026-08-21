@@ -18,6 +18,11 @@ public final class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ForRe
 	public fun render (Ljava/lang/Iterable;)Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$None : org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$None;
+	public fun render (Ljava/lang/Iterable;)Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ToString : org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ToString;
 	public fun render (Ljava/lang/Iterable;)Ljava/lang/String;
@@ -83,6 +88,8 @@ public class org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
 public class org/jetbrains/kotlin/fir/renderer/ConeTypeRendererForDebugInfo : org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
 	protected fun <init> ()V
 	public fun <init> (Ljava/lang/StringBuilder;)V
+	protected fun <init> (Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeFlexibleType;)V
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntegerLiteralType;)V
 	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;)V
@@ -315,7 +322,6 @@ public abstract class org/jetbrains/kotlin/fir/types/ConeAttributeWithConeType :
 public final class org/jetbrains/kotlin/fir/types/ConeAttributes : org/jetbrains/kotlin/util/AttributeArrayOwner, java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeAttributes$Companion;
 	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
 	public final fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
 	public final fun contains (Lkotlin/reflect/KClass;)Z
@@ -388,31 +394,26 @@ public final class org/jetbrains/kotlin/fir/types/ConeBuiltinTypeUtilsKt {
 }
 
 public final class org/jetbrains/kotlin/fir/types/ConeCapturedType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType, org/jetbrains/kotlin/types/model/CapturedTypeMarker {
-	public fun <init> (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
-	public fun <init> (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;Z)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/types/model/CaptureStatus;
-	public final fun component2 ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
-	public final fun component3 ()Z
-	public final fun component4 ()Lorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;
-	public final fun component5 ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
-	public final fun component6 ()Z
-	public final fun copy (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;Z)Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;
+	public fun <init> (ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)V
+	public synthetic fun <init> (ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Lorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;
+	public final fun component3 ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun copy (ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
-	public final fun getCaptureStatus ()Lorg/jetbrains/kotlin/types/model/CaptureStatus;
 	public final fun getConstructor ()Lorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;
-	public final fun getLowerType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
 	public fun hashCode ()I
 	public final fun isMarkedNullable ()Z
-	public final fun isProjectionNotNull ()Z
 }
 
 public final class org/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker, org/jetbrains/kotlin/types/model/CapturedTypeConstructorMarker {
-	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Ljava/util/List;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Ljava/util/List;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/types/model/CaptureStatus;Ljava/util/List;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/types/model/CaptureStatus;Ljava/util/List;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCaptureStatus ()Lorg/jetbrains/kotlin/types/model/CaptureStatus;
+	public final fun getLowerType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
 	public final fun getProjection ()Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
 	public final fun getSupertypes ()Ljava/util/List;
 	public final fun getTypeParameterMarker ()Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
@@ -765,13 +766,6 @@ public abstract class org/jetbrains/kotlin/fir/util/BaseMultimap : org/jetbrains
 	public fun put (Ljava/lang/Object;Ljava/lang/Object;)V
 	public fun remove (Ljava/lang/Object;Ljava/lang/Object;)V
 	public fun removeKey (Ljava/lang/Object;)Ljava/util/Collection;
-}
-
-public final class org/jetbrains/kotlin/fir/util/ChainedIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
-	public fun <init> (Ljava/util/Collection;)V
-	public fun hasNext ()Z
-	public fun next ()Ljava/lang/Object;
-	public fun remove ()V
 }
 
 public abstract class org/jetbrains/kotlin/fir/util/ConeTypeRegistry : org/jetbrains/kotlin/util/TypeRegistry {

@@ -88,6 +88,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/FirTree : org/jetbrai
 	public final fun getKlass ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getLabel ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getLazyBlock ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
+	public final fun getLazyContractDescription ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getLazyExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getLegacyRawContractDescription ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
 	public final fun getLiteralExpression ()Lorg/jetbrains/kotlin/fir/tree/generator/model/Element;
@@ -218,6 +219,7 @@ public final class org/jetbrains/kotlin/fir/tree/generator/TypesKt {
 	public static final fun getDeclarationOriginType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDelegateFieldSymbolType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDeprecationsProviderType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDfaType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getDirectDeclarationsAccessAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getEffectiveVisibilityType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
 	public static final fun getEmptyAnnotationArgumentMappingType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;

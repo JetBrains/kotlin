@@ -138,6 +138,7 @@ public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/WEB_C
 	public final fun getEXPORT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getEXTERNALS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 	public final fun getJSCODE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getREFLECTION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
 }
 
 public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/AbstractDiagnosticGroup {
