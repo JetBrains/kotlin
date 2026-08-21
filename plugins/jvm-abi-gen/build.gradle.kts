@@ -71,7 +71,12 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_1_8) {
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
+    ) {
         addClasspathProperty("kotlin.jvm.abi.jar.path") {
             from(tasks.jar.map { it.archiveFile.get() })
         }

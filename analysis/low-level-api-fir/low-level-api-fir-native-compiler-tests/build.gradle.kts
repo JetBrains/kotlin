@@ -29,7 +29,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask {
+    testTask(maxHeapSize = testMaxHeapSizeLarge) {
         dependsOn(":dist")
         workingDir = rootDir
     }
