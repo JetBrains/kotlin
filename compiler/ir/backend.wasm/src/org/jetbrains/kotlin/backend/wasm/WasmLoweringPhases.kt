@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.evaluation.FloatingPointOptimizationMode
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -98,7 +99,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
 private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
-    return ConstEvaluationLowering(context, isFloatingPointOptimizationEnabled = false)
+    return ConstEvaluationLowering(context, FloatingPointOptimizationMode.NO_TO_STRING)
 }
 
 fun wasmLoweringsOfTheFirstPhase(
