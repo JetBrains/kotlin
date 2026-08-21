@@ -305,7 +305,7 @@ class PsiClassRenderer private constructor(
 
         val renderedAttributesString = renderedAttributes.joinToString()
         if (qualifiedName == null && renderedAttributesString.isEmpty()) {
-            return ""
+            return "@EMPTY_FQN"
         }
         return "@$qualifiedName(${renderedAttributes.joinToString()})"
     }
