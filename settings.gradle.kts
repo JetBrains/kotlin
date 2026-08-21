@@ -633,6 +633,8 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
     ":prepare:analysis-api:kotlin-analysis-api-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
+    ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
