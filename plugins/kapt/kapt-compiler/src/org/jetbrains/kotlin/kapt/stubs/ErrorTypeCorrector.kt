@@ -90,12 +90,16 @@ class ErrorTypeCorrector(
         }
     }
 
-    private fun convert(typeReference: KtTypeReference?, coneType: ConeKotlinType?, substitutions: SubstitutionMap): Pair<JCTree.JCExpression, String> {
+    private fun convert(
+        typeReference: KtTypeReference?, coneType: ConeKotlinType?, substitutions: SubstitutionMap,
+    ): Pair<JCTree.JCExpression, String> {
         val type = typeReference?.typeElement ?: return defaultType
         return convert(type, coneType, substitutions)
     }
 
-    private fun convertUserType(type: KtUserType, coneType: ConeKotlinType?, substitutions: SubstitutionMap): Pair<JCTree.JCExpression, String> {
+    private fun convertUserType(
+        type: KtUserType, coneType: ConeKotlinType?, substitutions: SubstitutionMap,
+    ): Pair<JCTree.JCExpression, String> {
         if (coneType != null) {
             return convertFirUserType(type, coneType, substitutions)
         }
@@ -180,18 +184,20 @@ class ErrorTypeCorrector(
         return when {
             projectionKind === KtProjectionKind.STAR -> unbounded()
             projectionKind === KtProjectionKind.IN || variance === Variance.IN_VARIANCE ->
-                treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), argumentExpression.first)
-                    .to("? super ${argumentExpression.second}")
+                treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), argumentExpression.first) to
+                        "? super ${argumentExpression.second}"
 
             projectionKind === KtProjectionKind.OUT || variance === Variance.OUT_VARIANCE ->
-                treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), argumentExpression.first)
-                    .to("? extends ${argumentExpression.second}")
+                treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), argumentExpression.first) to
+                        "? extends ${argumentExpression.second}"
 
             else -> argumentExpression // invariant
         }
     }
 
-    private fun convertFunctionType(type: KtFunctionType, coneType: ConeKotlinType?, substitutions: SubstitutionMap): Pair<JCTree.JCExpression, String> {
+    private fun convertFunctionType(
+        type: KtFunctionType, coneType: ConeKotlinType?, substitutions: SubstitutionMap,
+    ): Pair<JCTree.JCExpression, String> {
         val receiverType = type.receiverTypeReference
         val coneTypeArguments = (coneType as? ConeClassLikeType)?.typeArguments
         var parameterTypes = mapJList(type.parameters.withIndex()) { [index, parameterKtType] ->
@@ -242,7 +248,9 @@ class ErrorTypeCorrector(
     }
 
     @OptIn(SymbolInternals::class)
-    private fun convertFirUserType(type: KtUserType, coneType: ConeKotlinType, substitutions: SubstitutionMap): Pair<JCTree.JCExpression, String> {
+    private fun convertFirUserType(
+        type: KtUserType, coneType: ConeKotlinType, substitutions: SubstitutionMap,
+    ): Pair<JCTree.JCExpression, String> {
         val session = converter.kaptContext.firSession!!
 
         val abbreviatedType = coneType.abbreviatedType
@@ -317,6 +325,7 @@ fun KotlinType.containsErrorTypes(allowedDepth: Int = 10): Boolean {
     return false
 }
 
+@Suppress("RedundantIf")
 fun IrType.containsErrorTypes(allowedDepth: Int = 10): Boolean {
     if (allowedDepth <= 0) return false
     return this is IrErrorType ||

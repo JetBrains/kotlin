@@ -45,6 +45,8 @@ class KaptContextForStubGeneration(
 
     val project: Project get() = generationState.project
 
+    // FirSession can be null in case of incremental compilation, e.g. if only Java files need reprocessing,
+    // or all affected Kotlin sources are removed.
     val firSession: FirSession? = firFiles.firstOrNull()?.moduleData?.session
 
     override fun preregisterTreeMaker(context: Context) {
