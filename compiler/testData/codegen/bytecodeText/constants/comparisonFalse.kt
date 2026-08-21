@@ -10,12 +10,12 @@ fun foo(): Array<Boolean> {
 }
 
 // Disabled: current backend doesn't fold them.
-// 4 INVOKESTATIC
+// 6 INVOKESTATIC
 // 4 INVOKESTATIC java/lang/Boolean.valueOf
-// 1 ICONST_1
-// 5 ICONST_0
+// 2 ICONST_1
+// 6 ICONST_0
 // 0 IFEQ
-// 0 IFNE
+// 1 IFNE
 // 0 IFGE
 // 0 IFGT
 // 0 IFLE
