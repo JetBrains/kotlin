@@ -350,7 +350,7 @@ class FusStatisticsIT : KGPBaseTest() {
                     "compileKotlinJvm", "-Pkotlin.session.logger.root.path=$projectPath",
                     buildOptions = defaultBuildOptions.copy(
                         jvmClasspathMetadata = true,
-                        enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+                        enableJvmIncrementalCompilationOfCommonSources = true,
                     ),
                 ) {
                     assertOutputDoesNotContainFusErrors()
@@ -364,7 +364,7 @@ class FusStatisticsIT : KGPBaseTest() {
                     "clean", "compileKotlinJvm", "-Pkotlin.session.logger.root.path=$projectPath",
                     buildOptions = defaultBuildOptions.copy(
                         jvmClasspathMetadata = false,
-                        enableJvmUnsafeIncrementalCompilationForMultiplatform = false,
+                        enableJvmIncrementalCompilationOfCommonSources = false,
                     ),
                 ) {
                     assertOutputDoesNotContainFusErrors()

@@ -616,17 +616,22 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     /**
-     * Without unsafe optimization: in k2, if common source is dirty, module will be rebuilt.
-     * With unsafe optimization: regular IC logic is used. Common sources might see declarations from platform sources. See KT-62686
+     * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.
+     * When enabled: common sources are compiled incrementally, and [enableJvmClasspathMetadata] keeps them from seeing
+     * platform declarations. See KT-86703.
      */
-    val enableJvmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    val enableJvmIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
-    /** See [enableJvmUnsafeOptimizationsForMultiplatform] */
+    /**
+     * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.
+     * When enabled: regular IC logic is used, and common sources might see platform declarations. There is no
+     * counterpart of [enableJvmClasspathMetadata] to prevent this. See KT-62686.
+     */
     val enableJsUnsafeOptimizationsForMultiplatform: Provider<Boolean>
         get() = booleanProvider(PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
 
-    /** See [enableJvmUnsafeOptimizationsForMultiplatform] */
+    /** See [enableJsUnsafeOptimizationsForMultiplatform] */
     val enableWasmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
         get() = booleanProvider(PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
 
@@ -645,7 +650,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * giving each non-leaf fragment an isolated dependency view while jvmMain keeps the full JVM classpath.
      */
     val enableJvmClasspathMetadata: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(enableJvmUnsafeOptimizationsForMultiplatform)
+        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(enableJvmIncrementalCompilationOfCommonSources)
 
     val enableKlibsCrossCompilation: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
@@ -880,6 +885,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT =
             property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
+        val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
@@ -907,13 +914,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
 
         /**
-         * Replaced by the per-target properties below, kept only to report
+         * Replaced by the per-target properties, kept only to report
          * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedErrorGradleProperties] on its usage.
          */
         val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
