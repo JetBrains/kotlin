@@ -18,6 +18,13 @@ class ConstructorExampleWithForce(val int: Int) {
     val z by lazy { "TEST" }
 }
 
+// KT-88705: nothing is generated for a value class, whose constructors compile to static `constructor-impl`
+// functions - the JVM backend used to fail on the generated constructor's instance initializer. Declaring the
+// class is enough to run that codegen.
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
+@JvmInline
+value class ConstructorExampleOnValueClass(val value: Int)
+
 fun box(): String {
     val zeroObject = ConstructorExample()
     assertEquals(false, zeroObject.boolean)
