@@ -568,6 +568,39 @@ class CompositionTests {
             movableContent.content
         }
     }
+
+    /**
+     * This is a regression test against a bug that, in certain cases, prevented execution of
+     * non-local `return` statements inside lambdas called from `when` expressions.
+     * For more details, see https://issuetracker.google.com/issues/549552317.
+     */
+    @Test
+    @OptIn(InternalComposeApi::class)
+    fun testNonLocalReturnFromWhen() = compositionTest {
+        val failed = FakeResult(RuntimeException("error"))
+        var reachedCodeAfterGuard = false
+        var leaked: String? = "guard-not-reached"
+
+        compose {
+            Wrapper {
+                val value: String = failed.fold(
+                    onSuccess = { "Ok" },
+                    onFailure = {
+                        stringResource()
+                        return@Wrapper
+                    }
+                )
+                leaked = value
+                reachedCodeAfterGuard = true
+            }
+
+            if (reachedCodeAfterGuard) {
+                error(
+                    "return@Wrapper had no effect and the String-typed `val value` held: $leaked"
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -756,6 +789,23 @@ internal fun ConsumeChildState(state: ChildState, result: MutableState<Boolean>)
     LaunchedEffect(state) {
         if (state.value > 0) {
             result.value = true
+        }
+    }
+}
+
+@Composable
+fun Wrapper(content: @Composable () -> Unit) {
+    content()
+}
+
+class FakeResult(val value: Exception?) {
+    inline fun fold(
+        onSuccess: () -> String,
+        onFailure: (exception: Exception) -> String,
+    ): String {
+        return when (value) {
+            null -> onSuccess()
+            else -> onFailure(value)
         }
     }
 }
