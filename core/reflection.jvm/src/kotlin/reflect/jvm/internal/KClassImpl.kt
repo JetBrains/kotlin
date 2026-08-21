@@ -114,7 +114,7 @@ internal class KClassImpl<T : Any>(
             descriptor ?: createSyntheticClassOrFail(classId, moduleData)
         }
 
-        val annotations: List<Annotation> by ReflectProperties.lazySoft {
+        val annotations: List<Annotation> by lazy(PUBLICATION) {
             val allAnnotations = jClass.annotations
             val declaredAnnotations = jClass.declaredAnnotations
             val hasInheritedAnnotations = allAnnotations.size != declaredAnnotations.size
@@ -165,8 +165,8 @@ internal class KClassImpl<T : Any>(
             filteredAnnotations.unwrapKotlinRepeatableAnnotations()
         }
 
-        val simpleName: String? by ReflectProperties.lazySoft {
-            if (jClass.isAnonymousClass) return@lazySoft null
+        val simpleName: String? by lazy(PUBLICATION) {
+            if (jClass.isAnonymousClass) return@lazy null
 
             val classId = classId
             @OptIn(ClassIdBasedLocality::class)
@@ -176,8 +176,8 @@ internal class KClassImpl<T : Any>(
             }
         }
 
-        val qualifiedName: String? by ReflectProperties.lazySoft {
-            if (jClass.isAnonymousClass) return@lazySoft null
+        val qualifiedName: String? by lazy(PUBLICATION) {
+            if (jClass.isAnonymousClass) return@lazy null
 
             val classId = classId
             @OptIn(ClassIdBasedLocality::class)
@@ -257,7 +257,7 @@ internal class KClassImpl<T : Any>(
         }
 
 
-        val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
+        val nestedClasses: Collection<KClass<*>> by lazy(PUBLICATION) {
             val kmClass = kmClass
             when {
                 kmClass != null -> {
@@ -289,7 +289,7 @@ internal class KClassImpl<T : Any>(
             field.get(null) as T
         }
 
-        val typeParameters: List<KTypeParameter> by ReflectProperties.lazySoft {
+        val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
             if (useK1Implementation) {
                 descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
             } else if (kmClass == null) {
@@ -299,7 +299,7 @@ internal class KClassImpl<T : Any>(
             }
         }
 
-        internal val typeParameterTable: TypeParameterTable by ReflectProperties.lazySoft {
+        internal val typeParameterTable: TypeParameterTable by lazy(PUBLICATION) {
             if (kmClass == null)
                 TypeParameterTable.EMPTY
             else
@@ -311,11 +311,11 @@ internal class KClassImpl<T : Any>(
                 )
         }
 
-        val supertypes: List<KType> by ReflectProperties.lazySoft {
-            if (jClass == Any::class.java) return@lazySoft emptyList()
+        val supertypes: List<KType> by lazy(PUBLICATION) {
+            if (jClass == Any::class.java) return@lazy emptyList()
 
             if (useK1Implementation) {
-                return@lazySoft computeLegacySupertypes()
+                return@lazy computeLegacySupertypes()
             }
 
             val result = ArrayList<KType>()
@@ -405,7 +405,7 @@ internal class KClassImpl<T : Any>(
             return result.compact()
         }
 
-        val sealedSubclasses: List<KClass<out T>> by ReflectProperties.lazySoft {
+        val sealedSubclasses: List<KClass<out T>> by lazy(PUBLICATION) {
             val classLoader = jClass.safeClassLoader
             val kmClass = kmClass
             val result = when {
@@ -447,16 +447,16 @@ internal class KClassImpl<T : Any>(
                     Number::class.java.isAssignableFrom(jClass)
         }
 
-        val declaredMemberNames: Set<String> by ReflectProperties.lazySoft(::computeDeclaredMemberNames)
+        val declaredMemberNames: Set<String> by lazy(PUBLICATION, ::computeDeclaredMemberNames)
 
         private val declaredMembersByName: ConcurrentHashMap<String, Collection<ReflectKCallable<*>>>
-                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+                by lazy(PUBLICATION) { ConcurrentHashMap() }
 
         private val allMembersByName: ConcurrentHashMap<String, Collection<ReflectKCallable<*>>>
-                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+                by lazy(PUBLICATION) { ConcurrentHashMap() }
 
         private val fakeOverrideMembersByName: ConcurrentHashMap<String, MembersJavaSignatureMap>
-                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+                by lazy(PUBLICATION) { ConcurrentHashMap() }
 
         val additionalFunctions: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::getAdditionalFunctions)
 
@@ -469,9 +469,9 @@ internal class KClassImpl<T : Any>(
         fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
             fakeOverrideMembersByName.getOrPut(name) { computeFakeOverrideMembersForName(this@KClassImpl, name) }
 
-        val declaredMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeDeclaredMembers)
+        val declaredMembers: Collection<ReflectKCallable<*>> by lazy(PUBLICATION, ::computeDeclaredMembers)
 
-        val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeAllMembers)
+        val allMembers: Collection<ReflectKCallable<*>> by lazy(PUBLICATION, ::computeAllMembers)
     }
 
     val data = lazy(PUBLICATION) { Data() }
