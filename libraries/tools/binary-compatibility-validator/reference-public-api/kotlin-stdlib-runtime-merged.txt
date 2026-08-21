@@ -3971,6 +3971,7 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getBoundContextArguments ()[Ljava/lang/Object;
 	public fun getBoundReceiver ()Ljava/lang/Object;
+	public fun getCompanionExtensionClass ()Lkotlin/reflect/KClass;
 	public fun getName ()Ljava/lang/String;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getParameters ()Ljava/util/List;
@@ -5267,6 +5268,9 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun until-eb3DHEI (JJ)Lkotlin/ranges/ULongRange;
 }
 
+public abstract interface annotation class kotlin/reflect/ExperimentalCompanionExtensions : java/lang/annotation/Annotation {
+}
+
 public abstract interface class kotlin/reflect/KAnnotatedElement {
 	public abstract fun getAnnotations ()Ljava/util/List;
 }
@@ -5274,6 +5278,7 @@ public abstract interface class kotlin/reflect/KAnnotatedElement {
 public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnotatedElement {
 	public abstract fun call ([Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun callBy (Ljava/util/Map;)Ljava/lang/Object;
+	public abstract fun getCompanionExtensionClass ()Lkotlin/reflect/KClass;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getParameters ()Ljava/util/List;
 	public abstract fun getReturnType ()Lkotlin/reflect/KType;

@@ -11,6 +11,8 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.metadata.Modality
+import kotlin.reflect.ExperimentalCompanionExtensions
+import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -62,6 +64,9 @@ internal class JavaAnnotationConstructor(
     override val annotations: List<Annotation> get() = emptyList()
     override val arity: Int get() = methods.size
     override val overridden: Collection<ReflectKFunction> get() = emptyList()
+
+    @ExperimentalCompanionExtensions
+    override val companionExtensionClass: KClass<*>? get() = null
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
         AnnotationConstructorCaller(klass.java, methods.map { it.name }, POSITIONAL_CALL, JAVA, methods)

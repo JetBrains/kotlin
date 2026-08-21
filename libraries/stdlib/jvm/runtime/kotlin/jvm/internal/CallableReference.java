@@ -214,4 +214,10 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     public boolean isSuspend() {
         return getReflected().isSuspend();
     }
+
+    @Override
+    @ExperimentalCompanionExtensions
+    public KClass<?> getCompanionExtensionClass() {
+        return getReflected().getCompanionExtensionClass();
+    }
 }
