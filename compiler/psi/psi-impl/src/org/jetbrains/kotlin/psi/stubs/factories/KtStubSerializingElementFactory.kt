@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.psi.stubs.factories
 import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubElementRegistryService
 import com.intellij.psi.stubs.StubSerializingElementFactory
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.stubs.KtStubElementFactories
 
 /**
  * A base class for all factories.
@@ -37,7 +37,7 @@ internal abstract class KtStubSerializingElementFactory<Stub : StubElement<Psi>,
             return true
         }
 
-        val parentFactory = StubElementRegistryService.getInstance().getStubFactory(parentType)
+        val parentFactory = KtStubElementFactories[parentType]
         return parentFactory?.shouldCreateStub(parent) == true
     }
 }

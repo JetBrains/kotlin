@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -20,384 +21,419 @@ import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
  * element types themselves.
  */
 internal class KotlinStubRegistryExtension : StubRegistryExtension {
-    @OptIn(KtImplementationDetail::class, KtExperimentalApi::class)
     override fun register(registry: StubRegistry) {
         registry.registerStubSerializer(KtFileElementType, KtFileStubSerializer)
 
-        registry.registerStubSerializingFactory(
+        for ((key, value) in KtStubElementFactories.factories) {
+            registry.registerStubSerializingFactory(key, value)
+        }
+    }
+}
+
+/**
+ * All Kotlin stub factories by their element types.
+ *
+ * The mapping is kept here to allow cheap factory lookups by an element type. Consulting
+ * [com.intellij.psi.stubs.StubElementRegistryService] instead is too expensive for hot paths
+ * such as [KtStubSerializingElementFactory.shouldCreateStub].
+ */
+internal object KtStubElementFactories {
+    @OptIn(KtImplementationDetail::class, KtExperimentalApi::class)
+    val factories: Map<KtNodeType, KtStubSerializingElementFactory<*, *>> = buildMap {
+        registerStubSerializingFactory(
             type = KtStubElementTypes.SECONDARY_CONSTRUCTOR,
             factory = KtSecondaryConstructorStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.PRIMARY_CONSTRUCTOR,
             factory = KtPrimaryConstructorStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.CLASS,
             factory = KtClassStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.FUNCTION,
             factory = KtFunctionStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.PROPERTY,
             factory = KtPropertyStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.PROPERTY_ACCESSOR,
             factory = KtPropertyAccessorStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.BACKING_FIELD,
             factory = KtBackingFieldStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.DESTRUCTURING_DECLARATION,
             factory = KtDestructuringDeclarationStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.TYPEALIAS,
             factory = KtTypeAliasStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.ENUM_ENTRY,
             factory = KtEnumEntryStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.OBJECT_DECLARATION,
             factory = KtObjectStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CLASS_INITIALIZER,
             psiFactory = ::KtClassInitializer,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.SCRIPT_INITIALIZER,
             factory = KtScriptInitializerStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.VALUE_PARAMETER,
             factory = KtParameterStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.VALUE_PARAMETER_LIST,
             psiFactory = ::KtParameterList,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.TYPE_PARAMETER,
             factory = KtTypeParameterStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.TYPE_PARAMETER_LIST,
             psiFactory = ::KtTypeParameterList,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.ANNOTATION_ENTRY,
             factory = KtAnnotationEntryStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.ANNOTATION,
             psiFactory = ::KtAnnotation,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.ANNOTATION_TARGET,
             factory = KtAnnotationUseSiteTargetStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CLASS_BODY,
             psiFactory = ::KtClassBody,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.COMPANION_BLOCK,
             psiFactory = ::KtCompanionBlock,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.IMPORT_LIST,
             psiFactory = ::KtImportList,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.FILE_ANNOTATION_LIST,
             psiFactory = ::KtFileAnnotationList,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.IMPORT_DIRECTIVE,
             factory = KtImportDirectiveStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.IMPORT_ALIAS,
             factory = KtImportAliasStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.PACKAGE_DIRECTIVE,
             psiFactory = ::KtPackageDirective,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.MODIFIER_LIST,
             factory = KtModifierListStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.TYPE_CONSTRAINT_LIST,
             psiFactory = ::KtTypeConstraintList,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.TYPE_CONSTRAINT,
             psiFactory = ::KtTypeConstraint,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.NULLABLE_TYPE,
             psiFactory = ::KtNullableType,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.INTERSECTION_TYPE,
             psiFactory = ::KtIntersectionType,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.DYNAMIC_TYPE,
             psiFactory = ::KtDynamicType,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.TYPE_REFERENCE,
             psiFactory = ::KtTypeReference,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.USER_TYPE,
             factory = KtUserTypeStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.FUNCTION_TYPE,
             factory = KtFunctionTypeStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.TYPE_PROJECTION,
             factory = KtTypeProjectionStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.FUNCTION_TYPE_RECEIVER,
             psiFactory = ::KtFunctionTypeReceiver,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.REFERENCE_EXPRESSION,
             factory = KtNameReferenceExpressionStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
             psiFactory = ::KtDotQualifiedExpression,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CALL_EXPRESSION,
             psiFactory = ::KtCallExpression,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.OPERATION_REFERENCE,
             factory = KtOperationReferenceExpressionStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.PREFIX_EXPRESSION,
             psiFactory = ::KtPrefixExpression,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.POSTFIX_EXPRESSION,
             psiFactory = ::KtPostfixExpression,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.BINARY_EXPRESSION,
             psiFactory = ::KtBinaryExpression,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.PARENTHESIZED,
             psiFactory = ::KtParenthesizedExpression,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.OBJECT_LITERAL,
             psiFactory = ::KtObjectLiteralExpression,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION,
             factory = KtEnumEntrySuperclassReferenceExpressionStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.TYPE_ARGUMENT_LIST,
             psiFactory = ::KtTypeArgumentList,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.VALUE_ARGUMENT_LIST,
             psiFactory = ::KtValueArgumentList,
         )
 
-        registry.registerValueArgumentFactory(
+        registerValueArgumentFactory(
             type = KtStubElementTypes.VALUE_ARGUMENT,
             psiFactory = ::KtValueArgument,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTRACT_EFFECT_LIST,
             psiFactory = ::KtContractEffectList,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTRACT_EFFECT,
             psiFactory = ::KtContractEffect,
         )
 
-        registry.registerValueArgumentFactory(
+        registerValueArgumentFactory(
             type = KtStubElementTypes.LAMBDA_ARGUMENT,
             psiFactory = ::KtLambdaArgument,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.VALUE_ARGUMENT_NAME,
             psiFactory = ::KtValueArgumentName,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.SUPER_TYPE_LIST,
             psiFactory = ::KtSuperTypeList,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.INITIALIZER_LIST,
             psiFactory = ::KtInitializerList,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY,
             psiFactory = ::KtDelegatedSuperTypeEntry,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY,
             psiFactory = ::KtSuperTypeCallEntry,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.SUPER_TYPE_ENTRY,
             psiFactory = ::KtSuperTypeEntry,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CONSTRUCTOR_CALLEE,
             psiFactory = ::KtConstructorCalleeExpression,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.CONTEXT_RECEIVER,
             factory = KtContextReceiverStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTEXT_PARAMETER_LIST,
             psiFactory = ::KtContextReceiverList,
         )
 
         for (kind in ConstantValueKind.entries) {
-            registry.registerStubSerializingFactory(
+            registerStubSerializingFactory(
                 type = kind.toConstantExpressionElementType(),
                 factory = KtConstantExpressionStubSerializingElementFactory(kind),
             )
         }
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.CLASS_LITERAL_EXPRESSION,
             psiFactory = ::KtClassLiteralExpression,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION,
             factory = KtCollectionLiteralExpressionStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderFactory(
+        registerPlaceHolderFactory(
             type = KtStubElementTypes.STRING_TEMPLATE,
             psiFactory = ::KtStringTemplateExpression,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY,
             factory = KtBlockStringTemplateEntryStubSerializingElementFactory,
         )
 
-        registry.registerPlaceHolderWithTextFactory(
+        registerPlaceHolderWithTextFactory(
             type = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
             psiFactory = ::KtSimpleNameStringTemplateEntry,
         )
 
-        registry.registerPlaceHolderWithTextFactory(
+        registerPlaceHolderWithTextFactory(
             type = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
             psiFactory = ::KtLiteralStringTemplateEntry,
         )
 
-        registry.registerPlaceHolderWithTextFactory(
+        registerPlaceHolderWithTextFactory(
             type = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY,
             psiFactory = ::KtEscapeStringTemplateEntry,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.SCRIPT,
             factory = KtScriptStubSerializingElementFactory,
         )
 
-        registry.registerStubSerializingFactory(
+        registerStubSerializingFactory(
             type = KtStubElementTypes.STRING_INTERPOLATION_PREFIX,
             factory = KtStringInterpolationPrefixStubSerializingElementFactory,
         )
     }
+
+    /**
+     * Returns the factory registered for [type], or `null` if the element type is not stubbed.
+     */
+    operator fun get(type: IElementType): KtStubSerializingElementFactory<*, *>? = factories[type]
+}
+
+/**
+ * A builder of the [KtStubElementFactories.factories] mapping.
+ */
+private typealias KtStubFactoryBuilder = MutableMap<KtNodeType, KtStubSerializingElementFactory<*, *>>
+
+/**
+ * Registers a factory for the given element [type].
+ */
+private fun KtStubFactoryBuilder.registerStubSerializingFactory(
+    type: KtNodeType,
+    factory: KtStubSerializingElementFactory<*, *>,
+) {
+    put(type, factory)
 }
 
 /**
  * Registers a factory for an element whose stub carries no data beyond its own presence.
  */
-private fun <Psi : KtElementImplStub<out StubElement<*>>> StubRegistry.registerPlaceHolderFactory(
-    type: IElementType,
+private fun <Psi : KtElementImplStub<out StubElement<*>>> KtStubFactoryBuilder.registerPlaceHolderFactory(
+    type: KtNodeType,
     psiFactory: (KotlinPlaceHolderStub<Psi>) -> Psi,
 ) {
     registerStubSerializingFactory(type, KtPlaceHolderStubSerializingElementFactory(type, psiFactory))
@@ -406,8 +442,8 @@ private fun <Psi : KtElementImplStub<out StubElement<*>>> StubRegistry.registerP
 /**
  * Registers a factory for an element which represents an argument of a call.
  */
-private fun <Psi : KtValueArgument> StubRegistry.registerValueArgumentFactory(
-    type: IElementType,
+private fun <Psi : KtValueArgument> KtStubFactoryBuilder.registerValueArgumentFactory(
+    type: KtNodeType,
     psiFactory: (KotlinValueArgumentStub<Psi>) -> Psi,
 ) {
     registerStubSerializingFactory(type, KtValueArgumentStubSerializingElementFactory(type, psiFactory))
@@ -416,8 +452,8 @@ private fun <Psi : KtValueArgument> StubRegistry.registerValueArgumentFactory(
 /**
  * Registers a factory for an element whose stub carries only its source text.
  */
-private fun <Psi : KtElementImplStub<out StubElement<*>>> StubRegistry.registerPlaceHolderWithTextFactory(
-    type: IElementType,
+private fun <Psi : KtElementImplStub<out StubElement<*>>> KtStubFactoryBuilder.registerPlaceHolderWithTextFactory(
+    type: KtNodeType,
     psiFactory: (KotlinPlaceHolderWithTextStub<Psi>) -> Psi,
 ) {
     registerStubSerializingFactory(type, KtPlaceHolderWithTextStubSerializingElementFactory(type, psiFactory))
