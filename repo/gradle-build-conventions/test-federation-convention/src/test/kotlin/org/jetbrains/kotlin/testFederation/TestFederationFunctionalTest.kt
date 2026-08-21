@@ -296,7 +296,7 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - build with test federation enabled - build in smoke mode - cant reuse caches`(@TempDir cache: Path) {
+    fun `test - build with test federation disabled - build in smoke mode - cant reuse caches`(@TempDir cache: Path) {
         val buildCacheArgs = buildCacheArgs(cache)
 
         cleanTest()
