@@ -29,7 +29,7 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJvmIncrementalCompilationOfCommonSources = true,
             enableJsUnsafeIncrementalCompilationForMultiplatform = true,
             enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
@@ -168,7 +168,7 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             // it's more convenient to set up the test project using common sourceset
-            enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJvmIncrementalCompilationOfCommonSources = true,
             enableJsUnsafeIncrementalCompilationForMultiplatform = true,
             enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
