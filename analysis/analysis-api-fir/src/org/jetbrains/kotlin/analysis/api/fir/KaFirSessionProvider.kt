@@ -16,6 +16,7 @@ import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.AppExecutorUtil
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
@@ -99,10 +100,30 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     override fun getAnalysisSession(useSiteElement: PsiElement): KaSession {
         val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
-        return getAnalysisSession(module)
+        return acquireSessionWithListeners(module, useSiteElement as? KtElement)
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        return acquireSessionWithListeners(useSiteModule, null)
+    }
+
+    private fun acquireSessionWithListeners(
+        useSiteModule: KaModule,
+        useSiteElement: KtElement?,
+    ): KaSession {
+        notifyListeners { beforeAcquiringSession(useSiteModule, useSiteElement) }
+
+        return try {
+            acquireAnalysisSession(useSiteModule)
+        } catch (t: Throwable) {
+            notifyListeners { onSessionAcquisitionException(useSiteModule, useSiteElement, t) }
+            throw t
+        } finally {
+            notifyListeners { afterAcquiringSession(useSiteModule, useSiteElement) }
+        }
+    }
+
+    private fun acquireAnalysisSession(useSiteModule: KaModule): KaSession {
         checkUseSiteModule(useSiteModule)
 
         ProgressManager.checkCanceled()
