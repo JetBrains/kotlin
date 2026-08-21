@@ -119,6 +119,7 @@ Js:
  - js/js.tests/build.gradle.kts
  - js/js.tests/klib-compatibility
  - js/js.tests/testFixtures/com
+ - js/js.tests/testFixturesResources
  - js/js.tests/tests
  - js/js.translator/ReadMe.md
  - js/js.translator/build.gradle.kts

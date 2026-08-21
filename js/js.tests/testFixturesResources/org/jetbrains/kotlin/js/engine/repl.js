@@ -56,7 +56,7 @@ function saveGlobalState() {
 }
 
 function restoreGlobalState() {
-    if (globalState === null) throw Error("There is no saved state!")
+    if (globalState === null) throw Error('There is no saved state!')
 
     const currentGlobal = Realm.global(currentRealmIndex)
 
@@ -81,17 +81,17 @@ async function loop() {
 
         try {
             switch (code) {
-                case "!reset":
+                case '!reset':
                     resetRealm()
                     break;
-                case "!saveGlobalState":
+                case '!saveGlobalState':
                     saveGlobalState();
                     break;
-                case "!restoreGlobalState":
+                case '!restoreGlobalState':
                     restoreGlobalState();
                     break;
-                case "!exit":
-                    print("Exiting REPL. Goodbye!");
+                case '!exit':
+                    print('Exiting REPL. Goodbye!');
                     return;
                 default:
                     print(await Realm.eval(currentRealmIndex, code));
