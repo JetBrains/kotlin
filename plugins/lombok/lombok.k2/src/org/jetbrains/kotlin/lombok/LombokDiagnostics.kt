@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXI
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.STATIC_CONSTRUCTOR_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_NOT_CALLED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_TO_ANY_IS_POINTLESS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED
@@ -79,6 +80,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY by warning1<KtAnnotationEntry, Name>()
     val DO_NOT_USE_GETTERS_IRRELEVANT by warning0<KtExpression>()
     val CALL_SUPER_NOT_CALLED by warning2<KtAnnotationEntry, String, Name>()
+    val CALL_SUPER_TO_ANY_IS_POINTLESS by error1<KtExpression, String>()
 
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
     val TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
@@ -144,6 +146,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
                     "If this is intentional, add ''@{1}(callSuper=false)'' to your type.",
             CommonRenderers.STRING,
             CommonRenderers.NAME,
+        )
+        map.put(
+            CALL_SUPER_TO_ANY_IS_POINTLESS,
+            "Generating ''{0}'' with a supercall to ''Any'' is pointless: ''Any'' compares by identity.",
+            CommonRenderers.STRING,
         )
         map.put(
             EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE,

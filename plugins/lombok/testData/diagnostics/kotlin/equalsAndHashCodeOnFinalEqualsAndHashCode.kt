@@ -28,7 +28,7 @@ open class FinalHashCode {
     final override fun hashCode(): Int = 0
 }
 
-<!EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
+<!CALL_SUPER_NOT_CALLED, EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
 class ChildOfFinalHashCode : FinalHashCode() {
     val a = 1
 }
@@ -37,24 +37,24 @@ open class FinalEquals {
     final override fun equals(other: Any?): Boolean = this === other
 }
 
-<!EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
+<!CALL_SUPER_NOT_CALLED, EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
 class ChildOfFinalEquals : FinalEquals() {
     val a = 1
 }
 
 open class IntermediateOfFinalHashCode : FinalHashCode()
 
-<!EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
+<!CALL_SUPER_NOT_CALLED, EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
 class GrandChildOfFinalHashCode : IntermediateOfFinalHashCode() {
     val a = 1
 }
 
-<!EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
+<!CALL_SUPER_NOT_CALLED, EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
 class ChildOfJavaFinalEquals : JavaFinalEquals() {
     val a = 1
 }
 
-<!EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
+<!CALL_SUPER_NOT_CALLED, EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS!>@EqualsAndHashCode<!>
 class ChildOfJavaFinalHashCode : JavaFinalHashCode() {
     val a = 1
 }
@@ -65,7 +65,7 @@ open class OpenEqualsAndHashCode {
     override fun hashCode(): Int = 0
 }
 
-@EqualsAndHashCode
+<!CALL_SUPER_NOT_CALLED!>@EqualsAndHashCode<!>
 class ChildOfOpenEqualsAndHashCode : OpenEqualsAndHashCode() {
     val a = 1
 }
@@ -76,13 +76,13 @@ open class FinalUnrelatedMembers {
     fun hashCode(salt: Int): Int = salt
 }
 
-@EqualsAndHashCode
+<!CALL_SUPER_NOT_CALLED!>@EqualsAndHashCode<!>
 class ChildOfFinalUnrelatedMembers : FinalUnrelatedMembers() {
     val a = 1
 }
 
 // Nothing is generated at all, so the final override is reported by the platform, not by Lombok
-<!EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST!>@EqualsAndHashCode<!>
+<!CALL_SUPER_NOT_CALLED, EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST!>@EqualsAndHashCode<!>
 class ChildOfFinalHashCodeWithOwnHashCode : FinalHashCode() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun hashCode(): Int = 1
     val a = 1

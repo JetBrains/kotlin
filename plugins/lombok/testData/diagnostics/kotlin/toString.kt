@@ -74,6 +74,13 @@ class WithDollarPrefixedPropertyIncludedAndExcluded(
 @ToString
 class WithRegularExcludedProperty(val regular: String, @ToString.Exclude val excluded: String)
 
+// No CALL_SUPER_NOT_CALLED warning: `lombok.toString.callSuper` defaults to `skip`, unlike
+// `lombok.equalsAndHashCode.callSuper`, which defaults to `warn`, KT-88653.
+open class Base(val baseProp: Int)
+
+@ToString
+class DerivedImplicit(val ownProp: String) : Base(10)
+
 // No warning: doNotUseGetters not specified
 @ToString
 class Normal(val x: Int)

@@ -88,9 +88,14 @@ fun parseFlagUsage(config: LombokConfig, key: String): FlagUsageValue? {
         ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
 }
 
-fun parseCallSuperMode(config: LombokConfig, configKey: String): CallSuperMode {
-    return CallSuperMode.entries.find { it.name.equals(config.getString(configKey), ignoreCase = true) }
-        ?: CallSuperMode.Skip
+/**
+ * The `lombok.<feature>.callSuper` mode configured under [configKey], falling back to [default] when the key is
+ * absent or holds something unrecognizable, exactly as Lombok falls back. The default differs per feature: `warn`
+ * for `@EqualsAndHashCode`, whose supercall decides whether two instances compare equal at all, and `skip` for
+ * `@ToString`, whose supercall only adds text (KT-88653).
+ */
+fun parseCallSuperMode(config: LombokConfig, configKey: String, default: CallSuperMode): CallSuperMode {
+    return CallSuperMode.entries.find { it.name.equals(config.getString(configKey), ignoreCase = true) } ?: default
 }
 
 class GlobalConfig(
@@ -146,13 +151,14 @@ class GlobalConfig(
                 log4j2LogFlagUsage = parseFlagUsage(config, LOG4J2_LOG_FLAG_USAGE_CONFIG),
                 xslf4jLogFlagUsage = parseFlagUsage(config, XSLF4J_LOG_FLAG_USAGE_CONFIG),
                 toStringIncludeFieldNames = config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
-                toStringCallSuper = parseCallSuperMode(config, TO_STRING_CALL_SUPER_CONFIG),
+                toStringCallSuper = parseCallSuperMode(config, TO_STRING_CALL_SUPER_CONFIG, CallSuperMode.Skip),
                 toStringOnlyExplicitlyIncluded = config.getBoolean(TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
                 toStringFlagUsage = parseFlagUsage(config, TO_STRING_FLAG_USAGE_CONFIG),
                 toStringDoNotUseGetters = config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG) ?: false,
                 equalsAndHashCodeCallSuper = parseCallSuperMode(
                     config,
-                    EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG
+                    EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG,
+                    CallSuperMode.Warn,
                 ),
                 equalsAndHashCodeOnlyExplicitlyIncluded = config.getBoolean(EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
                 equalsAndHashCodeFlagUsage = parseFlagUsage(
