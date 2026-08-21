@@ -13,19 +13,30 @@ import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil.getClass
 import org.jetbrains.kotlin.js.testOld.utils.AstSearchUtil.getFunction
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import java.io.File
 
 class FunctionHasEffectsDirective(entry: String) : ArgumentsHelper(entry), JsAstDirective {
+    val function by optional()
+    val constructor by optional()
+
     override fun evaluate(ast: JsNode, sourceFile: File) {
-        val functionType = getPositionalArgument(0)
-        val functionName = getPositionalArgument(1)
-        val effectName = getPositionalArgument(2)
-        val [function, description] = when (functionType) {
-            "function" -> getFunction(ast, functionName) to "Function"
-            "class" -> getClass(ast, functionName).constructor to "Constructor"
-            else -> throw IllegalArgumentException("Function type has to be 'class' or 'function' (got '$functionType')")
+        val functionName = this.function
+        val className = this.constructor
+        val effectName = getPositionalArgument(0)
+
+        if ((functionName == null) == (className == null)) {
+            throw IllegalArgumentException("Expected exactly one of `function` or `constructor`.")
         }
-        checkNotNull(function) { "No constructor in class" }
+
+        val [function, description] = when {
+            functionName != null -> getFunction(ast, functionName) to "Function $functionName"
+            className != null -> getClass(ast, className).constructor to "Constructor of $className"
+            else -> unreachableBranch("checked in the if above")
+        }
+
+        checkNotNull(function) { "$description not found" }
+
         val actual = function.sideEffects
         val expected = when (effectName) {
             "PURE" -> SideEffectKind.PURE
@@ -33,6 +44,6 @@ class FunctionHasEffectsDirective(entry: String) : ArgumentsHelper(entry), JsAst
             "WRITE" -> SideEffectKind.AFFECTS_STATE
             else -> throw IllegalArgumentException("Invalid side effect name: '$effectName'")
         }
-        assertEquals(expected, actual) { "$description $functionName" }
+        assertEquals(expected, actual) { description }
     }
 }
