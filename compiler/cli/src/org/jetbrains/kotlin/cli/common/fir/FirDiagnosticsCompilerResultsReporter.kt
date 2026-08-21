@@ -80,16 +80,45 @@ object FirDiagnosticsCompilerResultsReporter {
             try {
                 val diagnosticList = diagnosticsCollector.diagnosticsByFile[sourceFile].orEmpty()
 
+                // Precomputing positions of the offsets in the ascending order of the offsets
+                val offsetsToPositions = positionFinder.value?.let { finder ->
+                    val sortedOffsets = TreeSet<Int>().apply {
+                        for (diagnostic in diagnosticList) {
+                            if (diagnostic is KtDiagnosticWithSource && diagnostic.element !is KtPsiSourceElement) {
+                                val range = diagnostic.firstRange
+                                add(range.startOffset)
+                                add(range.endOffset)
+                            }
+                        }
+                    }
+                    sortedOffsets.associateWith { finder.findNextPosition(it) }
+                }
+
                 for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
                     val location = when (diagnostic) {
                         is KtDiagnosticWithoutSource -> diagnostic.location
-                        is KtDiagnosticWithSource -> run {
-                            val file = (diagnostic.element as KtPsiSourceElement).psi.containingFile
-                            MessageUtil.psiFileToMessageLocation(
-                                file,
-                                file.name,
-                                DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges)
-                            )
+                        is KtDiagnosticWithSource -> when (val element = diagnostic.element) {
+                            is KtPsiSourceElement -> {
+                                val file = element.psi.containingFile
+                                MessageUtil.psiFileToMessageLocation(
+                                    file,
+                                    file.name,
+                                    DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges)
+                                )
+                            }
+                            else -> {
+                                // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
+                                // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
+                                // on the the appropriate sorting above
+                                offsetsToPositions?.let {
+                                    val range = diagnostic.firstRange
+                                    val start = offsetsToPositions[range.startOffset]!!
+                                    val end = offsetsToPositions[range.endOffset]!!
+                                    MessageUtil.createMessageLocation(
+                                        sourceFile?.path, start.lineContent, start.line, start.column, end.line, end.column
+                                    )
+                                }
+                            }
                         }
                     }
                     report(diagnostic, location)
