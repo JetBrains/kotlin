@@ -262,6 +262,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     if (isEffectivelyPrivate()) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
+    // Cannot expose sealed class constructors
+    if (this is IrConstructor && constructedClass.modality == Modality.SEALED) return false
     if (parameters.any { it.type.isInlineClassType() }) return true
     // If the function is annotated with @JvmName, it is unmangled, so, we cannot implicitly expose it.
     if (!returnType.isInlineClassType() || (isPropagatedOrImplicit && hasAnnotation(JVM_NAME_ANNOTATION_FQ_NAME))) return false

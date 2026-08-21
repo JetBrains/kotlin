@@ -3725,6 +3725,12 @@ private fun KaDiagnosticConverterBuilder.addConversions82() {
             token,
         )
     }
+    add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR) { firDiagnostic ->
+        JvmExposeBoxedCannotExposeSealedConstructorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions83() {

@@ -8460,6 +8460,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JvmExposeBoxedCannotExposeSealedConstructor : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<JvmExposeBoxedCannotExposeSealedConstructor>
+            get() = JvmExposeBoxedCannotExposeSealedConstructor::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JvmExposeBoxedCanBeReplacedWithJvmName : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<JvmExposeBoxedCanBeReplacedWithJvmName>
             get() = JvmExposeBoxedCanBeReplacedWithJvmName::class
