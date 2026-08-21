@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidDeviceTest
+import com.android.build.api.dsl.KotlinMultiplatformAndroidDeviceTestCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
@@ -97,7 +97,7 @@ class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    fun `test - device test configuration time wiring`(
+    fun `test - device test wiring`(
         gradleVersion: GradleVersion,
         androidVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -114,29 +114,56 @@ class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
                 }
             },
         ) {
+            // `androidDeviceTest` belongs to the `instrumentedTest` source set tree and therefore is not
+            // connected to `commonTest` by the default hierarchy template: the edge has to be declared.
             buildScriptInjection {
                 kotlinMultiplatform.apply {
-                    val commonTest = sourceSets.getByName("commonTest")
-                    sourceSets.getByName("androidDeviceTest").dependsOn(commonTest)
+                    sourceSets.getByName("androidDeviceTest").dependsOn(sourceSets.getByName("commonTest"))
                 }
             }
 
-            val result = buildScriptReturn {
-                val commonTest = kotlinMultiplatform.sourceSets.getByName("commonTest")
-                val deviceTest = kotlinMultiplatform.sourceSets.getByName("androidDeviceTest")
-                val dependsOnCommon = deviceTest.dependsOn.contains(commonTest)
-                val hasTask = project.tasks.names.contains("connectedAndroidDeviceTest")
+            kotlinSourcesDir("commonTest").resolve("CommonTestUtils.kt").apply {
+                parent.toFile().mkdirs()
+                toFile().writeText(
+                    """
+                    package org.jetbrains.sample
+
+                    object CommonTestUtils {
+                        fun expected(): String = "expected"
+                    }
+                    """.trimIndent()
+                )
+            }
+
+            kotlinSourcesDir("androidDeviceTest").resolve("DeviceTest.kt").apply {
+                parent.toFile().mkdirs()
+                toFile().writeText(
+                    """
+                    package org.jetbrains.sample
+
+                    class DeviceTest {
+                        fun value(): String = CommonTestUtils.expected()
+                    }
+                    """.trimIndent()
+                )
+            }
+
+            val configuration = buildScriptReturn {
+                val hasConnectedTask = project.tasks.names.contains("connectedAndroidDeviceTest")
 
                 val target = kotlinMultiplatform.targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).single()
-                val compilation = target.compilations.getByName("deviceTest")
-                val runner = compilation::class.java.methods.find { it.name == "getInstrumentationRunner" }?.invoke(compilation) as? String
+                val compilation = target.compilations.getByName("deviceTest") as KotlinMultiplatformAndroidDeviceTestCompilation
 
-                Triple(dependsOnCommon, hasTask, runner)
+                hasConnectedTask to compilation.instrumentationRunner
             }.buildAndReturn(":help")
 
-            assertTrue(result.first, "androidDeviceTest source set must depend on commonTest")
-            assertTrue(result.second, "Task connectedAndroidDeviceTest must be registered in task graph")
-            assertEquals("androidx.test.runner.AndroidJUnitRunner", result.third)
+            assertTrue(configuration.first, "Task connectedAndroidDeviceTest must be registered in task graph")
+            assertEquals("androidx.test.runner.AndroidJUnitRunner", configuration.second)
+
+            // The declared `dependsOn` edge is honoured: device test sources see `commonTest` code.
+            build(":compileAndroidDeviceTest") {
+                assertTasksExecuted(":compileAndroidDeviceTest")
+            }
         }
     }
 }
