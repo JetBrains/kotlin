@@ -1,5 +1,5 @@
-const val floatNaNBits = -4194304
-const val doubleNaNBits = -2251799813685248L
+const val floatNaNBits = 0x7fc00000
+const val doubleNaNBits = 0x7ff8000000000000L
 
 const val floatNaN = Float.NaN
 const val doubleNaN = Double.NaN

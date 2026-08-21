@@ -1,7 +1,7 @@
 FILE: nanBitPattern.kt
-    public final const [EvaluatedValue=Int(-4194304)] val floatNaNBits: R|kotlin/Int| = Int(-4194304)
+    public final const [EvaluatedValue=Int(2143289344)] val floatNaNBits: R|kotlin/Int| = Int(2143289344)
         public get(): R|kotlin/Int|
-    public final const [EvaluatedValue=Long(-2251799813685248)] val doubleNaNBits: R|kotlin/Long| = Long(2251799813685248).R|kotlin/Long.unaryMinus|()
+    public final const [EvaluatedValue=Long(9221120237041090560)] val doubleNaNBits: R|kotlin/Long| = Long(9221120237041090560)
         public get(): R|kotlin/Long|
     public final const [EvaluatedValue=Float(NaN)] val floatNaN: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NaN|
         public get(): R|kotlin/Float|
