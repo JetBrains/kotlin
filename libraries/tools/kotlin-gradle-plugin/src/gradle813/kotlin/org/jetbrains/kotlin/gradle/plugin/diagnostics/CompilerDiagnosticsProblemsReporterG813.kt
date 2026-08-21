@@ -8,14 +8,29 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.problems.AdditionalData
 import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.Problems
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
+/**
+ * Makes a diagnostic unique per task.
+ *
+ * Gradle 8.13 deduplicates problems by content hash and attaches the task location only after that check, so the same
+ * compiler message from the metadata, JVM and JS compilations of `commonMain` collapses into one entry (KT-88430).
+ *
+ * Keep this a JavaBean over `String`: 8.13 rejects `Property<T>` in additional data, which is why
+ * [KotlinCompilerDiagnosticAdditionalData] can't be reused here.
+ */
+internal interface CompilerDiagnosticTaskData : AdditionalData {
+    var taskPath: String?
+}
+
 internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject constructor(
     private val problems: Problems,
+    private val taskPath: String,
 ) : CompilerDiagnosticsProblemsReporter {
     private val logger: Logger = Logging.getLogger(this.javaClass)
 
@@ -40,6 +55,9 @@ internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject construc
                     .details(message)
                     .severity(gradleSeverity)
                     .applySourceLocation(location)
+                    .additionalData(CompilerDiagnosticTaskData::class.java) { data ->
+                        data.taskPath = taskPath
+                    }
             }
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)
@@ -47,8 +65,8 @@ internal abstract class CompilerDiagnosticsProblemsReporterG813 @Inject construc
     }
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
-            return objects.newInstance<CompilerDiagnosticsProblemsReporterG813>()
+        override fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter {
+            return objects.newInstance<CompilerDiagnosticsProblemsReporterG813>(taskPath)
         }
     }
 }

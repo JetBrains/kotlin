@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import java.io.File
 import java.net.URI
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -52,28 +53,62 @@ internal object ProblemsApiTestUtils {
     }
 }
 
+internal fun BuildResult.problemsReport(gradleVersion: GradleVersion): ProblemReport<*> {
+    val reportUrl = ProblemsApiTestUtils.extractProblemReportUrl(output)
+    assertNotNull(reportUrl, "Problems API HTML report URL not found in build output")
+
+    val reportContent = ProblemsApiTestUtils.readProblemReportContent(reportUrl)
+    return ProblemsApiTestUtils.parseProblemReportFromScript(reportContent, gradleVersion)
+}
+
+internal fun ProblemReport<*>.diagnosticsMatching(
+    expectedProblemId: String,
+    expectedMessageSubstring: String,
+): List<ProblemDiagnostic> = diagnostics.filter { diagnostic ->
+    diagnostic.problemId.any { it.name == expectedProblemId } &&
+            (diagnostic.problemDetailsActual.contains(expectedMessageSubstring) ||
+                    diagnostic.contextualLabel.contains(expectedMessageSubstring))
+}
+
+private fun ProblemReport<*>.render(): String =
+    diagnostics.joinToString(prefix = "[", postfix = "]") { d ->
+        "${d.problemId.map { it.name }} -> tasks: ${d.locations.mapNotNull { it.taskPath }}, details: ${d.problemDetailsActual}"
+    }
+
 internal fun BuildResult.assertProblemsReportContainsDiagnostic(
     expectedProblemId: String,
     expectedMessageSubstring: String,
     gradleVersion: GradleVersion,
 ) {
-    val reportUrl = ProblemsApiTestUtils.extractProblemReportUrl(output)
-    assertNotNull(reportUrl, "Problems API HTML report URL not found in build output")
-
-    val reportContent = ProblemsApiTestUtils.readProblemReportContent(reportUrl)
-    val report = ProblemsApiTestUtils.parseProblemReportFromScript(reportContent, gradleVersion)
-
-    val matchingDiagnostics = report.diagnostics.filter { diagnostic ->
-        diagnostic.problemId.any { it.name == expectedProblemId } &&
-                (diagnostic.problemDetailsActual.contains(expectedMessageSubstring) ||
-                        diagnostic.contextualLabel.contains(expectedMessageSubstring))
-    }
+    val report = problemsReport(gradleVersion)
 
     assertTrue(
-        matchingDiagnostics.isNotEmpty(),
+        report.diagnosticsMatching(expectedProblemId, expectedMessageSubstring).isNotEmpty(),
         "Expected Problems API HTML report to contain a '$expectedProblemId' diagnostic " +
                 "with message containing '$expectedMessageSubstring', but none found.\n" +
-                "Report diagnostics: ${report.diagnostics.map { d -> "${d.problemId.map { it.name }} -> details: ${d.problemDetailsActual}}" }}"
+                "Report diagnostics: ${report.render()}"
+    )
+}
+
+/**
+ * Asserts the Problems API HTML report contains exactly [expectedCount] diagnostics
+ * matching [expectedProblemId] and [expectedMessageSubstring].
+ */
+internal fun BuildResult.assertProblemsReportContainsDiagnosticTimes(
+    expectedProblemId: String,
+    expectedMessageSubstring: String,
+    gradleVersion: GradleVersion,
+    expectedCount: Int,
+) {
+    val report = problemsReport(gradleVersion)
+    val matchingDiagnostics = report.diagnosticsMatching(expectedProblemId, expectedMessageSubstring)
+
+    assertEquals(
+        expectedCount,
+        matchingDiagnostics.size,
+        "Expected Problems API HTML report to contain $expectedCount '$expectedProblemId' diagnostics " +
+                "with message containing '$expectedMessageSubstring', but found ${matchingDiagnostics.size}.\n" +
+                "Report diagnostics: ${report.render()}"
     )
 }
 
@@ -133,7 +168,10 @@ internal data class ProblemsApiDiagnosticG94(
 internal data class TextWrapper(val text: String)
 
 @Serializable
-internal data class ProblemsApiLocation(val pluginId: String = "")
+internal data class ProblemsApiLocation(
+    val pluginId: String = "",
+    val taskPath: String? = null,
+)
 
 @Serializable
 internal data class ProblemIdentifier(
