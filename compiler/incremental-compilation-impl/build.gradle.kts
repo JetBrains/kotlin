@@ -73,8 +73,7 @@ projectTests {
     testTask("testJvmICWithJdk11", javaLauncher = JdkMajorVersion.JDK_11_0, skipInLocalBuild = false) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
-            includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
-            includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")
+            includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
         }
     }
 

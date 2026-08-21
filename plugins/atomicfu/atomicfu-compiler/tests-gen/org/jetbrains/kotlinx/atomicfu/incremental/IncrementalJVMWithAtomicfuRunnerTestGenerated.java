@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/projects")
 @TestDataPath("$PROJECT_ROOT")
-public class IncrementalK2JVMWithAtomicfuRunnerTestGenerated extends AbstractIncrementalK2JVMWithAtomicfuRunnerTest {
+public class IncrementalJVMWithAtomicfuRunnerTestGenerated extends AbstractIncrementalJVMWithAtomicfuRunnerTest {
   private void run(String fileName) {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/projects/" + fileName);
   }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
@@ -14,7 +13,7 @@ fun main(args: Array<String>) {
             "plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen",
             "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib"
         ) {
-            testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
+            testClass<AbstractIncrementalJvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false)
             }
             testClass<AbstractIncrementalJsKlibWithPluginCompilerRunnerTest> {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginS
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
-abstract class AbstractIncrementalK2JvmWithPluginCompilerRunnerTest : AbstractIncrementalK2JvmCompilerRunnerTest() {
+abstract class AbstractIncrementalJvmWithPluginCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             val annotationsJar = pluginSandboxAnnotationsJvmForTests().path
@@ -20,7 +20,4 @@ abstract class AbstractIncrementalK2JvmWithPluginCompilerRunnerTest : AbstractIn
             classpath += "${File.pathSeparator}$annotationsJar"
             pluginClasspaths = arrayOf(pluginJar)
         }
-
-    override val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isGradleEnabled = true, isFirEnabled = true) // TODO: investigate cases that need isGradleEnabled - the combination looks fragile
 }
