@@ -1,0 +1,95 @@
+FILE fqName:<root> fileName:/CompanionBlockProperties.kt
+  CLASS CLASS name:Outer modality:FINAL visibility:private superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer
+    PROPERTY name:i visibility:internal modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:i type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+            ARG initial: CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> visibility:internal modality:FINAL returnType:kotlinx.atomicfu.AtomicInt [companion]
+        correspondingProperty: PROPERTY name:i visibility:internal modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='internal final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>.Outer'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]' type=kotlinx.atomicfu.AtomicInt origin=null
+    PROPERTY name:b visibility:internal modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicRef<kotlin.Any?> visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun atomic <T> (initial: T of kotlinx.atomicfu.atomic): kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.atomic> declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=null
+            TYPE_ARG T: kotlin.Any?
+            ARG initial: CONST Null type=kotlin.Nothing? value=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:internal modality:FINAL returnType:kotlinx.atomicfu.AtomicRef<kotlin.Any?> [companion]
+        correspondingProperty: PROPERTY name:b visibility:internal modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='internal final fun <get-b> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.Outer'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicRef<kotlin.Any?> visibility:private [final,static]' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=null
+    PROPERTY name:arr visibility:internal modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final,static]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicIntArray origin=null
+            ARG size: CONST Int type=kotlin.Int value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:internal modality:FINAL returnType:kotlinx.atomicfu.AtomicIntArray [companion]
+        correspondingProperty: PROPERTY name:arr visibility:internal modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='internal final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.Outer'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final,static]' type=kotlinx.atomicfu.AtomicIntArray origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Outer [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun testCompanionBlock (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:testCompanionBlock visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=1
+        ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: CALL 'internal final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>.Outer' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=2
+        ARG b: CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
+          ARG <this>: CALL 'internal final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>.Outer' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+      CALL 'public final fun assertNull (actual: kotlin.Any?, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        ARG actual: CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
+          ARG <this>: CALL 'internal final fun <get-b> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.Outer' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
+      CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        ARG x: CALL 'public final fun compareAndSet (expect: T of kotlinx.atomicfu.AtomicRef, update: T of kotlinx.atomicfu.AtomicRef): kotlin.Boolean declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Boolean origin=null
+          ARG <this>: CALL 'internal final fun <get-b> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.Outer' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
+          ARG expect: CONST Null type=kotlin.Nothing? value=null
+          ARG update: CONST String type=kotlin.String value="value"
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Any?
+        ARG a: CONST String type=kotlin.String value="value"
+        ARG b: CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
+          ARG <this>: CALL 'internal final fun <get-b> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.Outer' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=0
+        ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+            ARG <this>: CALL 'internal final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.Outer' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+            ARG index: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=1
+        ARG b: CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
+          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+            ARG <this>: CALL 'internal final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.Outer' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+            ARG index: CONST Int type=kotlin.Int value=0

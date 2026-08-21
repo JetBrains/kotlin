@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,8 +21,12 @@ fun assertFalse(x: Boolean) {
 
 @Suppress("UNUSED_PARAMETER")
 fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
-    if (actual == null) throw Exception("")
+    if (actual == null) throw Exception("${if (message == null) "" else "$message. "}Expected value to be not null")
     return actual
 }
 
+@Suppress("UNUSED_PARAMETER")
+fun assertNull(actual: Any?, message: String? = null) {
+    if (actual != null) throw Exception("${if (message == null) "" else "$message. "}Expected value to be null, but was: <$actual>.")
+}
 
