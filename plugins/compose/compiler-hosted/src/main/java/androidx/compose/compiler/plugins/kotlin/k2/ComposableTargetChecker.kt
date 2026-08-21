@@ -178,7 +178,7 @@ private fun FirCallableSymbol<*>.fileScopeTarget(): Item? {
         (element as? FirFile)?.targetsFromAnnotations()?.let { targets ->
             when {
                 targets.size == 1 -> Token(targets.first())
-                targets.size > 1 -> Open(-1, allowedTokens = targets)
+                targets.size > 1 -> Open(-1, constraints = Constraints.restrictedTo(targets))
                 else -> null
             }
         } ?: element.parent?.let { findFileScope(it) }
@@ -208,7 +208,7 @@ fun FirCallableSymbol<*>.schemeItem(): Item {
     val explicitOpen = compositionOpenTarget()
     return when {
         targets.size == 1 -> Token(targets.first())
-        targets.size > 1 -> Open(explicitOpen ?: -1, allowedTokens = targets)
+        targets.size > 1 -> Open(explicitOpen ?: -1, constraints = Constraints.restrictedTo(targets))
         explicitOpen != null -> Open(explicitOpen)
         else -> Open(-1, isUnspecified = true)
     }
