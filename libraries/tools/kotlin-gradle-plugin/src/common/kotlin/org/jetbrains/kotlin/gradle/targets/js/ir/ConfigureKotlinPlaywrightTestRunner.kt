@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import kotlin.time.toJavaDuration
 
@@ -31,14 +28,16 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
 
     val project = target.project
 
-
     project.launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
         val browser = target.subTargets.filterIsInstance<KotlinBrowserJsIr>().singleOrNull() ?: return@launchInStage
 
+        if (!browser.usedJsBrowserTestDsl()) return@launchInStage
+
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
+
         if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
-            project.logger.debug("No browser runners configured. Skipping kotlin js test task configuration")
-            return@launchInStage
+            project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework(targetName = target.name))
+            browserTestDsl.setUpDefaultBrowserRunner()
         }
 
         // TODO: KT-86706 Implement different browser runners as independent test runs
@@ -58,7 +57,10 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             .map { runner -> runner.getBrowserKind() }
             .distinct()
             .map { browserType ->
-                project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
+                project.locateOrRegisterTask<PlaywrightBrowserInstall>(
+                    browserType.getPwInstallBrowserTaskName(),
+                    args = listOf(testCompilation)
+                ) {
                     browsers.add(browserType.browserName)
                 }
             }

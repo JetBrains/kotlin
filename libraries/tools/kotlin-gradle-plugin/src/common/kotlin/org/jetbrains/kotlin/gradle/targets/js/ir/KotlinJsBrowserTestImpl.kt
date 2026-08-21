@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -43,21 +39,21 @@ internal abstract class KotlinBrowserTestRunner(
 
 internal class KotlinChromiumTestRunner(
     name: String,
-    objects: ObjectFactory
+    objects: ObjectFactory,
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.ChromiumTestRunnerDsl
 
 internal class KotlinFirefoxTestRunner(
     name: String,
-    objects: ObjectFactory
+    objects: ObjectFactory,
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.FirefoxTestRunnerDsl
 
 internal class KotlinWebkitTestRunner(
     name: String,
-    objects: ObjectFactory
+    objects: ObjectFactory,
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.WebkitTestRunnerDsl
 
 internal fun ObjectFactory.createKotlinJsBrowserTestImpl(
-    testCompilation: KotlinJsIrCompilation
+    testCompilation: KotlinJsIrCompilation,
 ) = newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation)
 
 internal abstract class KotlinJsBrowserTestImpl
@@ -67,8 +63,12 @@ internal abstract class KotlinJsBrowserTestImpl
     providers: ProviderFactory,
 ) : KotlinJsBrowserTestDsl {
 
+    internal fun setUpDefaultBrowserRunner() {
+        chromium("chromium")
+    }
+
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
-        chromiumRunners + firefoxRunners + webkitRunners
+        (chromiumRunners + firefoxRunners + webkitRunners)
     }
 
     override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> =

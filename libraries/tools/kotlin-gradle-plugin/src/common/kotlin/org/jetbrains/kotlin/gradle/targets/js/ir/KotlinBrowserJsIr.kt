@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
@@ -75,10 +73,15 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
     }
 
-    override val test: KotlinJsBrowserTestDsl = project.objects
-        .createKotlinJsBrowserTestImpl(target.compilations.getByName(TEST_COMPILATION_NAME))
+    private val testDsl: Lazy<KotlinJsBrowserTestImpl> = lazy {
+        project.objects.createKotlinJsBrowserTestImpl(target.compilations.getByName(TEST_COMPILATION_NAME))
+    }
+
+    override val test: KotlinJsBrowserTestDsl get() = testDsl.value
 
     override fun test(body: Action<KotlinJsBrowserTestDsl>) = body.execute(test)
+
+    internal fun usedJsBrowserTestDsl() = testDsl.isInitialized()
 
     companion object {
         internal const val WEBPACK_TASK_NAME = "webpack"
