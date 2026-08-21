@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
@@ -23,6 +24,12 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * Binary-side [JavaClassFinder] over the CLI [JvmDependenciesIndex], used by the java-direct library session.
+ *
+ * [scope] is the part of the binary classpath of the compilation this session may see. It is different from the whole classpath
+ * during an incremental compilation only: the output directory of the previous build is the scope of the precompiled-binaries
+ * session, and is subtracted from the scope of the libraries session. What that shape decides in a compilation which runs
+ * it — including that a reference recorded in a class file is resolved outside the scope its reader may see — is pinned
+ * on the PSI peer of this finder by `org.jetbrains.kotlin.incremental.IncrementalJavaClassFromPreviousOutputTest`.
  */
 class JavaClassFinderOverBinaryIndex(
     private val index: JvmDependenciesIndex,
@@ -42,7 +49,7 @@ class JavaClassFinderOverBinaryIndex(
     private val knownClassNamesCache: MutableMap<FqName, Set<String>> = HashMap()
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
-        findClassImpl(request, applyScopeFilter = true)
+        findClassImpl(request, visibleScope = scope)
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> =
         listOfNotNull(findClass(request))
@@ -85,16 +92,11 @@ class JavaClassFinderOverBinaryIndex(
         return found
     }
 
-    /** Cross-references from bytecode must resolve against the full classpath, not only [scope]. */
-    private fun findClassWithoutScopeFilter(request: JavaClassFinder.Request): JavaClass? =
-        findClassImpl(request, applyScopeFilter = false)
-
-    private fun findClassImpl(request: JavaClassFinder.Request, applyScopeFilter: Boolean): JavaClass? {
+    private fun findClassImpl(request: JavaClassFinder.Request, visibleScope: GlobalSearchScope): JavaClass? {
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
         val candidates = findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName())
-        val virtualFile =
-            (if (applyScopeFilter) candidates.firstOrNull { it in scope } else candidates.firstOrNull()) ?: return null
+        val virtualFile = candidates.firstOrNull { it in visibleScope } ?: return null
 
         return readBinaryJavaClass(
             classId = classId,
@@ -103,8 +105,8 @@ class JavaClassFinderOverBinaryIndex(
             outerClassFromRequest = outerClassFromRequest,
             binaryCache = binaryCache,
             signatureParser = signatureParser,
-            findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), applyScopeFilter) },
-            resolveCrossReference = { ref -> findClassWithoutScopeFilter(JavaClassFinder.Request(ref)) },
+            findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), visibleScope) },
+            resolveCrossReference = { ref -> findClassImpl(JavaClassFinder.Request(ref), EverythingGlobalScope()) },
         )
     }
 
