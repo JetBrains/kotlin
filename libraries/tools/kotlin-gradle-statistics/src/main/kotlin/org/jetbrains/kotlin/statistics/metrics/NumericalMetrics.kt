@@ -35,7 +35,6 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     // gradle task types
     GRADLE_NUMBER_OF_TASKS(SUM, RANDOM_10_PERCENT),
     GRADLE_NUMBER_OF_UNCONFIGURED_TASKS(SUM, RANDOM_10_PERCENT),
-    GRADLE_NUMBER_OF_INCREMENTAL_TASKS(SUM, RANDOM_10_PERCENT),
 
     //Features
     BUILD_SRC_COUNT(SUM, RANDOM_10_PERCENT),
@@ -70,6 +69,6 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     KMP_COCOAPODS_NUMBER_OF_DIRECT_DEPENDENCIES(SUM, SAFE);
 
     companion object {
-        const val VERSION = 3
+        const val VERSION = 4
     }
 }

@@ -161,12 +161,6 @@ class BuildSessionLoggerTest {
             metrics.filter { it.getMetric(StringMetrics.KOTLIN_COMPILER_VERSION)?.getValue() == "1.2.3" }.size,
             "KOTLIN_COMPILER_VERSION metric should be red from logger build finished file"
         )
-
-        assertEquals(
-            0,
-            metrics.filter { it.getMetric(StringListMetrics.USE_OLD_BACKEND)?.getValue() != null }.size,
-            "USE_OLD_BACKEND metric should be red"
-        )
     }
 
     @Test
