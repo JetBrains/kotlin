@@ -1020,8 +1020,21 @@ open class FirDeclarationsResolveTransformer(
         val containingDeclaration = context.containerIfAny
         return context.withNamedFunction(namedFunction, session) {
             // this is required to resolve annotations on functions of local classes
-            if (shouldResolveEverything) {
+            if (shouldResolveEverything && namedFunction.isLocal) {
                 namedFunction.transformReceiverParameter(this, data)
+                namedFunction.transformAnnotations(transformer, data)
+                namedFunction.transformReturnTypeRef(transformer, data)
+
+                @OptIn(PrivateForInline::class)
+                fun transformValueParameterChildren(parameters: List<FirValueParameter>) {
+                    for (parameter in parameters) {
+                        context.withContainer(parameter) { parameter.transformChildren(transformer, data) }
+                    }
+                }
+
+                transformValueParameterChildren(namedFunction.contextParameters)
+                transformValueParameterChildren(namedFunction.valueParameters)
+
                 doTransformTypeParameters(namedFunction)
             }
 
