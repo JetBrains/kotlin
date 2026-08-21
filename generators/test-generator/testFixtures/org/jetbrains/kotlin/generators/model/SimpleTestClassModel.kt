@@ -44,8 +44,8 @@ class SimpleTestClassModel(
     private val additionalMethods: Collection<MethodModel<*>>,
     val skipTestAllFilesCheck: Boolean,
     override val testKClass: Class<*>,
-    override val isSmokeTest: Boolean,
-    override val smokeTestLimit: Int,
+    override val isAutoSmokeTest: Boolean,
+    override val autoSmokeTestLimit: Int,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -78,8 +78,8 @@ class SimpleTestClassModel(
                 additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                 skipTestAllFilesCheck,
                 testKClass,
-                isSmokeTest,
-                smokeTestLimit
+                isAutoSmokeTest,
+                autoSmokeTestLimit
             )
         }.sortedWith(BY_NAME)
     }
@@ -103,6 +103,7 @@ class SimpleTestClassModel(
                 file = rootFile,
                 filenamePattern,
                 extractTagsFromTestFile(rootFile),
+                isSmokeTest = hasSmokeDirective(rootFile),
             )
             return@lazy listOf(methodModel)
         }
@@ -139,9 +140,12 @@ class SimpleTestClassModel(
                     file,
                     filenamePattern,
                     extractTagsFromTestFile(file),
+                    isSmokeTest = hasSmokeDirective(file),
                 )
             }.sortedWith(BY_NAME).mapIndexed { index, model ->
-                if (isSmokeTest && index < smokeTestLimit) model.copy(isSmokeTest = true)
+                // This can also select a test that is manually marked via the smoke directive
+                // consequently, auto smoke testing doesn't always add *additional* smoke tests, if some were marked with the directive already
+                if (isAutoSmokeTest && index < autoSmokeTestLimit) model.copy(isSmokeTest = true)
                 else model
             }
 
@@ -162,8 +166,22 @@ class SimpleTestClassModel(
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"
 
+    override val hasSmokeTests: Boolean
+        get() = methods.any { it.isSmokeTest } || innerTestClasses.any { it.hasSmokeTests }
+
     companion object {
         private val BY_NAME = Comparator.comparing(TestEntityModel::name)
+
+        // TODO problem: generateTests isn't invalidated when test sources change, so adding something there and re-executing generate tests doesn't help - maybe do inside smoke exeuction condition instead?
+        private val SMOKE_DIRECTIVE = Regex("^//( )*SMOKE_ALL_RUNNERS( )*$")
+
+        /**
+         * Checks for the `// SMOKE_ALL_RUNNERS` directive in the given test data file. Directory-based test data is not supported.
+         */
+        private fun hasSmokeDirective(file: File): Boolean {
+            if (!file.isFile) return false
+            return file.useLines { lines -> lines.any { it.matches(SMOKE_DIRECTIVE) } }
+        }
 
         private fun dirHasFilesInside(dir: File): Boolean {
             return !FileUtil.processFilesRecursively(dir) { obj: File -> obj.isDirectory }
