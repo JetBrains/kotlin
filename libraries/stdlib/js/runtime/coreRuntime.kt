@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.internal.Effects
+import kotlin.internal.EffectsKind
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.*
 
@@ -261,6 +263,7 @@ internal fun <T> objectCreate(proto: T? = null): T =
 
 @Suppress("UNUSED_PARAMETER")
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
     val self = js("Object.create(ctor.prototype)")
     boxApply(self, box)

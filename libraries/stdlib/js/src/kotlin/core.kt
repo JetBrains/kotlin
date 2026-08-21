@@ -5,6 +5,9 @@
 
 package kotlin.js
 
+import kotlin.internal.Effects
+import kotlin.internal.EffectsKind
+
 /**
  * The property that can be used as a placeholder for statements and values that are defined in JavaScript.
  *
@@ -51,6 +54,7 @@ public actual external val definedExternally: Nothing
  *        including parameters. You can't refer to functions, properties and classes by their short names.
  */
 @Suppress("EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE")
+@Effects(EffectsKind.WRITE)
 public actual external fun js(code: String): dynamic
 
 
@@ -59,4 +63,5 @@ public actual external fun js(code: String): dynamic
  */
 // @JsIntrinsic
 //  To prevent people to insert @OptIn every time
+@Effects(EffectsKind.PURE)
 public external fun jsTypeOf(a: Any?): String
