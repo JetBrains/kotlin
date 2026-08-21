@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
