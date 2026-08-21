@@ -1,0 +1,118 @@
+public abstract interface class org/jetbrains/kotlin/compiler/plugin/AbstractCliOption {
+	public abstract fun getAllowMultipleOccurrences ()Z
+	public abstract fun getDescription ()Ljava/lang/String;
+	public abstract fun getOptionName ()Ljava/lang/String;
+	public abstract fun getRequired ()Z
+	public abstract fun getValueDescription ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CliOption : org/jetbrains/kotlin/compiler/plugin/AbstractCliOption {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getAllowMultipleOccurrences ()Z
+	public fun getDescription ()Ljava/lang/String;
+	public fun getOptionName ()Ljava/lang/String;
+	public fun getRequired ()Z
+	public fun getValueDescription ()Ljava/lang/String;
+}
+
+public class org/jetbrains/kotlin/compiler/plugin/CliOptionProcessingException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CliOptionValue {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/compiler/plugin/CliOptionValue;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/compiler/plugin/CliOptionValue;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/compiler/plugin/CliOptionValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOptionName ()Ljava/lang/String;
+	public final fun getPluginId ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CliOptionsKt {
+	public static final fun cliPluginUsageString (Ljava/lang/String;Ljava/util/Collection;)Ljava/lang/String;
+	public static final fun getPluginOptionString (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public static final fun parseLegacyPluginOption (Ljava/lang/String;)Lorg/jetbrains/kotlin/compiler/plugin/CliOptionValue;
+	public static final fun parseModernPluginOption (Ljava/lang/String;)Lorg/jetbrains/kotlin/compiler/plugin/CliOptionValue;
+}
+
+public abstract interface class org/jetbrains/kotlin/compiler/plugin/CommandLineProcessor {
+	public fun appendList (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/lang/Object;)V
+	public fun appendList (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/util/List;)V
+	public fun applyOptionsFrom (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Ljava/util/Map;Ljava/util/Collection;)V
+	public abstract fun getPluginId ()Ljava/lang/String;
+	public abstract fun getPluginOptions ()Ljava/util/Collection;
+	public fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/AbstractCliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+	public fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/CliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CommandLineProcessor$DefaultImpls {
+	public static fun appendList (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/lang/Object;)V
+	public static fun appendList (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/util/List;)V
+	public static fun applyOptionsFrom (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Ljava/util/Map;Ljava/util/Collection;)V
+	public static fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/compiler/plugin/AbstractCliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+	public static fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/CommandLineProcessor;Lorg/jetbrains/kotlin/compiler/plugin/CliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+}
+
+public abstract class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar {
+	public static final field Companion Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$Companion;
+	public fun <init> ()V
+	public abstract fun getSupportsK2 ()Z
+	public abstract fun registerExtensions (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$Companion {
+	public final fun getCOMPILER_PLUGIN_REGISTRARS ()Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage {
+	public fun <init> ()V
+	public final fun getDisposables ()Ljava/util/List;
+	public final fun getRegisteredExtensions ()Ljava/util/Map;
+	public final fun registerDisposable (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$PluginDisposable;)V
+	public final fun registerExtension (Lorg/jetbrains/kotlin/extensions/ProjectExtensionDescriptor;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$PluginDisposable {
+	public abstract fun dispose ()V
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrarKt {
+	public static final fun getTEST_ONLY_PLUGIN_REGISTRATION_CALLBACK ()Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;
+	public static final fun registerExtensionsForTest (Lcom/intellij/openapi/project/Project;Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lkotlin/jvm/functions/Function2;)V
+	public static final fun registerInProject (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun registerInProject$default (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/compiler/plugin/ComponentRegistrar {
+	public static final field Companion Lorg/jetbrains/kotlin/compiler/plugin/ComponentRegistrar$Companion;
+	public fun getSupportsK2 ()Z
+	public abstract fun registerProjectComponents (Lcom/intellij/mock/MockProject;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/ComponentRegistrar$Companion {
+	public final fun getPLUGIN_COMPONENT_REGISTRARS ()Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/compiler/plugin/ExperimentalCompilerApi : java/lang/annotation/Annotation {
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/PluginCliOptionProcessingException : org/jetbrains/kotlin/compiler/plugin/CliOptionProcessingException {
+	public fun <init> (Ljava/lang/String;Ljava/util/Collection;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Collection;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getOptions ()Ljava/util/Collection;
+	public final fun getPluginId ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/compiler/plugin/PluginProcessingException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+

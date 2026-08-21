@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("generated-sources")
     id("require-explicit-types")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {

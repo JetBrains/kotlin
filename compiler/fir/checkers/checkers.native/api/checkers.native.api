@@ -1,0 +1,291 @@
+public final class org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrors {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrors;
+	public final fun getCANNOT_CHECK_FOR_FORWARD_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getCONFLICTING_OBJC_OVERLOADS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getCONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getCONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getCONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getEMPTY_OBJC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getFORWARD_DECLARATION_AS_CLASS_LITERAL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getFORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getIDENTITY_HASH_CODE_ON_VALUE_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getINAPPLICABLE_EXACT_OBJC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINAPPLICABLE_OBJC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINAPPLICABLE_OBJC_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINAPPLICABLE_SHARED_IMMUTABLE_PROPERTY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINAPPLICABLE_THREAD_LOCAL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINAPPLICABLE_THREAD_LOCAL_TOP_LEVEL ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINCOMPATIBLE_OBJC_NAME_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getINCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getINCOMPATIBLE_THROWS_INHERITED ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getINCOMPATIBLE_THROWS_OVERRIDE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getINVALID_CHARACTERS_NATIVE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryForDeprecation1;
+	public final fun getINVALID_OBJC_HIDES_TARGETS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINVALID_OBJC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getINVALID_OBJC_NAME_CHARS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getINVALID_OBJC_NAME_FIRST_CHAR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getINVALID_REFINES_IN_SWIFT_TARGETS ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getMISSING_EXACT_OBJC_NAME ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getMISSING_EXCEPTION_IN_THROWS_ON_SUSPEND ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getMUST_BE_OBJC_OBJECT_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getMUST_BE_UNIT_TYPE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+	public final fun getMUST_NOT_HAVE_EXTENSION_RECEIVER ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getNATIVE_SPECIFIC_ATOMIC ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getNON_LITERAL_OBJC_NAME_ARG ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getPROPERTY_MUST_BE_VAR ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+	public final fun getREDUNDANT_SWIFT_REFINEMENT ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getSUBTYPE_OF_HIDDEN_FROM_OBJC ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getTHROWS_LIST_EMPTY ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getTWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;
+	public final fun getUNCHECKED_CAST_TO_FORWARD_DECLARATION ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory2;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages : org/jetbrains/kotlin/diagnostics/rendering/BaseDiagnosticRendererFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages;
+	public fun getMAP ()Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactoryToRendererMap;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeAtomicArrayToPrimitiveCallChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/AbstractAtomicReferenceToPrimitiveCallChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeAtomicArrayToPrimitiveCallChecker;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeAtomicReferenceToPrimitiveCallChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/AbstractAtomicReferenceToPrimitiveCallChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeAtomicReferenceToPrimitiveCallChecker;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeCastChecker : org/jetbrains/kotlin/fir/FirPlatformSpecificCastChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeCastChecker;
+	public fun shouldSuppressImpossibleCast (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeExternalDeclarationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeExternalDeclarationChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationGetClassCallChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationGetClassCallChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirGetClassCall;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationReifiedChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationReifiedChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirQualifiedAccessExpression;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationTypeOperatorChecker : org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeForwardDeclarationTypeOperatorChecker;
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirStatement;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/expressions/FirTypeOperatorCall;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeHelpersKt {
+	public static final fun forwardDeclarationKindOrNull (Lorg/jetbrains/kotlin/fir/symbols/impl/FirRegularClassSymbol;)Lorg/jetbrains/kotlin/name/NativeForwardDeclarationKind;
+	public static final fun reportIfHasAnnotation (Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory0;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeHiddenFromObjCInheritanceChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeHiddenFromObjCInheritanceChecker;
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeIdentifierChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeIdentifierChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCActionChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCActionChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected final fun check (Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;Lorg/jetbrains/kotlin/fir/declarations/FirClass;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker$ForExpectClass : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker$ForExpectClass;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker$Regular : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameCallableChecker$Regular;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker$ForExpectClass : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker$ForExpectClass;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker$Regular : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameOverridesChecker$Regular;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameUtilities {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameUtilities;
+	public final fun checkCallableMember (Lorg/jetbrains/kotlin/fir/scopes/FirTypeScope;Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;)V
+	public final fun getObjCNames (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/fir/FirSession;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCNameUtilities$ObjCName {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/expressions/FirAnnotation;Lorg/jetbrains/kotlin/fir/FirSession;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotation ()Lorg/jetbrains/kotlin/fir/expressions/FirAnnotation;
+	public final fun getExact ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getSwiftName ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCOutletChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCOutletChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCOverrideInitChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCOverrideInitChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementAnnotationChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementAnnotationChecker;
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public final fun getHidesFromObjCClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRefinesInSwiftClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+}
+
+public abstract class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker$Companion {
+	public final fun check (Lorg/jetbrains/kotlin/fir/scopes/FirTypeScope;Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Ljava/util/List;Ljava/util/List;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker$ForExpectClass : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker$ForExpectClass;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker$Regular : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjCRefinementOverridesChecker$Regular;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirClass;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjcOverrideApplicabilityChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeObjcOverrideApplicabilityChecker;
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirFunction;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativePackageDirectiveChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativePackageDirectiveChecker;
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirFile;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSharedImmutableChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSharedImmutableChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSpecificAtomicChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeSpecificAtomicChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirCallableDeclaration;)V
+	public synthetic fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThreadLocalChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThreadLocalChecker;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker : org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker$Companion {
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker$ForExpectClass : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker$ForExpectClass;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker$Regular : org/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/FirNativeThrowsChecker$Regular;
+	public fun check (Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;Lorg/jetbrains/kotlin/diagnostics/DiagnosticReporter;Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;)V
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeConflictDeclarationsDiagnosticDispatcher : org/jetbrains/kotlin/fir/analysis/checkers/declaration/PlatformConflictDeclarationsDiagnosticDispatcher {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/NativeConflictDeclarationsDiagnosticDispatcher;
+	public fun getDiagnostic (Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;Lorg/jetbrains/kotlin/utils/SmartSet;Lorg/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext;)Lorg/jetbrains/kotlin/diagnostics/KtDiagnosticFactory1;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationCheckers : org/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationCheckers;
+	public fun getBasicDeclarationCheckers ()Ljava/util/Set;
+	public fun getCallableDeclarationCheckers ()Ljava/util/Set;
+	public fun getClassCheckers ()Ljava/util/Set;
+	public fun getFileCheckers ()Ljava/util/Set;
+	public fun getFunctionCheckers ()Ljava/util/Set;
+	public fun getRegularClassCheckers ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationExtraCheckers : org/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationExtraCheckers;
+	public fun getCallableDeclarationCheckers ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers : org/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers;
+	public fun getFunctionCallCheckers ()Ljava/util/Set;
+	public fun getGetClassCallCheckers ()Ljava/util/Set;
+	public fun getQualifiedAccessExpressionCheckers ()Ljava/util/Set;
+	public fun getTypeOperatorCallCheckers ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/fir/analysis/native/checkers/NativeTypeCheckers : org/jetbrains/kotlin/fir/analysis/checkers/type/TypeCheckers {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/analysis/native/checkers/NativeTypeCheckers;
+	public fun getResolvedTypeRefCheckers ()Ljava/util/Set;
+}
+

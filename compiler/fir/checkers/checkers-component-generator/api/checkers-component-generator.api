@@ -1,0 +1,378 @@
+public final class org/jetbrains/kotlin/fir/builder/SYNTAX_DIAGNOSTIC_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/builder/SYNTAX_DIAGNOSTIC_LIST;
+	public final fun getSyntax ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/CheckersConfiguration {
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V
+	public final fun getAdditionalCheckers ()Ljava/util/Map;
+	public final fun getAliases ()Ljava/util/Map;
+	public final fun getParentsMap ()Ljava/util/Map;
+	public final fun getVisitAlso ()Ljava/util/Map;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/CheckersConfigurator {
+	public fun <init> ()V
+	public final fun additional (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun alias (Lkotlin/reflect/KClass;Ljava/lang/String;Z)Ljava/lang/String;
+	public final fun build ()Lorg/jetbrains/kotlin/fir/checkers/generator/CheckersConfiguration;
+	public final fun visitAlso (Lkotlin/reflect/KClass;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/CheckersConfiguratorKt {
+	public static final fun generateCheckersComponents (Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/Generator {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/checkers/generator/CheckersConfiguration;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)V
+	public final fun generate ()V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/ImportPrinterKt {
+	public static final fun printImports (Lorg/jetbrains/kotlin/utils/SmartPrinter;Ljava/util/Collection;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/MainKt {
+	public static final fun main ([Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/NonSuppressibleErrorNamesGeneratorKt {
+	public static final fun generateNonSuppressibleErrorNamesFile (Ljava/io/File;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/DIAGNOSTICS_LIST;
+	public final fun getAMBIGUITY ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getANNOTATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getAPPLICABILITY ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getBUILDER_INFERENCE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCALL_RESOLUTION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCASTS_AND_IS_CHECKS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCOMPATIBILITY_ISSUES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCONSTRUCTOR_PROBLEMS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCONTEXT_PARAMETERS_RESOLUTION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCONTEXT_TRACKING ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCONTROL_FLOW ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getCONVENTIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getDESTRUCTING_DECLARATION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getENUM_ENTRIES_DEPRECATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXPOSED_VISIBILITY ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXTRA_CHECKERS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getFUNCTIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getFUNCTION_CONTRACTS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getFUN_INTERFACES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getGENERAL_SYNTAX ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getIMPORTS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getINLINE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getINVALID_LOCAL_DECLARATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getLABEL ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getMODIFIERS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getMPP_PROJECTS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getMetaErrors ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getMiscellaneous ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getNULLABILITY ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getOPT_IN ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getOVERRIDES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getPARAMETER_DEFAULT_VALUES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getPROPERTIES_AND_ACCESSORS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getREDECLARATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getREFLECTION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getRETURNS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSUPER ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSUPERTYPES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSUSPEND ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getTYPES_AND_TYPE_PARAMETERS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getTYPE_ALIAS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getUNRESOLVED ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getVALUE_CLASSES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getWHEN_EXPRESSIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/JS_DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/JS_DIAGNOSTICS_LIST;
+	public final fun getANNOTATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getDYNAMICS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXPORT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXTERNAL ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getFUN_INTERFACES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSTATIC ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSUPERTYPES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/JVM_DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/JVM_DIAGNOSTICS_LIST;
+	public final fun getANNOTATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getDECLARATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXTERNAL_DECLARATION ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getINLINE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getJVM_DEFAULT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getMISC ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getMODULES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getRECORDS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getREPEATABLE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSUPER ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getSUSPENSION_POINT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getTYPES ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getTYPE_PARAMETERS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/NATIVE_DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/NATIVE_DIAGNOSTICS_LIST;
+	public final fun getALL ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/WASM_DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/WASM_DIAGNOSTICS_LIST;
+	public final fun getANNOTATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getASSOCIATED_OBJECTS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXTERNALS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getJSCODE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getJS_FUN ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getWASI ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getWASM_INTEROP ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/WEB_COMMON_DIAGNOSTICS_LIST : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/WEB_COMMON_DIAGNOSTICS_LIST;
+	public final fun getANNOTATIONS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXPORT ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getEXTERNALS ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+	public final fun getJSCODE ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;
+}
+
+public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/AbstractDiagnosticGroup {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getDiagnostics ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun get_diagnostics ()Ljava/util/List;
+	public final fun plus (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/AbstractDiagnosticGroup;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/AbstractDiagnosticGroup;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DeprecationDiagnosticData : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticData {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/config/LanguageFeature;Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lkotlin/reflect/KType;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/config/LanguageFeature;Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DeprecationDiagnosticData;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DeprecationDiagnosticData;Ljava/lang/String;Lorg/jetbrains/kotlin/config/LanguageFeature;Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DeprecationDiagnosticData;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getContainingObjectName ()Ljava/lang/String;
+	public final fun getFeatureForError ()Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public fun getName ()Ljava/lang/String;
+	public fun getParameters ()Ljava/util/List;
+	public fun getPositioningStrategy ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public fun getPsiType ()Lkotlin/reflect/KType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder$Companion;
+	public static final field MAX_DIAGNOSTIC_PARAMETER_COUNT I
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/reflect/KType;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public abstract fun build ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticData;
+	protected final fun getContainingObjectName ()Ljava/lang/String;
+	protected final fun getName ()Ljava/lang/String;
+	public final fun getParameters ()Ljava/util/List;
+	protected final fun getPositioningStrategy ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	protected final fun getPsiType ()Lkotlin/reflect/KType;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder$Companion {
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder$Deprecation : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/config/LanguageFeature;Ljava/lang/String;Lkotlin/reflect/KType;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;)V
+	public fun build ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DeprecationDiagnosticData;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticData;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder$Regular : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticBuilder {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/diagnostics/Severity;Ljava/lang/String;Lkotlin/reflect/KType;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;)V
+	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticData;
+	public fun build ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/RegularDiagnosticData;
+	public final fun isSuppressible ()Z
+	public final fun setSuppressible (Z)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticData {
+	public abstract fun getContainingObjectName ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getParameters ()Ljava/util/List;
+	public abstract fun getPositioningStrategy ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public abstract fun getPsiType ()Lkotlin/reflect/KType;
+}
+
+public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getAllDiagnostics ()Ljava/util/List;
+	public final fun getDiagnosticListDefinitionFQN ()Ljava/lang/String;
+	public final fun getGroups ()Ljava/util/List;
+	public final fun get_groups ()Ljava/util/List;
+	public final fun plus (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;
+	public final fun provideDelegate (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Lkotlin/reflect/KProperty;)Lkotlin/properties/ReadOnlyProperty;
+}
+
+public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList$DiagnosticGroup : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/AbstractDiagnosticGroup {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticListGeneratorKt {
+	public static final fun generateDiagnostics (Ljava/io/File;Ljava/lang/String;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticListKt {
+	public static final fun extendedKDoc (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Ljava/lang/String;)Ljava/lang/String;
+	public static synthetic fun extendedKDoc$default (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticListRenderer {
+	public fun <init> ()V
+	public abstract fun render (Ljava/io/File;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Ljava/lang/String;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticParameter {
+	public fun <init> (Ljava/lang/String;Lkotlin/reflect/KType;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlin/reflect/KType;
+	public final fun copy (Ljava/lang/String;Lkotlin/reflect/KType;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticParameter;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticParameter;Ljava/lang/String;Lkotlin/reflect/KType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getType ()Lkotlin/reflect/KType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/ErrorListDiagnosticListRenderer : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticListRenderer {
+	public static final field BASE_PACKAGE Ljava/lang/String;
+	public static final field DIAGNOSTICS_PACKAGE Ljava/lang/String;
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/ErrorListDiagnosticListRenderer;
+	public fun render (Ljava/io/File;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticList;Ljava/lang/String;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy : java/lang/Enum {
+	public static final field ABSTRACT_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field ACTUAL_DECLARATION_NAME Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field ANNOTATION_USE_SITE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field ARRAY_ACCESS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field AS_TYPE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field CALL_ELEMENT_WITH_DOT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field COMMAS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field COMPANION_OBJECT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field CONST_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field CONTEXT_KEYWORD Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field Companion Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy$Companion;
+	public static final field DATA_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_NAME Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_NAME_ONLY Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_RETURN_TYPE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_SIGNATURE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_SIGNATURE_OR_DEFAULT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_START_TO_NAME Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DECLARATION_WITH_BODY Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DEFAULT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DEPRECATION Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field DOT_BY_QUALIFIED Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field ELSE_ENTRY Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field ENUM_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field EXPECT_ACTUAL_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field EXTERNAL_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field FIELD_KEYWORD Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field FUN_INTERFACE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field FUN_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field IF_EXPRESSION Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field IMPORT_ALIAS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field IMPORT_LAST_BUT_ONE_NAME Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field IMPORT_LAST_NAME Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field INFIX_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field INLINE_FUN_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field INLINE_OR_VALUE_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field INLINE_PARAMETER_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field INNER_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field LABEL Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field LATEINIT_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field LONG_LITERAL_SUFFIX Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field MODALITY_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field NAME_IDENTIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field NAME_OF_NAMED_ARGUMENT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field NON_FINAL_MODIFIER_OR_NAME Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field OPEN_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field OPERATOR Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field OPERATOR_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field OVERRIDE_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PACKAGE_DIRECTIVE_NAME_EXPRESSION Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PARAMETERS_WITH_DEFAULT_VALUE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PARAMETER_DEFAULT_VALUE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PARAMETER_VARARG_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PRIVATE_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PROPERTY_DELEGATE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PROPERTY_DELEGATE_BY_KEYWORD Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field PROPERTY_INITIALIZER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field QUESTION_MARK_BY_TYPE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field REDUNDANT_NULLABLE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field REFERENCED_NAME_BY_QUALIFIED Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field REFERENCE_BY_QUALIFIED Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field REIFIED_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field RETURN_WITH_LABEL Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SAFE_ACCESS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SECONDARY_CONSTRUCTOR_DELEGATION_CALL Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SELECTOR_BY_QUALIFIED Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SPREAD_OPERATOR Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SUPERTYPES_LIST Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SUSPEND_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field SYNTAX_ERROR Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field TAILREC_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field TYPEALIAS_TYPE_REFERENCE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field TYPE_ARGUMENT_LIST_OR_SELF Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field TYPE_PARAMETERS_LIST Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field UNREACHABLE_CODE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field USELESS_ELVIS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field VALUE_ARGUMENTS Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field VALUE_ARGUMENTS_LIST Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field VAL_OR_VAR_NODE Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field VARIANCE_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field VISIBILITY_MODIFIER Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field WHEN_EXPRESSION Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field WHEN_GUARD Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field WHOLE_ELEMENT Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static final field importToAdd Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getExpressionToCreate ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public static fun values ()[Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy$Companion {
+}
+
+public final class org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/RegularDiagnosticData : org/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/DiagnosticData {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/diagnostics/Severity;Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;Z)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/jetbrains/kotlin/diagnostics/Severity;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lkotlin/reflect/KType;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public final fun component7 ()Z
+	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/diagnostics/Severity;Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;Z)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/RegularDiagnosticData;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/RegularDiagnosticData;Ljava/lang/String;Lorg/jetbrains/kotlin/diagnostics/Severity;Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/RegularDiagnosticData;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getContainingObjectName ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun getParameters ()Ljava/util/List;
+	public fun getPositioningStrategy ()Lorg/jetbrains/kotlin/fir/checkers/generator/diagnostics/model/PositioningStrategy;
+	public fun getPsiType ()Lkotlin/reflect/KType;
+	public final fun getSeverity ()Lorg/jetbrains/kotlin/diagnostics/Severity;
+	public fun hashCode ()I
+	public final fun isSuppressible ()Z
+	public fun toString ()Ljava/lang/String;
+}
+

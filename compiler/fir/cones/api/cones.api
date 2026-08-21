@@ -1,0 +1,831 @@
+public abstract interface class org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic {
+	public abstract fun getReason ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/diagnostics/ConeUnreportedDuplicateDiagnostic : org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;)V
+	public final fun getOriginal ()Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;
+	public fun getReason ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer {
+	public fun <init> ()V
+	public abstract fun render (Ljava/lang/Iterable;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ForReadability : org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ForReadability;
+	public fun render (Ljava/lang/Iterable;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ToString : org/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer$ToString;
+	public fun render (Ljava/lang/Iterable;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/renderer/ConeIdFullRenderer : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
+	public fun <init> ()V
+	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
+	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
+	public field builder Ljava/lang/StringBuilder;
+	public fun <init> ()V
+	public final fun getBuilder ()Ljava/lang/StringBuilder;
+	public abstract fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
+	public abstract fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+	public final fun setBuilder (Ljava/lang/StringBuilder;)V
+}
+
+public final class org/jetbrains/kotlin/fir/renderer/ConeIdRendererForDebugging : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
+	public fun <init> ()V
+	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
+	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+}
+
+public final class org/jetbrains/kotlin/fir/renderer/ConeIdRendererForDiagnostics : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
+	public fun <init> ()V
+	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
+	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+}
+
+public class org/jetbrains/kotlin/fir/renderer/ConeIdShortRenderer : org/jetbrains/kotlin/fir/renderer/ConeIdRenderer {
+	public fun <init> ()V
+	public fun renderCallableId (Lorg/jetbrains/kotlin/name/CallableId;)V
+	public fun renderClassId (Lorg/jetbrains/kotlin/name/ClassId;)V
+}
+
+public class org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
+	public field builder Ljava/lang/StringBuilder;
+	public field idRenderer Lorg/jetbrains/kotlin/fir/renderer/ConeIdRenderer;
+	public fun <init> ()V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/renderer/ConeAttributeRenderer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBuilder ()Ljava/lang/StringBuilder;
+	public final fun getIdRenderer ()Lorg/jetbrains/kotlin/fir/renderer/ConeIdRenderer;
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeFlexibleType;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntegerLiteralType;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;)V
+	public final fun render (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/lang/String;)V
+	public static synthetic fun render$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/lang/String;ILjava/lang/Object;)V
+	public fun renderAsPossibleFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun renderAsPossibleFunctionType$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	protected fun renderAttributes (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public fun renderConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/lang/String;)V
+	public static synthetic fun renderConstructor$default (Lorg/jetbrains/kotlin/fir/renderer/ConeTypeRenderer;Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/lang/String;ILjava/lang/Object;)V
+	protected final fun renderNonCompilerAttributes (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public final fun setBuilder (Ljava/lang/StringBuilder;)V
+	public final fun setIdRenderer (Lorg/jetbrains/kotlin/fir/renderer/ConeIdRenderer;)V
+}
+
+public class org/jetbrains/kotlin/fir/renderer/ConeTypeRendererForDebugInfo : org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
+	protected fun <init> ()V
+	public fun <init> (Ljava/lang/StringBuilder;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeFlexibleType;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntegerLiteralType;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;)V
+	protected fun renderAttributes (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+}
+
+public final class org/jetbrains/kotlin/fir/renderer/ConeTypeRendererForDebugging : org/jetbrains/kotlin/fir/renderer/ConeTypeRenderer {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/StringBuilder;)V
+	public fun renderAsPossibleFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+}
+
+public class org/jetbrains/kotlin/fir/renderer/ConeTypeRendererForReadability : org/jetbrains/kotlin/fir/renderer/ConeTypeRendererForDebugInfo {
+	public fun <init> (Ljava/lang/StringBuilder;Ljava/util/Map;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Ljava/lang/StringBuilder;Ljava/util/Map;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/Map;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Ljava/util/Map;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun render (Lorg/jetbrains/kotlin/fir/types/ConeFlexibleType;)V
+	public fun renderConstructor (Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;Ljava/lang/String;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutor : org/jetbrains/kotlin/types/model/TypeSubstitutorMarker {
+	public fun <init> ()V
+	public abstract fun substituteArgument (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;I)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public abstract fun substituteOrNull (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun substituteOrSelf (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+}
+
+public final class org/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutor$Empty : org/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutor {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutor$Empty;
+	public fun substituteArgument (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;I)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun substituteOrNull (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun substituteOrSelf (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutorKt {
+	public static final fun substituteOrNull (Lorg/jetbrains/kotlin/fir/resolve/substitution/ConeSubstitutor;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+}
+
+public final class org/jetbrains/kotlin/fir/symbols/SyntheticCallableId {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/symbols/SyntheticCallableId;
+	public final fun getACCEPT_SPECIFIC_TYPE ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getCHECK_NOT_NULL ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getELVIS_NOT_NULL ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getID ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getTRY ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getWHEN ()Lorg/jetbrains/kotlin/name/CallableId;
+}
+
+public final class org/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute : org/jetbrains/kotlin/fir/types/ConeAttributeWithConeType {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public fun add (Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;)Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun copyWith (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;
+	public synthetic fun copyWith (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeAttributeWithConeType;
+	public fun getConeType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;)Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;)Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/AbbreviatedTypeAttributeKt {
+	public static final fun getAbbreviatedType (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/AbbreviatedTypeAttribute;
+	public static final fun getAbbreviatedType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public static final fun getAbbreviatedTypeOrSelf (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public static final fun isTypealiasExpansion (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes;
+	public final fun getClassIdByCompilerAttributeKey ()Ljava/util/Map;
+	public final fun getCompilerAttributeKeyByFqName ()Ljava/util/Map;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams$Companion;
+	public fun <init> (I)V
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun getContextParameterNumber ()I
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$ContextFunctionTypeParams$Companion {
+	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$RawType;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;
+	public fun add (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;
+	public synthetic fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun getANNOTATION_CLASS_ID ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getKeepInInferredDeclarationType ()Z
+	public fun getKey ()Lkotlin/reflect/KClass;
+	public fun intersect (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;
+	public synthetic fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;)Z
+	public synthetic fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun toString ()Ljava/lang/String;
+	public fun union (Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$UnsafeVariance;
+	public synthetic fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public final class org/jetbrains/kotlin/fir/types/CompilerConeAttributesKt {
+	public static final fun getContextParameterNumberForFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)I
+	public static final fun getContextParameterNumberForFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)I
+	public static final fun getEnhancedNullability (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$EnhancedNullability;
+	public static final fun getExact (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$Exact;
+	public static final fun getExtensionFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$ExtensionFunctionType;
+	public static final fun getHasContextParameters (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun getHasEnhancedNullability (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun getHasNoInfer (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun getNoInfer (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/CompilerConeAttributes$NoInfer;
+	public static final fun isExtensionFunctionType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeAttribute : org/jetbrains/kotlin/types/model/AnnotationMarker {
+	public fun <init> ()V
+	public abstract fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public fun getImplementsEquality ()Z
+	public abstract fun getKeepInInferredDeclarationType ()Z
+	public abstract fun getKey ()Lkotlin/reflect/KClass;
+	public abstract fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public abstract fun isSubtypeOf (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public fun renderForReadability ()Ljava/lang/String;
+	public abstract fun toString ()Ljava/lang/String;
+	public abstract fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeAttributeWithConeType : org/jetbrains/kotlin/fir/types/ConeAttribute {
+	public fun <init> ()V
+	public abstract fun copyWith (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeAttributeWithConeType;
+	public abstract fun getConeType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeAttributes : org/jetbrains/kotlin/util/AttributeArrayOwner, java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeAttributes$Companion;
+	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun add (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun contains (Lkotlin/reflect/KClass;)Z
+	public final fun contains (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Z
+	public final fun definitelyDifferFrom (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Z
+	public final fun filterNecessaryToKeep ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun get (Lkotlin/reflect/KClass;)Lorg/jetbrains/kotlin/fir/types/ConeAttribute;
+	public final fun intersect (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun remove (Lkotlin/reflect/KClass;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun remove (Lorg/jetbrains/kotlin/fir/types/ConeAttribute;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun transformTypesWith (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun union (Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeAttributes$Companion : org/jetbrains/kotlin/fir/util/ConeTypeRegistry {
+	public final fun create (Ljava/util/List;)Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getEmpty ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getWithExtensionFunctionType ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeAttributesKt {
+	public static final fun transformOrNull (Lorg/jetbrains/kotlin/fir/types/ConeAttributeWithConeType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/types/ConeAttributeWithConeType;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeBuiltinTypeUtilsKt {
+	public static final fun isAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isAnyOrNullableAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isArrayType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isArrayTypeOrNullableArrayType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isBoolean (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isBooleanOrNullableBoolean (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isByte (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isChar (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isCharOrNullableChar (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isDouble (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isEnum (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isFloat (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isInt (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isList (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isLong (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMap (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMutableList (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMutableMap (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMutableSet (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNonPrimitiveArray (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNothing (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNothingOrNullableNothing (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNullableAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNullableBoolean (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNullableNothing (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isNullableString (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isPrimitive (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isPrimitiveArray (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isPrimitiveNumberOrNullableType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isPrimitiveOrNullablePrimitive (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isPrimitiveOrUnsignedArray (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isSet (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isShort (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isString (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isThrowableOrNullableThrowable (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUByte (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUInt (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isULong (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUShort (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUnit (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUnitOrNullableUnit (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUnsignedArray (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUnsignedType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isUnsignedTypeOrNullableUnsignedType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeCapturedType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType, org/jetbrains/kotlin/types/model/CapturedTypeMarker {
+	public fun <init> (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
+	public fun <init> (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;Z)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/types/model/CaptureStatus;
+	public final fun component2 ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun component3 ()Z
+	public final fun component4 ()Lorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;
+	public final fun component5 ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun component6 ()Z
+	public final fun copy (Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;Z)Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;Lorg/jetbrains/kotlin/types/model/CaptureStatus;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZLorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeCapturedType;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getCaptureStatus ()Lorg/jetbrains/kotlin/types/model/CaptureStatus;
+	public final fun getConstructor ()Lorg/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor;
+	public final fun getLowerType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun hashCode ()I
+	public final fun isMarkedNullable ()Z
+	public final fun isProjectionNotNull ()Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeCapturedTypeConstructor : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker, org/jetbrains/kotlin/types/model/CapturedTypeConstructorMarker {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Ljava/util/List;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Ljava/util/List;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getProjection ()Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public final fun getSupertypes ()Ljava/util/List;
+	public final fun getTypeParameterMarker ()Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
+	public final fun setSupertypes (Ljava/util/List;)V
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeClassLikeErrorLookupTag : org/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag {
+	public fun <init> (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDelegatedType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun getDiagnostic ()Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag : org/jetbrains/kotlin/fir/types/ConeClassifierLookupTag {
+	public fun <init> ()V
+	public abstract fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public fun getName ()Lorg/jetbrains/kotlin/name/Name;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeClassLikeType : org/jetbrains/kotlin/fir/types/ConeLookupTagBasedType {
+	public fun <init> ()V
+	public abstract fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeClassifierLookupTag : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker {
+	public fun <init> ()V
+	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType : org/jetbrains/kotlin/fir/types/ConeRigidType, org/jetbrains/kotlin/types/model/DefinitelyNotNullTypeMarker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
+	public final fun copy (Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType;Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getOriginal ()Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeDefinitelyNotNullType$Companion {
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeDynamicType : org/jetbrains/kotlin/fir/types/ConeFlexibleType, org/jetbrains/kotlin/types/model/DynamicTypeMarker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeDynamicType$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)V
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeDynamicType$Companion {
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeErrorType : org/jetbrains/kotlin/fir/types/ConeClassLikeType {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;ZLorg/jetbrains/kotlin/fir/types/ConeKotlinType;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;Ljava/lang/Boolean;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeErrorLookupTag;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;ZLorg/jetbrains/kotlin/fir/types/ConeKotlinType;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;Ljava/lang/Boolean;Lorg/jetbrains/kotlin/fir/types/ConeClassLikeErrorLookupTag;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getDelegatedType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun getDiagnostic ()Lorg/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic;
+	public fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeErrorLookupTag;
+	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+	public final fun getNullable ()Ljava/lang/Boolean;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun hashCode ()I
+	public fun isMarkedNullable ()Z
+	public final fun isUninferredParameter ()Z
+}
+
+public class org/jetbrains/kotlin/fir/types/ConeFlexibleType : org/jetbrains/kotlin/fir/types/ConeKotlinType, org/jetbrains/kotlin/types/model/FlexibleTypeMarker {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Z)V
+	public final fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getLowerBound ()Lorg/jetbrains/kotlin/fir/types/ConeRigidType;
+	public final fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public final fun getUpperBound ()Lorg/jetbrains/kotlin/fir/types/ConeRigidType;
+	public final fun hashCode ()I
+	public final fun isTrivial ()Z
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeIntegerConstantOperatorType : org/jetbrains/kotlin/fir/types/ConeIntegerLiteralType {
+	public fun <init> (ZZ)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeIntegerLiteralConstantType : org/jetbrains/kotlin/fir/types/ConeIntegerLiteralType {
+	public fun <init> (JZZ)V
+	public final fun getValue ()J
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeIntegerLiteralType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType, org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeIntegerLiteralType$Companion;
+	public synthetic fun <init> (ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun equals (Ljava/lang/Object;)Z
+	public abstract fun getApproximatedType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public static synthetic fun getApproximatedType$default (Lorg/jetbrains/kotlin/fir/types/ConeIntegerLiteralType;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public final fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public abstract fun getPossibleTypes ()Ljava/util/Collection;
+	public abstract fun getSupertypes ()Ljava/util/List;
+	public final fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public final fun hashCode ()I
+	public final fun isMarkedNullable ()Z
+	public final fun isUnsigned ()Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeIntegerLiteralType$Companion {
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeIntersectionType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType, org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker, org/jetbrains/kotlin/types/model/IntersectionTypeConstructorMarker {
+	public fun <init> (Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public synthetic fun <init> (Ljava/util/Collection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getIntersectedTypes ()Ljava/util/Collection;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public final fun getUpperBoundForApproximation ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun hashCode ()I
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeKotlinType : org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection, org/jetbrains/kotlin/types/model/KotlinTypeMarker, org/jetbrains/kotlin/types/model/TypeArgumentListMarker {
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getKind ()Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public final fun getType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public abstract fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public abstract fun hashCode ()I
+	public final fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeKotlinTypeConflictingProjection : org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun copy (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeConflictingProjection;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeConflictingProjection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeConflictingProjection;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKind ()Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public fun getType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection : org/jetbrains/kotlin/fir/types/ConeTypeProjection {
+	public fun equals (Ljava/lang/Object;)Z
+	public abstract fun getType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionIn : org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun copy (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionIn;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionIn;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionIn;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKind ()Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public fun getType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionOut : org/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public final fun copy (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionOut;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionOut;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjectionOut;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKind ()Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public fun getType ()Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeLookupTagBasedType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public abstract fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+	public fun hashCode ()I
+	public abstract fun isMarkedNullable ()Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeRawType : org/jetbrains/kotlin/fir/types/ConeFlexibleType {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeRawType$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeRawType$Companion {
+	public final fun create (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)Lorg/jetbrains/kotlin/fir/types/ConeRawType;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeRigidType : org/jetbrains/kotlin/fir/types/ConeKotlinType, org/jetbrains/kotlin/types/model/RigidTypeMarker {
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType : org/jetbrains/kotlin/fir/types/ConeRigidType, org/jetbrains/kotlin/types/model/SimpleTypeMarker {
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeStarProjection : org/jetbrains/kotlin/fir/types/ConeTypeProjection {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/fir/types/ConeStarProjection;
+	public fun getKind ()Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeStubType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType, org/jetbrains/kotlin/types/model/StubTypeMarker {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeStubTypeConstructor;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getConstructor ()Lorg/jetbrains/kotlin/fir/types/ConeStubTypeConstructor;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun hashCode ()I
+	public final fun isMarkedNullable ()Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeStubTypeConstructor : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;ZZ)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun copy (Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;ZZ)Lorg/jetbrains/kotlin/fir/types/ConeStubTypeConstructor;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/types/ConeStubTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;ZZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeStubTypeConstructor;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getVariable ()Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;
+	public fun hashCode ()I
+	public final fun isForFixation ()Z
+	public final fun isTypeVariableInSubtyping ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeStubTypeForTypeVariableInSubtyping : org/jetbrains/kotlin/fir/types/ConeStubType {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeStubTypeConstructor;Z)V
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeTypeVariable;Z)V
+}
+
+public abstract interface class org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker : org/jetbrains/kotlin/types/model/TypeConstructorMarker {
+}
+
+public abstract class org/jetbrains/kotlin/fir/types/ConeTypeProjection : org/jetbrains/kotlin/types/model/TypeArgumentMarker {
+	public static final field Companion Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection$Companion;
+	public abstract fun getKind ()Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypeProjection$Companion {
+	public final fun getEMPTY_ARRAY ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypeProjectionKt {
+	public static final fun getType (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;
+	public static final fun getVariance (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)Lorg/jetbrains/kotlin/types/Variance;
+	public static final fun isStarProjection (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)Z
+	public static final fun replaceType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeKotlinTypeProjection;
+	public static final fun replaceType (Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypeUtilsKt {
+	public static final fun contains (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun forEachType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun forEachType$default (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun getClassId (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/name/ClassId;
+	public static final fun getClassLikeLookupTagIfAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public static final fun getConstructor (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)Lorg/jetbrains/kotlin/types/model/TypeConstructorMarker;
+	public static final fun getHasFlexibleMarkedNullability (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun getLookupTagIfAny (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+	public static final fun hasCapture (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun hasError (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMarkedNullable (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMarkedOrFlexiblyNullable (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Z
+	public static final fun isMarkedOrFlexiblyNullable (Lorg/jetbrains/kotlin/fir/types/ConeRigidType;)Z
+	public static final fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeRigidType;
+	public static final fun mapTypes (Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;
+	public static final fun renderForDebugging (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Ljava/lang/String;
+	public static final fun renderReadable (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Ljava/lang/String;
+	public static final fun renderReadableWithFqNames (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/util/Map;)Ljava/lang/String;
+	public static synthetic fun renderReadableWithFqNames$default (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Ljava/util/Map;ILjava/lang/Object;)Ljava/lang/String;
+	public static final fun replaceArgumentsWithStarProjections (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public static final fun toTypeProjection (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/fir/types/ProjectionKind;)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public static final fun toTypeProjection (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lorg/jetbrains/kotlin/types/Variance;)Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public static final fun unwrapLowerBound (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
+	public static final fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeRigidType;
+	public static final fun withArguments (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public static final fun withUpperBound (Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeIntersectionType;
+}
+
+public class org/jetbrains/kotlin/fir/types/ConeTypeVariable : org/jetbrains/kotlin/types/model/TypeVariableMarker {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDefaultType ()Lorg/jetbrains/kotlin/fir/types/ConeTypeVariableType;
+	public final fun getTypeConstructor ()Lorg/jetbrains/kotlin/fir/types/ConeTypeVariableTypeConstructor;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypeVariableType : org/jetbrains/kotlin/fir/types/ConeSimpleKotlinType {
+	public fun <init> (ZLorg/jetbrains/kotlin/fir/types/ConeTypeVariableTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;)V
+	public synthetic fun <init> (ZLorg/jetbrains/kotlin/fir/types/ConeTypeVariableTypeConstructor;Lorg/jetbrains/kotlin/fir/types/ConeAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public final fun getTypeConstructor ()Lorg/jetbrains/kotlin/fir/types/ConeTypeVariableTypeConstructor;
+	public fun hashCode ()I
+	public final fun isMarkedNullable ()Z
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypeVariableTypeConstructor : org/jetbrains/kotlin/fir/types/ConeTypeConstructorMarker, org/jetbrains/kotlin/types/model/TypeVariableTypeConstructorMarker {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;)V
+	public final fun getDebugName ()Ljava/lang/String;
+	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getOriginalTypeParameter ()Lorg/jetbrains/kotlin/types/model/TypeParameterMarker;
+	public final fun isContainedInInvariantOrContravariantPositions ()Z
+	public final fun recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter ()V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/types/ConeTypesKt {
+	public static final fun unwrapToSimpleTypeUsingLowerBound (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)Lorg/jetbrains/kotlin/fir/types/ConeSimpleKotlinType;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/fir/types/DynamicTypeConstructor : java/lang/annotation/Annotation {
+}
+
+public final class org/jetbrains/kotlin/fir/types/ProjectionKind : java/lang/Enum {
+	public static final field IN Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public static final field INVARIANT Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public static final field OUT Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public static final field STAR Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/fir/types/ProjectionKind;
+}
+
+public final class org/jetbrains/kotlin/fir/types/impl/ConeClassLikeTypeImpl : org/jetbrains/kotlin/fir/types/ConeClassLikeType {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZLorg/jetbrains/kotlin/fir/types/ConeAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getAttributes ()Lorg/jetbrains/kotlin/fir/types/ConeAttributes;
+	public final fun getCachedExpandedType ()Lorg/jetbrains/kotlin/util/WeakPair;
+	public fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassLikeLookupTag;
+	public synthetic fun getLookupTag ()Lorg/jetbrains/kotlin/fir/types/ConeClassifierLookupTag;
+	public fun getTypeArguments ()[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;
+	public fun isMarkedNullable ()Z
+	public final fun setCachedExpandedType (Lorg/jetbrains/kotlin/util/WeakPair;)V
+}
+
+public abstract class org/jetbrains/kotlin/fir/util/BaseMultimap : org/jetbrains/kotlin/fir/util/MutableMultimap {
+	public fun <init> ()V
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	protected abstract fun createContainer ()Ljava/util/Collection;
+	protected abstract fun createEmptyContainer ()Ljava/util/Collection;
+	public fun get (Ljava/lang/Object;)Ljava/util/Collection;
+	public fun getKeys ()Ljava/util/Set;
+	public fun getValues ()Ljava/util/Collection;
+	public fun iterator ()Ljava/util/Iterator;
+	public fun put (Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun remove (Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun removeKey (Ljava/lang/Object;)Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/fir/util/ChainedIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (Ljava/util/Collection;)V
+	public fun hasNext ()Z
+	public fun next ()Ljava/lang/Object;
+	public fun remove ()V
+}
+
+public abstract class org/jetbrains/kotlin/fir/util/ConeTypeRegistry : org/jetbrains/kotlin/util/TypeRegistry {
+	public fun <init> ()V
+	public fun customComputeIfAbsent (Ljava/util/concurrent/ConcurrentHashMap;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)I
+}
+
+public final class org/jetbrains/kotlin/fir/util/ListMultimap : org/jetbrains/kotlin/fir/util/BaseMultimap {
+	public fun <init> ()V
+	public synthetic fun createContainer ()Ljava/util/Collection;
+	public synthetic fun createEmptyContainer ()Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/fir/util/Multimap : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+	public abstract fun contains (Ljava/lang/Object;)Z
+	public abstract fun get (Ljava/lang/Object;)Ljava/util/Collection;
+	public abstract fun getKeys ()Ljava/util/Set;
+	public abstract fun getValues ()Ljava/util/Collection;
+	public abstract fun iterator ()Ljava/util/Iterator;
+}
+
+public final class org/jetbrains/kotlin/fir/util/MultimapKt {
+	public static final fun listMultimapOf ()Lorg/jetbrains/kotlin/fir/util/ListMultimap;
+	public static final fun plusAssign (Lorg/jetbrains/kotlin/fir/util/MutableMultimap;Ljava/util/Map;)V
+	public static final fun setMultimapOf ()Lorg/jetbrains/kotlin/fir/util/SetMultimap;
+}
+
+public abstract interface class org/jetbrains/kotlin/fir/util/MutableMultimap : org/jetbrains/kotlin/fir/util/Multimap {
+	public abstract fun clear ()V
+	public abstract fun put (Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun putAll (Ljava/lang/Object;Ljava/util/Collection;)V
+	public abstract fun remove (Ljava/lang/Object;Ljava/lang/Object;)V
+	public abstract fun removeKey (Ljava/lang/Object;)Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/fir/util/PersistentMultimap {
+	public fun <init> ()V
+	public final fun get (Ljava/lang/Object;)Ljava/util/List;
+	public final fun getKeys ()Lkotlinx/collections/immutable/ImmutableSet;
+	public final fun put (Ljava/lang/Object;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/util/PersistentMultimap;
+	public final fun remove (Ljava/lang/Object;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/util/PersistentMultimap;
+}
+
+public final class org/jetbrains/kotlin/fir/util/PersistentSetMultimap {
+	public fun <init> ()V
+	public final fun get (Ljava/lang/Object;)Ljava/util/Set;
+	public final fun getEntries ()Lkotlinx/collections/immutable/ImmutableSet;
+	public final fun put (Ljava/lang/Object;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/util/PersistentSetMultimap;
+	public final fun remove (Ljava/lang/Object;Ljava/lang/Object;)Lorg/jetbrains/kotlin/fir/util/PersistentSetMultimap;
+}
+
+public final class org/jetbrains/kotlin/fir/util/SetMultimap : org/jetbrains/kotlin/fir/util/BaseMultimap {
+	public fun <init> ()V
+	public synthetic fun createContainer ()Ljava/util/Collection;
+	public synthetic fun createEmptyContainer ()Ljava/util/Collection;
+}
+

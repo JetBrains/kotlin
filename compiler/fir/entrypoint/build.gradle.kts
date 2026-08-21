@@ -4,6 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("require-explicit-types")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {

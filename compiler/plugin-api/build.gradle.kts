@@ -4,6 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {

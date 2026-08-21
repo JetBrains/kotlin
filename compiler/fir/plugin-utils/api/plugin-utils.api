@@ -1,0 +1,165 @@
+public final class org/jetbrains/kotlin/fir/plugin/ClassBuildingContext : org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/descriptors/ClassKind;)V
+	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;
+	public fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+	public final fun superType (Lkotlin/jvm/functions/Function1;)V
+	public final fun superType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/ClassBuildingContextKt {
+	public static final fun createCompanionObject (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+	public static synthetic fun createCompanionObject$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+	public static final fun createNestedClass (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/descriptors/ClassKind;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+	public static synthetic fun createNestedClass$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/descriptors/ClassKind;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+	public static final fun createTopLevelClass (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/descriptors/ClassKind;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+	public static synthetic fun createTopLevelClass$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/descriptors/ClassKind;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirRegularClass;
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/ConstructorBuildingContext : org/jetbrains/kotlin/fir/plugin/FunctionBuildingContext {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Z)V
+	public fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;
+	public synthetic fun contextReceiver (Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun contextReceiver (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public synthetic fun typeParameter (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/types/Variance;ZLorg/jetbrains/kotlin/GeneratedDeclarationKey;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/ConstructorBuildingContextKt {
+	public static final fun createConstructor (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
+	public static synthetic fun createConstructor$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
+	public static final fun createDefaultPrivateConstructor (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Z)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
+	public static synthetic fun createDefaultPrivateConstructor$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirConstructor;
+}
+
+public abstract class org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public abstract fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;
+	public fun contextReceiver (Lkotlin/jvm/functions/Function1;)V
+	public fun contextReceiver (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	protected final fun generateStatus ()Lorg/jetbrains/kotlin/fir/declarations/impl/FirResolvedDeclarationStatusImpl;
+	protected final fun generateTypeParameter (Lorg/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext$TypeParameterData;Lorg/jetbrains/kotlin/fir/symbols/FirBasedSymbol;)Lorg/jetbrains/kotlin/fir/declarations/FirTypeParameter;
+	protected final fun getKey ()Lorg/jetbrains/kotlin/GeneratedDeclarationKey;
+	public final fun getModality ()Lorg/jetbrains/kotlin/descriptors/Modality;
+	protected final fun getOwner ()Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;
+	protected final fun getSession ()Lorg/jetbrains/kotlin/fir/FirSession;
+	public final fun getSource ()Lorg/jetbrains/kotlin/KtSourceElement;
+	protected final fun getSourceForFirDeclaration ()Lorg/jetbrains/kotlin/KtSourceElement;
+	protected final fun getTypeParameters ()Ljava/util/List;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/descriptors/Visibility;
+	protected final fun initTypeParameterBounds (Ljava/util/List;Ljava/util/List;)V
+	protected final fun produceContextReceiversTo (Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/fir/declarations/FirDeclarationOrigin;Lorg/jetbrains/kotlin/fir/symbols/impl/FirCallableSymbol;)V
+	public final fun setModality (Lorg/jetbrains/kotlin/descriptors/Modality;)V
+	public final fun setSource (Lorg/jetbrains/kotlin/KtSourceElement;)V
+	public final fun setVisibility (Lorg/jetbrains/kotlin/descriptors/Visibility;)V
+	public final fun status (Lkotlin/jvm/functions/Function1;)V
+	public fun typeParameter (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/types/Variance;ZLorg/jetbrains/kotlin/GeneratedDeclarationKey;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun typeParameter$default (Lorg/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/types/Variance;ZLorg/jetbrains/kotlin/GeneratedDeclarationKey;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext$TypeParameterBuildingContext {
+	public fun <init> ()V
+	public final fun bound (Lkotlin/jvm/functions/Function1;)V
+	public final fun bound (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+}
+
+protected final class org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext$TypeParameterData {
+	public fun <init> (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/types/Variance;ZLjava/util/List;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun component2 ()Lorg/jetbrains/kotlin/types/Variance;
+	public final fun component3 ()Z
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Lorg/jetbrains/kotlin/GeneratedDeclarationKey;
+	public final fun copy (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/types/Variance;ZLjava/util/List;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;)Lorg/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext$TypeParameterData;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext$TypeParameterData;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/types/Variance;ZLjava/util/List;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext$TypeParameterData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBoundProviders ()Ljava/util/List;
+	public final fun getKey ()Lorg/jetbrains/kotlin/GeneratedDeclarationKey;
+	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getVariance ()Lorg/jetbrains/kotlin/types/Variance;
+	public fun hashCode ()I
+	public final fun isReified ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/fir/plugin/FunctionBuildingContext : org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected final fun generateValueParameter (Lorg/jetbrains/kotlin/fir/plugin/FunctionBuildingContext$ValueParameterData;Lorg/jetbrains/kotlin/fir/symbols/impl/FirFunctionSymbol;Ljava/util/List;)Lorg/jetbrains/kotlin/fir/declarations/FirValueParameter;
+	protected final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
+	protected final fun getValueParameters ()Ljava/util/List;
+	public final fun valueParameter (Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;)V
+	public final fun valueParameter (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;)V
+	public static synthetic fun valueParameter$default (Lorg/jetbrains/kotlin/fir/plugin/FunctionBuildingContext;Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;ILjava/lang/Object;)V
+	public static synthetic fun valueParameter$default (Lorg/jetbrains/kotlin/fir/plugin/FunctionBuildingContext;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;ILjava/lang/Object;)V
+}
+
+protected final class org/jetbrains/kotlin/fir/plugin/FunctionBuildingContext$ValueParameterData {
+	public fun <init> (Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun component2 ()Lkotlin/jvm/functions/Function1;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()Z
+	public final fun component7 ()Lorg/jetbrains/kotlin/GeneratedDeclarationKey;
+	public final fun copy (Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;)Lorg/jetbrains/kotlin/fir/plugin/FunctionBuildingContext$ValueParameterData;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/fir/plugin/FunctionBuildingContext$ValueParameterData;Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZZZLorg/jetbrains/kotlin/GeneratedDeclarationKey;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/plugin/FunctionBuildingContext$ValueParameterData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHasDefaultValue ()Z
+	public final fun getKey ()Lorg/jetbrains/kotlin/GeneratedDeclarationKey;
+	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getTypeProvider ()Lkotlin/jvm/functions/Function1;
+	public fun hashCode ()I
+	public final fun isCrossinline ()Z
+	public final fun isNoinline ()Z
+	public final fun isVararg ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/FunctionCopyUtilsKt {
+	public static final fun copyFirFunctionWithResolvePhase (Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/declarations/FirResolvePhase;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/PropertyBuildingContext : org/jetbrains/kotlin/fir/plugin/DeclarationBuildingContext {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;ZZ)V
+	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;
+	public fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public final fun extensionReceiverType (Lkotlin/jvm/functions/Function1;)V
+	public final fun extensionReceiverType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+	public final fun setter (Lorg/jetbrains/kotlin/descriptors/Visibility;)V
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/PropertyBuildingContextKt {
+	public static final fun createMemberProperty (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static final fun createMemberProperty (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static synthetic fun createMemberProperty$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static synthetic fun createMemberProperty$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static final fun createTopLevelProperty (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static final fun createTopLevelProperty (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static synthetic fun createTopLevelProperty$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+	public static synthetic fun createTopLevelProperty$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirProperty;
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/SimpleFunctionBuildingContext : org/jetbrains/kotlin/fir/plugin/FunctionBuildingContext {
+	public fun <init> (Lorg/jetbrains/kotlin/fir/FirSession;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirDeclaration;
+	public fun build ()Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public final fun extensionReceiverType (Lkotlin/jvm/functions/Function1;)V
+	public final fun extensionReceiverType (Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;)V
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/SimpleFunctionBuildingContextKt {
+	public static final fun createMemberFunction (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static final fun createMemberFunction (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static synthetic fun createMemberFunction$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static synthetic fun createMemberFunction$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/fir/symbols/impl/FirClassSymbol;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static final fun createTopLevelFunction (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static final fun createTopLevelFunction (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static synthetic fun createTopLevelFunction$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+	public static synthetic fun createTopLevelFunction$default (Lorg/jetbrains/kotlin/fir/extensions/FirExtension;Lorg/jetbrains/kotlin/GeneratedDeclarationKey;Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/fir/types/ConeKotlinType;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/declarations/FirSimpleFunction;
+}
+
+public final class org/jetbrains/kotlin/fir/plugin/TypeUtilsKt {
+	public static final fun createConeType (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/fir/FirSession;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;Z)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+	public static synthetic fun createConeType$default (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/fir/FirSession;[Lorg/jetbrains/kotlin/fir/types/ConeTypeProjection;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/fir/types/ConeClassLikeType;
+}
+

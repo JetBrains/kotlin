@@ -11,6 +11,7 @@ plugins {
     id("project-tests-convention")
     id("test-inputs-check")
     id("require-explicit-types")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {

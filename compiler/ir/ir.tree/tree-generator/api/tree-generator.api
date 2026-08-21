@@ -1,0 +1,435 @@
+public final class org/jetbrains/kotlin/ir/generator/CommonTypesKt {
+	public static final fun getAnyType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDeclaredSymbolRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDeclaredSymbolVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDeepCopyIrTreeWithSymbolsType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getDeepCopyTypeRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getElementBaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getElementTransformerVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getEmptySymbolRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getEmptySymbolVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIdSignatureType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrDeepCopyBaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrElementConstructorIndicatorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrFactoryType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrImplementationDetailType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrSimpleTypeType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrSymbolBaseType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrSymbolWithSignatureType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrTransformerType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrTreeSymbolsVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrTypeAbbreviationType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrTypeProjectionType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrTypeType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getIrVisitorVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getObsoleteDescriptorBasedApiAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getReferencedSymbolRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getReferencedSymbolVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getStageControllerType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getStatementOriginType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getSymbolRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getSymbolVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getTypeRemapperType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getTypeTransformerType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getTypeTransformerVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getTypeVisitorType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getTypeVisitorVoidType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public static final fun getUnsafeDuringIrConstructionApiAnnotation ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/ImplementationConfigurator : org/jetbrains/kotlin/ir/generator/config/AbstractIrTreeImplementationConfigurator {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/ir/generator/ImplementationConfigurator;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/IrSymbolTree : org/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeBuilder {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/ir/generator/IrSymbolTree;
+	public final fun getAnonymousInitializerSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getBindableSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getClassSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getClassifierSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getConstructorSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getDeclarationWithAccessorsSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getEnumEntrySymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getExternalPackageFragmentSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getFieldSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getFileSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getFunctionSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getLocalDelegatedPropertySymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getPackageFragmentSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getPropertySymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getReplSnippetSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getReturnTargetSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getReturnableBlockSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public synthetic fun getRootElement ()Lorg/jetbrains/kotlin/generators/tree/AbstractElement;
+	public fun getRootElement ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getScriptSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getSimpleFunctionSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getTypeAliasSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getTypeParameterSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getValueParameterSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getValueSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun getVariableSymbol ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/IrTree : org/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/ir/generator/IrTree;
+	public final fun getAnonymousInitializer ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getBlock ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getBlockBody ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getBody ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getBranch ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getBreak ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getBreakContinue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getCallableReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getCatch ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getClass ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getClassReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getComposite ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConst ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstantArray ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstantObject ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstantPrimitive ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstantValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstructor ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getConstructorCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getContainerExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getContinue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclaration ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclarationBase ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclarationContainer ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclarationParent ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclarationReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclarationWithName ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDeclarationWithVisibility ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDelegatingConstructorCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDoWhileLoop ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDynamicExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDynamicMemberExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getDynamicOperatorExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getElseBranch ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getEnumConstructorCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getEnumEntry ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getErrorCallExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getErrorExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getExpressionBody ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getExternalPackageFragment ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getField ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFieldAccessExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFile ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFunction ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFunctionAccessExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFunctionExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFunctionReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getFunctionWithLateBinding ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getGetClass ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getGetEnumValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getGetField ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getGetObjectValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getGetSingletonValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getGetValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getInlinedFunctionBlock ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getInstanceInitializerCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getLocalDelegatedProperty ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getLocalDelegatedPropertyReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getLoop ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getMemberAccessExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getMemberWithContainerSource ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getMetadataSourceOwner ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getModuleFragment ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getMutableAnnotationContainer ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getOverridableDeclaration ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getOverridableMember ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getPackageFragment ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getPossiblyExternalDeclaration ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getProperty ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getPropertyReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getPropertyWithLateBinding ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getRawFunctionReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getReplSnippet ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getReturn ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getReturnTarget ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getReturnableBlock ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getRichCallableReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getRichFunctionReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getRichPropertyReference ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public synthetic fun getRootElement ()Lorg/jetbrains/kotlin/generators/tree/AbstractElement;
+	public fun getRootElement ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getScript ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSetField ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSetValue ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSimpleFunction ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSpreadElement ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getStatement ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getStatementContainer ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getStringConcatenation ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSuspendableExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSuspensionPoint ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSymbolOwner ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getSyntheticBody ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getThrow ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getTry ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getTypeAlias ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getTypeOperatorCall ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getTypeParameter ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getTypeParametersContainer ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getValueAccessExpression ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getValueDeclaration ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getValueParameter ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getVararg ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getVarargElement ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getVariable ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getWhen ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public final fun getWhileLoop ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/MainKt {
+	public static final field BASE_PACKAGE Ljava/lang/String;
+	public static final fun main ([Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/Packages {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/ir/generator/Packages;
+	public static final field declarations Ljava/lang/String;
+	public static final field descriptors Ljava/lang/String;
+	public static final field exprs Ljava/lang/String;
+	public static final field symbols Ljava/lang/String;
+	public static final field symbolsImpl Ljava/lang/String;
+	public static final field tree Ljava/lang/String;
+	public static final field types Ljava/lang/String;
+	public static final field util Ljava/lang/String;
+	public static final field visitors Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/SymbolImplementationConfigurator : org/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeImplementationConfigurator {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/ir/generator/SymbolImplementationConfigurator;
+}
+
+public abstract class org/jetbrains/kotlin/ir/generator/config/AbstractIrTreeImplementationConfigurator : org/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator {
+	public fun <init> ()V
+	public synthetic fun createImplementation (Lorg/jetbrains/kotlin/generators/tree/AbstractElement;Ljava/lang/String;)Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;
+	protected fun createImplementation (Lorg/jetbrains/kotlin/ir/generator/model/Element;Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/generator/model/Implementation;
+	protected final fun smartList (Lorg/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator$ImplementationContext;)Ljava/lang/String;
+	protected final fun undefinedOffset (Lorg/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator$ImplementationContext;)Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder : org/jetbrains/kotlin/generators/tree/config/AbstractElementConfigurator {
+	public fun <init> ()V
+	public synthetic fun createElement (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)Lorg/jetbrains/kotlin/generators/tree/AbstractElement;
+	protected fun createElement (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;)Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	protected final fun declaredSymbol (Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	protected final fun field (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	public static synthetic fun field$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	protected final fun listField (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;ZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/ListField;
+	public static synthetic fun listField$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/ListField;
+	protected final fun needAcceptMethod (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
+	protected final fun needTransformMethod (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
+	protected final fun noAcceptMethod (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
+	protected final fun noMethodInVisitor (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
+	protected final fun referencedSymbol (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	protected final fun referencedSymbol (Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	public static synthetic fun referencedSymbol$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	public static synthetic fun referencedSymbol$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/SimpleField;
+	protected final fun referencedSymbolList (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/ListField;
+	public static synthetic fun referencedSymbolList$default (Lorg/jetbrains/kotlin/ir/generator/config/AbstractTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/ListField;
+}
+
+public abstract class org/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeBuilder : org/jetbrains/kotlin/generators/tree/config/AbstractElementConfigurator {
+	public fun <init> ()V
+	public synthetic fun createElement (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)Lorg/jetbrains/kotlin/generators/tree/AbstractElement;
+	protected fun createElement (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Void;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	protected final fun descriptorField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolField;
+	public static synthetic fun descriptorField$default (Lorg/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolField;
+	protected final fun field (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZLkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolField;
+	public static synthetic fun field$default (Lorg/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeBuilder;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolField;
+	protected final fun ownerField (Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolField;
+	public static synthetic fun ownerField$default (Lorg/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeBuilder;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolField;
+}
+
+public abstract class org/jetbrains/kotlin/ir/generator/config/symbol/AbstractIrSymbolTreeImplementationConfigurator : org/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator {
+	public fun <init> ()V
+	public synthetic fun createImplementation (Lorg/jetbrains/kotlin/generators/tree/AbstractElement;Ljava/lang/String;)Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;
+	protected final fun createImplementation (Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/SymbolImplementation;
+	protected final fun noSignature (Lorg/jetbrains/kotlin/generators/tree/config/AbstractImplementationConfigurator$ImplementationContext;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/Element : org/jetbrains/kotlin/generators/tree/AbstractElement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;)V
+	public final fun getCategory ()Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;
+	public fun getChildrenOrderOverride ()Ljava/util/List;
+	public final fun getCustomHasAcceptMethod ()Ljava/lang/Boolean;
+	public final fun getGenerateVisitorMethod ()Z
+	public final fun getGenerationCallback ()Lkotlin/jvm/functions/Function1;
+	public fun getHasAcceptMethod ()Z
+	public fun getHasTransformMethod ()Z
+	public fun getNamePrefix ()Ljava/lang/String;
+	public fun getPackageName ()Ljava/lang/String;
+	public synthetic fun getParentInVisitor ()Lorg/jetbrains/kotlin/generators/tree/AbstractElement;
+	public fun getParentInVisitor ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public fun getPropertyName ()Ljava/lang/String;
+	public final fun getTransformByChildren ()Z
+	public fun getVisitorParameterName ()Ljava/lang/String;
+	public fun setChildrenOrderOverride (Ljava/util/List;)V
+	public final fun setCustomHasAcceptMethod (Ljava/lang/Boolean;)V
+	public final fun setGenerateVisitorMethod (Z)V
+	public final fun setGenerationCallback (Lkotlin/jvm/functions/Function1;)V
+	public fun setHasTransformMethod (Z)V
+	public final fun setTransformByChildren (Z)V
+	public fun setVisitorParameterName (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/Element$Category : java/lang/Enum {
+	public static final field Declaration Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;
+	public static final field Expression Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;
+	public static final field Other Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;
+	public final fun getDefaultVisitorParam ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getPackageName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;
+	public static fun values ()[Lorg/jetbrains/kotlin/ir/generator/model/Element$Category;
+}
+
+public abstract class org/jetbrains/kotlin/ir/generator/model/Field : org/jetbrains/kotlin/generators/tree/AbstractField {
+	public synthetic fun <init> (Ljava/lang/String;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getCustomSetter ()Ljava/lang/String;
+	public final fun getDeepCopyExcludeFromApply ()Z
+	public final fun getDeepCopyExcludeFromConstructor ()Z
+	public fun getDefaultValueInBuilder ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public abstract fun getSymbolClass ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public fun isFinal ()Z
+	public fun isMutable ()Z
+	public fun setCustomSetter (Ljava/lang/String;)V
+	public final fun setDeepCopyExcludeFromApply (Z)V
+	public final fun setDeepCopyExcludeFromConstructor (Z)V
+	public fun setDefaultValueInBuilder (Ljava/lang/String;)V
+	public fun setFinal (Z)V
+	public fun setMutable (Z)V
+	public fun toString ()Ljava/lang/String;
+	public synthetic fun updateFieldsInCopy (Lorg/jetbrains/kotlin/generators/tree/AbstractField;)V
+	protected fun updateFieldsInCopy (Lorg/jetbrains/kotlin/ir/generator/model/Field;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/Implementation : org/jetbrains/kotlin/generators/tree/AbstractImplementation {
+	public fun <init> (Lorg/jetbrains/kotlin/ir/generator/model/Element;Ljava/lang/String;)V
+	public fun getAllFields ()Ljava/util/List;
+	public final fun getBindOwnedSymbol ()Z
+	public fun getDoPrint ()Z
+	public final fun getGenerationCallback ()Lkotlin/jvm/functions/Function1;
+	public final fun getHasConstructorIndicator ()Z
+	public fun getKind ()Lorg/jetbrains/kotlin/generators/tree/ImplementationKind;
+	public final fun setBindOwnedSymbol (Z)V
+	public fun setDoPrint (Z)V
+	public final fun setGenerationCallback (Lkotlin/jvm/functions/Function1;)V
+	public final fun setHasConstructorIndicator (Z)V
+	public fun setKind (Lorg/jetbrains/kotlin/generators/tree/ImplementationKind;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/ListField : org/jetbrains/kotlin/ir/generator/model/Field, org/jetbrains/kotlin/generators/tree/ListField {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRef;ZLorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;Z)V
+	public fun getBaseType ()Lorg/jetbrains/kotlin/generators/tree/TypeRef;
+	public fun getContainsElement ()Z
+	public fun getListType ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public final fun getMutability ()Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+	public fun getSymbolClass ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public fun getTypeRef ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public synthetic fun getTypeRef ()Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;
+	public synthetic fun internalCopy ()Lorg/jetbrains/kotlin/generators/tree/AbstractField;
+	public fun isChild ()Z
+	public fun setBaseType (Lorg/jetbrains/kotlin/generators/tree/TypeRef;)V
+	public fun substituteType (Ljava/util/Map;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/ListField$Mutability : java/lang/Enum {
+	public static final field Array Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+	public static final field MutableList Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+	public static final field Var Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+	public static fun values ()[Lorg/jetbrains/kotlin/ir/generator/model/ListField$Mutability;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/SimpleField : org/jetbrains/kotlin/ir/generator/model/Field {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;ZZ)V
+	public fun getContainsElement ()Z
+	public fun getSymbolClass ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public fun getTypeRef ()Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;
+	public synthetic fun internalCopy ()Lorg/jetbrains/kotlin/generators/tree/AbstractField;
+	public fun isChild ()Z
+	public fun setTypeRef (Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;)V
+	public fun substituteType (Ljava/util/Map;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/symbol/FieldWithSymbol {
+	public fun <init> (Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;Lorg/jetbrains/kotlin/generators/tree/ClassOrElementRef;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;
+	public final fun component4 ()Lorg/jetbrains/kotlin/generators/tree/ClassOrElementRef;
+	public final fun copy (Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;Lorg/jetbrains/kotlin/generators/tree/ClassOrElementRef;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/FieldWithSymbol;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/ir/generator/model/symbol/FieldWithSymbol;Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;Lorg/jetbrains/kotlin/generators/tree/ClassOrElementRef;ILjava/lang/Object;)Lorg/jetbrains/kotlin/ir/generator/model/symbol/FieldWithSymbol;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFieldContainer ()Lorg/jetbrains/kotlin/generators/tree/ClassOrElementRef;
+	public final fun getFieldName ()Ljava/lang/String;
+	public final fun getRole ()Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;
+	public final fun getSymbolType ()Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/symbol/Symbol : org/jetbrains/kotlin/generators/tree/AbstractElement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getDescriptor ()Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public fun getKind ()Lorg/jetbrains/kotlin/generators/tree/ImplementationKind;
+	public fun getNamePrefix ()Ljava/lang/String;
+	public final fun getOwner ()Lorg/jetbrains/kotlin/ir/generator/model/Element;
+	public fun getPackageName ()Ljava/lang/String;
+	public fun getPropertyName ()Ljava/lang/String;
+	public fun getVisitorParameterName ()Ljava/lang/String;
+	public final fun setDescriptor (Lorg/jetbrains/kotlin/generators/tree/ClassRef;)V
+	public fun setKind (Lorg/jetbrains/kotlin/generators/tree/ImplementationKind;)V
+	public final fun setOwner (Lorg/jetbrains/kotlin/ir/generator/model/Element;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/symbol/SymbolField : org/jetbrains/kotlin/generators/tree/AbstractField {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;Z)V
+	public fun getCustomSetter ()Ljava/lang/String;
+	public fun getDefaultValueInBuilder ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun getTypeRef ()Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;
+	public synthetic fun internalCopy ()Lorg/jetbrains/kotlin/generators/tree/AbstractField;
+	public fun isChild ()Z
+	public fun isFinal ()Z
+	public fun isMutable ()Z
+	public fun setCustomSetter (Ljava/lang/String;)V
+	public fun setDefaultValueInBuilder (Ljava/lang/String;)V
+	public fun setMutable (Z)V
+	public fun setTypeRef (Lorg/jetbrains/kotlin/generators/tree/TypeRefWithNullability;)V
+	public fun substituteType (Ljava/util/Map;)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/symbol/SymbolImplementation : org/jetbrains/kotlin/generators/tree/AbstractImplementation {
+	public fun <init> (Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Ljava/lang/String;)V
+	public fun getAllFields ()Ljava/util/List;
+	public final fun getGenerationCallback ()Lkotlin/jvm/functions/Function1;
+	public final fun getHasSignature ()Z
+	public final fun setGenerationCallback (Lkotlin/jvm/functions/Function1;)V
+	public final fun setHasSignature (Z)V
+}
+
+public final class org/jetbrains/kotlin/ir/generator/model/symbol/UtilsKt {
+	public static final fun findFieldsWithSymbols (Ljava/util/List;Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;)Ljava/util/Map;
+	public static final fun symbolRemapperMethodName (Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;)Ljava/lang/String;
+	public static final fun symbolVisitorMethodName (Lorg/jetbrains/kotlin/ir/generator/model/symbol/Symbol;Lorg/jetbrains/kotlin/generators/tree/AbstractField$SymbolFieldRole;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/ir/generator/print/symbol/SymbolImplementationPrinter : org/jetbrains/kotlin/generators/tree/AbstractImplementationPrinter {
+	public fun <init> (Lorg/jetbrains/kotlin/generators/tree/printer/ImportCollectingPrinter;)V
+	public synthetic fun additionalConstructorParameters (Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;)Ljava/util/List;
+	public synthetic fun getPureAbstractElementType (Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;)Lorg/jetbrains/kotlin/generators/tree/ClassRef;
+	public synthetic fun parentConstructorArguments (Lorg/jetbrains/kotlin/generators/tree/imports/ImportCollecting;Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;)Ljava/util/List;
+	public synthetic fun printAdditionalMethods (Lorg/jetbrains/kotlin/generators/tree/printer/ImportCollectingPrinter;Lorg/jetbrains/kotlin/generators/tree/AbstractImplementation;)V
+}
+

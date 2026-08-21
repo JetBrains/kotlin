@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {
