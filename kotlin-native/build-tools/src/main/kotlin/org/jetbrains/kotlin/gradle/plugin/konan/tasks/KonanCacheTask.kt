@@ -94,6 +94,13 @@ open class KonanCacheTask @Inject constructor(
     @get:Input
     val withOptimizations: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
+    /**
+     * Extra compiler arguments (e.g. `-Xoverride-konan-properties=useProvisionedXcode=true` for whole-Xcode
+     * provisioning). Empty by default, so default builds produce identical argument lists.
+     */
+    @get:Input
+    val extraCompilerArgs: ListProperty<String> = objectFactory.listProperty(String::class.java)
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
@@ -134,6 +141,7 @@ open class KonanCacheTask @Inject constructor(
             if (makePerFileCache.get()) {
                 add("-Xmake-per-file-cache")
             }
+            addAll(extraCompilerArgs.get())
         }
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCacheAction::class.java) {

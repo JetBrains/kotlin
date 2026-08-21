@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.util.XcodeProvisioner
 import java.io.File
+import java.util.Properties
 import javax.inject.Inject
 
 private enum class TestProperty(shortName: String) {
@@ -425,6 +428,43 @@ fun ProjectTestsExtension.nativeTestTask(
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
+
+        // Opt-in whole-Xcode provisioning (kotlin.native.internalServer.wholeXcode). On a macOS host, select the
+        // Xcode expected by this distribution (konan.properties: xcodeVersion/xcodeBuild/xcodeArtifactUrl) under
+        // ~/.konan/dependencies/xcode_<version>_<build> and point the test JVM at it via DEVELOPER_DIR, so
+        // xcrun/xcode-select resolve the toolchain and SDKs from it. The current Xcode is symlinked when its build
+        // matches; a download is only used when the internal server is enabled (env KONAN_USE_INTERNAL_SERVER=1 or
+        // -Pkotlin.native.useInternalServer=true), and never on TeamCity (agent images must ship the Xcode).
+        val useWholeXcode = project.providers.gradleProperty("kotlin.native.internalServer.wholeXcode")
+            .map { it.toBoolean() }.orElse(false).get()
+        if (HostManager.hostIsMac && useWholeXcode) {
+            val testTask = this
+            val konanDataDir = project.providers.gradleProperty("konan.data.dir").orNull
+            val forceInternalServer = project.providers.gradleProperty("kotlin.native.useInternalServer")
+                .map { it.toBoolean() }.orElse(false).get()
+            val serverEnabled = DependencyProcessor.isInternalSeverAvailable || forceInternalServer
+            val isTeamCity = kotlinBuildProperties.isTeamcityBuild.get()
+            val konanPropertiesFile = project.project(":kotlin-native").isolated.projectDirectory
+                .file("konan/konan.properties").asFile
+            doFirst {
+                val konanProperties = Properties().apply {
+                    konanPropertiesFile.inputStream().use { load(it) }
+                }
+                fun requiredProperty(name: String) = konanProperties.getProperty(name)
+                    ?: error("No '$name' property in ${konanPropertiesFile.absolutePath}")
+                val xcodeApp = XcodeProvisioner.provisionXcode(
+                    konanDataDir = konanDataDir,
+                    version = requiredProperty("xcodeVersion"),
+                    build = requiredProperty("xcodeBuild"),
+                    artifactUrl = requiredProperty("xcodeArtifactUrl"),
+                    serverEnabled = serverEnabled,
+                    isTeamCity = isTeamCity,
+                )
+                if (xcodeApp != null) {
+                    testTask.environment("DEVELOPER_DIR", xcodeApp.resolve("Contents/Developer").absolutePath)
+                }
+            }
+        }
 
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.

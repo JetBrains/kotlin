@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.isWholeXcodeProvisioningEnabled
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
+import org.jetbrains.kotlin.provisionXcodeBeforeRun
+import org.jetbrains.kotlin.xcodeProvisioningSpec
 import org.jetbrains.kotlin.utils.capitalized
 import org.jetbrains.kotlin.utils.reproducibilityCompilerFlags
 
@@ -123,6 +126,12 @@ enabledTargets(platformManager).forEach { target ->
                 val fmodulesCache = project.layout.buildDirectory.dir("clangModulesCache").get().asFile.toRelativeString(project.layout.projectDirectory.asFile)
                 this.extraOpts.addAll("-compiler-option", "-fmodules-cache-path=$fmodulesCache")
             }
+            if (target.family.isAppleFamily && project.isWholeXcodeProvisioningEnabled()) {
+                // Resolve the Apple toolchain/sysroot from the provisioned whole Xcode (see AppleConfigurablesImpl).
+                // cinterop parses this via kotlinx.cli, so the flag and its value are two separate tokens.
+                this.extraOpts.addAll("-Xoverride-konan-properties", "useProvisionedXcode=true")
+                provisionXcodeBeforeRun(project.xcodeProvisioningSpec(platformManager, target))
+            }
 
             usesService(compilePlatformLibsSemaphore)
         }
@@ -167,6 +176,11 @@ enabledTargets(platformManager).forEach { target ->
                     this.withOptimizations.set(withOptimizations)
                     this.cacheDirectory.set(dist.map { it.cachesRoot(targetName, withOptimizations) })
                     this.cacheName.set(artifactName)
+                    if (target.family.isAppleFamily && project.isWholeXcodeProvisioningEnabled()) {
+                        // Resolve the Apple toolchain/sysroot from the provisioned whole Xcode (see AppleConfigurablesImpl).
+                        this.extraCompilerArgs.addAll("-Xoverride-konan-properties=useProvisionedXcode=true")
+                        provisionXcodeBeforeRun(project.xcodeProvisioningSpec(platformManager, target))
+                    }
 
                     usesService(cachePlatformLibsSemaphore)
                 }
