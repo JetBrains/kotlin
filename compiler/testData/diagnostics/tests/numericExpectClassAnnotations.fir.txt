@@ -134,7 +134,7 @@ FILE: Main.kt
     }
     public final expect fun getSizeT(): R|SizeT|
     public final fun produceNSInteger(): R|NSInteger| {
-        ^produceNSInteger Int(30)
+        ^produceNSInteger NumericConversion<NSInteger>(Int(30))
     }
     public final fun requestConversionDuringImplicitTypes1(): R|kotlin/Unit| {
         ^requestConversionDuringImplicitTypes1 R|/acceptNSInteger|(NumericConversion<NSInteger>(Int(30)))

@@ -81,7 +81,7 @@ expect value class SizeT {
 fun acceptSizeT(num: SizeT) {}
 expect fun getSizeT(): SizeT
 
-fun produceNSInteger(): NSInteger = <!RETURN_TYPE_MISMATCH!>30<!>
+fun produceNSInteger(): NSInteger = 30
 
 fun requestConversionDuringImplicitTypes1() = acceptNSInteger(30)
 fun requestConversionDuringImplicitTypes2() = acceptSizeT(30u)
