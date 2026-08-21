@@ -355,7 +355,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
-        val javaDirectFacade =
+        val javaFacadeBuilder =
             if (configuration.useJavaDirect) {
                 createJavaDirectJavaFacadeBuilder(configuration, projectEnvironment, javaSourcesScope)
             } else AbstractProjectEnvironment::getFirJavaFacade
@@ -394,7 +394,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     scopeProvider,
                     context.packagePartProviderForLibraries,
                     kotlinClassFinder,
-                    javaDirectFacade(projectEnvironment, session, moduleData, context.librariesScope)
+                    javaFacadeBuilder(projectEnvironment, session, moduleData, context.librariesScope)
                 )
                 val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
                     session,
@@ -420,7 +420,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration.languageVersionSettings,
                     context,
-                    createJavaFacade = javaDirectFacade,
+                    createJavaFacade = javaFacadeBuilder,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
@@ -461,7 +461,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                     needRegisterJavaElementFinder = true,
                     kmpModuleKind = kmpModuleKind,
-                    createJavaFacade = javaDirectFacade,
+                    createJavaFacade = javaFacadeBuilder,
                     init = sessionConfigurator,
                 )
             }
