@@ -28,28 +28,28 @@ class C {
     private val ara: AtomicArray<Any?> = atomicArrayOfNulls(1)
 
     fun printAll() {
-        println(tai)
-        println(tal)
-        println(tab)
-        println(tar)
-        println(taia)
-        println(tala)
-        println(taba)
-        println(tara)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>tai<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>tal<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>tab<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>tar<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>taia<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>tala<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>taba<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>tara<!>)
 
-        println(ai)
-        println(al)
-        println(ab)
-        println(ar)
-        println(aia)
-        println(ala)
-        println(aba)
-        println(ara)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ai<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>al<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ab<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ar<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>aia<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ala<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>aba<!>)
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ara<!>)
     }
 
     @Suppress("UNCHECKED_CAST") fun castAndForget() {
-        ar as AtomicRef<Any?>
-        println(ar as AtomicRef<Any?>)
+        <!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ar<!> as AtomicRef<Any?>
+        println(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ar<!> as AtomicRef<Any?>)
         // did not forget
         println((ar as AtomicRef<Any?>).value)
         // even though it's illegal
@@ -57,10 +57,10 @@ class C {
     }
 
     fun prohibitedAccesses() {
-        ai
-        sink = ai
-        val local: Any = ai
-        consume(ai)
+        <!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ai<!>
+        sink = <!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ai<!>
+        val local: Any = <!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ai<!>
+        consume(<!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>ai<!>)
     }
 
     fun atomicOperations() {

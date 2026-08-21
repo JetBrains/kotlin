@@ -29,8 +29,8 @@ class C {
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicRef<Any?><!>).value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicRef<Any?><!>)?.value },
 
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as Int<!>) },
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? Int<!>)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mai<!> as Int<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mai<!> as? Int<!>)!! },
 
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicIntArray<!>)[0].value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicIntArray<!>)!![0].value },
@@ -60,8 +60,8 @@ class C {
             { (mar as AtomicRef<Any?>).value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicRef<Any?><!>)?.value },
 
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as Any<!>) },
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? Any<!>)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mar<!> as Any<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mar<!> as? Any<!>)!! },
 
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicIntArray<!>)[0].value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicIntArray<!>)!![0].value },
@@ -91,8 +91,8 @@ class C {
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicRef<Any?><!>).value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicRef<Any?><!>)?.value },
 
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as Any<!>) },
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? Any<!>)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>maia<!> as Any<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>maia<!> as? Any<!>)!! },
 
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicIntArray<!>)[0].value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicIntArray<!>)!![0].value },
@@ -128,8 +128,8 @@ class C {
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicRef<Any?><!>).value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicRef<Any?><!>)?.value },
 
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as Any<!>) },
-            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? Any<!>)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mara<!> as Any<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mara<!> as? Any<!>)!! },
 
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicIntArray<!>)[0].value },
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicIntArray<!>)!![0].value },
@@ -156,25 +156,25 @@ class C {
     
     fun isAtomicInt() {
         val expressions = listOf(
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai is AtomicInt<!> },
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai !is AtomicInt<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mai<!> is AtomicInt<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mai<!> !is AtomicInt<!> },
         )
     }
 
     fun isAtomicRef() {
         val expressions = listOf(
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar is Any<!> },
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar !is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mar<!> is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mar<!> !is Any<!> },
         )
     }
 
     fun isAtomicIntArray() {
         val expressions = listOf(
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia is Any<!> },
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia !is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>maia<!> is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>maia<!> !is Any<!> },
 
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia is AtomicIntArray<!> },
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia !is AtomicIntArray<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>maia<!> is AtomicIntArray<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>maia<!> !is AtomicIntArray<!> },
 
             { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] is AtomicInt<!> },
             { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] !is AtomicInt<!> },
@@ -183,8 +183,8 @@ class C {
 
     fun isAtomicArray() {
         val expressions = listOf(
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara is Any<!> },
-            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara !is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mara<!> is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mara<!> !is Any<!> },
         )
     }
 
