@@ -5,8 +5,6 @@
 
 package kotlin.js
 
-import kotlin.wasm.internal.ExternalInterfaceType
-
 @OptIn(ExperimentalWasmJsInterop::class)
 private val stackPlaceHolder: JsString = js("''")
 
@@ -43,6 +41,17 @@ public actual class JsException internal constructor(public val thrownValue: JsA
 
 @ExperimentalWasmJsInterop
 public actual val JsException.thrownValue: JsAny? get() = this.thrownValue
+
+// Correctly predict stacktrace header containing error name and message to strip.
+// Currently, V8 and JavaScriptCore engines emit this header.
+@OptIn(ExperimentalWasmJsInterop::class)
+internal val JsError.stackHeader: String
+    get() = when {
+        // ECMA-262 20.5.3.4: an empty name leaves just the message, an empty message just the name.
+        name.isEmpty() -> message
+        message.isEmpty() -> name
+        else -> "$name: $message"
+    }
 
 @OptIn(ExperimentalWasmJsInterop::class)
 @JsName("Error")

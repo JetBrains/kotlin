@@ -23,7 +23,7 @@ try {
         throw Error("Expected instance of Error, but '" + e.name +"' ('" + e.constructor.name + "') was received")
     }
 
-    if (e.name !== "AssertionError" ) {
+    if (e.name !== "kotlin.AssertionError" ) {
         throw Error("Wrong e.name = '" + e.name + "'")
     }
 }

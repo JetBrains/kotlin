@@ -8,7 +8,6 @@ package kotlin
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 import kotlin.wasm.internal.wasmGetObjectRtti
 import kotlin.wasm.internal.getQualifiedName
-import kotlin.wasm.internal.getSimpleName
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -19,12 +18,12 @@ import kotlin.wasm.internal.getSimpleName
 @OptIn(ExperimentalWasmJsInterop::class)
 public actual open class Throwable internal constructor(
     public actual open val message: String?,
-    public actual open val cause: kotlin.Throwable?,
+    public actual open val cause: Throwable?,
     internal val jsError: JsError?
 ) {
     init {
         if (jsError != null) {
-            jsError.name = getSimpleName(wasmGetObjectRtti(this))
+            jsError.name = getQualifiedName(wasmGetObjectRtti(this))
             jsError.kotlinException = toJsReference()
         }
     }
@@ -39,13 +38,26 @@ public actual open class Throwable internal constructor(
 
     internal open val jsStack get() = jsError!!.stack
 
+    internal open val jsStackHeader: String? get() = jsError?.stackHeader
+
     private var _stack: String? = null
     internal val stack: String
         get() {
             var value = _stack
             if (value == null) {
-                value = jsToKotlinStringAdapter(jsStack)
-                _stack = value
+                var body = jsToKotlinStringAdapter(jsStack)
+
+                // We rely on the fact that the engine emits
+                // header with error name and message
+                // right at the beginning of the stack,
+                // if emits at all.
+                val shortInfo = jsStackHeader
+                if (!shortInfo.isNullOrEmpty() && body.startsWith(shortInfo)) {
+                    val rest = body.substring(shortInfo.length)
+                    if (rest.isEmpty() || rest.startsWith('\n')) body = rest.removePrefix("\n")
+                }
+                value = body
+                _stack = body
             }
 
             return value
@@ -65,7 +77,9 @@ public actual open class Throwable internal constructor(
 
 internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
     get() = this.suppressedExceptionsList
-    set(value) { this.suppressedExceptionsList = value }
+    set(value) {
+        this.suppressedExceptionsList = value
+    }
 
 internal actual val Throwable.stack: String get() = this.stack
 
