@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
-import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 
@@ -21,28 +19,17 @@ class AllTestsExternalAndroidTargetIT : KGPBaseTest() {
         androidVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        project(
-            "empty",
+        externalAndroidLibraryProject(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-            buildJdk = jdkVersion.location,
+            androidVersion = androidVersion,
+            jdkVersion = jdkVersion,
+            namespace = "org.jetbrains.sample.alltests",
+            withJava = true,
+            androidLibraryConfiguration = {
+                withHostTest {}
+                withDeviceTest {}
+            },
         ) {
-            plugins {
-                kotlin("multiplatform")
-                id("com.android.kotlin.multiplatform.library")
-            }
-            buildScriptInjection {
-                kotlinMultiplatform.apply {
-                    targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
-                        target.compileSdk = 34
-                        target.namespace = "org.jetbrains.sample.alltests"
-                        target.withJava()
-                        target.withHostTest {}
-                        target.withDeviceTest {}
-                    }
-                }
-            }
-
             projectPath.source("src/androidMain/kotlin/AndroidMain.kt") {
                 """
                 class AndroidMain

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -482,23 +481,15 @@ class AndroidJvmLibDependencyResolutionIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
         namespace: String,
         configureKmp: KotlinMultiplatformExtension.() -> Unit = {},
-    ): TestProject = project(
-        "empty",
+    ): TestProject = externalAndroidLibraryProject(
         gradleVersion = gradleVersion,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-        buildJdk = jdkVersion.location,
+        androidVersion = androidVersion,
+        jdkVersion = jdkVersion,
+        namespace = namespace,
     ) {
-        plugins {
-            kotlin("multiplatform")
-            id("com.android.kotlin.multiplatform.library")
-        }
         projectPath.resolve("gradle.properties").toFile().appendText("\nkotlin.mpp.applyDefaultHierarchyTemplate=false\n")
         buildScriptInjection {
             kotlinMultiplatform.apply {
-                targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
-                    target.compileSdk = 34
-                    target.namespace = namespace
-                }
                 jvm()
                 macosArm64()
                 val commonMain = sourceSets.getByName("commonMain")
@@ -518,22 +509,14 @@ class AndroidJvmLibDependencyResolutionIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
         namespace: String,
         configureKmp: KotlinMultiplatformExtension.() -> Unit = {},
-    ): TestProject = project(
-        "empty",
+    ): TestProject = externalAndroidLibraryProject(
         gradleVersion = gradleVersion,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-        buildJdk = jdkVersion.location,
+        androidVersion = androidVersion,
+        jdkVersion = jdkVersion,
+        namespace = namespace,
     ) {
-        plugins {
-            kotlin("multiplatform")
-            id("com.android.kotlin.multiplatform.library")
-        }
         buildScriptInjection {
             kotlinMultiplatform.apply {
-                targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
-                    target.compileSdk = 34
-                    target.namespace = namespace
-                }
                 configureKmp()
             }
         }

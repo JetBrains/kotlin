@@ -9,6 +9,7 @@ import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.util.GradleVersion
 import java.io.File
 
@@ -18,6 +19,7 @@ fun KGPBaseTest.externalAndroidLibraryProject(
     jdkVersion: JdkVersions.ProvidedJdk,
     namespace: String = "org.jetbrains.sample.androidlibrary",
     withJava: Boolean = false,
+    additionalPlugins: PluginDependenciesSpec.() -> Unit = {},
     androidLibraryConfiguration: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = {},
     configureProject: TestProject.() -> Unit = {},
 ): TestProject = project(
@@ -29,6 +31,7 @@ fun KGPBaseTest.externalAndroidLibraryProject(
     plugins {
         kotlin("multiplatform")
         id("com.android.kotlin.multiplatform.library")
+        additionalPlugins()
     }
     buildScriptInjection {
         kotlinMultiplatform.apply {
