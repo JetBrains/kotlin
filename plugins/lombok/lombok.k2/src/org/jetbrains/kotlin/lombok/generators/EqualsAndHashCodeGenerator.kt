@@ -197,6 +197,8 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
 
                 val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID, session)
 
+                if (includeAnnotation == null && property.isExcludedByDollarPrefix) return@processAllProperties
+
                 if (includeAnnotation == null && annotation.onlyExplicitlyIncluded ?: config.equalsAndHashCodeOnlyExplicitlyIncluded) {
                     return@processAllProperties
                 }

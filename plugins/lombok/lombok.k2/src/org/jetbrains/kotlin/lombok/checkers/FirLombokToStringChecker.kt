@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
+import org.jetbrains.kotlin.lombok.generators.isExcludedByDollarPrefix
 import org.jetbrains.kotlin.lombok.generators.isToString
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
@@ -74,12 +75,27 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
         declaredMemberScope.processAllProperties { variableSymbol ->
             val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
             val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, context.session)
-                ?: return@processAllProperties
-            property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, context.session)
-                ?: return@processAllProperties
-            val includeSource = includeAnnotation.source ?: return@processAllProperties
+            val excludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, context.session)
 
-            reporter.reportOn(includeSource, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName(), context)
+            if (includeAnnotation != null && excludeAnnotation != null) {
+                includeAnnotation.source?.let {
+                    reporter.reportOn(it, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName())
+                }
+            }
+
+            /**
+             * Mirrors Lombok Java behaviour: "The @Exclude annotation is not needed; fields that start with $
+             * aren't included anyway". Reported independently of the clash above, exactly as Lombok does.
+             */
+            if (excludeAnnotation != null && property.isExcludedByDollarPrefix) {
+                excludeAnnotation.source?.let {
+                    reporter.reportOn(
+                        it,
+                        LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY,
+                        LombokNames.TO_STRING.shortName(),
+                    )
+                }
+            }
         }
     }
 

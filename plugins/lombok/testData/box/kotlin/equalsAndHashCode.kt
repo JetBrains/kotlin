@@ -65,6 +65,15 @@ class WithNestedArray(val array: Array<Array<String>>)
 @EqualsAndHashCode
 class WithNullableArray(val array: Array<String>?)
 
+// A `$`-prefixed name is generated or internal by convention, so Lombok leaves such a property out of the
+// class's identity unless it is explicitly opted in with `@EqualsAndHashCode.Include`, KT-88636.
+@EqualsAndHashCode
+class WithDollarPrefixedProperties(
+    val regular: String,
+    val `$excludedByDefault`: String,
+    @EqualsAndHashCode.Include val `$explicitlyIncluded`: String,
+)
+
 @EqualsAndHashCode
 class Empty
 
@@ -164,6 +173,15 @@ fun box(): String {
     assertEquals(true, WithNullableArray(null) == WithNullableArray(null))
     assertEquals(true, WithNullableArray(null).hashCode() == WithNullableArray(null).hashCode())
     assertEquals(false, WithNullableArray(null) == WithNullableArray(arrayOf("a")))
+
+    // KT-88636: only `$excludedByDefault` differs, so the instances stay equal; `$explicitlyIncluded` counts.
+    assertEquals(true, WithDollarPrefixedProperties("r", "a", "i") == WithDollarPrefixedProperties("r", "b", "i"))
+    assertEquals(
+        true,
+        WithDollarPrefixedProperties("r", "a", "i").hashCode() == WithDollarPrefixedProperties("r", "b", "i").hashCode()
+    )
+    assertEquals(false, WithDollarPrefixedProperties("r", "a", "i") == WithDollarPrefixedProperties("r", "a", "j"))
+    assertEquals(false, WithDollarPrefixedProperties("r", "a", "i") == WithDollarPrefixedProperties("s", "a", "i"))
 
     assertEquals(true, Empty() == Empty())
     // The accumulator Lombok starts every `hashCode` from, with nothing folded into it.

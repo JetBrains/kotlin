@@ -144,6 +144,9 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 }
 
                 val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, session)
+
+                if (toStringIncludeAnnotation == null && property.isExcludedByDollarPrefix) return@processAllProperties
+
                 val config = session.lombokService.config
 
                 // Can't check for `property.hasBackingField` right here

@@ -26,20 +26,26 @@
 
 /equalsAndHashCode.kt:73:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
 
-/equalsAndHashCode.kt:88:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:90:5: warning: '@EqualsAndHashCode.Exclude' is not needed: a property whose name starts with '$' is not included anyway.
 
-/equalsAndHashCode.kt:91:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:96:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
 
-/equalsAndHashCode.kt:95:15: strong_warning: Lombok annotation argument 'exclude' is not supported in Kotlin.
+/equalsAndHashCode.kt:97:5: warning: '@EqualsAndHashCode.Exclude' is not needed: a property whose name starts with '$' is not included anyway.
 
-/equalsAndHashCode.kt:96:10: strong_warning: Lombok annotation argument 'of' is not supported in Kotlin.
+/equalsAndHashCode.kt:110:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:97:23: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:113:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:98:21: strong_warning: Lombok annotation argument 'cacheStrategy' is not supported in Kotlin.
+/equalsAndHashCode.kt:117:15: strong_warning: Lombok annotation argument 'exclude' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:99:15: strong_warning: Lombok annotation argument 'onParam' is not supported in Kotlin.
+/equalsAndHashCode.kt:118:10: strong_warning: Lombok annotation argument 'of' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:103:20: strong_warning: Lombok annotation argument 'replaces' is not supported in Kotlin.
+/equalsAndHashCode.kt:119:23: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:104:16: strong_warning: Lombok annotation argument 'rank' is not supported in Kotlin.
+/equalsAndHashCode.kt:120:21: strong_warning: Lombok annotation argument 'cacheStrategy' is not supported in Kotlin.
+
+/equalsAndHashCode.kt:121:15: strong_warning: Lombok annotation argument 'onParam' is not supported in Kotlin.
+
+/equalsAndHashCode.kt:125:20: strong_warning: Lombok annotation argument 'replaces' is not supported in Kotlin.
+
+/equalsAndHashCode.kt:126:16: strong_warning: Lombok annotation argument 'rank' is not supported in Kotlin.
