@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
-@DisplayName("Tests for Multiplatform test reporting")
+@SmokeTest
+@DisplayName("Tests for KMP test reporting")
 class MppTestReportIT : KGPBaseTest() {
 
     @DisplayName("Aggregated test report contains results from multiple targets (:allTests)")
