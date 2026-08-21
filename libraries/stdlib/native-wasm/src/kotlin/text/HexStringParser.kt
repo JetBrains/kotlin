@@ -15,15 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.native.internal
-
-import kotlin.text.regex.*
-
-@GCUnsafeCall("Kotlin_native_int_bits_to_float")
-private external fun intBitsToFloat(x: Int): Float
-
-@GCUnsafeCall("Kotlin_native_long_bits_to_double")
-private external fun longBitsToDouble(x: Long): Double
+package kotlin.text
 
 /*
  * Parses hex string to a single or double precision floating point number.
@@ -54,10 +46,11 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
     }
 
     private fun parse(hexString: String): Long {
-        val hexSegments = getSegmentsFromHexString(hexString)
-        val signStr = hexSegments[0]
-        val significantStr = hexSegments[1]
-        val exponentStr = hexSegments[2]
+        val matchResult = PATTERN.matchEntire(hexString) ?: throw NumberFormatException()
+
+        val signStr = matchResult.groupValues[1]
+        val significantStr = matchResult.groupValues[2]
+        val exponentStr = matchResult.groupValues[3]
 
         parseHexSign(signStr)
         parseExponent(exponentStr)
@@ -99,7 +92,7 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
      * Parses the mantissa field.
      */
     private fun parseMantissa(significantStr: String) {
-        val strings = significantStr.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() //$NON-NLS-1$
+        val strings = significantStr.split(".").dropLastWhile { it.isEmpty() } //$NON-NLS-1$
         val strIntegerPart = strings[0]
         val strDecimalPart = if (strings.size > 1) strings[1] else "" //$NON-NLS-1$
 
@@ -210,8 +203,7 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
      * then it should be rounded up to the nearest infinitely precise even.
      */
     private fun round() {
-        val result = abandonedNumber.replace("0+".toRegex(), "") //$NON-NLS-1$ //$NON-NLS-2$
-        val moreThanZero = result.length > 0
+        val moreThanZero = abandonedNumber.any { it != '0' }
 
         val lastDiscardedBit = (mantissa and 1L).toInt()
         mantissa = mantissa shr 1
@@ -234,7 +226,7 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
      */
     private fun getNormalizedSignificand(strIntegerPart: String, strDecimalPart: String): String {
         var significand = strIntegerPart + strDecimalPart
-        significand = significand.replaceFirst("^0+".toRegex(), "") //$NON-NLS-1$//$NON-NLS-2$
+        significand = significand.trimStart('0') //$NON-NLS-1$//$NON-NLS-2$
         if (significand.length == 0) {
             significand = "0" //$NON-NLS-1$
         }
@@ -249,7 +241,7 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
      */
     private fun getOffset(strIntegerPartParam: String, strDecimalPart: String): Int {
         var strIntegerPart = strIntegerPartParam
-        strIntegerPart = strIntegerPart.replaceFirst("^0+".toRegex(), "") //$NON-NLS-1$ //$NON-NLS-2$
+        strIntegerPart = strIntegerPart.trimStart('0') //$NON-NLS-1$ //$NON-NLS-2$
 
         // If the Integer part is a nonzero number.
         if (strIntegerPart.length != 0) {
@@ -269,37 +261,7 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
         return (-i - 1) * 4 + countBitsLength(leadingNumber.toLong(HEX_RADIX)) - 1
     }
 
-    fun numberOfLeadingZeros(i: Long): Int {
-        // HD, Figure 5-6
-        if (i == 0L)
-            return 64
-        var n = 1
-        var x = (i ushr 32).toInt()
-        if (x == 0) {
-            n += 32
-            x = i.toInt()
-        }
-        if (x ushr 16 == 0) {
-            n += 16
-            x = x shl 16
-        }
-        if (x ushr 24 == 0) {
-            n += 8
-            x = x shl 8
-        }
-        if (x ushr 28 == 0) {
-            n += 4
-            x = x shl 4
-        }
-        if (x ushr 30 == 0) {
-            n += 2
-            x = x shl 2
-        }
-        n -= x ushr 31
-        return n
-    }
-
-    private fun countBitsLength(value: Long) = 64 - numberOfLeadingZeros(value)
+    private fun countBitsLength(value: Long) = 64 - value.countLeadingZeroBits()
 
     companion object {
 
@@ -331,38 +293,24 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
          * Parses the hex string to a double number.
          */
         fun parseDouble(hexString: String): Double {
-            val parser = HexStringParser(DOUBLE_EXPONENT_WIDTH,
-                    DOUBLE_MANTISSA_WIDTH)
+            val parser = HexStringParser(
+                DOUBLE_EXPONENT_WIDTH,
+                DOUBLE_MANTISSA_WIDTH
+            )
             val result = parser.parse(hexString)
-            return longBitsToDouble(result)
+            return Double.fromBits(result)
         }
 
         /*
          * Parses the hex string to a float number.
          */
         fun parseFloat(hexString: String): Float {
-            val parser = HexStringParser(FLOAT_EXPONENT_WIDTH,
-                    FLOAT_MANTISSA_WIDTH)
-            val result = parser.parse(hexString).toInt()
-            return intBitsToFloat(result)
-        }
-
-        /*
-         * Analyzes the hex string and extracts the sign and digit segments.
-         */
-        private fun getSegmentsFromHexString(hexString: String): Array<String> {
-            val matchResult = PATTERN.matchEntire(hexString)
-            if (matchResult == null) {
-                throw NumberFormatException()
-            }
-
-            val hexSegments = arrayOf(
-                    matchResult.groupValues[1],
-                    matchResult.groupValues[2],
-                    matchResult.groupValues[3]
+            val parser = HexStringParser(
+                FLOAT_EXPONENT_WIDTH,
+                FLOAT_MANTISSA_WIDTH
             )
-
-            return hexSegments
+            val result = parser.parse(hexString).toInt()
+            return Float.fromBits(result)
         }
     }
 }

@@ -5,8 +5,6 @@
 
 package kotlin.text
 
-import kotlin.wasm.internal.wasm_f32_demote_f64
-
 /**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
  *
@@ -94,19 +92,25 @@ public actual fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numbe
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public actual fun String.toDouble(): Double = kotlin.text.parseDouble(this)
+public actual fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
 
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public actual fun String.toFloat(): Float = wasm_f32_demote_f64(toDouble())
+public actual fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
 
 /**
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public actual fun String.toFloatOrNull(): Float? = toDoubleOrNull()?.let { wasm_f32_demote_f64(it) }
+public actual fun String.toFloatOrNull(): Float? {
+    try {
+        return toFloat()
+    } catch (e: NumberFormatException) {
+        return null
+    }
+}
 
 /**
  * Parses the string as a [Double] number and returns the result

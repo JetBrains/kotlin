@@ -15,17 +15,9 @@
  *  limitations under the License.
  */
 
-package kotlin.native.internal
+package kotlin.internal
 
-import kotlin.native.internal.escapeAnalysis.Escapes
-
-@GCUnsafeCall("Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl")
-@Escapes.Nothing
-private external fun bigIntDigitGeneratorInstImpl(results: IntArray, uArray: IntArray, f: Long, e: Int,
-                                                  isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int)
-
-@GCUnsafeCall("Kotlin_native_NumberConverter_ceil")
-private external fun ceil(x: Double): Double
+import kotlin.math.ceil
 
 /**
  * Converts [Float] or [Double] numbers to the [String] representation
@@ -42,6 +34,7 @@ internal class NumberConverter {
 
     private fun convertDouble(inputNumber: Double): String {
         val p = 1023 + 52 // The power offset (precision).
+
         @Suppress("INTEGER_OVERFLOW")
         val signMask = 0x7FFFFFFFFFFFFFFFL + 1 // The mask to get the sign of.
         // The number.
@@ -49,7 +42,7 @@ internal class NumberConverter {
         val fMask = 0x000FFFFFFFFFFFFFL // The mask to get the significand.
 
         // Bits.
-        val inputNumberBits = inputNumber.bits()
+        val inputNumberBits = inputNumber.toRawBits()
         // The value of the sign... 0 is positive, ~0 is negative.
         val signString = if (inputNumberBits and signMask == 0L) "" else "-"
         // The value of the 'power bits' of the inputNumber.
@@ -87,7 +80,8 @@ internal class NumberConverter {
             bigIntDigitGeneratorInstImpl(f, pow, e == 0, mantissaIsZero, numBits)
 
         if (inputNumber >= 1e7 || inputNumber <= -1e7
-                || inputNumber > -1e-3 && inputNumber < 1e-3)
+            || inputNumber > -1e-3 && inputNumber < 1e-3
+        )
             return signString + freeFormatExponential()
 
         return signString + freeFormat()
@@ -100,7 +94,7 @@ internal class NumberConverter {
         val eMask = 0x7F800000 // The mask to get the power bits.
         val fMask = 0x007FFFFF // The mask to get the significand bits.
 
-        val inputNumberBits = inputNumber.bits()
+        val inputNumberBits = inputNumber.toRawBits()
         // The value of the sign... 0 is positive, ~0 is negative.
         val signString = if (inputNumberBits and signMask == 0) "" else "-"
         // The value of the 'power bits' of the inputNumber.
@@ -138,7 +132,8 @@ internal class NumberConverter {
         else
             bigIntDigitGeneratorInstImpl(f.toLong(), pow, e == 0, mantissaIsZero, numBits)
         if (inputNumber >= 1e7f || inputNumber <= -1e7f
-                || inputNumber > -1e-3f && inputNumber < 1e-3f)
+            || inputNumber > -1e-3f && inputNumber < 1e-3f
+        )
             return signString + freeFormatExponential()
 
         return signString + freeFormat()
@@ -165,7 +160,7 @@ internal class NumberConverter {
         if (k == expt - 1)
             formattedDecimal[charPos++] = '0'
         formattedDecimal[charPos++] = 'E'
-        return unsafeStringFromCharArray(formattedDecimal, 0, charPos) + expt.toString()
+        return formattedDecimal.concatToString(0, charPos) + expt.toString()
     }
 
     private fun freeFormat(): String {
@@ -178,7 +173,7 @@ internal class NumberConverter {
             formattedDecimal[0] = '0'
             formattedDecimal[1] = '.'
             charPos += 2
-            for (i in k + 1 .. -1)
+            for (i in k + 1..-1)
                 formattedDecimal[charPos++] = '0'
         }
 
@@ -195,20 +190,25 @@ internal class NumberConverter {
             k--
             u = if (getCount < setCount) uArray[getCount++] else -1
         } while (u != -1 || k >= -1)
-        return unsafeStringFromCharArray(formattedDecimal, 0, charPos)
+
+        return formattedDecimal.concatToString(0, charPos)
     }
 
-    private fun bigIntDigitGeneratorInstImpl(f: Long, e: Int,
-                                             isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int) {
+    private fun bigIntDigitGeneratorInstImpl(
+        f: Long, e: Int,
+        isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int,
+    ) {
         val results = IntArray(3)
-        bigIntDigitGeneratorInstImpl(results, uArray, f, e, isDenormalized, mantissaIsZero, p)
+        kotlin.internal.dtoa.bigIntDigitGeneratorInstImpl(results, uArray, f, e, isDenormalized, mantissaIsZero, p)
         setCount = results[0]
         getCount = results[1]
-        firstK   = results[2]
+        firstK = results[2]
     }
 
-    private fun longDigitGenerator(f: Long, e: Int, isDenormalized: Boolean,
-                                   mantissaIsZero: Boolean, p: Int) {
+    private fun longDigitGenerator(
+        f: Long, e: Int, isDenormalized: Boolean,
+        mantissaIsZero: Boolean, p: Int,
+    ) {
         var r: Long
         var s: Long
         var m: Long
