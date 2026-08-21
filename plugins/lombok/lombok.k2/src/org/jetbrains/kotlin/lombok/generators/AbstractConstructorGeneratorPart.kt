@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
@@ -155,6 +156,12 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         // `targetClassSymbol` rather than `classSymbol`: for a static factory the latter is the companion object,
         // and it is the entity being constructed that cannot hold a constructor.
         if (targetClassSymbol.isUnsupportedLombokTarget) return
+
+        // A value class *is* its underlying value, so there is no instance to initialize field by field and no
+        // Java counterpart to model. Generating anyway produced a constructor whose body only calls the
+        // superclass one, and the JVM backend failed on its instance initializer with "Unexpected IR element
+        // found during code generation" (KT-88705). Reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (targetClassSymbol.isInlineOrValue) return
 
         val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val fields = getFieldsForParameters(targetClassSymbol)
