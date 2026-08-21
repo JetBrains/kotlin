@@ -1,4 +1,3 @@
-@<error>()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
@@ -6,7 +5,6 @@
 public abstract @interface Anno1 /* Anno1*/ {
 }
 
-@<error>()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
@@ -14,7 +12,6 @@ public abstract @interface Anno1 /* Anno1*/ {
 public abstract @interface Anno2 /* Anno2*/ {
 }
 
-@<error>()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
@@ -22,8 +19,6 @@ public abstract @interface Anno2 /* Anno2*/ {
 public abstract @interface Anno3 /* Anno3*/ {
 }
 
-@<error>()
-@<error>()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.PARAMETER})
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)

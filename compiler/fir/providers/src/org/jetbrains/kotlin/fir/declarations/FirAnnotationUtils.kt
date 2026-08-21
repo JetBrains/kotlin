@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -41,6 +40,13 @@ private fun FirAnnotation.toAnnotationLookupTagSafe(session: FirSession): ConeCl
 
 fun FirAnnotation.toAnnotationClassId(session: FirSession): ClassId? =
     toAnnotationLookupTag(session)?.classId
+
+/**
+ * Returns [ClassId] of [this] if its lookup tag is not [ConeClassLikeErrorLookupTag].
+ * Otherwise, returns `null`.
+ */
+fun FirAnnotation.toAnnotationNonErrorClassId(session: FirSession): ClassId? =
+    toAnnotationLookupTagSafe(session).takeIf { it !is ConeClassLikeErrorLookupTag }?.classId
 
 fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
     toAnnotationLookupTagSafe(session)?.classId

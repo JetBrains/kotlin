@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
   anchorPsi: KtNamedFunction
   annotations: [
-    <error>()
+    null()
       psi: KtAnnotationEntry
   ]
   callableId: /foo

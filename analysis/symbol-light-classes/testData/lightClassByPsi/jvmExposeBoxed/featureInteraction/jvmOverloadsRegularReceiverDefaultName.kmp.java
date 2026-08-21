@@ -1,7 +1,6 @@
 public final class JvmOverloadsRegularReceiverDefaultNameKt /* JvmOverloadsRegularReceiverDefaultNameKt*/ {
 }
 
-@<error>()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;

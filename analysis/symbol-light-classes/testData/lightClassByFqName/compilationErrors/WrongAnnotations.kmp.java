@@ -5,24 +5,18 @@ public final class A /* A*/ {
   public  A();//  .ctor()
 
   public static final class Companion /* A.Companion*/ {
-    @<error>()
+    private  Companion();//  .ctor()
+
     public final void f1();//  f1()
 
-    @<error>()
     public final void f2();//  f2()
 
-    @<error>()
     public final void f3();//  f3()
 
-    @<error>()
     public final void f4();//  f4()
 
-    @<error>()
     public final void f5();//  f5()
 
-    @<error>()
     public final void f6();//  f6()
-
-    private  Companion();//  .ctor()
   }
 }

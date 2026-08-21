@@ -27,7 +27,6 @@ public final class MyDataClass /* one.MyDataClass*/ {
   public int hashCode();//  hashCode()
 }
 
-@<error>()
 public final class MyValueClass /* one.MyValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String str;

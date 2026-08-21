@@ -232,7 +232,6 @@ public final class Foo2 /* Foo2*/ {
 }
 
 public final class Modifiers /* Modifiers*/ {
-  @<error>()
   private final int plainField = 1 /* initializer type: int */;
 
   public  Modifiers();//  .ctor()

@@ -8,7 +8,6 @@ public final class A /* A*/ {
   public  A();//  .ctor()
 }
 
-@<error>()
 public final class B /* B*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
@@ -27,7 +26,6 @@ public final class B /* B*/ {
   public int hashCode();//  hashCode()
 }
 
-@<error>()
 public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;

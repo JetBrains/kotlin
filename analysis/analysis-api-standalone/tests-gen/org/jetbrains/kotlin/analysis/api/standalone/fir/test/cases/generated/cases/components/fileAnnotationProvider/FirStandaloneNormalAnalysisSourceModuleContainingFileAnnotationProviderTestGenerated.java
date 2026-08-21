@@ -72,4 +72,10 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingFileAnnotationProv
   public void testJvmSource() {
     run("jvmSource.kt");
   }
+
+  @Test
+  @TestMetadata("jvmSourceInvalidAnnotations.kt")
+  public void testJvmSourceInvalidAnnotations() {
+    run("jvmSourceInvalidAnnotations.kt");
+  }
 }

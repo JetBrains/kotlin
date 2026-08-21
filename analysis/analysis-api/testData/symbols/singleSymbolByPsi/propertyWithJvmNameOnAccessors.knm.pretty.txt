@@ -1,5 +1,5 @@
 var x: kotlin.Int
-  @`<error>`
+  @ERROR_ANNOTATION
   get()
-  @`<error>`
+  @ERROR_ANNOTATION
   set(value: kotlin.Int)

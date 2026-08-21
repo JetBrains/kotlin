@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.toAnnotationNonErrorClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.ClassId
 
@@ -46,7 +46,7 @@ internal class KaKlibDecompiledFileAnnotationList private constructor(
     }
 
     override fun contains(classId: ClassId): Boolean = withValidityAssertion {
-        fileAnnotations.any { it.toAnnotationClassId(builder.rootSession) == classId }
+        fileAnnotations.any { it.toAnnotationNonErrorClassId(builder.rootSession) == classId }
     }
 
     override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
@@ -55,7 +55,7 @@ internal class KaKlibDecompiledFileAnnotationList private constructor(
 
     override val classIds: Collection<ClassId>
         get() = withValidityAssertion {
-            fileAnnotations.mapNotNull { it.toAnnotationClassId(builder.rootSession) }
+            fileAnnotations.mapNotNull { it.toAnnotationNonErrorClassId(builder.rootSession) }
         }
 
     companion object {

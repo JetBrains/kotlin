@@ -2,7 +2,6 @@
 public abstract @interface Ann /* pkg.Ann*/ {
 }
 
-@<error>()
 public final class MyRec /* pkg.MyRec*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String gender;

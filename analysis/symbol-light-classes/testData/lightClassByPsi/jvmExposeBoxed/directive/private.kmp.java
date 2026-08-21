@@ -1,4 +1,3 @@
-@<error>()
 public final class IC /* IC*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;

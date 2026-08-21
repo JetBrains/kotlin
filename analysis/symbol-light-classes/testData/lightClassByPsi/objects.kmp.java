@@ -11,18 +11,8 @@ public final class C /* C*/ {
 }
 
 public static final class Companion /* C.Companion*/ {
-  @<error>()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I);//  getC(@org.jetbrains.annotations.NotNull() I)
-
-  @<error>()
-  public final void foo();//  foo()
-
-  @<error>()
-  public final void setC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @<error>()
-  public final void setC1(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getC1();//  getC1()
@@ -33,6 +23,12 @@ public static final class Companion /* C.Companion*/ {
   private  Companion();//  .ctor()
 
   public final void bar();//  bar()
+
+  public final void foo();//  foo()
+
+  public final void setC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public final void setC1(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public final void setX(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setX(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
@@ -131,9 +127,6 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Obj INSTANCE;
 
-  @<error>()
-  public final int zoo();//  zoo()
-
   @java.lang.Override()
   public void run();//  run()
 
@@ -141,6 +134,8 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   public final @org.jetbrains.annotations.NotNull() java.lang.String getX();//  getX()
 
   private  Obj();//  .ctor()
+
+  public final int zoo();//  zoo()
 
   public final void setX(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setX(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

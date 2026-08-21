@@ -1,0 +1,41 @@
+KaValueParameterSymbol:
+  anchorPsi: KtParameter
+  annotations: []
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  hasDeclaredDefaultValue: false
+  hasDefaultValue: false
+  isActual: false
+  isCompanion: false
+  isCrossinline: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isImplicitLambdaParameter: false
+  isNoinline: false
+  isVal: true
+  isVararg: false
+  location: LOCAL
+  modality: FINAL
+  name: aa
+  origin: SOURCE
+  primaryConstructorProperty: null
+  psi: KtParameter
+  realPsi: KtParameter
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      kotlin/String()
+        psi: KtAnnotationEntry
+    ]
+    typeArguments: []
+    type: @R|kotlin/String|()  kotlin/Int
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(illegalAnnotationClass.kt)
+  getContainingJvmClassName: IllegalAnnotationClassKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

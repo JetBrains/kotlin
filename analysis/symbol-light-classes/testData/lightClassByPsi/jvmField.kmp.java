@@ -63,7 +63,7 @@ public final class C /* C*/ {
 
   public  C();//  .ctor()
 
-  public  C(@<error>() @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<?>, @<error>() int);//  .ctor(@org.jetbrains.annotations.NotNull() java.util.Collection<?>, int)
+  public  C(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<?>, int);//  .ctor(@org.jetbrains.annotations.NotNull() java.util.Collection<?>, int)
 
   public final int getB();//  getB()
 

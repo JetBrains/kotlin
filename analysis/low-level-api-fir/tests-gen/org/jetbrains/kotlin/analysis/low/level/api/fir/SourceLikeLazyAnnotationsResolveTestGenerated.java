@@ -222,6 +222,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("unresolvedAnnotations.kt")
+    public void testUnresolvedAnnotations() {
+      run("unresolvedAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("variableWithAnnotationOnGetter_getter.kt")
     public void testVariableWithAnnotationOnGetter_getter() {
       run("variableWithAnnotationOnGetter_getter.kt");
@@ -428,6 +434,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("unresolvedAnnotations.kt")
+    public void testUnresolvedAnnotations() {
+      run("unresolvedAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("variableWithAnnotationOnGetter_getter.kt")
     public void testVariableWithAnnotationOnGetter_getter() {
       run("variableWithAnnotationOnGetter_getter.kt");
@@ -493,6 +505,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @Test
     public void testAllFilesPresentInContains() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/contains"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationWithBuiltInName.kt")
+    public void testAnnotationWithBuiltInName() {
+      run("annotationWithBuiltInName.kt");
     }
 
     @Test
@@ -757,6 +775,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("targetAndRegular_target.kt")
     public void testTargetAndRegular_target() {
       run("targetAndRegular_target.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedAnnotation.kt")
+    public void testUnresolvedAnnotation() {
+      run("unresolvedAnnotation.kt");
     }
 
     @Test
@@ -828,6 +852,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("annotationWithBuiltInName.kt")
+    public void testAnnotationWithBuiltInName() {
+      run("annotationWithBuiltInName.kt");
+    }
+
+    @Test
     @TestMetadata("classWithRegularAnnotationsFalse.kt")
     public void testClassWithRegularAnnotationsFalse() {
       run("classWithRegularAnnotationsFalse.kt");
@@ -1089,6 +1119,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("targetAndRegular_target.kt")
     public void testTargetAndRegular_target() {
       run("targetAndRegular_target.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedAnnotation.kt")
+    public void testUnresolvedAnnotation() {
+      run("unresolvedAnnotation.kt");
     }
 
     @Test
