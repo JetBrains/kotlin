@@ -2,9 +2,11 @@
 @file:JvmName("AddEmbeddedRuntime")
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.support.serviceOf
 
 @JvmOverloads
@@ -39,15 +41,18 @@ fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
 @JvmOverloads
 fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
     project.configurations.findByName(configurationName)?.let { embedded ->
-        val allSources by lazy {
-            embedded.resolvedConfiguration
-                .resolvedArtifacts
-                .map { it.id.componentIdentifier }
-                .filterIsInstance<ProjectComponentIdentifier>()
-                .mapNotNull {
-                    project.project(it.projectPath).sources()
-                }
-        }
-        from({ allSources })
+        val allSources = embedded.incoming.artifactView {
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
+                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
+            }
+            withVariantReselection()
+            componentFilter {
+                it is ProjectComponentIdentifier
+            }
+        }.files
+        dependsOn(allSources)
+        val archiveOperations = project.serviceOf<ArchiveOperations>()
+        from({ allSources.map { archiveOperations.zipTree(it) } })
     }
 }

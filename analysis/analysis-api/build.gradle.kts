@@ -68,6 +68,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+sourcesJar()
 
 projectTests {
     testCodebaseTask()

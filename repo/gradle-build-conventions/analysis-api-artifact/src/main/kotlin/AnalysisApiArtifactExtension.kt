@@ -5,12 +5,13 @@
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
 import org.gradle.api.provider.Property
-import org.gradle.jvm.JvmLibrary
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.language.base.artifact.SourcesArtifact
+import org.gradle.kotlin.dsl.named
 import javax.inject.Inject
 
 abstract class AnalysisApiArtifactExtension @Inject constructor(private val project: Project) {
@@ -78,16 +79,17 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
 
     private fun Jar.addEmbeddedLibrarySources(configuration: Configuration) = with(project) {
         val allLibrarySources by lazy {
-            val moduleComponentIds = configuration.incoming.resolutionResult.allComponents.map { it.id }
+            configuration.incoming.artifactView {
+                attributes {
+                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+                    attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+                }
+                withVariantReselection()
+                componentFilter {
+                    it !is ProjectComponentIdentifier
+                }
 
-            dependencies.createArtifactResolutionQuery()
-                .forComponents(moduleComponentIds)
-                .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java)
-                .execute()
-                .resolvedComponents
-                .flatMap { it.getArtifacts(SourcesArtifact::class.java) }
-                .filterIsInstance<ResolvedArtifactResult>()
-                .map { zipTree(it.file) }
+            }.files.map { zipTree(it) }
         }
 
         from({ allLibrarySources })
