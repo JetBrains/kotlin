@@ -66,9 +66,10 @@ internal class VolatileFieldsLowering(val context: NativeBackendContext) : FileL
         require(scope != null)
         require(scope is IrClass || scope is IrFile)
         parent = scope
-        if (scope is IrClass) {
+        val receiverParameter = property.getter?.dispatchReceiverParameter
+        if (receiverParameter != null) {
             parameters += buildReceiverParameter {
-                type = scope.defaultType
+                type = receiverParameter.type
                 startOffset = irField.startOffset
                 endOffset = irField.endOffset
             }
