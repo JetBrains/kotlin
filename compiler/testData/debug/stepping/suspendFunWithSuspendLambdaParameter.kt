@@ -31,17 +31,8 @@ suspend fun box() {
 // test.kt:10 invokeSuspend
 // test.kt:5 foo
 // test.kt:6 foo
-// test.kt:10 Any
-// test.kt:10 Any
-// test.kt:10 Any
-// test.kt:10 invoke
-// test.kt:11 invoke
-// test.kt:12 invoke
-// test.kt:10 Any
-// test.kt:12 Any
 // test.kt:6 foo
 // test.kt:7 foo
-// test.kt:10 invokeSuspend
 // test.kt:10 invokeSuspend
 // test.kt:10 invokeSuspend
 // test.kt:9 invokeSuspend
