@@ -16,12 +16,18 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGeneratorKey
 import org.jetbrains.kotlin.lombok.generators.LombokDeclarationKey
 import org.jetbrains.kotlin.lombok.generators.ToStringGeneratorKey
+import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
 
 class LombokIrGenerationExtension : IrGenerationExtension {
@@ -77,4 +83,36 @@ sealed class IrBodyBuilder<T : GeneratedDeclarationKey> {
     /** The builders are always invoked from [IrBodyBuilderVisitor], which passes its [IrPluginContext] to the body builder. */
     protected val IrBuilderWithScope.pluginContext: IrPluginContext
         get() = context as IrPluginContext
+
+    /**
+     * The `java.util.Arrays` function Lombok routes an array property through, so that it is rendered, compared
+     * and hashed by content rather than by identity: the shallow overload named [primitiveArrayName] for a
+     * primitive array, and the deep one named [objectArrayName] for the rest - an object array is always treated
+     * deeply, even a one-dimensional one.
+     *
+     * Shared so that `toString` and `equals`/`hashCode` cannot drift apart on where that split falls.
+     *
+     * Returns `null` for a non-array [type], and also if `java.util.Arrays` can't be resolved, in which case the
+     * caller falls back to whatever it does for an ordinary property.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    protected fun IrBuilderWithScope.findArraysFunctionByContent(
+        type: IrType?,
+        primitiveArrayName: Name,
+        objectArrayName: Name,
+        parameterCount: Int,
+    ): IrSimpleFunction? {
+        val builtIns = context.irBuiltIns
+        val classifier = type?.classifierOrNull ?: return null
+        val isPrimitiveArray = classifier in builtIns.primitiveArraysToPrimitiveTypes
+        if (!isPrimitiveArray && classifier != builtIns.arrayClass) return null
+
+        val arraysClass = pluginContext.finderForBuiltins().findClass(LombokNames.JAVA_ARRAYS_ID) ?: return null
+        val name = if (isPrimitiveArray) primitiveArrayName else objectArrayName
+        return arraysClass.owner.functions.firstOrNull { function ->
+            function.name == name &&
+                    function.parameters.size == parameterCount &&
+                    function.parameters.all { it.type.classifierOrNull == classifier }
+        }
+    }
 }

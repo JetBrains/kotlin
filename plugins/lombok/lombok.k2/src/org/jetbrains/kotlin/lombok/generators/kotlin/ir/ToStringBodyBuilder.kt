@@ -25,11 +25,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.ToStringGeneratorKey
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -101,26 +99,11 @@ object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
         }
     }
 
-    /**
-     * Mirrors Lombok: an array property is rendered by content rather than by identity, with
-     * `java.util.Arrays.toString` for primitive arrays and `java.util.Arrays.deepToString` for the rest
-     * (an object array is always rendered deeply, even a one-dimensional one).
-     *
-     * Returns `null` for a non-array [type], and also if `java.util.Arrays` can't be resolved,
-     * in which case the caller falls back to plain concatenation.
-     */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    /** Renders an array property by content, falling back to plain concatenation for anything else. */
     private fun IrBuilderWithScope.renderArrayByContent(value: IrExpression, type: IrType): IrExpression? {
-        val builtIns = context.irBuiltIns
-        val classifier = type.classifierOrNull
-        val isPrimitiveArray = classifier in builtIns.primitiveArraysToPrimitiveTypes
-        if (!isPrimitiveArray && classifier != builtIns.arrayClass) return null
-
-        val arraysClass = pluginContext.finderForBuiltins().findClass(LombokNames.JAVA_ARRAYS_ID) ?: return null
-        val name = if (isPrimitiveArray) OperatorNameConventions.TO_STRING else DEEP_TO_STRING_NAME
-        val toStringFunction = arraysClass.owner.functions.firstOrNull { function ->
-            function.name == name && function.parameters.singleOrNull()?.type?.classifierOrNull == classifier
-        } ?: return null
+        val toStringFunction =
+            findArraysFunctionByContent(type, OperatorNameConventions.TO_STRING, DEEP_TO_STRING_NAME, parameterCount = 1)
+                ?: return null
 
         return irCall(toStringFunction.symbol).apply { arguments[0] = value }
     }
