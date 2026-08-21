@@ -435,6 +435,16 @@ class BackendWasmSymbols(
             else -> lazyOf(null)
         }
     }
+
+    // cabi_realloc is a @WasmExport'ed function defined in the Wasm/WASI standard library, and only referenced here in order to preserve it during IR Serialization/Deserialization
+    @Suppress("unused")
+    val cabiRealloc: IrSimpleFunctionSymbol? by run {
+        when (configuration.wasmTarget == WasmTarget.WASI) {
+            true -> CallableIds.cabiRealloc.functionSymbol()
+            else -> lazyOf(null)
+        }
+    }
+
 }
 
 private object ClassIds {
@@ -677,5 +687,6 @@ private object CallableIds {
     val registerRootSuiteBlock = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("registerRootSuiteBlock"))
     val runRootSuites = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("runRootSuites"))
     val checkStaticInitializationState = "checkStaticInitializationState".wasmCallableId
+    val cabiRealloc = "cabi_realloc".wasmCallableId
 }
 
