@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
 
-private const val statisticsIsEnabled: Boolean = true //KT-59629 Wait for user confirmation before start to collect metrics
 private val serviceClass = GradleBuildFusStatisticsService::class.java
 internal val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 internal val log = Logging.getLogger(GradleBuildFusStatisticsService::class.java)
@@ -43,14 +42,7 @@ private fun registerIfAbsent(
     val customPath: String = project.getFusDirectory()
 
     val objectFactory = project.objects
-    return if (!statisticsIsEnabled || customPath.isBlank()) {
-        log.info(
-            "Fus metrics wont be collected as statistic was " +
-                    (if (statisticsIsEnabled) "enabled" else "disabled") +
-                    if (customPath.isBlank()) " and custom path is blank" else ""
-        )
-        project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
-    } else if (customPath.isBlank() && isCiBuild()) {
+    return if (customPath.isBlank() && isCiBuild()) {
         val ciProperty = detectedCiProperty()
         log.debug("Fus metrics won't be collected for CI build. (CI build detected via environment variable $ciProperty)")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}

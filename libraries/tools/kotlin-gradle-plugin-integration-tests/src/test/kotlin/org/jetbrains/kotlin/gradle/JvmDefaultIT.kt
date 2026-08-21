@@ -229,7 +229,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
             kotlinJvm.target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileTaskProvider.map {
                 (it as KotlinCompile).createCompilerArguments(KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.default)
             }
-        }.buildAndReturn(":compileKotlin", buildAction = BuildActions.buildWithAssertions(buildOutputAssertions))
+        }.buildAndReturn(":compileKotlin", buildAction = BuildActions.build, buildAssertions = buildOutputAssertions)
 
         assertEquals(expectedJvmDefaultStable, jvmArgs.jvmDefaultStable)
         @Suppress("DEPRECATION")
