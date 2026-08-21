@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass

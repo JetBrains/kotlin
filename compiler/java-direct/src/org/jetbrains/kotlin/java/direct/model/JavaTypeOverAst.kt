@@ -238,17 +238,31 @@ class JavaClassifierTypeOverAst(
             return explicitArgs
         }
 
+        // Each parameter is kept together with the class that declares it: the implicit outer
+        // argument is a parameter *of that class*, so the only correct answer is that class's own
+        // instance — FIR matches `JavaTypeParameter`s to `FirTypeParameterSymbol`s by identity
+        // through the per-class `JavaTypeParameterStack`, which is keyed by exactly these objects.
         val outerTypeParams = mutableListOf<JavaTypeParameter>()
+        val outerTypeParamOwners = mutableListOf<JavaClass>()
         var outer = javaClass.outerClass
         while (outer != null && !outer.isStatic) {
-            outerTypeParams.addAll(outer.typeParameters)
+            for (typeParam in outer.typeParameters) {
+                outerTypeParams.add(typeParam)
+                outerTypeParamOwners.add(outer)
+            }
             outer = outer.outerClass
         }
 
-        // Resolve each outer type param through the current context so we get the caller's H
-        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
-        val lexicalArgs = outerTypeParams.map { typeParam ->
-            with(resolutionContext) { findTypeParameter(typeParam.name.asString()) }
+        // A declared parameter is available at this reference only if the reference is written
+        // inside the declaring class. This is an *identity* test on the enclosing chain, not a
+        // lexical lookup by name: a same-named parameter of a nested class or of the enclosing
+        // generic method shadows the outer one for name resolution, but it is not the parameter
+        // this implicit argument denotes (`class A<T> { class Inner<T> { Inner<String> foo(); } }`
+        // means `A<A.T>.Inner<String>`). Mirrors PSI, whose `JavaClassifierTypeImpl` substitutes an
+        // unmapped `PsiTypeParameter` to itself and never looks names up in the lexical scope.
+        // `null` means "not available here" and routes to the inherited recovery below.
+        val lexicalArgs = outerTypeParams.mapIndexed { index, typeParam ->
+            typeParam.takeIf { isInScopeOfDeclaringClass(outerTypeParamOwners[index]) }
         }
 
         // Inherited case: the inner class is non-static but its outer arguments are neither written
@@ -274,6 +288,30 @@ class JavaClassifierTypeOverAst(
         }
 
         return explicitArgs + implicitArgs
+    }
+
+    /**
+     * Whether this type reference is written inside [declaringClass], i.e. whether
+     * [declaringClass]'s own type parameters denote the enclosing instance's ones here.
+     *
+     * Walks the classes lexically enclosing the reference, innermost first. Per JLS a `static`
+     * class has no enclosing instance, which severs the chain of implicit outer type arguments —
+     * the same break the collection walk above and PSI's `PsiUtil.typeParametersIterable` make.
+     *
+     * Classes are compared by [JavaClass.classId] when both have one, so that a reference resolved
+     * through the class finder (a distinct instance for the same class) is still recognised; the
+     * identity comparison covers local/anonymous classes, which have no `ClassId`.
+     */
+    private fun isInScopeOfDeclaringClass(declaringClass: JavaClass): Boolean {
+        val declaringClassId = declaringClass.classId
+        var enclosing: JavaClass? = resolutionContext.scopeContext.containingClass
+        while (enclosing != null) {
+            if (enclosing === declaringClass) return true
+            if (declaringClassId != null && enclosing.classId == declaringClassId) return true
+            if (enclosing.isStatic) return false
+            enclosing = enclosing.outerClass
+        }
+        return false
     }
 
     /**
