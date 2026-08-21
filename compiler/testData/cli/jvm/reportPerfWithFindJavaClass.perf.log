@@ -7,6 +7,6 @@ KLIB METADATA WRITING        $UINT>>$ ms            $REAL>>$ loc/s
              BACKEND        $UINT>>$ ms            $REAL>>$ loc/s
 Find Java class performed 1 times, total time $UINT$ ms
 Binary class from Kotlin file performed $UINT$ times, total time $UINT$ ms
-GC time for G1 Old Generation is $UINT$ ms, $UINT$ collections
-GC time for G1 Young Generation is $UINT$ ms, $UINT$ collections
+GC time for <GC> is $UINT$ ms, $UINT$ collections
+GC time for <GC> is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms
