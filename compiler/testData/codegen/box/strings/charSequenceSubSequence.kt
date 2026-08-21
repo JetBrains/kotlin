@@ -2,12 +2,12 @@
 
 import kotlin.test.*
 
-// CHECK_CALLED_IN_SCOPE: function=substring scope=getStringSubSequence
+// CHECK_CALLED_IN_SCOPE: function=substring_0 scope=getStringSubSequence
 // CHECK_NOT_CALLED_IN_SCOPE: function=charSequenceSubSequence scope=getStringSubSequence
 fun getStringSubSequence(s: String, start: Int, end: Int): CharSequence = s.subSequence(start, end)
 
 // CHECK_CALLED_IN_SCOPE: function=charSequenceSubSequence scope=getCharSequenceSubSequence
-// CHECK_NOT_CALLED_IN_SCOPE: function=substring scope=getCharSequenceSubSequence
+// CHECK_NOT_CALLED_IN_SCOPE: function=substring_0 scope=getCharSequenceSubSequence
 fun getCharSequenceSubSequence(s: CharSequence, start: Int, end: Int): CharSequence = s.subSequence(start, end)
 
 private class MyCharSequence(val s: String) : CharSequence by s
