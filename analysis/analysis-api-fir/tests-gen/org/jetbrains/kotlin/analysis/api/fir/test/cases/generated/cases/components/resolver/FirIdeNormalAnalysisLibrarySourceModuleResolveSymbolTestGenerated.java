@@ -1245,6 +1245,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSymbolTestGenerated e
   }
 
   @Test
+  @TestMetadata("setterParameter.kt")
+  public void testSetterParameter() {
+    run("setterParameter.kt");
+  }
+
+  @Test
   @TestMetadata("SeveralOverrides.kt")
   public void testSeveralOverrides() {
     run("SeveralOverrides.kt");
