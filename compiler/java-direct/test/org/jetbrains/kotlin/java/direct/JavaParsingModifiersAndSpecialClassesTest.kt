@@ -316,6 +316,57 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testEnumConstantsComeBeforeOtherFields() {
+        // JLS 8.9.1 requires the enum constants to be written first, and both peers report the
+        // fields in that order: the class-file reader sees the constants first in the field table,
+        // and PSI reports the members in declaration order. FIR keeps the order it is given, and an
+        // enum entry which arrives after an ordinary member is an entry out of its place.
+        val source = """
+            public enum E {
+                FIRST, SECOND;
+                public static final int LIMIT = 2;
+                public int number;
+                public int number() { return number; }
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assertEquals(
+            listOf("FIRST", "SECOND", "LIMIT", "number"),
+            javaClass.fields.map { it.name.asString() },
+            "Enum constants must precede the ordinary fields, in declaration order",
+        )
+        assertTrue(javaClass.fields.take(2).all { it.isEnumEntry }, "FIRST and SECOND are the enum entries")
+        assertFalse(javaClass.fields.drop(2).any { it.isEnumEntry }, "LIMIT and number are not enum entries")
+    }
+
+    @Test
+    fun testEnumConstructorIsImplicitlyPrivate() {
+        // JLS 8.9.2: the constructor of an enum class is private, whether or not it is written so —
+        // `public` and `protected` are forbidden there, and the default access is not package-private.
+        val source = """
+            public enum E {
+                FIRST(1);
+                E(int value) {}
+            }
+            class C {
+                C(int value) {}
+            }
+        """.trimIndent()
+        val parsed = parseSource(source)
+        val classes = parsed.tree.getChildrenByType(parsed.root, JavaSyntaxElementType.CLASS)
+            .map { JavaClassOverAst(it, parsed.tree, parsed.context) }
+
+        val enumConstructor = classes.first { it.name.asString() == "E" }.constructors.single()
+        assertEquals("private", enumConstructor.visibility.toString(), "An enum constructor is implicitly private")
+
+        // The same declaration outside an enum keeps the ordinary default access, so the rule above
+        // is about enums and not about constructors in general.
+        val classConstructor = classes.first { it.name.asString() == "C" }.constructors.single()
+        assertEquals("public/*package*/", classConstructor.visibility.toString(), "A class constructor stays package-private")
+    }
+
+    @Test
     fun testAnnotationTypeImplicitAbstract() {
         // Annotation types with methods are implicitly abstract
         val source = "public @interface Ann { String value(); }"

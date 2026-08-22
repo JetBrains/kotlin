@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.*
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassFinderOverAstImpl internal constructor(
     private val session: FirSession,
     sourceRootEntries: List<JavaSourceRootEntry>,
+    private val moduleImportedPackages: JavaModuleImportedPackages = JavaModuleImportedPackages.EMPTY,
 ) : JavaClassFinder, LeanJavaClassFinder {
 
     init {
@@ -51,14 +53,17 @@ class JavaClassFinderOverAstImpl internal constructor(
     }
 
     private val packageInfoIndexer = JavaPackageInfoIndexer(
-        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
+        resolutionContextFactory = { tree -> createResolutionContext(tree) },
     )
 
     private val packageIndexer = JavaPackageIndexer(sourceRootEntries, packageInfoIndexer)
 
     private val classCache = JavaClassCache(
-        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
+        resolutionContextFactory = { tree -> createResolutionContext(tree) },
     )
+
+    private fun createResolutionContext(tree: JavaLightTree): JavaResolutionContext =
+        JavaResolutionContext.create(tree, session = session, classFinder = this, moduleImportedPackages = moduleImportedPackages)
 
     override fun isClassInIndex(classId: ClassId): Boolean {
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString() ?: return false

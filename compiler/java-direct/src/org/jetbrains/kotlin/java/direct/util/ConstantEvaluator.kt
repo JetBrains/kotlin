@@ -9,9 +9,12 @@ package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.java.syntax.element.SyntaxElementTypes
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.java.direct.model.JavaPrimitiveTypeOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.resolve
@@ -20,20 +23,34 @@ import org.jetbrains.kotlin.name.Name
 import kotlin.experimental.inv
 
 /**
- * Evaluates constant expressions in Java field initializers.
+ * Evaluates the constant expressions of the JLS 15.29 subset: Java field initializers as well as
+ * annotation arguments and annotation-method default values (JLS 9.6.1 / 9.7).
  *
- * Companion evaluator: `evaluateConstantExpression` in `JavaAnnotationOverAst.kt` implements the
- * same JLS 9.6.1 subset for annotation arguments. The two coexist because annotation-argument
- * evaluation runs before the class scope is available and therefore cannot reference fields.
- *
- * @param containingClass the class containing the field being evaluated
+ * @param containingClass the class the expression is written in, if any; simple names are looked up
+ *   among its fields first.
  * @param resolveExternalReference optional callback to resolve references to external classes (e.g., Kotlin classes)
  */
-class ConstantEvaluator(
-    private val containingClass: JavaClassOverAst,
-    private val resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
+class ConstantEvaluator private constructor(
+    private val tree: JavaLightTree,
+    private val resolutionContext: JavaResolutionContext,
+    private val containingClass: JavaClassOverAst?,
+    private val resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)?,
 ) {
-    private val tree: JavaLightTree get() = containingClass.tree
+    /** Evaluator for an expression written inside [containingClass], i.e. a field initializer. */
+    constructor(
+        containingClass: JavaClassOverAst,
+        resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
+    ) : this(containingClass.tree, containingClass.resolutionContext, containingClass, resolveExternalReference)
+
+    /**
+     * Evaluator for an expression written outside of any member — an annotation argument or an
+     * annotation-method default value.
+     */
+    constructor(
+        tree: JavaLightTree,
+        resolutionContext: JavaResolutionContext,
+        resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
+    ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst, resolveExternalReference)
 
     /**
      * Evaluates a constant expression node and returns the computed value.
@@ -47,6 +64,7 @@ class ConstantEvaluator(
             JavaSyntaxElementType.PARENTH_EXPRESSION -> evaluateParensExpression(node)
             JavaSyntaxElementType.REFERENCE_EXPRESSION -> evaluateReferenceExpression(node)
             JavaSyntaxElementType.POLYADIC_EXPRESSION -> evaluatePolyadicExpression(node)
+            JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> evaluateTypeCastExpression(node)
             else -> null
         }
     }
@@ -156,6 +174,21 @@ class ConstantEvaluator(
         return evaluate(innerExpr)
     }
 
+    private fun evaluateTypeCastExpression(node: JavaLightNode): Any? {
+        val children = tree.getChildren(node)
+        val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return null
+        val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
+        if (rparenthIndex < 0) return null
+        val operand = children.getOrNull(rparenthIndex + 1) ?: return null
+
+        val value = evaluate(operand) ?: return null
+        val primitiveNode = tree.getChildren(typeNode).firstOrNull {
+            tree.getType(it) in SyntaxElementTypes.PRIMITIVE_TYPE_BIT_SET
+        } ?: return value
+        val primitive = JavaPrimitiveTypeOverAst(primitiveNode, tree, resolutionContext).type ?: return value
+        return JavaLiteralParser.coerceToPrimitive(value, primitive)
+    }
+
     private fun evaluateReferenceExpression(node: JavaLightNode): Any? {
         val refText = tree.getText(node).toString()
 
@@ -164,10 +197,10 @@ class ConstantEvaluator(
         val className: String
         val fieldName: String
         if (lastDot < 0) {
-            val localValue = resolveFieldValue(containingClass, refText)
+            val localValue = containingClass?.let { resolveFieldValue(it, refText) }
             if (localValue != null) return localValue
 
-            val staticImportFqn = with(containingClass.resolutionContext) { getStaticImport(refText) }?.asString()
+            val staticImportFqn = with(resolutionContext) { getStaticImport(refText) }?.asString()
             val importDot = staticImportFqn?.lastIndexOf('.') ?: -1
             if (staticImportFqn == null || importDot < 0) {
                 return resolveExternalReference?.invoke(null, refText)
@@ -194,20 +227,20 @@ class ConstantEvaluator(
         val resolvedClassQualifier = if (className.contains('.')) {
             className
         } else {
-            with(containingClass.resolutionContext) { resolve(className) }?.asSingleFqName()?.asString() ?: className
+            with(resolutionContext) { resolve(className) }?.asSingleFqName()?.asString() ?: className
         }
 
         return resolveExternalReference?.invoke(resolvedClassQualifier, fieldName)
     }
 
     private fun findLocalClass(name: String): JavaClassOverAst? {
-        if (containingClass.name.asString() == name) {
+        if (containingClass != null && containingClass.name.asString() == name) {
             return containingClass
         }
         // Route through the shared resolution context so that sibling top-level classes are
         // retrieved from the file-level cache (same JavaClassOverAst instance, same type-parameter
         // identity) instead of being freshly constructed here.
-        return with(containingClass.resolutionContext) { findClassInCurrentScope(name) } as? JavaClassOverAst
+        return with(resolutionContext) { findClassInCurrentScope(name) } as? JavaClassOverAst
     }
 
     private fun resolveFieldValue(javaClass: JavaClassOverAst, fieldName: String): Any? {

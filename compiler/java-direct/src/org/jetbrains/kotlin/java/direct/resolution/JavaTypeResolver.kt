@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
+import org.jetbrains.kotlin.java.direct.model.JavaTypeParameterTypeOverAst
 import org.jetbrains.kotlin.java.direct.model.firBackedJavaType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -125,6 +127,8 @@ internal fun resolveSimpleNameToClassIdImpl(
     resolveFromJavaLang(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.2: type-import-on-demand.
     resolveFromTypeStarImports(simpleName, fullResolution)?.let { return it }
+    // JLS 7.5.5: module imports (shadowed by 7.5.2, shadow 7.5.4).
+    resolveFromModuleImports(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.4: static-import-on-demand (strictly lower rank than 7.5.2).
     return resolveFromStaticStarImports(simpleName, fullResolution)
 }
@@ -255,8 +259,31 @@ private fun resolveFromTypeStarImports(
 }
 
 /**
- * Step 7: static-import-on-demand (`import static a.b.C.*;`, JLS 7.5.4) — lower rank than
- * Step 6. Each entry is an outer *class* FqName, not a package: resolve it via [resolveAsClassId]
+ * Step 7: module imports (`import module M;`, JLS 7.5.5), each expanded to the packages the
+ * module brings into on-demand scope. Ambiguity between two of them is a compile-time error, so
+ * a conflict returns `null` and falls through to Step 8.
+ */
+context(c: JavaResolutionContext)
+private fun resolveFromModuleImports(
+    simpleName: String,
+    fullResolution: Boolean,
+): ClassId? {
+    var foundClassId: ClassId? = null
+    for (moduleName in c.fileContext.imports.moduleImports) {
+        for (packageFqName in c.fileContext.moduleImportedPackages.forModule(moduleName)) {
+            val candidateClassId = ClassId(packageFqName, Name.identifier(simpleName))
+            if (classExists(candidateClassId, fullResolution)) {
+                if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
+                foundClassId = candidateClassId
+            }
+        }
+    }
+    return foundClassId
+}
+
+/**
+ * Step 8: static-import-on-demand (`import static a.b.C.*;`, JLS 7.5.4) — lower rank than
+ * Steps 6-7. Each entry is an outer *class* FqName, not a package: resolve it via [resolveAsClassId]
  * and probe its nested class. Without [fullResolution] (reentrance-safe fallback) the first
  * match is returned without the ambiguity check.
  */
@@ -392,26 +419,54 @@ internal fun recoverInheritedOuterTypeArguments(innerClassId: ClassId): List<Jav
     val outerClassId = innerClassId.outerClassId ?: return null
     val containingClass = c.scopeContext.containingClass ?: return null
     val session = c.fileContext.session
-    // Walk the containing class's outer classes, whose supertypes are resolved already (FIR
-    // resolves outer before inner). Per JLS a `static` nested class has no enclosing instance and
-    // severs the chain of implicit outer type arguments — mirrors the static break in PSI's
-    // `JavaClassifierTypeImpl.getTypeParameters` and IntelliJ's `PsiUtil.typeParametersIterable`.
-    var child: JavaClass = containingClass
-    var currentOuter: JavaClass? = child.outerClass
-    while (currentOuter != null) {
-        if (child.isStatic) break
-        val currentOuterId = currentOuter.classId
-        if (currentOuterId != null) {
-            for (supertype in FirBackedJavaClassAdapter(currentOuterId, session).supertypes) {
+    // Walk the containing class itself and then its outer classes, innermost first: the innermost
+    // class that inherits the inner class is the one whose instantiation of the outer class the
+    // reference denotes (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` ⇒ `BaseInner`
+    // written in `Outer`'s body has outer arguments `Integer, E1`). Per JLS a `static` nested
+    // class has no enclosing instance and severs the chain of implicit outer type arguments —
+    // mirrors the static break in PSI's `JavaClassifierTypeImpl.getTypeParameters` and IntelliJ's
+    // `PsiUtil.typeParametersIterable`. Reading the containing class's own supertypes cannot loop:
+    // `FirBackedJavaClassAdapter.supertypes` is cycle-guarded, so a reference that is itself part
+    // of that supertype list sees an empty answer and the walk simply moves outward.
+    var current: JavaClass? = containingClass
+    while (current != null) {
+        val currentId = current.classId
+        if (currentId != null) {
+            for (supertype in FirBackedJavaClassAdapter(currentId, session).supertypes) {
                 val coneSupertype = (supertype as? FirBackedJavaClassifierType)?.coneType ?: continue
                 val recovered = findTypeArgsForClassInHierarchy(coneSupertype, outerClassId, session, mutableSetOf())
-                if (recovered != null) return recovered.map { firBackedJavaType(it, session) }
+                if (recovered != null) return recovered.map { recoveredOuterTypeArgument(it, session) }
             }
         }
-        child = currentOuter
-        currentOuter = currentOuter.outerClass
+        if (current.isStatic) break
+        current = current.outerClass
     }
     return null
+}
+
+/**
+ * Wraps one recovered outer type argument as a [JavaType].
+ *
+ * A recovered argument is often a type parameter of the containing class itself
+ * (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` recovers `Integer, E1`). Such an argument
+ * must be handed back as the model's *own* [JavaTypeParameter]: FIR matches `JavaTypeParameter`s to
+ * `FirTypeParameterSymbol`s by identity through the per-class `JavaTypeParameterStack`, which does
+ * not know resolution-time cone-backed wrappers, so the cone route
+ * ([firBackedJavaType]) would degrade the reference to an unbounded wildcard. The name is
+ * necessarily in scope — the parameter is declared by a class of the containing chain the recovery
+ * walked.
+ */
+context(c: JavaResolutionContext)
+private fun recoveredOuterTypeArgument(projection: ConeTypeProjection, session: FirSession): JavaType {
+    // Arguments read off a resolved FIR supertype are flexible (`kotlin/Int!`, `E1!`), while the
+    // Java model is nullability-agnostic and FIR re-derives flexibility when converting back — so
+    // the lower bound is what has to be handed over. Without unwrapping, neither branch below
+    // matches and everything degrades to an unbounded wildcard.
+    val type = (projection as? ConeKotlinType)?.lowerBoundIfFlexible() ?: return firBackedJavaType(projection, session)
+    if (type is ConeTypeParameterType) {
+        findTypeParameter(type.lookupTag.name.asString())?.let { return JavaTypeParameterTypeOverAst(it) }
+    }
+    return firBackedJavaType(type, session)
 }
 
 /**

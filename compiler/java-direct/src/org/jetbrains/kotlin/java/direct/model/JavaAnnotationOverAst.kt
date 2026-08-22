@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.java.direct.resolution.resolveConstFieldValue
+import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
+import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
@@ -121,7 +123,10 @@ internal fun createAnnotationArgumentFromValue(
             val constValue = if (classId != null) {
                 with(resolutionContext) { resolveConstFieldValue(classId, enumArg.entryName) }
             } else null
-            if (constValue != null) JavaLiteralAnnotationArgumentOverAst(name, constValue) else enumArg
+            // Not a `const val`: the reference may still name a Java `static final` constant of
+            // this compilation unit, that is evaluated on the AST.
+            val value = constValue ?: ConstantEvaluator(tree, resolutionContext).evaluate(valueNode)
+            if (value != null) JavaLiteralAnnotationArgumentOverAst(name, value) else enumArg
         }
         JavaSyntaxElementType.CLASS_OBJECT_ACCESS_EXPRESSION -> {
             JavaClassObjectAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
@@ -129,8 +134,10 @@ internal fun createAnnotationArgumentFromValue(
         JavaSyntaxElementType.ANNOTATION -> {
             JavaAnnotationAsAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
-        JavaSyntaxElementType.PREFIX_EXPRESSION, JavaSyntaxElementType.BINARY_EXPRESSION -> {
-            val value = evaluateConstantExpression(valueNode, tree)
+        JavaSyntaxElementType.PREFIX_EXPRESSION, JavaSyntaxElementType.BINARY_EXPRESSION,
+        JavaSyntaxElementType.POLYADIC_EXPRESSION, JavaSyntaxElementType.PARENTH_EXPRESSION,
+        JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> {
+            val value = annotationConstantEvaluator(tree, resolutionContext).evaluate(valueNode)
             JavaLiteralAnnotationArgumentOverAst(name, value)
         }
         else -> {
@@ -140,58 +147,18 @@ internal fun createAnnotationArgumentFromValue(
 }
 
 /**
- * Evaluates a prefix/binary/literal constant expression used as an annotation argument.
+ * The evaluator for a constant expression written as an annotation argument or as an
+ * annotation-method default value (JLS 9.6.1 / 9.7).
  *
- * Supports the subset of constant expressions that can legally appear in a Java annotation
- * value (JLS 9.6.1): literals, unary minus, and binary string concatenation / arithmetic.
- * Unlike [org.jetbrains.kotlin.java.direct.util.ConstantEvaluator] this does not require a containing class — annotation arguments
- * cannot reference local fields — which is why the two evaluators coexist. The numeric and
- * literal primitives live in [JavaLiteralParser] so the semantics match across both.
+ * It is the same [ConstantEvaluator] the field initializers use, so that references to
+ * `static final` constants, parenthesized and polyadic sub-expressions and casts are evaluated
+ * identically in both positions; cross-language `const val` references inside the expression go
+ * through the session-backed `resolveExternalFieldValue`, as they do for fields.
  */
-private fun evaluateConstantExpression(node: JavaLightNode, tree: JavaLightTree): Any? {
-    when (tree.getType(node)) {
-        JavaSyntaxElementType.PREFIX_EXPRESSION -> {
-            val children = tree.getChildren(node)
-            val firstChild = children.firstOrNull()
-            val operand = children.getOrNull(1)
-            if (firstChild != null && tree.getType(firstChild) == JavaSyntaxTokenType.MINUS && operand != null) {
-                val value = if (tree.getType(operand) == JavaSyntaxElementType.LITERAL_EXPRESSION) {
-                    JavaLiteralParser.evaluateLiteral(operand, tree)
-                } else {
-                    evaluateConstantExpression(operand, tree)
-                }
-                return when (value) {
-                    is Int -> -value
-                    is Long -> -value
-                    is Float -> -value
-                    is Double -> -value
-                    else -> null
-                }
-            }
-        }
-        JavaSyntaxElementType.BINARY_EXPRESSION -> {
-            val children = tree.getChildren(node)
-            if (children.size < 3) return null
-            val left = evaluateConstantExpression(children[0], tree) ?: return null
-            val operator = tree.getType(children[1])
-            val right = evaluateConstantExpression(children[2], tree) ?: return null
-            return evaluateAnnotationBinaryOp(left, operator, right)
-        }
-        JavaSyntaxElementType.LITERAL_EXPRESSION -> return JavaLiteralParser.evaluateLiteral(node, tree)
+private fun annotationConstantEvaluator(tree: JavaLightTree, resolutionContext: JavaResolutionContext): ConstantEvaluator =
+    ConstantEvaluator(tree, resolutionContext) { classQualifier, fieldName ->
+        with(resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
     }
-    return null
-}
-
-private fun evaluateAnnotationBinaryOp(left: Any, operator: com.intellij.platform.syntax.SyntaxElementType, right: Any): Any? {
-    if (operator == JavaSyntaxTokenType.PLUS && (left is String || right is String)) {
-        return left.toString() + right.toString()
-    }
-    if (left is Number && right is Number) {
-        return JavaLiteralParser.evaluateNumericBinaryOp(left, operator, right)
-    }
-    return null
-}
-
 
 class JavaLiteralAnnotationArgumentOverAst(
     override val name: Name?,

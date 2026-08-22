@@ -9,13 +9,13 @@ package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 
 /**
- * Shared Java literal parsing and constant-expression helpers used by both
- * [ConstantEvaluator] (field initializers) and annotation argument evaluation in
- * [JavaAnnotationOverAst].
+ * Shared Java literal parsing and constant-expression helpers used by [ConstantEvaluator], for both
+ * of its flavors (field initializers and annotation arguments).
  *
  * The [parseIntegerLiteral] / [parseLongLiteral] / [parseFloatLiteral] / [parseDoubleLiteral]
  * / [unescapeJavaString] methods turn the textual form of Java literal tokens into Kotlin
@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
  * rather than throwing, because upstream AST nodes may carry partially-recovered text from
  * the KMP Java parser.
  *
- * The [evaluateLiteral] and [evaluateNumericBinaryOp] methods are the higher-level building
- * blocks both evaluators share so that literal and numeric-operator semantics cannot drift
- * between the two contexts.
+ * The [evaluateLiteral], [evaluateNumericBinaryOp] and [coerceToPrimitive] methods are the
+ * higher-level building blocks on top of them.
  */
 internal object JavaLiteralParser {
     /**
@@ -193,10 +192,7 @@ internal object JavaLiteralParser {
      * shifts, bitwise ops, equality, and comparisons. Returns `null` for an operator that
      * doesn't produce a numeric/boolean result on two numeric operands.
      *
-     * Shared between [ConstantEvaluator] (field initializer evaluation) and
-     * [JavaAnnotationOverAst] (annotation argument evaluation) so that numeric semantics stay
-     * consistent. Callers that need special cases (e.g. `String + x` for annotations) handle
-     * those before delegating here.
+     * Callers that need special cases (e.g. `String + x`) handle those before delegating here.
      */
     fun evaluateNumericBinaryOp(lhs: Number, operator: SyntaxElementType, rhs: Number): Any? {
         val isFloat = lhs is Float || lhs is Double || rhs is Float || rhs is Double
@@ -247,6 +243,33 @@ internal object JavaLiteralParser {
             JavaSyntaxTokenType.GT -> if (isFloat) lhs.toDouble() > rhs.toDouble() else lhs.toLong() > rhs.toLong()
             JavaSyntaxTokenType.GE -> if (isFloat) lhs.toDouble() >= rhs.toDouble() else lhs.toLong() >= rhs.toLong()
             else -> null
+        }
+    }
+
+    /**
+     * Applies the JLS 5.1 widening / 5.2 narrowing conversion of a constant expression to
+     * [primitive]. Returns `null` when [value] has no representation in that type.
+     *
+     * Shared by the declared-type coercion of a field initializer
+     * ([org.jetbrains.kotlin.java.direct.model.JavaFieldOverAst]) and the cast-target coercion in
+     * [ConstantEvaluator], so that `byte b = 0` and `(byte) 0` narrow identically.
+     */
+    fun coerceToPrimitive(value: Any, primitive: PrimitiveType): Any? {
+        if (primitive == PrimitiveType.BOOLEAN) return value as? Boolean
+        val number: Number = when (value) {
+            is Number -> value
+            is Char -> value.code
+            else -> return null
+        }
+        return when (primitive) {
+            PrimitiveType.CHAR -> number.toInt().toChar()
+            PrimitiveType.BYTE -> number.toByte()
+            PrimitiveType.SHORT -> number.toShort()
+            PrimitiveType.INT -> number.toInt()
+            PrimitiveType.LONG -> number.toLong()
+            PrimitiveType.FLOAT -> number.toFloat()
+            PrimitiveType.DOUBLE -> number.toDouble()
+            PrimitiveType.BOOLEAN -> null
         }
     }
 }

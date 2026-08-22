@@ -185,18 +185,15 @@ class JavaClassifierTypeOverAst(
                 tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
             }
             if (!outerHasExplicitArgs) {
-                // Walk the outer chain, one hop per qualifier in the source. NB: don't bound the
-                // walk with `outer.isStatic` — `FirBackedJavaClassAdapter.isStatic` reports `true`
-                // for a top-level outer, which would skip exactly the top-level generic outer
-                // whose type parameters make the qualified form raw.
-                var outer: JavaClass? = javaClass.outerClass
-                var levels = rawTypeNameParts.size - 1
-                while (outer != null && levels > 0) {
+                // Walk the *enclosing-instance* chain: only the outers whose type parameters are in scope for
+                // this reference can make it raw. The walk therefore stops at the first `static` (or top-level)
+                // enclosing class.
+                var current: JavaClass = javaClass
+                while (true) {
+                    val outer = current.outerClass ?: break
                     if (outer.typeParameters.isNotEmpty()) return true
-                    val parent = outer.outerClass
-                    if (parent == null) break // Defensive: bound the walk to the top of the chain.
-                    outer = parent
-                    levels--
+                    if (outer.isStatic) break
+                    current = outer
                 }
             }
         }
@@ -248,26 +245,32 @@ class JavaClassifierTypeOverAst(
             outer = outer.outerClass
         }
 
-        if (outerTypeParams.isEmpty()) {
-            // Inherited case: the inner class is non-static but its outer arguments are neither
-            // written in source nor lexically in scope (the outer class is top-level / cross-file,
-            // so the lexical walk above stops). Recover them from the containing class's supertype
-            // hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
-            // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
+        // Resolve each outer type param through the current context so we get the caller's H
+        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
+        val lexicalArgs = outerTypeParams.map { typeParam ->
+            with(resolutionContext) { findTypeParameter(typeParam.name.asString()) }
+        }
+
+        // Inherited case: the inner class is non-static but its outer arguments are neither written
+        // in source nor lexically in scope — either the outer chain declares no parameters at all
+        // (top-level / cross-file outer, so the lexical walk above stops), or the outer class only
+        // *declares* them while the reference sits in a class that merely *inherits* the inner
+        // class, e.g. `class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`.
+        // In the latter case the declaring class's own parameters are out of scope here and would
+        // render as unresolved names, so the arguments have to come from the containing class's
+        // supertype hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
+        // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
+        if (outerTypeParams.isEmpty() || lexicalArgs.any { it == null }) {
             val classId = javaClass.classId
             if (classId != null) {
                 val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
                 if (recovered != null) return explicitArgs + recovered
             }
-            return explicitArgs
         }
 
-        // Resolve each outer type param through the current context so we get the caller's H
-        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
-        val implicitArgs = outerTypeParams.map { typeParam ->
-            val resolved = with(resolutionContext) { findTypeParameter(typeParam.name.asString()) }
-            if (resolved != null) JavaTypeParameterTypeOverAst(resolved)
-            else JavaTypeParameterTypeOverAst(typeParam)
+        // Nothing recovered: keep the declaration-side parameters as the best available answer.
+        val implicitArgs = outerTypeParams.mapIndexed { index, typeParam ->
+            JavaTypeParameterTypeOverAst(lexicalArgs[index] ?: typeParam)
         }
 
         return explicitArgs + implicitArgs
@@ -344,9 +347,12 @@ class JavaArrayTypeOverAst(
     tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
     override val componentType: JavaType,
-    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
-    memberAnnotations: Collection<JavaAnnotation> = emptyList(),
-) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaArrayType
+    // Annotations of *this* array level only, already bound by [arrayLevelAnnotations].
+    // Not delegated to [JavaTypeOverAst]: all levels of a multi-dimensional array share the one
+    // TYPE node the parser produces, so its node scan would report every level's annotations on
+    // every level.
+    override val annotations: Collection<JavaAnnotation> = emptyList(),
+) : JavaTypeOverAst(node, tree, resolutionContext), JavaArrayType
 
 class JavaWildcardTypeOverAst(
     node: JavaLightNode,
@@ -410,12 +416,15 @@ fun createJavaType(
  * places all `[]` pairs as siblings under the same TYPE node, so the inner type is wrapped in N
  * dimensions, innermost first.
  *
- * [memberAnnotations] placement matches PSI:
- * - varargs: on the component type (TYPE_USE annotations enhance the component's nullability);
- * - non-vararg arrays: nowhere — the member's own `annotations` already deliver them to FIR as
- *   container annotations, and FIR's array-head TYPE_USE filter (KT-24392) drops them from the
- *   array head; attaching them here as *type* annotations would double-apply them
- *   (`@NotNull Foo[] f()` must give `Array<Foo!>!`, not `Array<Foo!>`).
+ * Annotations are bound per level (JLS 9.7.4), exactly like the class-file peer binds them by JVM
+ * type path (`BinaryJavaAnnotation.computeTargetType` in `impl/classFiles/Annotations.kt`):
+ * - each `[]` pair keeps only the annotations written in front of it, the leftmost pair being the
+ *   outermost array — see [arrayLevelAnnotations];
+ * - [memberAnnotations] (i.e. what stands in front of the *type name*, which for a field/method/
+ *   parameter the parser puts in the member's MODIFIER_LIST) annotate the element type, so they are
+ *   handed to the component and to nothing else. `@NotNull Foo[] f()` is therefore `Array<Foo>`,
+ *   not `Array<Foo!>` — while the array head stays unannotated, the member's own `annotations`
+ *   being what reaches FIR as the container annotations of the declaration.
  */
 private fun tryCreateArrayOrVarargFromTypeNode(
     typeNode: JavaLightNode,
@@ -423,19 +432,49 @@ private fun tryCreateArrayOrVarargFromTypeNode(
     resolutionContext: JavaResolutionContext,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaType? {
-    val arrayDimensions = tree.getChildren(typeNode).count { tree.getType(it) == JavaSyntaxTokenType.LBRACKET }
-    val hasVarargEllipsis = tree.findChildByType(typeNode, JavaSyntaxTokenType.ELLIPSIS) != null
-    if (arrayDimensions == 0 && !hasVarargEllipsis) return null
+    val levels = arrayLevelAnnotations(typeNode, tree, resolutionContext)
+    if (levels.isEmpty()) return null
     val componentTypeNode = tree.findChildByType(typeNode, JavaSyntaxElementType.TYPE) ?: return null
 
-    val dims = if (hasVarargEllipsis) 1 else arrayDimensions
-    val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
-    var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
-    repeat(dims) {
-        // No annotations on the array wrapper — see this function's KDoc.
-        result = JavaArrayTypeOverAst(typeNode, tree, resolutionContext, result)
+    var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = memberAnnotations)
+    // Innermost first, so the levels are consumed from the rightmost dimension leftwards.
+    for (levelAnnotations in levels.asReversed()) {
+        result = JavaArrayTypeOverAst(typeNode, tree, resolutionContext, result, levelAnnotations)
     }
     return result
+}
+
+/**
+ * Splits the direct ANNOTATION children of an array/vararg [typeNode] into one group per array
+ * level, outermost level first, or returns an empty list when [typeNode] is no array at all.
+ *
+ * The parser emits the whole `ANNOTATION* ('[' ']' | '...')` sequence flat, after the component
+ * TYPE, so a level is closed by its own `[` (or by the vararg `...`) and owns the annotations
+ * accumulated since the previous one. JLS 9.7.4: the leftmost pair is the outermost array — `String
+ * @Outer [] @Inner []` is an `@Outer` array of `@Inner` arrays of `String`.
+ *
+ * A vararg `...` is just the rightmost dimension of the declared type (JLS 8.4.1: `T... x` has type
+ * `T[]`; JLS 10.2 treats the ellipsis as a bracket pair, so `int @A [] @B [] x` and
+ * `int @A [] @B ... y` have the same array type), so it is counted and annotated like a `[]` pair:
+ * `String [] @Nullable ... x` is an array of `@Nullable` arrays of `String`.
+ */
+private fun arrayLevelAnnotations(
+    typeNode: JavaLightNode,
+    tree: JavaLightTree,
+    resolutionContext: JavaResolutionContext,
+): List<List<JavaAnnotation>> {
+    val levels = mutableListOf<List<JavaAnnotation>>()
+    var pending = mutableListOf<JavaAnnotation>()
+    for (child in tree.getChildren(typeNode)) {
+        when (tree.getType(child)) {
+            JavaSyntaxElementType.ANNOTATION -> pending.add(JavaAnnotationOverAst(child, tree, resolutionContext))
+            JavaSyntaxTokenType.LBRACKET, JavaSyntaxTokenType.ELLIPSIS -> {
+                levels.add(pending)
+                pending = mutableListOf()
+            }
+        }
+    }
+    return levels
 }
 
 /**
@@ -477,8 +516,23 @@ private fun createClassifierOrPrimitive(
     if (referenceNode != null) {
         // TYPE_USE annotations on type arguments appear directly under the TYPE node (not in MODIFIER_LIST).
         // Pass them as extraAnnotations since we're using JAVA_CODE_REFERENCE as the node.
-        val typeNodeAnnotations = tree.getChildrenByType(typeNode, JavaSyntaxElementType.ANNOTATION)
-            .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        //
+        // Only for a *simple* name though: JLS 9.7.4 binds an annotation written in front of a
+        // qualified name to its leftmost segment, so `@NotNull A.B` annotates `A` and says nothing
+        // about the denoted type — which is written `A.@NotNull B` and picked up from the reference
+        // node itself. In the one case where such an annotation is admissible at all (`@Foo C.D`
+        // with `D` an inner class of `C`) it is dropped, because the model has no node for the
+        // outer type: `C.D` is a single classifier type whose arguments are `D`'s followed by `C`'s.
+        // Same at the PSI boundary — `PsiClassReferenceType` keeps such annotations in a separate
+        // qualifier channel that `getAnnotations()` never reports — and, differently, on the
+        // class-file side, where `BinaryJavaAnnotation.translatePath` skips the `INNER_TYPE` steps
+        // of a JVM type path, so `@A Map.Entry` and `Map.@A Entry` collapse onto that one type.
+        val referenceIsQualified = tree.findChildByType(referenceNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE) != null
+        val typeNodeAnnotations = when {
+            referenceIsQualified -> emptyList()
+            else -> tree.getChildrenByType(typeNode, JavaSyntaxElementType.ANNOTATION)
+                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        }
         return JavaClassifierTypeOverAst(referenceNode, tree, resolutionContext, typeNodeAnnotations, memberAnnotations)
     }
     return JavaClassifierTypeOverAst(typeNode, tree, resolutionContext, memberAnnotations = memberAnnotations)

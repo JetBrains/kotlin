@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
+import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.load.java.structure.*
@@ -223,6 +223,14 @@ class JavaFieldOverAst(
                 }
                 inner != null && isInitializerPotentiallyConstant(inner)
             }
+            // `(byte) 0` and similar: a cast to a primitive (or String) type keeps the expression
+            // constant (JLS 15.29), so the operand alone decides.
+            JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> {
+                val children = tree.getChildren(n)
+                val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
+                val operand = if (rparenthIndex < 0) null else children.getOrNull(rparenthIndex + 1)
+                operand != null && isInitializerPotentiallyConstant(operand)
+            }
             JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
                 val refText = tree.getText(n).toString().trim()
                 if (refText.contains('.')) {
@@ -270,17 +278,7 @@ class JavaFieldOverAst(
     private fun coerceConstantToFieldType(value: Any?): Any? {
         if (value == null) return null
         val primitive = (type as? JavaPrimitiveType)?.type ?: return value  // String / non-primitive — no coercion
-        // else -> null = no constant for this declared primitive type; mirrors PSI.
-        return when (primitive) {
-            PrimitiveType.BOOLEAN -> value as? Boolean
-            PrimitiveType.CHAR -> when (value) {
-                is Char -> value
-                is Number -> value.toInt().toChar()
-                else -> null
-            }
-            PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT,
-            PrimitiveType.LONG, PrimitiveType.FLOAT, PrimitiveType.DOUBLE -> coerceNumberOrChar(value, primitive)
-        }
+        return JavaLiteralParser.coerceToPrimitive(value, primitive)
     }
 
     override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.STATIC_KEYWORD)
@@ -372,6 +370,13 @@ class JavaConstructorOverAst(
     override val isAbstract: Boolean get() = false
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
+
+    // A constructor of an enum class is private even when written without a modifier: JLS 8.9.2
+    // both forbids `public`/`protected` there and makes the access implicitly private. PSI reports
+    // the same (`PsiModifierListImpl.hasModifierProperty` special-cases enum constructors), as does
+    // the class-file reader, which sees `ACC_PRIVATE`.
+    override val visibility: Visibility
+        get() = if (containingClass.isEnum) Visibilities.Private else super.visibility
 }
 
 class JavaValueParameterOverAst(
@@ -403,23 +408,4 @@ class JavaValueParameterOverAst(
         get() = isDeprecatedInJavaDoc(tree, node)
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
-}
-
-// JLS 5.2 narrowing-of-constant-expression conversion for the six numeric primitive types.
-// Returns null for non-Number / non-Char inputs (mirrors PSI: no constant value for this type).
-private fun coerceNumberOrChar(value: Any, primitive: PrimitiveType): Any? {
-    val n: Number = when (value) {
-        is Number -> value
-        is Char -> value.code
-        else -> return null
-    }
-    return when (primitive) {
-        PrimitiveType.BYTE -> n.toByte()
-        PrimitiveType.SHORT -> n.toShort()
-        PrimitiveType.INT -> n.toInt()
-        PrimitiveType.LONG -> n.toLong()
-        PrimitiveType.FLOAT -> n.toFloat()
-        PrimitiveType.DOUBLE -> n.toDouble()
-        else -> null
-    }
 }
