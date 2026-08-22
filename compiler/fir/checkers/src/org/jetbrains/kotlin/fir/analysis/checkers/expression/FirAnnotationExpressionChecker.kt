@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
@@ -46,6 +47,8 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         sinceKotlinFqName,
     )
 
+    private data class Diagnostic(val error: KtDiagnosticFactory0, val source: AbstractKtSourceElement?)
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {
         val annotationClassId = expression.toAnnotationClassId(context.session)
@@ -53,7 +56,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         for (arg in expression.arguments) {
             val argExpression = ((arg as? FirErrorExpression)?.expression ?: arg).unwrapArgument()
             checkAnnotationArgumentWithSubElements(argExpression, context.session)
-                ?.let { reporter.reportOn(argExpression.source, it) }
+                ?.let { reporter.reportOn(it.source, it.error) }
         }
 
         checkAnnotationsWithVersion(fqName, expression)
@@ -68,23 +71,15 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     private fun checkAnnotationArgumentWithSubElements(
         expression: FirExpression,
         session: FirSession,
-    ): KtDiagnosticFactory0? {
+    ): Diagnostic? {
 
         fun checkArgumentList(args: FirArgumentList): KtDiagnosticFactory0? {
             var usedNonConst = false
 
             for (arg in args.arguments.map { it.unwrapArgument() }) {
-                val sourceForReport = arg.source
-
-                when (val err = checkAnnotationArgumentWithSubElements(arg, session)) {
-                    null -> {
-                        //DO NOTHING
-                    }
-                    else -> {
-                        if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
-                        reporter.reportOn(sourceForReport, err)
-                    }
-                }
+                val [err, sourceForReport] = checkAnnotationArgumentWithSubElements(arg, session) ?: continue
+                if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
+                reporter.reportOn(sourceForReport, err)
             }
 
             return FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.takeIf { usedNonConst }
@@ -92,11 +87,12 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
 
         when (expression) {
             is FirCollectionLiteral -> return checkArgumentList(expression.argumentList)
+                ?.let { Diagnostic(it, expression.source) }
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = arg.unwrapArgument()
-                    checkAnnotationArgumentWithSubElements(unwrappedArg, session)
-                        ?.let { reporter.reportOn(unwrappedArg.source, it) }
+                    val [error, source] = checkAnnotationArgumentWithSubElements(unwrappedArg, session) ?: continue
+                    reporter.reportOn(source, error)
                 }
             }
             else -> {
@@ -104,15 +100,21 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 val evaluationResult = FirExpressionEvaluator.evaluateExpression(expression, context.session)
                 return when (evaluationResult) {
                     is FirEvaluatorResult.Evaluated -> null
-                    FirEvaluatorResult.EnumNotConst -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
-                    FirEvaluatorResult.NotKClassLiteral -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
-                    FirEvaluatorResult.KClassLiteralOfTypeParameterError -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-                    FirEvaluatorResult.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-                    FirEvaluatorResult.ResolutionError ->
+                    is FirEvaluatorResult.EnumNotConst -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, evaluationResult.source)
+                    is FirEvaluatorResult.NotKClassLiteral -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL, evaluationResult.source)
+                    is FirEvaluatorResult.KClassLiteralOfTypeParameterError -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR, evaluationResult.source)
+                    is FirEvaluatorResult.NotConstValInConstExpression -> Diagnostic(FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, evaluationResult.source)
+                    is FirEvaluatorResult.ControlFlowNotSupportedError -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED, evaluationResult.source)
+                    is FirEvaluatorResult.ResolutionError -> {
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
-                        (expression as? FirFunctionCall)?.let { checkArgumentList(it.argumentList) }
-                    else -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
+                        val args = (expression as? FirFunctionCall)?.argumentList ?: return null
+                        checkArgumentList(args)?.let { Diagnostic(it, evaluationResult.source)}
+                    }
+                    else -> Diagnostic(
+                        FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST,
+                        (evaluationResult as? FirEvaluatorResult.NotEvaluated)?.source ?: expression.source
+                    )
                 }
             }
         }

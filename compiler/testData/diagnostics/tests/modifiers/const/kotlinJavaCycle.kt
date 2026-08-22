@@ -9,13 +9,13 @@ public class Bar {
 
 class Foo {
     companion object {
-        const val FOO = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Baz.BAZ + 1<!>
+        const val FOO = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Baz.BAZ<!> + 1
     }
 }
 
 class Baz {
     companion object {
-        const val BAZ = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Bar.BAR + 1<!>
+        const val BAZ = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Bar.BAR<!> + 1
     }
 }
 

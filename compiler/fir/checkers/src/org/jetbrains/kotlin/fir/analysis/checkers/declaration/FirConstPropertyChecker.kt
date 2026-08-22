@@ -79,12 +79,13 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             is FirEvaluatorResult.Evaluated, is FirEvaluatorResult.ResolutionError -> return
             is FirEvaluatorResult.DivisionByZero -> {
                 // Report an additional DIVISION_BY_ZERO warning
-                reporter.reportOn(initializer.source, FirErrors.DIVISION_BY_ZERO)
+                reporter.reportOn(evaluationResult.source ?: initializer.source, FirErrors.DIVISION_BY_ZERO)
                 FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
             }
-            FirEvaluatorResult.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+            is FirEvaluatorResult.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+            is FirEvaluatorResult.ControlFlowNotSupportedError -> FirErrors.CONST_VAL_WITH_CONTROL_FLOW_IN_INITIALIZER
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }
-        reporter.reportOn(initializer.source, errorKind)
+        reporter.reportOn((evaluationResult as? FirEvaluatorResult.NotEvaluated)?.source ?: initializer.source, errorKind)
     }
 }

@@ -10,7 +10,7 @@ object TestVeConsts {
 val ConstsDuplicate = TestVeConsts
 
 @TestParameters(
-    <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"{ veId: ${ConstsDuplicate.LETS_GO_BUTTON}}"<!>
+    "{ veId: ${<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>ConstsDuplicate<!>.LETS_GO_BUTTON}}"
 )
 fun box() = "OK"
 

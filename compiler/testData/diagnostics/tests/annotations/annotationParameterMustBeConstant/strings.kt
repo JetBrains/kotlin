@@ -13,18 +13,18 @@ fun foo() {
     val a5 = 1.0
 
     @Ann(
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a2<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a3<!>,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!>,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a2<!>,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a3<!>,
             "$topLevel",
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$a1"<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$a1 $topLevel"<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$a4"<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$a5"<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 + a2<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"a" + a2<!>,
+            "$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!>",
+            "$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!> $topLevel",
+            "$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a4<!>",
+            "$<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a5<!>",
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!> + a2,
+            "a" + <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a2<!>,
             "a" + topLevel,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"a" + a4<!>
+            "a" + <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a4<!>
     ) val b = 1
 }
 

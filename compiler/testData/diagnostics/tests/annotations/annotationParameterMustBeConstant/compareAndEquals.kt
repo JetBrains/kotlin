@@ -8,11 +8,11 @@ fun foo() {
     val a4 = a1 > a2
 
     @Ann(
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a2<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a3<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 > a2<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 == a2<!>
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!>,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a2<!>,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a3<!>,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!> > a2,
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a1<!> == a2
     ) val b = 1
 }
 
