@@ -498,7 +498,6 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      *
      * @sample samples.collections.Collections.Sets.add
-     * @sample samples.collections.Collections.Sets.addKeepsStoredElement
      */
     @IgnorableReturnValue
     override fun add(element: E): Boolean
@@ -516,7 +515,6 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
      * @return `true` if any of the specified elements was added to the set, `false` if the set was not modified.
      *
      * @sample samples.collections.Collections.Sets.addAll
-     * @sample samples.collections.Collections.Sets.addKeepsStoredElement
      */
     @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
@@ -688,12 +686,11 @@ public expect interface MutableMap<K, V> : Map<K, V> {
     /**
      * Associates the specified [value] with the specified [key] in the map.
      *
-     * If the map already contains a mapping for [key], the key instance stored in the map is retained.
+     * If the map already contains a mapping for [key], the value for that key is replaced with the specified [value].
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      *
      * @sample samples.collections.Maps.CoreApi.put
-     * @sample samples.collections.Maps.CoreApi.putKeepsStoredKey
      */
     @IgnorableReturnValue
     public fun put(key: K, value: V): V?
@@ -716,7 +713,6 @@ public expect interface MutableMap<K, V> : Map<K, V> {
      * stored in this map are retained.
      *
      * @sample samples.collections.Maps.CoreApi.putAll
-     * @sample samples.collections.Maps.CoreApi.putKeepsStoredKey
      */
     public fun putAll(from: Map<out K, V>): Unit
 
