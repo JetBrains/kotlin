@@ -316,6 +316,7 @@ tasks {
     // === Build: JSCompilerTestsES5 ===
     testLifecycleTask("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
+        dependsOn(":js:js.parser:test")
         dependsOn(":compiler:ir.serialization.js:test")
     }
 
