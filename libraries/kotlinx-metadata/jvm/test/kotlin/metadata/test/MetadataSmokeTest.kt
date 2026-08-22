@@ -185,8 +185,7 @@ class MetadataSmokeTest {
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassFacade(listOf("A"), mv, 0).write() }
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassPart(KmPackage(), "A", mv, 0).write() }
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.SyntheticClass(null, mv, 0).write() }
-
-        KotlinModuleMetadata(KmModule(), mv).write()
+        assertFailsWith<IllegalArgumentException> { KotlinModuleMetadata(KmModule(), mv).write() }
     }
 
     @Test

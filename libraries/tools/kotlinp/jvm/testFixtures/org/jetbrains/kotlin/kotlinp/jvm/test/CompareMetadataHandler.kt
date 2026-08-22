@@ -58,8 +58,8 @@ class CompareMetadataHandler(
                     }
                 }
                 path.endsWith(".kotlin_module") -> {
-                    val moduleFile = KotlinModuleMetadata.read(outputFile.asByteArray())
-                    val moduleFile2 = KotlinModuleMetadata.read(moduleFile.write())
+                    val moduleFile = KotlinModuleMetadata.readStrict(outputFile.asByteArray())
+                    val moduleFile2 = KotlinModuleMetadata.readStrict(moduleFile.write())
                     for ([sb, moduleFileToRender] in listOf(dump to moduleFile, dump2 to moduleFile2)) {
                         sb.appendFileName(path)
                         sb.append(kotlinp.printModuleFile(moduleFileToRender))

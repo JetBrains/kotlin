@@ -1011,6 +1011,8 @@ public final class kotlin/metadata/jvm/KotlinModuleMetadata {
 	public final fun getKmModule ()Lkotlin/metadata/jvm/KmModule;
 	public final fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
 	public static final fun read ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
+	public static final fun readLenient ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
+	public static final fun readStrict ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
 	public final fun setKmModule (Lkotlin/metadata/jvm/KmModule;)V
 	public final fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
 	public final fun write ()[B
@@ -1018,6 +1020,8 @@ public final class kotlin/metadata/jvm/KotlinModuleMetadata {
 
 public final class kotlin/metadata/jvm/KotlinModuleMetadata$Companion {
 	public final fun read ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
+	public final fun readLenient ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
+	public final fun readStrict ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
 }
 
 public abstract interface annotation class kotlin/metadata/jvm/UnstableMetadataApi : java/lang/annotation/Annotation {
