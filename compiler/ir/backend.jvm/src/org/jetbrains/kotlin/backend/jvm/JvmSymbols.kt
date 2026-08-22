@@ -404,19 +404,29 @@ class JvmSymbols(
             klass.generateCallableReferenceSuperclassConstructors(withArity = true)
         }
 
-    private fun IrClass.generateCallableReferenceSuperclassConstructors(withArity: Boolean) {
-        for (hasBoundReceiver in listOf(false, true)) {
-            addConstructor().apply {
-                if (withArity) {
-                    addValueParameter("arity", irBuiltIns.intType)
+    private fun IrClass.generateCallableReferenceSuperclassConstructors(
+        withArity: Boolean,
+        withBoundContextArguments: Boolean = false,
+        unboundReceiverCount: Int = 0,
+    ) {
+        for (hasBoundContextArguments in if (withBoundContextArguments) listOf(false, true) else listOf(false)) {
+            for (hasBoundReceiver in listOf(false, true)) {
+                if (hasBoundContextArguments && unboundReceiverCount + (if (hasBoundReceiver) 1 else 0) > 1) continue
+                addConstructor().apply {
+                    if (withArity) {
+                        addValueParameter("arity", irBuiltIns.intType)
+                    }
+                    if (hasBoundContextArguments) {
+                        addValueParameter("contextArguments", irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType))
+                    }
+                    if (hasBoundReceiver) {
+                        addValueParameter("receiver", irBuiltIns.anyNType)
+                    }
+                    addValueParameter("owner", javaLangClass.starProjectedType)
+                    addValueParameter("name", irBuiltIns.stringType)
+                    addValueParameter("signature", irBuiltIns.stringType)
+                    addValueParameter("flags", irBuiltIns.intType)
                 }
-                if (hasBoundReceiver) {
-                    addValueParameter("receiver", irBuiltIns.anyNType)
-                }
-                addValueParameter("owner", javaLangClass.starProjectedType)
-                addValueParameter("name", irBuiltIns.stringType)
-                addValueParameter("signature", irBuiltIns.stringType)
-                addValueParameter("flags", irBuiltIns.intType)
             }
         }
     }
@@ -513,7 +523,9 @@ class JvmSymbols(
                 classModality = if (impl) Modality.FINAL else Modality.ABSTRACT
             ) { klass ->
                 if (impl) {
-                    klass.generateCallableReferenceSuperclassConstructors(withArity = false)
+                    klass.generateCallableReferenceSuperclassConstructors(
+                        withArity = false, withBoundContextArguments = true, unboundReceiverCount = parameterCount,
+                    )
 
                     klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
                 } else {
