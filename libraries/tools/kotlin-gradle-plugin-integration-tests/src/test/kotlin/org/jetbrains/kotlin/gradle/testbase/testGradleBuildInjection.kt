@@ -24,6 +24,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -300,6 +301,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
         executingProject: TestProject = returnContainingGradleProject,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
         buildAction: BuildAction = defaultBuildAction,
+        buildAssertions: BuildResult.() -> Unit = {},
     ): T {
         executingProject.buildAction(
             arrayOf(
@@ -307,6 +309,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
                 "-P${injectionLoadProperty}=true",
             ),
             executingProject.deriveBuildOptions(),
+            buildAssertions
         )
         ObjectInputStream(serializedReturnPath.inputStream()).use {
             @Suppress("UNCHECKED_CAST")
@@ -521,7 +524,7 @@ fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
 }
 
 fun GradleProject.addEcosystemPluginToBuildScriptCompilationClasspath(
-    kotlinVersion: String
+    kotlinVersion: String,
 ) {
     settingsBuildScriptBuildscriptBlockInjection {
         settings.buildscript.configurations.getByName("classpath").dependencies.add(

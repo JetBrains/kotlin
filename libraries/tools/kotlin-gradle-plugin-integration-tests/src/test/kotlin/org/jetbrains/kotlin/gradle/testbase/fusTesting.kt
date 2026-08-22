@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.testkit.runner.BuildResult
+import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
+import java.nio.file.Path
 import kotlin.String
 import kotlin.emptyArray
-import kotlin.io.path.pathString
 import kotlin.io.path.readLines
 
 fun TestProject.collectFusEvents(
@@ -20,9 +22,71 @@ fun TestProject.collectFusEvents(
     buildAction(
         arrayOf(
             *buildArguments,
-            "-Pkotlin.session.logger.root.path=${fusEventPath.pathString}"
         ),
-        deriveBuildOptions()
+        deriveBuildOptions().copy(pathToFusReportDirectory = { fusEventPath }),
+        {}
     )
     return fusEventPath.resolve("kotlin-profile").filterKotlinFusFiles().single().readLines().toSet()
+}
+
+enum class FusFileType {
+    KOTLIN_PROFILE_FILES,
+    BACKWARD_COMPATIBILITY_PROFILE_FILES,
+}
+
+fun TestProject.validateFusFiles(
+    vararg buildArguments: String = emptyArray(),
+    buildAction: BuildAction = BuildActions.build,
+    buildOptions: BuildOptions = this.buildOptions,
+    fusFilesType: List<FusFileType> = FusFileType.entries,
+    fusReportRootDirectory: Path = defaultFusReportRootDirectory(),
+    buildAssertions: BuildResult.() -> Unit = { },
+    validateFusFiles: (List<Path>) -> Unit = {},
+) = validateFusDirectory(
+    *buildArguments,
+    buildAction = buildAction,
+    buildOptions = buildOptions,
+    fusReportRootDirectory = fusReportRootDirectory,
+    buildAssertions = buildAssertions
+) { fusDirectory ->
+    if (fusFilesType.contains(FusFileType.KOTLIN_PROFILE_FILES))
+        fusDirectory.filterKotlinFusFiles().also(validateFusFiles)
+    if (fusFilesType.contains(FusFileType.BACKWARD_COMPATIBILITY_PROFILE_FILES))
+        fusDirectory.filterBackwardCompatibilityKotlinFusFiles().also(validateFusFiles)
+}
+
+fun TestProject.validateFusDirectory(
+    vararg buildArguments: String = emptyArray(),
+    buildAction: BuildAction = BuildActions.build,
+    buildOptions: BuildOptions = this.buildOptions,
+    fusReportRootDirectory: Path = defaultFusReportRootDirectory(),
+    buildAssertions: BuildResult.() -> Unit = { },
+    validateFusDirectory: (Path) -> Unit = {},
+) {
+    assertNoErrorFilesCreated {
+        buildAction(
+            arrayOf(
+                *buildArguments,
+            ),
+            buildOptions.copy(pathToFusReportDirectory = { fusReportRootDirectory} ),
+            {
+                buildAssertions()
+                assertOutputDoesNotContainFusErrors()
+            }
+        )
+        validateFusDirectory(fusReportRootDirectory.resolve("kotlin-profile"))
+    }
+}
+
+/**
+ * A unique FUS report directory, so that reports of different builds do not affect each other.
+ *
+ * The FUS report directory is a configuration cache input,
+ * so builds that are expected to reuse the configuration cache have to share one directory.
+ */
+fun TestProject.defaultFusReportRootDirectory(): Path = projectPath.resolve("fusEvent_${generateIdentifier()}")
+
+private fun BuildResult.assertOutputDoesNotContainFusErrors() {
+    assertOutputDoesNotContain("finish-profile already exists")
+    assertOutputDoesNotContain("Unable to collect finish file for build")
 }

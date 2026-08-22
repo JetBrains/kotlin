@@ -91,6 +91,7 @@ internal fun collectProjectConfigurationTimeMetrics(
                     "kapt" -> {
                         configurationTimeMetrics.put(BooleanMetrics.ENABLED_KAPT, true)
                         for (dependency in dependencies) {
+                            if (dependency is ProjectDependency) continue //access projectDependency leads to a broken configuration cache for Gradle 8
                             when (dependency.group) {
                                 "com.google.dagger" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DAGGER, true)
                                 "com.android.databinding" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DATABINDING, true)
