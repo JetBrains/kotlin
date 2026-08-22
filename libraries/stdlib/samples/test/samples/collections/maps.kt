@@ -518,27 +518,6 @@ class Maps {
         }
 
         @Sample
-        fun putKeepsStoredKey() {
-            class User(val id: Int, val name: String) {
-                override fun equals(other: Any?): Boolean = other is User && id == other.id
-                override fun hashCode(): Int = id
-                override fun toString(): String = name
-            }
-
-            val map = mutableMapOf(User(1, "Alice") to "admin")
-
-            map[User(1, "Alicia")] = "guest"
-            assertPrints(map, "{Alice=guest}")
-
-            map.putAll(mapOf(User(1, "Alicia") to "owner"))
-            assertPrints(map, "{Alice=owner}")
-
-            map.remove(User(1, "Alice"))
-            map[User(1, "Alicia")] = "guest"
-            assertPrints(map, "{Alicia=guest}")
-        }
-
-        @Sample
         fun clear() {
             val map = mutableMapOf(1 to "one", 2 to "two")
             assertPrints(map, "{1=one, 2=two}")

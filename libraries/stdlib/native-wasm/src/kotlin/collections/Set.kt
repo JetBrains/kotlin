@@ -79,7 +79,6 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      *
      * @sample samples.collections.Collections.Sets.add
-     * @sample samples.collections.Collections.Sets.addKeepsStoredElement
      */
     @IgnorableReturnValue
     actual override fun add(element: E): Boolean
@@ -97,7 +96,6 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
      * @return `true` if any of the specified elements was added to the set, `false` if the set was not modified.
      *
      * @sample samples.collections.Collections.Sets.addAll
-     * @sample samples.collections.Collections.Sets.addKeepsStoredElement
      */
     @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
