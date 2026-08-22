@@ -437,7 +437,11 @@ fun Project.publishProjectJars(
     sourcesJar {
         from {
             projects.map {
-                project(it).mainSourceSet.allSource
+                val sourceProject = project(it)
+                // Do not silently publish an incomplete aggregate sources JAR when a project uses an unsupported source layout.
+                requireNotNull(sourceProject.sources()) {
+                    "Unable to determine the main sources for ${sourceProject.path}"
+                }
             }
         }
     }

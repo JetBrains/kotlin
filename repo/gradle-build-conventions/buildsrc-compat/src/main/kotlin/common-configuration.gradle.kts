@@ -161,6 +161,7 @@ fun Project.configureKotlinCompilationOptions() {
                 !project.path.startsWith(":native:objcexport-header-generator") &&
                 !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
                 !project.path.startsWith(":native:external-projects-test-utils") &&
+                !project.path.startsWith(":plugins:parcelize:parcelize-runtime") &&
                 !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations") &&
                 !project.path.startsWith(":kotlin-power-assert-runtime")
             ) {
@@ -379,6 +380,7 @@ fun Project.configureTests() {
             ":libraries:tools:abi-validation:kgp-integration-tests",
 
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
+            ":plugins:parcelize:parcelize-runtime", // TODO(KTI-3056): 'test-inputs-check' cannot be combined with 'multiplatform' projects
             ":plugins:scripting:scripting-tests",
             ":plugins:scripting:scripting-tests:runtime",
             ":repo:auto-code-review", // Runs processes, traverses all repo files. Quick.
