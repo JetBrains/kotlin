@@ -178,15 +178,12 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         // Generate log field based on the first encountered log annotation
         val log = if (classSymbol.isCompanion) {
-            val logOnCompanion = session.lombokService.getLogs(classSymbol).firstOrNull()
-            if (logOnCompanion != null) {
-                targetClassSymbol = classSymbol
-                logOnCompanion.takeIf { config.logFieldIsStatic }
-            } else {
-                val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
-                targetClassSymbol = outerClass
-                session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic }
-            }
+            // An annotation on the companion object itself is ignored - it is reported as `ANNOTATION_HAS_NO_EFFECT`
+            // (KT-88288), since `logFieldIsStatic` alone decides whether the logger lands here. The one that produces
+            // a logger for a companion object is therefore always the one on the class holding it.
+            val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
+            targetClassSymbol = outerClass
+            session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic }
         } else {
             targetClassSymbol = classSymbol
             // Always generate static/non-static fields for Java classes
@@ -194,6 +191,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 session.lombokService.getLogs(classSymbol).firstOrNull()
             }
         } ?: return null
+
+        // `targetClassSymbol` rather than `classSymbol`: the logger of an annotated interface goes into its
+        // companion object, so it is the annotated class that decides whether anything is generated at all.
+        if (targetClassSymbol.isUnsupportedLombokTarget) return null
 
         val logFieldOrPropertyName = Name.identifier(config.logFieldName)
 

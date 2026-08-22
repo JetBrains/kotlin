@@ -11,8 +11,13 @@ open class C {
 <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!>
 object O
 
-<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!> // isn't applicable to interface unlike `@NoArg` from noarg plugin
+// Nothing is generated when `ANNOTATION_HAS_NO_EFFECT` is reported: neither the constructor (which would be
+// illegal in an interface) nor the `staticName` factory, so both are unresolved at the use sites below.
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "iface")<!> // isn't applicable to interface unlike `@NoArg` from noarg plugin
 interface I
+
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "annotationClass")<!>
+annotation class AnnotationClass
 
 // any encountered val param requires `force = true`
 <!NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED!>@NoArgsConstructor<!>
@@ -48,6 +53,18 @@ class NoArgsConstructorWithValPropertyAndNoBackingField {
 class NoArgsConstructorWithValPropertyAndInitializer {
     val y: Int = 42
 }
+
+// A value class *is* its underlying value: there is no instance to initialize field by field, and its
+// constructors compile to static `constructor-impl` functions that must return that value. Generating one used
+// to fail the JVM backend outright with "Unexpected IR element found during code generation", KT-88705.
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
+@JvmInline
+value class OnValueClass(val value: Int)
+
+// The static factory exists only to call the constructor, so it is not generated either.
+<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "create", force = true)<!>
+@JvmInline
+value class OnValueClassWithStaticName(val value: Int)
 
 abstract class A(val x: String)
 
@@ -124,6 +141,12 @@ fun test() {
 
     StaticNameTakenByExtensionOnly()
     StaticNameTakenByExtensionOnly.make()
+
+    <!NO_VALUE_FOR_PARAMETER!>OnValueClass<!>() // Nothing is generated, KT-88705
+    OnValueClassWithStaticName.<!UNRESOLVED_REFERENCE!>create<!>() // Nothing is generated, KT-88705
+
+    I.<!UNRESOLVED_REFERENCE!>iface<!>() // Nothing is generated, KT-87871
+    AnnotationClass.<!UNRESOLVED_REFERENCE!>annotationClass<!>() // Nothing is generated, KT-87871
 }
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)

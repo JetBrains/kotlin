@@ -339,10 +339,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
                     } else {
                         entityClass.declarations.mapNotNull { declaration ->
+                            // A static field is never a builder field in Lombok. On the Kotlin side these are what a
+                            // `companion { }` block declares (KT-88367); on the Java side they are plain `static`
+                            // fields, which real Lombok leaves out of the builder just the same.
                             if (isJavaClass) {
-                                declaration as? FirJavaField
+                                (declaration as? FirJavaField)?.takeIf { !it.isStatic }
                             } else {
-                                (declaration as? FirProperty)?.takeIf { it.hasBackingField }
+                                (declaration as? FirProperty)?.takeIf { it.hasBackingField && !it.isStatic }
                             }
                         }
                     }
@@ -675,7 +678,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         return buildList {
-            if (allowedTargets.contains(KotlinTarget.CLASS)) {
+            // Only the class-level `@Builder` is dropped: a `@Builder`-annotated member function of an interface,
+            // an enum class or an object still builds whatever that function returns, and is a legitimate case.
+            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass) {
                 getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
             }
 
@@ -868,7 +873,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     SingularAddAllParameterType.Map -> JavaClasses.Map
                     SingularAddAllParameterType.Table -> JavaClasses.Table
                 }
-                DummyJavaClassType(baseType, typeArgumentRefs.map { (it as FirJavaTypeRef).type }, annotations).toRef(source = null)
+                // `? extends T` for every argument, mirroring the `Collection<? extends T>` Lombok itself
+                // generates: an invariant argument rejects a collection of a subtype with `JAVA_TYPE_MISMATCH`.
+                val wildcardArguments = typeArgumentRefs.map { DummyJavaExtendsWildcardType((it as FirJavaTypeRef).type) }
+                DummyJavaClassType(baseType, wildcardArguments, annotations).toRef(source = null)
             } else {
                 val baseType = when (collectionType) {
                     SingularAddAllParameterType.Iterable -> StandardClassIds.Iterable

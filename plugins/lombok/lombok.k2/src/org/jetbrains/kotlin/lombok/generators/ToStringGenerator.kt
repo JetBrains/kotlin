@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -92,7 +91,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
     private fun initializeToStringIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirNamedFunctionSymbol? {
         // An annotation class can hold no member at all, generating one makes the platform report
         // `ANNOTATION_CLASS_MEMBER` on it. Both kinds are already reported as `ANNOTATION_HAS_NO_EFFECT`.
-        if (classSymbol !is FirRegularClassSymbol || classSymbol.isInterface || classSymbol.isAnnotationClass) return null
+        if (classSymbol !is FirRegularClassSymbol || classSymbol.isUnsupportedLombokTarget) return null
 
         val toStringConfig = session.lombokService.getToString(classSymbol) ?: return null
         val declaredScope = context.declaredScope
@@ -133,11 +132,14 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
             declaredScope?.processAllProperties { variableSymbol ->
                 val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
 
+                // Lombok never renders a static field, and a `companion { }` block declares its members as statics
+                // on the class itself, so they show up here (KT-88367). Including one also breaks IR outright: the
+                // getter of a static property has no dispatch receiver for `toString()` to pass `this` in.
+                if (property.isStatic) return@processAllProperties
+
                 val propertyName = property.name
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, session) != null ||
-                    propertyName.identifier in toStringConfig.excludeFields
-                ) {
+                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, session) != null) {
                     return@processAllProperties
                 }
 

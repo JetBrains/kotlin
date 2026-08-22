@@ -36,17 +36,27 @@ import org.jetbrains.kotlin.lombok.config.getAccessLevel
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private class ImplementedAnnotationsInfo(
     val allowedTargetsMap: Set<KotlinTarget>,
     val unsupportedArguments: Set<Name> = emptySet(),
+    /**
+     * A value class is a plain `CLASS` as far as [KotlinTarget] is concerned, so an annotation that cannot act
+     * upon one has to say so separately.
+     */
+    val isSupportedOnValueClass: Boolean = true,
 )
 
 private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
     val logInfo = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
-            KotlinTarget.OBJECT,
+            // `STANDALONE_OBJECT` rather than the umbrella `OBJECT`, which also covers a companion object:
+            // `lombok.log.fieldIsStatic` alone decides whether the logger is static, so putting the annotation on
+            // the companion object rather than on its class buys nothing - and with `fieldIsStatic=false` it did
+            // nothing at all, neither generating nor reporting (KT-88288).
+            KotlinTarget.STANDALONE_OBJECT,
             KotlinTarget.ENUM_CLASS,
         )
     )
@@ -88,13 +98,17 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         ),
         unsupportedArguments = setOf(
             ON_CONSTRUCTOR, // Not yet supported
-        )
+        ),
+        // A value class *is* its underlying value: it has no instance to initialize field by field, and its
+        // constructors compile to static `constructor-impl` functions that must return that value. A generated
+        // constructor that only calls the superclass one leaves nothing to return, and the JVM backend used to
+        // fail outright on its instance initializer with "Unexpected IR element found during code generation"
+        // (KT-88705).
+        isSupportedOnValueClass = false,
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
-            KotlinTarget.OBJECT,
-            KotlinTarget.ENUM_CLASS,
             KotlinTarget.LOCAL_CLASS,
         ),
         unsupportedArguments = setOf(
@@ -122,7 +136,7 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
     )
     this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
-            KotlinTarget.CLASS,
+            KotlinTarget.CLASS_ONLY,
             KotlinTarget.CONSTRUCTOR,
             KotlinTarget.FUNCTION,
         )
@@ -146,26 +160,39 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
  *
  * [defaultTargets] is what the annotated element is, expressed in the terms an annotation's `@Target` speaks:
  * [getActualTargetList] for a declaration, plain [KotlinTarget.EXPRESSION] for an expression.
+ *
+ * [isValueClass] tells whether the annotated declaration is a value class, which [defaultTargets] cannot express:
+ * [KotlinTarget] knows it only as a plain `CLASS`.
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun checkLombokAnnotations(annotations: List<FirAnnotation>, defaultTargets: List<KotlinTarget>) {
+fun checkLombokAnnotations(annotations: List<FirAnnotation>, defaultTargets: List<KotlinTarget>, isValueClass: Boolean = false) {
     for (annotation in annotations) {
         val classId = annotation.toAnnotationClassId(context.session) ?: continue
         val implementedAnnotationInfo = implementedAnnotationInfos[classId]
 
         if (implementedAnnotationInfo != null) {
-            val (narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments) = implementedAnnotationInfo
+            val (narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments, isSupportedOnValueClass) = implementedAnnotationInfo
 
-            if (defaultTargets.none { narrowedAllowedTargets.contains(it) }) {
-                val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
-                if (defaultTargets.any { allowedAnnotationTargets.contains(it) }) {
-                    reporter.reportOn(
-                        annotation.source,
-                        LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT,
-                        defaultTargets.firstOrNull()?.description ?: "unidentified target",
-                        narrowedAllowedTargets,
-                    )
+            val ineffectiveTarget = when {
+                isValueClass && !isSupportedOnValueClass -> "value class"
+                defaultTargets.none { narrowedAllowedTargets.contains(it) } -> {
+                    // Only warn where the platform itself accepts the annotation, otherwise
+                    // `WRONG_ANNOTATION_TARGET` says it already.
+                    val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
+                    runIf(defaultTargets.any { allowedAnnotationTargets.contains(it) }) {
+                        defaultTargets.firstOrNull()?.description ?: "unidentified target"
+                    }
                 }
+                else -> null
+            }
+
+            if (ineffectiveTarget != null) {
+                reporter.reportOn(
+                    annotation.source,
+                    LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT,
+                    ineffectiveTarget,
+                    narrowedAllowedTargets,
+                )
             }
 
             for ([argumentName, argumentExpression] in annotation.argumentMapping.mapping) {

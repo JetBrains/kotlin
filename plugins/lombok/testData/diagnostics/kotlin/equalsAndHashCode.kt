@@ -18,6 +18,25 @@ typealias TA = String
 
 val onAnonymous = <!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!> object {}
 
+// An enum inherits final `equals`/`hashCode` from `java.lang.Enum`, so a generated one wouldn't load, KT-88507.
+<!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
+enum class Color(val hex: String) {
+    RED("#FF0000")
+}
+
+// An object is a single instance, and comparing it to itself by identity is what it already does, KT-88507.
+<!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
+object Object {
+    val version = "2.0"
+}
+
+class WithCompanion {
+    <!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
+    companion object {
+        val version = "2.0"
+    }
+}
+
 // Both equals and hashCode user-defined → warning, no generation.
 <!EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST!>@EqualsAndHashCode<!>
 class WithBothExisting(val x: Int) {

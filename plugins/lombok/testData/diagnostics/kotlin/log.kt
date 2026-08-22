@@ -31,8 +31,12 @@ class LogExamplePrivate : LogExamplePrivateBase() {
     }
 }
 
+// Nothing is generated into either, so the warning is truthful: `log` is unresolved at the use sites below.
 <!ANNOTATION_HAS_NO_EFFECT!>@Log<!> // `'@lombok.extern.java.Log' is legal only on classes and enums` in Java
 interface Interface
+
+<!ANNOTATION_HAS_NO_EFFECT!>@Log<!>
+annotation class AnnotationClass
 
 <!WRONG_ANNOTATION_TARGET!>@Log<!> // Prohibited
 fun func() {}
@@ -61,10 +65,26 @@ class LogOnOuterClassWhenItsCompanionHasLogField {
     }
 }
 
-class LogOnCompanionWhenCompanionHasLogField {
-    <!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
+// `lombok.log.fieldIsStatic` alone decides whether the logger is static, so the annotation belongs on the class
+// rather than on its companion object - and on the latter it generated nothing whatsoever with
+// `fieldIsStatic=false`, KT-88288.
+class LogOnCompanion {
+    <!ANNOTATION_HAS_NO_EFFECT!>@Log<!>
     companion object MyCompanion {
-        val log = "No log"
+        fun test() {
+            <!UNRESOLVED_REFERENCE!>log<!>.info("Nothing is generated into the companion object")
+        }
+    }
+}
+
+// The annotation on the class keeps working: an inert one must not suppress one that has an effect.
+@Log
+class LogOnBothClassAndItsCompanion {
+    <!ANNOTATION_HAS_NO_EFFECT!>@Log<!>
+    companion object MyCompanion {
+        fun test() {
+            log.info("Generated from the annotation on the class")
+        }
     }
 }
 
@@ -102,4 +122,6 @@ class LogAccessLevelModule
 
 fun test() {
     LogAccessLevelProtected.<!INVISIBLE_REFERENCE!>log<!>.info("")
+    Interface.<!UNRESOLVED_REFERENCE!>log<!>.info("Interface") // Nothing is generated, KT-87871
+    AnnotationClass.<!UNRESOLVED_REFERENCE!>log<!>.info("AnnotationClass") // Nothing is generated, KT-87871
 }

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.strongWarning1
+import org.jetbrains.kotlin.diagnostics.strongWarning2
 import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.diagnostics.warning2
@@ -63,10 +65,11 @@ object LombokCliDiagnostics : KtDiagnosticsContainer() {
 }
 
 object LombokFirDiagnostics : KtDiagnosticsContainer() {
-    val ANNOTATION_IS_NOT_SUPPORTED by warning1<KtAnnotationEntry, Name>()
-    val ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED by warning1<KtExpression, Name>()
+    val ANNOTATION_IS_NOT_SUPPORTED by strongWarning1<KtAnnotationEntry, Name>()
+    val ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED by strongWarning1<KtExpression, Name>()
+    val ANNOTATION_HAS_NO_EFFECT by strongWarning2<KtAnnotationEntry, String, Collection<KotlinTarget>>()
+
     val UNSUPPORTED_ACCESS_LEVEL by error1<KtExpression, Name>()
-    val ANNOTATION_HAS_NO_EFFECT by warning2<KtAnnotationEntry, String, Collection<KotlinTarget>>()
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE by error1<KtAnnotationEntry, Name>()

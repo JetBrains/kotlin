@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
@@ -164,6 +167,39 @@ fun FirClassSymbol<*>.createJavaMethod(
 class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
 
 val FirBasedSymbol<*>.hasJavaOrigin get() = origin is FirDeclarationOrigin.Java
+
+/**
+ * Whether Lombok generates nothing at all into [this] class, because it is a kind of class Lombok's own model has
+ * no counterpart for: an interface holds no state to generate from and no constructor to generate, and an
+ * annotation class can hold no member at all - the platform reports `ANNOTATION_CLASS_MEMBER` for one.
+ *
+ * Both are reported as `ANNOTATION_HAS_NO_EFFECT` already, so generating anyway makes the checker contradict the
+ * generators, and the output is not merely useless: a constructor in an interface is rejected outright by the
+ * backend, and a builder for an interface has no constructor to call (KT-87871).
+ */
+val FirClassSymbol<*>.isUnsupportedLombokTarget: Boolean
+    get() = isInterface || isAnnotationClass
+
+/**
+ * Whether [this] is a plain class, that is, neither an interface, nor an annotation class, nor an enum class, nor
+ * an object. It is the only kind `@Builder` and `@EqualsAndHashCode` generate anything into, and it mirrors
+ * `isClass` in Lombok's own `JavacHandlerUtil`, which both of its handlers consult before generating - unlike
+ * `@Log` and `@ToString`, which accept an enum class and an object as well.
+ *
+ * Neither annotation has anything to generate for the other kinds, and generating anyway used to produce code
+ * that doesn't even run:
+ *  - an enum constructor takes the synthetic name and ordinal parameters, so a generated `build()` calls a
+ *    signature that doesn't exist and fails with `NoSuchMethodError` (KT-87871);
+ *  - `equals` and `hashCode` are final in `java.lang.Enum`, so generated ones make the whole class fail
+ *    verification with "class Color overrides final method java.lang.Enum.equals" (KT-88507);
+ *  - an object is a single instance compared by identity and has no constructor to build it with, so both
+ *    annotations only ever generated members that repeat what the object already does (KT-88507).
+ *
+ * A local class is a plain class: `@EqualsAndHashCode` supports one, and `@Builder` is stopped for it by
+ * `isCompanionNeeded` instead, since a local class can't hold the companion object a `builder()` needs.
+ */
+val FirClassSymbol<*>.isPlainClass: Boolean
+    get() = classKind == ClassKind.CLASS
 
 /**
  * Whether [this] has an extension receiver or context parameters.

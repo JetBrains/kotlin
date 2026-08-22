@@ -56,16 +56,6 @@ class LogExampleWithTopic {
     }
 }
 
-class LogOnCompanion {
-    @Log
-    companion object {
-        fun test() {
-            log.addHandler(logHandler)
-            log.info("Check @Log on companion object")
-        }
-    }
-}
-
 class LogOnNestedClass {
     @Log
     class Nested {
@@ -137,7 +127,6 @@ fun box(): String {
     LogExampleWithExistingCompanion().test()
     assertEquals("No log", LogExampleWithExistingCompanionAndLogField().test())
     LogExampleWithTopic().test()
-    LogOnCompanion.test()
     LogOnNestedClass.Nested().test()
     LogOnInnerClass<String>().Inner().test()
     LogOnObject.test()
@@ -150,7 +139,6 @@ fun box(): String {
         "INFO: Test LogExample",
         "WARNING: Test LogExampleWithExistingCompanion",
         "INFO: Test LogExampleWithTopic",
-        "INFO: Check @Log on companion object",
         "INFO: Check @Log on nested class",
         "INFO: Check @Log on inner class",
         "INFO: Check @Log on object",

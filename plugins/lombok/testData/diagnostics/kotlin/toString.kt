@@ -64,3 +64,9 @@ class WithDoNotUseGettersTrue(val x: Int)
 // Despite the absence of behavioral difference, report a warning because the parameter is redundant and it's discrouraged to use in Kotlin.
 @ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)
+
+@ToString(
+    exclude = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+    of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+)
+class WithUnsupportedArguments

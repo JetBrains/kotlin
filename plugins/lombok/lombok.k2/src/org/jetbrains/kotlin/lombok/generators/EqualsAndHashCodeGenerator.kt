@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -116,9 +115,10 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         classSymbol: FirClassSymbol<*>,
         context: MemberGenerationContext,
     ): EqualsAndHashCodeMembers? {
-        // An annotation class can hold no member at all, generating one makes the platform report
-        // `ANNOTATION_CLASS_MEMBER` on it. Both kinds are already reported as `ANNOTATION_HAS_NO_EFFECT`.
-        if (classSymbol !is FirRegularClassSymbol || classSymbol.isInterface || classSymbol.isAnnotationClass) return null
+        // Only a plain class gets `equals`/`hashCode`: an annotation class can hold no member at all, an enum's
+        // `equals`/`hashCode` are final, and an object is compared by identity. Every other kind is already
+        // reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isPlainClass) return null
 
         val annotation = session.lombokService.getEqualsAndHashCode(classSymbol) ?: return null
         val declaredScope = context.declaredScope
@@ -185,28 +185,25 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             declaredScope?.processAllProperties { variableSymbol ->
                 val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
 
+                // See the same guard in `ToStringGenerator`: a static property is never part of the generated
+                // members, and its getter takes no dispatch receiver for IR to pass `this`/`other` in (KT-88367).
+                if (property.isStatic) return@processAllProperties
+
                 val propertyName = property.name
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID, session) != null ||
-                    propertyName.identifier in annotation.excludeFields
-                ) {
+                if (property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID, session) != null) {
                     return@processAllProperties
                 }
 
                 val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID, session)
 
-                // The deprecated-but-still-supported `of` parameter pins selection to the listed names.
-                if (annotation.ofFields != null) {
-                    if (propertyName.identifier !in annotation.ofFields) return@processAllProperties
-                } else if (includeAnnotation == null && annotation.onlyExplicitlyIncluded ?: config.equalsAndHashCodeOnlyExplicitlyIncluded) {
+                if (includeAnnotation == null && annotation.onlyExplicitlyIncluded ?: config.equalsAndHashCodeOnlyExplicitlyIncluded) {
                     return@processAllProperties
                 }
 
                 // Same convention as ToString: properties without a backing field are treated like
                 // computed/getter-only members. Include them only if explicitly opted in.
-                val ignoreWithoutBackingField = includeAnnotation == null && annotation.ofFields == null
-
-                add(EqualsAndHashCodePropertyInfo(propertyName, ignoreWithoutBackingField))
+                add(EqualsAndHashCodePropertyInfo(propertyName, ignoreWithoutBackingField = includeAnnotation == null))
             }
         }
     }
