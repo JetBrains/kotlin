@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
@@ -1051,6 +1052,23 @@ internal object KotlinToolingDiagnostics {
                 .solution {
                     "Please refrain from using it in production code and provide feedback to the Kotlin team for any issues encountered via https://kotl.in/issue"
                 }
+        }
+    }
+
+    object IncrementalCompilationOfCommonSourcesWithOldCompiler :
+        ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(compilerVersion: KotlinToolingVersion) = build {
+            title("Incremental Compilation Of Common Sources Might Be Incorrect With Kotlin $compilerVersion")
+                .description(
+                    "'$KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES' is enabled, but the project is compiled with Kotlin $compilerVersion. " +
+                            "Incremental compilation of common sources is correct only since Kotlin 2.5.0: with earlier compilers, common sources " +
+                            "may see declarations from platform sources, so incremental compilation might produce a wrong result."
+                )
+                .solutions(
+                    "Compile the project with Kotlin 2.5.0 or newer.",
+                    "Or remove '$KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES' from the Gradle properties: common sources are then recompiled as a whole, which is slower but always correct.",
+                )
+                .documentationLink(URI("https://youtrack.jetbrains.com/issue/KT-87490"))
         }
     }
 

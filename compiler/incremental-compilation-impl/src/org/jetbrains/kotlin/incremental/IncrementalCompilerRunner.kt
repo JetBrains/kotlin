@@ -236,7 +236,7 @@ abstract class IncrementalCompilerRunner<
         }
         changedFiles as? DeterminableFiles ?: error("Expected $changedFiles to be an instance of DeterminableFiles")
 
-        val fragmentContext = if (!icFeatures.enableUnsafeIncrementalCompilationForMultiplatform) { //see KT-62686
+        val fragmentContext = if (!icFeatures.enableIncrementalCompilationOfCommonSources) { //see KT-62686
             FragmentContext.fromCompilerArguments(args)
         } else {
             null
@@ -310,7 +310,7 @@ abstract class IncrementalCompilerRunner<
                         messageCollector,
                     )
                 } catch (e: RequireRebuildForCorrectnessInKMPException) {
-                    return ICResult.RequiresRebuild(UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                    return ICResult.RequiresRebuild(COMMON_SOURCES_NEED_RECOMPILATION)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
                 }

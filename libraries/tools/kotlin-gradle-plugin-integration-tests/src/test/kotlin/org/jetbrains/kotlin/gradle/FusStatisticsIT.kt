@@ -350,13 +350,13 @@ class FusStatisticsIT : KGPBaseTest() {
                     "compileKotlinJvm", "-Pkotlin.session.logger.root.path=$projectPath",
                     buildOptions = defaultBuildOptions.copy(
                         jvmClasspathMetadata = true,
-                        enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+                        enableJvmIncrementalCompilationOfCommonSources = true,
                     ),
                 ) {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains(
                         "KMP_JVM_CLASSPATH_METADATA_ENABLED=true",
-                        "KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED=true",
+                        "KMP_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES_ENABLED=true",
                     )
                 }
 
@@ -364,13 +364,13 @@ class FusStatisticsIT : KGPBaseTest() {
                     "clean", "compileKotlinJvm", "-Pkotlin.session.logger.root.path=$projectPath",
                     buildOptions = defaultBuildOptions.copy(
                         jvmClasspathMetadata = false,
-                        enableJvmUnsafeIncrementalCompilationForMultiplatform = false,
+                        enableJvmIncrementalCompilationOfCommonSources = false,
                     ),
                 ) {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains(
                         "KMP_JVM_CLASSPATH_METADATA_ENABLED=false",
-                        "KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED=false",
+                        "KMP_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES_ENABLED=false",
                     )
                 }
             }

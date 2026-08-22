@@ -56,11 +56,17 @@ data class IncrementalCompilationFeatures(
      */
     val keepIncrementalCompilationCachesInMemory: Boolean = false,
     /**
-     * By default, with k2 KMP, we recompile the whole module, if any common sources are recompiled.
-     * It provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
-     * You can enable "unsafeIC" to use pre-2.0 behavior with potentially incorrect incremental builds.
+     * Controls whether the common sources of a multiplatform module are compiled incrementally.
+     *
+     * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
+     * Keeping this option disabled provides consistent builds at the cost of compilation speed.
+     * Enabling it restores incremental compilation of common sources.
+     *
+     * On the JVM target, the correctness issue behind the default (KT-62686) is resolved, although this option is
+     * still experimental. On the JS and Wasm targets, KT-62686 still applies, so enabling this option may
+     * potentially introduce incorrect incremental builds.
      */
-    val enableUnsafeIncrementalCompilationForMultiplatform: Boolean = false,
+    val enableIncrementalCompilationOfCommonSources: Boolean = false,
     /**
      * Scope expansion policy governs the cases where incremental compilation uses multiple compilation steps.
      *
@@ -78,6 +84,6 @@ data class IncrementalCompilationFeatures(
     companion object {
         val DEFAULT_CONFIGURATION = IncrementalCompilationFeatures()
 
-        const val serialVersionUID: Long = 3L
+        const val serialVersionUID: Long = 4L
     }
 }

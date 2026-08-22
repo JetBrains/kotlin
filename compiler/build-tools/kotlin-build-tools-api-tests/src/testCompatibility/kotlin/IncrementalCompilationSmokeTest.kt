@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -94,6 +96,32 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                 assertCompiledSources(expectedCompiledSources)
             }
         }
+    }
+
+    @DisplayName("Incremental compilation of common sources can be enabled on every supported implementation")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun incrementalCompilationOfCommonSourcesIsAccepted(scenario: ScenarioCreator) {
+        scenario {
+            assumeTrue(
+                KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 3, 0, null),
+                "BTA v2 toolchains are available only since Kotlin 2.3.0, the current version is ${kotlinToolchains.getCompilerVersion()}"
+            )
+            // Implementations older than 2.5.0 do not know ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES and reject it
+            // unless KotlinWrapperPre2_5_0 translates it into the option they read.
+            val module = module("basic-multimodule-project/module-1", icOptionsConfigAction = enableIcOfCommonSources)
+
+            module.replaceFileWithVersion("bar.kt", "add-default-argument")
+            module.compile {
+                assertCompiledSources("bar.kt")
+            }
+        }
+    }
+
+    /** Shared between tests on purpose: the scenario DSL caches compiled modules per `icOptionsConfigAction` instance. */
+    @OptIn(ExperimentalCompilerArgument::class)
+    private val enableIcOfCommonSources: (BaseIncrementalCompilationConfiguration.Builder) -> Unit = {
+        it[ENABLE_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES] = true
     }
 
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {

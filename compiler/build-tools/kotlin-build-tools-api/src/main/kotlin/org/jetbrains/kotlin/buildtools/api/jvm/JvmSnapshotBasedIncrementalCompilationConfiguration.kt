@@ -321,43 +321,6 @@ constructor(
         @ExperimentalCompilerArgument
         @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
-
-        /**
-         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
-         * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
-         * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
-         */
-        @Deprecated(
-            "Use `BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM` instead.",
-            ReplaceWith(
-                "BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM",
-                "org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration"
-            )
-        )
-        @JvmField
-        @ExperimentalCompilerArgument
-        public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", KotlinReleaseVersion(2, 3, 0))
-
-        /**
-         * When this option is enabled, the incremental compilation scope is always expanded monotonously (see explanation below).
-         *
-         * For example, when recompilation of file `a.kt` introduces changes that require the recompilation of file `b.kt`, the new
-         * file `b.kt` is _added_ to the compilation scope, and both files `a.kt` and `b.kt` are recompiled in the next step.
-         *
-         * When this option is disabled, only the files that weren't compiled previously are recompiled,
-         * so only `b.kt` from the example above would be recompiled in the second step.
-         */
-        @Deprecated(
-            "Use `BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION` instead.",
-            ReplaceWith(
-                "BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION",
-                "org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration"
-            )
-        )
-        @JvmField
-        @ExperimentalCompilerArgument
-        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", KotlinReleaseVersion(2, 3, 0))
     }
 }
 

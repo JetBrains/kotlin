@@ -13,6 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CLASSLOADER_CACHE_TIMEOUT
@@ -67,6 +68,8 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
@@ -616,19 +619,45 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     /**
-     * Without unsafe optimization: in k2, if common source is dirty, module will be rebuilt.
-     * With unsafe optimization: regular IC logic is used. Common sources might see declarations from platform sources. See KT-62686
+     * Disabled: in k2, if common source is dirty, module will be rebuilt.
+     * Enabled: regular IC logic is used. Common sources might see declarations from platform sources. See KT-62686
+     *
+     * KT-62686 is fixed on JVM since 2.5.0, but the compiler is not necessarily of the same version as this plugin:
+     * it may be set to an older one via the `compilerVersion` DSL, and then enabling the option is still unsafe.
      */
-    val enableJvmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    val enableJvmIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanPropertyWithValueReporting(
+            PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES,
+            setOf(true),
+        ) {
+            if (compilerVersion?.toKotlinVersion()?.isAtLeast(2, 5) == false) {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.IncrementalCompilationOfCommonSourcesWithOldCompiler(compilerVersion!!),
+                    key = "IncrementalCompilationOfCommonSourcesWithOldCompiler",
+                )
+            }
+        }.orElse(false)
 
-    /** See [enableJvmUnsafeOptimizationsForMultiplatform] */
-    val enableJsUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    private val compilerVersion: KotlinToolingVersion?
+        get() {
+            @Suppress("DEPRECATION")
+            if (!runKotlinCompilerViaBuildToolsApi.get()) return null
+            val version = project.kotlinExtensionOrNull?.compilerVersion?.orNull ?: return null
 
-    /** See [enableJvmUnsafeOptimizationsForMultiplatform] */
-    val enableWasmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+            return try {
+                KotlinToolingVersion(version)
+            } catch (_: IllegalArgumentException) {
+                null
+            }
+        }
+
+    /** See [enableJvmIncrementalCompilationOfCommonSources] */
+    val enableJsIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
+
+    /** See [enableJvmIncrementalCompilationOfCommonSources] */
+    val enableWasmIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
     /**
      * Context: assume that incremental compilation of a.kt makes b.kt dirty (for example, because some function needs to be re-inlined)
@@ -912,12 +941,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
          */
         val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.wasm.enableUnsafeOptimizationsForMultiplatform")
+        val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("$KOTLIN_INTERNAL_NAMESPACE.js.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("$KOTLIN_INTERNAL_NAMESPACE.wasm.enableIncrementalCompilationOfCommonSources")
         val KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA =
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableKmpClasspathMetadataForIncrementalCompilation")
         val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")
@@ -945,6 +974,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY = "kotlin.suppressGradlePluginWarnings"
 
         private const val KOTLIN_NATIVE_BINARY_OPTION_PREFIX = "kotlin.native.binary."
+
+        /** The version since which incremental compilation of common sources on JVM no longer hits KT-62686. */
+        private val FIRST_CORRECT_COMMON_SOURCES_IC_VERSION = KotlinVersion(2, 5, 0)
 
         internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
 

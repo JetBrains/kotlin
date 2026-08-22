@@ -37,12 +37,12 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
                 KotlinPlatformType.js -> BuildOptions.IsolatedProjectsMode.DISABLED
                 else -> super.defaultBuildOptions.isolatedProjects
             }
-        ).withUnsafeOptimizationsForMultiplatform(false)
+        ).withIncrementalCompilationOfCommonSources(false)
 
-    private fun BuildOptions.withUnsafeOptimizationsForMultiplatform(enabled: Boolean): BuildOptions = when (platformType) {
-        KotlinPlatformType.js -> copy(enableJsUnsafeIncrementalCompilationForMultiplatform = enabled)
-        KotlinPlatformType.wasm -> copy(enableWasmUnsafeIncrementalCompilationForMultiplatform = enabled)
-        else -> copy(enableJvmUnsafeIncrementalCompilationForMultiplatform = enabled)
+    private fun BuildOptions.withIncrementalCompilationOfCommonSources(enabled: Boolean): BuildOptions = when (platformType) {
+        KotlinPlatformType.js -> copy(enableJsIncrementalCompilationOfCommonSources = enabled)
+        KotlinPlatformType.wasm -> copy(enableWasmIncrementalCompilationOfCommonSources = enabled)
+        else -> copy(enableJvmIncrementalCompilationOfCommonSources = enabled)
     }
 
     private val platformSourceSet = "${platformType.name}Main"
@@ -54,7 +54,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
         project(
             "kt-62686-mpp-source-set-boundary",
             gradleVersion,
-            buildOptions = defaultBuildOptions.withUnsafeOptimizationsForMultiplatform(true)
+            buildOptions = defaultBuildOptions.withIncrementalCompilationOfCommonSources(true)
         ) {
             buildScriptInjection(setupBuildScript)
 
@@ -95,7 +95,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -117,7 +117,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -142,7 +142,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
@@ -167,7 +167,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilation(BuildAttribute.COMMON_SOURCES_NEED_RECOMPILATION)
             }
         }
     }
