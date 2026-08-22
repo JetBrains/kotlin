@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jsProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.wasmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -111,17 +114,34 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
-//    @OptIn(ExperimentalCompilerArgument::class)
-//    @BtaV2StrategyAgnosticCompilationTest
-//    fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-//        jsProject(strategyConfig) {
-//            val libModule = module("js-ic-basic-lib")
-//            val appModule = module("js-ic-basic-app", listOf(libModule))
-//            libModule.compile()
-//            appModule.compile()
-//            appModule.link {
-//                assertOutputs("js-ic-basic-app.js")
-//            }
-//        }
-//    }
+    @BtaV2StrategyAgnosticCompilationTest
+    fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", listOf(libModule))
+            libModule.compile()
+            appModule.compile()
+            appModule.link {
+                assertOutputs("js-ic-basic-app.js")
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    fun basicWasmCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", listOf(libModule))
+            libModule.compile()
+            appModule.compile()
+            appModule.link {
+                assertOutputs(
+                    "js-ic-basic-app.wasm",
+                    "js-ic-basic-app.mjs",
+                    "js-ic-basic-app.import-object.mjs",
+                    "js-ic-basic-app.js-builtins.mjs",
+                )
+            }
+        }
+    }
 }
