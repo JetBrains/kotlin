@@ -1273,7 +1273,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         val originalBody = declaration.body ?: return super.visitFunction(declaration)
-        val [body, returnVar] = originalBody.asBodyAndResultVar()
+        val [body, returnVar] = originalBody.asBodyAndResultVar(expectedTarget = declaration)
         body.transformChildrenVoid()
 
         // Avoid transforming functions that are not referencing anything composable, as they cannot use slots (read-only is fine).
