@@ -60,16 +60,14 @@ internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBacken
     LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
-internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
-        name = "CheckExternalCalls",
-        postactions = getDefaultLlvmModuleActions(),
-) { context, _ ->
-    checkLlvmModuleExternalCalls(context)
-}
-
 internal val ModuleCallsChecker = optimizationPipelinePass(
         name = "ModuleCallsChecker",
         pipeline = ::ModuleCallsCheckerPipeline
+)
+
+internal val CallsChecker = optimizationPipelinePass(
+        name = "CallsChecker",
+        pipeline = ::CallsCheckerPipeline
 )
 
 internal class OptimizationState(
@@ -178,6 +176,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
+        if (context.config.checkStateAtExternalCalls) {
+            it.runAndMeasurePhase(CallsChecker, module)
+        }
         if (context.config.runLLVMPassesInCompiler) {
             it.runAndMeasurePhase(StackProtectorPhaseInCompiler, module)
         } else {
