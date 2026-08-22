@@ -694,6 +694,8 @@ class NewConstraintSystemImpl(
         constraintInjector.addInitialEqualityConstraint(variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
+        addConstraintsWithSubstitutedResultType(freshTypeConstructor, resultType, position)
+
         val variableWithConstraints =
             notFixedTypeVariables.remove(freshTypeConstructor) ?: error("Seems that $variable is being fixed second time")
 
@@ -713,6 +715,45 @@ class NewConstraintSystemImpl(
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
         doPostponedComputationsIfAllVariablesAreFixed()
+    }
+
+    /**
+     * Given a type variable T and its ResultType used for fixation, it adds F <: SomeOtherType<ResultType> for all other
+     * type variables F and their constraints like F <: SomeOtherType<T>.
+     *
+     * NB: It doesn't remove the existing F <: SomeOtherType<T> constraint, it shall be removed later at [NewConstraintSystemImpl.fixVariable]
+     *
+     * Before [LanguageFeature.EliminateSecondKindIncorporation], it was performed at [ConstraintIncorporator.insideOtherConstraint]
+     */
+    private fun addConstraintsWithSubstitutedResultType(
+        freshTypeConstructor: TypeVariableTypeConstructorMarker,
+        resultType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)) return
+        if (resultType.isError()) return
+        val substitutor = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
+
+        val newEqualityConstraints = mutableListOf<Triple<TypeVariableMarker, KotlinTypeMarker, Constraint>>()
+
+        for ([otherVariableConstructor, otherVariableWithConstraints] in notFixedTypeVariables.entries) {
+            if (freshTypeConstructor == otherVariableConstructor) continue
+            val otherVariable = allTypeVariables[otherVariableConstructor] ?: error("No type variable found for $otherVariableConstructor")
+            for (constraint in otherVariableWithConstraints.constraints) {
+                substitutor.substituteOrNull(constraint.type)?.let {
+                    newEqualityConstraints += Triple(otherVariable, it, constraint)
+                }
+            }
+        }
+
+        for ([otherVariable, newConstraintType, existingConstraint] in newEqualityConstraints) {
+            constraintInjector.addSubstitutedConstraintReplacementAfterVariableFixation(
+                otherVariable,
+                existingConstraint,
+                newConstraintType,
+                position,
+            )
+        }
     }
 
     override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? {

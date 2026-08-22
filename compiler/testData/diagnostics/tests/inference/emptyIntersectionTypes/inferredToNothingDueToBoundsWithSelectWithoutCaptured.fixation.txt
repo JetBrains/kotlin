@@ -16,7 +16,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     )
      <: SelfI<TypeVariable(S)>
      = CapturedType(*) (inferred during fixation)
-     <: SelfI<CapturedType(*)> (inferred during fixation)
     FIXED TO: CapturedType(*)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
@@ -37,7 +36,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     )
      <: SelfI<TypeVariable(S)>
      = Entity
-     <: SelfI<Entity> (inferred during fixation)
     FIXED TO: Entity
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(

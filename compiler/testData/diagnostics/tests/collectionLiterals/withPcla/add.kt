@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-88681
 // LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
@@ -31,11 +32,11 @@ fun test() {
         add(["42"])
     }
 
-    <!TYPE_MISMATCH!>buildList {
+    buildList {
         add(setOf(42))
         add(["42"])
-        <!TYPE_MISMATCH!>this[0]<!>.size
-    }<!>
+        this[0].size
+    }
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

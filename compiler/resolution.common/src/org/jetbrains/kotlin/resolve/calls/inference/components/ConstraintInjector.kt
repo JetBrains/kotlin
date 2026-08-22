@@ -122,6 +122,54 @@ class ConstraintInjector(
         }
     }
 
+    /**
+     * For freshly fixed type variable T := ResultType and some other type variable F and its constraint F <: SomeOtherType<T>,
+     * it adds F <: SomeOtherType<ResultType>.
+     *
+     * NB: All other constraint's properties are not changed.
+     * NB: It doesn't remove the existing F <: SomeOtherType<T> constraint, it shall be removed later at [NewConstraintSystemImpl.fixVariable]
+     *
+     * @param typeVariable type variable F from the example above
+     * @param existingConstraint constraint F <: SomeOtherType<T> from the example above
+     * @param newType substituted type SomeOtherType<ResultType>
+     */
+    context(c: Context)
+    fun addSubstitutedConstraintReplacementAfterVariableFixation(
+        typeVariable: TypeVariableMarker,
+        existingConstraint: Constraint,
+        newType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        val initialConstraint =
+            InitialConstraint(typeVariable.defaultType(), newType, existingConstraint.kind, position)
+                .also { c.addInitialConstraint(it) }
+
+        inferenceLogger?.logInitial(initialConstraint, c)
+
+        with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
+            inferenceLogger.withOrigin(initialConstraint) {
+                val inputTypePositionBeforeIncorporation =
+                    (existingConstraint.position.from as? OnlyInputTypeConstraintPosition
+                        ?: existingConstraint.inputTypePositionBeforeIncorporation)
+
+                addNewIncorporatedConstraint(
+                    typeVariable,
+                    newType,
+                    ConstraintContext(
+                        existingConstraint.kind,
+                        derivedFrom = emptySet(), // derivedFrom was only used for the second kind incorporation
+                        inputTypePositionBeforeIncorporation,
+                        existingConstraint.isNullabilityConstraint,
+                        existingConstraint.isNoInfer,
+                        existingConstraint.forceInflexibilityForUpperTypeAtDirectIncorporation,
+                    )
+                )
+            }
+
+            processConstraints()
+        }
+    }
+
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun addSubTypeConstraintAndIncorporateIt(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
@@ -256,18 +304,12 @@ class ConstraintInjector(
     }
 
     private inner class TypeCheckerStateForConstraintInjector(
-        baseState: TypeCheckerState,
         val c: Context,
         val position: IncorporationConstraintPosition
     ) : TypeCheckerStateForConstraintSystem(
         c,
-        baseState,
+        c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
     ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
-        constructor(c: Context, position: IncorporationConstraintPosition) : this(
-            c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
-            c,
-            position
-        )
 
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
@@ -285,6 +327,16 @@ class ConstraintInjector(
         private var baseLowerType = position.initialConstraint.a
         private var baseUpperType = position.initialConstraint.b
 
+        /**
+         * True only if direct incorporation happens for some Type1 <: X <: Type2 where neither of the types is a variable.
+         *
+         * Currently, it's only used to emulate the second-kind-incorporation behavior for nested occurrences of flexible type variables,
+         * like MyComparable <: T <: Comparable<in T!>.
+         * 
+         * In a perfect situation, we might get rid of it once KT-88593 is fixed.
+         * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
+         */
+        private var isNonTrivialDirectIncorporation = false
         private var isIncorporatingConstraintFromDeclaredUpperBound = false
         private var isIncorporatingConstraintFromNoInfer = false
         private var currentDerivedFromSet: Set<TypeVariableMarker> = emptySet()
@@ -383,7 +435,7 @@ class ConstraintInjector(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean = false,
-            isFromNullabilityConstraint: Boolean = false
+            isFromNullabilityConstraint: Boolean = false,
         ) {
             fun isSubtypeOf(upperType: KotlinTypeMarker) =
                 AbstractTypeChecker.isSubtypeOf(
@@ -415,10 +467,19 @@ class ConstraintInjector(
         override fun isMyTypeVariable(type: RigidTypeMarker): Boolean =
             c.allTypeVariables.containsKey(type.typeConstructor().unwrapStubTypeVariableConstructor())
 
-        override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isNoInfer: Boolean) =
+        override fun addUpperConstraint(
+            typeVariable: TypeConstructorMarker,
+            superType: KotlinTypeMarker,
+            isNoInfer: Boolean,
+            /**
+             * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
+             */
+            isFromFlexibleNotEqualityPosition: Boolean
+        ) =
             addConstraint(
                 typeVariable, superType, UPPER,
-                isFromNullabilityConstraint = false, isNoInfer = isNoInfer
+                isFromNullabilityConstraint = false, isNoInfer,
+                isFromFlexibleTypeVariablePositionAtUpperConstraint = isFromFlexibleNotEqualityPosition,
             )
 
         override fun addLowerConstraint(
@@ -453,6 +514,7 @@ class ConstraintInjector(
             kind: ConstraintKind,
             isFromNullabilityConstraint: Boolean,
             isNoInfer: Boolean,
+            isFromFlexibleTypeVariablePositionAtUpperConstraint: Boolean = false,
         ) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor.unwrapStubTypeVariableConstructor()]
                 ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
@@ -464,7 +526,10 @@ class ConstraintInjector(
                     kind = kind,
                     derivedFrom = currentDerivedFromSet,
                     isNullabilityConstraint = isFromNullabilityConstraint,
-                    isNoInfer = isNoInfer
+                    isNoInfer = isNoInfer,
+                    forceInflexibilityForUpperTypeAtDirectIncorporation =
+                        // T! <: MyComparable                               && from MyComparable <: Comparable<in T!>!
+                        isFromFlexibleTypeVariablePositionAtUpperConstraint && isNonTrivialDirectIncorporation,
                 )
             )
         }
@@ -490,6 +555,7 @@ class ConstraintInjector(
                     newDerivedFromSet = newDerivedFrom,
                     isFromDeclaredUpperBound = isFromDeclaredUpperBound,
                     isNoInfer = isNoInfer,
+                    isNonTrivial = !lowerType.typeConstructor().isTypeVariable()
                 ) {
                     runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
                 }
@@ -500,12 +566,14 @@ class ConstraintInjector(
             newDerivedFromSet: Set<TypeVariableMarker>,
             isFromDeclaredUpperBound: Boolean,
             isNoInfer: Boolean,
+            isNonTrivial: Boolean,
             b: () -> Unit,
         ) {
             // No immediate recursive incorporation should happen, so `currentDerivedFromSet` would be reset at "finally"
             check(currentDerivedFromSet.isEmpty())
 
             try {
+                isNonTrivialDirectIncorporation = isNonTrivial
                 currentDerivedFromSet = newDerivedFromSet
                 isIncorporatingConstraintFromDeclaredUpperBound = isFromDeclaredUpperBound
                 isIncorporatingConstraintFromNoInfer = isNoInfer
@@ -513,6 +581,7 @@ class ConstraintInjector(
             } finally {
                 // NB: `emptySet()` returns a singleton, so no excessive memory here
                 currentDerivedFromSet = emptySet()
+                isNonTrivialDirectIncorporation = false
                 isIncorporatingConstraintFromDeclaredUpperBound = false
                 isIncorporatingConstraintFromNoInfer = false
             }
@@ -568,6 +637,8 @@ class ConstraintInjector(
                 isNullabilityConstraint = isNullabilityConstraint,
                 isNoInfer = isNoInfer || isIncorporatingConstraintFromNoInfer,
                 inputTypePositionBeforeIncorporation = inputTypePosition,
+                forceInflexibilityForUpperTypeAtDirectIncorporation = constraintContext.forceInflexibilityForUpperTypeAtDirectIncorporation && languageVersionSettings.supportsFeature(
+                    LanguageFeature.EliminateSecondKindIncorporation),
             )
 
             addPossibleNewConstraint(typeVariable, newConstraint)
@@ -617,6 +688,10 @@ data class ConstraintContext(
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
     val isNullabilityConstraint: Boolean,
     val isNoInfer: Boolean,
+    /**
+     * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
+     */
+    val forceInflexibilityForUpperTypeAtDirectIncorporation: Boolean = false,
 )
 
 private typealias Stack<E> = MutableList<E>

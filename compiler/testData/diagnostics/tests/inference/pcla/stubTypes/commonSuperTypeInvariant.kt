@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_STDLIB
 // ISSUE: KT-64802 (K2/PCLA difference)
@@ -49,13 +49,13 @@ fun test() {
         build2 {
             emit(1)
             select1(this@build.get(), getInv())
-            select1(get(), <!ARGUMENT_TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)
+            select1(get(), Test.foo(this@build.getInv()))
             select1(Test.foo(this@build.get()), Test.foo(getInv()))
-            select1(Test.foo(get()), <!ARGUMENT_TYPE_MISMATCH!>this@build.getInv()<!>)
+            select1(Test.foo(get()), this@build.getInv())
             select4(this@build.get(), getInv())
-            select4(get(), <!ARGUMENT_TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)
+            select4(get(), Test.foo(this@build.getInv()))
             select4(Test.foo(this@build.get()), Test.foo(getInv()))
-            select4(Test.foo(get()), <!ARGUMENT_TYPE_MISMATCH!>this@build.getInv()<!>)
+            select4(Test.foo(get()), this@build.getInv())
 
             select4(id(Test.foo(this@build.get())), getInv())
             ""
@@ -80,13 +80,13 @@ fun test() {
         build2 {
             emit(1)
             select2(this@build.get(), getInv()) // TODO
-            select2(get(), <!ARGUMENT_TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)
+            select2(get(), Test.foo(this@build.getInv()))
             select2(Test.foo(this@build.get()), Test.foo(getInv())) // TODO
-            select2(Test.foo(get()), <!ARGUMENT_TYPE_MISMATCH!>this@build.getInv()<!>)
+            select2(Test.foo(get()), this@build.getInv())
             select3(this@build.get(), getInv()) // TODO
-            select3(get(), <!ARGUMENT_TYPE_MISMATCH!>Test.foo(this@build.getInv())<!>)
+            select3(get(), Test.foo(this@build.getInv()))
             select3(Test.foo(this@build.get()), Test.foo(getInv())) // TODO
-            select3(Test.foo(get()), <!ARGUMENT_TYPE_MISMATCH!>this@build.getInv()<!>)
+            select3(Test.foo(get()), this@build.getInv())
             ""
         }
         ""

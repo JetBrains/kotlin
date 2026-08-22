@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// ISSUE: KT-73434
+// ISSUE: KT-73434, KT-88674
 
 // FILE: JavaHelper.java
 public interface JavaHelper {
@@ -21,12 +21,12 @@ fun <R> funA(
 ) {}
 
 fun <E3 : Enum<E3>> funB() {
-    <!TYPE_MISMATCH("CapturedType(*); Enum<*>")!>funA(
+    funA(
         createInterfaceAKotlin(),
         defaultB(),
-    )<!>
+    )
 
-    <!TYPE_MISMATCH("CapturedType(*)?; Enum<*>")!>funA(
+    <!TYPE_MISMATCH("Enum<CapturedType(*)!>!; CapturedType(*) & Any")!>funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
     )<!>
