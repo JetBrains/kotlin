@@ -20,6 +20,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * @param stripBrowserVersionInfoFromTestCaseNames Some test executor implementations include browser version info in test case names,
@@ -61,6 +62,20 @@ fun GradleProject.assertTestResults(
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
+}
+
+fun GradleProject.assertNoTestResultsProduced(
+    taskName: String,
+    subprojectName: String? = null,
+) {
+    val testResultsDir = testResultsAndReportsDirs(taskName, subprojectName).first
+    if (Files.exists(testResultsDir)) {
+        val xmlFiles = testResultsDir.allFilesWithExtension("xml")
+        assertTrue(
+            xmlFiles.isEmpty(),
+            "Expected no test result XML files in '$testResultsDir', but found: ${xmlFiles.joinToString()}"
+        )
+    }
 }
 
 internal fun readValidateAndCleanupTestResults(
