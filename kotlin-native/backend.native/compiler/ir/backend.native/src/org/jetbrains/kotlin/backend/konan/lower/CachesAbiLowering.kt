@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -176,7 +176,7 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
 /**
  * Adds accessors to private entities.
  */
-internal class ExportCachesAbiVisitor(val context: NativeBackendContext) : FileLoweringPass {
+internal class ExportCachesAbiVisitor(val context: NativeLoweringContext) : FileLoweringPass {
     private val cachesAbiSupport = context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {
@@ -280,8 +280,8 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
     }
 
     private inner class Transformer(val irFile: IrFile) : IrElementTransformerVoid() {
-        private val cachesAbiSupport = generationState.context.cachesAbiSupport
-        private val innerClassesSupport = generationState.context.innerClassesSupport
+        private val cachesAbiSupport = generationState.cachesAbiSupport
+        private val innerClassesSupport = generationState.innerClassesSupport
         private val dependenciesTracker = generationState.dependenciesTracker
 
         override fun visitCall(expression: IrCall): IrExpression {
@@ -309,7 +309,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
 
             // Actual scope for builder is the current function that we don't have access to. So we put a new symbol as scope here,
             // but it will not affect the result because we are not creating any declarations here.
-            fun createIrBuilder() = generationState.context.irBuiltIns.createIrBuilder(
+            fun createIrBuilder() = generationState.irBuiltIns.createIrBuilder(
                     IrSimpleFunctionSymbolImpl(), expression.startOffset, expression.endOffset
             )
 

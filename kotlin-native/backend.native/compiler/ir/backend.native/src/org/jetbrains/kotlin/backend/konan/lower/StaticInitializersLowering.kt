@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.ExpressionBodyTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
@@ -71,7 +73,8 @@ internal fun ConfigChecks.shouldBeInitializedEagerly(irField: IrField): Boolean 
 
 internal var IrClass.clinitTriggerFunction: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
 
-internal class StaticInitializersLowering(val context: NativeBackendContext) : FileLoweringPass {
+@PhasePrerequisites(ExpressionBodyTransformer::class)
+internal class StaticInitializersLowering(val context: NativeLoweringContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {

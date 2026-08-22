@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 // TODO: Find a better home for this function than Context.
-internal fun NativeBackendContext.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
+internal fun NativeLoweringContext.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
         getTypeConversionImpl(actualType.getInlinedClassNative(), expectedType.getInlinedClassNative())
 
-private fun NativeBackendContext.getTypeConversionImpl(
+private fun NativeLoweringContext.getTypeConversionImpl(
         actualInlinedClass: IrClass?,
         expectedInlinedClass: IrClass?
 ): IrSimpleFunctionSymbol? {
@@ -63,7 +63,7 @@ private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
     return Pair(parent, classes.reversed().joinToString(".") { it.name.asString() })
 }
 
-internal fun NativeBackendContext.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
+internal fun NativeLoweringContext.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
     val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
@@ -87,7 +87,7 @@ internal fun NativeBackendContext.getBoxFunction(inlinedClass: IrClass): IrSimpl
     }
 }
 
-internal fun NativeBackendContext.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
+internal fun NativeLoweringContext.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
     val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
@@ -111,7 +111,7 @@ internal fun NativeBackendContext.getUnboxFunction(inlinedClass: IrClass): IrSim
     }
 }
 
-internal fun NativeBackendContext.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
+internal fun NativeLoweringContext.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
     val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)

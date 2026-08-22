@@ -41,7 +41,7 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
     }
 }
 
-class IrValidationAfterInliningPrivateFunctionsKlibPhase<Context : LoweringContext>(
+open class IrValidationAfterInliningPrivateFunctionsKlibPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker,
 ) : IrValidationPhase<Context>(context) {
@@ -69,7 +69,7 @@ class IrValidationAfterInliningAllFunctionsKlibFirstStagePhase<Context : Lowerin
             .withoutCheckersByName(context.configuration.disableIrCheckers)
 }
 
-class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : LoweringContext>(
+open class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker? = null,
 ) : IrValidationPhase<Context>(context) {

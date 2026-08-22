@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.ir.builders.*
@@ -32,8 +33,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
  */
-internal class BuiltinOperatorLowering(val context: NativeBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
-
+@PhasePrerequisites(NativeDefaultParameterInjector::class, NativeSingleAbstractMethodLowering::class, NativeEnumWhenLowering::class)
+internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : FileLoweringPass, IrBuildingTransformer(context) {
     private val irBuiltins = context.irBuiltIns
     private val symbols = context.symbols
 
@@ -53,8 +54,8 @@ internal class BuiltinOperatorLowering(val context: NativeBackendContext) : File
 
             irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset,
-                    context.symbols.throwNoWhenBranchMatchedException.owner.returnType,
-                    context.symbols.throwNoWhenBranchMatchedException)
+                    symbols.throwNoWhenBranchMatchedException.owner.returnType,
+                    symbols.throwNoWhenBranchMatchedException)
 
             irBuiltins.linkageErrorSymbol -> with(symbols.throwIrLinkageError) { irCall(expression, this, newReturnType = owner.returnType) }
 
