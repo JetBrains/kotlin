@@ -199,7 +199,13 @@ open class UpgradeCallableReferences(
         override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclarationParent): IrExpression {
             if (upgradeSamConversions && expression.operator == IrTypeOperator.SAM_CONVERSION) {
                 expression.transformChildren(this, data)
-                val argument = expression.argument
+                val argument = expression.argument.let {
+                    if (it is IrTypeOperatorCall && it.operator == IrTypeOperator.IMPLICIT_CAST) {
+                        it.argument
+                    } else {
+                        it
+                    }
+                }
                 if (argument !is IrRichFunctionReference) return expression
                 return argument.apply {
                     startOffset = expression.startOffset
