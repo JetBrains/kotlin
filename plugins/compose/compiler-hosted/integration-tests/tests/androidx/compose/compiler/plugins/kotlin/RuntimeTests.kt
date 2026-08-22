@@ -8,6 +8,9 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import com.intellij.util.containers.orNull
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -124,6 +127,14 @@ private class RuntimeTestCompiler(
                 )
             )
         }
+        languageVersionSettings = LanguageVersionSettingsImpl(
+            languageVersion = languageVersionSettings.languageVersion,
+            apiVersion = languageVersionSettings.apiVersion,
+            specificFeatures = mapOf(
+                LanguageFeature.ContextParameters to LanguageFeature.State.ENABLED,
+                LanguageFeature.CallableReferencesToContextual to LanguageFeature.State.ENABLED,
+            )
+        )
     }
 
     fun compileRuntimeClasses() =

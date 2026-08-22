@@ -508,7 +508,11 @@ class ComposerLambdaMemoization(
                 return result
             }
 
-            return rememberFunctionReference(functionReference, expression)
+            return rememberFunctionReference(
+                functionReference.symbol.owner,
+                functionReference.arguments,
+                expression
+            )
         }
 
         return result
@@ -536,17 +540,47 @@ class ComposerLambdaMemoization(
             return result
         }
 
-        return rememberFunctionReference(result, result)
+        return rememberFunctionReference(
+            referencedFn = result.symbol.owner,
+            arguments = result.arguments,
+            expression = result
+        )
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        val result = super.visitRichFunctionReference(expression)
+        val referencedFn = expression.reflectionTargetSymbol?.owner ?: return result
+        if (
+            inlineLambdaInfo.isInlineFunctionExpression(expression) ||
+            inlineLambdaInfo.isInlineLambda(referencedFn)
+        ) {
+            // Do not memoize function references used in inline parameters.
+            return result
+        }
+
+        if (result !is IrRichFunctionReference) {
+            // Do not memoize if the shape doesn't match
+            return result
+        }
+
+        @Suppress("UNCHECKED_CAST") // Pinky promise to not add nulls here
+        val boundValues = expression.boundValues as MutableList<IrExpression?>
+        return rememberFunctionReference(
+            referencedFn,
+            boundValues,
+            result
+        )
     }
 
     private fun rememberFunctionReference(
-        reference: IrFunctionReference,
+        referencedFn: IrFunction,
+        arguments: MutableList<IrExpression?>,
         expression: IrExpression,
     ): IrExpression {
         // Get the local captures for local function ref, to make sure we invalidate memoized
         // reference if its capture is different.
-        val localCaptures = if (reference.symbol.owner.visibility == DescriptorVisibilities.LOCAL) {
-            declarationContextStack.recordLocalCapture(reference.symbol.owner)
+        val localCaptures = if (referencedFn.visibility == DescriptorVisibilities.LOCAL) {
+            declarationContextStack.recordLocalCapture(referencedFn)
         } else {
             null
         }
@@ -557,9 +591,9 @@ class ComposerLambdaMemoization(
 
         if (functionContext.canRemember) {
             // Memoize the reference for <expr>::<method>
-            val argumentsAreNull = reference.arguments.all { it == null }
+            val argumentsAreNull = arguments.all { it == null }
             val argumentsAreNullOrStable =
-                reference.arguments.all { it.isNullOrStable(fileContainingDependent = functionContext.declaration.fileOrNull) }
+                arguments.all { it.isNullOrStable(fileContainingDependent = functionContext.declaration.fileOrNull) }
 
             val captures = mutableListOf<IrValueDeclaration>()
             if (localCaptures != null) {
@@ -579,12 +613,12 @@ class ComposerLambdaMemoization(
                     resultType = expression.type
                 ) {
                     // Patch reference arguments in place
-                    for (i in reference.arguments.indices) {
-                        if (reference.arguments[i] == null) continue
+                    for (i in arguments.indices) {
+                        if (arguments[i] == null) continue
 
-                        val tmp = irTemporary(reference.arguments[i])
+                        val tmp = irTemporary(arguments[i])
                         captures.add(tmp)
-                        reference.arguments[i] = irGet(tmp)
+                        arguments[i] = irGet(tmp)
                     }
 
                     +rememberExpression(
@@ -1261,7 +1295,8 @@ class ComposerLambdaMemoization(
 
     // TODO(b/315869143): consider hoisting property reference receivers into a variable and memoizing based on them.
     private fun IrValueDeclaration.isPropertyReferenceDelegate() =
-        origin == IrDeclarationOrigin.PROPERTY_DELEGATE && this is IrVariable && initializer is IrPropertyReference
+        origin == IrDeclarationOrigin.PROPERTY_DELEGATE && this is IrVariable &&
+                (initializer is IrPropertyReference || initializer is IrRichPropertyReference)
 }
 
 // This must match the highest value of FunctionXX which is current Function22

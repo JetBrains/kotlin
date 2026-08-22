@@ -28,6 +28,8 @@ internal var IrFunction.functionMetrics: FunctionMetrics? by irAttribute(copyByD
 
 internal var IrFunction.isComposableReferenceAdapter: Boolean by irFlag(copyByDefault = true)
 
+internal var IrFunction.isComposableReferenceInvoke: Boolean by irFlag(copyByDefault = true)
+
 internal var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = true)
 
 internal var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)

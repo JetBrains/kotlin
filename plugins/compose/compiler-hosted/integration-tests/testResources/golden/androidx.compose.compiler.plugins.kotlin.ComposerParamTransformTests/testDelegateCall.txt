@@ -89,7 +89,7 @@ class FooDelegate {
 class Bar {
   val foo: Foo = Foo()
     @Composable @JvmName(name = "getFoo") @FunctionKeyMeta(key = -231152804, startOffset = 599, endOffset = 615)
-    get() {
+    get(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(<get-foo>)<Foo()>:Test.kt#2487m")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)

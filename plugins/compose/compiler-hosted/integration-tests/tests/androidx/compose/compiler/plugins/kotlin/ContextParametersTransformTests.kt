@@ -30,7 +30,8 @@ class ContextParametersTransformTests : AbstractIrTransformTest() {
             languageVersion = languageVersionSettings.languageVersion,
             apiVersion = languageVersionSettings.apiVersion,
             specificFeatures = mapOf(
-                LanguageFeature.ContextParameters to LanguageFeature.State.ENABLED
+                LanguageFeature.ContextParameters to LanguageFeature.State.ENABLED,
+                LanguageFeature.CallableReferencesToContextual to LanguageFeature.State.ENABLED,
             )
         )
     }
@@ -316,6 +317,44 @@ class ContextParametersTransformTests : AbstractIrTransformTest() {
                 state: T,
                 content: @Composable (T) -> Unit
             ) {
+            }
+        """
+    )
+
+    @Test
+    fun testFunctionReference() = contextReceivers(
+        """
+            class Foo { }
+
+            context(foo: Foo)
+            @Composable
+            fun A(a: Int) { }
+
+            context(foo: Foo)
+            @Composable
+            fun String.B(a: Int) { }
+
+            @Composable
+            fun Foo.ExtA(a: Int) { }
+
+            @Composable
+            fun Caller(foo: Foo, block: @Composable context(Foo) (Int) -> Unit) {
+                with(foo) {
+                    block(10)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Test(foo: Foo) {
+                with(foo) {
+                    val refA: @Composable (Int) -> Unit = ::A
+                    refA(42)
+                    Caller(foo, Foo::ExtA)
+
+                    val refB: @Composable String.(Int) -> Unit = String::B
+                    "Hello".refB(42)
+                }
             }
         """
     )
