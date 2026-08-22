@@ -13,6 +13,8 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
     /**
      * Associates the specified [value] with the specified [key] in the map.
      *
+     * If the map already contains a mapping for [key], the value for that key is replaced with the specified [value].
+     *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
     @IgnorableReturnValue

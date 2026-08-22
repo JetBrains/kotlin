@@ -502,6 +502,8 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     /**
      * Adds the specified element to the set.
      *
+     * If the set already contains [element], the element instance stored in the set is retained.
+     *
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      *
      * @sample samples.collections.Collections.Sets.add
@@ -514,6 +516,16 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     // Bulk Modification Operations
 
+    /**
+     * Adds all of the elements of the specified collection to the set.
+     *
+     * The effect of this call is equivalent to calling [add] for each element of [elements], so the element
+     * instances stored in the set are retained.
+     *
+     * @return `true` if any of the specified elements was added to the set, `false` if the set was not modified.
+     *
+     * @sample samples.collections.Collections.Sets.addAll
+     */
     @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
     @IgnorableReturnValue
@@ -696,6 +708,8 @@ public actual interface MutableMap<K, V> : Map<K, V> {
     /**
      * Associates the specified [value] with the specified [key] in the map.
      *
+     * If the map already contains a mapping for [key], the value for that key is replaced with the specified [value].
+     *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      *
      * @sample samples.collections.Maps.CoreApi.put
@@ -729,6 +743,9 @@ public actual interface MutableMap<K, V> : Map<K, V> {
     // Bulk Modification Operations
     /**
      * Updates this map with key/value pairs from the specified map [from].
+     *
+     * The effect of this call is equivalent to calling [put] for each entry of [from], so the key instances
+     * stored in this map are retained.
      *
      * @sample samples.collections.Maps.CoreApi.putAll
      */
