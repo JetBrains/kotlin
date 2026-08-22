@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass

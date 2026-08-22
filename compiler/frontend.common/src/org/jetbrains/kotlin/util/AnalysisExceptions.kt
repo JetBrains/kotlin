@@ -10,7 +10,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
@@ -75,14 +74,14 @@ private fun KtSourceElement.isDefinitelyNotInsideFile(fileSource: KtSourceElemen
 private fun reportFileMismatch(source: KtSourceElement, fileSource: KtSourceElement, cause: Throwable): Throwable {
     val thisPsi = source.psi
     val otherPsi = fileSource.psi
-    val comparison = "This:\n\n${source.text?.asQuote}\n\n...is not present in"
+    val comparison = "This:\n\n${source.text.asQuote}\n\n...is not present in"
 
     val expectedFileMessage = if (thisPsi != null && otherPsi != null) {
         val actualPath = thisPsi.containingFile.virtualFile.path
         val expectedPath = otherPsi.containingFile.virtualFile.path
         "$expectedPath, but rather in $actualPath"
     } else {
-        "...${fileSource.text?.asQuote}"
+        "...${fileSource.text.asQuote}"
     }
 
     return IllegalStateException(

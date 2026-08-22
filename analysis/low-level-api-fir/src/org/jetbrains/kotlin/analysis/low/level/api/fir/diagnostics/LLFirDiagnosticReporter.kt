@@ -42,7 +42,6 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
 
         val psiDiagnostic = when (diagnostic) {
             is KtPsiDiagnostic -> diagnostic
-            is KtLightDiagnostic -> diagnostic.toPsiDiagnostic()
             else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
         }
 
@@ -92,57 +91,4 @@ private fun KtPsiDiagnostic.isInside(element: AbstractKtSourceElement): Boolean 
 private fun KtDiagnostic.isAboutImplicitImport(): Boolean {
     if (this !is KtPsiDiagnostic) return false
     return (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
-}
-
-
-private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
-    val psiSourceElement = element.unwrapToKtPsiSourceElement()
-        ?: error("Diagnostic should be created from PSI in IDE")
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is KtLightSimpleDiagnostic -> KtPsiSimpleDiagnostic(
-            psiSourceElement,
-            severity,
-            factory,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters1<*> -> KtPsiDiagnosticWithParameters1(
-            psiSourceElement,
-            a,
-            severity,
-            factory as KtDiagnosticFactory1<Any?>,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters2<*, *> -> KtPsiDiagnosticWithParameters2(
-            psiSourceElement,
-            a, b,
-            severity,
-            factory as KtDiagnosticFactory2<Any?, Any?>,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters3<*, *, *> -> KtPsiDiagnosticWithParameters3(
-            psiSourceElement,
-            a, b, c,
-            severity,
-            factory as KtDiagnosticFactory3<Any?, Any?, Any?>,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters4<*, *, *, *> -> KtPsiDiagnosticWithParameters4(
-            psiSourceElement,
-            a, b, c, d,
-            severity,
-            factory as KtDiagnosticFactory4<Any?, Any?, Any?, Any?>,
-            positioningStrategy,
-            context,
-        )
-        else -> error("Unknown diagnostic type ${this::class.simpleName}")
-    }
 }

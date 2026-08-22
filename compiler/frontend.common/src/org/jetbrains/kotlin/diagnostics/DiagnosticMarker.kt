@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 
 interface DiagnosticMarker {
     val psiElement: PsiElement
+        get() = error("psiElement should be called only on KtPsiDiagnostic and equivalents")
     val factoryName: String
     val severity: Severity
     val textRanges: List<TextRange>

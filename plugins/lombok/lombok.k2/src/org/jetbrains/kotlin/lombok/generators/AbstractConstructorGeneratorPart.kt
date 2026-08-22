@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
