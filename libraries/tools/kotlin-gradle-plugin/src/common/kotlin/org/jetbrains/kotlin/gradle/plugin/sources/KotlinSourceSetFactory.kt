@@ -71,11 +71,6 @@ internal class DefaultKotlinSourceSetFactory(
     override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_RESOURCES))
-        // Drop in KT-80897
-        @Suppress("DEPRECATION_ERROR")
-        project.configurations.maybeCreateResolvable(sourceSet.implementationMetadataConfigurationName) {
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
-        }
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet =
