@@ -388,7 +388,7 @@ KtWhenExpression(459,550): 'when (i) {'
 KtNameReferenceExpression(465,466): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       i: Inner

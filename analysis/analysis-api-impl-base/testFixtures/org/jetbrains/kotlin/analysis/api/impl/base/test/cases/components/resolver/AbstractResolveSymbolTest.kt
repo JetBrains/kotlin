@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
@@ -13,11 +14,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertS
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.lookupLocally
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -71,6 +70,21 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             ignoreStabilityIfNeeded {
                 testServices.assertions.assertTrue(resolved!!.isEquivalentTo(localLookup)) {
                     "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
+                }
+            }
+        } else if (mainElement is KtSimpleNameExpression) {
+            // completeness: localLookup can resolve any local symbols, except those that are explicitly not resolvable
+            // see `canPerformLocalLookup`
+            val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()
+
+            @OptIn(KtImplementationDetail::class)
+            val localLookupContextKind = mainElement.localLookupContextKind
+            @OptIn(KtImplementationDetail::class)
+            if (resolved != null && resolved.isLocal && localLookupContextKind != null) {
+                testServices.assertions.assertFalse(
+                    resolved.canPerformLocalLookup(localLookupContextKind, mainElement)
+                ) {
+                    "Should be able to resolve ${stringRepresentation(mainElement)} to ${stringRepresentation(resolved)}"
                 }
             }
         }
@@ -148,4 +162,26 @@ internal fun assertSpecificResolutionApi(
             }
         }
     }
+}
+
+@OptIn(KtImplementationDetail::class)
+context(_: KaSession)
+fun KaSymbol.canPerformLocalLookup(localLookupContextKind: LocalLookupContextKind, startingReference: KtSimpleNameExpression): Boolean {
+    if (!isLocal) return false
+    if (!startingReference.canPerformLocalLookup()) return false
+    when (this) {
+        is KaValueParameterSymbol -> {
+            if (isImplicitLambdaParameter) return false
+            if (containingSymbol is KaConstructorSymbol) return false
+        }
+        is KaClassSymbol -> {
+            if (localLookupContextKind == LocalLookupContextKind.VALUE) return false
+        }
+        is KaTypeParameterSymbol -> {
+            if (startingReference.parentOfType<KtDeclaration>()?.symbol != containingSymbol)
+                return false
+        }
+    }
+
+    return true
 }

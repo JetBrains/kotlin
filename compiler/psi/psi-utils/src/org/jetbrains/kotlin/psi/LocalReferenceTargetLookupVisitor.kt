@@ -2,10 +2,15 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.TokenType
+import com.intellij.psi.util.elementType
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -20,24 +25,43 @@ import org.jetbrains.kotlin.name.Name
  */
 @KtExperimentalApi
 fun KtSimpleNameExpression.lookupLocally(): KtNamedDeclaration? {
-    val contextKind = contextKind ?: return null
+    val contextKind = localLookupContextKind ?: return null
 
     return LocalReferenceTargetLookupVisitor(this, contextKind).lookup()
 }
 
+/**
+ * Returns `true` if can perform a local lookup from the given starting expression.
+ *
+ * This API is marked as an implementation detail of the Kotlin PSI API
+ * and is not intended for public or external use. It may change or be removed
+ * without notice.
+ */
+@TestOnly
+@KtImplementationDetail
+fun KtSimpleNameExpression.canPerformLocalLookup(): Boolean = localLookupContextKind != null
+
 private val KtElement.nonContainerParent: KtElement?
     get() {
-        var e = parent
-        while (e is KtContainerNode) {
-            e = e.parent
+        var e = parent ?: context
+        while (e != null && (e is KtContainerNode || e.elementType in CODE_FRAGMENTS)) {
+            e = e.parent ?: e.context
         }
         return e as? KtElement
     }
 
 private fun KtSimpleNameExpression.typeIsValidForLocalLookup(): Boolean =
-    this !is KtOperationReferenceExpression
+    this !is KtOperationReferenceExpression && this !is KtLabelReferenceExpression
 
-private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisitor.ContextKind?
+/**
+ * Returns the kind of context in which a local lookup is performed.
+ *
+ * This API is marked as an implementation detail of the Kotlin PSI API
+ * and is not intended for public or external use. It may change or be removed
+ * without notice.
+ */
+@KtImplementationDetail
+val KtSimpleNameExpression.localLookupContextKind: LocalLookupContextKind?
     get() =
         if (!typeIsValidForLocalLookup()) null
         else when (val p = nonContainerParent) {
@@ -51,24 +75,24 @@ private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisito
             is KtDotQualifiedExpression,
             is KtSafeQualifiedExpression,
                 -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.receiverExpression == this@contextKind }
+                LocalLookupContextKind.VALUE.takeIf { p.receiverExpression == this@localLookupContextKind }
             }
             is KtUserType -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.TYPE
-                    .takeIf { p.qualifier == null && (p.referenceExpression == this@contextKind) }
+                LocalLookupContextKind.TYPE
+                    .takeIf { p.qualifier == null && (p.referenceExpression == this@localLookupContextKind) }
             }
-            is KtClassLiteralExpression -> LocalReferenceTargetLookupVisitor.ContextKind.VALUE_OR_TYPE
+            is KtClassLiteralExpression -> LocalLookupContextKind.VALUE_OR_TYPE
             is KtProperty -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.delegateExpressionOrInitializer == this@contextKind }
+                LocalLookupContextKind.VALUE.takeIf { p.delegateExpressionOrInitializer == this@localLookupContextKind }
             }
             is KtDestructuringDeclaration -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.initializer == this@contextKind }
+                LocalLookupContextKind.VALUE.takeIf { p.initializer == this@localLookupContextKind }
             }
             is KtNamedFunction -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.bodyExpression == this@contextKind }
+                LocalLookupContextKind.VALUE.takeIf { p.bodyExpression == this@localLookupContextKind }
             }
             is KtParameter -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.defaultValue == this@contextKind }
+                LocalLookupContextKind.VALUE.takeIf { p.defaultValue == this@localLookupContextKind }
             }
             is KtValueArgument,
             is KtBinaryExpression,
@@ -88,18 +112,13 @@ private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisito
             is KtSimpleNameStringTemplateEntry,
             is KtWhenConditionWithExpression,
             is KtWhenEntry,
-                -> LocalReferenceTargetLookupVisitor.ContextKind.VALUE
-            is KtTypeConstraint, is KtDelegatedSuperTypeEntry -> LocalReferenceTargetLookupVisitor.ContextKind.TYPE
+                -> LocalLookupContextKind.VALUE
+            is KtTypeConstraint, is KtDelegatedSuperTypeEntry -> LocalLookupContextKind.TYPE
             else -> null
         }
 
-private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpression, val contextKind: ContextKind) : KtVisitorVoid() {
-    enum class ContextKind {
-        VALUE,
-        TYPE,
-        VALUE_OR_TYPE,
-    }
-
+private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpression, val contextKind: LocalLookupContextKind) :
+    KtVisitorVoid() {
     fun lookup(): KtNamedDeclaration? {
         var current: KtElement = element
 
@@ -136,10 +155,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
                 || this is KtTypeAlias
                 || this is KtTypeParameter
 
-    private fun typeMatchesGivenContext(element: KtElement, contextKind: ContextKind): Boolean = when (contextKind) {
-        ContextKind.VALUE -> element.typeMatchesForValueContext
-        ContextKind.TYPE -> element.typeMatchesForTypeContext
-        ContextKind.VALUE_OR_TYPE -> element.typeMatchesForValueContext || element.typeMatchesForTypeContext
+    private fun typeMatchesGivenContext(element: KtElement, contextKind: LocalLookupContextKind): Boolean = when (contextKind) {
+        LocalLookupContextKind.VALUE -> element.typeMatchesForValueContext
+        LocalLookupContextKind.TYPE -> element.typeMatchesForTypeContext
+        LocalLookupContextKind.VALUE_OR_TYPE -> element.typeMatchesForValueContext || element.typeMatchesForTypeContext
     }
 
     fun PsiElement.prevKtSibling(): KtElement? {
@@ -162,12 +181,13 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
     private var myLastDirection: LastDirection = LastDirection.INITIAL
 
     private fun isStopElement(element: KtElement): Boolean =
-        element is KtNamedFunction && lastDirectionIs(LastDirection.PARENT)
+        element is KtNamedFunction && !element.isLocal && lastDirectionIs(LastDirection.PARENT)
                 || element is KtProperty && !element.isLocal && lastDirectionIs(LastDirection.PARENT)
 
     private fun shouldStopBeforeProcessing(element: KtElement): Boolean =
         element is KtClassOrObject && lastDirectionIs(LastDirection.PARENT)
-                || element is KtFile || (element.parent is KtBlockExpression && element.parent.parent is KtScript)
+                || element is KtFile && element.elementType !in CODE_FRAGMENTS
+                || (element.parent is KtBlockExpression && element.parent.parent is KtScript)
                 || element is KtAnonymousInitializer
 
     /**
@@ -303,10 +323,16 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
     override fun visitProperty(element: KtProperty) {
         foundIfNameMatches(element)
 
+        element.typeParameters.processMany(::processTypeParameter)
         element.contextParameters.processMany(::processParameter)
     }
 
     override fun visitClass(klass: KtClass) {
+        if (contextKind == LocalLookupContextKind.VALUE && name == klass.nameAsSafeName) {
+            klass.companionObjects.firstOrNull()
+                ?.takeIf(::isValidCandidate)
+                ?.let(::found)
+        }
         foundIfNameMatches(klass)
     }
 
@@ -347,11 +373,11 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
         _found = element
     }
 
-    private fun nameMatchesAndIsValidCandidate(element: KtNamedDeclaration): Boolean =
-        element.nameAsSafeName == name && !isIgnored(element) && typeMatchesGivenContext(element, contextKind)
+    private fun isValidCandidate(element: KtNamedDeclaration): Boolean =
+        !isIgnored(element) && typeMatchesGivenContext(element, contextKind)
 
     private fun foundIfNameMatches(element: KtNamedDeclaration) {
-        if (nameMatchesAndIsValidCandidate(element)) {
+        if (element.nameAsSafeName == name && isValidCandidate(element)) {
             found(element)
         }
     }
@@ -370,6 +396,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
         foundIfNameMatches(decl)
     }
 
+    override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+        accessor.valueParameters.processMany(::processParameter)
+    }
+
     private inline fun <T> Iterable<T>.processMany(f: (T) -> Unit) {
         if (_found != null) return
 
@@ -378,4 +408,45 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
             if (_found != null) return
         }
     }
+}
+
+private val CODE_FRAGMENTS = setOf(
+    TokenType.CODE_FRAGMENT,
+    KtNodeTypes.BLOCK_CODE_FRAGMENT,
+    KtNodeTypes.EXPRESSION_CODE_FRAGMENT,
+    KtNodeTypes.TYPE_CODE_FRAGMENT
+)
+
+/**
+ * Represents the kind of context in which a local lookup is performed.
+ *
+ * This enum is used internally by the Kotlin PSI API to differentiate
+ * between different types of lookups, such as resolving values, types,
+ * or both values and types in the local context.
+ *
+ * VALUE - Indicates a context where only values are looked up.
+ * TYPE - Indicates a context where only types are looked up.
+ * VALUE_OR_TYPE - Indicates a context where both values and types can be looked up.
+ *
+ * This API is marked as an implementation detail of the Kotlin PSI API
+ * and is not intended for public or external use. It may change or be removed
+ * without notice.
+ */
+@KtImplementationDetail
+enum class LocalLookupContextKind {
+    /**
+     * Indicates a context where we are looking up values.
+     */
+    VALUE,
+
+    /**
+     * Indicates a context where we are looking up types.
+     */
+    TYPE,
+
+    /**
+     * Indicates a context where both values and types can be looked up.
+     * For example, `T::class` literals.
+     */
+    VALUE_OR_TYPE,
 }
