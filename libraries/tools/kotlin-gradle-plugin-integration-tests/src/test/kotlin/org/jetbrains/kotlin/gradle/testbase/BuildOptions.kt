@@ -62,7 +62,7 @@ data class BuildOptions(
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
-    val enableJvmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableJvmIncrementalCompilationOfCommonSources: Boolean? = null,
     val enableJsUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableWasmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
@@ -311,8 +311,8 @@ data class BuildOptions(
             arguments.add("-Pkotlin.test.languageVersion=$languageVersion")
         }
 
-        if (enableJvmUnsafeIncrementalCompilationForMultiplatform != null) {
-            arguments.add("-Pkotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform=$enableJvmUnsafeIncrementalCompilationForMultiplatform")
+        if (enableJvmIncrementalCompilationOfCommonSources != null) {
+            arguments.add("-Pkotlin.jvm.enableIncrementalCompilationOfCommonSources=$enableJvmIncrementalCompilationOfCommonSources")
         }
 
         if (enableJsUnsafeIncrementalCompilationForMultiplatform != null) {

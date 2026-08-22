@@ -280,7 +280,7 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         executionPolicy: KotlinCompilerExecutionStrategy,
         // both are null for anything that is not a multiplatform Kotlin/JVM compilation
         kmpJvmClasspathMetadataEnabled: Boolean?,
-        kmpJvmUnsafeOptimizationsEnabled: Boolean?,
+        kmpJvmIncrementalCompilationOfCommonSourcesEnabled: Boolean?,
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -303,8 +303,8 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         kmpJvmClasspathMetadataEnabled?.also {
             metricsContainer.report(BooleanMetrics.KMP_JVM_CLASSPATH_METADATA_ENABLED, it)
         }
-        kmpJvmUnsafeOptimizationsEnabled?.also {
-            metricsContainer.report(BooleanMetrics.KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED, it)
+        kmpJvmIncrementalCompilationOfCommonSourcesEnabled?.also {
+            metricsContainer.report(BooleanMetrics.KMP_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES_ENABLED, it)
         }
         metricsContainer.report(StringListMetrics.KOTLIN_COMPILER_EXECUTION_POLICY, executionPolicy.propertyValue)
     }
