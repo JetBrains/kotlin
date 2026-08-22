@@ -159,7 +159,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun String.asEscapedIdentifier(): String {
-        return JsToStringGenerationVisitor.javaScriptString(this, true).toString()
+        return JsToStringGenerationVisitor.javaScriptString(this, true)
     }
 
     private val ExportedMember.propertyMemberName: String
