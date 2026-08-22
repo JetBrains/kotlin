@@ -6,6 +6,7 @@
 // because the latter doesn't yet handle annotation toString implementations properly.
 // Disable test grouping as a workaround:
 // NATIVE_STANDALONE
+// WASM_STANDALONE
 
 package test
 

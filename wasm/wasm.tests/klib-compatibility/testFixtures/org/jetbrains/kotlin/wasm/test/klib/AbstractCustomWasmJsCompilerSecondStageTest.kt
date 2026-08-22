@@ -101,7 +101,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS))
         }
         nonGroupingStage {
-            useGroupingTestIsolators(::WasmGroupingTestIsolator)
+            useGroupingTestIsolators({ WasmGroupingTestIsolator(it, considerCustomSecondStageDirectives = true) })
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
 

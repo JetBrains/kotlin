@@ -67,7 +67,16 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
         fun computePackage(testInfo: KotlinTestInfo): String {
             (val className, val methodName) = testInfo
-            val classPart = className.substringAfter("$")
+            // `className` is the fully qualified *generated* JUnit test class name (e.g.
+            // `org.jetbrains.kotlin.wasm.test.WasmJsCodegenBoxTestGenerated$Box$Annotations`), so dropping only the
+            // package prefix (`substringAfterLast(".")`) and keeping every `$`-separated segment from the top-level
+            // generated class onward is what makes the computed package unique across *all* generated test classes,
+            // not just within one of them. Stripping the top-level class name too (e.g. via `substringAfter("$")`)
+            // would make two same-named nested test groups generated for different top-level classes - for example
+            // `WasmJsCodegenBoxTestGenerated$Box$Annotations` and `WasmWasiCodegenBoxTestGenerated$Box$Annotations` -
+            // collide on the exact same package, even though they are unrelated tests possibly targeting different
+            // platforms.
+            val classPart = className.substringAfterLast(".")
                 .split("$")
                 .map { it.decapitalizeSmart() }
                 .joinToString(".") {

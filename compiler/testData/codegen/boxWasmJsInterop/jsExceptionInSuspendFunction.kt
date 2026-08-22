@@ -2,6 +2,8 @@
 // WITH_COROUTINES
 // TARGET_BACKEND: WASM
 // ^^ For JS_IR and JS_IR_ES6, the test doesn't work since we don't expect that non Error could came to the catch block
+// WASM_STANDALONE
+// ^^^ Do not rename packages since stacktrace is checked for exact FQN of <main>
 
 import helpers.*
 import kotlin.coroutines.*
