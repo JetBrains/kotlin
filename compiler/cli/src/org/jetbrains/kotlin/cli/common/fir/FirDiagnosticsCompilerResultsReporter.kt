@@ -108,7 +108,7 @@ object FirDiagnosticsCompilerResultsReporter {
                             else -> {
                                 // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
                                 // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
-                                // on the the appropriate sorting above
+                                // on the appropriate sorting above
                                 offsetsToPositions?.let {
                                     val range = diagnostic.firstRange
                                     val start = offsetsToPositions[range.startOffset]!!
