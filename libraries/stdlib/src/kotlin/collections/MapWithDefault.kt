@@ -19,12 +19,10 @@ package kotlin.collections
 @PublishedApi
 internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     @OptIn(ExperimentalStdlibApi::class)
-    return getOrElseIfMissing(key, {
-        if (this is MapWithDefault)
-            return this.computeDefault(key)
-        else
-            throw NoSuchElementException("Key $key is missing in the map.")
-    })
+    return getOrElseIfMissing(key) {
+        if (this is MapWithDefault) return computeDefault(key)
+        throw NoSuchElementException("Key $key is missing in the map.")
+    }
 }
 
 /**
