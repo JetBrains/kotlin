@@ -109,7 +109,7 @@ internal class BtaApiOptionsGenerator(
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
                 @Suppress("UNCHECKED_CAST")
                 enumConstants as List<WithStringRepresentation>
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level)
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level, type.toBtaEnumClassName())
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -180,7 +180,7 @@ internal class BtaApiOptionsGenerator(
             if (enumsExperimental.getOrDefault(type, false)) {
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
-            writeEnumFile(typeSpecBuilder.build(), type)
+            outputs += writeEnumFile(typeSpecBuilder.build(), type, targetPackage)
         }
     }
 
@@ -205,41 +205,6 @@ internal class BtaApiOptionsGenerator(
             addKdoc("\n\nDeprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}.")
             annotation(ClassName(API_PACKAGE, "DeprecatedCompilerArgument")) {}
         }
-    }
-
-    fun <T> generateEnumTypeBuilder(
-        sourceEnum: Collection<T>,
-        level: KotlinCompilerArgumentsLevel,
-    ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
-        val className = sourceEnum.first()::class.toBtaEnumClassName()
-        return TypeSpec.enumBuilder(className).apply {
-            property<String>("stringValue") {
-                initializer("stringValue")
-            }
-            if (btaEnumVersionMap.contains(className)) {
-                addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
-            } else {
-                addKdoc(levelsSince[level.name] ?: error("Level ${level.name} is missing in levelSince map"))
-            }
-            primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
-            val nameAccessor = WithStringRepresentation::stringRepresentation
-            sourceEnum.forEach {
-                addEnumConstant(
-                    it.name.uppercase(),
-                    TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%S", nameAccessor.get(it)).build()
-                )
-            }
-        }
-    }
-
-    fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>) {
-        val className = sourceEnum.toBtaEnumClassName()
-        val enumFileAppendable = createGeneratedFileAppendable()
-        val enumFile = FileSpec.builder(className).apply {
-            addType(typeSpec)
-        }.build()
-        enumFile.writeTo(enumFileAppendable)
-        outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, level: KotlinCompilerArgumentsLevel, deprecateSet: Boolean = false) {
@@ -375,4 +340,39 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
         returns(listTypeNameOf<String>())
         this.addModifiers(KModifier.ABSTRACT)
     }
+}
+
+fun <T> generateEnumTypeBuilder(
+    sourceEnum: Collection<T>,
+    level: KotlinCompilerArgumentsLevel,
+    className: ClassName
+): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
+    return TypeSpec.enumBuilder(className).apply {
+        property<String>("stringValue") {
+            initializer("stringValue")
+        }
+        if (btaEnumVersionMap.contains(className)) {
+            addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
+        } else {
+            addKdoc(levelsSince[level.name] ?: error("Level ${level.name} is missing in levelSince map"))
+        }
+        primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
+        val nameAccessor = WithStringRepresentation::stringRepresentation
+        sourceEnum.forEach {
+            addEnumConstant(
+                it.name.uppercase(),
+                TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%S", nameAccessor.get(it)).build()
+            )
+        }
+    }
+}
+
+fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>, targetPackage: String): Pair<Path, String> {
+    val className = sourceEnum.toBtaImplEnumClassName(targetPackage)
+    val enumFileAppendable = createGeneratedFileAppendable()
+    val enumFile = FileSpec.builder(className).apply {
+        addType(typeSpec)
+    }.build()
+    enumFile.writeTo(enumFileAppendable)
+    return Path(enumFile.relativePath) to enumFileAppendable.toString()
 }

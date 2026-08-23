@@ -20,6 +20,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
+import kotlin.reflect.full.allSuperclasses
 
 private const val ARGUMENT_PARSE_DIAGNOSTICS_CLASS = "ArgumentParseDiagnostics"
 
@@ -108,19 +109,20 @@ internal class BtaImplOptionsGenerator(
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
                 val constructorSpecBuilder = constructorSpecBuilder()
 
-                val mapProperty = generateOptionsMap()
-                generateOwnGetPutFunctions(argumentImplTypeName, mapProperty, level)
+                generateOptionsMap()
+                generateOwnGetPutFunctions(argumentImplTypeName)
 
                 if (syntheticInterfaces.isEmpty()) {
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
-                    generateGetPutFunctions(argumentTypeName, mapProperty, level)
+                    generateGetPutFunctions(argumentTypeName, level)
                 } else {
                     syntheticInterfaces.forEach { syntheticInterface ->
                         val argumentTypeName =
                             ClassName(API_ARGUMENTS_PACKAGE, syntheticInterface.name, syntheticInterface.name.removeSuffix("s"))
-                        generateGetPutFunctions(argumentTypeName, mapProperty, level)
+                        generateGetPutFunctions(argumentTypeName, level)
                     }
                 }
+                val mapEnumsFun = generateMapEnumsFunBuilder()
 
                 addType(TypeSpec.companionObjectBuilder().apply {
                     property(
@@ -137,8 +139,12 @@ internal class BtaImplOptionsGenerator(
                         applyCompilerArgumentsFun = applyCompilerArgumentsFun,
                         toCompilerConverterFun = toCompilerConverterFun,
                         toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
+                        mapEnumsFun = mapEnumsFun,
+                        level = level
                     )
                 }.build())
+
+                addFunction(mapEnumsFun.build())
 
                 // Initialize default values for custom arguments
                 defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
@@ -210,6 +216,15 @@ internal class BtaImplOptionsGenerator(
         return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
     }
 
+    private fun generateMapEnumsFunBuilder(): FunSpec.Builder {
+        return FunSpec.builder("mapEnums").apply {
+            receiver(Any::class.asClassName().copy(nullable = true))
+            returns(Any::class.asClassName().copy(nullable = true))
+            addParameter("directionToInternal", Boolean::class)
+            modifiers.add(KModifier.PRIVATE)
+        }
+    }
+
     private fun constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
         if (!generateCompatLayer) {
             addParameter(
@@ -245,7 +260,26 @@ internal class BtaImplOptionsGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         toCompilerConverterFun: FunSpec.Builder,
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
+        mapEnumsFun: FunSpec.Builder,
+        level: KotlinCompilerArgumentsLevel,
     ) {
+        val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
+
+        /**
+         * Marks enum to be generated and returns its name
+         */
+        fun generatedEnumType(type: KClass<*>): ClassName {
+            require(WithStringRepresentation::class in type.allSuperclasses) {
+                "Compiler enum ${type.qualifiedName} must implement ${WithStringRepresentation::class.qualifiedName} to be used with BTA."
+            }
+            val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
+            @Suppress("UNCHECKED_CAST")
+            enumConstants as List<WithStringRepresentation>
+            enumsToGenerate[type] =
+                generateEnumTypeBuilder(enumConstants, level, type.toBtaImplEnumClassName(targetPackage))
+            return type.toBtaImplEnumClassName(targetPackage)
+        }
+
         arguments.forEach { argument ->
             val name = argument.extractName()
             if (skipXX && name.startsWith("XX_")) return@forEach
@@ -273,11 +307,12 @@ internal class BtaImplOptionsGenerator(
                     val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                     when {
                         classifier.java.isEnum -> {
-                            val classifier = type.classifier as KClass<*>
-                            classifier.toBtaEnumClassName()
+//                            val classifier = type.classifier as KClass<*>
+//                            classifier.toBtaEnumClassName()
+                            generatedEnumType(classifier)
                         }
                         classifier == List::class && (type.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
-                            listTypeNameOf((type.arguments.first().type?.classifier as KClass<*>).toBtaEnumClassName())
+                            listTypeNameOf(generatedEnumType(type.arguments.first().type?.classifier as KClass<*>))
                         }
                         else -> {
                             type.asTypeName()
@@ -321,6 +356,23 @@ internal class BtaImplOptionsGenerator(
                 }
             }
         }
+
+        mapEnumsFun.beginControlFlow("return when (this)")
+        enumsToGenerate.forEach { [type, typeSpecBuilder] ->
+            outputs += writeEnumFile(typeSpecBuilder.build(), type, targetPackage)
+            mapEnumsFun.addStatement(
+                "is %T if directionToInternal -> %T.entries.first { it.name == this.name }",
+                type.toBtaEnumClassName(),
+                type.toBtaImplEnumClassName(targetPackage),
+            )
+            mapEnumsFun.addStatement(
+                "is %T if !directionToInternal-> %T.entries.first { it.name == this.name }",
+                type.toBtaImplEnumClassName(targetPackage),
+                type.toBtaEnumClassName(),
+            )
+        }
+        mapEnumsFun.addStatement("else -> this")
+        mapEnumsFun.endControlFlow()
     }
 
     private fun generateCustomRepresentation(
@@ -656,8 +708,6 @@ internal class BtaImplOptionsGenerator(
 
     fun TypeSpec.Builder.generateOwnGetPutFunctions(
         implParameter: ClassName,
-        mapProperty: PropertySpec,
-        level: KotlinCompilerArgumentsLevel,
     ) {
         function("get") {
             val typeParameter = TypeVariableName("V")
@@ -668,15 +718,15 @@ internal class BtaImplOptionsGenerator(
             addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
-            addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
+            addStatement("return optionsMap[key.id] as %T", typeParameter)
         }
         function("set") {
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
-            addStatement("%N[key.id] = %N", mapProperty, "value")
+            addStatement("optionsMap[key.id] = %N", "value")
         }
 
         function("contains") {
@@ -685,9 +735,22 @@ internal class BtaImplOptionsGenerator(
             addParameter("key", implParameter.parameterizedBy(STAR))
             addStatement("return key.id in optionsMap")
         }
+
+        function("get") {
+            returns(Any::class.asClassName().copy(nullable = true))
+            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+            addParameter("key", String::class)
+            addStatement("return optionsMap[key]?.mapEnums(false)")
+        }
+        function("set") {
+            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+            addParameter("key", String::class)
+            addParameter("value", Any::class.asClassName().copy(nullable = true))
+            addStatement("optionsMap[key] = %N?.mapEnums(true)", "value")
+        }
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, mapProperty: PropertySpec, level: KotlinCompilerArgumentsLevel) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, level: KotlinCompilerArgumentsLevel) {
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
@@ -701,7 +764,7 @@ internal class BtaImplOptionsGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addStatement($$"check(key.id in optionsMap) { \"Argument ${key.id} is not set and has no default value\" }")
-            addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
+            addStatement("return this[key.id] as %T", typeParameter)
         }
         function("set") {
             if (targetPackage == IMPL_ARGUMENTS_PACKAGE) {
@@ -741,7 +804,7 @@ internal class BtaImplOptionsGenerator(
                     .endControlFlow()
                     .build()
             )
-            addStatement("%N[key.id] = %N", mapProperty, "value")
+            addStatement("this[key.id] = %N", "value")
         }
 
         if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
@@ -914,15 +977,17 @@ internal class BtaImplOptionsGenerator(
             addStatement("return arguments")
         }
     }
+
+    private val TypeName.isGeneratedEnum: Boolean get() = (this as? ClassName)?.packageName?.startsWith("$targetPackage.enums") ?: false
+    private fun TypeName.isGeneratedEnumList(): Boolean {
+        @OptIn(ExperimentalContracts::class)
+        contract {
+            returns(true) implies (this@isGeneratedEnumList is ParameterizedTypeName)
+        }
+        return this is ParameterizedTypeName && this.rawType == List::class.asTypeName() && this.typeArguments[0].isGeneratedEnum
+    }
 }
 
-private fun TypeName.isGeneratedEnumList(): Boolean {
-    @OptIn(ExperimentalContracts::class)
-    contract {
-        returns(true) implies (this@isGeneratedEnumList is ParameterizedTypeName)
-    }
-    return this is ParameterizedTypeName && this.rawType == List::class.asTypeName() && this.typeArguments[0].isGeneratedEnum
-}
 
 internal fun FunSpec.Builder.addSafeSetStatement(
     wasIntroducedRecently: Boolean,

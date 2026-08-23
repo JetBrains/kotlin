@@ -56,11 +56,15 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsMainCallMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapEmbedSources
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapNamesPolicy
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode as InternalArgumentsEnumsJsIrDiagnosticMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsMainCallMode as InternalArgumentsEnumsJsMainCallMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapEmbedSources as InternalArgumentsEnumsSourceMapEmbedSources
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapNamesPolicy as InternalArgumentsEnumsSourceMapNamesPolicy
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode as ApiArgumentsEnumsJsIrDiagnosticMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsMainCallMode as ApiArgumentsEnumsJsMainCallMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapEmbedSources as ApiArgumentsEnumsSourceMapEmbedSources
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapNamesPolicy as ApiArgumentsEnumsSourceMapNamesPolicy
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -80,17 +84,23 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
   public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
 
+  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+
+  private operator fun `set`(key: String, `value`: Any?) {
+    optionsMap[key] = `value`?.mapEnums(true)
+  }
+
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return this[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -98,14 +108,14 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    this[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return this[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -113,14 +123,14 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    this[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return this[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -128,7 +138,19 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    this[key.id] = `value`
+  }
+
+  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
+    is ApiArgumentsEnumsJsIrDiagnosticMode if directionToInternal -> InternalArgumentsEnumsJsIrDiagnosticMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsJsIrDiagnosticMode if !directionToInternal-> ApiArgumentsEnumsJsIrDiagnosticMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsJsMainCallMode if directionToInternal -> InternalArgumentsEnumsJsMainCallMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsJsMainCallMode if !directionToInternal-> ApiArgumentsEnumsJsMainCallMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsSourceMapEmbedSources if directionToInternal -> InternalArgumentsEnumsSourceMapEmbedSources.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsSourceMapEmbedSources if !directionToInternal-> ApiArgumentsEnumsSourceMapEmbedSources.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsSourceMapNamesPolicy if directionToInternal -> InternalArgumentsEnumsSourceMapNamesPolicy.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsSourceMapNamesPolicy if !directionToInternal-> ApiArgumentsEnumsSourceMapNamesPolicy.entries.first { it.name == this.name }
+    else -> this
   }
 
   abstract override fun build(): CommonJsAndWasmArgumentsImpl
@@ -178,7 +200,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[X_INCLUDE] = arguments.includes?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE] = arguments.irDce } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { InternalArgumentsEnumsJsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_MODULE_NAME] = arguments.irModuleName } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_MODULE_OUTPUT_NAME] = arguments.irPerModuleOutputName } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PRODUCE_JS] = arguments.irProduceJs } catch (_: NoSuchMethodError) {  }
@@ -189,12 +211,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[IR_OUTPUT_DIR] = arguments.outputDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[IR_OUTPUT_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[LIBRARIES] = arguments.libraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[MAIN] = arguments.main?.let { JsMainCallMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[MAIN] = arguments.main?.let { InternalArgumentsEnumsJsMainCallMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[NOPACK] = arguments.nopack } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP] = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { InternalArgumentsEnumsSourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { InternalArgumentsEnumsSourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_PREFIX] = arguments.sourceMapPrefix } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
@@ -259,7 +281,8 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     public val X_IR_DCE_PRINT_REACHABILITY_INFO: CommonJsAndWasmArgument<Boolean> =
         CommonJsAndWasmArgument("X_IR_DCE_PRINT_REACHABILITY_INFO")
 
-    public val X_IR_DCE_RUNTIME_DIAGNOSTIC: CommonJsAndWasmArgument<JsIrDiagnosticMode?> =
+    public val X_IR_DCE_RUNTIME_DIAGNOSTIC:
+        CommonJsAndWasmArgument<InternalArgumentsEnumsJsIrDiagnosticMode?> =
         CommonJsAndWasmArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC")
 
     public val X_IR_MODULE_NAME: CommonJsAndWasmArgument<String?> =
@@ -292,7 +315,8 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     public val LIBRARIES: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
         CommonJsAndWasmArgument("LIBRARIES")
 
-    public val MAIN: CommonJsAndWasmArgument<JsMainCallMode?> = CommonJsAndWasmArgument("MAIN")
+    public val MAIN: CommonJsAndWasmArgument<InternalArgumentsEnumsJsMainCallMode?> =
+        CommonJsAndWasmArgument("MAIN")
 
     public val NOPACK: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("NOPACK")
 
@@ -301,10 +325,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
         CommonJsAndWasmArgument("SOURCE_MAP_BASE_DIRS")
 
-    public val SOURCE_MAP_EMBED_SOURCES: CommonJsAndWasmArgument<SourceMapEmbedSources?> =
+    public val SOURCE_MAP_EMBED_SOURCES:
+        CommonJsAndWasmArgument<InternalArgumentsEnumsSourceMapEmbedSources?> =
         CommonJsAndWasmArgument("SOURCE_MAP_EMBED_SOURCES")
 
-    public val SOURCE_MAP_NAMES_POLICY: CommonJsAndWasmArgument<SourceMapNamesPolicy?> =
+    public val SOURCE_MAP_NAMES_POLICY:
+        CommonJsAndWasmArgument<InternalArgumentsEnumsSourceMapNamesPolicy?> =
         CommonJsAndWasmArgument("SOURCE_MAP_NAMES_POLICY")
 
     public val SOURCE_MAP_PREFIX: CommonJsAndWasmArgument<String?> =

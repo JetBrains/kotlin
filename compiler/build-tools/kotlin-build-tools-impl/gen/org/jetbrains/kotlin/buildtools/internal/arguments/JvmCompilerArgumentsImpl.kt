@@ -120,22 +120,34 @@ import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ValhallaSupportMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AbiStabilityMode as InternalArgumentsEnumsAbiStabilityMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AssertionsMode as InternalArgumentsEnumsAssertionsMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.CompatqualAnnotationsMode as InternalArgumentsEnumsCompatqualAnnotationsMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JdkRelease as InternalArgumentsEnumsJdkRelease
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JspecifyAnnotationsMode as InternalArgumentsEnumsJspecifyAnnotationsMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JvmDefaultMode as InternalArgumentsEnumsJvmDefaultMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JvmTarget as InternalArgumentsEnumsJvmTarget
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.LambdasMode as InternalArgumentsEnumsLambdasMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversionsMode as InternalArgumentsEnumsSamConversionsMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode as InternalArgumentsEnumsStringConcatMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ValhallaSupportMode as InternalArgumentsEnumsValhallaSupportMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode as InternalArgumentsEnumsWhenExpressionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode as ApiArgumentsEnumsAbiStabilityMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode as ApiArgumentsEnumsAssertionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode as ApiArgumentsEnumsCompatqualAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease as ApiArgumentsEnumsJdkRelease
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode as ApiArgumentsEnumsJspecifyAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode as ApiArgumentsEnumsJvmDefaultMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget as ApiArgumentsEnumsJvmTarget
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode as ApiArgumentsEnumsLambdasMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode as ApiArgumentsEnumsSamConversionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode as ApiArgumentsEnumsStringConcatMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.ValhallaSupportMode as ApiArgumentsEnumsValhallaSupportMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode as ApiArgumentsEnumsWhenExpressionsMode
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -155,17 +167,23 @@ internal class JvmCompilerArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
+  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+
+  private operator fun `set`(key: String, `value`: Any?) {
+    optionsMap[key] = `value`?.mapEnums(true)
+  }
+
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return this[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -173,7 +191,7 @@ internal class JvmCompilerArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    this[key.id] = `value`
   }
 
   @Deprecated(
@@ -181,6 +199,34 @@ internal class JvmCompilerArgumentsImpl(
     level = DeprecationLevel.ERROR,
   )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
+
+  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
+    is ApiArgumentsEnumsAbiStabilityMode if directionToInternal -> InternalArgumentsEnumsAbiStabilityMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsAbiStabilityMode if !directionToInternal-> ApiArgumentsEnumsAbiStabilityMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsAssertionsMode if directionToInternal -> InternalArgumentsEnumsAssertionsMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsAssertionsMode if !directionToInternal-> ApiArgumentsEnumsAssertionsMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsJdkRelease if directionToInternal -> InternalArgumentsEnumsJdkRelease.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsJdkRelease if !directionToInternal-> ApiArgumentsEnumsJdkRelease.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsJspecifyAnnotationsMode if directionToInternal -> InternalArgumentsEnumsJspecifyAnnotationsMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsJspecifyAnnotationsMode if !directionToInternal-> ApiArgumentsEnumsJspecifyAnnotationsMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsLambdasMode if directionToInternal -> InternalArgumentsEnumsLambdasMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsLambdasMode if !directionToInternal-> ApiArgumentsEnumsLambdasMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsSamConversionsMode if directionToInternal -> InternalArgumentsEnumsSamConversionsMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsSamConversionsMode if !directionToInternal-> ApiArgumentsEnumsSamConversionsMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsStringConcatMode if directionToInternal -> InternalArgumentsEnumsStringConcatMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsStringConcatMode if !directionToInternal-> ApiArgumentsEnumsStringConcatMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsCompatqualAnnotationsMode if directionToInternal -> InternalArgumentsEnumsCompatqualAnnotationsMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsCompatqualAnnotationsMode if !directionToInternal-> ApiArgumentsEnumsCompatqualAnnotationsMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsValhallaSupportMode if directionToInternal -> InternalArgumentsEnumsValhallaSupportMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsValhallaSupportMode if !directionToInternal-> ApiArgumentsEnumsValhallaSupportMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsWhenExpressionsMode if directionToInternal -> InternalArgumentsEnumsWhenExpressionsMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsWhenExpressionsMode if !directionToInternal-> ApiArgumentsEnumsWhenExpressionsMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsJvmDefaultMode if directionToInternal -> InternalArgumentsEnumsJvmDefaultMode.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsJvmDefaultMode if !directionToInternal-> ApiArgumentsEnumsJvmDefaultMode.entries.first { it.name == this.name }
+    is ApiArgumentsEnumsJvmTarget if directionToInternal -> InternalArgumentsEnumsJvmTarget.entries.first { it.name == this.name }
+    is InternalArgumentsEnumsJvmTarget if !directionToInternal-> ApiArgumentsEnumsJvmTarget.entries.first { it.name == this.name }
+    else -> this
+  }
 
   override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
@@ -284,12 +330,12 @@ internal class JvmCompilerArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: K2JVMCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_ABI_STABILITY] = arguments.abiStability?.let { AbiStabilityMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::abiStability, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_ABI_STABILITY] = arguments.abiStability?.let { InternalArgumentsEnumsAbiStabilityMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::abiStability, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_ADD_MODULES] = arguments.additionalJavaModules.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_NO_SOURCE_FILES] = arguments.allowNoSourceFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_UNSTABLE_DEPENDENCIES] = arguments.allowUnstableDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATIONS_IN_METADATA] = arguments.annotationsInMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_ASSERTIONS] = arguments.assertionsMode?.let { AssertionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::assertionsMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_ASSERTIONS] = arguments.assertionsMode?.let { InternalArgumentsEnumsAssertionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::assertionsMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_BUILD_FILE] = arguments.buildFile } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILE_BUILTINS_AS_PART_OF_STDLIB] = arguments.getUsingReflection<Boolean>("expectBuiltinsAsPartOfStdlib") } catch (_: NoSuchMethodError) {  }
@@ -310,13 +356,13 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_JAVA_PACKAGE_PREFIX] = arguments.javaPackagePrefix } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_SOURCE_ROOTS] = arguments.javaSourceRoots.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVAC_ARGUMENTS] = arguments.getUsingReflection<Array<String>>("javacArguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_JDK_RELEASE] = arguments.jdkRelease?.let { JdkRelease.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jdkRelease, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_JSPECIFY_ANNOTATIONS] = arguments.jspecifyAnnotations?.let { JspecifyAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jspecifyAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_JDK_RELEASE] = arguments.jdkRelease?.let { InternalArgumentsEnumsJdkRelease.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jdkRelease, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_JSPECIFY_ANNOTATIONS] = arguments.jspecifyAnnotations?.let { InternalArgumentsEnumsJspecifyAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jspecifyAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_DEFAULT] = arguments.jvmDefault } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_ENABLE_PREVIEW] = arguments.enableJvmPreview } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_EXPOSE_BOXED] = arguments.jvmExposeBoxed } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB] = arguments.getUsingReflection<String?>("klibLibraries")?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_LAMBDAS] = arguments.lambdas?.let { LambdasMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::lambdas, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_LAMBDAS] = arguments.lambdas?.let { InternalArgumentsEnumsLambdasMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::lambdas, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_LINK_VIA_SIGNATURES] = arguments.getUsingReflection<Boolean>("linkViaSignatures") } catch (_: NoSuchMethodError) {  }
     try { this[X_MODULE_PATH] = arguments.javaModulePath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTIFILE_PARTS_INHERIT] = arguments.inheritMultifileParts } catch (_: NoSuchMethodError) {  }
@@ -329,12 +375,12 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_NO_SOURCE_DEBUG_EXTENSION] = arguments.noSourceDebugExtension } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_SAM_CONVERSIONS] = arguments.samConversions?.let { SamConversionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::samConversions, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_SAM_CONVERSIONS] = arguments.samConversions?.let { InternalArgumentsEnumsSamConversionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::samConversions, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SANITIZE_PARENTHESES] = arguments.sanitizeParentheses } catch (_: NoSuchMethodError) {  }
     try { this[X_SCRIPT_RESOLVER_ENVIRONMENT] = arguments.scriptResolverEnvironment.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_SERIALIZE_IR] = arguments.getUsingReflection<String>("serializeIr") } catch (_: NoSuchMethodError) {  }
-    try { this[X_STRING_CONCAT] = arguments.stringConcat?.let { StringConcatMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::stringConcat, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations?.let { CompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::supportCompatqualCheckerFrameworkAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_STRING_CONCAT] = arguments.stringConcat?.let { InternalArgumentsEnumsStringConcatMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::stringConcat, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations?.let { InternalArgumentsEnumsCompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::supportCompatqualCheckerFrameworkAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING] = arguments.getUsingReflection<Boolean>("suppressDeprecatedJvmTargetWarning") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_MISSING_BUILTINS_ERROR] = arguments.suppressMissingBuiltinsError } catch (_: NoSuchMethodError) {  }
     try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
@@ -346,18 +392,18 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_USE_METADATA_ON_INCREMENTAL_CLASSPATH] = arguments.useMetadataOnIncrementalClasspath } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_OLD_CLASS_FILES_READING] = arguments.useOldClassFilesReading } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_TYPE_TABLE] = arguments.useTypeTable } catch (_: NoSuchMethodError) {  }
-    try { this[X_VALHALLA_SUPPORT] = arguments.valhallaSupport?.let { ValhallaSupportMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::valhallaSupport, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xvalhalla-support value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_VALHALLA_SUPPORT] = arguments.valhallaSupport?.let { InternalArgumentsEnumsValhallaSupportMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::valhallaSupport, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xvalhalla-support value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_VALIDATE_BYTECODE] = arguments.validateBytecode } catch (_: NoSuchMethodError) {  }
     try { this[X_VALUE_CLASSES] = arguments.getUsingReflection<Boolean>("valueClasses") } catch (_: NoSuchMethodError) {  }
-    try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration?.let { WhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::whenExpressionsGeneration, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration?.let { InternalArgumentsEnumsWhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::whenExpressionsGeneration, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
     try { this[INCLUDE_RUNTIME] = arguments.includeRuntime } catch (_: NoSuchMethodError) {  }
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
     try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[JVM_DEFAULT] = arguments.jvmDefaultStable?.let { JvmDefaultMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jvmDefaultStable, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jvmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[JVM_DEFAULT] = arguments.jvmDefaultStable?.let { InternalArgumentsEnumsJvmDefaultMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jvmDefaultStable, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[JVM_TARGET] = arguments.jvmTarget?.let { InternalArgumentsEnumsJvmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jvmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[NO_JDK] = arguments.noJdk } catch (_: NoSuchMethodError) {  }
     try { this[NO_REFLECT] = arguments.noReflect } catch (_: NoSuchMethodError) {  }
@@ -498,7 +544,7 @@ internal class JvmCompilerArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
+    public val X_ABI_STABILITY: JvmCompilerArgument<InternalArgumentsEnumsAbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY")
 
     public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
@@ -513,7 +559,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_ANNOTATIONS_IN_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_ANNOTATIONS_IN_METADATA")
 
-    public val X_ASSERTIONS: JvmCompilerArgument<AssertionsMode?> =
+    public val X_ASSERTIONS: JvmCompilerArgument<InternalArgumentsEnumsAssertionsMode?> =
         JvmCompilerArgument("X_ASSERTIONS")
 
     public val X_BACKEND_THREADS: JvmCompilerArgument<Int> =
@@ -571,10 +617,11 @@ internal class JvmCompilerArgumentsImpl(
     public val X_JAVAC_ARGUMENTS: JvmCompilerArgument<Array<String>?> =
         JvmCompilerArgument("X_JAVAC_ARGUMENTS")
 
-    public val X_JDK_RELEASE: JvmCompilerArgument<JdkRelease?> =
+    public val X_JDK_RELEASE: JvmCompilerArgument<InternalArgumentsEnumsJdkRelease?> =
         JvmCompilerArgument("X_JDK_RELEASE")
 
-    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<JspecifyAnnotationsMode?> =
+    public val X_JSPECIFY_ANNOTATIONS:
+        JvmCompilerArgument<InternalArgumentsEnumsJspecifyAnnotationsMode?> =
         JvmCompilerArgument("X_JSPECIFY_ANNOTATIONS")
 
     public val X_JVM_DEFAULT: JvmCompilerArgument<String?> = JvmCompilerArgument("X_JVM_DEFAULT")
@@ -588,7 +635,8 @@ internal class JvmCompilerArgumentsImpl(
     public val X_KLIB: JvmCompilerArgument<List<java.nio.`file`.Path>?> =
         JvmCompilerArgument("X_KLIB")
 
-    public val X_LAMBDAS: JvmCompilerArgument<LambdasMode?> = JvmCompilerArgument("X_LAMBDAS")
+    public val X_LAMBDAS: JvmCompilerArgument<InternalArgumentsEnumsLambdasMode?> =
+        JvmCompilerArgument("X_LAMBDAS")
 
     public val X_LINK_VIA_SIGNATURES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_LINK_VIA_SIGNATURES")
@@ -625,7 +673,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_OUTPUT_BUILTINS_METADATA")
 
-    public val X_SAM_CONVERSIONS: JvmCompilerArgument<SamConversionsMode?> =
+    public val X_SAM_CONVERSIONS: JvmCompilerArgument<InternalArgumentsEnumsSamConversionsMode?> =
         JvmCompilerArgument("X_SAM_CONVERSIONS")
 
     public val X_SANITIZE_PARENTHESES: JvmCompilerArgument<Boolean> =
@@ -636,11 +684,11 @@ internal class JvmCompilerArgumentsImpl(
 
     public val X_SERIALIZE_IR: JvmCompilerArgument<String> = JvmCompilerArgument("X_SERIALIZE_IR")
 
-    public val X_STRING_CONCAT: JvmCompilerArgument<StringConcatMode?> =
+    public val X_STRING_CONCAT: JvmCompilerArgument<InternalArgumentsEnumsStringConcatMode?> =
         JvmCompilerArgument("X_STRING_CONCAT")
 
     public val X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS:
-        JvmCompilerArgument<CompatqualAnnotationsMode?> =
+        JvmCompilerArgument<InternalArgumentsEnumsCompatqualAnnotationsMode?> =
         JvmCompilerArgument("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS")
 
     public val X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING: JvmCompilerArgument<Boolean> =
@@ -674,7 +722,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_USE_TYPE_TABLE: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_TYPE_TABLE")
 
-    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<ValhallaSupportMode?> =
+    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<InternalArgumentsEnumsValhallaSupportMode?> =
         JvmCompilerArgument("X_VALHALLA_SUPPORT")
 
     public val X_VALIDATE_BYTECODE: JvmCompilerArgument<Boolean> =
@@ -683,7 +731,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES")
 
-    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<WhenExpressionsMode?> =
+    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<InternalArgumentsEnumsWhenExpressionsMode?> =
         JvmCompilerArgument("X_WHEN_EXPRESSIONS")
 
     public val CLASSPATH: JvmCompilerArgument<List<java.nio.`file`.Path>?> =
@@ -702,10 +750,11 @@ internal class JvmCompilerArgumentsImpl(
     public val JDK_HOME: JvmCompilerArgument<java.nio.`file`.Path?> =
         JvmCompilerArgument("JDK_HOME")
 
-    public val JVM_DEFAULT: JvmCompilerArgument<JvmDefaultMode?> =
+    public val JVM_DEFAULT: JvmCompilerArgument<InternalArgumentsEnumsJvmDefaultMode?> =
         JvmCompilerArgument("JVM_DEFAULT")
 
-    public val JVM_TARGET: JvmCompilerArgument<JvmTarget?> = JvmCompilerArgument("JVM_TARGET")
+    public val JVM_TARGET: JvmCompilerArgument<InternalArgumentsEnumsJvmTarget?> =
+        JvmCompilerArgument("JVM_TARGET")
 
     public val MODULE_NAME: JvmCompilerArgument<String?> = JvmCompilerArgument("MODULE_NAME")
 

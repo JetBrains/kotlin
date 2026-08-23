@@ -104,8 +104,7 @@ internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().rep
 }
 
 internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)
-
-internal val TypeName.isGeneratedEnum: Boolean get() = (this as? ClassName)?.packageName?.startsWith(API_ENUMS_PACKAGE) ?: false
+internal fun KClass<*>.toBtaImplEnumClassName(targetPackage: String): ClassName = ClassName("$targetPackage.enums", simpleName!!)
 
 internal fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     .appendLine("the README.md file").appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX).appendLine()

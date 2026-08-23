@@ -99,12 +99,13 @@ internal class JsDtsGenerationOperationImpl private constructor(
         this[USE_UNKNOWN_INSTEAD_ANY] =
             linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
 
-        this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
-            ?: JsModuleKind.ES.takeIf {
-                val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
-                target != null && target >= JsEcmaVersion.ES2015
-            }
-            ?: JsModuleKind.UMD
+        this[MODULE_KIND] =
+            linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]?.let { from -> JsModuleKind.entries.first { it.name == from.name } }
+                ?: JsModuleKind.ES.takeIf {
+                    val target =
+                        linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]?.let { from -> JsEcmaVersion.entries.first { it.name == from.name } }
+                    target != null && target >= JsEcmaVersion.ES2015
+                } ?: JsModuleKind.UMD
 
         this[GRANULARITY] = when {
             linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_FILE] -> JsDtsGranularity.PER_FILE
@@ -155,7 +156,8 @@ internal class JsDtsGenerationOperationImpl private constructor(
                 } ?: JsModuleKind.UMD
         )
         val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT", defaultArgsReference.compileLongAsBigInt ?: false)
-        val IMPLEMENT_INTERFACES: Option<Boolean> = Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
+        val IMPLEMENT_INTERFACES: Option<Boolean> =
+            Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
         val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
         val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
         val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
