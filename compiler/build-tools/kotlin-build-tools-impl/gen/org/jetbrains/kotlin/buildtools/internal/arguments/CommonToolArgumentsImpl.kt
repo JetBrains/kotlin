@@ -64,17 +64,23 @@ internal abstract class CommonToolArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
   public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
 
+  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+
+  private operator fun `set`(key: String, `value`: Any?) {
+    optionsMap[key] = `value`?.mapEnums(true)
+  }
+
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return this[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -82,7 +88,7 @@ internal abstract class CommonToolArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    this[key.id] = `value`
   }
 
   @Deprecated(
@@ -90,6 +96,10 @@ internal abstract class CommonToolArgumentsImpl(
     level = DeprecationLevel.ERROR,
   )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
+
+  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
+    else -> this
+  }
 
   abstract override fun build(): CommonToolArgumentsImpl
 
