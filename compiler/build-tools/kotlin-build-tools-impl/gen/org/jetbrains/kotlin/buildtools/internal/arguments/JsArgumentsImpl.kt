@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Comp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_SUSPEND_LAMBDA_EXPORTING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -54,12 +57,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion as InternalArgumentsEnumsJsEcmaVersion
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode as InternalArgumentsEnumsJsIrDiagnosticMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind as InternalArgumentsEnumsJsModuleKind
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion as ApiArgumentsEnumsJsEcmaVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode as ApiArgumentsEnumsJsIrDiagnosticMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind as ApiArgumentsEnumsJsModuleKind
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -89,10 +86,10 @@ internal class JsArgumentsImpl(
 
   public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = JsArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = JsArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -138,16 +135,6 @@ internal class JsArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
-  }
-
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    is ApiArgumentsEnumsJsIrDiagnosticMode if directionToInternal -> InternalArgumentsEnumsJsIrDiagnosticMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsJsIrDiagnosticMode if !directionToInternal-> ApiArgumentsEnumsJsIrDiagnosticMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsJsModuleKind if directionToInternal -> InternalArgumentsEnumsJsModuleKind.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsJsModuleKind if !directionToInternal-> ApiArgumentsEnumsJsModuleKind.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsJsEcmaVersion if directionToInternal -> InternalArgumentsEnumsJsEcmaVersion.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsJsEcmaVersion if !directionToInternal-> ApiArgumentsEnumsJsEcmaVersion.entries.first { it.name == this.name }
-    else -> this
   }
 
   override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
@@ -211,13 +198,13 @@ internal class JsArgumentsImpl(
     try { this[X_IR_PER_FILE] = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_MODULE] = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_SAFE_EXTERNAL_BOOLEAN] = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic?.let { InternalArgumentsEnumsJsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_OPTIMIZE_GENERATED_JS] = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
     try { this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
     try { this[X_SUSPEND_LAMBDA_EXPORTING] = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
     try { this[X_TYPED_ARRAYS] = arguments.getUsingReflection<Boolean>("typedArrays") } catch (_: NoSuchMethodError) {  }
-    try { this[MODULE_KIND] = arguments.moduleKind?.let { InternalArgumentsEnumsJsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[TARGET] = arguments.target?.let { InternalArgumentsEnumsJsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[MODULE_KIND] = arguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[TARGET] = arguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -325,8 +312,7 @@ internal class JsArgumentsImpl(
     public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsArgument<Boolean> =
         JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN")
 
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC:
-        JsArgument<InternalArgumentsEnumsJsIrDiagnosticMode?> =
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsArgument<JsIrDiagnosticMode?> =
         JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
 
     public val X_OPTIMIZE_GENERATED_JS: JsArgument<Boolean> = JsArgument("X_OPTIMIZE_GENERATED_JS")
@@ -339,9 +325,8 @@ internal class JsArgumentsImpl(
 
     public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
 
-    public val MODULE_KIND: JsArgument<InternalArgumentsEnumsJsModuleKind?> =
-        JsArgument("MODULE_KIND")
+    public val MODULE_KIND: JsArgument<JsModuleKind?> = JsArgument("MODULE_KIND")
 
-    public val TARGET: JsArgument<InternalArgumentsEnumsJsEcmaVersion?> = JsArgument("TARGET")
+    public val TARGET: JsArgument<JsEcmaVersion?> = JsArgument("TARGET")
   }
 }

@@ -135,27 +135,20 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_VISIBILITY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_WHEN_GUARDS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AnnotationDefaultTargetMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ExplicitApiMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.HeaderMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.NameBasedDestructuringMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ReturnValueCheckerMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.VerifyIrMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AnnotationDefaultTargetMode as InternalArgumentsEnumsAnnotationDefaultTargetMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ExplicitApiMode as InternalArgumentsEnumsExplicitApiMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.HeaderMode as InternalArgumentsEnumsHeaderMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KotlinVersion as InternalArgumentsEnumsKotlinVersion
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.NameBasedDestructuringMode as InternalArgumentsEnumsNameBasedDestructuringMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ReturnValueCheckerMode as InternalArgumentsEnumsReturnValueCheckerMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.VerifyIrMode as InternalArgumentsEnumsVerifyIrMode
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode as ApiArgumentsEnumsAnnotationDefaultTargetMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode as ApiArgumentsEnumsExplicitApiMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode as ApiArgumentsEnumsHeaderMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion as ApiArgumentsEnumsKotlinVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode as ApiArgumentsEnumsNameBasedDestructuringMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode as ApiArgumentsEnumsReturnValueCheckerMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode as ApiArgumentsEnumsVerifyIrMode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
@@ -178,10 +171,10 @@ internal abstract class CommonCompilerArgumentsImpl(
 
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = CommonCompilerArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = CommonCompilerArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -204,24 +197,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     level = DeprecationLevel.ERROR,
   )
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
-
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    is ApiArgumentsEnumsExplicitApiMode if directionToInternal -> InternalArgumentsEnumsExplicitApiMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsExplicitApiMode if !directionToInternal-> ApiArgumentsEnumsExplicitApiMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsAnnotationDefaultTargetMode if directionToInternal -> InternalArgumentsEnumsAnnotationDefaultTargetMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsAnnotationDefaultTargetMode if !directionToInternal-> ApiArgumentsEnumsAnnotationDefaultTargetMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsHeaderMode if directionToInternal -> InternalArgumentsEnumsHeaderMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsHeaderMode if !directionToInternal-> ApiArgumentsEnumsHeaderMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsNameBasedDestructuringMode if directionToInternal -> InternalArgumentsEnumsNameBasedDestructuringMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsNameBasedDestructuringMode if !directionToInternal-> ApiArgumentsEnumsNameBasedDestructuringMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsReturnValueCheckerMode if directionToInternal -> InternalArgumentsEnumsReturnValueCheckerMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsReturnValueCheckerMode if !directionToInternal-> ApiArgumentsEnumsReturnValueCheckerMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsVerifyIrMode if directionToInternal -> InternalArgumentsEnumsVerifyIrMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsVerifyIrMode if !directionToInternal-> ApiArgumentsEnumsVerifyIrMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsKotlinVersion if directionToInternal -> InternalArgumentsEnumsKotlinVersion.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsKotlinVersion if !directionToInternal-> ApiArgumentsEnumsKotlinVersion.entries.first { it.name == this.name }
-    else -> this
-  }
 
   abstract override fun build(): CommonCompilerArgumentsImpl
 
@@ -352,7 +327,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[XX_LANGUAGE] = arguments.manuallyConfiguredFeatures } catch (_: NoSuchMethodError) {  }
     try { this[XX_DEBUG_LEVEL_COMPILER_CHECKS] = arguments.debugLevelCompilerChecks } catch (_: NoSuchMethodError) {  }
     try { this[XX_DUMP_MODEL] = arguments.dumpArgumentsDir } catch (_: NoSuchMethodError) {  }
-    try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { InternalArgumentsEnumsExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitReturnTypes, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitReturnTypes, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[XX_LENIENT_MODE] = arguments.lenientMode } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = arguments.allowConditionImpliesReturnsContracts } catch (_: NoSuchMethodError) {  }
@@ -361,7 +336,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_RETURNS_RESULT_OF] = arguments.allowReturnsResultOf } catch (_: NoSuchMethodError) {  }
-    try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { InternalArgumentsEnumsAnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
     try { this[X_CALLABLE_REFERENCES_TO_CONTEXTUAL] = arguments.callableReferencesToContextual } catch (_: NoSuchMethodError) {  }
     try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
@@ -392,7 +367,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_EQUALITY_BOUNDS] = arguments.equalityBounds } catch (_: NoSuchMethodError) {  }
     try { this[X_ESCAPING_FUNCTIONS] = arguments.escapingFunctions.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_API] = arguments.explicitApi.let { InternalArgumentsEnumsExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitApi, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitApi, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_BACKING_FIELDS] = arguments.explicitBackingFields } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments } catch (_: NoSuchMethodError) {  }
     try { this[X_FIR_AGGRESSIVE_PRUNING] = arguments.firAggressivePruning } catch (_: NoSuchMethodError) {  }
@@ -402,7 +377,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
-    try { this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { InternalArgumentsEnumsHeaderMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { HeaderMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors } catch (_: NoSuchMethodError) {  }
     try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
@@ -413,7 +388,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_METADATA_VERSION] = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTI_PLATFORM] = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
-    try { this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring?.let { InternalArgumentsEnumsNameBasedDestructuringMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::nameBasedDestructuring, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring?.let { NameBasedDestructuringMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::nameBasedDestructuring, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
     try { this[X_NEW_INFERENCE] = arguments.newInference } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_CHECK_ACTUAL] = arguments.noCheckActual } catch (_: NoSuchMethodError) {  }
@@ -433,7 +408,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { InternalArgumentsEnumsReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::returnValueChecker, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::returnValueChecker, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
@@ -446,13 +421,13 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
     try { this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR] = arguments.verifyIr?.let { InternalArgumentsEnumsVerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::verifyIr, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_VERIFY_IR] = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::verifyIr, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR_NESTED_OFFSETS] = arguments.getUsingReflection<Boolean>("verifyIrNestedOffsets") } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR_VISIBILITY] = arguments.getUsingReflection<Boolean>("verifyIrVisibility") } catch (_: NoSuchMethodError) {  }
     try { this[X_WHEN_GUARDS] = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
-    try { this[API_VERSION] = arguments.apiVersion?.let { InternalArgumentsEnumsKotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::apiVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::apiVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { InternalArgumentsEnumsKotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::languageVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::languageVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[OPT_IN] = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
@@ -592,8 +567,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val XX_DUMP_MODEL: CommonCompilerArgument<String?> =
         CommonCompilerArgument("XX_DUMP_MODEL")
 
-    public val XX_EXPLICIT_RETURN_TYPES:
-        CommonCompilerArgument<InternalArgumentsEnumsExplicitApiMode> =
+    public val XX_EXPLICIT_RETURN_TYPES: CommonCompilerArgument<ExplicitApiMode> =
         CommonCompilerArgument("XX_EXPLICIT_RETURN_TYPES")
 
     public val XX_LENIENT_MODE: CommonCompilerArgument<Boolean> =
@@ -620,8 +594,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_ALLOW_RETURNS_RESULT_OF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_RETURNS_RESULT_OF")
 
-    public val X_ANNOTATION_DEFAULT_TARGET:
-        CommonCompilerArgument<InternalArgumentsEnumsAnnotationDefaultTargetMode?> =
+    public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<AnnotationDefaultTargetMode?> =
         CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET")
 
     public val X_ANNOTATION_TARGET_ALL: CommonCompilerArgument<Boolean> =
@@ -714,7 +687,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_EXPECT_ACTUAL_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPECT_ACTUAL_CLASSES")
 
-    public val X_EXPLICIT_API: CommonCompilerArgument<InternalArgumentsEnumsExplicitApiMode> =
+    public val X_EXPLICIT_API: CommonCompilerArgument<ExplicitApiMode> =
         CommonCompilerArgument("X_EXPLICIT_API")
 
     public val X_EXPLICIT_BACKING_FIELDS: CommonCompilerArgument<Boolean> =
@@ -744,7 +717,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_HEADER_MODE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_HEADER_MODE")
 
-    public val X_HEADER_MODE_TYPE: CommonCompilerArgument<InternalArgumentsEnumsHeaderMode> =
+    public val X_HEADER_MODE_TYPE: CommonCompilerArgument<HeaderMode> =
         CommonCompilerArgument("X_HEADER_MODE_TYPE")
 
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
@@ -777,8 +750,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_MULTI_PLATFORM: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_MULTI_PLATFORM")
 
-    public val X_NAME_BASED_DESTRUCTURING:
-        CommonCompilerArgument<InternalArgumentsEnumsNameBasedDestructuringMode?> =
+    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<NameBasedDestructuringMode?> =
         CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING")
 
     public val X_NESTED_TYPE_ALIASES: CommonCompilerArgument<Boolean> =
@@ -835,8 +807,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_PERF")
 
-    public val X_RETURN_VALUE_CHECKER:
-        CommonCompilerArgument<InternalArgumentsEnumsReturnValueCheckerMode> =
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER")
 
     public val X_SEPARATE_KMP_COMPILATION: CommonCompilerArgument<Boolean> =
@@ -876,7 +847,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_VERBOSE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_VERBOSE_PHASES")
 
-    public val X_VERIFY_IR: CommonCompilerArgument<InternalArgumentsEnumsVerifyIrMode?> =
+    public val X_VERIFY_IR: CommonCompilerArgument<VerifyIrMode?> =
         CommonCompilerArgument("X_VERIFY_IR")
 
     public val X_VERIFY_IR_NESTED_OFFSETS: CommonCompilerArgument<Boolean> =
@@ -888,13 +859,13 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_WHEN_GUARDS")
 
-    public val API_VERSION: CommonCompilerArgument<InternalArgumentsEnumsKotlinVersion?> =
+    public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("API_VERSION")
 
     public val KOTLIN_HOME: CommonCompilerArgument<java.nio.`file`.Path?> =
         CommonCompilerArgument("KOTLIN_HOME")
 
-    public val LANGUAGE_VERSION: CommonCompilerArgument<InternalArgumentsEnumsKotlinVersion?> =
+    public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")
 
     public val OPT_IN: CommonCompilerArgument<List<String>> = CommonCompilerArgument("OPT_IN")
