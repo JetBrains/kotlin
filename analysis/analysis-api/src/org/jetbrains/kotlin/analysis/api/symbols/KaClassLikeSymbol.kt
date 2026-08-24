@@ -325,8 +325,8 @@ public enum class KaClassKind {
      *
      * ```kotlin
      * val runnable = object : Runnable {
-     *  *     override fun run() {}
-     *  * }
+     *     override fun run() {}
+     * }
      * ```
      *
      * @see KaAnonymousObjectSymbol
