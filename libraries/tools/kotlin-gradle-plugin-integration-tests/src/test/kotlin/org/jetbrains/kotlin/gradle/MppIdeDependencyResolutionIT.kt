@@ -711,7 +711,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         class Foo : Exception()
         class Bar : Exception()
         val baz = "baz"
-        val project = project("empty", gradleVersion) {
+        val project = project("empty", gradleVersion, enableGradleDaemonMemoryLimitInMb = 1024) {
             plugins { kotlin("multiplatform") }
             buildScriptInjection {
                 kotlinMultiplatform.jvm()
