@@ -46,6 +46,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
         val kotlinVersion: Property<String>
         val errorDirs: ListProperty<File>
         val collectAllFusReportsIntoOne: Property<Boolean>
+        val failBuildOnFusError: Property<Boolean>
     }
 
     companion object {
@@ -79,6 +80,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
                 spec.parameters.errorDirs.disallowChanges()
                 spec.parameters.kotlinVersion.value(kotlinPluginVersion).disallowChanges()
                 spec.parameters.collectAllFusReportsIntoOne.value(collectAllFusReportsIntoOne).disallowChanges()
+                spec.parameters.failBuildOnFusError.value(project.isCustomLoggerRootPathProvided).disallowChanges()
             }
 
             // Gradle < 8.1: ensure BuildFinishBuildService is created at the same time as BuildFusService to ensure the same buildId is used
@@ -92,6 +94,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             fusReportDirectory: File,
             kotlinVersion: String,
             log: Logger,
+            failBuildOnFusError: Boolean,
         ): Errors {
             try {
                 val metricContainer = MetricsContainer.createMetricsContainerForV1ProfileFile()
@@ -109,16 +112,30 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
                 }
 
                 if (!fusReportDirectory.resolve("$buildUid.finish-profile").createNewFile()) {
-                    log.debug("File $fusReportDirectory/$buildUid.finish-profile already exists")
-                    return listOf("File $fusReportDirectory/$buildUid.finish-profile already exists")
+                    val errorMessage = "File $fusReportDirectory/$buildUid.finish-profile already exists"
+                    failOrLogFusError(errorMessage, log, failBuildOnFusError)
+                    return listOf(errorMessage)
                 }
-
+            } catch (e: FusException) {
+                throw e
             } catch (e: Exception) {
-                log.debug("Unable to collect finish file for build $buildUid: ${e.message}")
-                return listOf("Error while creating finish file: ${e.message}" + e.stackTrace.joinToString("\n"))
+                failOrLogFusError("Unable to collect finish file for build $buildUid: ${e.message}", log, failBuildOnFusError)
+                return listOf("Error while creating finish file: ${e.message}\n" + e.stackTrace.joinToString("\n"))
             }
             log.debug("Single fus file was created for build $buildUid ")
             return emptyList()
+        }
+
+        private fun failOrLogFusError(
+            message: String,
+            log: Logger,
+            failBuildOnFusError: Boolean,
+        ) {
+            if (failBuildOnFusError) {
+                throw FusException(message)
+            } else {
+                log.debug(message)
+            }
         }
 
         internal fun File.findV2FusFilesByBuildId(buildUid: String): List<File>? = listFiles()
@@ -140,16 +157,25 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
     private fun File.errorFile() = resolve("errors-$buildId-${System.currentTimeMillis()}.log")
 
     internal fun collectAllFusReportsIntoOne() {
-        val errorMessages = collectAllFusReportsIntoOne(buildId, parameters.fusReportDirectory.get(), parameters.kotlinVersion.get(), log)
+        val errorMessages = collectAllFusReportsIntoOne(
+            buildId,
+            parameters.fusReportDirectory.get(),
+            parameters.kotlinVersion.get(),
+            log,
+            parameters.failBuildOnFusError.get(),
+        )
 
-        //KT-79408 skip reporting to IDE if there is already a reported fus related error file with the same buildId
-        if (errorMessages.isNotEmpty()) {
-            if (errorWasReported.compareAndSet(false, true)) {
-                errorMessages.reportToIde(
-                    parameters.errorDirs.get().map { it.errorFile() }, parameters.kotlinVersion.get(), buildId,
-                    GradleKotlinLogger(log)
-                )
-            }
+        reportToIde(errorMessages)
+    }
+
+    //KT-79408 skip reporting to IDE if there is already a reported fus related error file with the same buildId
+    private fun reportToIde(errorMessages: Errors) {
+        if (errorMessages.isEmpty()) return
+        if (errorWasReported.compareAndSet(false, true)) {
+            errorMessages.reportToIde(
+                parameters.errorDirs.get().map { it.errorFile() }, parameters.kotlinVersion.get(), buildId,
+                GradleKotlinLogger(log)
+            )
         }
     }
 }

@@ -11,4 +11,5 @@ import org.gradle.api.provider.Property
 interface ConfigurationMetricsBuildFusParameters : BuildFusService.Parameters {
     val configurationMetrics: ListProperty<MetricContainer>
     val kotlinVersion: Property<String>
+    val failBuildOnFusError: Property<Boolean>
 }

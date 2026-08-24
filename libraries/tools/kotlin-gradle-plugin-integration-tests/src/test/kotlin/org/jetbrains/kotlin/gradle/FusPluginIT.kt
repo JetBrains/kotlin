@@ -164,29 +164,6 @@ class FusPluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("test invalid fus report directory")
-    @GradleTest
-    fun testInvalidFusReportDir(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            buildGradle.modify {
-                """
-                ${applyFusPluginAndCreateTestFusTask(it)}
-                
-                ${registerTaskAndReportMetric("test-fus", "metricName", "metricValue")}
-                
-                """.trimIndent()
-            }
-
-            val invalidPath = buildGradle.resolve("fus")
-
-            //invalid path for FUS reports should not break the build
-            build("test-fus", "-Pkotlin.session.logger.root.path=${invalidPath.absolutePathString()}",
-                  buildOptions = buildOptions.copy(fusReportDirectory = { null })) {
-                assertOutputContains("Failed to create directory '${invalidPath.resolve("kotlin-profile").absolutePathString()}' for FUS report. FUS report won't be created")
-            }
-        }
-    }
-
     @DisplayName("test configuration metrics with different classloaders")
     @GradleTest
     fun testConfigurationMetricsOnly(gradleVersion: GradleVersion) {
