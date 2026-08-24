@@ -741,9 +741,7 @@ public interface KaResolver : KaSessionComponent {
      * ### Usage Example:
      * ```kotlin
      * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
-     *   val call = expression.resolveCall() ?: return null
-     *   val callableCall = call as? KaSimpleCall<*, *> ?: return null
-     *   return callableCall.symbol
+     *   return expression.resolveCall()?.simple?.symbol
      * }
      * ```
      *
@@ -2456,9 +2454,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * ### Usage Example:
  * ```kotlin
  * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
- *   val call = expression.resolveCall() ?: return null
- *   val callableCall = call as? KaSimpleCall<*, *> ?: return null
- *   return callableCall.symbol
+ *   return expression.resolveCall()?.simple?.symbol
  * }
  * ```
  *
