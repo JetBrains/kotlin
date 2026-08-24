@@ -9,16 +9,16 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundSymbolResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionAttempt
 
 @KaImplementationDetail
 class KaBaseCompoundSymbolResolutionError(
-    private val backingAttempts: List<KaSingleSymbolResolutionAttempt>,
+    private val backingAttempts: List<KaSimpleSymbolResolutionAttempt>,
 ) : KaCompoundSymbolResolutionError {
     init {
         require(backingAttempts.isNotEmpty()) { "Empty list of attempts" }
     }
 
     override val token: KaLifetimeToken get() = backingAttempts.first().token
-    override val attempts: List<KaSingleSymbolResolutionAttempt> get() = withValidityAssertion { backingAttempts }
+    override val attempts: List<KaSimpleSymbolResolutionAttempt> get() = withValidityAssertion { backingAttempts }
 }
