@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
 @KaImplementationDetail
 class KaBaseForLoopCallResolutionAttempt(
-    private val backingIteratorCallAttempt: KaSingleCallResolutionAttempt,
-    private val backingHasNextCallAttempt: KaSingleCallResolutionAttempt,
-    private val backingNextCallAttempt: KaSingleCallResolutionAttempt,
+    private val backingIteratorCallAttempt: KaSimpleCallResolutionAttempt,
+    private val backingHasNextCallAttempt: KaSimpleCallResolutionAttempt,
+    private val backingNextCallAttempt: KaSimpleCallResolutionAttempt,
 ) : KaForLoopCallResolutionAttempt {
     override val token: KaLifetimeToken get() = backingIteratorCallAttempt.token
 
@@ -31,9 +31,9 @@ class KaBaseForLoopCallResolutionAttempt(
             }
         }
 
-    override val iteratorCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingIteratorCallAttempt }
-    override val hasNextCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingHasNextCallAttempt }
-    override val nextCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingNextCallAttempt }
-    override val attempts: List<KaSingleCallResolutionAttempt>
+    override val iteratorCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingIteratorCallAttempt }
+    override val hasNextCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingHasNextCallAttempt }
+    override val nextCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingNextCallAttempt }
+    override val attempts: List<KaSimpleCallResolutionAttempt>
         get() = withValidityAssertion { listOf(backingIteratorCallAttempt, backingHasNextCallAttempt, backingNextCallAttempt) }
 }

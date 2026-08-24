@@ -66,7 +66,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         is KtNameReferenceExpression, is KtEnumEntrySuperclassReferenceExpression -> tryResolveSymbolsForElement()
         else -> null
     } ?: when (val callAttempt = tryResolveCall(this)) {
-        is KaSingleCallResolutionAttempt -> callAttempt.toSingleSymbolResolutionAttempt()
+        is KaSimpleCallResolutionAttempt -> callAttempt.toSingleSymbolResolutionAttempt()
         is KaMultiCallResolutionAttempt -> callAttempt.toSymbolResolutionAttempt()
         null -> null
     }
@@ -359,7 +359,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     private fun KaMultiCallResolutionAttempt.toSymbolResolutionAttempt(): KaSymbolResolutionAttempt =
         mergeSymbolAttempts(attempts.map { it.toSingleSymbolResolutionAttempt() })
 
-    private fun KaSingleCallResolutionAttempt.toSingleSymbolResolutionAttempt(): KaSingleSymbolResolutionAttempt = when (this) {
+    private fun KaSimpleCallResolutionAttempt.toSingleSymbolResolutionAttempt(): KaSingleSymbolResolutionAttempt = when (this) {
         is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
         is KaCallResolutionError -> KaBaseSymbolResolutionError(
             backingDiagnostic = diagnostic,
