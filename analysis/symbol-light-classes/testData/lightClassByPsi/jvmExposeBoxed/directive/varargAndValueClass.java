@@ -1,5 +1,5 @@
 @kotlin.jvm.JvmInline()
-public final class IntValue /* one.IntValue*/ {
+public final value class IntValue /* one.IntValue*/ {
   private final int value;
 
   @kotlin.jvm.JvmExposeBoxed()

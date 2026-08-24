@@ -7,7 +7,7 @@ public final class LambdaKt /* LambdaKt*/ {
 }
 
 @<error>()
-public final class TopLevelValueClass /* TopLevelValueClass*/ {
+public final value class TopLevelValueClass /* TopLevelValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 

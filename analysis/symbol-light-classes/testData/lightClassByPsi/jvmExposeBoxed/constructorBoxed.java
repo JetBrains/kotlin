@@ -1,5 +1,5 @@
 @kotlin.jvm.JvmInline()
-public final class StringWrapper /* StringWrapper*/ {
+public final value class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() java.lang.String s;
 

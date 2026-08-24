@@ -11,7 +11,7 @@ public abstract interface Interface /* pack.Interface*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
+public final value class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int int;
 
   @java.lang.Override()
