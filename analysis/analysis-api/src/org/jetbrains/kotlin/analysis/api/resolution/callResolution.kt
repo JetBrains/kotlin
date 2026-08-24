@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.resolution.*
  *
  * ### Usage Example:
  * ```kotlin
- * fun KaSession.findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
+ * context(session: KaSession)
+ * fun findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
  *   val attempt = expression.tryResolveCall() ?: return null
  *   val error = attempt as? KaCallResolutionError ?: return null
  *   return error.diagnostic
@@ -76,7 +77,8 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  *
  * ### Usage Example:
  * ```kotlin
- * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
+ * context(session: KaSession)
+ * fun resolveSymbol(expression: KtCallExpression): KaSymbol? {
  *   return expression.resolveSuccessfulCall()?.simple?.symbol
  * }
  * ```
