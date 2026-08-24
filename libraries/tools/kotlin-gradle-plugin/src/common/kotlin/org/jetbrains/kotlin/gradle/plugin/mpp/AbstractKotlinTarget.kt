@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
+
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -124,10 +127,11 @@ abstract class AbstractKotlinTarget(
                 producingCompilation is KotlinCompilationToRunnableFiles
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
-            DefaultKotlinUsageContext(
-                producingCompilation,
-                mavenScope,
-                dependenciesConfigurationName
+            project.defaultKotlinUsageContextMaybeReplacedWithKar(
+                isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) { isStoredInKotlinArchive } else null,
+                compilation = producingCompilation,
+                mavenScope = mavenScope,
+                dependencyConfigurationName = dependenciesConfigurationName,
             )
         }
     }
@@ -160,7 +164,13 @@ abstract class AbstractKotlinTarget(
             overrideConfigurationAttributes = overrideConfigurationAttributes,
             mavenScope = mavenScope,
             includeIntoProjectStructureMetadata = false,
-            publishOnlyIf = { isSourcesPublishable }
+            publishOnlyIf = {
+                if (this is KotlinTargetWithKotlinArchiveSupport) {
+                    isSourcesPublishable && !isStoredInKotlinArchive.get()
+                } else {
+                    isSourcesPublishable
+                }
+            }
         )
     }
 

@@ -65,6 +65,7 @@ internal fun KotlinTargetSoftwareComponent(
                     project.providers,
                     dest = this
                 )
+                kotlinUsageContext.configurePublishedConfiguration(this@maybeCreateDependencyScope, kotlinComponent)
             }
 
             adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
