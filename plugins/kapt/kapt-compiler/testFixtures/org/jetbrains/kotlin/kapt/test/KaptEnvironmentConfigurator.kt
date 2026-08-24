@@ -42,7 +42,7 @@ class KaptEnvironmentConfigurator(
         testServices.kaptOptionsProvider.registerKaptOptions(module) {
             val temporaryDirectoryManager = testServices.temporaryDirectoryManager
             projectBaseDir = temporaryDirectoryManager.rootDir
-            compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
+            compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForDistDirectory.stdlibPath)
 
             sourcesOutputDir = temporaryDirectoryManager.getOrCreateTempDirectory(KAPT_RUNNER_DIRECTORY_NAME)
             classesOutputDir = sourcesOutputDir
