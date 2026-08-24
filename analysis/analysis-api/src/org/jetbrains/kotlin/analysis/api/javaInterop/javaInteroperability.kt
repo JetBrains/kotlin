@@ -49,6 +49,15 @@ public fun KaType.mapToJvmTypeDescriptor(): String {
 
 /**
  * Whether the given [KaType] is backed by a single JVM primitive type.
+ *
+ * This is `true` for non-nullable primitive types and for non-nullable inline value class types whose single underlying property is
+ * primitive-backed, recursively. It is `false` for nullable types, regular reference types, and types without a single primitive-backed
+ * representation.
+ *
+ * This property describes the type's underlying representation. It does not imply that every use of the type is emitted as a JVM primitive,
+ * as boxing can still be required by the use-site context.
+ *
+ * For non-JVM modules, the result describes the equivalent JVM representation inferred from the Kotlin declaration.
  */
 @KaExperimentalApi
 context(session: KaSession)
