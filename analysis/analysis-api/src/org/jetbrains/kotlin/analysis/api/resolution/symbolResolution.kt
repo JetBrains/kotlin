@@ -71,7 +71,7 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
 context(session: KaSession)
 public fun KtResolvable.resolveSuccessfulSymbols(): Collection<KaSymbol> {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbols(this)
+    return internals.resolver.resolveSuccessfulSymbols(this)
 }
 
 /**
@@ -117,7 +117,7 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = resolveSuccessf
 context(session: KaSession)
 public fun KtResolvable.resolveSuccessfulSymbol(): KaSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -161,7 +161,7 @@ public fun KtResolvable.resolveSymbol(): KaSymbol? = resolveSuccessfulSymbol()
 context(session: KaSession)
 public fun KtAnnotationEntry.resolveSuccessfulSymbol(): KaConstructorSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -204,7 +204,7 @@ public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? = resolveSucc
 context(session: KaSession)
 public fun KtSuperTypeCallEntry.resolveSuccessfulSymbol(): KaConstructorSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -253,7 +253,7 @@ public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? = resolveS
 context(session: KaSession)
 public fun KtConstructorDelegationCall.resolveSuccessfulSymbol(): KaConstructorSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -302,7 +302,7 @@ public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? = r
 context(session: KaSession)
 public fun KtConstructorDelegationReferenceExpression.resolveSuccessfulSymbol(): KaConstructorSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -347,7 +347,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
 context(session: KaSession)
 public fun KtCallElement.resolveSuccessfulSymbol(): KaFunctionSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -390,7 +390,7 @@ public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? = resolveSuccessfulS
 context(session: KaSession)
 public fun KtCallableReferenceExpression.resolveSuccessfulSymbol(): KaCallableSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -449,7 +449,7 @@ public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = re
 context(session: KaSession)
 public fun KtArrayAccessExpression.resolveSuccessfulSymbol(): KaNamedFunctionSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -494,7 +494,7 @@ public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? = res
 context(session: KaSession)
 public fun KtCollectionLiteralExpression.resolveSuccessfulSymbol(): KaNamedFunctionSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -540,7 +540,7 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
 context(session: KaSession)
 public fun KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulSymbol(): KaNamedClassSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -589,7 +589,7 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClas
 context(session: KaSession)
 public fun KtLabelReferenceExpression.resolveSuccessfulSymbol(): KaDeclarationSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -640,7 +640,7 @@ public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? = re
 context(session: KaSession)
 public fun KtReturnExpression.resolveSuccessfulSymbol(): KaFunctionSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -689,7 +689,7 @@ public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? = resolveSucces
 context(session: KaSession)
 public fun KtWhenConditionInRange.resolveSuccessfulSymbol(): KaNamedFunctionSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -736,7 +736,7 @@ public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? = reso
 context(session: KaSession)
 public fun KtDestructuringDeclarationEntry.resolveSuccessfulSymbol(): KaCallableSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -777,7 +777,7 @@ public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? = 
 context(session: KaSession)
 public fun KtQualifiedExpression.resolveSuccessfulSymbol(): KaCallableSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -820,7 +820,7 @@ public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? = resolveSuc
 context(session: KaSession)
 public fun KtConstructorCalleeExpression.resolveSuccessfulSymbol(): KaConstructorSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -878,7 +878,7 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? =
 context(session: KaSession)
 public fun KtInstanceExpressionWithLabel.resolveSuccessfulSymbol(): KaDeclarationSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -923,7 +923,7 @@ public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? =
 context(session: KaSession)
 public fun KtNullableType.resolveSuccessfulSymbol(): KaClassifierSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -967,7 +967,7 @@ public fun KtNullableType.resolveSymbol(): KaClassifierSymbol? = resolveSuccessf
 context(session: KaSession)
 public fun KtFunctionType.resolveSuccessfulSymbol(): KaClassSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -1019,7 +1019,7 @@ public fun KtFunctionType.resolveSymbol(): KaClassSymbol? = resolveSuccessfulSym
 context(session: KaSession)
 public fun KtTypeReference.resolveSuccessfulSymbol(): KaClassifierSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -1064,7 +1064,7 @@ public fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? = resolveSuccess
 context(session: KaSession)
 public fun KtClassLiteralExpression.resolveSuccessfulSymbol(): KaClassifierSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -1108,7 +1108,7 @@ public fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? = resol
 context(session: KaSession)
 public fun KtSuperTypeEntry.resolveSuccessfulSymbol(): KaClassifierSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
@@ -1150,7 +1150,7 @@ public fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? = resolveSucces
 context(session: KaSession)
 public fun KtDelegatedSuperTypeEntry.resolveSuccessfulSymbol(): KaClassifierSymbol? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveSymbol(this)
+    return internals.resolver.resolveSuccessfulSymbol(this)
 }
 
 /**
