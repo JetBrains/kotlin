@@ -97,7 +97,7 @@ fun linkIr(irModuleInfo: IrModuleInfo, configuration: CompilerConfiguration): Pa
     // Sort dependencies after IR linkage.
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
-    val allModules = sortedModuleDependencies.all
+    val allModules = sortedModuleDependencies.allDependencies
     allModules.forEach { it.patchDeclarationParents() }
 
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)

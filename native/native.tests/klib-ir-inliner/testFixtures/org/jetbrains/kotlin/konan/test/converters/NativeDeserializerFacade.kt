@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -34,10 +35,8 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
@@ -138,7 +137,7 @@ class NativeDeserializerFacade(
         val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
         return IrModuleInfo(
-            module = sortedModuleDependencies.included!!,
+            module = sortedModuleDependencies.allDependencies.single { it.kotlinLibrary == mainLibrary },
             dependencies = sortedModuleDependencies,
             bultins = irBuiltIns,
             symbolTable = symbolTable,
@@ -155,31 +154,15 @@ class NativeDeserializerFacade(
         irLinker: KonanIrLinker,
         mainModuleLib: KotlinLibrary?,
         mapping: (KotlinLibrary) -> ModuleDescriptor,
-    ): IrModuleDependencies {
-        val all: MutableList<IrModuleFragment> = mutableListOf()
-        var stdlib: IrModuleFragment? = null
-        var included: IrModuleFragment? = null
-
-        libraries.forEach { klib: KotlinLibrary ->
+    ): IrModuleDependencies = IrModuleDependencies(
+        libraries.map { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
-            val module: IrModuleFragment = if (klib != mainModuleLib)
+            if (klib != mainModuleLib)
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             else
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL }, descriptor.name.asString())
-
-            all += module
-            when {
-                klib.isNativeStdlib -> stdlib = module
-                klib == mainModuleLib -> included = module
-            }
         }
-
-        return IrModuleDependencies(
-            all = all,
-            stdlib = stdlib,
-            included = included,
-        )
-    }
+    )
 
     companion object {
         @OptIn(K1Deprecation::class)

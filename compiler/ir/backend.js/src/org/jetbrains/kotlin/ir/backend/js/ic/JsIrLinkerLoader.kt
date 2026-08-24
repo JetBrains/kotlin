@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -51,12 +50,8 @@ internal class LoadedJsIr(
         val unorderedModuleFragments: List<IrModuleFragment> = loadedFragments.values.toList()
 
         val orderedAndIndexedModuleFragments: Map<IrModuleFragment, Int> = linker.moduleDependencyTracker.reverseTopoOrder(
-            IrModuleDependencies(
-                all = unorderedModuleFragments,
-                stdlib = unorderedModuleFragments.firstOrNull { it.kotlinLibrary?.isAnyPlatformStdlib == true },
-                included = unorderedModuleFragments.last(),
-            )
-        ).all.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
+            IrModuleDependencies(unorderedModuleFragments)
+        ).allDependencies.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
 
         val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
             .map { [libraryFile, moduleFragment] -> libraryFile to moduleFragment }

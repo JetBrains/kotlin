@@ -97,7 +97,7 @@ class JsIrLoweringFacade(
         (val irModuleFragment = module, val moduleDependencies = dependencies, val _ = bultins, val _ = symbolTable, val _ = deserializer) = inputArtifact.cliArtifact.moduleInfo
 
         irModuleFragment.resolveTestPaths()
-        moduleDependencies.all.forEach { it.resolveTestPaths() }
+        moduleDependencies.allDependencies.forEach { it.resolveTestPaths() }
 
         val cliInputArtifact = inputArtifact.cliArtifact as? WebLoadedIrPipelineArtifact
             ?: testInfraError("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
