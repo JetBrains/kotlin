@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.archive
 
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
-import org.jetbrains.kotlin.gradle.testbase.nativeProject
-import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import java.nio.file.Path
 import java.util.zip.ZipInputStream
 import kotlin.io.path.inputStream
@@ -28,61 +28,85 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
 
     @GradleTest
     fun testSimpleProducer(gradleVersion: GradleVersion) {
-        project("archive/simpleProducer", gradleVersion) {
-            build("packKotlinArchive") {
-                assertTasksExecuted(":packKotlinArchive")
-            }
+        val archiveEntries = packKotlinArchive(
+            gradleVersion,
+            projectName = "simpleProducer",
+        ) { simpleProducer() }
 
-            val archiveEntries = projectPath.resolve("build/kar/simpleProducer.kar.xz")
-                .normalizedArchiveEntries()
-
-            assertEquals(simpleProducerArchiveEntries, archiveEntries)
-        }
+        assertEquals(simpleProducerArchiveEntries, archiveEntries)
     }
 
     @GradleTest
     fun testTargetRenamesDoNotAffectArchiveLayout(gradleVersion: GradleVersion) {
-        project("archive/simpleProducerWithRenames", gradleVersion) {
-            build("packKotlinArchive") {
-                assertTasksExecuted(":packKotlinArchive")
-            }
+        val archiveEntries = packKotlinArchive(
+            gradleVersion,
+            projectName = "simpleProducerWithRenames",
+        ) {
+            jvm("renamedJvm")
+            js("renamedJs")
+            wasmJs("renamedWasmJs")
+            macosArm64("renamedMacosArm64")
 
-            val archiveEntries = projectPath.resolve("build/kar/simpleProducerWithRenames.kar.xz")
-                .normalizedArchiveEntries()
-
-            assertEquals(simpleProducerArchiveEntries, archiveEntries)
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }
+
+        assertEquals(simpleProducerArchiveEntries, archiveEntries)
     }
 
     @GradleTest
     fun testPackedKlibsAreUnpackedInArchive(gradleVersion: GradleVersion) {
-        project("archive/simpleProducer", gradleVersion) {
-            build(
-                "packKotlinArchive",
-                "-Pkotlin.internal.klibs.non-packed=false",
-            ) {
-                assertTasksExecuted(":packKotlinArchive")
-            }
+        val archiveEntries = packKotlinArchive(
+            gradleVersion,
+            projectName = "simpleProducer",
+            "-Pkotlin.internal.klibs.non-packed=false",
+        ) { simpleProducer() }
 
-            val archiveEntries = projectPath.resolve("build/kar/simpleProducer.kar.xz")
-                .normalizedArchiveEntries()
-
-            assertEquals(simpleProducerArchiveEntries, archiveEntries)
-        }
+        assertEquals(simpleProducerArchiveEntries, archiveEntries)
     }
 
     @GradleTest
     fun testCommonizedCInteropsKeepPerLibraryDirectories(gradleVersion: GradleVersion) {
-        nativeProject("archive/producerWithCommonizedCinterops", gradleVersion) {
-            build("packKotlinArchive") {
-                assertTasksExecuted(":packKotlinArchive")
+        val archiveEntries = packKotlinArchive(
+            gradleVersion,
+            projectName = "producerWithCommonizedCinterops",
+            "-Pkotlin.mpp.enableCInteropCommonization=true",
+        ) {
+            listOf(linuxX64(), linuxArm64()).forEach { target ->
+                target.createCInterop("first")
+                target.createCInterop("second")
             }
 
-            val archiveEntries = projectPath.resolve("build/kar/producerWithCommonizedCinterops.kar.xz")
-                .normalizedArchiveEntries()
-
-            assertEquals(producerWithCommonizedCinteropsArchiveEntries, archiveEntries)
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+            sourceSets.nativeMain.get().compileStubSourceWithSourceSetName()
         }
+
+        assertEquals(producerWithCommonizedCinteropsArchiveEntries, archiveEntries)
+    }
+
+    private fun packKotlinArchive(
+        gradleVersion: GradleVersion,
+        projectName: String,
+        vararg buildArguments: String,
+        configure: KotlinMultiplatformExtension.() -> Unit,
+    ): String = project("empty", gradleVersion) {
+        addKgpToBuildScriptCompilationClasspath()
+        settingsBuildScriptInjection {
+            settings.rootProject.name = projectName
+        }
+        buildScriptInjection {
+            project.applyMultiplatform {
+                configure()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }
+    }.run {
+        build("packKotlinArchive", *buildArguments) {
+            assertTasksExecuted(":packKotlinArchive")
+        }
+
+        projectPath.resolve("build/kar/$projectName.kar.xz").normalizedArchiveEntries()
     }
 
     private fun Path.normalizedArchiveEntries(): String {
@@ -159,4 +183,27 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
                 }
             }
         }
+}
+
+private fun KotlinMultiplatformExtension.simpleProducer() {
+    jvm()
+    js()
+    wasmJs()
+    macosArm64()
+
+    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+}
+
+private fun KotlinNativeTarget.createCInterop(interopName: String) {
+    val definitionFile = project.layout.projectDirectory.file("$interopName.def")
+    definitionFile.asFile.writeText(
+        """
+        language = C
+        ---
+        void $interopName(void);
+        """.trimIndent()
+    )
+    compilations.getByName("main").cinterops.create(interopName) {
+        it.definitionFile.set(definitionFile)
+    }
 }
