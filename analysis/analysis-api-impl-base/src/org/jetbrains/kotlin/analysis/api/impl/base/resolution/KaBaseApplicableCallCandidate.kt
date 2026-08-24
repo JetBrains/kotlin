@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaApplicableCallCandidate
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleOrMultiCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall
 
 @KaImplementationDetail
 class KaBaseApplicableCallCandidate(
-    private val backingCandidate: KaSingleOrMultiCall,
+    private val backingCandidate: KaSimpleOrMultiCall,
     private val backingIsInBestCandidates: Boolean,
 ) : KaApplicableCallCandidate {
     override val token: KaLifetimeToken get() = backingCandidate.token
 
-    override val candidate: KaSingleOrMultiCall get() = withValidityAssertion { backingCandidate }
+    override val candidate: KaSimpleOrMultiCall get() = withValidityAssertion { backingCandidate }
     override val isInBestCandidates: Boolean get() = withValidityAssertion { backingIsInBestCandidates }
 }

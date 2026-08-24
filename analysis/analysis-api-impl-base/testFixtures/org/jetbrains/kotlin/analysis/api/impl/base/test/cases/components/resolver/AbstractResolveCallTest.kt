@@ -35,9 +35,9 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
                 val oldAttempt = mainElement.resolveToCall()?.asCallResolutionAttempt()
                 // Old API collapses multi-calls into a single success/error, losing some symbols.
                 // We only check that old API symbols are a subset of new API symbols.
-                val newSymbols = attempt?.calls?.flatMap(KaSingleOrMultiCall::symbols)
+                val newSymbols = attempt?.calls?.flatMap(KaSimpleOrMultiCall::symbols)
                     ?.map { stringRepresentation(it) }?.toSet().orEmpty()
-                val oldSymbols = oldAttempt?.calls?.flatMap(KaSingleOrMultiCall::symbols)
+                val oldSymbols = oldAttempt?.calls?.flatMap(KaSimpleOrMultiCall::symbols)
                     ?.map { stringRepresentation(it) }?.toSet().orEmpty()
 
                 testServices.assertions.assertTrue(newSymbols.containsAll(oldSymbols)) {
@@ -62,14 +62,14 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     private fun Any.asCallResolutionAttempt(): KaCallResolutionAttempt = when (this) {
         is KaCallResolutionAttempt -> this
         is KaSuccessCallInfo -> {
-            val singleCall = (call as KaSingleOrMultiCall).calls.first()
+            val singleCall = (call as KaSimpleOrMultiCall).calls.first()
             KaBaseCallResolutionSuccess(singleCall)
         }
 
         is KaErrorCallInfo -> KaBaseCallResolutionError(
             backedDiagnostic = diagnostic,
             backingCandidateCalls = candidateCalls.flatMap {
-                (it as KaSingleOrMultiCall).calls
+                (it as KaSimpleOrMultiCall).calls
             },
         )
 
@@ -91,7 +91,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         val assertions = testServices.assertions
         val expectedCall = attempt?.successfulCall
         for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveCall", elementClass)) {
-            val specificCall = kFunction.call(session, element) as? KaSingleOrMultiCall
+            val specificCall = kFunction.call(session, element) as? KaSimpleOrMultiCall
             if (expectedCall == null || specificCall == null) {
                 assertions.assertEquals(expected = expectedCall, actual = specificCall)
             } else {

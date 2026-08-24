@@ -75,7 +75,7 @@ public interface KaInternalsResolver {
 
     public fun tryResolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCallResolutionAttempt?
 
-    public fun resolveCall(resolvableCall: KtResolvableCall): KaSingleOrMultiCall?
+    public fun resolveCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall?
 
     public fun resolveCall(annotationEntry: KtAnnotationEntry): KaAnnotationCall?
 
