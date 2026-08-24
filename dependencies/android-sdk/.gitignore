@@ -1,0 +1,8 @@
+# The root .gitignore excludes all 'build/' directories, and git does not descend into
+# excluded directories, so a plain '!build/**/package.xml' would have no effect.
+# Instead: re-include the 'build' directory itself, ignore its contents, re-include all
+# subdirectories (so git traverses them), and finally re-include the package.xml files.
+!build/
+build/**
+!build/**/
+!build/**/package.xml
