@@ -22,7 +22,7 @@ class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(enableLegacyAgpDsl = false)
 
     @GradleAndroidTest
-    fun `test - host tests execute and generate reports`(
+    fun `test - host test wiring, execution and reports`(
         gradleVersion: GradleVersion,
         androidVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -97,7 +97,7 @@ class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    fun `test - device test wiring`(
+    fun `test - device test wiring and compilation`(
         gradleVersion: GradleVersion,
         androidVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
