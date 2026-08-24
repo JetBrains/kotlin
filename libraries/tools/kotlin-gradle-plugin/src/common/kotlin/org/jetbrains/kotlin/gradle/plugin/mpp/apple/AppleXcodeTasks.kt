@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
@@ -50,6 +51,7 @@ internal object AppleXcodeTasks {
     const val embedAndSignTaskPrefix = "embedAndSign"
     const val embedAndSignTaskPostfix = "AppleFrameworkForXcode"
     const val validateArchitecturesForTaskPrefix = "validateArchitecturesFor"
+    const val validateDeploymentTargetForTaskPrefix = "validateDeploymentTargetFor"
     const val checkSandboxAndWriteProtection = "checkSandboxAndWriteProtection"
 }
 
@@ -218,6 +220,11 @@ internal fun Project.registerEmbedSwiftExportTask(
         configuredTarget = target.konanTarget.visibleName,
     )
 
+    val validateDeploymentTargetTask = registerValidateSwiftExportDeploymentTargetTask(
+        frameworkTaskName = binaryTaskName,
+        environment = environment,
+    )
+
     val embedAndSignTask = locateOrRegisterTask<EmbedSwiftExportForXcodeTask>(binaryTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Embed Swift Export artifacts requested by Xcode's environment variables"
@@ -228,6 +235,7 @@ internal fun Project.registerEmbedSwiftExportTask(
     }
 
     embedAndSignTask.dependsOn(validateTask)
+    embedAndSignTask.dependsOn(validateDeploymentTargetTask)
 
     if (!envTargets.contains(target.konanTarget)) {
         return
@@ -469,6 +477,23 @@ private fun Project.registerValidateXcodeArchitecturesTask(
     }
 
     return taskProvider
+}
+
+private fun Project.registerValidateSwiftExportDeploymentTargetTask(
+    frameworkTaskName: String,
+    environment: XcodeEnvironment,
+): TaskProvider<ValidateSwiftExportDeploymentTargetTask> {
+    val taskName = lowerCamelCaseName(AppleXcodeTasks.validateDeploymentTargetForTaskPrefix, frameworkTaskName)
+
+    return locateOrRegisterTask<ValidateSwiftExportDeploymentTargetTask>(taskName) { task ->
+        task.description = "Check that the deployment target requested by Xcode is supported by Swift Export"
+        task.deploymentTargetSettingName.set(environment.deploymentTargetSettingName)
+        task.deploymentTarget.set(environment.deploymentTarget)
+        // One Xcode build targets a single platform, so the family of any requested target gives us the minimum
+        task.minimumDeploymentTarget.set(
+            environment.targets.firstOrNull()?.let { SwiftExportConstants.minimumDeploymentTargets[it.family] }
+        )
+    }
 }
 
 private fun Project.checkSandboxAndWriteProtectionTask(

@@ -1952,6 +1952,25 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportMinimumDeployTargetError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            deploymentTargetSettingName: String,
+            actualDeploymentTarget: String,
+            minimumDeploymentTarget: String,
+        ) = build {
+            title("Swift Export Deployment Target Too Low")
+                .description {
+                    """
+                    Swift Export needs $deploymentTargetSettingName to be $minimumDeploymentTarget or newer, but the Xcode target is built with $actualDeploymentTarget.
+                    The generated Swift code uses APIs that only exist since $minimumDeploymentTarget, so it cannot compile against $actualDeploymentTarget.
+                    """.trimIndent()
+                }
+                .solution {
+                    "Raise $deploymentTargetSettingName to $minimumDeploymentTarget or newer in the build settings of your Xcode target."
+                }
+        }
+    }
+
     object SwiftPMLocalPackageDirectoryNotFound : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(resolvedPath: String, originalPath: String) = build {
             title("Local SwiftPM Package Directory Not Found")
