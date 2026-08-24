@@ -1,5 +1,5 @@
 @<error>()
-public final value class A /* A*/ {
+public final class A /* A*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 
@@ -19,7 +19,7 @@ public final class GlobalVariableContextAndReceiverKt /* GlobalVariableContextAn
 }
 
 @<error>()
-public final value class Z /* Z*/ {
+public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 

@@ -1,5 +1,5 @@
 @<error>()
-public final value class StringWrapper /* pack.StringWrapper*/ {
+public final class StringWrapper /* pack.StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 

@@ -227,7 +227,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
     companion object {
         /**
-         * @param suppressValueClass whether suppress the [containingClass] check for [isValueClass]
+         * @param suppressValueClass whether suppress the [containingClass] check for [isKotlinValueClass]
          * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
          *  * inside the containing class
          */
@@ -255,7 +255,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             val isNonMaterializableValueClassFunction = !suppressValueClass &&
                     // Static methods should be materialized even inside value classes if possible
                     !staticsFromCompanion &&
-                    containingClass.isValueClass &&
+                    containingClass.isKotlinValueClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride
 

@@ -3,7 +3,7 @@ public final class OriginalClass /* pack.OriginalClass*/ {
 }
 
 @<error>()
-public final value class ValueClass /* pack.ValueClass*/ {
+public final class ValueClass /* pack.ValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() pack.OriginalClass value;
 

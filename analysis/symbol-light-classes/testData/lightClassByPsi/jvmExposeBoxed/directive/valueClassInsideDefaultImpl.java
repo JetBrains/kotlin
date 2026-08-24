@@ -7,7 +7,7 @@ public abstract interface BaseInterface /* one.BaseInterface*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public final value class MyValueClass /* one.MyValueClass*/ {
+public final class MyValueClass /* one.MyValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String str;
 
