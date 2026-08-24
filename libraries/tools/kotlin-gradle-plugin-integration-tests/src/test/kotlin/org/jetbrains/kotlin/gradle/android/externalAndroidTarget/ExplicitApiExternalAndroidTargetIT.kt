@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.logging.LogLevel
-import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 
@@ -29,6 +27,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -64,6 +63,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -116,6 +116,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -166,6 +167,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -218,6 +220,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -268,6 +271,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -317,6 +321,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             androidVersion = androidVersion,
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample",
+            withJava = true,
         ) {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
@@ -355,34 +360,6 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }
         }
-    }
-
-    private fun externalAndroidLibraryProject(
-        gradleVersion: GradleVersion,
-        androidVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-        namespace: String,
-        configureProject: TestProject.() -> Unit = {},
-    ): TestProject = project(
-        "empty",
-        gradleVersion = gradleVersion,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-        buildJdk = jdkVersion.location,
-    ) {
-        plugins {
-            kotlin("multiplatform")
-            id("com.android.kotlin.multiplatform.library")
-        }
-        buildScriptInjection {
-            kotlinMultiplatform.apply {
-                targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
-                    target.compileSdk = 34
-                    target.namespace = namespace
-                    target.withJava()
-                }
-            }
-        }
-        configureProject()
     }
 
 }
