@@ -205,7 +205,16 @@ object CompilerModules {
 
     val analysisApiSurfaceModules = arrayOf(
         ":analysis:analysis-api",
+    )
+
+    val analysisApiStandaloneSurfaceModules = arrayOf(
         ":analysis:analysis-api-standalone",
+    )
+
+    val analysisApiStandaloneModules = arrayOf(
+        *analysisApiStandaloneSurfaceModules,
+        ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
+        ":analysis:analysis-api-standalone:analysis-api-standalone-base",
     )
 
     /**
@@ -214,12 +223,11 @@ object CompilerModules {
      */
     val analysisApiModules = arrayOf(
         *analysisApiSurfaceModules,
+        *analysisApiStandaloneModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-api-platform-interface",
-        ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
-        ":analysis:analysis-api-standalone:analysis-api-standalone-base",
         ":analysis:analysis-internal-utils",
         ":analysis:decompiled:decompiler-js",
         ":analysis:decompiled:decompiler-native",
@@ -249,6 +257,8 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
+        ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
+        ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
         ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
         ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
