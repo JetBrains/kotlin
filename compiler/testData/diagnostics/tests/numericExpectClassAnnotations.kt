@@ -74,6 +74,8 @@ expect value class SizeT {
 fun acceptSizeT(num: SizeT) {}
 expect fun getSizeT(): SizeT
 
+fun produceNSInteger(): NSInteger = <!RETURN_TYPE_MISMATCH!>30<!>
+
 fun main() {
     acceptNSInteger(10)
     acceptNSInteger(1_000_000_000_000L)
@@ -116,6 +118,8 @@ fun main() {
     c = getSizeT()
     acceptULong(c)
     acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
+
+    acceptNSInteger(produceNSInteger())
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral */
