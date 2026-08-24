@@ -59,7 +59,7 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  *
  * For which the behavior could be different depending on the context.
  *
- * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
+ * The main idea is that [resolveSuccessfulSymbols] could represent more cases, so it prefers exactly the referenced symbol
  * and not the parent call. For more details, see the mentioned elements.
  *
  * @see tryResolveSymbols
@@ -69,10 +69,27 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
 context(session: KaSession)
-public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
+public fun KtResolvable.resolveSuccessfulSymbols(): Collection<KaSymbol> {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSymbols(this)
 }
+
+/**
+ * The former name of [resolveSuccessfulSymbols].
+ *
+ * @see resolveSuccessfulSymbols
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulSymbols()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulSymbols()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbols"],
+    ),
+)
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
+public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = resolveSuccessfulSymbols()
 
 /**
  * Resolves a single symbol for the given [KtResolvable].
@@ -92,7 +109,7 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  * and not the parent call. For more details, see the mentioned elements.
  *
  * @see tryResolveSymbols
- * @see resolveSymbols
+ * @see resolveSuccessfulSymbols
  * @see KaSymbolResolutionSuccess
  */
 @KaExperimentalApi

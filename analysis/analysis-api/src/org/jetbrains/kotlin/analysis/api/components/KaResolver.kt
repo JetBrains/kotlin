@@ -1417,8 +1417,11 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
 @Deprecated(
-    message = "Use the 'resolveSymbols' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbols()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols"),
+    message = "Use the 'resolveSuccessfulSymbols' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbols()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbols",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
