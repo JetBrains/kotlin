@@ -467,6 +467,7 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
             *taskNames,
             executedTaskNames = executedTaskNames,
             checkUpToDateOnRebuild = checkUpToDateOnRebuild,
+            suppressAgpWarnings = suppressAgpWarnings,
             buildOptions = buildOptions,
         )
     }

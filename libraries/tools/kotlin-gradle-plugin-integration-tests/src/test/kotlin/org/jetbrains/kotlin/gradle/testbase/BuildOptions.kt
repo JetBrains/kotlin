@@ -515,15 +515,22 @@ fun BuildOptions.suppressAgpWarningSinceGradle814(
 // https://issuetracker.google.com/issues/399393875, was fixed in AGP 8.11.0
 fun BuildOptions.suppressAgpWarningIsProperty(
     currentGradleVersion: GradleVersion,
+    warningMode: WarningMode = WarningMode.Summary,
 ): BuildOptions {
     val currentAgpVersion = androidVersion?.let { TestVersions.AgpCompatibilityMatrix.fromVersion(it) }
-    return if (currentAgpVersion != null && currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_811) {
-        suppressDeprecationWarningsSinceGradleVersion(
+    return when {
+        warningMode == WarningMode.Summary &&
+                currentAgpVersion != null &&
+                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_811 -> suppressDeprecationWarningsSinceGradleVersion(
             gradleVersion = TestVersions.Gradle.G_8_14,
             currentGradleVersion = currentGradleVersion,
             reason = "APG produces deprecation warning for is-property: https://issuetracker.google.com/issues/399393875"
         )
-    } else this
+        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
+                currentAgpVersion != null &&
+                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_811 -> copy(warningMode = warningMode)
+        else -> this
+    }
 }
 
 fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(

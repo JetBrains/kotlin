@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 
 /**
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProbl
 fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     vararg buildArguments: String,
     buildOptions: BuildOptions,
+    suppressAgpWarnings: Boolean = false,
     executedTaskNames: List<String>? = null,
     checkUpToDateOnRebuild: Boolean = true,
 ) {
@@ -22,7 +23,19 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     val executedTask: List<String> = executedTaskNames ?: buildArguments.toList()
 
-    build(*buildArguments, buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+    val scenarioBuildOptions = if (suppressAgpWarnings) {
+        buildOptions.suppressAgpWarningIsProperty(gradleVersion)
+    } else {
+        buildOptions
+    }
+    // The settings plugin that verifies deprecation warnings is not invoked when the configuration cache is reused.
+    val configurationCacheReuseBuildOptions = if (suppressAgpWarnings) {
+        buildOptions.suppressAgpWarningIsProperty(gradleVersion, warningMode = WarningMode.None)
+    } else {
+        buildOptions
+    }
+
+    build(*buildArguments, buildOptions = scenarioBuildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
         assertOutputContains(
             "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
@@ -34,13 +47,13 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     build("clean", buildOptions = buildOptions)
 
     // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-    build(*buildArguments, buildOptions = buildOptions) {
+    build(*buildArguments, buildOptions = configurationCacheReuseBuildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
         assertConfigurationCacheReused()
     }
 
     if (checkUpToDateOnRebuild) {
-        build(*buildArguments, buildOptions = buildOptions) {
+        build(*buildArguments, buildOptions = configurationCacheReuseBuildOptions) {
             assertTasksUpToDate(*executedTask.toTypedArray())
         }
     }
