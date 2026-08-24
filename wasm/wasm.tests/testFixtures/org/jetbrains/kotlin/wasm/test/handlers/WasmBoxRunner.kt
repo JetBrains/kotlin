@@ -57,6 +57,7 @@ open class WasmBoxRunner(
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val testFileText = originalFile.readText()
+        val callGroupedTestsDriver = artifacts.hasGroupedTestsDriver
 
         fun writeToFilesAndRunTest(mode: String, result: WasmCompilationSet): List<Throwable> {
             val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
@@ -73,6 +74,7 @@ open class WasmBoxRunner(
                 mark = mode,
                 filesToIgnoreInSizeChecks = filesToIgnoreInSizeChecks,
                 useUnitTestRunnerOnly = useUnitTestRunnerOnly,
+                callGroupedTestsDriver = callGroupedTestsDriver,
                 outputCollector = outputCollector,
             )
 
@@ -143,10 +145,11 @@ open class WasmFolderGroupingStageBoxRunner(
         useUnitTestRunnerOnly: Boolean,
         outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
-        val folder = (artifact as WasmFolderBinaryArtifact).folder
+        val folderArtifact = artifact as WasmFolderBinaryArtifact
         return wasmFolderBoxRunner.saveAdditionalFilesAndRun(
-            folder, "dev", mutableSetOf(),
+            folderArtifact.folder, "dev", mutableSetOf(),
             useUnitTestRunnerOnly = useUnitTestRunnerOnly,
+            callGroupedTestsDriver = folderArtifact.hasGroupedTestsDriver,
             outputCollector = outputCollector,
         )
     }
