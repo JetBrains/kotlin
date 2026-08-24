@@ -304,6 +304,33 @@ public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
     }
 
 /**
+ * The only call of [calls], or `null` if the attempt has no calls or more than one.
+ *
+ * Unlike [successful], a call is also returned for a failed resolution which considered exactly one candidate.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class Foo {
+ *    private fun bar() {}
+ * }
+ *
+ * fun usage(foo: Foo) {
+ *    foo.bar()
+ * //     ^^^^^
+ * }
+ * ```
+ *
+ * `bar()` is resolved to a [KaCallResolutionError], so [successful] is `null`, while [single] is the `bar` candidate call.
+ *
+ * @see calls
+ * @see successful
+ */
+@KaExperimentalApi
+public val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?
+    get() = calls.singleOrNull()
+
+/**
  * The resolved call if the resolution succeeded, or `null` if it failed.
  *
  * - [KaCallResolutionSuccess]: the resolved [call][KaCallResolutionSuccess.call].
