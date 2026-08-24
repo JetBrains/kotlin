@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.resolution.*
 @KaImplementationDetail
 class KaBaseCompoundVariableAccessCallResolutionAttempt(
     private val backingCompoundOperation: KaCompoundOperation?,
-    private val backingVariableCallAttempt: KaSingleCallResolutionAttempt,
-    private val backingOperationCallAttempt: KaSingleCallResolutionAttempt,
+    private val backingVariableCallAttempt: KaSimpleCallResolutionAttempt,
+    private val backingOperationCallAttempt: KaSimpleCallResolutionAttempt,
 ) : KaCompoundVariableAccessCallResolutionAttempt {
     override val token: KaLifetimeToken get() = backingVariableCallAttempt.token
 
@@ -29,8 +29,8 @@ class KaBaseCompoundVariableAccessCallResolutionAttempt(
             }
         }
 
-    override val variableCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingVariableCallAttempt }
-    override val operationCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
-    override val attempts: List<KaSingleCallResolutionAttempt>
+    override val variableCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingVariableCallAttempt }
+    override val operationCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
+    override val attempts: List<KaSimpleCallResolutionAttempt>
         get() = withValidityAssertion { listOf(backingVariableCallAttempt, backingOperationCallAttempt) }
 }
