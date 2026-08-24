@@ -48,6 +48,8 @@ fun box() = abiTest {
 
     success("publicTopLevelFunWithPrivateDefaultArgument.v2(privateTopLevelFun.v2)") { publicTopLevelFunWithPrivateDefaultArgument() }
     success("publicNestedFunWithPrivateDefaultArgument.v2(privateNestedFun.v2)") { TopLevel.publicNestedFunWithPrivateDefaultArgument() }
+
+    success("friendInternalTopLevelFunction") { friendInternalTopLevelFunction() }
 }
 
 // Shortcuts:
