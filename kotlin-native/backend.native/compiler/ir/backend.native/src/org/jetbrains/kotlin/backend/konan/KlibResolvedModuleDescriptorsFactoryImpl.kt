@@ -36,11 +36,44 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
 import java.nio.file.Path
 
-class KlibResolvedModuleDescriptorsFactoryImpl(
-        override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
-) : KlibResolvedModuleDescriptorsFactory {
+class KotlinResolvedModuleDescriptors(
+        /**
+         * The list of modules each representing an individual Kotlin/Native library. All modules
+         * in this list have properly installed dependencies, i.e. module has all necessary dependencies
+         * on other modules plus a dependency on the [forwardDeclarationsModule].
+         */
+        val resolvedDescriptors: List<ModuleDescriptorImpl>,
 
-    override fun createResolved2(
+        /**
+         * This is a module which "contains" forward declarations.
+         * Note: this module should be unique per compilation and should always be the last dependency of any module.
+         */
+        val forwardDeclarationsModule: ModuleDescriptorImpl,
+
+        val friendModules: Set<ModuleDescriptorImpl>,
+        val refinesModules: Set<ModuleDescriptorImpl>
+)
+
+@K1Deprecation
+class KlibResolvedModuleDescriptorsFactoryImpl(
+        val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
+) {
+
+    /**
+     * Given the [libraries] creates the list of [ModuleDescriptorImpl]s with properly installed
+     * inter-dependencies. The result of this method is returned in a form of [KotlinResolvedModuleDescriptors] instance.
+     *
+     * Please use this method with care: Unless this method accepts `null` for [builtIns], it is not recommended to
+     * invoke it this way. If you are compiling a source module, please supply the non-null [builtIns] from the
+     * source module, so that all modules created in your compilation session will share the same built-ins instance.
+     *
+     * Otherwise (if `null` was supplied), a new instance of [KotlinBuiltIns] will be created. The created built-ins
+     * instance will be shared by all modules created in this method. But this instance will have no connection
+     * with probably existing built-ins instance of your source module(s).
+     *
+     * FYI: No much attention to naming of this function, anyway it's going to be removed soon as a part of K1.
+     */
+    fun createResolved2(
             libraries: List<KotlinLibrary>,
             storageManager: StorageManager,
             builtIns: KotlinBuiltIns?,
@@ -133,7 +166,6 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
 
         fun createPackage(forwardDeclarationKind: NativeForwardDeclarationKind) =
-                @OptIn(K1Deprecation::class)
                 ForwardDeclarationsPackageFragmentDescriptor(
                         storageManager,
                         module,
@@ -144,7 +176,6 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-                @OptIn(K1Deprecation::class)
                 NativeForwardDeclarationKind.entries.map { createPackage(it) }
         )
 
@@ -167,7 +198,6 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtInsToUse,
                 capabilities = mapOf(
                         KlibModuleOrigin.CAPABILITY to moduleOrigin,
-                        @OptIn(K1Deprecation::class)
                         ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
                 ),
                 // TODO: don't use hardcoded platform; it should be supplied as a parameter

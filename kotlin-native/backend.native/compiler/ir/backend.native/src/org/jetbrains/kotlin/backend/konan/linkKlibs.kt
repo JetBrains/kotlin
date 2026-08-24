@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -121,7 +121,7 @@ internal fun LinkKlibsContext.linkKlibs(
     }
 
     val irModulesForLinkKlibsOutput: Map<Path, IrModuleFragment> = originalModuleDependencies.allDependencies
-            .filter { it.name != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
+            .filter { it.name != FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
             .associateBy { it.kotlinLibrary!!.path }
 
     return if (libraryToCache == null) {

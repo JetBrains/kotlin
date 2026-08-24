@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
@@ -116,7 +115,7 @@ class NativeDeserializerFacade(
             }
         }
         val forwardDeclarationsModule = createDescriptor(
-            KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME,
+            FORWARD_DECLARATIONS_MODULE_NAME,
             SyntheticModulesOrigin,
             builtIns,
         )
