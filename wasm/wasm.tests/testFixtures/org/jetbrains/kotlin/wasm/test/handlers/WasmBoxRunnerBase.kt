@@ -17,6 +17,12 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
+/** Captured stdout from one VM invocation, kept separate so grouped results cannot be merged across VM boundaries. */
+data class WasmVMOutput(
+    val vmName: String,
+    val output: String,
+)
+
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
@@ -39,7 +45,7 @@ abstract class WasmBoxRunnerBase(
         mark: String,
         filesToIgnoreInSizeChecks: MutableSet<File>,
         useUnitTestRunnerOnly: Boolean = false,
-        outputCollector: MutableList<String>? = null,
+        outputCollector: MutableList<WasmVMOutput>? = null,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -211,7 +217,7 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
-    outputCollector: MutableList<String>? = null,
+    outputCollector: MutableList<WasmVMOutput>? = null,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
@@ -224,7 +230,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             useNewExceptionHandling = useNewExceptionHandling,
             useStackSwitching = useStackSwitching,
         )
-        outputCollector?.add(str)
+        outputCollector?.add(WasmVMOutput(vmName = vmName, output = str))
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName is completed")
         }

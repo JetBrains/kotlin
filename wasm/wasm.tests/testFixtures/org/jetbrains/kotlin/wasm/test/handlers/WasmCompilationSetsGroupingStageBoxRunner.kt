@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
@@ -63,7 +62,7 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
         check(artifact is WasmCompilationSetsBinaryArtifact) {
             "Unexpected artifact type: ${artifact::class}"

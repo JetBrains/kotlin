@@ -110,6 +110,13 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
+    fun `given a structured block when checking completeness then an unterminated block is rejected`() {
+        assertTrue(GroupedTestsResultProtocol.hasCompleteStructuredBlock(block()))
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock("$BEGIN\n${resultLine("id", PASSED)}\n"))
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock("output without a structured block"))
+    }
+
+    @Test
     fun `given values with protocol-significant characters when escaped and parsed back then they survive verbatim`() {
         // The round trip that matters: escape as the generated driver does, put the result on a wire line, and let the
         // parser split and unescape it — the whole path a failure message travels.

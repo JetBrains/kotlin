@@ -64,7 +64,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
     protected abstract fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable>
 
     override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
@@ -82,8 +82,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 input.failWith(exceptions.first())
             }
         } else {
-            // Unit test mode: run the batch and parse the structured GroupedTestsResultProtocol block from stdout.
-            val collectedOutputs = mutableListOf<String>()
+            // Unit test mode: run the batch and parse the structured result block from stdout.
+            val collectedOutputs = mutableListOf<WasmVMOutput>()
             val exceptions = runTestCode(
                 artifact,
                 useUnitTestRunnerOnly = true,
@@ -93,17 +93,60 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
     }
 
-    /**
-     * @param collectedOutputs the stdout captured from every VM that finished normally
-     * @param exceptions whatever the VM wrappers threw (a failed run, or a failure detected in the output)
-     */
-    private fun handleRunResult(collectedOutputs: List<String>, exceptions: List<Throwable>) {
-        // Every text that may carry the structured block: the stdout of VMs that finished normally, plus the messages
-        // of VM-failure exceptions, which embed the captured stdout — so a partial block of a VM that died mid-batch
-        // is recovered too.
+    private fun handleRunResult(
+        collectedOutputs: List<WasmVMOutput>,
+        exceptions: List<Throwable>,
+    ) {
+        // A VM-failure message embeds the stdout captured before the crash, so a partial block is recovered too.
         val texts = buildList {
-            addAll(collectedOutputs)
+            collectedOutputs.forEach { add(it.output) }
             exceptions.forEach { throwable -> addAll(collectExceptionTexts(throwable)) }
+        }
+
+        if (testServices.hasGroupedTestsDriver) {
+            // Successful VM invocations retain their own output boundary. A VM that failed to start or crashed is
+            // represented by an exception and remains covered by the crash/unexplained-exception handling below.
+            val outputsWithoutStructuredBlock = collectedOutputs.filter { output ->
+                !GroupedTestsResultProtocol.parseMerged(listOf(output.output)).sawStructuredBlock
+            }
+            if (outputsWithoutStructuredBlock.isNotEmpty()) {
+                val missingBlockVms = outputsWithoutStructuredBlock
+                    .map { it.vmName }
+                    .distinct()
+                    .joinToString(", ")
+                testServices.groupingStageInputs.forEach { input ->
+                    input.failWithCollectedOutputs(
+                        texts,
+                        "Sanity check failed: the grouped batch did not print a " +
+                                "'${GroupedTestsResultProtocol.BEGIN}' block for every driver-enabled VM. " +
+                                "Missing from: $missingBlockVms. A VM exited successfully without invoking the " +
+                                "launcher's result-collecting driver; not a single test reported a result on that " +
+                                "VM, so the results from the other VMs cannot establish complete test coverage.",
+                    )
+                }
+                return
+            }
+
+            val outputsWithIncompleteStructuredBlock = collectedOutputs.filter { output ->
+                !GroupedTestsResultProtocol.hasCompleteStructuredBlock(output.output)
+            }
+            if (outputsWithIncompleteStructuredBlock.isNotEmpty()) {
+                val incompleteBlockVms = outputsWithIncompleteStructuredBlock
+                    .map { it.vmName }
+                    .distinct()
+                    .joinToString(", ")
+                testServices.groupingStageInputs.forEach { input ->
+                    input.failWithCollectedOutputs(
+                        texts,
+                        "Sanity check failed: the grouped batch did not print a complete " +
+                                "'${GroupedTestsResultProtocol.BEGIN}'/'${GroupedTestsResultProtocol.END}' block for " +
+                                "every driver-enabled VM. Incomplete on: $incompleteBlockVms. A VM exited " +
+                                "successfully before the launcher's result-collecting driver completed, so the " +
+                                "results from the other VMs cannot establish complete test coverage.",
+                    )
+                }
+                return
+            }
         }
 
         val parsedBatchResult = GroupedTestsResultProtocol.parseMerged(texts)

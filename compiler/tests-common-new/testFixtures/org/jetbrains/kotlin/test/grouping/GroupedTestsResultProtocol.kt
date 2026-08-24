@@ -95,10 +95,17 @@ object GroupedTestsResultProtocol {
         return ParsedBatchResult(outcomes = merged, sawStructuredBlock = sawStructuredBlock)
     }
 
-    /** What a single captured text — one VM's stdout, or the output a VM-failure exception embeds — reported. */
+    /** Returns whether [output] contains a structured result block closed by [END]. */
+    fun hasCompleteStructuredBlock(output: String): Boolean {
+        val parsed = parseSingleOutput(output)
+        return parsed.sawStructuredBlock && !parsed.blockLeftOpen
+    }
+
+    /** One captured text: a VM's stdout, or the output a VM-failure exception embeds. */
     private class SingleOutputParse(
         val outcomes: LinkedHashMap<String, Outcome>,
         val sawStructuredBlock: Boolean,
+        val blockLeftOpen: Boolean,
     )
 
     private fun parseSingleOutput(output: String): SingleOutputParse {
@@ -135,7 +142,7 @@ object GroupedTestsResultProtocol {
                 )
             )
         }
-        return SingleOutputParse(outcomes, sawStructuredBlock)
+        return SingleOutputParse(outcomes, sawStructuredBlock, blockLeftOpen = insideBlock)
     }
 
     /** Matches a sentinel on the exact raw line, tolerating only a trailing CR from CRLF-captured stdout. */

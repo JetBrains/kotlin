@@ -125,6 +125,67 @@ class WasmGroupedStageBoxRunnerAttributionTest {
     }
 
     @Test
+    fun `given a grouped batch whose driver ran on only one VM then every test is failed`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        val outputWithResults = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val outputWithoutResults = "fallback to startUnitTests()\n"
+
+        runner(
+            listOf(first, second),
+            vmStdout = listOf(outputWithResults, outputWithoutResults),
+            vmFailures = emptyList(),
+        ).processArtifact(FakeWasmArtifact)
+
+        for (test in listOf(first, second)) {
+            val message = test.reportedFailure?.message.orEmpty()
+            assertTrue("every driver-enabled VM" in message, message)
+            assertTrue("VM-2" in message, message)
+        }
+    }
+
+    @Test
+    fun `given a grouped batch whose driver did not complete on one VM then every test is failed`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        val completeOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val incompleteOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.PASSED)
+            // No END sentinel: the VM exited successfully before the driver completed its result block.
+        }
+
+        runner(
+            listOf(first, second),
+            vmStdout = listOf(completeOutput, incompleteOutput),
+            vmFailures = emptyList(),
+        ).processArtifact(DriverLinkedBatchArtifact)
+
+        for (test in listOf(first, second)) {
+            val message = test.reportedFailure?.message.orEmpty()
+            assertTrue("complete" in message, message)
+            assertTrue("VM-2" in message, message)
+        }
+    }
+
+    @Test
     fun `given a single isolated test without a structured block then only a VM failure fails it`() {
         // An isolated batch gets no driver at all, so the absence of a block is expected there: its verdict comes from
         // the `box()` check in the launcher glue, which makes the VM exit non-zero on failure.
@@ -227,10 +288,12 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             override fun runTestCode(
                 artifact: BinaryArtifacts.Wasm,
                 useUnitTestRunnerOnly: Boolean,
-                outputCollector: MutableList<String>?,
+                outputCollector: MutableList<WasmVMOutput>?,
             ): List<Throwable> {
-                // VMs that finished report through the collector; the ones that died report through exceptions.
-                outputCollector?.addAll(vmStdout)
+                // VMs that finished report through the collector, the ones that died through exceptions.
+                outputCollector?.addAll(vmStdout.mapIndexed { index, output ->
+                    WasmVMOutput(vmName = "VM-${index + 1}", output = output)
+                })
                 return vmFailures
             }
         }

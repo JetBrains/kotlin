@@ -112,7 +112,7 @@ class WasiBoxRunner(
     fun runWasmCode(
         artifacts: WasmCompilationSetsBinaryArtifact,
         useUnitTestRunnerOnly: Boolean = false,
-        outputCollector: MutableList<String>? = null,
+        outputCollector: MutableList<WasmVMOutput>? = null,
         throwOnExceptions: Boolean = !useUnitTestRunnerOnly,
         /** Whether this batch carries the generated result-collecting driver; see [startUnitTestsWasiScript]. */
         callGroupedTestsDriver: Boolean = false,
@@ -241,7 +241,7 @@ open class WasmWasiFolderGroupingStageBoxRunner(
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
         useUnitTestRunnerOnly: Boolean,
-        outputCollector: MutableList<String>?,
+        outputCollector: MutableList<WasmVMOutput>?,
     ): List<Throwable> {
         val folder = (artifact as WasmFolderBinaryArtifact).folder
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
