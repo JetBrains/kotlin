@@ -12,6 +12,10 @@
 
 - [`KT-88571`](https://youtrack.jetbrains.com/issue/KT-88571) K/JS: "llegalStateException: Internal error: cannot find external signature" caused by  `@Serializable` enum in 2.4.20-RC
 
+### Tools. CLI
+
+- [`KT-88475`](https://youtrack.jetbrains.com/issue/KT-88475) IncrementalCompilationComponents instances are not being called anymore
+
 ### Tools. Gradle. Wasm
 
 - [`KT-88566`](https://youtrack.jetbrains.com/issue/KT-88566) K/Wasm: Webpack configuration generated after user defined chunks from the webpack.config.d directory
