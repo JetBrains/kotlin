@@ -104,6 +104,43 @@ class KotlinTargetVariantResourcesPublicationTests {
         )
     }
 
+    @Test
+    fun `test resources configuration - outputs only kar - when target is stored in kotlin archive`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                enableMppResourcesPublication(true)
+                /*propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_MULTIPLATFORM_USE_KOTLIN_ARCHIVE,
+                    "true",
+                )*/
+            }
+        ) {
+            kotlin {
+                linuxX64()
+            }
+        }.evaluate()
+        val target = project.multiplatformExtension.linuxX64()
+
+        project.publishFakeResources(target)
+
+        val publishedResourcesConfigurationName = target.resourcesElementsConfigurationName + "-published"
+        assertEquals(
+            publishedResourcesConfigurationName,
+            target.internal.kotlinComponents
+                .flatMap { component -> component.internal.usages }
+                .single { usage -> usage.dependencyConfigurationName.contains("resourcesElements", ignoreCase = true) }
+                .dependencyConfigurationName,
+        )
+        assertEquals(
+            listOf("kar.xz"),
+            project.configurations.getByName(publishedResourcesConfigurationName).outgoing.artifacts.map { it.extension },
+        )
+        assertEquals(
+            emptyList(),
+            project.configurations.getByName(target.resourcesElementsConfigurationName).outgoing.artifacts.toList(),
+        )
+    }
+
     private fun testPublishedVariants(
         enableResourcePublication: Boolean,
         afterEvaluation: Project.(KotlinTarget) -> Unit,
