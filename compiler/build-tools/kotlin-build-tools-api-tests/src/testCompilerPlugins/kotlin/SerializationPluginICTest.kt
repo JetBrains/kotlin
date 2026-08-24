@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgno
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @AffectedByCompilerPlugins
@@ -59,7 +58,6 @@ class SerializationPluginICTest : BaseCompilationTest() {
         }
     }
 
-    @Disabled("enable when fixed")
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("KT-88801: Modifying a subclass of a serializable abstract class with a private field succeeds incrementally")
     fun testIncrementalCompilationOfSerializableAbstractClassWithPrivateField(strategyConfig: CompilerExecutionStrategyConfiguration) {
