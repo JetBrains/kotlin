@@ -25,15 +25,15 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
   sourceInformation(%composer, "C(VarargComposable)N(state,values):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(state) as Int + 1 shl 1
   }
   if (%default and 0b0010 == 0) {
     %composer.startMovableGroup(<>, values.size)
-    %dirty = %dirty or if (%composer.changed(values.size)) 0b00100000 else 0
+    %dirty = %dirty or %composer.changed(values.size) as Int shl 5
     val <iterator> = values.iterator()
     while (<iterator>.hasNext()) {
       val value = <iterator>.next()
-      %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
+      %dirty = %dirty or %composer.changed(value) as Int shl 5
     }
     %composer.endMovableGroup()
     if (%dirty and 0b01110000 == 0) {

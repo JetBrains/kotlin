@@ -164,16 +164,16 @@ fun Test01(p0: Int, p1: Int, p2: Int, p3: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test01)N(p0,p1,p2,p3):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -200,16 +200,16 @@ fun Test02(p0: Int, p1: Int, p3: Int, p2: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test02)N(p0,p1,p3,p2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -236,16 +236,16 @@ fun Test03(p0: Int, p2: Int, p1: Int, p3: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test03)N(p0,p2,p1,p3):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -272,16 +272,16 @@ fun Test04(p0: Int, p2: Int, p3: Int, p1: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test04)N(p0,p2,p3,p1):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -308,16 +308,16 @@ fun Test05(p0: Int, p3: Int, p1: Int, p2: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test05)N(p0,p3,p1,p2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -344,16 +344,16 @@ fun Test06(p0: Int, p3: Int, p2: Int, p1: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test06)N(p0,p3,p2,p1):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -380,16 +380,16 @@ fun Test07(p1: Int, p0: Int, p2: Int, p3: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test07)N(p1,p0,p2,p3):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -416,16 +416,16 @@ fun Test08(p1: Int, p0: Int, p3: Int, p2: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test08)N(p1,p0,p3,p2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -452,16 +452,16 @@ fun Test09(p1: Int, p2: Int, p0: Int, p3: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test09)N(p1,p2,p0,p3):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -488,16 +488,16 @@ fun Test00(p1: Int, p2: Int, p3: Int, p0: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test00)N(p1,p2,p3,p0):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -524,16 +524,16 @@ fun Test11(p1: Int, p3: Int, p0: Int, p2: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test11)N(p1,p3,p0,p2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -560,16 +560,16 @@ fun Test12(p1: Int, p3: Int, p2: Int, p0: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test12)N(p1,p3,p2,p0):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -596,16 +596,16 @@ fun Test13(p2: Int, p0: Int, p1: Int, p3: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test13)N(p2,p0,p1,p3):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -632,16 +632,16 @@ fun Test14(p2: Int, p0: Int, p3: Int, p1: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test14)N(p2,p0,p3,p1):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -668,16 +668,16 @@ fun Test15(p2: Int, p1: Int, p0: Int, p3: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test15)N(p2,p1,p0,p3):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -704,16 +704,16 @@ fun Test16(p2: Int, p1: Int, p3: Int, p0: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test16)N(p2,p1,p3,p0):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -740,16 +740,16 @@ fun Test17(p2: Int, p3: Int, p0: Int, p1: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test17)N(p2,p3,p0,p1):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -776,16 +776,16 @@ fun Test18(p2: Int, p3: Int, p1: Int, p0: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test18)N(p2,p3,p1,p0):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -812,16 +812,16 @@ fun Test19(p3: Int, p0: Int, p1: Int, p2: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test19)N(p3,p0,p1,p2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -848,16 +848,16 @@ fun Test20(p3: Int, p0: Int, p2: Int, p1: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test20)N(p3,p0,p2,p1):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -884,16 +884,16 @@ fun Test21(p3: Int, p1: Int, p0: Int, p2: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test21)N(p3,p1,p0,p2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -920,16 +920,16 @@ fun Test22(p3: Int, p1: Int, p2: Int, p0: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test22)N(p3,p1,p2,p0):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -956,16 +956,16 @@ fun Test23(p3: Int, p2: Int, p0: Int, p1: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test23)N(p3,p2,p0,p1):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -992,16 +992,16 @@ fun Test24(p3: Int, p2: Int, p1: Int, p0: Int, %composer: Composer?, %changed: I
   sourceInformation(%composer, "C(Test24)N(p3,p2,p1,p0):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(p3) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(p2) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(p1) as Int + 1 shl 7
   }
   if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changed(p0) as Int + 1 shl 10
   }
   if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

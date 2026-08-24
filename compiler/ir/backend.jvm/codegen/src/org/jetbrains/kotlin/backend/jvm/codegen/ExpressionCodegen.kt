@@ -1076,9 +1076,6 @@ class ExpressionCodegen(
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
         val typeOperand = expression.typeOperand
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_CAST ->
-                expression.argument.accept(this, data)
-
             IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST -> {
                 val result = expression.argument.accept(this, data)
                 val boxedLeftType = typeMapper.boxType(result.irType)
@@ -1094,6 +1091,13 @@ class ExpressionCodegen(
                     TypeIntrinsics.checkcast(mv, typeOperand, boxedRightType, false)
                 }
                 MaterialValue(this, boxedRightType, expression.type)
+            }
+
+            IrTypeOperator.IMPLICIT_CAST -> {
+                val result = expression.argument.accept(this, data)
+                val targetType = typeMapper.mapType(typeOperand)
+                result.materializeAt(targetType, typeOperand)
+                MaterialValue(this, targetType, expression.type)
             }
 
             IrTypeOperator.REINTERPRET_CAST -> {

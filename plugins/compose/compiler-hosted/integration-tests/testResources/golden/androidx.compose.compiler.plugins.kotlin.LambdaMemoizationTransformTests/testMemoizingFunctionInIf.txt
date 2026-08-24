@@ -26,7 +26,7 @@ fun Something(param: Function0<String>?, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(Something)N(param)<Someth...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(param)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(param) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

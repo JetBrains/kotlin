@@ -10,7 +10,7 @@ fun interface Consumer {
 
 @Composable fun Test(int: Int) {
     Example {
-        println(it)
+        println(int)
     }
 }
 
@@ -25,19 +25,22 @@ interface Consumer {
   abstract fun consume(t: Int)
 }
 @Composable
-@FunctionKeyMeta(key = -1502623783, startOffset = 160, endOffset = 270)
 fun Test(int: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)N(int)<{>,<Exampl...>:Test.kt")
-  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+  sourceInformation(%composer, "C(Test)<{>,<Exampl...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or %composer.changed(int) as Int + 1 shl 1
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
+      traceEventStart(<>, %dirty, -1, <>)
     }
     Example(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(false) {
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         Consumer { it: Int ->
-          println(it)
+          println(int)
         }
       }
       sourceInformationMarkerEnd(%composer)
@@ -54,8 +57,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1139663906, startOffset = 303, endOffset = 350)
 fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Example)N(consumer):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(Example):Test.kt")
   sourceInformationMarkerEnd(%composer)
 }

@@ -57,11 +57,11 @@ fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %defa
   val %dirty = %changed
   if (%default and 0b0001 == 0) {
     %composer.startMovableGroup(<>, values.size)
-    %dirty = %dirty or if (%composer.changed(values.size)) 0b0100 else 0
+    %dirty = %dirty or %composer.changed(values.size) as Int shl 2
     val <iterator> = values.iterator()
     while (<iterator>.hasNext()) {
       val value = <iterator>.next()
-      %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+      %dirty = %dirty or %composer.changed(value) as Int shl 2
     }
     %composer.endMovableGroup()
     if (%dirty and 0b1110 == 0) {
@@ -104,11 +104,11 @@ fun VarargWContent(values: IntArray?, content: Function2<Composer, Int, Unit>, %
   val %dirty = %changed
   if (%default and 0b0001 == 0) {
     %composer.startMovableGroup(<>, values.size)
-    %dirty = %dirty or if (%composer.changed(values.size)) 0b0100 else 0
+    %dirty = %dirty or %composer.changed(values.size) as Int shl 2
     val <iterator> = values.iterator()
     while (<iterator>.hasNext()) {
       val value = <iterator>.next()
-      %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+      %dirty = %dirty or %composer.changed(value) as Int shl 2
     }
     %composer.endMovableGroup()
     if (%dirty and 0b1110 == 0) {

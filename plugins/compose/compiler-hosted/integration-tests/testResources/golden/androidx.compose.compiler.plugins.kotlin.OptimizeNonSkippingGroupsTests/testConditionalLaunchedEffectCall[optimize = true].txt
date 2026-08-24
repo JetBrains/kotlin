@@ -24,21 +24,15 @@ fun Test(states: List<String>, condition: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1277138018, startOffset = 84, endOffset = 578)
 fun Test(states: List<String>, condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(states,condition):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
-      %composer.changed(states)
-    } else {
-      %composer.changedInstance(states)
-    }
-    ) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(states) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(condition)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(condition) as Int + 1 shl 4
   }
   if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

@@ -81,7 +81,7 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
   sourceInformation(%composer, "C(Wrapper)N(content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(content) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -108,35 +108,35 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
   } else if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(one)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(one) as Int + 1 shl 1
   }
   if (%default and 0b0010 != 0) {
     %dirty = %dirty or 0b00110000
   } else if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(two)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changedInstance(two) as Int + 1 shl 4
   }
   if (%default and 0b0100 != 0) {
     %dirty = %dirty or 0b000110000000
   } else if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(three)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changedInstance(three) as Int + 1 shl 7
   }
   if (%default and 0b1000 != 0) {
     %dirty = %dirty or 0b110000000000
   } else if (%changed and 0b110000000000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(four)) 0b100000000000 else 0b010000000000
+    %dirty = %dirty or %composer.changedInstance(four) as Int + 1 shl 10
   }
   if (%default and 0b00010000 != 0) {
     %dirty = %dirty or 0b0110000000000000
   } else if (%changed and 0b0110000000000000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(five)) 0b0100000000000000 else 0b0010000000000000
+    %dirty = %dirty or %composer.changedInstance(five) as Int + 1 shl 13
   }
   if (%default and 0b00100000 != 0) {
     %dirty = %dirty or 0b00110000000000000000
   } else if (%changed and 0b00110000000000000000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(six)) 0b00100000000000000000 else 0b00010000000000000000
+    %dirty = %dirty or %composer.changedInstance(six) as Int + 1 shl 16
   }
   if (%changed and 0b000110000000000000000000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(content)) 0b000100000000000000000000 else 0b10000000000000000000
+    %dirty = %dirty or %composer.changedInstance(content) as Int + 1 shl 19
   }
   if (%composer.shouldExecute(%dirty and 0b10010010010010010011 != 0b10010010010010010010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
@@ -171,7 +171,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<invoke...>")
-        tmp0_safe_receiver as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b0011)
+        tmp0_safe_receiver as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 3)
         %composer.endReplaceGroup()
       }
     }
@@ -202,7 +202,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<four()>")
         tmp2_safe_receiver as Function2<Composer, Int, Unit>.let { it: Function2<Composer, Int, Unit> ->
-          four as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b1001)
+          four as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 9)
         }
         %composer.endReplaceGroup()
       }
@@ -210,7 +210,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
     if (five != null) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<five()>")
-      five as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b1100)
+      five as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 12)
       %composer.endReplaceGroup()
     } else {
       %composer.startReplaceGroup(<>)
@@ -232,7 +232,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         %composer.endReplaceGroup()
       }
     }
-    content(%composer, 0b1110 and %dirty shr 0b00010010)
+    content(%composer, 0b1110 and %dirty shr 18)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

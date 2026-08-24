@@ -23,18 +23,17 @@ import androidx.compose.runtime.Composable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1541238530, startOffset = 104, endOffset = 173)
 fun <V> B(value: V, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)N(value)<A(Wrap...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+    %dirty = %dirty or if (%changed and 0b1000 == 0) {
       %composer.changed(value)
     } else {
       %composer.changedInstance(value)
     }
-    ) 0b0100 else 0b0010
+     as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -53,21 +52,15 @@ fun <V> B(value: V, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 888702020, startOffset = 198, endOffset = 331)
 fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(X)N(items,itemContent)*<itemCo...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
-      %composer.changed(items)
-    } else {
-      %composer.changedInstance(items)
-    }
-    ) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(items) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(itemContent)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changedInstance(itemContent) as Int + 1 shl 4
   }
   if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -89,18 +82,12 @@ fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %compo
   }
 }
 @Composable
-@FunctionKeyMeta(key = 691220591, startOffset = 356, endOffset = 516)
 fun C(items: List<String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(C)N(items)<X(item...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
-      %composer.changed(items)
-    } else {
-      %composer.changedInstance(items)
-    }
-    ) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(items) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -118,29 +105,23 @@ fun C(items: List<String>, %composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%1463567948: Function3<String, Composer, Int, Unit>?
-    get() {
-      if (field == null) {
-        field = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
-          sourceInformation(%composer, "invalid source info at 1: 'CN(item)12@440L7,13@468L16:Test.kt'")
-          val %dirty = %changed
-          if (%changed and 0b0110 == 0) {
-            %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
-          }
-          if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
-            if (isTraceInProgress()) {
-              traceEventStart(<>, %dirty, -1, <>)
-            }
-            A(item, %composer, 0b1110 and %dirty)
-            A(Wrapper(item), %composer, Wrapper.%stable)
-            if (isTraceInProgress()) {
-              traceEventEnd()
-            }
-          } else {
-            %composer.skipToGroupEnd()
-          }
-        }
-      }
-      return field
+  val lambda%1463567948: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "invalid source info at 1: 'CN(item)12@440L7,13@468L16:Test.kt'")
+    val %dirty = %changed
+    if (%changed and 0b0110 == 0) {
+      %dirty = %dirty or %composer.changed(item) as Int + 1 shl 1
     }
+    if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %dirty, -1, <>)
+      }
+      A(item, %composer, 0b1110 and %dirty)
+      A(Wrapper(item), %composer, Wrapper.%stable)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
 }

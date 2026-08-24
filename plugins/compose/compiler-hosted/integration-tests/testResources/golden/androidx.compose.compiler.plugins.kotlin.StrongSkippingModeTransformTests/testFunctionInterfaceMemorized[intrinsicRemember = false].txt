@@ -7,17 +7,10 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
-@Composable fun TestMemoizedFun(compute: TestFunInterface) {}
+@Composable fun Varargs(vararg ints: Int) {
+}
 @Composable fun Test() {
-    val capture = 0
-    TestMemoizedFun {
-        // no captures
-        use(it)
-    }
-    TestMemoizedFun {
-        // stable captures
-        use(capture)
-    }
+    Varargs(1, 2, 3)
 }
 
 //
@@ -25,12 +18,23 @@ import androidx.compose.runtime.ReadOnlyComposable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1461782433, startOffset = 226, endOffset = 275)
-fun TestMemoizedFun(compute: TestFunInterface, %composer: Composer?, %changed: Int) {
+fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+  val %dirty = %changed
+  %composer.startMovableGroup(<>, ints.size)
+  %dirty = %dirty or %composer.changed(ints.size) as Int shl 2
+  val <iterator> = ints.iterator()
+  while (<iterator>.hasNext()) {
+    val value = <iterator>.next()
+    %dirty = %dirty or %composer.changed(value) as Int shl 2
+  }
+  %composer.endMovableGroup()
+  if (%dirty and 0b1110 == 0) {
+    %dirty = %dirty or 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0001 != 0, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
+      traceEventStart(<>, %dirty, -1, <>)
     }
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -39,28 +43,17 @@ fun TestMemoizedFun(compute: TestFunInterface, %composer: Composer?, %changed: I
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    TestMemoizedFun(compute, %composer, updateChangedFlags(%changed or 0b0001))
+    Varargs(ints, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 300, endOffset = 597)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val capture = 0
-    TestMemoizedFun(%composer.cache(false) {
-      TestFunInterface { it: Int ->
-        use(it)
-      }
-    }, %composer, 0)
-    TestMemoizedFun(%composer.cache(%composer.changed(capture)) {
-      TestFunInterface { it: Int ->
-        use(capture)
-      }
-    }, %composer, 0)
+    Varargs(1, 2, 3, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

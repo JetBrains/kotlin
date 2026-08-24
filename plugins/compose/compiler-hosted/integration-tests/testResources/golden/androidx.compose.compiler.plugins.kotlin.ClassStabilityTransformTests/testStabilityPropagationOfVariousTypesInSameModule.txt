@@ -68,7 +68,7 @@ fun A(y: Any, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(A)N(y)<A(X(li...>,<A(Stab...>,<A(Unst...>,<A(Sing...>,<A(Sing...>,<A(Sing...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(y)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(y) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

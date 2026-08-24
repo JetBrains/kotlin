@@ -23,11 +23,11 @@ fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(Test)N(strings)<rememb...>:Test.kt")
   val %dirty = %changed
   %composer.startMovableGroup(<>, strings.size)
-  %dirty = %dirty or if (%composer.changed(strings.size)) 0b0100 else 0
+  %dirty = %dirty or %composer.changed(strings.size) as Int shl 2
   val <iterator> = strings.iterator()
   while (<iterator>.hasNext()) {
     val value = <iterator>.next()
-    %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+    %dirty = %dirty or %composer.changed(value) as Int shl 2
   }
   %composer.endMovableGroup()
   if (%dirty and 0b1110 == 0) {

@@ -6,10 +6,8 @@ import androidx.compose.runtime.*
 
 @Composable
 private fun Test(param: String?) {
-    Inline1 {
-        Inline2 {
-            if (true) return@Inline1
-        }
+    Dialog {
+        if (false) Test(param)
     }
 }
 
@@ -18,27 +16,29 @@ private fun Test(param: String?) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1971298841, startOffset = 92, endOffset = 277)
 private fun Test(param: String?, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)N(param)<Inline...>:Test.kt")
-  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+  sourceInformation(%composer, "C(Test)<Dialog>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or %composer.changed(param) as Int + 1 shl 1
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
+      traceEventStart(<>, %dirty, -1, <>)
     }
-    Inline1({ %composer: Composer?, %changed: Int ->
-      val tmp0_marker = %composer.currentMarker
+    Dialog({ %composer: Composer?, %changed: Int ->
       %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "C<Inline...>:Test.kt")
-      Inline2({ %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C:Test.kt")
+      if (false) {
         %composer.startReplaceGroup(<>)
-        sourceInformation(%composer, "C:Test.kt")
-        if (true) {
-          %composer.endToMarker(tmp0_marker)
-          return@Inline1
-        }
+        sourceInformation(%composer, "<Test(p...>")
+        Test(param, %composer, 0)
         %composer.endReplaceGroup()
-      }, %composer, 0)
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+      }
       %composer.endReplaceGroup()
     }, %composer, 0)
     if (isTraceInProgress()) {
