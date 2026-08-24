@@ -356,7 +356,19 @@ data class Variant(
     val attributes: Map<String, String>,
     @SerialName("available-at")
     val availableAt: ComponentPointer? = null,
+    /**
+     * Gradle writes this only for a variant that declares a capability, so it stays empty for most variants.
+     * The order of the capabilities is not stable, so this is a set to keep the pretty printed form deterministic.
+     */
+    val capabilities: Set<Capability> = emptySet(),
     val files: List<VariantFile> = emptyList(),
+)
+
+@kotlinx.serialization.Serializable
+data class Capability(
+    val group: String,
+    val name: String,
+    val version: String? = null,
 )
 
 @kotlinx.serialization.Serializable
