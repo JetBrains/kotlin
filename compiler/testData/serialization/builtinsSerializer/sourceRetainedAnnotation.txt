@@ -1,26 +1,40 @@
-package test
+library {
+  // module name: <main>
 
-public val property: kotlin.Unit
-public fun </*0*/ T> function(/*0*/ param: kotlin.Unit): kotlin.Unit
+  library fragment {
+    // package name: test
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
-    public constructor A()
-}
+    // class name: test/A
+    // class name: test/Klass
+    // class name: test/Enum
 
-public final enum class Enum : kotlin.Enum<test.Enum> {
-    enum entry ENTRY
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/A : kotlin/Annotation {
 
-    private constructor Enum()
-    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
-    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+      public constructor()
+    }
 
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Enum
-    public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>
-}
+    public final class test/Klass : kotlin/Any {
 
-public final class Klass {
-    public constructor Klass()
+      public constructor()
+    }
+
+    public final enum class test/Enum : kotlin/Enum<test/Enum> {
+
+      private constructor()
+
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> function(param: kotlin/Unit): kotlin/Unit
+
+      public final val property: kotlin/Unit
+        public final get
+    }
+  }
 }

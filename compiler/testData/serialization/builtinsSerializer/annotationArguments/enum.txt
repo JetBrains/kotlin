@@ -1,37 +1,58 @@
-package test
+library {
+  // module name: <main>
 
-@test.JustEnum(weapon = Weapon.SCISSORS) @test.EnumArray(enumArray = {}) public final class C1 {
-    public constructor C1()
-}
+  library fragment {
+    // package name: test
 
-@test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) public final class C2 {
-    public constructor C2()
-}
+    // class name: test/Weapon
+    // class name: test/JustEnum
+    // class name: test/EnumArray
+    // class name: test/C1
+    // class name: test/C2
 
-public final annotation class EnumArray : kotlin.Annotation {
-    public constructor EnumArray(/*0*/ enumArray: kotlin.Array<test.Weapon>)
-    public final val enumArray: kotlin.Array<test.Weapon>
-}
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
 
-public final annotation class JustEnum : kotlin.Annotation {
-    public constructor JustEnum(/*0*/ weapon: test.Weapon)
-    public final val weapon: test.Weapon
-}
+      private constructor()
 
-public final enum class Weapon : kotlin.Enum<test.Weapon> {
-    enum entry ROCK
+      ROCK,
 
-    enum entry PAPER
+      PAPER,
 
-    enum entry SCISSORS
+      SCISSORS,
 
-    private constructor Weapon()
-    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
-    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+      // has Enum.entries
+    }
 
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Weapon
-    public final /*synthesized*/ fun values(): kotlin.Array<test.Weapon>
+    public final annotation class test/JustEnum : kotlin/Annotation {
+
+      public constructor(weapon: test/Weapon)
+
+      public final val weapon: test/Weapon
+        public final get
+    }
+
+    public final annotation class test/EnumArray : kotlin/Annotation {
+
+      public constructor(enumArray: kotlin/Array<test/Weapon>)
+
+      public final val enumArray: kotlin/Array<test/Weapon>
+        public final get
+    }
+
+    @test/JustEnum(weapon = test/Weapon.SCISSORS)
+    @test/EnumArray(enumArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    @test/EnumArray(enumArray = [test/Weapon.PAPER, test/Weapon.ROCK])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+    }
+  }
 }

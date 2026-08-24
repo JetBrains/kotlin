@@ -1,28 +1,41 @@
-package test
+library {
+  // module name: <main>
 
-public final enum class My : kotlin.Enum<test.My> {
-    enum entry ALPHA
+  library fragment {
+    // package name: test
 
-    enum entry BETA
+    // class name: test/My
+    // class name: test/ann
+    // class name: test/annotated
 
-    enum entry OMEGA
+    public final enum class test/My : kotlin/Enum<test/My> {
 
-    private constructor My()
-    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
-    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.My): kotlin.Int
+      private constructor()
 
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.My
-    public final /*synthesized*/ fun values(): kotlin.Array<test.My>
-}
+      ALPHA,
 
-public final annotation class ann : kotlin.Annotation {
-    public constructor ann(/*0*/ vararg m: test.My /*kotlin.Array<out test.My>*/)
-    public final val m: kotlin.Array<out test.My>
-}
+      BETA,
 
-@test.ann(m = {My.ALPHA, My.BETA}) public final annotation class annotated : kotlin.Annotation {
-    public constructor annotated()
+      OMEGA,
+
+      // has Enum.entries
+    }
+
+    public final annotation class test/ann : kotlin/Annotation {
+
+      public constructor(vararg m: test/My /* kotlin/Array<out test/My> */)
+
+      public final val m: kotlin/Array<out test/My>
+        public final get
+    }
+
+    @test/ann(m = [test/My.ALPHA, test/My.BETA])
+    public final annotation class test/annotated : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+    }
+  }
 }
