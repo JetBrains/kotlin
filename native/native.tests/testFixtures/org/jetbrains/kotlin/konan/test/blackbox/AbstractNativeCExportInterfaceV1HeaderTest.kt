@@ -25,6 +25,9 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
 
     private val testCompilationFactory = TestCompilationFactory()
 
+    /** Extra compiler args for subclasses, e.g. to exercise the IR-based discovery mode. */
+    protected open val additionalCompilerArgs: List<String> get() = emptyList()
+
     protected fun runTest(@TestDataFile testFile: String) {
         val path = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
         val goldenDataHeaderFile = HeaderTestModuleMarkers.resolveTargetSpecificGoldenDataFile(
@@ -57,7 +60,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         "-XXLanguage:+CompanionBlocks",
         "-XXLanguage:+CompanionExtensions",
         "-Xbinary=cInterfaceMode=v1",
-    ))
+    ) + additionalCompilerArgs)
 
     /** A single-module header test: the whole test data file becomes one library. */
     private fun singleModuleBinaryLibrary(path: File, moduleName: String): BinaryLibraryCompilation {
@@ -107,4 +110,16 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
             kind = testRunSettings.get<BinaryLibraryKind>(),
         )
     }
+}
+
+/**
+ * Same as [AbstractNativeCExportInterfaceV1HeaderTest], but with the model built from the IR instead
+ * of K1 descriptors (`-Xbinary=cExportUseIrDiscovery=true`).
+ * The IR mode must produce byte-identical output to the descriptor mode, so both share the same
+ * golden `.h` files.
+ */
+@Tag("cexport")
+abstract class AbstractNativeCExportInterfaceV1HeaderIrTest : AbstractNativeCExportInterfaceV1HeaderTest() {
+    override val additionalCompilerArgs: List<String>
+        get() = listOf("-Xbinary=cExportUseIrDiscovery=true")
 }
