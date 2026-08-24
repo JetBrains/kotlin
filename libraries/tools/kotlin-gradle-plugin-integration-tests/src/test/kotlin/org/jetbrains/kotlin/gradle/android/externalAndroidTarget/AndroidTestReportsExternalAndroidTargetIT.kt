@@ -108,7 +108,6 @@ class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
             jdkVersion = jdkVersion,
             namespace = "org.jetbrains.sample.devicetestwiring",
             androidLibraryConfiguration = {
-                withHostTest {}
                 withDeviceTest {
                     instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
