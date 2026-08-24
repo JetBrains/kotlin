@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.psi.KtExpression
 class KaBaseCompoundArrayAccessCallResolutionAttempt(
     private val backingCompoundOperation: KaCompoundOperation?,
     private val backingIndexArguments: List<KtExpression>,
-    private val backingGetterCallAttempt: KaSingleCallResolutionAttempt,
-    private val backingOperationCallAttempt: KaSingleCallResolutionAttempt,
-    private val backingSetterCallAttempt: KaSingleCallResolutionAttempt,
+    private val backingGetterCallAttempt: KaSimpleCallResolutionAttempt,
+    private val backingOperationCallAttempt: KaSimpleCallResolutionAttempt,
+    private val backingSetterCallAttempt: KaSimpleCallResolutionAttempt,
 ) : KaCompoundArrayAccessCallResolutionAttempt {
     override val token: KaLifetimeToken get() = backingGetterCallAttempt.token
 
@@ -39,9 +39,9 @@ class KaBaseCompoundArrayAccessCallResolutionAttempt(
             }
         }
 
-    override val getterCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingGetterCallAttempt }
-    override val operationCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
-    override val setterCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingSetterCallAttempt }
-    override val attempts: List<KaSingleCallResolutionAttempt>
+    override val getterCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingGetterCallAttempt }
+    override val operationCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
+    override val setterCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingSetterCallAttempt }
+    override val attempts: List<KaSimpleCallResolutionAttempt>
         get() = withValidityAssertion { listOf(backingGetterCallAttempt, backingOperationCallAttempt, backingSetterCallAttempt) }
 }

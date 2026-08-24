@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionSuccess
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCallResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
@@ -40,9 +40,9 @@ internal fun Map<KtExpression, KaVariableSignature<KaParameterSymbol>>.toContext
  * Otherwise, returns `null`.
  */
 internal inline fun <R> assembleMultiCall(
-    attempt1: KaSingleCallResolutionAttempt,
-    attempt2: KaSingleCallResolutionAttempt,
-    attempt3: KaSingleCallResolutionAttempt,
+    attempt1: KaSimpleCallResolutionAttempt,
+    attempt2: KaSimpleCallResolutionAttempt,
+    attempt3: KaSimpleCallResolutionAttempt,
     assemble: (KaCallResolutionSuccess, KaCallResolutionSuccess, KaCallResolutionSuccess) -> R,
 ): R? {
     val s1 = attempt1 as? KaCallResolutionSuccess ?: return null
@@ -52,8 +52,8 @@ internal inline fun <R> assembleMultiCall(
 }
 
 internal inline fun <R> assembleMultiCall(
-    attempt1: KaSingleCallResolutionAttempt,
-    attempt2: KaSingleCallResolutionAttempt,
+    attempt1: KaSimpleCallResolutionAttempt,
+    attempt2: KaSimpleCallResolutionAttempt,
     assemble: (KaCallResolutionSuccess, KaCallResolutionSuccess) -> R,
 ): R? {
     val s1 = attempt1 as? KaCallResolutionSuccess ?: return null
