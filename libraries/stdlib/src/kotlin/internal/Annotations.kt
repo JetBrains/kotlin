@@ -138,12 +138,11 @@ internal annotation class JvmBuiltin
 internal annotation class SuppressBytecodeGeneration
 
 /**
- * The type of effects that a function produces.
+ * The effects that a function produces.
  * There are two kinds, not including pure functions: read-only and read-write.
  * The former only reads the state of the outside world, the calls to these functions can be reordered.
  * The latter mutates the state, so non-pure function calls cannot be moved across calls of this function.
  */
-@SinceKotlin("2.4")
 internal enum class EffectsKind {
     /** No effects, the function is pure. */
     PURE,
@@ -160,5 +159,4 @@ internal enum class EffectsKind {
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER)
 @Retention(AnnotationRetention.BINARY)
-@SinceKotlin("2.4")
 internal annotation class Effects(val kind: EffectsKind)
