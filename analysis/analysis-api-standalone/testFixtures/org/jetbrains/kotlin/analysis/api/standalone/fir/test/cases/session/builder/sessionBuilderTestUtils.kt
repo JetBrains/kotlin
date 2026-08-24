@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,16 +9,14 @@ import com.intellij.mock.MockVirtualFileSystem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
-import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
-import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
-import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
@@ -34,27 +32,29 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.streams.asSequence
 
+@OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
 fun KtCallExpression.assertIsSuccessfulCallOf(
     callableId: CallableId,
     additionalCheck: (KaFunctionSymbol) -> Unit = {},
 ) {
     analyze(this) {
-        val ktCallInfo = resolveToCall()
-        Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
-        val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
+        val attempt = tryResolveCall()
+        Assertions.assertInstanceOf(KaCallResolutionSuccess::class.java, attempt)
+        val symbol = attempt?.successful?.function?.symbol
         Assertions.assertInstanceOf(KaNamedFunctionSymbol::class.java, symbol); symbol as KaNamedFunctionSymbol
         Assertions.assertEquals(callableId, symbol.callableId)
         additionalCheck.invoke(symbol)
     }
 }
 
+@OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
 fun KtCallExpression.assertIsCallOf(
     callableId: CallableId,
     additionalCheck: (KaFunctionSymbol) -> Unit = {},
 ) {
     analyze(this) {
-        val ktCallInfo = resolveToCall()
-        val symbol = ktCallInfo?.singleFunctionCallOrNull()?.symbol
+        val attempt = tryResolveCall()
+        val symbol = attempt?.single?.function?.symbol
         Assertions.assertInstanceOf(KaNamedFunctionSymbol::class.java, symbol); symbol as KaNamedFunctionSymbol
         Assertions.assertEquals(callableId, symbol.callableId)
         additionalCheck.invoke(symbol)
