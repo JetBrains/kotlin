@@ -89,7 +89,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         val elementClass = element::class
 
         val assertions = testServices.assertions
-        val expectedCall = attempt?.successfulCall
+        val expectedCall = attempt?.successful
         for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveCall", elementClass)) {
             val specificCall = kFunction.call(session, element) as? KaSimpleOrMultiCall
             if (expectedCall == null || specificCall == null) {
