@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolution
 
+import org.jetbrains.kotlin.psi.KtElement
+
 /**
  * A marker interface for all elements that can be resolved into a symbol in the Analysis API.
  *
  * See [References and calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for more details
  */
-interface KtResolvable
+interface KtResolvable : KtElement
 
 /**
  * A marker interface for all elements that can be resolved into a call in the Analysis API.
