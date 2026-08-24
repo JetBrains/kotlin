@@ -21,12 +21,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.archive.PackKotlinArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.AssembleKotlinArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.populateTaskGraph
 import java.io.File
 import java.util.zip.ZipInputStream
 import kotlin.test.*
@@ -52,42 +54,24 @@ class PackKotlinArchiveTaskTest {
             }
         }.evaluate()
 
-        val assembleTask = "assembleKotlinArchive"
-        val assembleTaskDependencies = project.tasks.getByName(assembleTask).dependencyNames()
-        val shouldDependOn = listOf(
-            "compileKotlinJs",
-            "compileKotlinWasmJs",
-            "compileKotlinMacosArm64",
-            "compileCommonMainKotlinMetadata",
-            "generateProjectStructureMetadata",
+        val assembleTaskDependencies = project.tasks.getByName("assembleKotlinArchive").dependencyNames()
+        assertEquals(
+            setOf(
+                "compileCommonMainKotlinMetadata",
+                "compileKotlinJs",
+                "compileKotlinMacosArm64",
+                "compileKotlinWasmJs",
+                "compileWebMainKotlinMetadata",
+                "generateProjectStructureMetadata",
+                "metadataCommonMainClasses",
+                "metadataWebMainClasses"
+            ).prettyPrinted,
+            assembleTaskDependencies.prettyPrinted,
         )
-        val shouldNotDependOn = setOf(
-            "compileTestKotlinJs",
-            "compileTestKotlinWasmJs",
-            "compileTestKotlinMacosArm64",
-            "compileDevelopmentExecutableKotlinJs",
-            "compileProductionExecutableKotlinJs",
-            "compileDevelopmentExecutableKotlinWasmJs",
-            "compileProductionExecutableKotlinWasmJs",
-            "linkDebugExecutableMacosArm64",
-            "linkReleaseExecutableMacosArm64",
-        )
-        for (taskName in shouldDependOn) {
-            assertTrue(
-                taskName in assembleTaskDependencies,
-                "Expected task '$assembleTask' to depend on '$taskName'",
-            )
-        }
-        for (taskName in shouldNotDependOn) {
-            assertFalse(
-                taskName in assembleTaskDependencies,
-                "Expected task '$assembleTask' to not depend on '$taskName'",
-            )
-        }
     }
 
     @Test
-    fun `pack task depends on cinterops commonization and resources`() {
+    fun `assemble task depends on cinterops commonization and resources`() {
         val project = buildProjectWithMPP(
             preApplyCode = {
                 enableCInteropCommonization()
@@ -114,17 +98,30 @@ class PackKotlinArchiveTaskTest {
         val assembleTaskDependencies = project.tasks.getByName("assembleKotlinArchive").dependencyNames()
 
         assertEquals(
-            emptySet(),
             setOf(
-                "cinteropArchiveTestMacosArm64",
                 "cinteropArchiveTestIosArm64",
                 "cinteropArchiveTestLinuxArm64",
+                "cinteropArchiveTestMacosArm64",
                 "commonizeCInterop",
+                "compileAppleMainKotlinMetadata",
+                "compileCommonMainKotlinMetadata",
+                "compileKotlinIosArm64",
+                "compileKotlinJs",
+                "compileKotlinLinuxArm64",
+                "compileKotlinMacosArm64",
+                "compileKotlinWasmJs",
+                "compileNativeMainKotlinMetadata",
+                "compileWebMainKotlinMetadata",
+                "generateProjectStructureMetadata",
                 "jsCopyHierarchicalMultiplatformResources",
-                "wasmJsCopyHierarchicalMultiplatformResources",
                 "macosArm64CopyHierarchicalMultiplatformResources",
-            ) - assembleTaskDependencies,
-            "Missing packKotlinArchive dependencies. Actual dependencies: $assembleTaskDependencies",
+                "metadataAppleMainClasses",
+                "metadataCommonMainClasses",
+                "metadataNativeMainClasses",
+                "metadataWebMainClasses",
+                "wasmJsCopyHierarchicalMultiplatformResources",
+            ).prettyPrinted,
+            assembleTaskDependencies.prettyPrinted,
         )
     }
 
@@ -154,18 +151,19 @@ class PackKotlinArchiveTaskTest {
             }
         }
         producer.evaluate()
-        consumer.evaluate()
 
-        val compileTask = consumer.tasks.getByName("compileKotlinJs")
-        val transitiveDependencies = compileTask.transitiveTaskDependencies()
+        consumer.populateTaskGraph(consumer.tasks.getByName("compileKotlinJs"))
 
-        assertTrue(
-            transitiveDependencies.any { it.path == ":compileKotlinJs" },
-            "The consumer compile task does not depend on the producer compilation: ${transitiveDependencies.map { it.path }}",
-        )
-        assertFalse(
-            transitiveDependencies.any { it.name == "assembleKotlinArchive" },
-            "The compile task has a transitive dependency on assembleKotlinArchive: ${transitiveDependencies.map { it.path }}",
+        assertEquals(
+            setOf(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                ":compileKotlinJs",
+                ":consumer:checkKotlinGradlePluginConfigurationErrors",
+                ":consumer:compileKotlinJs",
+                ":consumer:kmpPartiallyResolvedDependenciesChecker",
+                ":kmpPartiallyResolvedDependenciesChecker",
+            ).prettyPrinted,
+            consumer.gradle.taskGraph.allTasks.map { it.path }.toSet().prettyPrinted,
         )
     }
 
@@ -191,14 +189,14 @@ class PackKotlinArchiveTaskTest {
         packTask.execute()
 
         assertEquals(
-            """
-                cinterop/
-                manifest.json
-                metadata/
-                platform/
-                resources/
-            """.trimIndent(),
-            packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().joinToString("\n"),
+            listOf(
+                "cinterop/",
+                "manifest.json",
+                "metadata/",
+                "platform/",
+                "resources/",
+            ).prettyPrinted,
+            packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
     }
 
@@ -227,42 +225,40 @@ class PackKotlinArchiveTaskTest {
         assembleTask.execute()
         task.execute()
 
-        val archiveListing = task.outputFile.get().asFile.zipXzArchiveEntries().sorted().joinToString("\n")
         assertEquals(
-            """
-                cinterop/
-                cinterop/iosArm64/
-                cinterop/iosArm64/cinteropName/
-                cinterop/iosArm64/cinteropName/cinterop-klib
-                cinterop/macosArm64/
-                cinterop/macosArm64/cinteropName/
-                cinterop/macosArm64/cinteropName/cinterop-klib
-                manifest.json
-                metadata/
-                metadata/commonMain/
-                metadata/commonMain/metadata-klib
-                metadata/kotlin-project-structure-metadata.json
-                metadata/nativeMain-cinterop/
-                metadata/nativeMain-cinterop/commonized-cinterop-klib
-                metadata/nativeMain/
-                metadata/nativeMain/metadata-klib
-                platform/
-                platform/js/
-                platform/js/platform-klib
-                platform/macosArm64/
-                platform/macosArm64/platform-klib
-                platform/wasm/
-                platform/wasm/platform-klib
-                resources/
-                resources/js/
-                resources/js/resources.txt
-                resources/macosArm64/
-                resources/macosArm64/resources.txt
-            """.trimIndent(),
-            archiveListing,
+            listOf(
+                "cinterop/",
+                "cinterop/iosArm64/",
+                "cinterop/iosArm64/cinteropName/",
+                "cinterop/iosArm64/cinteropName/cinterop-klib",
+                "cinterop/macosArm64/",
+                "cinterop/macosArm64/cinteropName/",
+                "cinterop/macosArm64/cinteropName/cinterop-klib",
+                "manifest.json",
+                "metadata/",
+                "metadata/commonMain/",
+                "metadata/commonMain/metadata-klib",
+                "metadata/kotlin-project-structure-metadata.json",
+                "metadata/nativeMain-cinterop/",
+                "metadata/nativeMain-cinterop/commonized-cinterop-klib",
+                "metadata/nativeMain/",
+                "metadata/nativeMain/metadata-klib",
+                "platform/",
+                "platform/js/",
+                "platform/js/platform-klib",
+                "platform/macosArm64/",
+                "platform/macosArm64/platform-klib",
+                "platform/wasm/",
+                "platform/wasm/platform-klib",
+                "resources/",
+                "resources/js/",
+                "resources/js/resources.txt",
+                "resources/macosArm64/",
+                "resources/macosArm64/resources.txt",
+            ).prettyPrinted,
+            task.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
     }
-
 
     private fun KotlinNativeTarget.withCInterop(): KotlinNativeTarget = apply {
         compilations.getByName("main").cinterops.create("archiveTest")
@@ -283,21 +279,6 @@ class PackKotlinArchiveTaskTest {
     }
 
     private fun Task.dependencyNames(): Set<String> = taskDependencies.getDependencies(this).mapTo(mutableSetOf()) { it.name }
-
-    private fun Task.transitiveTaskDependencies(): Set<Task> {
-        val result = mutableSetOf<Task>()
-
-        fun collectDependencies(task: Task) {
-            task.taskDependencies.getDependencies(task).forEach { dependency ->
-                if (result.add(dependency)) {
-                    collectDependencies(dependency)
-                }
-            }
-        }
-
-        collectDependencies(this)
-        return result
-    }
 
     private fun Project.singleFileTree(directoryName: String, fileName: String): FileTree {
         val directory = layout.buildDirectory.dir("kotlin-archive-test/input/$directoryName").get().asFile

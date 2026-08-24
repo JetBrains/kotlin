@@ -41,7 +41,7 @@ internal class KotlinArchiveEntry(
     val files: FileCollection,
 )
 
-@DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching")
+@DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
 ) : DefaultTask() {
@@ -119,7 +119,7 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     }
 }
 
-@DisableCachingByDefault(because = "Packing a Kotlin Archive is not worth caching")
+@DisableCachingByDefault(because = "Packing a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class PackKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
 ) : DefaultTask() {
@@ -130,45 +130,47 @@ internal abstract class PackKotlinArchiveTask @Inject constructor(
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
 
+    /**
+     * We want to put files with the same name nearby each other in archive.
+     * Files with the same name would correspond to platform-specific version of the same thing.
+     * In most cases, they should be very similar to each other, so they would be compressed much better,
+     * if located nearby.
+     *
+     * On kotlinx-coroutines-core, it improves compression by extra 10%.
+     * This difference should be larger as total klib size growth.
+     */
+    private fun prepareArchiveFiles(): List<ArchiveFile> {
+        val assembledKarDirectory = assembledKarDirectory.get().asFile
+        return buildList {
+            fileOperations.fileTree(assembledKarDirectory).visit(object : ReproducibleFileVisitor {
+                override fun isReproducibleFileOrder(): Boolean = true
+
+                override fun visitDir(details: FileVisitDetails) = addEntry(details, isDirectory = true)
+                override fun visitFile(details: FileVisitDetails) = addEntry(details, isDirectory = false)
+
+                private fun addEntry(details: FileVisitDetails, isDirectory: Boolean) {
+                    add(
+                        ArchiveFile(
+                            path = details.path,
+                            source = assembledKarDirectory.resolve(details.path),
+                            isDirectory = isDirectory,
+                            name = details.name,
+                        )
+                    )
+                }
+            })
+            sortBy { it.name }
+        }
+    }
+
     @TaskAction
     fun execute() {
-        val assembledKarDirectory = assembledKarDirectory.get().asFile
         outputFile.get().asFile.apply { parentFile.mkdirs() }.outputStream().buffered().use { output ->
             XZCompressorOutputStream(output).use { compressedOutput ->
                 ZipArchiveOutputStream(compressedOutput).use { zipOutput ->
                     zipOutput.setLevel(Deflater.NO_COMPRESSION)
 
-                    /**
-                     * We want to put files with the same name nearby each other in archive.
-                     * Files with the same name would correspond to platform-specific version of the same thing.
-                     * In most cases, they should be very similar to each other, so they would be compressed much better,
-                     * if located nearby.
-                     *
-                     * On kotlinx-coroutines-core, it improves compression by extra 10%.
-                     * This difference should be larger as total klib size growth.
-                     */
-                    val filesList: List<ArchiveFile> = buildList {
-                        fileOperations.fileTree(assembledKarDirectory).visit(object : ReproducibleFileVisitor {
-                            override fun isReproducibleFileOrder(): Boolean = true
-
-                            override fun visitDir(details: FileVisitDetails) = addEntry(details, isDirectory = true)
-                            override fun visitFile(details: FileVisitDetails) = addEntry(details, isDirectory = false)
-
-                            private fun addEntry(details: FileVisitDetails, isDirectory: Boolean) {
-                                add(
-                                    ArchiveFile(
-                                        path = details.path,
-                                        source = assembledKarDirectory.resolve(details.path),
-                                        isDirectory = isDirectory,
-                                        name = details.name,
-                                    )
-                                )
-                            }
-                        })
-                        sortBy { it.name }
-                    }
-
-                    for ((path, source, isDirectory) in filesList) {
+                    for ((path, source, isDirectory) in prepareArchiveFiles()) {
                         if (isDirectory) {
                             zipOutput.directoryEntry(path)
                         } else {

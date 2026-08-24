@@ -72,7 +72,7 @@ internal constructor(
 
     @InternalKotlinGradlePluginApi
     override val platformNameInKotlinArchive: String
-        get() = targetPreset?.name ?: targetName
+        get() = targetPreset?.name ?: error("Name in kotlin archive in unknown for $targetName")
 
     @Deprecated(
         "Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.",
