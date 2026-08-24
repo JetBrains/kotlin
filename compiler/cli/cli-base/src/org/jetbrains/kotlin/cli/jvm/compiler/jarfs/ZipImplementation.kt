@@ -171,9 +171,15 @@ private fun LargeDynamicMappedBuffer.parseCentralDirectoryRecordsNumberAndOffset
 private val setInflaterInputFromBuffer: ((Inflater, ByteBuffer) -> Unit)? =
     try {
         val method = Inflater::class.java.getMethod("setInput", ByteBuffer::class.java)
-        val setter: (Inflater, ByteBuffer) -> Unit = { inflater, buffer -> method.invoke(inflater, buffer) }
+        val setter: (Inflater, ByteBuffer) -> Unit = { inflater, buffer ->
+            try {
+                method.invoke(inflater, buffer)
+            } catch (e: InvocationTargetException) {
+                throw e.cause ?: e
+            }
+        }
         setter
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         null
     }
 
