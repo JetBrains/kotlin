@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 /**
- * Represents a resolved call that can be either a single call or a compound (multi) call.
+ * Represents a resolved call that can be either a simple call or a multi call.
  *
  * It can be either a [KaSimpleCall] or a [KaMultiCall].
  *
@@ -61,7 +61,7 @@ public sealed interface KaSimpleOrMultiCall : KaLifetimeOwner
 public typealias KaSingleOrMultiCall = KaSimpleOrMultiCall
 
 /**
- * Represents a successful resolution resulting in a single call.
+ * Represents a successful resolution resulting in a simple call.
  *
  * ### Example
  * ```kotlin

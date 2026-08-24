@@ -20,7 +20,7 @@ import kotlin.contracts.contract
 /**
  * Represents an attempt to resolve [KtResolvableCall].
  *
- * [KaCallResolutionAttempt] represents either a [single call attempt][KaSimpleCallResolutionAttempt]
+ * [KaCallResolutionAttempt] represents either a [simple call attempt][KaSimpleCallResolutionAttempt]
  * or a [multi-call attempt][KaMultiCallResolutionAttempt].
  *
  * @see KaResolver.tryResolveCall
@@ -30,7 +30,7 @@ import kotlin.contracts.contract
 public sealed interface KaCallResolutionAttempt : KaLifetimeOwner
 
 /**
- * Represents an attempt to resolve a single call (as opposed to a [multi-call][KaMultiCallResolutionAttempt]),
+ * Represents an attempt to resolve a simple call (as opposed to a [multi-call][KaMultiCallResolutionAttempt]),
  * which is either a [success][KaCallResolutionSuccess] or an [error][KaCallResolutionError].
  *
  * Both [KaCallResolutionSuccess.call] and [KaCallResolutionError.candidateCalls] always contain [KaSimpleCall]s.
@@ -88,7 +88,7 @@ public interface KaCallResolutionError : KaSimpleCallResolutionAttempt {
 }
 
 /**
- * Represents a successful resolution of a single [KtResolvableCall].
+ * Represents a successful resolution of a simple [KtResolvableCall].
  *
  * For compound calls (e.g., `i += 1`, `for (x in list)`), see [KaMultiCallResolutionAttempt] instead.
  *
