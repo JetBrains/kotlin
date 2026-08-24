@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.util.JsonFormat
 import org.jetbrains.kotlin.importmodels.proto.BaseModel
@@ -75,6 +76,16 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
     @GradleTest
     @MppGradlePluginTests
     fun `dump task writes distinct ordered KMP JSON models including test compilations without compilation`(gradleVersion: GradleVersion) {
+        val producer = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm("producerJvm")
+                kotlinMultiplatform.linuxX64("producerLinuxX64")
+                kotlinMultiplatform.linuxArm64("producerLinuxArm64")
+            }
+        }
         project(
             projectName = "empty",
             gradleVersion = gradleVersion,
@@ -83,9 +94,13 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
             plugins {
                 kotlin("multiplatform")
             }
+            include(producer, "producer")
             buildScriptInjection {
                 kotlinMultiplatform.jvm()
                 kotlinMultiplatform.linuxX64()
+                kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                    implementation(project(":producer"))
+                }
             }
             build("dumpKotlinImportModels") {
                 assertTasksExecuted(":dumpKotlinImportModels")
@@ -95,9 +110,13 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
                     ":compileKotlinLinuxX64",
                     ":compileTestKotlinJvm",
                     ":compileTestKotlinLinuxX64",
+                    ":producer:compileCommonMainKotlinMetadata",
+                    ":producer:compileProducerJvmKotlin",
+                    ":producer:compileKotlinProducerLinuxX64",
+                    ":producer:compileKotlinProducerLinuxArm64",
                 )
             }
-            assertKmpDump()
+            assertKmpDump(producer)
         }
     }
 
@@ -111,6 +130,7 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         val units = parseDumpModels(root, "compilation-units", ::parseCompilation)
         val compilerArguments = parseDumpModels(root, "compiler-arguments", ::parseCompilerArguments)
         val dependencies = parseDumpModels(root, "dependencies", ::parseDependencies)
+        val compilerPluginDependencies = parseDumpModels(root, "compiler-plugin-dependencies", ::parseDependencies)
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
         assertDumpFileNames(root, listOf("000-jvm-main.json", "001-jvm-test.json"))
         assertEquals(listOf("main", "test"), units.map { it.name })
@@ -133,22 +153,28 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
         assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
         assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
+        assertEquals(project.compilationUnitIdsList, compilerPluginDependencies.map { it.parameters.compilationUnitId })
+        assertTrue(compilerPluginDependencies.all {
+            it.parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN &&
+                    it.parameters.coverage == DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+        })
+        assertTrue(compilerPluginDependencies.all { it.compilationRelationsList.isEmpty() })
         assertEquals(
             listOf(KotlinImportModelIds.COMPILER_ARGUMENTS, KotlinImportModelIds.COMPILER_ARGUMENTS),
             compilerArguments.map { it.id })
         assertEquals(listOf(KotlinImportModelIds.DEPENDENCIES, KotlinImportModelIds.DEPENDENCIES), dependencies.map { it.id })
         assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
         assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
-        assertTrue(dependencies.all { it.binaryDependenciesList.isNotEmpty() })
-        assertEquals(emptyList(), dependencies.first().sourceDependenciesList)
+        assertTrue(dependencies.all { it.classpathEntriesList.isNotEmpty() })
+        assertEquals(emptyList(), dependencies.first().compilationRelationsList)
         assertEquals(
             listOf(
-                DependenciesModelKt.sourceDependency {
-                    kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                DependenciesModelKt.compilationRelation {
+                    kind = DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_FRIEND
                     targetCompilationUnitId = units.first().parameters.compilationUnitId
                 }
             ),
-            dependencies.last().sourceDependenciesList,
+            dependencies.last().compilationRelationsList,
         )
         assertEquals(
             listOf(
@@ -187,7 +213,7 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         return project.compilationUnitIdsList
     }
 
-    private fun TestProject.assertKmpDump() {
+    private fun TestProject.assertKmpDump(producer: TestProject) {
         val root = projectPath.resolve("build/kotlin-import-models").toFile()
         assertEquals(
             listOf(BaseModel.Capability.CAPABILITY_KOTLIN_MULTIPLATFORM),
@@ -215,13 +241,17 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         assertKmpDumpModels(root, "compilation-units", expectedIds, ::parseCompilation) { it.parameters.compilationUnitId.value }
         assertKmpDumpModels(root, "compiler-arguments", expectedIds, ::parseCompilerArguments) { it.parameters.compilationUnitId.value }
         assertKmpDumpModels(root, "dependencies", expectedIds, ::parseDependencies) { it.parameters.compilationUnitId.value }
+        assertKmpDumpModels(root, "compiler-plugin-dependencies", expectedIds, ::parseDependencies) {
+            it.parameters.compilationUnitId.value
+        }
+        assertFalse(producer.projectPath.resolve("build/classes").toFile().exists())
     }
 
     private fun <T> parseDumpModels(root: File, directory: String, parser: (File) -> T): List<T> =
         dumpJsonFiles(root, directory).map(parser)
 
     private fun assertDumpFileNames(root: File, expectedFileNames: List<String>) {
-        listOf("compilation-units", "compiler-arguments", "dependencies").forEach { directory ->
+        listOf("compilation-units", "compiler-arguments", "dependencies", "compiler-plugin-dependencies").forEach { directory ->
             assertEquals(expectedFileNames, dumpJsonFiles(root, directory).map(File::getName))
         }
     }

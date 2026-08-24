@@ -109,6 +109,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
                 val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module")
                 assertFileDoesNotContain(gradleMetadata, ProjectLocalConfigurations.ATTRIBUTE.name)
+                assertFileDoesNotContain(gradleMetadata, "org.jetbrains.kotlin.import-models.compilation-unit-id")
 
                 listOf(jvmJar, jsKlib, nativeKlib).forEach { file ->
                     val pom = file.resolveSibling(file.nameWithoutExtension + ".pom")

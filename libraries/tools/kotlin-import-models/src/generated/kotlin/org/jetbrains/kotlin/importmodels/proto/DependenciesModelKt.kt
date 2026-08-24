@@ -83,70 +83,70 @@ public object DependenciesModelKt {
      * generics.
      */
     @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
-    public class BinaryDependenciesProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
+    public class ClasspathEntriesProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
      */
-     public val binaryDependencies: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>
+     public val classpathEntries: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>
       @kotlin.jvm.JvmSynthetic
       get() = com.google.protobuf.kotlin.DslList(
-        _builder.binaryDependenciesList
+        _builder.classpathEntriesList
       )
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
-     * @param value The binaryDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
+     * @param value The classpathEntries to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("addBinaryDependencies")
-    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.BinaryDependency) {
-      _builder.addBinaryDependencies(value)
+    @kotlin.jvm.JvmName("addClasspathEntries")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry) {
+      _builder.addClasspathEntries(value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
-     * @param value The binaryDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
+     * @param value The classpathEntries to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("plusAssignBinaryDependencies")
+    @kotlin.jvm.JvmName("plusAssignClasspathEntries")
     @Suppress("NOTHING_TO_INLINE")
-    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.BinaryDependency) {
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry) {
       add(value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
-     * @param values The binaryDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
+     * @param values The classpathEntries to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("addAllBinaryDependencies")
-    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.BinaryDependency>) {
-      _builder.addAllBinaryDependencies(values)
+    @kotlin.jvm.JvmName("addAllClasspathEntries")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry>) {
+      _builder.addAllClasspathEntries(values)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
-     * @param values The binaryDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
+     * @param values The classpathEntries to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("plusAssignAllBinaryDependencies")
+    @kotlin.jvm.JvmName("plusAssignAllClasspathEntries")
     @Suppress("NOTHING_TO_INLINE")
-    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.BinaryDependency>) {
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry>) {
       addAll(values)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
      * @param index The index to set the value at.
-     * @param value The binaryDependencies to set.
+     * @param value The classpathEntries to set.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("setBinaryDependencies")
-    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.BinaryDependency) {
-      _builder.setBinaryDependencies(index, value)
+    @kotlin.jvm.JvmName("setClasspathEntries")
+    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry) {
+      _builder.setClasspathEntries(index, value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;`
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("clearBinaryDependencies")
-    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency, BinaryDependenciesProxy>.clear() {
-      _builder.clearBinaryDependencies()
+    @kotlin.jvm.JvmName("clearClasspathEntries")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, ClasspathEntriesProxy>.clear() {
+      _builder.clearClasspathEntries()
     }
 
 
@@ -227,70 +227,70 @@ public object DependenciesModelKt {
      * generics.
      */
     @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
-    public class SourceDependenciesProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
+    public class CompilationRelationsProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
      */
-     public val sourceDependencies: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>
+     public val compilationRelations: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>
       @kotlin.jvm.JvmSynthetic
       get() = com.google.protobuf.kotlin.DslList(
-        _builder.sourceDependenciesList
+        _builder.compilationRelationsList
       )
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
-     * @param value The sourceDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
+     * @param value The compilationRelations to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("addSourceDependencies")
-    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency) {
-      _builder.addSourceDependencies(value)
+    @kotlin.jvm.JvmName("addCompilationRelations")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation) {
+      _builder.addCompilationRelations(value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
-     * @param value The sourceDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
+     * @param value The compilationRelations to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("plusAssignSourceDependencies")
+    @kotlin.jvm.JvmName("plusAssignCompilationRelations")
     @Suppress("NOTHING_TO_INLINE")
-    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency) {
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation) {
       add(value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
-     * @param values The sourceDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
+     * @param values The compilationRelations to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("addAllSourceDependencies")
-    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency>) {
-      _builder.addAllSourceDependencies(values)
+    @kotlin.jvm.JvmName("addAllCompilationRelations")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation>) {
+      _builder.addAllCompilationRelations(values)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
-     * @param values The sourceDependencies to add.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
+     * @param values The compilationRelations to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("plusAssignAllSourceDependencies")
+    @kotlin.jvm.JvmName("plusAssignAllCompilationRelations")
     @Suppress("NOTHING_TO_INLINE")
-    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency>) {
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation>) {
       addAll(values)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
      * @param index The index to set the value at.
-     * @param value The sourceDependencies to set.
+     * @param value The compilationRelations to set.
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("setSourceDependencies")
-    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency) {
-      _builder.setSourceDependencies(index, value)
+    @kotlin.jvm.JvmName("setCompilationRelations")
+    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation) {
+      _builder.setCompilationRelations(index, value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;`
      */
     @kotlin.jvm.JvmSynthetic
-    @kotlin.jvm.JvmName("clearSourceDependencies")
-    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, SourceDependenciesProxy>.clear() {
-      _builder.clearSourceDependencies()
+    @kotlin.jvm.JvmName("clearCompilationRelations")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, CompilationRelationsProxy>.clear() {
+      _builder.clearCompilationRelations()
     }
 
   }
@@ -367,32 +367,231 @@ public object DependenciesModelKt {
       }
     }
   }
-  @kotlin.jvm.JvmName("-initializesourceDependency")
-  public inline fun sourceDependency(block: org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.SourceDependencyKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency =
-    org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.SourceDependencyKt.Dsl._create(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.newBuilder()).apply { block() }._build()
+  @kotlin.jvm.JvmName("-initializeprojectDependency")
+  public inline fun projectDependency(block: org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.ProjectDependencyKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency =
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.ProjectDependencyKt.Dsl._create(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.newBuilder()).apply { block() }._build()
   /**
-   * Protobuf type `org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency`
+   * Protobuf type `org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency`
    */
-  public object SourceDependencyKt {
+  public object ProjectDependencyKt {
     @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
     @com.google.protobuf.kotlin.ProtoDslMarker
     public class Dsl private constructor(
-      private val _builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder
+      private val _builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder
     ) {
       public companion object {
         @kotlin.jvm.JvmSynthetic
         @kotlin.PublishedApi
-        internal fun _create(builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder): Dsl = Dsl(builder)
+        internal fun _create(builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder): Dsl = Dsl(builder)
       }
 
       @kotlin.jvm.JvmSynthetic
       @kotlin.PublishedApi
-      internal fun _build(): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency = _builder.build()
+      internal fun _build(): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency = _builder.build()
 
       /**
-       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;`
+       * `string build_path = 1;`
        */
-      public var kind: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind
+      public var buildPath: kotlin.String
+        @JvmName("getBuildPath")
+        get() = _builder.buildPath
+        @JvmName("setBuildPath")
+        set(value) {
+          _builder.buildPath = value
+        }
+      /**
+       * `string build_path = 1;`
+       */
+      public fun clearBuildPath() {
+        _builder.clearBuildPath()
+      }
+      /**
+       * `string build_path = 1;`
+       * @return Whether the buildPath field is set.
+       */
+      public fun hasBuildPath(): kotlin.Boolean {
+        return _builder.hasBuildPath()
+      }
+
+      /**
+       * `string project_path = 2;`
+       */
+      public var projectPath: kotlin.String
+        @JvmName("getProjectPath")
+        get() = _builder.projectPath
+        @JvmName("setProjectPath")
+        set(value) {
+          _builder.projectPath = value
+        }
+      /**
+       * `string project_path = 2;`
+       */
+      public fun clearProjectPath() {
+        _builder.clearProjectPath()
+      }
+      /**
+       * `string project_path = 2;`
+       * @return Whether the projectPath field is set.
+       */
+      public fun hasProjectPath(): kotlin.Boolean {
+        return _builder.hasProjectPath()
+      }
+
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;`
+       */
+      public var targetCompilationUnitId: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
+        @JvmName("getTargetCompilationUnitId")
+        get() = _builder.targetCompilationUnitId
+        @JvmName("setTargetCompilationUnitId")
+        set(value) {
+          _builder.targetCompilationUnitId = value
+        }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;`
+       */
+      public fun clearTargetCompilationUnitId() {
+        _builder.clearTargetCompilationUnitId()
+      }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;`
+       * @return Whether the targetCompilationUnitId field is set.
+       */
+      public fun hasTargetCompilationUnitId(): kotlin.Boolean {
+        return _builder.hasTargetCompilationUnitId()
+      }
+      public val ProjectDependencyKt.Dsl.targetCompilationUnitIdOrNull: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId?
+        get() = _builder.targetCompilationUnitIdOrNull
+
+      /**
+       * `string artifact_path = 4;`
+       */
+      public var artifactPath: kotlin.String
+        @JvmName("getArtifactPath")
+        get() = _builder.artifactPath
+        @JvmName("setArtifactPath")
+        set(value) {
+          _builder.artifactPath = value
+        }
+      /**
+       * `string artifact_path = 4;`
+       */
+      public fun clearArtifactPath() {
+        _builder.clearArtifactPath()
+      }
+      /**
+       * `string artifact_path = 4;`
+       * @return Whether the artifactPath field is set.
+       */
+      public fun hasArtifactPath(): kotlin.Boolean {
+        return _builder.hasArtifactPath()
+      }
+    }
+  }
+  @kotlin.jvm.JvmName("-initializeclasspathEntry")
+  public inline fun classpathEntry(block: org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.ClasspathEntryKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry =
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.ClasspathEntryKt.Dsl._create(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.newBuilder()).apply { block() }._build()
+  /**
+   * Protobuf type `org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry`
+   */
+  public object ClasspathEntryKt {
+    @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
+    @com.google.protobuf.kotlin.ProtoDslMarker
+    public class Dsl private constructor(
+      private val _builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder
+    ) {
+      public companion object {
+        @kotlin.jvm.JvmSynthetic
+        @kotlin.PublishedApi
+        internal fun _create(builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder): Dsl = Dsl(builder)
+      }
+
+      @kotlin.jvm.JvmSynthetic
+      @kotlin.PublishedApi
+      internal fun _build(): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry = _builder.build()
+
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;`
+       */
+      public var binary: org.jetbrains.kotlin.importmodels.proto.BinaryDependency
+        @JvmName("getBinary")
+        get() = _builder.binary
+        @JvmName("setBinary")
+        set(value) {
+          _builder.binary = value
+        }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;`
+       */
+      public fun clearBinary() {
+        _builder.clearBinary()
+      }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;`
+       * @return Whether the binary field is set.
+       */
+      public fun hasBinary(): kotlin.Boolean {
+        return _builder.hasBinary()
+      }
+
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;`
+       */
+      public var project: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency
+        @JvmName("getProject")
+        get() = _builder.project
+        @JvmName("setProject")
+        set(value) {
+          _builder.project = value
+        }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;`
+       */
+      public fun clearProject() {
+        _builder.clearProject()
+      }
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;`
+       * @return Whether the project field is set.
+       */
+      public fun hasProject(): kotlin.Boolean {
+        return _builder.hasProject()
+      }
+      public val dependencyCase: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.DependencyCase
+        @JvmName("getDependencyCase")
+        get() = _builder.getDependencyCase()
+
+      public fun clearDependency() {
+        _builder.clearDependency()
+      }
+    }
+  }
+  @kotlin.jvm.JvmName("-initializecompilationRelation")
+  public inline fun compilationRelation(block: org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.CompilationRelationKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation =
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModelKt.CompilationRelationKt.Dsl._create(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.newBuilder()).apply { block() }._build()
+  /**
+   * Protobuf type `org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation`
+   */
+  public object CompilationRelationKt {
+    @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
+    @com.google.protobuf.kotlin.ProtoDslMarker
+    public class Dsl private constructor(
+      private val _builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder
+    ) {
+      public companion object {
+        @kotlin.jvm.JvmSynthetic
+        @kotlin.PublishedApi
+        internal fun _create(builder: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder): Dsl = Dsl(builder)
+      }
+
+      @kotlin.jvm.JvmSynthetic
+      @kotlin.PublishedApi
+      internal fun _build(): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation = _builder.build()
+
+      /**
+       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;`
+       */
+      public var kind: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind
         @JvmName("getKind")
         get() = _builder.kind
         @JvmName("setKind")
@@ -407,13 +606,13 @@ public object DependenciesModelKt {
           _builder.kindValue = value
         }
       /**
-       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;`
+       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;`
        */
       public fun clearKind() {
         _builder.clearKind()
       }
       /**
-       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;`
+       * `.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;`
        * @return Whether the kind field is set.
        */
       public fun hasKind(): kotlin.Boolean {
@@ -443,7 +642,7 @@ public object DependenciesModelKt {
       public fun hasTargetCompilationUnitId(): kotlin.Boolean {
         return _builder.hasTargetCompilationUnitId()
       }
-      public val SourceDependencyKt.Dsl.targetCompilationUnitIdOrNull: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId?
+      public val CompilationRelationKt.Dsl.targetCompilationUnitIdOrNull: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId?
         get() = _builder.targetCompilationUnitIdOrNull
     }
   }
@@ -571,10 +770,27 @@ public val org.jetbrains.kotlin.importmodels.proto.DependenciesModel.UnresolvedO
   get() = if (hasCoordinates()) getCoordinates() else null
 
 @kotlin.jvm.JvmSynthetic
-public inline fun org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.copy(block: `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.SourceDependencyKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency =
-  `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.SourceDependencyKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+public inline fun org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.copy(block: `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.ProjectDependencyKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency =
+  `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.ProjectDependencyKt.Dsl._create(this.toBuilder()).apply { block() }._build()
 
-public val org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder.targetCompilationUnitIdOrNull: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId?
+public val org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder.targetCompilationUnitIdOrNull: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId?
+  get() = if (hasTargetCompilationUnitId()) getTargetCompilationUnitId() else null
+
+@kotlin.jvm.JvmSynthetic
+public inline fun org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.copy(block: `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.ClasspathEntryKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry =
+  `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.ClasspathEntryKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+
+public val org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder.binaryOrNull: org.jetbrains.kotlin.importmodels.proto.BinaryDependency?
+  get() = if (hasBinary()) getBinary() else null
+
+public val org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder.projectOrNull: org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency?
+  get() = if (hasProject()) getProject() else null
+
+@kotlin.jvm.JvmSynthetic
+public inline fun org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.copy(block: `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.CompilationRelationKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation =
+  `org.jetbrains.kotlin.importmodels.proto`.DependenciesModelKt.CompilationRelationKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+
+public val org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder.targetCompilationUnitIdOrNull: org.jetbrains.kotlin.importmodels.proto.CompilationUnitId?
   get() = if (hasTargetCompilationUnitId()) getTargetCompilationUnitId() else null
 
 @kotlin.jvm.JvmSynthetic

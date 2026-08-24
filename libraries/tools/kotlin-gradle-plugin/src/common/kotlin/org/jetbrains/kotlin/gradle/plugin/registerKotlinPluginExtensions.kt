@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinImportModelsDumpTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinModelBuilderSetupAction
+import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinImportModelVariantIdentitySideEffect
 import org.jetbrains.kotlin.gradle.plugin.internal.buildNeededDependentTasksWiringProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXcodeSetupAction
@@ -133,6 +134,9 @@ internal fun Project.registerKotlinPluginExtensions() {
     KotlinTargetSideEffect.extensionPoint.apply {
         register(project, CreateDefaultCompilationsSideEffect)
         register(project, CreateTargetConfigurationsSideEffect)
+        if (isMultiplatform) {
+            register(project, KotlinImportModelVariantIdentitySideEffect)
+        }
         register(project, NativeForwardImplementationToApiElementsSideEffect)
         register(project, CreateArtifactsSideEffect)
         register(project, project.buildNeededDependentTasksWiringProvider.wireSideEffect())

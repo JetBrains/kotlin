@@ -77,7 +77,12 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
         if (request.compilationUnitId !in provider.projectInformation().compilationUnitIdsList) {
             return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
         }
-        if (request.scope != DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE) {
+        if (
+            request.scope !in setOf(
+                DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE,
+                DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN,
+            )
+        ) {
             return result(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported dependency scope")
         }
         if (request.coverage != DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL) {

@@ -9,6 +9,7 @@ import org.gradle.tooling.BuildController
 import org.gradle.util.GradleVersion
 import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
@@ -56,6 +57,7 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             val units = first.compilationUnits.map { it.model.unpack(CompilationUnitModel::class.java) }
             val compilerArguments = first.compilerArguments.map { it.model.unpack(CompilerArgumentsModel::class.java) }
             val dependencies = first.dependencies.map { it.model.unpack(DependenciesModel::class.java) }
+            val compilerPluginDependencies = first.compilerPluginDependencies.map { it.model.unpack(DependenciesModel::class.java) }
             val main = units.single { it.name == "main" }
             val test = units.single { it.name == "test" }
             val mainDependencies = dependencies.single { it.parameters.compilationUnitId == main.parameters.compilationUnitId }
@@ -76,20 +78,24 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
+            assertEquals(project.compilationUnitIdsList, compilerPluginDependencies.map { it.parameters.compilationUnitId })
+            assertTrue(compilerPluginDependencies.all { it.parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN })
+            assertTrue(compilerPluginDependencies.all { it.parameters.coverage == DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL })
+            assertTrue(compilerPluginDependencies.all { it.compilationRelationsList.isEmpty() })
             assertTrue(compilerArguments.all { it.id == KotlinImportModelIds.COMPILER_ARGUMENTS })
             assertTrue(dependencies.all { it.id == KotlinImportModelIds.DEPENDENCIES })
             assertTrue(dependencies.all { it.parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE })
             assertTrue(dependencies.all { it.parameters.coverage == DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL })
-            assertTrue(dependencies.all { it.binaryDependenciesList.isNotEmpty() })
-            assertEquals(emptyList(), mainDependencies.sourceDependenciesList)
+            assertTrue(dependencies.all { it.classpathEntriesList.isNotEmpty() })
+            assertEquals(emptyList(), mainDependencies.compilationRelationsList)
             assertEquals(
                 listOf(
-                    DependenciesModelKt.sourceDependency {
-                        kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                    DependenciesModelKt.compilationRelation {
+                        kind = DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_FRIEND
                         targetCompilationUnitId = main.parameters.compilationUnitId
                     }
                 ),
-                testDependencies.sourceDependenciesList,
+                testDependencies.compilationRelationsList,
             )
             assertTrue("-Xdebug" in compilerArguments.first().argumentsList)
             assertTrue("-opt-in my.custom.OptInAnnotation" in compilerArguments.first().argumentsList.joinToString(" "))
@@ -142,6 +148,16 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_0)
     @MppGradlePluginTests
     fun `Tooling API returns KMP import models including test compilations without materializing outputs`(gradleVersion: GradleVersion) {
+        val producer = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm("producerJvm")
+                kotlinMultiplatform.linuxX64("producerLinuxX64")
+                kotlinMultiplatform.linuxArm64("producerLinuxArm64")
+            }
+        }
         project(
             projectName = "empty",
             gradleVersion = gradleVersion,
@@ -155,9 +171,13 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             plugins {
                 kotlin("multiplatform")
             }
+            include(producer, "producer")
             buildScriptInjection {
                 kotlinMultiplatform.jvm()
                 kotlinMultiplatform.linuxX64()
+                kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                    implementation(project(":producer"))
+                }
             }
 
             val models = runBuildAction(KotlinImportModelsBuildAction()).toModels()
@@ -166,6 +186,7 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             val units = models.compilationUnits.map { it.model.unpack(CompilationUnitModel::class.java) }
             val compilerArguments = models.compilerArguments.map { it.model.unpack(CompilerArgumentsModel::class.java) }
             val dependencies = models.dependencies.map { it.model.unpack(DependenciesModel::class.java) }
+            val compilerPluginDependencies = models.compilerPluginDependencies.map { it.model.unpack(DependenciesModel::class.java) }
             val metadata = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_METADATA }
             val jvm = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_JVM && it.name == "main" }
             val jvmTest = units.single { it.platform == CompilationUnitModel.Platform.PLATFORM_JVM && it.name == "test" }
@@ -191,6 +212,10 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(project.compilationUnitIdsList, units.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, compilerArguments.map { it.parameters.compilationUnitId })
             assertEquals(project.compilationUnitIdsList, dependencies.map { it.parameters.compilationUnitId })
+            assertEquals(project.compilationUnitIdsList, compilerPluginDependencies.map { it.parameters.compilationUnitId })
+            assertTrue(compilerPluginDependencies.all { it.parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN })
+            assertTrue(compilerPluginDependencies.all { it.parameters.coverage == DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL })
+            assertTrue(compilerPluginDependencies.all { it.compilationRelationsList.isEmpty() })
             assertEquals("commonMain", metadata.name)
             assertEquals(
                 listOf(
@@ -208,10 +233,41 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals("linuxX64", nativeTest.targetName)
             assertTrue(nativeTest.outputsList.all { it.kind == CompilationUnitModel.Output.Kind.OUTPUT_KIND_KLIB })
             assertEquals(
-                listOf(sourceDependency(jvm.parameters.compilationUnitId)),
-                dependenciesByCompilationId.getValue(jvmTest.parameters.compilationUnitId).sourceDependenciesList,
+                listOf(compilationRelation(jvm.parameters.compilationUnitId)),
+                dependenciesByCompilationId.getValue(jvmTest.parameters.compilationUnitId).compilationRelationsList,
             )
+            assertEquals(
+                mapOf(
+                    metadata.parameters.compilationUnitId to ":|:producer|metadata|commonMain",
+                    jvm.parameters.compilationUnitId to ":|:producer|producerJvm|main",
+                    compilationUnitId { value = ":|:|linuxX64|main" } to ":|:producer|producerLinuxX64|main",
+                ),
+                listOf(metadata.parameters.compilationUnitId, jvm.parameters.compilationUnitId, compilationUnitId { value = ":|:|linuxX64|main" })
+                    .associateWith {
+                        dependenciesByCompilationId.getValue(it).classpathEntriesList.single { entry -> entry.hasProject() }.project
+                            .targetCompilationUnitId.value
+                    },
+            )
+            assertEquals(
+                mapOf(
+                    metadata.parameters.compilationUnitId to projectPath.toRealPath().resolve("producer/build/libs/producer-metadata.jar").toString(),
+                    jvm.parameters.compilationUnitId to projectPath.toRealPath().resolve("producer/build/libs/producer-producerjvm.jar").toString(),
+                    compilationUnitId { value = ":|:|linuxX64|main" } to
+                        projectPath.toRealPath().resolve("producer/build/classes/kotlin/producerLinuxX64/main/klib/producer").toString(),
+                ),
+                listOf(metadata.parameters.compilationUnitId, jvm.parameters.compilationUnitId, compilationUnitId { value = ":|:|linuxX64|main" })
+                    .associateWith {
+                        dependenciesByCompilationId.getValue(it).classpathEntriesList.single { entry -> entry.hasProject() }.project.artifactPath
+                    },
+            )
+            assertTrue(dependencies.all { dependency ->
+                val projectEntry = dependency.classpathEntriesList.singleOrNull { it.hasProject() }?.project
+                projectEntry == null || dependency.classpathEntriesList.none {
+                    it.hasBinary() && it.binary.artifactPath == projectEntry.artifactPath
+                }
+            })
             assertTrue(units.flatMap { it.outputsList }.all { output -> !projectPath.resolve(output.path).exists() })
+            assertTrue(producer.projectPath.resolve("build").toFile().walkTopDown().none { it.isFile })
         }
     }
 
@@ -243,9 +299,9 @@ private fun output(
     producingActions += producingTaskPaths.map(::gradleAction)
 }
 
-private fun sourceDependency(targetCompilationUnitId: CompilationUnitId): DependenciesModel.SourceDependency =
-    DependenciesModelKt.sourceDependency {
-        kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+private fun compilationRelation(targetCompilationUnitId: CompilationUnitId): DependenciesModel.CompilationRelation =
+    DependenciesModelKt.compilationRelation {
+        kind = DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_FRIEND
         this.targetCompilationUnitId = targetCompilationUnitId
     }
 
@@ -274,17 +330,24 @@ private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<Kot
                 CompilerArgumentsModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
             )
         }
-        val dependencies = project.compilationUnitIdsList.map { compilationUnitId ->
+        fun dependencies(scope: DependenciesModel.Scope) = project.compilationUnitIdsList.map { compilationUnitId ->
             request(
                 KotlinImportModelIds.DEPENDENCIES,
                 DependenciesModelKt.parameters {
                     this.compilationUnitId = compilationUnitId
-                    scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
+                    this.scope = scope
                     coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
                 }.toByteArray(),
             )
         }
-        return KotlinImportModelsBuildActionResult(base, projectInformation, compilationUnits, compilerArguments, dependencies)
+        return KotlinImportModelsBuildActionResult(
+            base,
+            projectInformation,
+            compilationUnits,
+            compilerArguments,
+            dependencies(DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE),
+            dependencies(DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN),
+        )
     }
 }
 
@@ -294,6 +357,7 @@ private data class KotlinImportModelsBuildActionResult(
     val compilationUnits: List<ByteArray>,
     val compilerArguments: List<ByteArray>,
     val dependencies: List<ByteArray>,
+    val compilerPluginDependencies: List<ByteArray>,
 ) : Serializable
 
 private data class KotlinImportModelsModels(
@@ -302,6 +366,7 @@ private data class KotlinImportModelsModels(
     val compilationUnits: List<Result>,
     val compilerArguments: List<Result>,
     val dependencies: List<Result>,
+    val compilerPluginDependencies: List<Result>,
 )
 
 private fun KotlinImportModelsBuildActionResult.toModels(): KotlinImportModelsModels = KotlinImportModelsModels(
@@ -310,4 +375,5 @@ private fun KotlinImportModelsBuildActionResult.toModels(): KotlinImportModelsMo
     compilationUnits = compilationUnits.map(Result::parseFrom),
     compilerArguments = compilerArguments.map(Result::parseFrom),
     dependencies = dependencies.map(Result::parseFrom),
+    compilerPluginDependencies = compilerPluginDependencies.map(Result::parseFrom),
 )

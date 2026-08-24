@@ -52,6 +52,7 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
         val compilationUnit: CompilationUnitModel,
         val compilerArguments: CompilerArgumentsModel,
         val dependencies: DependenciesModel,
+        val compilerPluginDependencies: DependenciesModel,
     )
 
     @TaskAction
@@ -65,21 +66,26 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
             val dumpFileName = produce("compilationUnitDumpFileName[${id.value}]") { modelProvider.compilationUnitDumpFileName(id) }
             val compilationUnit = produce("compilationUnit[${id.value}]") { modelProvider.compilationUnit(id) }
             val compilerArguments = produce("compilerArguments[${id.value}]") { modelProvider.compilerArguments(id) }
-            val dependencies = produce("dependencies[${id.value}]") {
-                modelProvider.dependencies(
-                    DependenciesModelKt.parameters {
-                        compilationUnitId = id
-                        scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
-                        coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
-                    }
-                )
+            fun dependencies(scope: DependenciesModel.Scope) = produce("dependencies[$scope][${id.value}]") {
+                modelProvider.dependencies(DependenciesModelKt.parameters {
+                    compilationUnitId = id
+                    this.scope = scope
+                    coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+                })
             }
-            CompilationModels(dumpFileName, compilationUnit, compilerArguments, dependencies)
+            CompilationModels(
+                dumpFileName,
+                compilationUnit,
+                compilerArguments,
+                dependencies(DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE),
+                dependencies(DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN),
+            )
         }
 
         write("base", outputRoot.resolve("base.json"), KotlinImportModelSerialization.toJson(base))
         write("projectInformation", outputRoot.resolve("project.json"), KotlinImportModelSerialization.toJson(projectModel))
-        compilationModels.forEachIndexed { index, (dumpFileName, compilationUnit, compilerArguments, dependencies) ->
+        compilationModels.forEachIndexed { index, models ->
+            val (dumpFileName, compilationUnit, compilerArguments, dependencies, compilerPluginDependencies) = models
             val fileName = "%03d-%s.json".format(Locale.ROOT, index, dumpFileName)
             write(
                 "compilationUnit[${compilationUnit.parameters.compilationUnitId.value}]",
@@ -95,6 +101,11 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
                 "dependencies[${dependencies.parameters.compilationUnitId.value}]",
                 outputRoot.resolve("dependencies/$fileName"),
                 KotlinImportModelSerialization.toJson(dependencies),
+            )
+            write(
+                "compilerPluginDependencies[${compilerPluginDependencies.parameters.compilationUnitId.value}]",
+                outputRoot.resolve("compiler-plugin-dependencies/$fileName"),
+                KotlinImportModelSerialization.toJson(compilerPluginDependencies),
             )
         }
     }

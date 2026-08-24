@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
+import org.jetbrains.kotlin.gradle.plugin.importmodel.kotlinImportModelCompilationIdAttribute
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -233,6 +234,7 @@ class DefaultKotlinUsageContext(
     private fun filterOutNonPublishableAttributes(attributes: Set<Attribute<*>>): Set<Attribute<*>> =
         attributes.filterTo(mutableSetOf()) {
             it != ProjectLocalConfigurations.ATTRIBUTE &&
+                    it != kotlinImportModelCompilationIdAttribute &&
                     /**
                      * We exclude the attribute "org.gradle.jvm.environment" from publishing to avoid two issues:
                      *

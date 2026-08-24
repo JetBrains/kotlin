@@ -69,7 +69,11 @@ class ImportModelEnumCompatibilityTest {
         assertEquals(0, CompilationUnitModel.TargetPlatform.TARGET_PLATFORM_UNSPECIFIED.number)
         assertEquals(0, CompilationUnitModel.Purpose.COMPILATION_PURPOSE_UNSPECIFIED.number)
         assertEquals(0, CompilationUnitModel.Output.Kind.OUTPUT_KIND_UNSPECIFIED.number)
-        assertEquals(0, DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_UNSPECIFIED.number)
+        assertEquals(0, DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_UNSPECIFIED.number)
+        assertEquals(0, DependenciesModel.Scope.DEPENDENCY_SCOPE_UNSPECIFIED.number)
+        assertEquals(1, DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE.number)
+        assertEquals(2, DependenciesModel.Scope.DEPENDENCY_SCOPE_RUNTIME.number)
+        assertEquals(3, DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN.number)
     }
 
     @Test
@@ -100,10 +104,10 @@ class ImportModelEnumCompatibilityTest {
         assertEquals(106, output.kindValue)
         assertEquals(CompilationUnitModel.Output.Kind.UNRECOGNIZED, output.kind)
 
-        val sourceDependency = DependenciesModel.SourceDependency.parseFrom(
-            DependenciesModel.SourceDependency.newBuilder().setKindValue(104).build().toByteArray()
+        val compilationRelation = DependenciesModel.CompilationRelation.parseFrom(
+            DependenciesModel.CompilationRelation.newBuilder().setKindValue(104).build().toByteArray()
         )
-        assertEquals(104, sourceDependency.kindValue)
-        assertEquals(DependenciesModel.SourceDependencyKind.UNRECOGNIZED, sourceDependency.kind)
+        assertEquals(104, compilationRelation.kindValue)
+        assertEquals(DependenciesModel.CompilationRelation.Kind.UNRECOGNIZED, compilationRelation.kind)
     }
 }

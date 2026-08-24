@@ -42,27 +42,27 @@ public interface DependenciesModelOrBuilder extends
   org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ParametersOrBuilder getParametersOrBuilder();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
-  java.util.List<org.jetbrains.kotlin.importmodels.proto.BinaryDependency> 
-      getBinaryDependenciesList();
+  java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry> 
+      getClasspathEntriesList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
-  org.jetbrains.kotlin.importmodels.proto.BinaryDependency getBinaryDependencies(int index);
+  org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry getClasspathEntries(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
-  int getBinaryDependenciesCount();
+  int getClasspathEntriesCount();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
-  java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> 
-      getBinaryDependenciesOrBuilderList();
+  java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder> 
+      getClasspathEntriesOrBuilderList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
-  org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder getBinaryDependenciesOrBuilder(
+  org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder getClasspathEntriesOrBuilder(
       int index);
 
   /**
@@ -90,26 +90,26 @@ public interface DependenciesModelOrBuilder extends
       int index);
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
-  java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency> 
-      getSourceDependenciesList();
+  java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation> 
+      getCompilationRelationsList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
-  org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency getSourceDependencies(int index);
+  org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation getCompilationRelations(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
-  int getSourceDependenciesCount();
+  int getCompilationRelationsCount();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
-  java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder> 
-      getSourceDependenciesOrBuilderList();
+  java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder> 
+      getCompilationRelationsOrBuilderList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
-  org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder getSourceDependenciesOrBuilder(
+  org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder getCompilationRelationsOrBuilder(
       int index);
 }

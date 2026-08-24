@@ -28,9 +28,9 @@ private static final long serialVersionUID = 0L;
   }
   private DependenciesModel() {
     id_ = "";
-    binaryDependencies_ = java.util.Collections.emptyList();
+    classpathEntries_ = java.util.Collections.emptyList();
     unresolvedDependencies_ = java.util.Collections.emptyList();
-    sourceDependencies_ = java.util.Collections.emptyList();
+    compilationRelations_ = java.util.Collections.emptyList();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -47,10 +47,6 @@ private static final long serialVersionUID = 0L;
   }
 
   /**
-   * <pre>
-   * TODO: Add project_artifact_dependencies
-   * </pre>
-   *
    * Protobuf enum {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.Scope}
    */
   public enum Scope
@@ -71,6 +67,10 @@ private static final long serialVersionUID = 0L;
      * <code>DEPENDENCY_SCOPE_RUNTIME = 2;</code>
      */
     DEPENDENCY_SCOPE_RUNTIME(2),
+    /**
+     * <code>DEPENDENCY_SCOPE_COMPILER_PLUGIN = 3;</code>
+     */
+    DEPENDENCY_SCOPE_COMPILER_PLUGIN(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -99,6 +99,10 @@ private static final long serialVersionUID = 0L;
      * <code>DEPENDENCY_SCOPE_RUNTIME = 2;</code>
      */
     public static final int DEPENDENCY_SCOPE_RUNTIME_VALUE = 2;
+    /**
+     * <code>DEPENDENCY_SCOPE_COMPILER_PLUGIN = 3;</code>
+     */
+    public static final int DEPENDENCY_SCOPE_COMPILER_PLUGIN_VALUE = 3;
 
 
     public final int getNumber() {
@@ -128,6 +132,7 @@ private static final long serialVersionUID = 0L;
         case 0: return DEPENDENCY_SCOPE_UNSPECIFIED;
         case 1: return DEPENDENCY_SCOPE_COMPILE;
         case 2: return DEPENDENCY_SCOPE_RUNTIME;
+        case 3: return DEPENDENCY_SCOPE_COMPILER_PLUGIN;
         default: return null;
       }
     }
@@ -316,150 +321,6 @@ private static final long serialVersionUID = 0L;
     }
 
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.Coverage)
-  }
-
-  /**
-   * Protobuf enum {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind}
-   */
-  public enum SourceDependencyKind
-      implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_UNSPECIFIED = 0;</code>
-     */
-    SOURCE_DEPENDENCY_KIND_UNSPECIFIED(0),
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_REGULAR = 1;</code>
-     */
-    SOURCE_DEPENDENCY_KIND_REGULAR(1),
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_FRIEND = 2;</code>
-     */
-    SOURCE_DEPENDENCY_KIND_FRIEND(2),
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_DEPENDS_ON = 3;</code>
-     */
-    SOURCE_DEPENDENCY_KIND_DEPENDS_ON(3),
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_VISIBLE = 4;</code>
-     */
-    SOURCE_DEPENDENCY_KIND_VISIBLE(4),
-    UNRECOGNIZED(-1),
-    ;
-
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 28,
-        /* patch= */ 2,
-        /* suffix= */ "",
-        SourceDependencyKind.class.getName());
-    }
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_UNSPECIFIED = 0;</code>
-     */
-    public static final int SOURCE_DEPENDENCY_KIND_UNSPECIFIED_VALUE = 0;
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_REGULAR = 1;</code>
-     */
-    public static final int SOURCE_DEPENDENCY_KIND_REGULAR_VALUE = 1;
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_FRIEND = 2;</code>
-     */
-    public static final int SOURCE_DEPENDENCY_KIND_FRIEND_VALUE = 2;
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_DEPENDS_ON = 3;</code>
-     */
-    public static final int SOURCE_DEPENDENCY_KIND_DEPENDS_ON_VALUE = 3;
-    /**
-     * <code>SOURCE_DEPENDENCY_KIND_VISIBLE = 4;</code>
-     */
-    public static final int SOURCE_DEPENDENCY_KIND_VISIBLE_VALUE = 4;
-
-
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @param value The numeric wire value of the corresponding enum entry.
-     * @return The enum associated with the given numeric wire value.
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static SourceDependencyKind valueOf(int value) {
-      return forNumber(value);
-    }
-
-    /**
-     * @param value The numeric wire value of the corresponding enum entry.
-     * @return The enum associated with the given numeric wire value.
-     */
-    public static SourceDependencyKind forNumber(int value) {
-      switch (value) {
-        case 0: return SOURCE_DEPENDENCY_KIND_UNSPECIFIED;
-        case 1: return SOURCE_DEPENDENCY_KIND_REGULAR;
-        case 2: return SOURCE_DEPENDENCY_KIND_FRIEND;
-        case 3: return SOURCE_DEPENDENCY_KIND_DEPENDS_ON;
-        case 4: return SOURCE_DEPENDENCY_KIND_VISIBLE;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<SourceDependencyKind>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        SourceDependencyKind> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<SourceDependencyKind>() {
-            public SourceDependencyKind findValueByNumber(int number) {
-              return SourceDependencyKind.forNumber(number);
-            }
-          };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-        getValueDescriptor() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalStateException(
-            "Can't get the descriptor of an unrecognized enum value.");
-      }
-      return getDescriptor().getValues().get(ordinal());
-    }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptor() {
-      return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.getDescriptor().getEnumTypes().get(2);
-    }
-
-    private static final SourceDependencyKind[] VALUES = values();
-
-    public static SourceDependencyKind valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      if (desc.getIndex() == -1) {
-        return UNRECOGNIZED;
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int value;
-
-    private SourceDependencyKind(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind)
   }
 
   public interface UnresolvedOrBuilder extends
@@ -1206,25 +1067,2002 @@ private static final long serialVersionUID = 0L;
 
   }
 
-  public interface SourceDependencyOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)
+  public interface ProjectDependencyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+     * <code>string build_path = 1;</code>
+     * @return Whether the buildPath field is set.
+     */
+    boolean hasBuildPath();
+    /**
+     * <code>string build_path = 1;</code>
+     * @return The buildPath.
+     */
+    java.lang.String getBuildPath();
+    /**
+     * <code>string build_path = 1;</code>
+     * @return The bytes for buildPath.
+     */
+    com.google.protobuf.ByteString
+        getBuildPathBytes();
+
+    /**
+     * <code>string project_path = 2;</code>
+     * @return Whether the projectPath field is set.
+     */
+    boolean hasProjectPath();
+    /**
+     * <code>string project_path = 2;</code>
+     * @return The projectPath.
+     */
+    java.lang.String getProjectPath();
+    /**
+     * <code>string project_path = 2;</code>
+     * @return The bytes for projectPath.
+     */
+    com.google.protobuf.ByteString
+        getProjectPathBytes();
+
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+     * @return Whether the targetCompilationUnitId field is set.
+     */
+    boolean hasTargetCompilationUnitId();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+     * @return The targetCompilationUnitId.
+     */
+    org.jetbrains.kotlin.importmodels.proto.CompilationUnitId getTargetCompilationUnitId();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+     */
+    org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getTargetCompilationUnitIdOrBuilder();
+
+    /**
+     * <code>string artifact_path = 4;</code>
+     * @return Whether the artifactPath field is set.
+     */
+    boolean hasArtifactPath();
+    /**
+     * <code>string artifact_path = 4;</code>
+     * @return The artifactPath.
+     */
+    java.lang.String getArtifactPath();
+    /**
+     * <code>string artifact_path = 4;</code>
+     * @return The bytes for artifactPath.
+     */
+    com.google.protobuf.ByteString
+        getArtifactPathBytes();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency}
+   */
+  public static final class ProjectDependency extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)
+      ProjectDependencyOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 28,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        ProjectDependency.class.getName());
+    }
+    // Use ProjectDependency.newBuilder() to construct.
+    private ProjectDependency(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private ProjectDependency() {
+      buildPath_ = "";
+      projectPath_ = "";
+      artifactPath_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ProjectDependency_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ProjectDependency_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int BUILD_PATH_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object buildPath_ = "";
+    /**
+     * <code>string build_path = 1;</code>
+     * @return Whether the buildPath field is set.
+     */
+    @java.lang.Override
+    public boolean hasBuildPath() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>string build_path = 1;</code>
+     * @return The buildPath.
+     */
+    @java.lang.Override
+    public java.lang.String getBuildPath() {
+      java.lang.Object ref = buildPath_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        buildPath_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string build_path = 1;</code>
+     * @return The bytes for buildPath.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getBuildPathBytes() {
+      java.lang.Object ref = buildPath_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        buildPath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PROJECT_PATH_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object projectPath_ = "";
+    /**
+     * <code>string project_path = 2;</code>
+     * @return Whether the projectPath field is set.
+     */
+    @java.lang.Override
+    public boolean hasProjectPath() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>string project_path = 2;</code>
+     * @return The projectPath.
+     */
+    @java.lang.Override
+    public java.lang.String getProjectPath() {
+      java.lang.Object ref = projectPath_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        projectPath_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string project_path = 2;</code>
+     * @return The bytes for projectPath.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getProjectPathBytes() {
+      java.lang.Object ref = projectPath_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        projectPath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TARGET_COMPILATION_UNIT_ID_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.importmodels.proto.CompilationUnitId targetCompilationUnitId_;
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+     * @return Whether the targetCompilationUnitId field is set.
+     */
+    @java.lang.Override
+    public boolean hasTargetCompilationUnitId() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+     * @return The targetCompilationUnitId.
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId getTargetCompilationUnitId() {
+      return targetCompilationUnitId_ == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance() : targetCompilationUnitId_;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getTargetCompilationUnitIdOrBuilder() {
+      return targetCompilationUnitId_ == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance() : targetCompilationUnitId_;
+    }
+
+    public static final int ARTIFACT_PATH_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object artifactPath_ = "";
+    /**
+     * <code>string artifact_path = 4;</code>
+     * @return Whether the artifactPath field is set.
+     */
+    @java.lang.Override
+    public boolean hasArtifactPath() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <code>string artifact_path = 4;</code>
+     * @return The artifactPath.
+     */
+    @java.lang.Override
+    public java.lang.String getArtifactPath() {
+      java.lang.Object ref = artifactPath_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        artifactPath_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string artifact_path = 4;</code>
+     * @return The bytes for artifactPath.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getArtifactPathBytes() {
+      java.lang.Object ref = artifactPath_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        artifactPath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (((bitField0_ & 0x00000001) != 0)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, buildPath_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, projectPath_);
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        output.writeMessage(3, getTargetCompilationUnitId());
+      }
+      if (((bitField0_ & 0x00000008) != 0)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 4, artifactPath_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, buildPath_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, projectPath_);
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getTargetCompilationUnitId());
+      }
+      if (((bitField0_ & 0x00000008) != 0)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, artifactPath_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)) {
+        return super.equals(obj);
+      }
+      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency other = (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) obj;
+
+      if (hasBuildPath() != other.hasBuildPath()) return false;
+      if (hasBuildPath()) {
+        if (!getBuildPath()
+            .equals(other.getBuildPath())) return false;
+      }
+      if (hasProjectPath() != other.hasProjectPath()) return false;
+      if (hasProjectPath()) {
+        if (!getProjectPath()
+            .equals(other.getProjectPath())) return false;
+      }
+      if (hasTargetCompilationUnitId() != other.hasTargetCompilationUnitId()) return false;
+      if (hasTargetCompilationUnitId()) {
+        if (!getTargetCompilationUnitId()
+            .equals(other.getTargetCompilationUnitId())) return false;
+      }
+      if (hasArtifactPath() != other.hasArtifactPath()) return false;
+      if (hasArtifactPath()) {
+        if (!getArtifactPath()
+            .equals(other.getArtifactPath())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasBuildPath()) {
+        hash = (37 * hash) + BUILD_PATH_FIELD_NUMBER;
+        hash = (53 * hash) + getBuildPath().hashCode();
+      }
+      if (hasProjectPath()) {
+        hash = (37 * hash) + PROJECT_PATH_FIELD_NUMBER;
+        hash = (53 * hash) + getProjectPath().hashCode();
+      }
+      if (hasTargetCompilationUnitId()) {
+        hash = (37 * hash) + TARGET_COMPILATION_UNIT_ID_FIELD_NUMBER;
+        hash = (53 * hash) + getTargetCompilationUnitId().hashCode();
+      }
+      if (hasArtifactPath()) {
+        hash = (37 * hash) + ARTIFACT_PATH_FIELD_NUMBER;
+        hash = (53 * hash) + getArtifactPath().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ProjectDependency_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ProjectDependency_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          getTargetCompilationUnitIdFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        buildPath_ = "";
+        projectPath_ = "";
+        targetCompilationUnitId_ = null;
+        if (targetCompilationUnitIdBuilder_ != null) {
+          targetCompilationUnitIdBuilder_.dispose();
+          targetCompilationUnitIdBuilder_ = null;
+        }
+        artifactPath_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ProjectDependency_descriptor;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency build() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency buildPartial() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency result = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency result) {
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.buildPath_ = buildPath_;
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.projectPath_ = projectPath_;
+          to_bitField0_ |= 0x00000002;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.targetCompilationUnitId_ = targetCompilationUnitIdBuilder_ == null
+              ? targetCompilationUnitId_
+              : targetCompilationUnitIdBuilder_.build();
+          to_bitField0_ |= 0x00000004;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.artifactPath_ = artifactPath_;
+          to_bitField0_ |= 0x00000008;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) {
+          return mergeFrom((org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency other) {
+        if (other == org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance()) return this;
+        if (other.hasBuildPath()) {
+          buildPath_ = other.buildPath_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.hasProjectPath()) {
+          projectPath_ = other.projectPath_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (other.hasTargetCompilationUnitId()) {
+          mergeTargetCompilationUnitId(other.getTargetCompilationUnitId());
+        }
+        if (other.hasArtifactPath()) {
+          artifactPath_ = other.artifactPath_;
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                buildPath_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                projectPath_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                input.readMessage(
+                    getTargetCompilationUnitIdFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                artifactPath_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object buildPath_ = "";
+      /**
+       * <code>string build_path = 1;</code>
+       * @return Whether the buildPath field is set.
+       */
+      public boolean hasBuildPath() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>string build_path = 1;</code>
+       * @return The buildPath.
+       */
+      public java.lang.String getBuildPath() {
+        java.lang.Object ref = buildPath_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          buildPath_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string build_path = 1;</code>
+       * @return The bytes for buildPath.
+       */
+      public com.google.protobuf.ByteString
+          getBuildPathBytes() {
+        java.lang.Object ref = buildPath_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          buildPath_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string build_path = 1;</code>
+       * @param value The buildPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBuildPath(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        buildPath_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string build_path = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBuildPath() {
+        buildPath_ = getDefaultInstance().getBuildPath();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string build_path = 1;</code>
+       * @param value The bytes for buildPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBuildPathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        buildPath_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object projectPath_ = "";
+      /**
+       * <code>string project_path = 2;</code>
+       * @return Whether the projectPath field is set.
+       */
+      public boolean hasProjectPath() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>string project_path = 2;</code>
+       * @return The projectPath.
+       */
+      public java.lang.String getProjectPath() {
+        java.lang.Object ref = projectPath_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          projectPath_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string project_path = 2;</code>
+       * @return The bytes for projectPath.
+       */
+      public com.google.protobuf.ByteString
+          getProjectPathBytes() {
+        java.lang.Object ref = projectPath_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          projectPath_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string project_path = 2;</code>
+       * @param value The projectPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProjectPath(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        projectPath_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string project_path = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearProjectPath() {
+        projectPath_ = getDefaultInstance().getProjectPath();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string project_path = 2;</code>
+       * @param value The bytes for projectPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProjectPathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        projectPath_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.importmodels.proto.CompilationUnitId targetCompilationUnitId_;
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.importmodels.proto.CompilationUnitId, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder, org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder> targetCompilationUnitIdBuilder_;
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       * @return Whether the targetCompilationUnitId field is set.
+       */
+      public boolean hasTargetCompilationUnitId() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       * @return The targetCompilationUnitId.
+       */
+      public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId getTargetCompilationUnitId() {
+        if (targetCompilationUnitIdBuilder_ == null) {
+          return targetCompilationUnitId_ == null ? org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance() : targetCompilationUnitId_;
+        } else {
+          return targetCompilationUnitIdBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      public Builder setTargetCompilationUnitId(org.jetbrains.kotlin.importmodels.proto.CompilationUnitId value) {
+        if (targetCompilationUnitIdBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          targetCompilationUnitId_ = value;
+        } else {
+          targetCompilationUnitIdBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      public Builder setTargetCompilationUnitId(
+          org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder builderForValue) {
+        if (targetCompilationUnitIdBuilder_ == null) {
+          targetCompilationUnitId_ = builderForValue.build();
+        } else {
+          targetCompilationUnitIdBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      public Builder mergeTargetCompilationUnitId(org.jetbrains.kotlin.importmodels.proto.CompilationUnitId value) {
+        if (targetCompilationUnitIdBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0) &&
+            targetCompilationUnitId_ != null &&
+            targetCompilationUnitId_ != org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance()) {
+            getTargetCompilationUnitIdBuilder().mergeFrom(value);
+          } else {
+            targetCompilationUnitId_ = value;
+          }
+        } else {
+          targetCompilationUnitIdBuilder_.mergeFrom(value);
+        }
+        if (targetCompilationUnitId_ != null) {
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      public Builder clearTargetCompilationUnitId() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        targetCompilationUnitId_ = null;
+        if (targetCompilationUnitIdBuilder_ != null) {
+          targetCompilationUnitIdBuilder_.dispose();
+          targetCompilationUnitIdBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder getTargetCompilationUnitIdBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getTargetCompilationUnitIdFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      public org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getTargetCompilationUnitIdOrBuilder() {
+        if (targetCompilationUnitIdBuilder_ != null) {
+          return targetCompilationUnitIdBuilder_.getMessageOrBuilder();
+        } else {
+          return targetCompilationUnitId_ == null ?
+              org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance() : targetCompilationUnitId_;
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.importmodels.proto.CompilationUnitId, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder, org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder> 
+          getTargetCompilationUnitIdFieldBuilder() {
+        if (targetCompilationUnitIdBuilder_ == null) {
+          targetCompilationUnitIdBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.importmodels.proto.CompilationUnitId, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder, org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder>(
+                  getTargetCompilationUnitId(),
+                  getParentForChildren(),
+                  isClean());
+          targetCompilationUnitId_ = null;
+        }
+        return targetCompilationUnitIdBuilder_;
+      }
+
+      private java.lang.Object artifactPath_ = "";
+      /**
+       * <code>string artifact_path = 4;</code>
+       * @return Whether the artifactPath field is set.
+       */
+      public boolean hasArtifactPath() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       * <code>string artifact_path = 4;</code>
+       * @return The artifactPath.
+       */
+      public java.lang.String getArtifactPath() {
+        java.lang.Object ref = artifactPath_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          artifactPath_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string artifact_path = 4;</code>
+       * @return The bytes for artifactPath.
+       */
+      public com.google.protobuf.ByteString
+          getArtifactPathBytes() {
+        java.lang.Object ref = artifactPath_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          artifactPath_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string artifact_path = 4;</code>
+       * @param value The artifactPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setArtifactPath(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        artifactPath_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string artifact_path = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearArtifactPath() {
+        artifactPath_ = getDefaultInstance().getArtifactPath();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string artifact_path = 4;</code>
+       * @param value The bytes for artifactPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setArtifactPathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        artifactPath_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency)
+    private static final org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency();
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ProjectDependency>
+        PARSER = new com.google.protobuf.AbstractParser<ProjectDependency>() {
+      @java.lang.Override
+      public ProjectDependency parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ProjectDependency> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ProjectDependency> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ClasspathEntryOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+     * @return Whether the binary field is set.
+     */
+    boolean hasBinary();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+     * @return The binary.
+     */
+    org.jetbrains.kotlin.importmodels.proto.BinaryDependency getBinary();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+     */
+    org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder getBinaryOrBuilder();
+
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+     * @return Whether the project field is set.
+     */
+    boolean hasProject();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+     * @return The project.
+     */
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency getProject();
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+     */
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder getProjectOrBuilder();
+
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.DependencyCase getDependencyCase();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry}
+   */
+  public static final class ClasspathEntry extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)
+      ClasspathEntryOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 28,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        ClasspathEntry.class.getName());
+    }
+    // Use ClasspathEntry.newBuilder() to construct.
+    private ClasspathEntry(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private ClasspathEntry() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ClasspathEntry_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ClasspathEntry_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder.class);
+    }
+
+    private int dependencyCase_ = 0;
+    @SuppressWarnings("serial")
+    private java.lang.Object dependency_;
+    public enum DependencyCase
+        implements com.google.protobuf.Internal.EnumLite,
+            com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+      BINARY(1),
+      PROJECT(2),
+      DEPENDENCY_NOT_SET(0);
+      private final int value;
+      private DependencyCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @param value The number of the enum to look for.
+       * @return The enum associated with the given number.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static DependencyCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static DependencyCase forNumber(int value) {
+        switch (value) {
+          case 1: return BINARY;
+          case 2: return PROJECT;
+          case 0: return DEPENDENCY_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public DependencyCase
+    getDependencyCase() {
+      return DependencyCase.forNumber(
+          dependencyCase_);
+    }
+
+    public static final int BINARY_FIELD_NUMBER = 1;
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+     * @return Whether the binary field is set.
+     */
+    @java.lang.Override
+    public boolean hasBinary() {
+      return dependencyCase_ == 1;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+     * @return The binary.
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.BinaryDependency getBinary() {
+      if (dependencyCase_ == 1) {
+         return (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_;
+      }
+      return org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder getBinaryOrBuilder() {
+      if (dependencyCase_ == 1) {
+         return (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_;
+      }
+      return org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance();
+    }
+
+    public static final int PROJECT_FIELD_NUMBER = 2;
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+     * @return Whether the project field is set.
+     */
+    @java.lang.Override
+    public boolean hasProject() {
+      return dependencyCase_ == 2;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+     * @return The project.
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency getProject() {
+      if (dependencyCase_ == 2) {
+         return (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_;
+      }
+      return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder getProjectOrBuilder() {
+      if (dependencyCase_ == 2) {
+         return (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_;
+      }
+      return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (dependencyCase_ == 1) {
+        output.writeMessage(1, (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_);
+      }
+      if (dependencyCase_ == 2) {
+        output.writeMessage(2, (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (dependencyCase_ == 1) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_);
+      }
+      if (dependencyCase_ == 2) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)) {
+        return super.equals(obj);
+      }
+      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry other = (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry) obj;
+
+      if (!getDependencyCase().equals(other.getDependencyCase())) return false;
+      switch (dependencyCase_) {
+        case 1:
+          if (!getBinary()
+              .equals(other.getBinary())) return false;
+          break;
+        case 2:
+          if (!getProject()
+              .equals(other.getProject())) return false;
+          break;
+        case 0:
+        default:
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      switch (dependencyCase_) {
+        case 1:
+          hash = (37 * hash) + BINARY_FIELD_NUMBER;
+          hash = (53 * hash) + getBinary().hashCode();
+          break;
+        case 2:
+          hash = (37 * hash) + PROJECT_FIELD_NUMBER;
+          hash = (53 * hash) + getProject().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ClasspathEntry_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ClasspathEntry_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        if (binaryBuilder_ != null) {
+          binaryBuilder_.clear();
+        }
+        if (projectBuilder_ != null) {
+          projectBuilder_.clear();
+        }
+        dependencyCase_ = 0;
+        dependency_ = null;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_ClasspathEntry_descriptor;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry build() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry buildPartial() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry result = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        buildPartialOneofs(result);
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry result) {
+        int from_bitField0_ = bitField0_;
+      }
+
+      private void buildPartialOneofs(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry result) {
+        result.dependencyCase_ = dependencyCase_;
+        result.dependency_ = this.dependency_;
+        if (dependencyCase_ == 1 &&
+            binaryBuilder_ != null) {
+          result.dependency_ = binaryBuilder_.build();
+        }
+        if (dependencyCase_ == 2 &&
+            projectBuilder_ != null) {
+          result.dependency_ = projectBuilder_.build();
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry) {
+          return mergeFrom((org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry other) {
+        if (other == org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.getDefaultInstance()) return this;
+        switch (other.getDependencyCase()) {
+          case BINARY: {
+            mergeBinary(other.getBinary());
+            break;
+          }
+          case PROJECT: {
+            mergeProject(other.getProject());
+            break;
+          }
+          case DEPENDENCY_NOT_SET: {
+            break;
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                input.readMessage(
+                    getBinaryFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                dependencyCase_ = 1;
+                break;
+              } // case 10
+              case 18: {
+                input.readMessage(
+                    getProjectFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                dependencyCase_ = 2;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int dependencyCase_ = 0;
+      private java.lang.Object dependency_;
+      public DependencyCase
+          getDependencyCase() {
+        return DependencyCase.forNumber(
+            dependencyCase_);
+      }
+
+      public Builder clearDependency() {
+        dependencyCase_ = 0;
+        dependency_ = null;
+        onChanged();
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.importmodels.proto.BinaryDependency, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder, org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> binaryBuilder_;
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       * @return Whether the binary field is set.
+       */
+      @java.lang.Override
+      public boolean hasBinary() {
+        return dependencyCase_ == 1;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       * @return The binary.
+       */
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.BinaryDependency getBinary() {
+        if (binaryBuilder_ == null) {
+          if (dependencyCase_ == 1) {
+            return (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_;
+          }
+          return org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance();
+        } else {
+          if (dependencyCase_ == 1) {
+            return binaryBuilder_.getMessage();
+          }
+          return org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      public Builder setBinary(org.jetbrains.kotlin.importmodels.proto.BinaryDependency value) {
+        if (binaryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          dependency_ = value;
+          onChanged();
+        } else {
+          binaryBuilder_.setMessage(value);
+        }
+        dependencyCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      public Builder setBinary(
+          org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder builderForValue) {
+        if (binaryBuilder_ == null) {
+          dependency_ = builderForValue.build();
+          onChanged();
+        } else {
+          binaryBuilder_.setMessage(builderForValue.build());
+        }
+        dependencyCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      public Builder mergeBinary(org.jetbrains.kotlin.importmodels.proto.BinaryDependency value) {
+        if (binaryBuilder_ == null) {
+          if (dependencyCase_ == 1 &&
+              dependency_ != org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance()) {
+            dependency_ = org.jetbrains.kotlin.importmodels.proto.BinaryDependency.newBuilder((org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            dependency_ = value;
+          }
+          onChanged();
+        } else {
+          if (dependencyCase_ == 1) {
+            binaryBuilder_.mergeFrom(value);
+          } else {
+            binaryBuilder_.setMessage(value);
+          }
+        }
+        dependencyCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      public Builder clearBinary() {
+        if (binaryBuilder_ == null) {
+          if (dependencyCase_ == 1) {
+            dependencyCase_ = 0;
+            dependency_ = null;
+            onChanged();
+          }
+        } else {
+          if (dependencyCase_ == 1) {
+            dependencyCase_ = 0;
+            dependency_ = null;
+          }
+          binaryBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      public org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder getBinaryBuilder() {
+        return getBinaryFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder getBinaryOrBuilder() {
+        if ((dependencyCase_ == 1) && (binaryBuilder_ != null)) {
+          return binaryBuilder_.getMessageOrBuilder();
+        } else {
+          if (dependencyCase_ == 1) {
+            return (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_;
+          }
+          return org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.importmodels.proto.BinaryDependency, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder, org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> 
+          getBinaryFieldBuilder() {
+        if (binaryBuilder_ == null) {
+          if (!(dependencyCase_ == 1)) {
+            dependency_ = org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance();
+          }
+          binaryBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.importmodels.proto.BinaryDependency, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder, org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder>(
+                  (org.jetbrains.kotlin.importmodels.proto.BinaryDependency) dependency_,
+                  getParentForChildren(),
+                  isClean());
+          dependency_ = null;
+        }
+        dependencyCase_ = 1;
+        onChanged();
+        return binaryBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder> projectBuilder_;
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       * @return Whether the project field is set.
+       */
+      @java.lang.Override
+      public boolean hasProject() {
+        return dependencyCase_ == 2;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       * @return The project.
+       */
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency getProject() {
+        if (projectBuilder_ == null) {
+          if (dependencyCase_ == 2) {
+            return (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_;
+          }
+          return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+        } else {
+          if (dependencyCase_ == 2) {
+            return projectBuilder_.getMessage();
+          }
+          return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      public Builder setProject(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency value) {
+        if (projectBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          dependency_ = value;
+          onChanged();
+        } else {
+          projectBuilder_.setMessage(value);
+        }
+        dependencyCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      public Builder setProject(
+          org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder builderForValue) {
+        if (projectBuilder_ == null) {
+          dependency_ = builderForValue.build();
+          onChanged();
+        } else {
+          projectBuilder_.setMessage(builderForValue.build());
+        }
+        dependencyCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      public Builder mergeProject(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency value) {
+        if (projectBuilder_ == null) {
+          if (dependencyCase_ == 2 &&
+              dependency_ != org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance()) {
+            dependency_ = org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.newBuilder((org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            dependency_ = value;
+          }
+          onChanged();
+        } else {
+          if (dependencyCase_ == 2) {
+            projectBuilder_.mergeFrom(value);
+          } else {
+            projectBuilder_.setMessage(value);
+          }
+        }
+        dependencyCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      public Builder clearProject() {
+        if (projectBuilder_ == null) {
+          if (dependencyCase_ == 2) {
+            dependencyCase_ = 0;
+            dependency_ = null;
+            onChanged();
+          }
+        } else {
+          if (dependencyCase_ == 2) {
+            dependencyCase_ = 0;
+            dependency_ = null;
+          }
+          projectBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder getProjectBuilder() {
+        return getProjectFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      @java.lang.Override
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder getProjectOrBuilder() {
+        if ((dependencyCase_ == 2) && (projectBuilder_ != null)) {
+          return projectBuilder_.getMessageOrBuilder();
+        } else {
+          if (dependencyCase_ == 2) {
+            return (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_;
+          }
+          return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency project = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder> 
+          getProjectFieldBuilder() {
+        if (projectBuilder_ == null) {
+          if (!(dependencyCase_ == 2)) {
+            dependency_ = org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.getDefaultInstance();
+          }
+          projectBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependencyOrBuilder>(
+                  (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ProjectDependency) dependency_,
+                  getParentForChildren(),
+                  isClean());
+          dependency_ = null;
+        }
+        dependencyCase_ = 2;
+        onChanged();
+        return projectBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry)
+    private static final org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry();
+    }
+
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ClasspathEntry>
+        PARSER = new com.google.protobuf.AbstractParser<ClasspathEntry>() {
+      @java.lang.Override
+      public ClasspathEntry parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ClasspathEntry> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ClasspathEntry> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface CompilationRelationOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
      * @return Whether the kind field is set.
      */
     boolean hasKind();
     /**
-     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
      * @return The enum numeric value on the wire for kind.
      */
     int getKindValue();
     /**
-     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
      * @return The kind.
      */
-    org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind getKind();
+    org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind getKind();
 
     /**
      * <code>.org.jetbrains.kotlin.importmodels.proto.CompilationUnitId target_compilation_unit_id = 2;</code>
@@ -1242,12 +3080,12 @@ private static final long serialVersionUID = 0L;
     org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getTargetCompilationUnitIdOrBuilder();
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency}
+   * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation}
    */
-  public static final class SourceDependency extends
+  public static final class CompilationRelation extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)
-      SourceDependencyOrBuilder {
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)
+      CompilationRelationOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
       com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
@@ -1256,53 +3094,170 @@ private static final long serialVersionUID = 0L;
         /* minor= */ 28,
         /* patch= */ 2,
         /* suffix= */ "",
-        SourceDependency.class.getName());
+        CompilationRelation.class.getName());
     }
-    // Use SourceDependency.newBuilder() to construct.
-    private SourceDependency(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    // Use CompilationRelation.newBuilder() to construct.
+    private CompilationRelation(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
     }
-    private SourceDependency() {
+    private CompilationRelation() {
       kind_ = 0;
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_SourceDependency_descriptor;
+      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_CompilationRelation_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_SourceDependency_fieldAccessorTable
+      return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_CompilationRelation_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder.class);
+              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder.class);
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind}
+     */
+    public enum Kind
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>COMPILATION_RELATION_KIND_UNSPECIFIED = 0;</code>
+       */
+      COMPILATION_RELATION_KIND_UNSPECIFIED(0),
+      /**
+       * <code>COMPILATION_RELATION_KIND_FRIEND = 1;</code>
+       */
+      COMPILATION_RELATION_KIND_FRIEND(1),
+      UNRECOGNIZED(-1),
+      ;
+
+      static {
+        com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+          com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+          /* major= */ 4,
+          /* minor= */ 28,
+          /* patch= */ 2,
+          /* suffix= */ "",
+          Kind.class.getName());
+      }
+      /**
+       * <code>COMPILATION_RELATION_KIND_UNSPECIFIED = 0;</code>
+       */
+      public static final int COMPILATION_RELATION_KIND_UNSPECIFIED_VALUE = 0;
+      /**
+       * <code>COMPILATION_RELATION_KIND_FRIEND = 1;</code>
+       */
+      public static final int COMPILATION_RELATION_KIND_FRIEND_VALUE = 1;
+
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static Kind valueOf(int value) {
+        return forNumber(value);
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       */
+      public static Kind forNumber(int value) {
+        switch (value) {
+          case 0: return COMPILATION_RELATION_KIND_UNSPECIFIED;
+          case 1: return COMPILATION_RELATION_KIND_FRIEND;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Kind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          Kind> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Kind>() {
+              public Kind findValueByNumber(int number) {
+                return Kind.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalStateException(
+              "Can't get the descriptor of an unrecognized enum value.");
+        }
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final Kind[] VALUES = values();
+
+      public static Kind valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private Kind(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind)
     }
 
     private int bitField0_;
     public static final int KIND_FIELD_NUMBER = 1;
     private int kind_ = 0;
     /**
-     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
      * @return Whether the kind field is set.
      */
     @java.lang.Override public boolean hasKind() {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
      * @return The enum numeric value on the wire for kind.
      */
     @java.lang.Override public int getKindValue() {
       return kind_;
     }
     /**
-     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+     * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
      * @return The kind.
      */
-    @java.lang.Override public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind getKind() {
-      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind result = org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind.forNumber(kind_);
-      return result == null ? org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind.UNRECOGNIZED : result;
+    @java.lang.Override public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind getKind() {
+      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind result = org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind.forNumber(kind_);
+      return result == null ? org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind.UNRECOGNIZED : result;
     }
 
     public static final int TARGET_COMPILATION_UNIT_ID_FIELD_NUMBER = 2;
@@ -1378,10 +3333,10 @@ private static final long serialVersionUID = 0L;
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)) {
+      if (!(obj instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)) {
         return super.equals(obj);
       }
-      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency other = (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency) obj;
+      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation other = (org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation) obj;
 
       if (hasKind() != other.hasKind()) return false;
       if (hasKind()) {
@@ -1416,44 +3371,44 @@ private static final long serialVersionUID = 0L;
       return hash;
     }
 
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(byte[] data)
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1461,26 +3416,26 @@ private static final long serialVersionUID = 0L;
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseDelimitedFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency parseFrom(
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1493,7 +3448,7 @@ private static final long serialVersionUID = 0L;
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency prototype) {
+    public static Builder newBuilder(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1509,26 +3464,26 @@ private static final long serialVersionUID = 0L;
       return builder;
     }
     /**
-     * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency}
+     * Protobuf type {@code org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_SourceDependency_descriptor;
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_CompilationRelation_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_SourceDependency_fieldAccessorTable
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_CompilationRelation_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder.class);
+                org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.class, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder.class);
       }
 
-      // Construct using org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.newBuilder()
+      // Construct using org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1560,17 +3515,17 @@ private static final long serialVersionUID = 0L;
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_SourceDependency_descriptor;
+        return org.jetbrains.kotlin.importmodels.proto.KotlinImportModels.internal_static_org_jetbrains_kotlin_importmodels_proto_DependenciesModel_CompilationRelation_descriptor;
       }
 
       @java.lang.Override
-      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.getDefaultInstance();
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency build() {
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency result = buildPartial();
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation build() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1578,14 +3533,14 @@ private static final long serialVersionUID = 0L;
       }
 
       @java.lang.Override
-      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency buildPartial() {
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency result = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency(this);
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation buildPartial() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation result = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency result) {
+      private void buildPartial0(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation result) {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -1603,16 +3558,16 @@ private static final long serialVersionUID = 0L;
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency) {
-          return mergeFrom((org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)other);
+        if (other instanceof org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation) {
+          return mergeFrom((org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency other) {
-        if (other == org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation other) {
+        if (other == org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.getDefaultInstance()) return this;
         if (other.hasKind()) {
           setKind(other.getKind());
         }
@@ -1676,21 +3631,21 @@ private static final long serialVersionUID = 0L;
 
       private int kind_ = 0;
       /**
-       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
        * @return Whether the kind field is set.
        */
       @java.lang.Override public boolean hasKind() {
         return ((bitField0_ & 0x00000001) != 0);
       }
       /**
-       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
        * @return The enum numeric value on the wire for kind.
        */
       @java.lang.Override public int getKindValue() {
         return kind_;
       }
       /**
-       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
        * @param value The enum numeric value on the wire for kind to set.
        * @return This builder for chaining.
        */
@@ -1701,20 +3656,20 @@ private static final long serialVersionUID = 0L;
         return this;
       }
       /**
-       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
        * @return The kind.
        */
       @java.lang.Override
-      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind getKind() {
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind result = org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind.forNumber(kind_);
-        return result == null ? org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind.UNRECOGNIZED : result;
+      public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind getKind() {
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind result = org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind.forNumber(kind_);
+        return result == null ? org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind.UNRECOGNIZED : result;
       }
       /**
-       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
        * @param value The kind to set.
        * @return This builder for chaining.
        */
-      public Builder setKind(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind value) {
+      public Builder setKind(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1724,7 +3679,7 @@ private static final long serialVersionUID = 0L;
         return this;
       }
       /**
-       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyKind kind = 1;</code>
+       * <code>.org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Kind kind = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearKind() {
@@ -1855,23 +3810,23 @@ private static final long serialVersionUID = 0L;
         return targetCompilationUnitIdBuilder_;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency)
-    private static final org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation)
+    private static final org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency();
+      DEFAULT_INSTANCE = new org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation();
     }
 
-    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency getDefaultInstance() {
+    public static org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<SourceDependency>
-        PARSER = new com.google.protobuf.AbstractParser<SourceDependency>() {
+    private static final com.google.protobuf.Parser<CompilationRelation>
+        PARSER = new com.google.protobuf.AbstractParser<CompilationRelation>() {
       @java.lang.Override
-      public SourceDependency parsePartialFrom(
+      public CompilationRelation parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1890,17 +3845,17 @@ private static final long serialVersionUID = 0L;
       }
     };
 
-    public static com.google.protobuf.Parser<SourceDependency> parser() {
+    public static com.google.protobuf.Parser<CompilationRelation> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<SourceDependency> getParserForType() {
+    public com.google.protobuf.Parser<CompilationRelation> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency getDefaultInstanceForType() {
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2810,45 +4765,45 @@ private static final long serialVersionUID = 0L;
     return parameters_ == null ? org.jetbrains.kotlin.importmodels.proto.DependenciesModel.Parameters.getDefaultInstance() : parameters_;
   }
 
-  public static final int BINARY_DEPENDENCIES_FIELD_NUMBER = 3;
+  public static final int CLASSPATH_ENTRIES_FIELD_NUMBER = 3;
   @SuppressWarnings("serial")
-  private java.util.List<org.jetbrains.kotlin.importmodels.proto.BinaryDependency> binaryDependencies_;
+  private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry> classpathEntries_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
   @java.lang.Override
-  public java.util.List<org.jetbrains.kotlin.importmodels.proto.BinaryDependency> getBinaryDependenciesList() {
-    return binaryDependencies_;
+  public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry> getClasspathEntriesList() {
+    return classpathEntries_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> 
-      getBinaryDependenciesOrBuilderList() {
-    return binaryDependencies_;
+  public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder> 
+      getClasspathEntriesOrBuilderList() {
+    return classpathEntries_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
   @java.lang.Override
-  public int getBinaryDependenciesCount() {
-    return binaryDependencies_.size();
+  public int getClasspathEntriesCount() {
+    return classpathEntries_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.importmodels.proto.BinaryDependency getBinaryDependencies(int index) {
-    return binaryDependencies_.get(index);
+  public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry getClasspathEntries(int index) {
+    return classpathEntries_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder getBinaryDependenciesOrBuilder(
+  public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder getClasspathEntriesOrBuilder(
       int index) {
-    return binaryDependencies_.get(index);
+    return classpathEntries_.get(index);
   }
 
   public static final int UNRESOLVED_DEPENDENCIES_FIELD_NUMBER = 4;
@@ -2892,45 +4847,45 @@ private static final long serialVersionUID = 0L;
     return unresolvedDependencies_.get(index);
   }
 
-  public static final int SOURCE_DEPENDENCIES_FIELD_NUMBER = 5;
+  public static final int COMPILATION_RELATIONS_FIELD_NUMBER = 5;
   @SuppressWarnings("serial")
-  private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency> sourceDependencies_;
+  private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation> compilationRelations_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
   @java.lang.Override
-  public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency> getSourceDependenciesList() {
-    return sourceDependencies_;
+  public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation> getCompilationRelationsList() {
+    return compilationRelations_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder> 
-      getSourceDependenciesOrBuilderList() {
-    return sourceDependencies_;
+  public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder> 
+      getCompilationRelationsOrBuilderList() {
+    return compilationRelations_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
   @java.lang.Override
-  public int getSourceDependenciesCount() {
-    return sourceDependencies_.size();
+  public int getCompilationRelationsCount() {
+    return compilationRelations_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency getSourceDependencies(int index) {
-    return sourceDependencies_.get(index);
+  public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation getCompilationRelations(int index) {
+    return compilationRelations_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder getSourceDependenciesOrBuilder(
+  public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder getCompilationRelationsOrBuilder(
       int index) {
-    return sourceDependencies_.get(index);
+    return compilationRelations_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -2953,14 +4908,14 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000002) != 0)) {
       output.writeMessage(2, getParameters());
     }
-    for (int i = 0; i < binaryDependencies_.size(); i++) {
-      output.writeMessage(3, binaryDependencies_.get(i));
+    for (int i = 0; i < classpathEntries_.size(); i++) {
+      output.writeMessage(3, classpathEntries_.get(i));
     }
     for (int i = 0; i < unresolvedDependencies_.size(); i++) {
       output.writeMessage(4, unresolvedDependencies_.get(i));
     }
-    for (int i = 0; i < sourceDependencies_.size(); i++) {
-      output.writeMessage(5, sourceDependencies_.get(i));
+    for (int i = 0; i < compilationRelations_.size(); i++) {
+      output.writeMessage(5, compilationRelations_.get(i));
     }
     getUnknownFields().writeTo(output);
   }
@@ -2978,17 +4933,17 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, getParameters());
     }
-    for (int i = 0; i < binaryDependencies_.size(); i++) {
+    for (int i = 0; i < classpathEntries_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, binaryDependencies_.get(i));
+        .computeMessageSize(3, classpathEntries_.get(i));
     }
     for (int i = 0; i < unresolvedDependencies_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, unresolvedDependencies_.get(i));
     }
-    for (int i = 0; i < sourceDependencies_.size(); i++) {
+    for (int i = 0; i < compilationRelations_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, sourceDependencies_.get(i));
+        .computeMessageSize(5, compilationRelations_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -3015,12 +4970,12 @@ private static final long serialVersionUID = 0L;
       if (!getParameters()
           .equals(other.getParameters())) return false;
     }
-    if (!getBinaryDependenciesList()
-        .equals(other.getBinaryDependenciesList())) return false;
+    if (!getClasspathEntriesList()
+        .equals(other.getClasspathEntriesList())) return false;
     if (!getUnresolvedDependenciesList()
         .equals(other.getUnresolvedDependenciesList())) return false;
-    if (!getSourceDependenciesList()
-        .equals(other.getSourceDependenciesList())) return false;
+    if (!getCompilationRelationsList()
+        .equals(other.getCompilationRelationsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -3040,17 +4995,17 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + PARAMETERS_FIELD_NUMBER;
       hash = (53 * hash) + getParameters().hashCode();
     }
-    if (getBinaryDependenciesCount() > 0) {
-      hash = (37 * hash) + BINARY_DEPENDENCIES_FIELD_NUMBER;
-      hash = (53 * hash) + getBinaryDependenciesList().hashCode();
+    if (getClasspathEntriesCount() > 0) {
+      hash = (37 * hash) + CLASSPATH_ENTRIES_FIELD_NUMBER;
+      hash = (53 * hash) + getClasspathEntriesList().hashCode();
     }
     if (getUnresolvedDependenciesCount() > 0) {
       hash = (37 * hash) + UNRESOLVED_DEPENDENCIES_FIELD_NUMBER;
       hash = (53 * hash) + getUnresolvedDependenciesList().hashCode();
     }
-    if (getSourceDependenciesCount() > 0) {
-      hash = (37 * hash) + SOURCE_DEPENDENCIES_FIELD_NUMBER;
-      hash = (53 * hash) + getSourceDependenciesList().hashCode();
+    if (getCompilationRelationsCount() > 0) {
+      hash = (37 * hash) + COMPILATION_RELATIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getCompilationRelationsList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -3183,9 +5138,9 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessage
               .alwaysUseFieldBuilders) {
         getParametersFieldBuilder();
-        getBinaryDependenciesFieldBuilder();
+        getClasspathEntriesFieldBuilder();
         getUnresolvedDependenciesFieldBuilder();
-        getSourceDependenciesFieldBuilder();
+        getCompilationRelationsFieldBuilder();
       }
     }
     @java.lang.Override
@@ -3198,11 +5153,11 @@ private static final long serialVersionUID = 0L;
         parametersBuilder_.dispose();
         parametersBuilder_ = null;
       }
-      if (binaryDependenciesBuilder_ == null) {
-        binaryDependencies_ = java.util.Collections.emptyList();
+      if (classpathEntriesBuilder_ == null) {
+        classpathEntries_ = java.util.Collections.emptyList();
       } else {
-        binaryDependencies_ = null;
-        binaryDependenciesBuilder_.clear();
+        classpathEntries_ = null;
+        classpathEntriesBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000004);
       if (unresolvedDependenciesBuilder_ == null) {
@@ -3212,11 +5167,11 @@ private static final long serialVersionUID = 0L;
         unresolvedDependenciesBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000008);
-      if (sourceDependenciesBuilder_ == null) {
-        sourceDependencies_ = java.util.Collections.emptyList();
+      if (compilationRelationsBuilder_ == null) {
+        compilationRelations_ = java.util.Collections.emptyList();
       } else {
-        sourceDependencies_ = null;
-        sourceDependenciesBuilder_.clear();
+        compilationRelations_ = null;
+        compilationRelationsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000010);
       return this;
@@ -3252,14 +5207,14 @@ private static final long serialVersionUID = 0L;
     }
 
     private void buildPartialRepeatedFields(org.jetbrains.kotlin.importmodels.proto.DependenciesModel result) {
-      if (binaryDependenciesBuilder_ == null) {
+      if (classpathEntriesBuilder_ == null) {
         if (((bitField0_ & 0x00000004) != 0)) {
-          binaryDependencies_ = java.util.Collections.unmodifiableList(binaryDependencies_);
+          classpathEntries_ = java.util.Collections.unmodifiableList(classpathEntries_);
           bitField0_ = (bitField0_ & ~0x00000004);
         }
-        result.binaryDependencies_ = binaryDependencies_;
+        result.classpathEntries_ = classpathEntries_;
       } else {
-        result.binaryDependencies_ = binaryDependenciesBuilder_.build();
+        result.classpathEntries_ = classpathEntriesBuilder_.build();
       }
       if (unresolvedDependenciesBuilder_ == null) {
         if (((bitField0_ & 0x00000008) != 0)) {
@@ -3270,14 +5225,14 @@ private static final long serialVersionUID = 0L;
       } else {
         result.unresolvedDependencies_ = unresolvedDependenciesBuilder_.build();
       }
-      if (sourceDependenciesBuilder_ == null) {
+      if (compilationRelationsBuilder_ == null) {
         if (((bitField0_ & 0x00000010) != 0)) {
-          sourceDependencies_ = java.util.Collections.unmodifiableList(sourceDependencies_);
+          compilationRelations_ = java.util.Collections.unmodifiableList(compilationRelations_);
           bitField0_ = (bitField0_ & ~0x00000010);
         }
-        result.sourceDependencies_ = sourceDependencies_;
+        result.compilationRelations_ = compilationRelations_;
       } else {
-        result.sourceDependencies_ = sourceDependenciesBuilder_.build();
+        result.compilationRelations_ = compilationRelationsBuilder_.build();
       }
     }
 
@@ -3317,29 +5272,29 @@ private static final long serialVersionUID = 0L;
       if (other.hasParameters()) {
         mergeParameters(other.getParameters());
       }
-      if (binaryDependenciesBuilder_ == null) {
-        if (!other.binaryDependencies_.isEmpty()) {
-          if (binaryDependencies_.isEmpty()) {
-            binaryDependencies_ = other.binaryDependencies_;
+      if (classpathEntriesBuilder_ == null) {
+        if (!other.classpathEntries_.isEmpty()) {
+          if (classpathEntries_.isEmpty()) {
+            classpathEntries_ = other.classpathEntries_;
             bitField0_ = (bitField0_ & ~0x00000004);
           } else {
-            ensureBinaryDependenciesIsMutable();
-            binaryDependencies_.addAll(other.binaryDependencies_);
+            ensureClasspathEntriesIsMutable();
+            classpathEntries_.addAll(other.classpathEntries_);
           }
           onChanged();
         }
       } else {
-        if (!other.binaryDependencies_.isEmpty()) {
-          if (binaryDependenciesBuilder_.isEmpty()) {
-            binaryDependenciesBuilder_.dispose();
-            binaryDependenciesBuilder_ = null;
-            binaryDependencies_ = other.binaryDependencies_;
+        if (!other.classpathEntries_.isEmpty()) {
+          if (classpathEntriesBuilder_.isEmpty()) {
+            classpathEntriesBuilder_.dispose();
+            classpathEntriesBuilder_ = null;
+            classpathEntries_ = other.classpathEntries_;
             bitField0_ = (bitField0_ & ~0x00000004);
-            binaryDependenciesBuilder_ = 
+            classpathEntriesBuilder_ = 
               com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                 getBinaryDependenciesFieldBuilder() : null;
+                 getClasspathEntriesFieldBuilder() : null;
           } else {
-            binaryDependenciesBuilder_.addAllMessages(other.binaryDependencies_);
+            classpathEntriesBuilder_.addAllMessages(other.classpathEntries_);
           }
         }
       }
@@ -3369,29 +5324,29 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
-      if (sourceDependenciesBuilder_ == null) {
-        if (!other.sourceDependencies_.isEmpty()) {
-          if (sourceDependencies_.isEmpty()) {
-            sourceDependencies_ = other.sourceDependencies_;
+      if (compilationRelationsBuilder_ == null) {
+        if (!other.compilationRelations_.isEmpty()) {
+          if (compilationRelations_.isEmpty()) {
+            compilationRelations_ = other.compilationRelations_;
             bitField0_ = (bitField0_ & ~0x00000010);
           } else {
-            ensureSourceDependenciesIsMutable();
-            sourceDependencies_.addAll(other.sourceDependencies_);
+            ensureCompilationRelationsIsMutable();
+            compilationRelations_.addAll(other.compilationRelations_);
           }
           onChanged();
         }
       } else {
-        if (!other.sourceDependencies_.isEmpty()) {
-          if (sourceDependenciesBuilder_.isEmpty()) {
-            sourceDependenciesBuilder_.dispose();
-            sourceDependenciesBuilder_ = null;
-            sourceDependencies_ = other.sourceDependencies_;
+        if (!other.compilationRelations_.isEmpty()) {
+          if (compilationRelationsBuilder_.isEmpty()) {
+            compilationRelationsBuilder_.dispose();
+            compilationRelationsBuilder_ = null;
+            compilationRelations_ = other.compilationRelations_;
             bitField0_ = (bitField0_ & ~0x00000010);
-            sourceDependenciesBuilder_ = 
+            compilationRelationsBuilder_ = 
               com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                 getSourceDependenciesFieldBuilder() : null;
+                 getCompilationRelationsFieldBuilder() : null;
           } else {
-            sourceDependenciesBuilder_.addAllMessages(other.sourceDependencies_);
+            compilationRelationsBuilder_.addAllMessages(other.compilationRelations_);
           }
         }
       }
@@ -3434,15 +5389,15 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 18
             case 26: {
-              org.jetbrains.kotlin.importmodels.proto.BinaryDependency m =
+              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry m =
                   input.readMessage(
-                      org.jetbrains.kotlin.importmodels.proto.BinaryDependency.parser(),
+                      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.parser(),
                       extensionRegistry);
-              if (binaryDependenciesBuilder_ == null) {
-                ensureBinaryDependenciesIsMutable();
-                binaryDependencies_.add(m);
+              if (classpathEntriesBuilder_ == null) {
+                ensureClasspathEntriesIsMutable();
+                classpathEntries_.add(m);
               } else {
-                binaryDependenciesBuilder_.addMessage(m);
+                classpathEntriesBuilder_.addMessage(m);
               }
               break;
             } // case 26
@@ -3460,15 +5415,15 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 34
             case 42: {
-              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency m =
+              org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation m =
                   input.readMessage(
-                      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.parser(),
+                      org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.parser(),
                       extensionRegistry);
-              if (sourceDependenciesBuilder_ == null) {
-                ensureSourceDependenciesIsMutable();
-                sourceDependencies_.add(m);
+              if (compilationRelationsBuilder_ == null) {
+                ensureCompilationRelationsIsMutable();
+                compilationRelations_.add(m);
               } else {
-                sourceDependenciesBuilder_.addMessage(m);
+                compilationRelationsBuilder_.addMessage(m);
               }
               break;
             } // case 42
@@ -3689,244 +5644,244 @@ private static final long serialVersionUID = 0L;
       return parametersBuilder_;
     }
 
-    private java.util.List<org.jetbrains.kotlin.importmodels.proto.BinaryDependency> binaryDependencies_ =
+    private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry> classpathEntries_ =
       java.util.Collections.emptyList();
-    private void ensureBinaryDependenciesIsMutable() {
+    private void ensureClasspathEntriesIsMutable() {
       if (!((bitField0_ & 0x00000004) != 0)) {
-        binaryDependencies_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.BinaryDependency>(binaryDependencies_);
+        classpathEntries_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry>(classpathEntries_);
         bitField0_ |= 0x00000004;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilder<
-        org.jetbrains.kotlin.importmodels.proto.BinaryDependency, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder, org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> binaryDependenciesBuilder_;
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder> classpathEntriesBuilder_;
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.importmodels.proto.BinaryDependency> getBinaryDependenciesList() {
-      if (binaryDependenciesBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(binaryDependencies_);
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry> getClasspathEntriesList() {
+      if (classpathEntriesBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(classpathEntries_);
       } else {
-        return binaryDependenciesBuilder_.getMessageList();
+        return classpathEntriesBuilder_.getMessageList();
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public int getBinaryDependenciesCount() {
-      if (binaryDependenciesBuilder_ == null) {
-        return binaryDependencies_.size();
+    public int getClasspathEntriesCount() {
+      if (classpathEntriesBuilder_ == null) {
+        return classpathEntries_.size();
       } else {
-        return binaryDependenciesBuilder_.getCount();
+        return classpathEntriesBuilder_.getCount();
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.BinaryDependency getBinaryDependencies(int index) {
-      if (binaryDependenciesBuilder_ == null) {
-        return binaryDependencies_.get(index);
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry getClasspathEntries(int index) {
+      if (classpathEntriesBuilder_ == null) {
+        return classpathEntries_.get(index);
       } else {
-        return binaryDependenciesBuilder_.getMessage(index);
+        return classpathEntriesBuilder_.getMessage(index);
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder setBinaryDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.BinaryDependency value) {
-      if (binaryDependenciesBuilder_ == null) {
+    public Builder setClasspathEntries(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry value) {
+      if (classpathEntriesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.set(index, value);
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.set(index, value);
         onChanged();
       } else {
-        binaryDependenciesBuilder_.setMessage(index, value);
+        classpathEntriesBuilder_.setMessage(index, value);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder setBinaryDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder builderForValue) {
-      if (binaryDependenciesBuilder_ == null) {
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.set(index, builderForValue.build());
+    public Builder setClasspathEntries(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder builderForValue) {
+      if (classpathEntriesBuilder_ == null) {
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.set(index, builderForValue.build());
         onChanged();
       } else {
-        binaryDependenciesBuilder_.setMessage(index, builderForValue.build());
+        classpathEntriesBuilder_.setMessage(index, builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder addBinaryDependencies(org.jetbrains.kotlin.importmodels.proto.BinaryDependency value) {
-      if (binaryDependenciesBuilder_ == null) {
+    public Builder addClasspathEntries(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry value) {
+      if (classpathEntriesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.add(value);
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.add(value);
         onChanged();
       } else {
-        binaryDependenciesBuilder_.addMessage(value);
+        classpathEntriesBuilder_.addMessage(value);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder addBinaryDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.BinaryDependency value) {
-      if (binaryDependenciesBuilder_ == null) {
+    public Builder addClasspathEntries(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry value) {
+      if (classpathEntriesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.add(index, value);
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.add(index, value);
         onChanged();
       } else {
-        binaryDependenciesBuilder_.addMessage(index, value);
+        classpathEntriesBuilder_.addMessage(index, value);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder addBinaryDependencies(
-        org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder builderForValue) {
-      if (binaryDependenciesBuilder_ == null) {
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.add(builderForValue.build());
+    public Builder addClasspathEntries(
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder builderForValue) {
+      if (classpathEntriesBuilder_ == null) {
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.add(builderForValue.build());
         onChanged();
       } else {
-        binaryDependenciesBuilder_.addMessage(builderForValue.build());
+        classpathEntriesBuilder_.addMessage(builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder addBinaryDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder builderForValue) {
-      if (binaryDependenciesBuilder_ == null) {
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.add(index, builderForValue.build());
+    public Builder addClasspathEntries(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder builderForValue) {
+      if (classpathEntriesBuilder_ == null) {
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.add(index, builderForValue.build());
         onChanged();
       } else {
-        binaryDependenciesBuilder_.addMessage(index, builderForValue.build());
+        classpathEntriesBuilder_.addMessage(index, builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder addAllBinaryDependencies(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.BinaryDependency> values) {
-      if (binaryDependenciesBuilder_ == null) {
-        ensureBinaryDependenciesIsMutable();
+    public Builder addAllClasspathEntries(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry> values) {
+      if (classpathEntriesBuilder_ == null) {
+        ensureClasspathEntriesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, binaryDependencies_);
+            values, classpathEntries_);
         onChanged();
       } else {
-        binaryDependenciesBuilder_.addAllMessages(values);
+        classpathEntriesBuilder_.addAllMessages(values);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder clearBinaryDependencies() {
-      if (binaryDependenciesBuilder_ == null) {
-        binaryDependencies_ = java.util.Collections.emptyList();
+    public Builder clearClasspathEntries() {
+      if (classpathEntriesBuilder_ == null) {
+        classpathEntries_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
       } else {
-        binaryDependenciesBuilder_.clear();
+        classpathEntriesBuilder_.clear();
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public Builder removeBinaryDependencies(int index) {
-      if (binaryDependenciesBuilder_ == null) {
-        ensureBinaryDependenciesIsMutable();
-        binaryDependencies_.remove(index);
+    public Builder removeClasspathEntries(int index) {
+      if (classpathEntriesBuilder_ == null) {
+        ensureClasspathEntriesIsMutable();
+        classpathEntries_.remove(index);
         onChanged();
       } else {
-        binaryDependenciesBuilder_.remove(index);
+        classpathEntriesBuilder_.remove(index);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder getBinaryDependenciesBuilder(
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder getClasspathEntriesBuilder(
         int index) {
-      return getBinaryDependenciesFieldBuilder().getBuilder(index);
+      return getClasspathEntriesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder getBinaryDependenciesOrBuilder(
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder getClasspathEntriesOrBuilder(
         int index) {
-      if (binaryDependenciesBuilder_ == null) {
-        return binaryDependencies_.get(index);  } else {
-        return binaryDependenciesBuilder_.getMessageOrBuilder(index);
+      if (classpathEntriesBuilder_ == null) {
+        return classpathEntries_.get(index);  } else {
+        return classpathEntriesBuilder_.getMessageOrBuilder(index);
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> 
-         getBinaryDependenciesOrBuilderList() {
-      if (binaryDependenciesBuilder_ != null) {
-        return binaryDependenciesBuilder_.getMessageOrBuilderList();
+    public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder> 
+         getClasspathEntriesOrBuilderList() {
+      if (classpathEntriesBuilder_ != null) {
+        return classpathEntriesBuilder_.getMessageOrBuilderList();
       } else {
-        return java.util.Collections.unmodifiableList(binaryDependencies_);
+        return java.util.Collections.unmodifiableList(classpathEntries_);
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder addBinaryDependenciesBuilder() {
-      return getBinaryDependenciesFieldBuilder().addBuilder(
-          org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance());
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder addClasspathEntriesBuilder() {
+      return getClasspathEntriesFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder addBinaryDependenciesBuilder(
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder addClasspathEntriesBuilder(
         int index) {
-      return getBinaryDependenciesFieldBuilder().addBuilder(
-          index, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.getDefaultInstance());
+      return getClasspathEntriesFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.BinaryDependency binary_dependencies = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry classpath_entries = 3;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder> 
-         getBinaryDependenciesBuilderList() {
-      return getBinaryDependenciesFieldBuilder().getBuilderList();
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder> 
+         getClasspathEntriesBuilderList() {
+      return getClasspathEntriesFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilder<
-        org.jetbrains.kotlin.importmodels.proto.BinaryDependency, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder, org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder> 
-        getBinaryDependenciesFieldBuilder() {
-      if (binaryDependenciesBuilder_ == null) {
-        binaryDependenciesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-            org.jetbrains.kotlin.importmodels.proto.BinaryDependency, org.jetbrains.kotlin.importmodels.proto.BinaryDependency.Builder, org.jetbrains.kotlin.importmodels.proto.BinaryDependencyOrBuilder>(
-                binaryDependencies_,
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder> 
+        getClasspathEntriesFieldBuilder() {
+      if (classpathEntriesBuilder_ == null) {
+        classpathEntriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntry.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.ClasspathEntryOrBuilder>(
+                classpathEntries_,
                 ((bitField0_ & 0x00000004) != 0),
                 getParentForChildren(),
                 isClean());
-        binaryDependencies_ = null;
+        classpathEntries_ = null;
       }
-      return binaryDependenciesBuilder_;
+      return classpathEntriesBuilder_;
     }
 
     private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.Unresolved> unresolvedDependencies_ =
@@ -4169,244 +6124,244 @@ private static final long serialVersionUID = 0L;
       return unresolvedDependenciesBuilder_;
     }
 
-    private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency> sourceDependencies_ =
+    private java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation> compilationRelations_ =
       java.util.Collections.emptyList();
-    private void ensureSourceDependenciesIsMutable() {
+    private void ensureCompilationRelationsIsMutable() {
       if (!((bitField0_ & 0x00000010) != 0)) {
-        sourceDependencies_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency>(sourceDependencies_);
+        compilationRelations_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation>(compilationRelations_);
         bitField0_ |= 0x00000010;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilder<
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder> sourceDependenciesBuilder_;
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder> compilationRelationsBuilder_;
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency> getSourceDependenciesList() {
-      if (sourceDependenciesBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(sourceDependencies_);
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation> getCompilationRelationsList() {
+      if (compilationRelationsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(compilationRelations_);
       } else {
-        return sourceDependenciesBuilder_.getMessageList();
+        return compilationRelationsBuilder_.getMessageList();
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public int getSourceDependenciesCount() {
-      if (sourceDependenciesBuilder_ == null) {
-        return sourceDependencies_.size();
+    public int getCompilationRelationsCount() {
+      if (compilationRelationsBuilder_ == null) {
+        return compilationRelations_.size();
       } else {
-        return sourceDependenciesBuilder_.getCount();
+        return compilationRelationsBuilder_.getCount();
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency getSourceDependencies(int index) {
-      if (sourceDependenciesBuilder_ == null) {
-        return sourceDependencies_.get(index);
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation getCompilationRelations(int index) {
+      if (compilationRelationsBuilder_ == null) {
+        return compilationRelations_.get(index);
       } else {
-        return sourceDependenciesBuilder_.getMessage(index);
+        return compilationRelationsBuilder_.getMessage(index);
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder setSourceDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency value) {
-      if (sourceDependenciesBuilder_ == null) {
+    public Builder setCompilationRelations(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation value) {
+      if (compilationRelationsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.set(index, value);
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.set(index, value);
         onChanged();
       } else {
-        sourceDependenciesBuilder_.setMessage(index, value);
+        compilationRelationsBuilder_.setMessage(index, value);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder setSourceDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder builderForValue) {
-      if (sourceDependenciesBuilder_ == null) {
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.set(index, builderForValue.build());
+    public Builder setCompilationRelations(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder builderForValue) {
+      if (compilationRelationsBuilder_ == null) {
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.set(index, builderForValue.build());
         onChanged();
       } else {
-        sourceDependenciesBuilder_.setMessage(index, builderForValue.build());
+        compilationRelationsBuilder_.setMessage(index, builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder addSourceDependencies(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency value) {
-      if (sourceDependenciesBuilder_ == null) {
+    public Builder addCompilationRelations(org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation value) {
+      if (compilationRelationsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.add(value);
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.add(value);
         onChanged();
       } else {
-        sourceDependenciesBuilder_.addMessage(value);
+        compilationRelationsBuilder_.addMessage(value);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder addSourceDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency value) {
-      if (sourceDependenciesBuilder_ == null) {
+    public Builder addCompilationRelations(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation value) {
+      if (compilationRelationsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.add(index, value);
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.add(index, value);
         onChanged();
       } else {
-        sourceDependenciesBuilder_.addMessage(index, value);
+        compilationRelationsBuilder_.addMessage(index, value);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder addSourceDependencies(
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder builderForValue) {
-      if (sourceDependenciesBuilder_ == null) {
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.add(builderForValue.build());
+    public Builder addCompilationRelations(
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder builderForValue) {
+      if (compilationRelationsBuilder_ == null) {
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.add(builderForValue.build());
         onChanged();
       } else {
-        sourceDependenciesBuilder_.addMessage(builderForValue.build());
+        compilationRelationsBuilder_.addMessage(builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder addSourceDependencies(
-        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder builderForValue) {
-      if (sourceDependenciesBuilder_ == null) {
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.add(index, builderForValue.build());
+    public Builder addCompilationRelations(
+        int index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder builderForValue) {
+      if (compilationRelationsBuilder_ == null) {
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.add(index, builderForValue.build());
         onChanged();
       } else {
-        sourceDependenciesBuilder_.addMessage(index, builderForValue.build());
+        compilationRelationsBuilder_.addMessage(index, builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder addAllSourceDependencies(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency> values) {
-      if (sourceDependenciesBuilder_ == null) {
-        ensureSourceDependenciesIsMutable();
+    public Builder addAllCompilationRelations(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation> values) {
+      if (compilationRelationsBuilder_ == null) {
+        ensureCompilationRelationsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, sourceDependencies_);
+            values, compilationRelations_);
         onChanged();
       } else {
-        sourceDependenciesBuilder_.addAllMessages(values);
+        compilationRelationsBuilder_.addAllMessages(values);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder clearSourceDependencies() {
-      if (sourceDependenciesBuilder_ == null) {
-        sourceDependencies_ = java.util.Collections.emptyList();
+    public Builder clearCompilationRelations() {
+      if (compilationRelationsBuilder_ == null) {
+        compilationRelations_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
       } else {
-        sourceDependenciesBuilder_.clear();
+        compilationRelationsBuilder_.clear();
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public Builder removeSourceDependencies(int index) {
-      if (sourceDependenciesBuilder_ == null) {
-        ensureSourceDependenciesIsMutable();
-        sourceDependencies_.remove(index);
+    public Builder removeCompilationRelations(int index) {
+      if (compilationRelationsBuilder_ == null) {
+        ensureCompilationRelationsIsMutable();
+        compilationRelations_.remove(index);
         onChanged();
       } else {
-        sourceDependenciesBuilder_.remove(index);
+        compilationRelationsBuilder_.remove(index);
       }
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder getSourceDependenciesBuilder(
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder getCompilationRelationsBuilder(
         int index) {
-      return getSourceDependenciesFieldBuilder().getBuilder(index);
+      return getCompilationRelationsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder getSourceDependenciesOrBuilder(
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder getCompilationRelationsOrBuilder(
         int index) {
-      if (sourceDependenciesBuilder_ == null) {
-        return sourceDependencies_.get(index);  } else {
-        return sourceDependenciesBuilder_.getMessageOrBuilder(index);
+      if (compilationRelationsBuilder_ == null) {
+        return compilationRelations_.get(index);  } else {
+        return compilationRelationsBuilder_.getMessageOrBuilder(index);
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder> 
-         getSourceDependenciesOrBuilderList() {
-      if (sourceDependenciesBuilder_ != null) {
-        return sourceDependenciesBuilder_.getMessageOrBuilderList();
+    public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder> 
+         getCompilationRelationsOrBuilderList() {
+      if (compilationRelationsBuilder_ != null) {
+        return compilationRelationsBuilder_.getMessageOrBuilderList();
       } else {
-        return java.util.Collections.unmodifiableList(sourceDependencies_);
+        return java.util.Collections.unmodifiableList(compilationRelations_);
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder addSourceDependenciesBuilder() {
-      return getSourceDependenciesFieldBuilder().addBuilder(
-          org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.getDefaultInstance());
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder addCompilationRelationsBuilder() {
+      return getCompilationRelationsFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder addSourceDependenciesBuilder(
+    public org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder addCompilationRelationsBuilder(
         int index) {
-      return getSourceDependenciesFieldBuilder().addBuilder(
-          index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.getDefaultInstance());
+      return getCompilationRelationsFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency source_dependencies = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation compilation_relations = 5;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder> 
-         getSourceDependenciesBuilderList() {
-      return getSourceDependenciesFieldBuilder().getBuilderList();
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder> 
+         getCompilationRelationsBuilderList() {
+      return getCompilationRelationsFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilder<
-        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder> 
-        getSourceDependenciesFieldBuilder() {
-      if (sourceDependenciesBuilder_ == null) {
-        sourceDependenciesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-            org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependency.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.SourceDependencyOrBuilder>(
-                sourceDependencies_,
+        org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder> 
+        getCompilationRelationsFieldBuilder() {
+      if (compilationRelationsBuilder_ == null) {
+        compilationRelationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelation.Builder, org.jetbrains.kotlin.importmodels.proto.DependenciesModel.CompilationRelationOrBuilder>(
+                compilationRelations_,
                 ((bitField0_ & 0x00000010) != 0),
                 getParentForChildren(),
                 isClean());
-        sourceDependencies_ = null;
+        compilationRelations_ = null;
       }
-      return sourceDependenciesBuilder_;
+      return compilationRelationsBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.DependenciesModel)

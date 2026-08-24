@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
@@ -50,7 +53,7 @@ class KotlinModelBuilderTest {
     }
 
     @Test
-    fun `serializes source dependencies for the requested compilation`() {
+    fun `serializes direct friend compilation relations for the requested compilation`() {
         val project = projectWithJvm()
         val (mainId, testId) = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList
         val parameters = DependenciesModelKt.parameters {
@@ -66,13 +69,14 @@ class KotlinModelBuilderTest {
         assertEquals(parameters, model.parameters)
         assertEquals(
             listOf(
-                DependenciesModelKt.sourceDependency {
-                    kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                DependenciesModelKt.compilationRelation {
+                    kind = DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_FRIEND
                     targetCompilationUnitId = mainId
                 }
             ),
-            model.sourceDependenciesList,
+            model.compilationRelationsList,
         )
+        assertEquals(emptyList(), model.classpathEntriesList)
     }
 
     @Test
@@ -94,6 +98,46 @@ class KotlinModelBuilderTest {
             Error.Type.ERROR_TYPE_UNKNOWN_MODEL_PARAMS,
             builder.buildResult(KotlinImportModelIds.DEPENDENCIES, project).error.errorType,
         )
+    }
+
+    @Test
+    fun `rejects unsupported dependency parameters before resolution`() {
+        val project = projectWithJvm()
+        val compilation = project.kotlinJvmExtension.target.compilations
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        listOf(
+            compilation.internal.configurations.compileDependencyConfiguration,
+            compilation.internal.configurations.pluginConfiguration,
+        ).forEach { configuration ->
+            configuration.incoming.beforeResolve {
+                error("Dependency resolution must not run for unsupported parameters")
+            }
+        }
+        val compilationUnitId = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList.first()
+
+        val runtimeResult = builder.buildResult(
+            KotlinImportModelIds.DEPENDENCIES,
+            project,
+            DependenciesModelKt.parameters {
+                this.compilationUnitId = compilationUnitId
+                scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_RUNTIME
+                coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+            }.toByteArray(),
+        )
+        val compilerPluginResult = builder.buildResult(
+            KotlinImportModelIds.DEPENDENCIES,
+            project,
+            DependenciesModelKt.parameters {
+                this.compilationUnitId = compilationUnitId
+                scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN
+                coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_LOCAL
+            }.toByteArray(),
+        )
+
+        assertEquals(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, runtimeResult.error.errorType)
+        assertEquals("Unsupported dependency scope", runtimeResult.error.errorMessage)
+        assertEquals(Error.Type.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, compilerPluginResult.error.errorType)
+        assertEquals("Unsupported dependency coverage", compilerPluginResult.error.errorMessage)
     }
 
     private fun KotlinModelBuilder.buildResult(modelId: String, project: Project, parameters: ByteArray? = null): Result {

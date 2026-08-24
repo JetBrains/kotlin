@@ -6,15 +6,23 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mockMavenRepository
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.utils.lenientArtifactsView
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
@@ -68,6 +76,16 @@ class KotlinImportModelProviderTest {
                     }
                 )
             }
+        }
+        buildProjectWithMPP({ withParent(project).withName("producer") }) {
+            kotlin {
+                jvm("producerJvm")
+                linuxX64("producerLinuxX64")
+                linuxArm64("producerLinuxArm64")
+            }
+        }
+        project.multiplatformExtension.sourceSets.getByName("commonMain").dependencies {
+            implementation(project.project(":producer"))
         }
         project.evaluate()
         val provider = KotlinImportModelProvider(project)
@@ -241,19 +259,219 @@ class KotlinImportModelProviderTest {
             CompilationUnitModel.Purpose.COMPILATION_PURPOSE_TEST,
         )
 
+        val dependenciesById = listOf(commonMainId, jvmMainId, jvmTestId, linuxX64MainId, linuxX64TestId).associateWith { id ->
+            provider.dependencies(DependenciesModelKt.parameters {
+                compilationUnitId = id
+                scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
+                coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+            })
+        }
         listOf(commonMainId, jvmMainId, linuxX64MainId).forEach { compilationUnitId ->
             assertEquals(
                 emptyList(),
-                provider.dependencies(DependenciesModelKt.parameters { this.compilationUnitId = compilationUnitId }).sourceDependenciesList,
+                dependenciesById.getValue(compilationUnitId).compilationRelationsList,
             )
         }
         assertEquals(
-            listOf(sourceDependency(jvmMainId)),
-            provider.dependencies(DependenciesModelKt.parameters { this.compilationUnitId = jvmTestId }).sourceDependenciesList,
+            listOf(compilationRelation(jvmMainId)),
+            dependenciesById.getValue(jvmTestId).compilationRelationsList,
         )
         assertEquals(
-            listOf(sourceDependency(linuxX64MainId)),
-            provider.dependencies(DependenciesModelKt.parameters { this.compilationUnitId = linuxX64TestId }).sourceDependenciesList,
+            listOf(compilationRelation(linuxX64MainId)),
+            dependenciesById.getValue(linuxX64TestId).compilationRelationsList,
+        )
+        assertEquals(
+            mapOf(
+                commonMainId to ":|:producer|metadata|commonMain",
+                jvmMainId to ":|:producer|producerJvm|main",
+                linuxX64MainId to ":|:producer|producerLinuxX64|main",
+            ),
+            listOf(commonMainId, jvmMainId, linuxX64MainId).associateWith { id ->
+                dependenciesById.getValue(id).classpathEntriesList.single { it.hasProject() }.project.targetCompilationUnitId.value
+            },
+        )
+        assertTrue(listOf(commonMainId, jvmMainId, linuxX64MainId).all { id ->
+            val model = dependenciesById.getValue(id)
+            val projectArtifactPath = model.classpathEntriesList.single { it.hasProject() }.project.artifactPath
+            model.classpathEntriesList.none { it.hasBinary() && it.binary.artifactPath == projectArtifactPath }
+        })
+    }
+
+    @Test
+    fun `emits ordered JVM classpath entries and retains a project entry without a compilation ID`() {
+        val root = buildProject()
+        buildProjectWithJvm({ withParent(root).withName("producer") }) { }
+        val consumer = buildProjectWithJvm({ withParent(root).withName("consumer") }) {
+            val first = rootDir.resolve("first.jar").also { it.writeBytes(byteArrayOf()) }
+            val second = rootDir.resolve("second.jar").also { it.writeBytes(byteArrayOf()) }
+            dependencies.add("implementation", files(first))
+            dependencies.add("implementation", project(":producer"))
+            dependencies.add("implementation", files(second))
+        }
+        consumer.mockMavenRepository {
+            module("org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}")
+        }
+        root.evaluate()
+        consumer.evaluate()
+
+        val compilation = consumer.kotlinJvmExtension.target.compilations.getByName("main")
+        val compilerPaths = compilation.compileDependencyFiles
+            .toList()
+            .map { it.absolutePath }
+        val artifactPaths = compilation.internal.configurations
+            .compileDependencyConfiguration
+            .lenientArtifactsView
+            .artifactFiles.files
+            .map { it.absolutePath }
+        assertEquals(compilerPaths, artifactPaths)
+
+        val id = compilationUnitId { value = ":|:consumer|jvm|main" }
+        val model = KotlinImportModelProvider(consumer).dependencies(DependenciesModelKt.parameters {
+            compilationUnitId = id
+            scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
+            coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+        })
+        val entries = model.classpathEntriesList
+
+        assertEquals(
+            compilerPaths,
+            entries.map { entry ->
+                when {
+                    entry.hasBinary() -> entry.binary.artifactPath
+                    entry.hasProject() -> entry.project.artifactPath
+                    else -> error("Classpath entry without binary or project provenance: $entry")
+                }
+            },
+        )
+        assertTrue(entries.all { it.hasBinary() xor it.hasProject() })
+        assertEquals(emptyList(), model.compilationRelationsList)
+
+        val project = entries.single { it.hasProject() }.project
+        assertEquals(":", project.buildPath)
+        assertEquals(":producer", project.projectPath)
+        assertTrue(project.artifactPath.isNotEmpty())
+        assertFalse(project.hasTargetCompilationUnitId())
+        assertTrue(entries.none { it.hasBinary() && it.binary.artifactPath == project.artifactPath })
+    }
+
+    @Test
+    fun `emits compiler plugin classpath entries without duplicating plugin arguments`() {
+        val project = buildProjectWithJvm { }
+        val compilation = project.kotlinJvmExtension.target.compilations.getByName("main")
+        val firstPlugin = project.rootDir.resolve("first-plugin.jar").also { it.writeBytes(byteArrayOf()) }
+        val secondPlugin = project.rootDir.resolve("second-plugin.jar").also { it.writeBytes(byteArrayOf()) }
+        project.dependencies.add(compilation.internal.configurations.pluginConfiguration.name, project.files(firstPlugin))
+        project.dependencies.add(compilation.internal.configurations.pluginConfiguration.name, project.files(secondPlugin))
+        compilation.compileTaskProvider.configure { task ->
+            when (task) {
+                is AbstractKotlinCompile<*> -> {
+                    task.pluginClasspath.from(compilation.internal.configurations.pluginConfiguration)
+                    task.pluginOptions.add(
+                        CompilerPluginConfig().apply {
+                            addPluginArgument("test.plugin", SubpluginOption("enabled", "true"))
+                        }
+                    )
+                }
+                else -> error("Unexpected Kotlin compilation task: ${task.javaClass.name}")
+            }
+        }
+        project.evaluate()
+        val pluginConfiguration = compilation.internal.configurations.pluginConfiguration
+        pluginConfiguration.dependencies.removeAll {
+            it.group == "org.jetbrains.kotlin" && it.name == "kotlin-scripting-compiler-embeddable"
+        }
+        val resolvedPluginPaths = pluginConfiguration
+            .lenientArtifactsView
+            .artifactFiles.files
+            .map { it.absolutePath }
+        val expectedPluginPaths = listOf(firstPlugin.absolutePath, secondPlugin.absolutePath)
+        assertEquals(expectedPluginPaths, resolvedPluginPaths)
+
+        val effectivePluginPaths = IdeCompilerArgumentsResolver.instance(project)
+            .resolveCompilerArguments(compilation)
+            .orEmpty()
+            .mapNotNull { argument ->
+                argument.removePrefix("-Xplugin=").takeIf { it != argument }
+            }
+        assertEquals(effectivePluginPaths, resolvedPluginPaths)
+
+        val id = compilationUnitId { value = ":|:|jvm|main" }
+        val provider = KotlinImportModelProvider(project)
+        val model = provider.dependencies(DependenciesModelKt.parameters {
+            compilationUnitId = id
+            scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN
+            coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+        })
+
+        assertEquals(
+            effectivePluginPaths,
+            model.classpathEntriesList.map { entry ->
+                when {
+                    entry.hasBinary() -> entry.binary.artifactPath
+                    entry.hasProject() -> entry.project.artifactPath
+                    else -> error("Classpath entry without binary or project provenance: $entry")
+                }
+            },
+        )
+        assertTrue(model.classpathEntriesList.all { it.hasBinary() xor it.hasProject() })
+        assertEquals(emptyList(), model.compilationRelationsList)
+
+        val compilerArguments = provider.compilerArguments(id).argumentsList
+        assertTrue(compilerArguments.none { it.startsWith("-Xplugin=") })
+        assertEquals(
+            listOf("-P", "plugin:test.plugin:enabled=true"),
+            compilerArguments.filter { it == "-P" || it == "plugin:test.plugin:enabled=true" },
+        )
+    }
+
+    @Test
+    fun `retains resolved classpath entries when another dependency is unresolved`() {
+        val project = buildProjectWithJvm {
+            dependencies.add("implementation", "test:resolved-library:1.0")
+            dependencies.add("implementation", "test:missing-library:1.0")
+        }
+        project.mockMavenRepository {
+            module("org.jetbrains.kotlin:kotlin-stdlib:${project.kotlinToolingVersion}")
+        }
+        project.rootDir.resolve("mavenRepoMock/test/resolved-library/1.0").also { repository ->
+            repository.mkdirs()
+            repository.resolve("resolved-library-1.0.jar").writeBytes(byteArrayOf())
+            repository.resolve("resolved-library-1.0.pom").writeText(
+                """
+                <project xmlns="http://maven.apache.org/POM/4.0.0">
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>test</groupId>
+                  <artifactId>resolved-library</artifactId>
+                  <version>1.0</version>
+                </project>
+                """.trimIndent(),
+            )
+        }
+        project.evaluate()
+
+        val id = compilationUnitId { value = ":|:|jvm|main" }
+        val model = KotlinImportModelProvider(project).dependencies(DependenciesModelKt.parameters {
+            compilationUnitId = id
+            scope = DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE
+            coverage = DependenciesModel.Coverage.DEPENDENCY_COVERAGE_ALL
+        })
+
+        assertEquals(
+            1,
+            model.classpathEntriesList.count {
+                it.hasBinary() &&
+                        it.binary.coordinates.group == "test" &&
+                        it.binary.coordinates.module == "resolved-library" &&
+                        it.binary.coordinates.version == "1.0"
+            },
+        )
+        assertEquals(
+            1,
+            model.unresolvedDependenciesList.count {
+                it.coordinates.group == "test" &&
+                        it.coordinates.module == "missing-library" &&
+                        it.coordinates.version == "1.0"
+            },
         )
     }
 
@@ -442,9 +660,9 @@ class KotlinImportModelProviderTest {
         gradleAction = ActionKt.gradleTask { this.taskPath = taskPath }
     }
 
-    private fun sourceDependency(targetCompilationUnitId: CompilationUnitId): DependenciesModel.SourceDependency =
-        DependenciesModelKt.sourceDependency {
-            kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+    private fun compilationRelation(targetCompilationUnitId: CompilationUnitId): DependenciesModel.CompilationRelation =
+        DependenciesModelKt.compilationRelation {
+            kind = DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_FRIEND
             this.targetCompilationUnitId = targetCompilationUnitId
         }
 

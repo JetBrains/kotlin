@@ -148,12 +148,12 @@ message BinaryDependency {
 }
 
 message DependenciesModel {
-  // TODO: Add project_artifact_dependencies
   enum Scope {
     DEPENDENCY_SCOPE_UNSPECIFIED = 0;
     DEPENDENCY_SCOPE_COMPILE = 1;
     // TODO: Support RUNTIME dependency scope
     DEPENDENCY_SCOPE_RUNTIME = 2;
+    DEPENDENCY_SCOPE_COMPILER_PLUGIN = 3;
   }
 
   enum Coverage {
@@ -168,16 +168,26 @@ message DependenciesModel {
     string failure_message = 2;
   }
 
-  enum SourceDependencyKind {
-    SOURCE_DEPENDENCY_KIND_UNSPECIFIED = 0;
-    SOURCE_DEPENDENCY_KIND_REGULAR = 1;
-    SOURCE_DEPENDENCY_KIND_FRIEND = 2;
-    SOURCE_DEPENDENCY_KIND_DEPENDS_ON = 3;
-    SOURCE_DEPENDENCY_KIND_VISIBLE = 4;
+  message ProjectDependency {
+    string build_path = 1;
+    string project_path = 2;
+    CompilationUnitId target_compilation_unit_id = 3;
+    string artifact_path = 4;
   }
 
-  message SourceDependency {
-    SourceDependencyKind kind = 1;
+  message ClasspathEntry {
+    oneof dependency {
+      BinaryDependency binary = 1;
+      ProjectDependency project = 2;
+    }
+  }
+
+  message CompilationRelation {
+    enum Kind {
+      COMPILATION_RELATION_KIND_UNSPECIFIED = 0;
+      COMPILATION_RELATION_KIND_FRIEND = 1;
+    }
+    Kind kind = 1;
     CompilationUnitId target_compilation_unit_id = 2;
   }
 
@@ -189,7 +199,7 @@ message DependenciesModel {
 
   string id = 1;
   Parameters parameters = 2;
-  repeated BinaryDependency binary_dependencies = 3;
+  repeated ClasspathEntry classpath_entries = 3;
   repeated Unresolved unresolved_dependencies = 4;
-  repeated SourceDependency source_dependencies = 5;
+  repeated CompilationRelation compilation_relations = 5;
 }

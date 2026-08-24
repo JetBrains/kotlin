@@ -86,22 +86,44 @@ internal class KotlinImportModelProvider(
         return compilerArgumentsModel {
             this.id = KotlinImportModelIds.COMPILER_ARGUMENTS
             parameters = CompilerArgumentsModelKt.parameters { compilationUnitId = id }
-            arguments += IdeCompilerArgumentsResolver.instance(project).resolveCompilerArguments(compilation).orEmpty()
+            arguments += IdeCompilerArgumentsResolver.instance(project)
+                .resolveCompilerArguments(compilation)
+                .orEmpty()
+                .filterNot { it.startsWith("-Xplugin=") }
         }
     }
 
     fun dependencies(parameters: DependenciesModel.Parameters): DependenciesModel {
         val descriptor = compilation(parameters.compilationUnitId)
         val compilation = descriptor.compilation
-        val artifacts = compilation.internal.configurations.compileDependencyConfiguration.lenientArtifactsView
+        val configuration = when (parameters.scope) {
+            DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE ->
+                compilation.internal.configurations.compileDependencyConfiguration
+            DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN ->
+                compilation.internal.configurations.pluginConfiguration
+            else -> error("Unsupported dependency scope")
+        }
+        val artifacts = configuration.lenientArtifactsView
+        if (parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILER_PLUGIN) {
+            val pluginPaths = IdeCompilerArgumentsResolver.instance(project)
+                .resolveCompilerArguments(compilation)
+                .orEmpty()
+                .mapNotNull { argument -> argument.removePrefix("-Xplugin=").takeIf { it != argument } }
+            check(pluginPaths == artifacts.artifactFiles.files.map(File::getAbsolutePath)) {
+                "Compiler plugin classpath does not match resolved plugin artifacts"
+            }
+        }
 
         return dependenciesModel {
             id = KotlinImportModelIds.DEPENDENCIES
             this.parameters = parameters
-            val artifactsByFile = artifacts.artifacts.associateBy { it.file }
-            binaryDependencies += artifacts.artifactFiles.files.mapNotNull { artifactsByFile[it]?.toBinaryDependency() }
+            classpathEntries += artifacts.artifactFiles.files.map { file ->
+                artifacts.artifacts.single { it.file == file }.toClasspathEntry()
+            }
             unresolvedDependencies += artifacts.failures.mapNotNull(::toUnresolvedDependency)
-            sourceDependencies += sourceDependencies(descriptor)
+            if (parameters.scope == DependenciesModel.Scope.DEPENDENCY_SCOPE_COMPILE) {
+                compilationRelations += compilationRelations(descriptor)
+            }
         }
     }
 
@@ -186,14 +208,14 @@ internal class KotlinImportModelProvider(
         readOutputs = { compilationOutputs(compilation.compileTaskProvider.get() as KotlinCompileCommon) },
     )
 
-    private fun sourceDependencies(compilation: ImportCompilationDescriptor): List<DependenciesModel.SourceDependency> {
+    private fun compilationRelations(compilation: ImportCompilationDescriptor): List<DependenciesModel.CompilationRelation> {
         val supportedCompilations = supportedCompilations()
         return compilation.compilation.associatedCompilations
             .mapNotNull { associatedCompilation -> supportedCompilations.singleOrNull { it.compilation == associatedCompilation } }
             .sortedBy { compilationUnitId(it).value }
             .map { associatedCompilation ->
-                DependenciesModelKt.sourceDependency {
-                    kind = DependenciesModel.SourceDependencyKind.SOURCE_DEPENDENCY_KIND_FRIEND
+                DependenciesModelKt.compilationRelation {
+                    kind = DependenciesModel.CompilationRelation.Kind.COMPILATION_RELATION_KIND_FRIEND
                     targetCompilationUnitId = compilationUnitId(associatedCompilation)
                 }
             }
@@ -255,7 +277,22 @@ internal class KotlinImportModelProvider(
         else -> error("Unsupported Kotlin import compilation purpose '$name' for project '${project.path}'")
     }
 
-    private fun ResolvedArtifactResult.toBinaryDependency(): BinaryDependency? = when (val component = id.componentIdentifier) {
+    private fun ResolvedArtifactResult.toClasspathEntry(): DependenciesModel.ClasspathEntry =
+        DependenciesModelKt.classpathEntry {
+            when (val component = id.componentIdentifier) {
+                is ProjectComponentIdentifier -> project = DependenciesModelKt.projectDependency {
+                    buildPath = component.build.compatAccessor(this@KotlinImportModelProvider.project).buildPath
+                    projectPath = component.projectPath
+                    artifactPath = file.absolutePath
+                    variant.attributes.getAttribute(kotlinImportModelCompilationIdAttribute)
+                        ?.takeIf(String::isNotEmpty)
+                        ?.let { targetCompilationUnitId = compilationUnitId { value = it } }
+                }
+                else -> binary = toBinaryDependency()
+            }
+        }
+
+    private fun ResolvedArtifactResult.toBinaryDependency(): BinaryDependency = when (val component = id.componentIdentifier) {
         is ModuleComponentIdentifier -> binaryDependency {
             coordinates = mavenCoordinates {
                 group = component.group
@@ -263,10 +300,6 @@ internal class KotlinImportModelProvider(
                 version = component.version
             }
             artifactPath = file.absolutePath
-        }
-        is ProjectComponentIdentifier -> {
-            // TODO: Support project-to-project dependencies
-            null
         }
         else -> binaryDependency {
             artifactPath = file.absolutePath
