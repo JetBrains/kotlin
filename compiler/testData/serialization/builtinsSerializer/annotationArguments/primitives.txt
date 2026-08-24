@@ -1,17 +1,48 @@
-package test
+library {
+  // module name: <main>
 
-@test.Primitives(boolean = true, byte = 7.toByte(), char = \u0025 ('%'), double = -3.14.toDouble(), float = 2.72.toFloat(), int = 239017, long = 123456789123456789.toLong(), short = 239.toShort()) public final class C {
-    public constructor C()
-}
+  library fragment {
+    // package name: test
 
-public final annotation class Primitives : kotlin.Annotation {
-    public constructor Primitives(/*0*/ byte: kotlin.Byte, /*1*/ char: kotlin.Char, /*2*/ short: kotlin.Short, /*3*/ int: kotlin.Int, /*4*/ long: kotlin.Long, /*5*/ float: kotlin.Float, /*6*/ double: kotlin.Double, /*7*/ boolean: kotlin.Boolean)
-    public final val boolean: kotlin.Boolean
-    public final val byte: kotlin.Byte
-    public final val char: kotlin.Char
-    public final val double: kotlin.Double
-    public final val float: kotlin.Float
-    public final val int: kotlin.Int
-    public final val long: kotlin.Long
-    public final val short: kotlin.Short
+    // class name: test/Primitives
+    // class name: test/C
+
+    public final annotation class test/Primitives : kotlin/Annotation {
+
+      public constructor(byte: kotlin/Byte, char: kotlin/Char, short: kotlin/Short, int: kotlin/Int, long: kotlin/Long, float: kotlin/Float, double: kotlin/Double, boolean: kotlin/Boolean)
+
+      public final val byte: kotlin/Byte
+        public final get
+
+      public final val char: kotlin/Char
+        public final get
+
+      public final val short: kotlin/Short
+        public final get
+
+      public final val int: kotlin/Int
+        public final get
+
+      public final val long: kotlin/Long
+        public final get
+
+      public final val float: kotlin/Float
+        public final get
+
+      public final val double: kotlin/Double
+        public final get
+
+      public final val boolean: kotlin/Boolean
+        public final get
+    }
+
+    @test/Primitives(byte = 7.toByte(), char = '%', short = 239.toShort(), int = 239017, long = 123456789123456789L, float = 2.72f, double = -3.14, boolean = true)
+    public final class test/C : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+    }
+  }
 }

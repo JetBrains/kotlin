@@ -1,10 +1,26 @@
-package test
+library {
+  // module name: <main>
 
-public val property: kotlin.Unit
-public fun function(/*0*/ int: kotlin.Int, /*1*/ string: kotlin.String = ...): test.Class
-public fun </*0*/ T> T.extension(): T?
+  library fragment {
+    // package name: test
 
-public final class Class {
-    public constructor Class()
-    public final fun member(): kotlin.Nothing?
+    // class name: test/Class
+
+    public final class test/Class : kotlin/Any {
+
+      public constructor()
+
+      public final fun member(): kotlin/Nothing?
+    }
+
+    package {
+
+      public final fun function(int: kotlin/Int, string: kotlin/String /* = ... */): test/Class
+
+      public final fun <T#0 /* T */> T#0.extension(): T#0?
+
+      public final val property: kotlin/Unit
+        public final get
+    }
+  }
 }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrTest
+import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataSerializationTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibComparisonTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompilationTest
@@ -74,6 +75,16 @@ fun main(args: Array<String>) {
         // Dump KLIB metadata tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-metadata") {
             testClass<AbstractNativeKlibDumpMetadataTest>(
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+
+        testGroup(testsRoot, "compiler/testData/serialization") {
+            testClass<AbstractNativeKlibDumpMetadataSerializationTest>(
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
                 )

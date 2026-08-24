@@ -54,6 +54,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/serialization")
     testData(project(":native:native.tests").isolated, "testData/codegen")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")

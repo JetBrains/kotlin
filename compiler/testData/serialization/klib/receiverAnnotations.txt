@@ -1,14 +1,41 @@
-package test
+library {
+  // module name: <main>
 
-@test.Ann public val @receiver:test.Ann kotlin.Int.bar: kotlin.Int
-@test.Ann public fun @receiver:test.Ann kotlin.Int.foo(/*0*/ @test.Ann arg: kotlin.Int): kotlin.Int
+  library fragment {
+    // package name: test
 
-public final class A {
-    public constructor A()
-    @test.Ann public final val @receiver:test.Ann kotlin.Int.bar: kotlin.Int
-    @test.Ann public final fun @receiver:test.Ann kotlin.Int.foo(/*0*/ @test.Ann arg: kotlin.Int): kotlin.Int
-}
+    // class name: test/Ann
+    // class name: test/A
 
-public final annotation class Ann : kotlin.Annotation {
-    public constructor Ann()
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      @test/Ann
+      @receiver:test/Ann
+      public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+
+      @test/Ann
+      @receiver:test/Ann
+      public final val kotlin/Int.bar: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    package {
+
+      @test/Ann
+      @receiver:test/Ann
+      public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+
+      @test/Ann
+      @receiver:test/Ann
+      public final val kotlin/Int.bar: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
 }
