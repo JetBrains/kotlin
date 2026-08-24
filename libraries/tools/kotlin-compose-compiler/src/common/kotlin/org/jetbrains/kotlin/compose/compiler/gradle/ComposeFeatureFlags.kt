@@ -91,7 +91,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * ```
          */
         @Deprecated(
-            message = "This flag should be enabled by default and will be removed with Kotlin 2.5.0.",
+            message = "This flag is now enabled by default and will be removed with Kotlin 2.5.0.",
             level = DeprecationLevel.ERROR
         )
         @JvmField
@@ -112,7 +112,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * ```
          */
         @Deprecated(
-            message = "This flag should be enabled by default and will be removed with Kotlin 2.5.0.",
+            message = "This flag is now enabled by default and will be removed with Kotlin 2.5.0.",
             level = DeprecationLevel.ERROR
         )
         @JvmField
@@ -135,7 +135,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * ```
          */
         @Deprecated(
-            message = "This flag should be enabled by default and will be removed in the future versions.",
+            message = "This flag is now enabled by default and will be removed in the future versions.",
             level = DeprecationLevel.WARNING
         )
         @JvmField
@@ -156,7 +156,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * ```
          */
         @Deprecated(
-            message = "This flag should be enabled by default and will be removed in the future versions.",
+            message = "This flag is now enabled by default and will be removed in the future versions.",
             level = DeprecationLevel.WARNING
         )
         @JvmField
