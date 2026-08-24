@@ -93,7 +93,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
 context(session: KaSession)
 public fun KtResolvableCall.resolveSuccessfulCall(): KaSimpleOrMultiCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -137,7 +137,7 @@ public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = resolveSuccess
 context(session: KaSession)
 public fun KtAnnotationEntry.resolveSuccessfulCall(): KaAnnotationCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -180,7 +180,7 @@ public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveSuccessfu
 context(session: KaSession)
 public fun KtSuperTypeCallEntry.resolveSuccessfulCall(): KaFunctionCall<KaConstructorSymbol>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -228,7 +228,7 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
 context(session: KaSession)
 public fun KtConstructorDelegationCall.resolveSuccessfulCall(): KaDelegatedConstructorCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -276,7 +276,7 @@ public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall
 context(session: KaSession)
 public fun KtConstructorDelegationReferenceExpression.resolveSuccessfulCall(): KaDelegatedConstructorCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -321,7 +321,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
 context(session: KaSession)
 public fun KtCallElement.resolveSuccessfulCall(): KaFunctionCall<*>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -364,7 +364,7 @@ public fun KtCallElement.resolveCall(): KaFunctionCall<*>? = resolveSuccessfulCa
 context(session: KaSession)
 public fun KtCallableReferenceExpression.resolveSuccessfulCall(): KaCallableReferenceCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -423,7 +423,7 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
 context(session: KaSession)
 public fun KtArrayAccessExpression.resolveSuccessfulCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -468,7 +468,7 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunction
 context(session: KaSession)
 public fun KtCollectionLiteralExpression.resolveSuccessfulCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -511,7 +511,7 @@ public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFu
 context(session: KaSession)
 public fun KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall(): KaDelegatedConstructorCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -561,7 +561,7 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
 context(session: KaSession)
 public fun KtWhenConditionInRange.resolveSuccessfulCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -608,7 +608,7 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
 context(session: KaSession)
 public fun KtDestructuringDeclarationEntry.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -649,7 +649,7 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? = 
 context(session: KaSession)
 public fun KtQualifiedExpression.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -697,7 +697,7 @@ public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? = resolveSuc
 context(session: KaSession)
 public fun KtForExpression.resolveSuccessfulCall(): KaForLoopCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -744,7 +744,7 @@ public fun KtForExpression.resolveCall(): KaForLoopCall? = resolveSuccessfulCall
 context(session: KaSession)
 public fun KtPropertyDelegate.resolveSuccessfulCall(): KaDelegatedPropertyCall? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -787,7 +787,7 @@ public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = resolveS
 context(session: KaSession)
 public fun KtConstructorCalleeExpression.resolveSuccessfulCall(): KaFunctionCall<KaConstructorSymbol>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
@@ -830,7 +830,7 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
 context(session: KaSession)
 public fun KtNameReferenceExpression.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
-    return internals.resolver.resolveCall(this)
+    return internals.resolver.resolveSuccessfulCall(this)
 }
 
 /**
