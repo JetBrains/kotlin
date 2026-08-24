@@ -63,7 +63,7 @@ fun KGPBaseTest.project(
     enableOfflineMode: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 512,
+    enableGradleDaemonMemoryLimitInMb: Int? = if (buildOptions.androidVersion != null) 1024 else 512,
     enableKotlinDaemonMemoryLimitInMb: Int? = 256,
     kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
