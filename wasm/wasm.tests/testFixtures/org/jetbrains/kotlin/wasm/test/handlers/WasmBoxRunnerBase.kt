@@ -45,6 +45,7 @@ abstract class WasmBoxRunnerBase(
         filesToIgnoreInSizeChecks: MutableSet<File>,
         useUnitTestRunnerOnly: Boolean = false,
         outputCollector: MutableList<WasmVMOutput>? = null,
+        callGroupedTestsDriver: Boolean = false,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -66,17 +67,7 @@ abstract class WasmBoxRunnerBase(
                         console.log = print;
                     }
                     try {
-                        if (typeof jsModule.runGroupedTests === 'function') {
-                            // Grouped batch: pass/fail is attributed on the JVM side, so a failure must NOT throw here.
-                            await jsModule.runGroupedTests();
-                        } else {
-                            await jsModule.startUnitTests();
-                            const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
-                                                (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
-                            if (hasFailures) {
-                                throw new Error('Unit test failed');
-                            }
-                        }
+                        ${generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver)}
                     } catch(e) {
                         console.log('Failed with exception!')
 
@@ -203,6 +194,23 @@ abstract class WasmBoxRunnerBase(
             }
     }
 }
+
+internal fun generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver: Boolean): String =
+    if (callGroupedTestsDriver) {
+        """
+        // Grouped batch: pass/fail is attributed on the JVM side, so a failure must NOT throw here.
+        await jsModule.runGroupedTests();
+        """.trimIndent()
+    } else {
+        """
+        await jsModule.startUnitTests();
+        const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
+                            (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
+        if (hasFailures) {
+            throw new Error('Unit test failed');
+        }
+        """.trimIndent()
+    }
 
 class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM $vmName failed", cause = nested)
 
