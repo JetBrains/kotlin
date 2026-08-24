@@ -22,10 +22,10 @@ fun Icon(param: Int, defaultParam: Int, %composer: Composer?, %changed: Int, %de
   sourceInformation(%composer, "C(Icon)N(param,defaultParam)<rememb...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(param) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(defaultParam)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %default and 0b0010 == 0 && %composer.changed(defaultParam) as Int + 1 shl 4
   }
   if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     %composer.startDefaults()

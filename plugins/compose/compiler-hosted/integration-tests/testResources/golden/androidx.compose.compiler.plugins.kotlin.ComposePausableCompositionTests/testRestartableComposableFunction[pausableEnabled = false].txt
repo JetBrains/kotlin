@@ -21,13 +21,13 @@ fun Test(a: Int, b: String, c: Float, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(a) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(b) as Int + 1 shl 4
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(c) as Int + 1 shl 7
   }
   if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
     use(a)

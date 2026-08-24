@@ -20,12 +20,12 @@ fun Ref(cls: Cls, content: Function2<Composer, Int, Unit>, %composer: Composer?,
   sourceInformation(%composer, "C(Ref)N(cls,content)<cls::F...>,<cls::F...>,<Ref(cl...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+    %dirty = %dirty or if (%changed and 0b1000 == 0) {
       %composer.changed(cls)
     } else {
       %composer.changedInstance(cls)
     }
-    ) 0b0100 else 0b0010
+     as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

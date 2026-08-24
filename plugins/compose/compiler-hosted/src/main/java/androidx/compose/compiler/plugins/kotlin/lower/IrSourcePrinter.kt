@@ -417,6 +417,9 @@ class IrSourcePrinterVisitor(
                 printIntsAsBinary = true
             }
             expression.printReceiver()
+            if (name == "shl" || name == "shr" || name == "ushr") {
+                printIntsAsBinary = false
+            }
             print(" $name ")
             expression.printFirstParameter()
             printIntsAsBinary = prev
