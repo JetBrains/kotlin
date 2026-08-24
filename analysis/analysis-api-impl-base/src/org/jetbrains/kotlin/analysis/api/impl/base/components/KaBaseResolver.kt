@@ -185,9 +185,9 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         }
     }
 
-    final override fun resolveCall(resolvableCall: KtResolvableCall): KaSingleOrMultiCall? = tryResolveCall(resolvableCall)?.successfulCall
+    final override fun resolveCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall? = tryResolveCall(resolvableCall)?.successfulCall
 
-    private inline fun <reified R : KaSingleOrMultiCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall(this) as? R
+    private inline fun <reified R : KaSimpleOrMultiCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall(this) as? R
 
     private inline fun <reified S : KaCallableSymbol, C : KaCallableSignature<S>, reified R : KaSingleCall<S, C>> KtResolvableCall.resolveSingleCallSafe(): R? {
         val call = resolveCall(this) ?: return null
@@ -433,7 +433,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 }
 
 internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
-    val call = candidate as KaSingleOrMultiCall
+    val call = candidate as KaSimpleOrMultiCall
     return when (this) {
         is KaApplicableCallCandidateInfo -> KaBaseApplicableCallCandidate(
             backingCandidate = call,
@@ -465,13 +465,13 @@ internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
 }
 
 /**
- * Returns the legacy [KaCall] view of [this] [KaSingleOrMultiCall]. Most resolution result types
+ * Returns the legacy [KaCall] view of [this] [KaSimpleOrMultiCall]. Most resolution result types
  * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
  * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
  * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
  * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
  */
-private fun KaSingleOrMultiCall.asKaCall(): KaCall = when (this) {
+private fun KaSimpleOrMultiCall.asKaCall(): KaCall = when (this) {
     is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()
     else -> this as KaCall
 }

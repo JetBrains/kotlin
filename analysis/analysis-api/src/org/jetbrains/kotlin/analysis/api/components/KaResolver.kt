@@ -747,14 +747,14 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      *
-     * Returns the resolved [KaSingleOrMultiCall] on success; otherwise, `null`
+     * Returns the resolved [KaSimpleOrMultiCall] on success; otherwise, `null`
      *
      * @see tryResolveCall
      * @see collectCallCandidates
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
-    public fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall?
+    public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall?
 
     /**
      * Resolves the given [KtAnnotationEntry] to an annotation constructor call.
@@ -2390,7 +2390,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * }
  * ```
  *
- * Returns the resolved [KaSingleOrMultiCall] on success; otherwise, `null`
+ * Returns the resolved [KaSimpleOrMultiCall] on success; otherwise, `null`
  *
  * @see tryResolveCall
  * @see collectCallCandidates
@@ -2404,7 +2404,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
 )
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? {
+public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? {
     return with(session) {
         resolveCall()
     }

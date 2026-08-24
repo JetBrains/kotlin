@@ -164,7 +164,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                         val value = (property as KProperty1<Any, *>).get(this@with)?.let { value ->
                             when {
                                 (KaErrorCallInfo::class.isSuperclassOf(klass) || KaCallResolutionError::class.isSuperclassOf(klass)) && name == "candidateCalls" -> {
-                                    sortedCalls(value as Collection<KaSingleOrMultiCall>)
+                                    sortedCalls(value as Collection<KaSimpleOrMultiCall>)
                                 }
 
                                 KaSymbolResolutionError::class.isSuperclassOf(klass) && name == KaSymbolResolutionError::candidateSymbols.name -> {
@@ -263,8 +263,8 @@ internal fun prettyPrintSignature(signature: KaCallableSignature<*>): String = p
 
 context(_: KaSession)
 internal fun sortedCalls(
-    collection: Collection<KaSingleOrMultiCall>,
-): Collection<KaSingleOrMultiCall> = collection.sortedWith { call1, call2 ->
+    collection: Collection<KaSimpleOrMultiCall>,
+): Collection<KaSimpleOrMultiCall> = collection.sortedWith { call1, call2 ->
     compareCalls(call1, call2)
 }
 
@@ -281,7 +281,7 @@ internal fun compareSymbols(symbol1: KaSymbol, symbol2: KaSymbol): Int {
 }
 
 context(_: KaSession)
-internal fun compareCalls(call1: KaSingleOrMultiCall, call2: KaSingleOrMultiCall): Int {
+internal fun compareCalls(call1: KaSimpleOrMultiCall, call2: KaSimpleOrMultiCall): Int {
     return stringRepresentation(call1).compareTo(stringRepresentation(call2))
 }
 
@@ -402,7 +402,7 @@ internal fun assertStableResult(
     }
 
     val symbols = symbolResolutionAttempt?.symbols?.let { sortedSymbols(it) }.orEmpty()
-    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSimpleOrMultiCall::symbols))
     if (mainElement is KtOperationReferenceExpression) {
         assertions.assertContainsElements(symbolsFromCall, symbols)
         return
@@ -529,7 +529,7 @@ private fun assertMultiSymbolConsistency(testServices: TestServices, attempt: Ka
 }
 
 context(_: KaSession)
-internal fun assertStableResult(testServices: TestServices, firstCall: KaSingleOrMultiCall, secondCall: KaSingleOrMultiCall) {
+internal fun assertStableResult(testServices: TestServices, firstCall: KaSimpleOrMultiCall, secondCall: KaSimpleOrMultiCall) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCall::class, secondCall::class)
 
@@ -542,7 +542,7 @@ internal fun assertStableResult(testServices: TestServices, firstCall: KaSingleO
 }
 
 context(_: KaSession)
-internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMultiCall, checkTypeArgumentsMapping: Boolean = true) {
+internal fun assertConsistency(testServices: TestServices, call: KaSimpleOrMultiCall, checkTypeArgumentsMapping: Boolean = true) {
     when (call) {
         is KaMultiCall -> {
             // Multi-call sub-calls may have empty type argument mappings

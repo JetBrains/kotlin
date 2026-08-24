@@ -278,7 +278,7 @@ private interface KaMultiUnknownCallResolutionAttempt : KaMultiCallResolutionAtt
  *   succeeded, or the combined calls from individual [attempts][KaMultiCallResolutionAttempt.attempts] otherwise.
  */
 @KaExperimentalApi
-public val KaCallResolutionAttempt.calls: List<KaSingleOrMultiCall>
+public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
     get() = if (this is KaCallResolutionError) {
         candidateCalls
     } else {
@@ -297,7 +297,7 @@ public val KaCallResolutionAttempt.calls: List<KaSingleOrMultiCall>
  *   if all sub-calls succeeded, or `null` otherwise.
  */
 @KaExperimentalApi
-public val KaCallResolutionAttempt.successfulCall: KaSingleOrMultiCall?
+public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
     get() = fold(onSuccess = { it }, onFailure = { null })
 
 /**
@@ -312,7 +312,7 @@ public val KaCallResolutionAttempt.successfulCall: KaSingleOrMultiCall?
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
 public inline fun <T> KaCallResolutionAttempt.fold(
-    onSuccess: (KaSingleOrMultiCall) -> T,
+    onSuccess: (KaSimpleOrMultiCall) -> T,
     onFailure: (List<KaSingleCallResolutionAttempt>) -> T,
 ): T {
     contract {
