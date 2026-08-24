@@ -9,7 +9,10 @@ import abitestutils.TestMode.*
 interface TestBuilder {
     val testMode: TestMode
 
-    /** N.B. It is expected that [messageWithoutHashes] contains IR linkage error message without hashes in ID signatures. */
+    /**
+     * N.B. It is expected that [messageWithoutHashes] contains IR linkage error message without hashes in ID signatures.
+     * The `#companion@<receiver>` marker of a companion extension is preserved.
+     */
     fun linkage(messageWithoutHashes: String): FailurePattern
     fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String): FailurePattern
     fun noWhenBranch(): FailurePattern
@@ -139,13 +142,22 @@ private class GeneralIrLinkageError(private val expectedMessageWithoutHashes: St
     }
 
     override fun checkIrLinkageErrorMessage(errorMessage: String?) =
-        if (errorMessage?.replace(SIGNATURE_WITH_HASH) { it.groupValues[1] + "'" } == expectedMessageWithoutHashes)
+        if (errorMessage?.replace(SIGNATURE_WITH_HASH) { stripHash(it) } == expectedMessageWithoutHashes)
             null // Success.
         else
             TestMismatchedExpectation(expectedMessageWithoutHashes, errorMessage)
 
     companion object {
         val SIGNATURE_WITH_HASH = Regex("(symbol '[\\da-zA-Z.<>_\\-]*/[\\da-zA-Z.<>_\\-]+)(\\|\\S+)'")
+        val COMPANION_EXTENSION_MARKER = Regex("#companion@[\\w./\\-]*")
+
+        /**
+         * Drops the hash part of an ID signature but preserves the `#companion@<receiver>` marker if there is one.
+         */
+        private fun stripHash(signatureWithHash: MatchResult): String {
+            val companionExtensionMarker = COMPANION_EXTENSION_MARKER.find(signatureWithHash.groupValues[2])?.value.orEmpty()
+            return signatureWithHash.groupValues[1] + companionExtensionMarker + "'"
+        }
     }
 }
 

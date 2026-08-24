@@ -19,21 +19,21 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'removedFun' can not be called: No function found for symbol '/A.removedFun'")) { removedFunRef.invoke() }
 
     expectSuccess("extensionPropertyChange.v2") { extensionValChangeGet() }
-    expectFailure(linkage("Property accessor 'removedExtensionVal.<get-removedExtensionVal>' can not be called: No property accessor found for symbol '/removedExtensionVal.<get-removedExtensionVal>'")) { removedExtensionValGet() }
+    expectFailure(linkage("Property accessor 'removedExtensionVal.<get-removedExtensionVal>' can not be called: No property accessor found for symbol '/removedExtensionVal.<get-removedExtensionVal>#companion@A'")) { removedExtensionValGet() }
     expectSuccess("extensionPropertyChange.v2") { extensionVarChangeGet() }
-    expectFailure(linkage("Property accessor 'removedExtensionVar.<get-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<get-removedExtensionVar>'")) { removedExtensionVarGet() }
-    expectFailure(linkage("Property accessor 'removedExtensionVar.<set-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<set-removedExtensionVar>'")) { removedExtensionVarSet() }
+    expectFailure(linkage("Property accessor 'removedExtensionVar.<get-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<get-removedExtensionVar>#companion@A'")) { removedExtensionVarGet() }
+    expectFailure(linkage("Property accessor 'removedExtensionVar.<set-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<set-removedExtensionVar>#companion@A'")) { removedExtensionVarSet() }
 
     expectSuccess("extensionPropertyChange.v2") { extensionValChangeRef.invoke() }
-    expectFailure(linkage("Property accessor 'removedExtensionVal.<get-removedExtensionVal>' can not be called: No property accessor found for symbol '/removedExtensionVal.<get-removedExtensionVal>'")) { removedExtensionValRef.invoke() }
+    expectFailure(linkage("Property accessor 'removedExtensionVal.<get-removedExtensionVal>' can not be called: No property accessor found for symbol '/removedExtensionVal.<get-removedExtensionVal>#companion@A'")) { removedExtensionValRef.invoke() }
     expectSuccess("extensionPropertyChange.v2") { extensionVarChangeRef.invoke() }
-    expectFailure(linkage("Property accessor 'removedExtensionVar.<get-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<get-removedExtensionVar>'")) { removedExtensionVarRef.invoke() }
+    expectFailure(linkage("Property accessor 'removedExtensionVar.<get-removedExtensionVar>' can not be called: No property accessor found for symbol '/removedExtensionVar.<get-removedExtensionVar>#companion@A'")) { removedExtensionVarRef.invoke() }
 
     expectSuccess("extensionFunBodyChange.v2") { extensionFunBodyChangeCall() }
-    expectFailure(linkage("Function 'removedExtensionFun' can not be called: No function found for symbol '/removedExtensionFun'")) { removedExtensionFunCall() }
+    expectFailure(linkage("Function 'removedExtensionFun' can not be called: No function found for symbol '/removedExtensionFun#companion@A'")) { removedExtensionFunCall() }
 
     expectSuccess("extensionFunBodyChange.v2") { extensionFunBodyChangeRef.invoke() }
-    expectFailure(linkage("Function 'removedExtensionFun' can not be called: No function found for symbol '/removedExtensionFun'")) { removedExtensionFunRef.invoke() }
+    expectFailure(linkage("Function 'removedExtensionFun' can not be called: No function found for symbol '/removedExtensionFun#companion@A'")) { removedExtensionFunRef.invoke() }
 
     expectSuccess("removedClass") { removedClassCall() }
     expectSuccess(42) { removedClassValueCall() }
@@ -52,8 +52,8 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'blockToObject' can not be called: No function found for symbol '/A.blockToObject'")) { blockToObjectCall() }
     expectFailure(linkage("Function 'objectToBlock' can not be called: No function found for symbol '/A.Companion.objectToBlock'")) { objectToBlockCall() }
     expectFailure(linkage("Function 'blockToCompanionExtension' can not be called: No function found for symbol '/A.blockToCompanionExtension'")) { blockToCompanionExtensionCall() }
-    expectFailure(linkage("Function 'companionExtensionToBlock' can not be called: No function found for symbol '/companionExtensionToBlock'")) { companionExtensionToBlockCall() }
-    expectFailure(linkage("Function 'companionToRegularExtension' can not be called: No function found for symbol '/companionToRegularExtension'")) { companionToRegularExtensionCall() }
+    expectFailure(linkage("Function 'companionExtensionToBlock' can not be called: No function found for symbol '/companionExtensionToBlock#companion@A'")) { companionExtensionToBlockCall() }
+    expectFailure(linkage("Function 'companionToRegularExtension' can not be called: No function found for symbol '/companionToRegularExtension#companion@A'")) { companionToRegularExtensionCall() }
     expectFailure(linkage("Function 'regularToCompanionExtension' can not be called: No function found for symbol '/regularToCompanionExtension'")) { regularToCompanionExtensionCall() }
     expectFailure(linkage("Function 'blockToRegularExtension' can not be called: No function found for symbol '/A.blockToRegularExtension'")) { blockToRegularExtensionCall() }
     expectFailure(linkage("Function 'regularExtensionToBlock' can not be called: No function found for symbol '/regularExtensionToBlock'")) { regularExtensionToBlockCall() }
@@ -61,8 +61,8 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'sameFun' can not be called: No function found for symbol '/RemovedBlock.sameFun'")) { noBlockSameFunCall() }
     expectSuccess("object") { newBlockSameFunCall() }
 
-    expectFailure(linkage("Function 'privateClassFun' can not be called: No function found for symbol '/privateClassFun'")) { privateClassCall() }
-    expectFailure(linkage("Function 'aliasFun' can not be called: No function found for symbol '/aliasFun'")) { aliasCall() }
+    expectFailure(linkage("Function 'privateClassFun' can not be called: No function found for symbol '/privateClassFun#companion@PrivateClass'")) { privateClassCall() }
+    expectFailure(linkage("Function 'aliasFun' can not be called: No function found for symbol '/aliasFun#companion@A'")) { aliasCall() }
     expectSuccess("aliasToClassFun") { aliasToClassFunCall() }
     expectSuccess("classToAliasFun") { classToAliasFunCall() }
 }
