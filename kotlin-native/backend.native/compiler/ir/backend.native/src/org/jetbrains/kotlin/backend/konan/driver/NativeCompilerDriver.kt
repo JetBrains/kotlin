@@ -93,14 +93,24 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         // Note: `BuildCExports` is technically not a part of IR linking. Ideally, it should be attributed to `TranslationToIr`,
         // mirroring `ProduceObjCExportInterfacePhase` in `produceObjCFramework`,
         // or both should be moved to a separate dedicated phase type, e.g. `Export`.
-        val [linkKlibsOutput, cAdapterElements] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [linkKlibsOutput, k1CAdapterElements] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
-                if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
+                if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1 && !config.cExportUseIrDiscovery) {
                     it.runPhase(BuildCExports, frontendOutput)
                 } else {
                     null
                 }
             }
+        }
+
+        val cAdapterElements = if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
+            if (config.cExportUseIrDiscovery) {
+                buildCExportsFromIr(config, linkKlibsOutput)
+            } else {
+                k1CAdapterElements
+            }
+        } else {
+            null
         }
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput) {
             it.cAdapterExportedElements = cAdapterElements

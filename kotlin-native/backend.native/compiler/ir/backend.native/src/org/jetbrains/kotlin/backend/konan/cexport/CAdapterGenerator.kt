@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompan
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -387,21 +386,6 @@ internal class CAdapterGenerator(
 
         moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
         return CAdapterExportedElements(prefix, scopes)
-    }
-
-    private val simpleNameMapping = mapOf(
-            "<this>" to "thiz",
-            "<set-?>" to "set"
-    )
-
-    private fun translateName(name: Name): String {
-        val nameString = name.asString()
-        return when {
-            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
-            cKeywords.contains(nameString) -> "${nameString}_"
-            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
-            else -> nameString
-        }
     }
 
     private var functionIndex = 0

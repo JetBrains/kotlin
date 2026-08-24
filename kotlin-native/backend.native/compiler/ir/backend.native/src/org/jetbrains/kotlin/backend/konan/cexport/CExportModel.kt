@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.konan.cexport
 
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.name.Name
+import kotlin.collections.contains
 
 /**
  * The representation-neutral C export model produced by phase 1 and consumed by phase 2 (LLVM bridges) and
@@ -131,5 +133,20 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
         scopeNames += computedName
         uniqueNameCache[declaration to shortName] = computedName
         return computedName
+    }
+}
+
+private val simpleNameMapping = mapOf(
+        "<this>" to "thiz",
+        "<set-?>" to "set"
+)
+
+internal fun translateName(name: Name): String {
+    val nameString = name.asString()
+    return when {
+        simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
+        cKeywords.contains(nameString) -> "${nameString}_"
+        name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
+        else -> nameString
     }
 }

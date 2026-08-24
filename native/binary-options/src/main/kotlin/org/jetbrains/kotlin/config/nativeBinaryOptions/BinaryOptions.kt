@@ -92,6 +92,12 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val cInterfaceMode by option<CInterfaceGenerationMode>()
 
+    /**
+     * Experimental: build the C export model (phase 1) from the linked IR instead of K1 descriptors.
+     * The default (`false`) keeps the descriptor-based discovery. Only affects `cInterfaceMode=v1`.
+     */
+    val cExportUseIrDiscovery by booleanOption()
+
     val globalDataLazyInit by booleanOption()
 
     val swiftExport by booleanOption()
