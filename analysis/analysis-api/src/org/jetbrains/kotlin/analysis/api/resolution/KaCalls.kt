@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -263,6 +264,36 @@ public val KaSimpleOrMultiCall.function: KaFunctionCall<*>?
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.variable: KaVariableAccessCall?
     get() = this as? KaVariableAccessCall
+
+/**
+ * [this] call as a call to a [constructor][KaConstructorSymbol], or `null` if it is not a constructor call.
+ *
+ * ### Example
+ * ```kotlin
+ * annotation class Anno
+ *
+ * class Foo
+ *
+ * @Anno
+ * fun usage() {
+ *    Foo()
+ * }
+ * ```
+ *
+ * Both the `Foo()` call and the `@Anno` annotation entry are constructor calls, so [constructor] returns the call itself.
+ *
+ * @see KaConstructorSymbol
+ * @see function
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.constructor: KaFunctionCall<KaConstructorSymbol>?
+    get() {
+        val call = function ?: return null
+        if (call.symbol !is KaConstructorSymbol) return null
+
+        @Suppress("UNCHECKED_CAST")
+        return call as KaFunctionCall<KaConstructorSymbol>
+    }
 
 /**
  * The resolved [KaCallableSymbol] of the [KaSimpleCall].
