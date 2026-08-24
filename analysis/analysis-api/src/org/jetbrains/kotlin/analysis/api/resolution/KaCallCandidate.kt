@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 @KaExperimentalApi
 public sealed interface KaCallCandidate : KaLifetimeOwner {
     /**
-     * The [KaSingleOrMultiCall] representing the call candidate.
+     * The [KaSimpleOrMultiCall] representing the call candidate.
      */
-    public val candidate: KaSingleOrMultiCall
+    public val candidate: KaSimpleOrMultiCall
 
     /**
      * Whether the [candidate] is in the final set of candidates considered during the call's resolution. There can be multiple best

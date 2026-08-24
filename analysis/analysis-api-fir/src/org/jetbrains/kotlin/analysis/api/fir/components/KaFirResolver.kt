@@ -939,7 +939,7 @@ internal class KaFirResolver(
         fir: FirResolvable,
         candidate: Candidate?,
         resolveFragmentOfCall: Boolean,
-    ): KaSingleOrMultiCall? = createKaCallResolutionAttempt(
+    ): KaSimpleOrMultiCall? = createKaCallResolutionAttempt(
         psi = psi,
         fir = fir,
         calleeReference = fir.calleeReference,

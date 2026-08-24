@@ -11,7 +11,7 @@ import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleOrMultiCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall
 import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -37,7 +37,7 @@ internal class KaBaseSimpleNameReference(
         // For instance, it is the case for constructor calls
         val symbolsFromCall = (element as? KtResolvableCall)?.tryResolveCall()
             ?.calls
-            ?.flatMap(KaSingleOrMultiCall::symbols)
+            ?.flatMap(KaSimpleOrMultiCall::symbols)
             ?.takeUnless(List<KaSymbol>::isEmpty)
 
         return symbolsFromCall ?: element.tryResolveSymbols()?.symbols.orEmpty()

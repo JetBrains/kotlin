@@ -43,7 +43,22 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * @see KaMultiCall
  */
 @KaExperimentalApi
-public sealed interface KaSingleOrMultiCall : KaLifetimeOwner
+public sealed interface KaSimpleOrMultiCall : KaLifetimeOwner
+
+/**
+ * The former name of [KaSimpleOrMultiCall].
+ *
+ * @see KaSimpleOrMultiCall
+ */
+@Deprecated(
+    message = "Use 'KaSimpleOrMultiCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaSimpleOrMultiCall",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall"],
+    ),
+)
+@KaExperimentalApi
+public typealias KaSingleOrMultiCall = KaSimpleOrMultiCall
 
 /**
  * Represents a successful resolution resulting in a single call.
@@ -66,7 +81,7 @@ public sealed interface KaSingleOrMultiCall : KaLifetimeOwner
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSingleOrMultiCall {
+public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSimpleOrMultiCall {
     /**
      * The function or variable declaration.
      */
@@ -118,7 +133,7 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
  * @see KaResolver.resolveCall
  */
 @KaExperimentalApi
-public sealed interface KaMultiCall : KaSingleOrMultiCall {
+public sealed interface KaMultiCall : KaSimpleOrMultiCall {
     /**
      * The non-empty list of [KaSingleCall]s that were discovered during resolution of [KtResolvableCall]
      */
@@ -144,7 +159,7 @@ private interface KaMultiUnknownCall : KaMultiCall
  * - If [this] is an instance of [KaMultiCall], the list will contain [KaMultiCall.calls]
  */
 @KaExperimentalApi
-public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
+public val KaSimpleOrMultiCall.calls: List<KaSingleCall<*, *>>
     get() = when (this) {
         is KaSingleCall<*, *> -> listOf(this)
         is KaMultiCall -> calls
@@ -157,7 +172,7 @@ public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
  * - If [this] is an instance of [KaMultiCall], the list will contain symbols from all [KaMultiCall.calls]
  */
 @KaExperimentalApi
-public val KaSingleOrMultiCall.symbols: List<KaSymbol>
+public val KaSimpleOrMultiCall.symbols: List<KaSymbol>
     get() = when (this) {
         is KaSingleCall<*, *> -> listOf(symbol)
         is KaMultiCall -> calls.map { it.signature.symbol }

@@ -101,7 +101,7 @@ fun KtElement.renderLocationDescription(): String {
 @OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 fun KtResolvable.resolveSymbolPreferringCall(): KaSymbol? {
-    return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSingleOrMultiCall::symbols)?.singleOrNull()
+    return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSimpleOrMultiCall::symbols)?.singleOrNull()
         ?: tryResolveSymbols()?.symbols?.singleOrNull()
 }
 
