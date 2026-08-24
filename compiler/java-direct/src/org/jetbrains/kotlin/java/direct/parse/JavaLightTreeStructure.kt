@@ -12,6 +12,8 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 
 /**
  * Single shared placeholder [IElementType] used by [JavaLightAstNode.getTokenType].
@@ -26,14 +28,14 @@ private object JavaDirectPlaceholderElementType : IElementType("JAVA_DIRECT_PLAC
 val JAVA_DIRECT_PLACEHOLDER_TYPE: IElementType = JavaDirectPlaceholderElementType
 
 /**
- * Exposes a [JavaLightNode] of a [JavaLightTree] through the [LighterASTNode] interface.
+ * Exposes a [LightNode] of a [LightSyntaxTree] through the [LighterASTNode] interface.
  *
  * Only [getStartOffset]/[getEndOffset] and (via [JavaLightTreeStructure]) the node text are
  * meaningful; [getTokenType] returns the shared [JAVA_DIRECT_PLACEHOLDER_TYPE].
  */
 class JavaLightAstNode(
-    val tree: JavaLightTree,
-    val node: JavaLightNode,
+    val tree: LightSyntaxTree,
+    val node: LightNode,
 ) : LighterASTNode {
     override fun getTokenType(): IElementType = JAVA_DIRECT_PLACEHOLDER_TYPE
 
@@ -50,15 +52,15 @@ class JavaLightAstNode(
 }
 
 /**
- * Adapts a whole [JavaLightTree] to [FlyweightCapableTreeStructure] over [LighterASTNode], delegating
- * navigation/offsets/text to the underlying tree. One instance per [JavaLightTree] is memoized via
- * [JavaLightTree.lightSourceTreeStructure] so every source element from the same file shares a single
+ * Adapts a whole [LightSyntaxTree] to [FlyweightCapableTreeStructure] over [LighterASTNode], delegating
+ * navigation/offsets/text to the underlying tree. One instance per [LightSyntaxTree] is memoized via
+ * [LightSyntaxTree.lightSourceTreeStructure] so every source element from the same file shares a single
  * [tree] (required for sane [org.jetbrains.kotlin.KtLightSourceElement] equality/identity).
  */
-class JavaLightTreeStructure(val tree: JavaLightTree) : FlyweightCapableTreeStructure<LighterASTNode> {
-    private fun unwrap(node: LighterASTNode): JavaLightNode = (node as JavaLightAstNode).node
+class JavaLightTreeStructure(val tree: LightSyntaxTree) : FlyweightCapableTreeStructure<LighterASTNode> {
+    private fun unwrap(node: LighterASTNode): LightNode = (node as JavaLightAstNode).node
 
-    private fun wrap(node: JavaLightNode): LighterASTNode = JavaLightAstNode(tree, node)
+    private fun wrap(node: LightNode): LighterASTNode = JavaLightAstNode(tree, node)
 
     override fun getRoot(): LighterASTNode = wrap(tree.getRoot())
 
