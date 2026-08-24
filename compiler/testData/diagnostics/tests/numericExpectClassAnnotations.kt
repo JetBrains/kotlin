@@ -79,21 +79,21 @@ fun main() {
     a = 20
     acceptNSInteger(a)
     acceptLong(a)
-    acceptInt(a)
+    acceptInt(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 
     var b: Long = getNSInteger()
     acceptLong(b)
     acceptNSInteger(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
     b = getNSInteger()
     acceptLong(b)
-    acceptNSInteger(b)
+    acceptNSInteger(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
 
     var c: ULong = getSizeT()
     acceptULong(c)
     acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
     c = getSizeT()
     acceptULong(c)
-    acceptSizeT(c)
+    acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral */

@@ -1376,7 +1376,14 @@ abstract class FirDataFlowAnalyzer(
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         val property = assignment.calleeReference?.toResolvedPropertySymbol()?.fir
         if (property != null && property.isEffectivelyLocal) {
-            context.variableAssignmentAnalyzer.visitAssignment(property, assignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf)
+            val refinedType = assignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf
+            val rValueType = property.returnTypeRef.coneType
+                .takeIf {
+                    it.toSymbol()?.supportsNumericClassConversionFrom(refinedType, session) == true
+                            || refinedType.toSymbol()?.supportsNumericClassConversionTo(it, session) == true
+                }
+                ?: refinedType
+            context.variableAssignmentAnalyzer.visitAssignment(property, rValueType)
         }
 
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { _, flow ->
@@ -1451,9 +1458,15 @@ abstract class FirDataFlowAnalyzer(
         }
 
         if (needToAddInitializerStatement) {
+            val initializerType = propertyVariable.originalType
+                .takeIf {
+                    it.toSymbol()?.supportsNumericClassConversionFrom(initializer.resolvedType, session) == true
+                            || initializer.resolvedType.toSymbol()?.supportsNumericClassConversionTo(it, session) == true
+                }
+                ?: initializer.resolvedType
             // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
             // a redundant type statement which is fine...probably
-            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.resolvedType)
+            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializerType)
         }
     }
 
