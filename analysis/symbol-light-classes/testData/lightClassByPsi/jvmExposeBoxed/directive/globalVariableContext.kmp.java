@@ -8,7 +8,7 @@ public final class GlobalVariableContextKt /* GlobalVariableContextKt*/ {
 }
 
 @<error>()
-public final value class Z /* Z*/ {
+public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 

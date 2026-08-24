@@ -9,7 +9,7 @@ public final class GetterKt /* GetterKt*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public final value class StringWrapper /* StringWrapper*/ {
+public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 
@@ -25,7 +25,7 @@ public final value class StringWrapper /* StringWrapper*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public final value class StringWrapper2 /* StringWrapper2*/ {
+public final class StringWrapper2 /* StringWrapper2*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s1;
 

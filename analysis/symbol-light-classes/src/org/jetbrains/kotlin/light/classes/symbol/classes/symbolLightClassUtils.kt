@@ -923,5 +923,5 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
     symbol.createPointer() as KaSymbolPointer<T>
 }
 
-internal inline val SymbolLightClassBase.isValueClass: Boolean
-    get() = this is SymbolLightClassForClassOrObject && isValueClass
+internal inline val SymbolLightClassBase.isKotlinValueClass: Boolean
+    get() = this is SymbolLightClassForClassOrObject && isKotlinValueClass

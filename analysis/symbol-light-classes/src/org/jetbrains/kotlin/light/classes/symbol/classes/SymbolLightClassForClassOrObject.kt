@@ -53,8 +53,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
-    private val isValueClass: Boolean
-    override fun isValueClass() = isValueClass
+    val isKotlinValueClass: Boolean
 
     constructor(
         ktModule: KaModule,
@@ -66,7 +65,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         manager = manager,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isValueClass = classSymbol.isInline
+        isKotlinValueClass = classSymbol.isInline
     }
 
     @OptIn(KaImplementationDetail::class)
@@ -78,7 +77,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
-        isValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
+        isKotlinValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
     ) {
         require(classOrObject !is KtClass || !classOrObject.isInterface() && !classOrObject.isAnnotation())
     }
@@ -88,14 +87,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         ktModule: KaModule,
         manager: PsiManager,
-        isValueClass: Boolean,
+        isKotlinValueClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     ) {
-        this.isValueClass = isValueClass
+        this.isKotlinValueClass = isKotlinValueClass
     }
 
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -376,6 +375,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
-        isValueClass = isValueClass,
+        isKotlinValueClass = isKotlinValueClass,
     )
 }

@@ -8,7 +8,7 @@ public final class Baz /* Baz*/ {
 }
 
 @<error>()
-public final value class IntWrapper /* IntWrapper*/ {
+public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 
   @kotlin.jvm.JvmExposeBoxed()

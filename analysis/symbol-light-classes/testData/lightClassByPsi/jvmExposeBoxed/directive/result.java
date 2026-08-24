@@ -57,7 +57,7 @@ public final class ResultKt /* ResultKt*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public final value class Some /* Some*/ {
+public final class Some /* Some*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 

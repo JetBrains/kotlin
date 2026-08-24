@@ -9,7 +9,7 @@ public final class A /* A*/ {
 }
 
 @<error>()
-public final value class B /* B*/ {
+public final class B /* B*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 
@@ -28,7 +28,7 @@ public final value class B /* B*/ {
 }
 
 @<error>()
-public final value class Z /* Z*/ {
+public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 

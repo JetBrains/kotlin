@@ -56,7 +56,7 @@ public final class ResultInSignatureKt /* ResultInSignatureKt*/ {
 }
 
 @<error>()
-public final value class Some /* Some*/ {
+public final class Some /* Some*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 
@@ -72,7 +72,7 @@ public final value class Some /* Some*/ {
 }
 
 @<error>()
-public final value class ValueClassWithResult /* ValueClassWithResult*/ {
+public final class ValueClassWithResult /* ValueClassWithResult*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.Object r;
 

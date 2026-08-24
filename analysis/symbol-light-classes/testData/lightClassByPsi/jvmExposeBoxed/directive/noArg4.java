@@ -1,5 +1,5 @@
 @kotlin.jvm.JvmInline()
-public final value class IntWrapper /* IntWrapper*/ {
+public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 
   @kotlin.jvm.JvmExposeBoxed()

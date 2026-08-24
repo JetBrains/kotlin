@@ -22,7 +22,7 @@ public static final class Clazz /* Script.Clazz*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public static final value class StringWrapper /* Script.StringWrapper*/ {
+public static final class StringWrapper /* Script.StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 
