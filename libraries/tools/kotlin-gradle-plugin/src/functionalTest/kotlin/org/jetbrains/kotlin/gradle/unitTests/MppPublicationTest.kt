@@ -18,6 +18,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -48,6 +49,35 @@ class MppPublicationTest {
             .findByName("kotlinMultiplatform") ?: fail("Missing 'kotlinMultiplatform' publication")
     }
 
+    @Test
+    fun `root variants provide capabilities of replaced target publications`() {
+        project.propertiesExtension.set("kotlin.publication.multiplatform.publishAsKotlinArchive", "true")
+        project.group = "org.example"
+        project.version = "2.0"
+        project.evaluate()
+
+        val kotlinComponent = project.components.getByName("kotlin") as SoftwareComponentInternal
+        val jsUsages = kotlinComponent.usages.filter { usage ->
+            usage.attributes.getAttribute(KotlinPlatformType.attribute) == KotlinPlatformType.js
+        }
+
+        assertTrue(jsUsages.isNotEmpty())
+        jsUsages.forEach { usage ->
+            assertEquals(
+                setOf(
+                    Triple("org.example", project.name, "2.0"),
+                    Triple("org.example", "${project.name}-js", "2.0"),
+                ),
+                usage.capabilities.map { capability -> Triple(capability.group, capability.name, capability.version) }.toSet(),
+            )
+        }
+
+        val metadataUsages = kotlinComponent.usages.filter { usage ->
+            usage.attributes.getAttribute(KotlinPlatformType.attribute) == KotlinPlatformType.common
+        }
+        assertTrue(metadataUsages.isNotEmpty())
+        assertTrue(metadataUsages.all { usage -> usage.capabilities.isEmpty() })
+    }
 
     @Test
     fun `all publication contains sourcesJar`() {
