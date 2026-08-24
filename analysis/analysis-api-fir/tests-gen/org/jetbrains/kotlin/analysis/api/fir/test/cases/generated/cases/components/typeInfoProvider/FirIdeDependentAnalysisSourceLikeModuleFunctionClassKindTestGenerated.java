@@ -50,6 +50,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleFunctionClassKindTestGenerat
   }
 
   @Test
+  @TestMetadata("custom.kt")
+  public void testCustom() {
+    run("custom.kt");
+  }
+
+  @Test
   @TestMetadata("function.kt")
   public void testFunction() {
     run("function.kt");

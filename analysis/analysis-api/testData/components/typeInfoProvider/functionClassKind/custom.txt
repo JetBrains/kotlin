@@ -1,0 +1,5 @@
+expression: xy
+expected type: @org.jetbrains.kotlin.plugin.sandbox.MyInlineable ((kotlin.Int) -> kotlin.Unit)
+functionTypeFamily: some.MyInlineableFunctionN
+typeRenderingPrefix: @MyInlineable
+markerAnnotationClassId: org/jetbrains/kotlin/plugin/sandbox/MyInlineable
