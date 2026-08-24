@@ -102,6 +102,33 @@ class WithDollarPrefixedPropertyIncludedAndExcluded(
 @EqualsAndHashCode
 class WithRegularExcludedProperty(val regular: String, @EqualsAndHashCode.Exclude val excluded: String)
 
+// `onlyExplicitlyIncluded` leaves nothing for an `@Exclude` to take out - a property is in only if it says
+// `@Include` - so the annotation says nothing the class-level argument does not already say, KT-88655.
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+class OnlyExplicitlyIncludedExample(
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@EqualsAndHashCode.Exclude<!> val id: Long,
+    val name: String,
+)
+
+// Only one redundancy is reported per property, `onlyExplicitlyIncluded` first: Lombok chains the two with
+// `else if`, and once the whole class is opt-in there is nothing left for `$` to explain.
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+class OnlyExplicitlyIncludedDollarPrefixed(
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@EqualsAndHashCode.Exclude<!> val `$dollarPrefixed`: String,
+)
+
+// The clash is reported on top of it, the two being separate checks in Lombok as well.
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+class OnlyExplicitlyIncludedIncludedAndExcluded(
+    <!EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE!>@EqualsAndHashCode.Include<!>
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@EqualsAndHashCode.Exclude<!>
+    val both: String,
+)
+
+// No warning: `onlyExplicitlyIncluded = false` puts every property back in, so the `@Exclude` does the work.
+@EqualsAndHashCode(onlyExplicitlyIncluded = false)
+class OnlyExplicitlyIncludedFalse(@EqualsAndHashCode.Exclude val excluded: String, val included: String)
+
 // No warning: doNotUseGetters not specified
 @EqualsAndHashCode
 class Normal(val x: Int)

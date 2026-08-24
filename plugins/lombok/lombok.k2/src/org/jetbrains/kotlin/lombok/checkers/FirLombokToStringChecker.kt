@@ -61,7 +61,11 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
             functionNames,
         )
 
-        checkIncludeAndExcludeAnnotations(declaredMemberScope, LombokNames.TO_STRING_ID)
+        checkIncludeAndExcludeAnnotations(
+            declaredMemberScope,
+            LombokNames.TO_STRING_ID,
+            toStringAnnInfo.onlyExplicitlyIncluded ?: context.session.lombokService.config.toStringOnlyExplicitlyIncluded,
+        )
     }
 
     /** The closest superclass declaring a final parameterless `toString()`, if any. */
