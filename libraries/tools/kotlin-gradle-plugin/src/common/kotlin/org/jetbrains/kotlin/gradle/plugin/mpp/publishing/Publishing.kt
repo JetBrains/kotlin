@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -180,6 +181,14 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
                     val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                     val crossCompilationSharedData = mainCompilation.crossCompilationSharedData
                     crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
+                }
+            }
+            if (this@createTargetSpecificMavenPublications is KotlinTargetWithKotlinArchiveSupport) {
+                publishOnlyIf(
+                    publication = componentPublication,
+                    skipReason = "Publication of '$targetName' is disabled, as it is stored as part of Kotlin Archive",
+                ) {
+                    !isStoredInKotlinArchive.get()
                 }
             }
         }
