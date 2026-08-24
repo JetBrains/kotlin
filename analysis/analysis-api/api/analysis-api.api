@@ -774,7 +774,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaE
 	public abstract fun isSafeNavigation ()Z
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSimpleCall {
 	public fun getArgumentMapping ()Ljava/util/Map;
 	public abstract fun getCombinedArgumentMapping ()Ljava/util/Map;
 	public abstract fun getContextArgumentMapping ()Ljava/util/Map;
@@ -834,7 +834,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaS
 	public abstract fun getCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaCall;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSimpleCall {
 	public abstract fun getKind ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind;
 	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }

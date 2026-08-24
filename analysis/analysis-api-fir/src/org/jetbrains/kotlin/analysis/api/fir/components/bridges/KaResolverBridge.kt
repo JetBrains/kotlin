@@ -124,9 +124,9 @@ internal class KaResolverBridge(
     override fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? =
         context(analysisSession) { resolveCallEndpoint() }
 
-    override fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
 
-    override fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
 
     override fun KtForExpression.resolveCall(): KaForLoopCall? = context(analysisSession) { resolveCallEndpoint() }
 
@@ -135,7 +135,7 @@ internal class KaResolverBridge(
     override fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? =
         context(analysisSession) { resolveCallEndpoint() }
 
-    override fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
 
     override fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> =
         context(analysisSession) { collectCallCandidatesEndpoint() }

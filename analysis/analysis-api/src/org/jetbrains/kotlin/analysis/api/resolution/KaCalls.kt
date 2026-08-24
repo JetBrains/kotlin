@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
 /**
  * Represents a resolved call that can be either a single call or a compound (multi) call.
  *
- * It can be either a [KaSingleCall] or a [KaMultiCall].
+ * It can be either a [KaSimpleCall] or a [KaMultiCall].
  *
  * ### Example
  * ```kotlin
@@ -36,10 +36,10 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * }
  * ```
  *
- * `function()` call will be represented as a [KaSingleCall] (the target is the function),
+ * `function()` call will be represented as a [KaSimpleCall] (the target is the function),
  * and `int++` call as a [KaMultiCall] (with two targets: the `int` property and the `++` operator function)
  *
- * @see KaSingleCall
+ * @see KaSimpleCall
  * @see KaMultiCall
  */
 @KaExperimentalApi
@@ -74,14 +74,14 @@ public typealias KaSingleOrMultiCall = KaSimpleOrMultiCall
  * }
  * ```
  *
- * `function()` call will be represented as a [KaSingleCall]
+ * `function()` call will be represented as a [KaSimpleCall]
  *
  * @see KaResolver.tryResolveCall
  * @see KaResolver.resolveCall
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSimpleOrMultiCall {
+public interface KaSimpleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSimpleOrMultiCall {
     /**
      * The function or variable declaration.
      */
@@ -115,6 +115,21 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
 }
 
 /**
+ * The former name of [KaSimpleCall].
+ *
+ * @see KaSimpleCall
+ */
+@Deprecated(
+    message = "Use 'KaSimpleCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaSimpleCall<S, C>",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall"],
+    ),
+)
+@KaExperimentalApi
+public typealias KaSingleCall<S, C> = KaSimpleCall<S, C>
+
+/**
  * Represents a successful resolution resulting in multiple calls.
  *
  * ### Example
@@ -126,7 +141,7 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
  * }
  * ```
  *
- * `int++` call will be represented as a [KaMultiCall] with two [KaSingleCall]s inside: one for the `int` property
+ * `int++` call will be represented as a [KaMultiCall] with two [KaSimpleCall]s inside: one for the `int` property
  * and one for the `++` operator function ([Int.inc])
  *
  * @see KaResolver.tryResolveCall
@@ -135,10 +150,10 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
 @KaExperimentalApi
 public sealed interface KaMultiCall : KaSimpleOrMultiCall {
     /**
-     * The non-empty list of [KaSingleCall]s that were discovered during resolution of [KtResolvableCall]
+     * The non-empty list of [KaSimpleCall]s that were discovered during resolution of [KtResolvableCall]
      */
     @KaExperimentalApi
-    public val calls: List<KaSingleCall<*, *>>
+    public val calls: List<KaSimpleCall<*, *>>
 }
 
 /**
@@ -153,33 +168,33 @@ public sealed interface KaMultiCall : KaSimpleOrMultiCall {
 private interface KaMultiUnknownCall : KaMultiCall
 
 /**
- * The flattened list of [KaSingleCall]s.
+ * The flattened list of [KaSimpleCall]s.
  *
- * - If [this] is an instance of [KaSingleCall], the list will contain only [this] call
+ * - If [this] is an instance of [KaSimpleCall], the list will contain only [this] call
  * - If [this] is an instance of [KaMultiCall], the list will contain [KaMultiCall.calls]
  */
 @KaExperimentalApi
-public val KaSimpleOrMultiCall.calls: List<KaSingleCall<*, *>>
+public val KaSimpleOrMultiCall.calls: List<KaSimpleCall<*, *>>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(this)
+        is KaSimpleCall<*, *> -> listOf(this)
         is KaMultiCall -> calls
     }
 
 /**
  * The flattened list of [KaSymbol]s for the resolved calls.
  *
- * - If [this] is an instance of [KaSingleCall], the list will contain only the [KaSingleCall.signature]'s symbol
+ * - If [this] is an instance of [KaSimpleCall], the list will contain only the [KaSimpleCall.signature]'s symbol
  * - If [this] is an instance of [KaMultiCall], the list will contain symbols from all [KaMultiCall.calls]
  */
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.symbols: List<KaSymbol>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(symbol)
+        is KaSimpleCall<*, *> -> listOf(symbol)
         is KaMultiCall -> calls.map { it.signature.symbol }
     }
 
 /**
- * The resolved [KaCallableSymbol] of the [KaSingleCall].
+ * The resolved [KaCallableSymbol] of the [KaSimpleCall].
  *
  * This is a short-cut for [KaCallableSignature.symbol].
  */
@@ -190,5 +205,5 @@ public val KaSimpleOrMultiCall.symbols: List<KaSymbol>
 // The workaround could be moved to the `KaCallableMemberCall.symbol` side once the API is stabilized.
 @Suppress("INVISIBLE_REFERENCE")
 @kotlin.internal.LowPriorityInOverloadResolution
-public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSingleCall<S, C>.symbol: S
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSimpleCall<S, C>.symbol: S
     get() = signature.symbol
