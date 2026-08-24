@@ -727,6 +727,9 @@ class NativeSecondStageCompilationConfig(
         }
     }
 
+    internal val cExportUseIrDiscovery: Boolean
+        get() = configuration.get(BinaryOptions.cExportUseIrDiscovery) ?: false
+
     private val defaultCCallMode get() = CCallMode.IndirectOrDirect
     val cCallMode get() = configuration.get(BinaryOptions.cCallMode) ?: defaultCCallMode
 
