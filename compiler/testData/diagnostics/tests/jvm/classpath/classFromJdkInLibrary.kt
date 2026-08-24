@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// JAVAC_OPTIONS: --release 8
 // MODULE: library
 // FILE: java/util/Date.java
 package java.util;

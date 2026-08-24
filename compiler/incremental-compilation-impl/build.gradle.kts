@@ -60,21 +60,9 @@ sourceSets {
 }
 
 projectTests {
-    testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
-    ) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
-
-    testTask("testJvmICWithJdk11", javaLauncher = JdkMajorVersion.JDK_11_0, skipInLocalBuild = false) {
-        useJsIrBoxTests(buildDir = layout.buildDirectory)
-        filter {
-            includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
-        }
-    }
-
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
     testData(project.isolated, "testData")

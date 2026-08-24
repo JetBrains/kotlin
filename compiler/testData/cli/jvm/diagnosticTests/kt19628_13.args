@@ -1,3 +1,5 @@
+-jdk-home
+$JDK_1_8
 $TESTDATA_DIR$/kt19628_13.kt
 -d
 $TEMP_DIR$

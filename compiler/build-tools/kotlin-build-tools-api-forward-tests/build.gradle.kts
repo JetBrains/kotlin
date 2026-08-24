@@ -320,7 +320,6 @@ testing {
                     testTask(
                         taskName = testTask.name,
                         skipInLocalBuild = false,
-                        garbageCollector = GarbageCollector.Parallel
                     ) {
                         systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         systemProperty(

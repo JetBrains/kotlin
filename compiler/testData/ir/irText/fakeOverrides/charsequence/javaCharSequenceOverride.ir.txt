@@ -22,6 +22,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.A
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.lang.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.A
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -82,6 +86,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
       VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
@@ -128,6 +136,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
       VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
@@ -188,6 +200,10 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
         public open fun hashCode (): kotlin.Int declared in <root>.Java2
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
       VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
@@ -276,6 +292,15 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Number): kotlin.Char declared in <root>.F'
           CONST Char type=kotlin.Char value='a'
+    FUN name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.F
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.F'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:length visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open length: kotlin.Int declared in <root>.Java1
@@ -313,6 +338,10 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
         public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
       VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
@@ -385,6 +414,10 @@ FILE fqName:<root> fileName:/1.kt
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
         public open fun hashCode (): kotlin.Int declared in <root>.Java2
         public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
       VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
@@ -460,6 +493,10 @@ FILE fqName:<root> fileName:/1.kt
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
         public open fun hashCode (): kotlin.Int declared in <root>.Java2
         public open fun hashCode (): kotlin.Int declared in <root>.Java3
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
       VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
@@ -524,6 +561,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java4
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.lang.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java4
     FUN FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.lang.CharSequence
       overridden:
@@ -561,6 +602,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java4
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.lang.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java4
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -659,6 +704,16 @@ FILE fqName:<root> fileName:/1.kt
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.stream.IntStream origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.L
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.L'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:length visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open length: kotlin.Int declared in <root>.Java1
@@ -737,6 +792,16 @@ FILE fqName:<root> fileName:/1.kt
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.stream.IntStream origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.M
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
+        public open fun isEmpty (): kotlin.Boolean declared in java.lang.CharSequence
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.M'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:length visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open length: kotlin.Int declared in <root>.Java1
@@ -771,6 +836,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in java.lang.CharSequence
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.lang.CharSequence
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in java.lang.CharSequence
     FUN FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.lang.CharSequence
       overridden:
