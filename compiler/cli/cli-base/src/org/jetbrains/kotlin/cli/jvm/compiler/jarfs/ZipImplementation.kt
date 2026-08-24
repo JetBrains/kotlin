@@ -200,35 +200,26 @@ private val inflateToBuffer: ((Inflater, ByteBuffer) -> Int)? =
         null
     }
 
-private const val INITIAL_DIRECT_BUFFER_SIZE = 1 shl 16
-
-/** Entries above this size are inflated into the heap array, so that a single large entry doesn't keep a large buffer per thread. */
-private const val MAX_DIRECT_BUFFER_SIZE = 1 shl 22
+private const val DIRECT_BUFFER_SIZE = 1 shl 16
 
 private val directBuffer: ThreadLocal<ByteBuffer> = ThreadLocal()
 
 private fun inflateToByteArray(inflater: Inflater, result: ByteArray) {
-    val inflate = inflateToBuffer
-    val buffer = if (inflate != null) directBufferOfAtLeast(result.size) else null
-    if (inflate == null || buffer == null) {
+    val inflate = inflateToBuffer ?: run {
         inflater.inflate(result)
         return
     }
-
-    buffer.clear()
-    buffer.limit(result.size)
-    // A single `inflate` call is not guaranteed to fill the whole buffer.
-    while (buffer.hasRemaining()) {
+    val buffer = directBuffer.get() ?: ByteBuffer.allocateDirect(DIRECT_BUFFER_SIZE).also(directBuffer::set)
+    var offset = 0
+    while (offset < result.size) {
+        buffer.clear()
+        buffer.limit(minOf(DIRECT_BUFFER_SIZE, result.size - offset))
         if (inflate(inflater, buffer) == 0) break
+        buffer.flip()
+        val count = buffer.remaining()
+        buffer.get(result, offset, count)
+        offset += count
     }
-    buffer.flip()
-    buffer.get(result, 0, buffer.remaining())
-}
-
-private fun directBufferOfAtLeast(size: Int): ByteBuffer? {
-    if (size > MAX_DIRECT_BUFFER_SIZE) return null
-    directBuffer.get()?.takeIf { it.capacity() >= size }?.let { return it }
-    return ByteBuffer.allocateDirect(size.coerceAtLeast(INITIAL_DIRECT_BUFFER_SIZE)).also(directBuffer::set)
 }
 
 private fun LargeDynamicMappedBuffer.Mapping.parseZip64CentralDirectoryRecordsNumberAndOffset(): Pair<Long, Long> {
