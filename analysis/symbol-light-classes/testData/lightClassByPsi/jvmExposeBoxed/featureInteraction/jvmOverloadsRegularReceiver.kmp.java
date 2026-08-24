@@ -2,7 +2,7 @@ public final class JvmOverloadsRegularReceiverKt /* JvmOverloadsRegularReceiverK
 }
 
 @<error>()
-public final class StringWrapper /* StringWrapper*/ {
+public final value class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 

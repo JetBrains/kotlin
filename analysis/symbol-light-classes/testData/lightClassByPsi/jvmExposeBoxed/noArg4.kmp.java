@@ -1,6 +1,6 @@
 @<error>()
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
-public final class IntWrapper /* IntWrapper*/ {
+public final value class IntWrapper /* IntWrapper*/ {
   private final int i;
 
   @org.jetbrains.annotations.NotNull()

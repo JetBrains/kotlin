@@ -19,7 +19,7 @@ public enum Foo /* Foo*/ {
   public final int getX();//  getX()
 }
 
-public final class InlineInheritance /* InlineInheritance*/ implements I {
+public final value class InlineInheritance /* InlineInheritance*/ implements I {
   private final int v;
 
   @java.lang.Override()
@@ -31,7 +31,7 @@ public final class InlineInheritance /* InlineInheritance*/ implements I {
   public final int getV();//  getV()
 }
 
-public final class InlinedDelegate /* InlinedDelegate*/<T>  {
+public final value class InlinedDelegate /* InlinedDelegate*/<T>  {
   private T node;
 
   @org.jetbrains.annotations.NotNull()
@@ -46,7 +46,7 @@ public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   public int hashCode();//  hashCode()
 }
 
-public final class UInt /* UInt*/ {
+public final value class UInt /* UInt*/ {
   private final int value;
 
   @org.jetbrains.annotations.NotNull()

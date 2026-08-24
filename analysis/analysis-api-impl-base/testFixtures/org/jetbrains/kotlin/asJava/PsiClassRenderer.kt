@@ -50,6 +50,7 @@ class PsiClassRenderer private constructor(
             psiClass.isAnnotationType -> "@interface"
             psiClass.isInterface -> "interface"
             psiClass.isEnum -> "enum"
+            psiClass.isValueClass -> "value class"
             else -> "class"
         }
 

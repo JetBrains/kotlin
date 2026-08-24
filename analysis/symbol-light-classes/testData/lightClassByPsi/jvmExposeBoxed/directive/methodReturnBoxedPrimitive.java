@@ -7,7 +7,7 @@ public final class Foo /* Foo*/ {
 }
 
 @kotlin.jvm.JvmInline()
-public final class IntWrapper /* IntWrapper*/ {
+public final value class IntWrapper /* IntWrapper*/ {
   private final int i;
 
   @kotlin.jvm.JvmExposeBoxed()

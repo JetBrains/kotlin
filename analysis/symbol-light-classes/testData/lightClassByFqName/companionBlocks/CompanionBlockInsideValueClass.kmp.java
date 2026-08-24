@@ -1,5 +1,5 @@
 @<error>()
-public final class C /* one.C*/ {
+public final value class C /* one.C*/ {
   private final int value;
 
   @org.jetbrains.annotations.NotNull()

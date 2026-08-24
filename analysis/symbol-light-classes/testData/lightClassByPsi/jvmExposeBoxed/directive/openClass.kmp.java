@@ -1,5 +1,5 @@
 @<error>()
-public final class IC /* IC*/ {
+public final value class IC /* IC*/ {
   private final int i;
 
   @kotlin.jvm.JvmExposeBoxed()

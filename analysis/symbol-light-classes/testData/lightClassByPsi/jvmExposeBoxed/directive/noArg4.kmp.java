@@ -1,5 +1,5 @@
 @<error>()
-public final class IntWrapper /* IntWrapper*/ {
+public final value class IntWrapper /* IntWrapper*/ {
   private final int i;
 
   @kotlin.jvm.JvmExposeBoxed()
