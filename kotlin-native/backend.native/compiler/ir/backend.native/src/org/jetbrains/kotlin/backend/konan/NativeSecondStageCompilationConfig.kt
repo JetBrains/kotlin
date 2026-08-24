@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -383,11 +384,12 @@ class NativeSecondStageCompilationConfig(
 
     internal val produceStaticFramework get() = configuration.staticFramework
 
-    private val resolve = KonanLibrariesResolveSupport(
-            configuration, target, distribution, resolveManifestDependenciesLenient = true
-    )
-
-    val resolvedLibraries get() = resolve.resolvedLibraries
+    val resolvedLibraries: KotlinLibraryResolveResult = KonanLibrariesResolveSupport(
+            configuration = configuration,
+            target = target,
+            distribution = distribution,
+            resolveManifestDependenciesLenient = true
+    ).resolvedLibraries
 
     /**
      * Returns the list of libraries in reverse topological order.
