@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolution.*
  *
  * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
- * @see resolveCall
+ * @see resolveSuccessfulCall
  */
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
@@ -45,7 +45,7 @@ public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
  *
  * This is a specialized counterpart of [KtResolvableCall.tryResolveCall] focused specifically on `for` loops.
  *
- * @see KtForExpression.resolveCall
+ * @see KtForExpression.resolveSuccessfulCall
  * @see KtResolvableCall.tryResolveCall
  */
 @KaExperimentalApi
@@ -61,7 +61,7 @@ public fun KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt? {
  *
  * This is a specialized counterpart of [KtResolvableCall.tryResolveCall] focused specifically on delegated properties.
  *
- * @see KtPropertyDelegate.resolveCall
+ * @see KtPropertyDelegate.resolveSuccessfulCall
  * @see KtResolvableCall.tryResolveCall
  */
 @KaExperimentalApi
@@ -77,7 +77,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * ### Usage Example:
  * ```kotlin
  * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
- *   val call = expression.resolveCall() ?: return null
+ *   val call = expression.resolveSuccessfulCall() ?: return null
  *   val callableCall = call as? KaSimpleCall<*, *> ?: return null
  *   return callableCall.symbol
  * }
@@ -91,10 +91,27 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
 context(session: KaSession)
-public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? {
+public fun KtResolvableCall.resolveSuccessfulCall(): KaSimpleOrMultiCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtResolvableCall.resolveSuccessfulCall].
+ *
+ * @see KtResolvableCall.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
+public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtAnnotationEntry] to an annotation constructor call.
@@ -110,18 +127,34 @@ public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? {
  *
  * Returns the corresponding [KaAnnotationCall] if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on annotation entries.
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on annotation entries.
  * Use [collectCallCandidates] to inspect all candidates considered during overload resolution
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
+public fun KtAnnotationEntry.resolveSuccessfulCall(): KaAnnotationCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtAnnotationEntry.resolveSuccessfulCall].
+ *
+ * @see KtAnnotationEntry.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtSuperTypeCallEntry] to a constructor call of the referenced supertype.
@@ -138,17 +171,33 @@ public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
  * Returns the corresponding [KaFunctionCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on supertype constructor calls
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on supertype constructor calls
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
+public fun KtSuperTypeCallEntry.resolveSuccessfulCall(): KaFunctionCall<KaConstructorSymbol>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtSuperTypeCallEntry.resolveSuccessfulCall].
+ *
+ * @see KtSuperTypeCallEntry.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtConstructorDelegationCall] to a delegated constructor call.
@@ -170,17 +219,33 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
  * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor delegation calls
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on constructor delegation calls
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? {
+public fun KtConstructorDelegationCall.resolveSuccessfulCall(): KaDelegatedConstructorCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtConstructorDelegationCall.resolveSuccessfulCall].
+ *
+ * @see KtConstructorDelegationCall.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtConstructorDelegationReferenceExpression] to a delegated constructor call.
@@ -202,17 +267,33 @@ public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall
  * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor delegation calls
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on constructor delegation calls
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
+public fun KtConstructorDelegationReferenceExpression.resolveSuccessfulCall(): KaDelegatedConstructorCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtConstructorDelegationReferenceExpression.resolveSuccessfulCall].
+ *
+ * @see KtConstructorDelegationReferenceExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtCallElement] to a function call.
@@ -231,17 +312,33 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
  * Returns the corresponding [KaSimpleCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on call elements
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on call elements
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
+public fun KtCallElement.resolveSuccessfulCall(): KaFunctionCall<*>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtCallElement.resolveSuccessfulCall].
+ *
+ * @see KtCallElement.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtCallElement.resolveCall(): KaFunctionCall<*>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtCallableReferenceExpression] to a callable member call.
@@ -258,17 +355,33 @@ public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
  * Returns the corresponding [KaCallableReferenceCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on callable reference expressions
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on callable reference expressions
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<*, *>? {
+public fun KtCallableReferenceExpression.resolveSuccessfulCall(): KaCallableReferenceCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtCallableReferenceExpression.resolveSuccessfulCall].
+ *
+ * @see KtCallableReferenceExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<*, *>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtArrayAccessExpression] to a simple function call representing `get`/`set` operator invocation.
@@ -292,7 +405,7 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
  * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on array access operations.
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on array access operations.
  *
  * **Note**: the `get` call is prefered in the case of a compound assignent
  *
@@ -304,14 +417,30 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
  * ```
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
+public fun KtArrayAccessExpression.resolveSuccessfulCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtArrayAccessExpression.resolveSuccessfulCall].
+ *
+ * @see KtArrayAccessExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtCollectionLiteralExpression] to a simple function call representing the corresponding
@@ -330,17 +459,33 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunction
  * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on collection literal expressions
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on collection literal expressions
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
+public fun KtCollectionLiteralExpression.resolveSuccessfulCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtCollectionLiteralExpression.resolveSuccessfulCall].
+ *
+ * @see KtCollectionLiteralExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtEnumEntrySuperclassReferenceExpression] to a delegated constructor call.
@@ -357,17 +502,33 @@ public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFu
  * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on enum entry superclass constructor calls
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on enum entry superclass constructor calls
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
+public fun KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall(): KaDelegatedConstructorCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall].
+ *
+ * @see KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtWhenConditionInRange] to a simple function call representing the corresponding
@@ -390,18 +551,34 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
  * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `in`/`!in`
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on `in`/`!in`
  * range conditions inside `when` entries
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
+public fun KtWhenConditionInRange.resolveSuccessfulCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtWhenConditionInRange.resolveSuccessfulCall].
+ *
+ * @see KtWhenConditionInRange.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtDestructuringDeclarationEntry] to a call representing the `componentN` invocation
@@ -422,17 +599,33 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
  * Returns the corresponding [KaSimpleCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on destructuring declaration entries
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on destructuring declaration entries
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? {
+public fun KtDestructuringDeclarationEntry.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtDestructuringDeclarationEntry.resolveSuccessfulCall].
+ *
+ * @see KtDestructuringDeclarationEntry.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtQualifiedExpression] to a call representing the member or extension access.
@@ -444,20 +637,36 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? {
  * //        ^________^
  * ```
  *
- * Calling `resolveCall()` on the [KtQualifiedExpression] (`str.length`) returns the corresponding [KaSimpleCall]
+ * Calling `resolveSuccessfulCall()` on the [KtQualifiedExpression] (`str.length`) returns the corresponding [KaSimpleCall]
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on qualified expressions
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on qualified expressions
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? {
+public fun KtQualifiedExpression.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtQualifiedExpression.resolveSuccessfulCall].
+ *
+ * @see KtQualifiedExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtForExpression] to a [KaForLoopCall] representing the desugared `for` loop.
@@ -475,21 +684,37 @@ public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? {
  * }
  * ```
  *
- * Calling `resolveCall()` on the [KtForExpression] returns a [KaForLoopCall] containing the three
+ * Calling `resolveSuccessfulCall()` on the [KtForExpression] returns a [KaForLoopCall] containing the three
  * desugared operator calls if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `for` loops
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on `for` loops
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtForExpression.resolveCall(): KaForLoopCall? {
+public fun KtForExpression.resolveSuccessfulCall(): KaForLoopCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtForExpression.resolveSuccessfulCall].
+ *
+ * @see KtForExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtForExpression.resolveCall(): KaForLoopCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtPropertyDelegate] to a [KaDelegatedPropertyCall] representing the desugared delegated property.
@@ -506,21 +731,37 @@ public fun KtForExpression.resolveCall(): KaForLoopCall? {
  * //               ^________________^
  * ```
  *
- * Calling `resolveCall()` on the [KtPropertyDelegate] returns a [KaDelegatedPropertyCall] containing the
+ * Calling `resolveSuccessfulCall()` on the [KtPropertyDelegate] returns a [KaDelegatedPropertyCall] containing the
  * desugared operator calls if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on delegated properties
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on delegated properties
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
+public fun KtPropertyDelegate.resolveSuccessfulCall(): KaDelegatedPropertyCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtPropertyDelegate.resolveSuccessfulCall].
+ *
+ * @see KtPropertyDelegate.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtConstructorCalleeExpression] to a constructor call.
@@ -537,17 +778,33 @@ public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
  * Returns the corresponding [KaFunctionCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor callee expressions
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on constructor callee expressions
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
+public fun KtConstructorCalleeExpression.resolveSuccessfulCall(): KaFunctionCall<KaConstructorSymbol>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
+
+/**
+ * The former name of [KtConstructorCalleeExpression.resolveSuccessfulCall].
+ *
+ * @see KtConstructorCalleeExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtNameReferenceExpression] to a call representing the referenced declaration.
@@ -561,29 +818,45 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
  * //      ^^^
  * ```
  *
- * Calling `resolveCall()` on the [KtNameReferenceExpression] (`foo`) returns the corresponding [KaSimpleCall]
+ * Calling `resolveSuccessfulCall()` on the [KtNameReferenceExpression] (`foo`) returns the corresponding [KaSimpleCall]
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
- * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on name reference expressions
+ * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on name reference expressions
  *
  * @see tryResolveCall
- * @see KtResolvableCall.resolveCall
+ * @see KtResolvableCall.resolveSuccessfulCall
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? {
+public fun KtNameReferenceExpression.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
 
 /**
+ * The former name of [KtNameReferenceExpression.resolveSuccessfulCall].
+ *
+ * @see KtNameReferenceExpression.resolveSuccessfulCall
+ */
+@Deprecated(
+    message = "Use 'resolveSuccessfulCall()' instead",
+    replaceWith = ReplaceWith(
+        expression = "resolveSuccessfulCall()",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
+    ),
+)
+@KaExperimentalApi
+context(session: KaSession)
+public fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? = resolveSuccessfulCall()
+
+/**
  * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
  * for the call corresponding to the given [KtResolvableCall].
  *
- * In contrast, [resolveCall] returns only the final result, i.e., the most specific callable that passes all
+ * In contrast, [resolveSuccessfulCall] returns only the final result, i.e., the most specific callable that passes all
  * compatibility checks.
  *
- * @see resolveCall
+ * @see resolveSuccessfulCall
  */
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)

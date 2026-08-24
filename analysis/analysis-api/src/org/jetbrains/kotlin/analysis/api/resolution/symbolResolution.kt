@@ -50,9 +50,9 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
  * for a compound case
  *
- * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+ * In contract to [resolveSuccessfulCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+ * In most cases, a not-null result of [resolveSuccessfulCall] will represent the same symbol. The only exceptions are:
  * - [KtNameReferenceExpression]
  * - [KtOperationReferenceExpression]
  * - [KtEnumEntrySuperclassReferenceExpression]
@@ -79,9 +79,9 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  *
  * Returns the [KaSymbol] if there is exactly one target; otherwise, `null`
  *
- * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+ * In contract to [resolveSuccessfulCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+ * In most cases, a not-null result of [resolveSuccessfulCall] will represent the same symbol. The only exceptions are:
  * - [KtNameReferenceExpression]
  * - [KtOperationReferenceExpression]
  * - [KtEnumEntrySuperclassReferenceExpression]
@@ -367,7 +367,7 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
  * the enclosing enum class if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * Mirrors how [KtNameReferenceExpression] prefers the class over the constructor: while the surrounding
- * super-type call ([resolveCall]) maps to the constructor, the reference itself denotes the class.
+ * super-type call ([resolveSuccessfulCall]) maps to the constructor, the reference itself denotes the class.
  *
  * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on enum entry super-type references
  *
