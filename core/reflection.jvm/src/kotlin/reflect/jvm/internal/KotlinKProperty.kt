@@ -5,7 +5,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
@@ -38,14 +42,16 @@ internal abstract class KotlinKProperty<out V>(
         )
 
     override val returnType: KType by lazy(PUBLICATION) {
-        kmProperty.returnType.toKType(
-            container.jClass.safeClassLoader, typeParameterTable.value,
-            computeJavaType = if (isLocalDelegated) null else fun(): Type = caller.returnType,
+        substituteType(
+            kmProperty.returnType.toKType(
+                container.jClass.safeClassLoader, typeParameterTable.value,
+                computeJavaType = if (isLocalDelegated) null else fun(): Type = caller.returnType,
+            )
         )
     }
 
     val typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
-        val parent = (container as? KClassImpl<*>)?.typeParameterTable
+        val parent = (originalContainer as? KClassImpl<*>)?.typeParameterTable
         TypeParameterTable.create(kmProperty.typeParameters, parent, this, container.jClass.safeClassLoader)
     }
 
@@ -62,14 +68,30 @@ internal abstract class KotlinKProperty<out V>(
     override val javaField: Field? by lazy(PUBLICATION) {
         if (isLocalDelegated) return@lazy null
         val fieldSignature = kmProperty.fieldSignature ?: return@lazy null
-        require(container is KPackageImpl) { "javaField is only supported for top-level properties for now: $container/$name $signature" }
-        val owner = container.jClass
+        val owner =
+            if (kmProperty.isMovedFromInterfaceCompanion || isPropertyWithBackingFieldInOuterClass())
+                originalContainer.jClass.enclosingClass
+            else
+                originalContainer.jClass
         try {
             owner.getDeclaredField(fieldSignature.name)
         } catch (_: NoSuchFieldException) {
             null
         }
     }
+
+    private fun isPropertyWithBackingFieldInOuterClass(): Boolean {
+        val container = container as? KClassImpl<*> ?: return false
+        return overriddenStorage == KCallableOverriddenStorage.EMPTY &&
+                isClassCompanionObjectWithBackingFieldsInOuter(container)
+    }
+
+    private fun isClassCompanionObjectWithBackingFieldsInOuter(klass: KClassImpl<*>): Boolean =
+        klass.isCompanion && klass.java.enclosingClass.kotlin.isClassOrEnumClass &&
+                !CompanionObjectMapping.isMappedIntrinsicCompanionObjectClassId(klass.classId)
+
+    private val KClass<*>.isClassOrEnumClass: Boolean
+        get() = this is KClassImpl<*> && (classKind == ClassKind.CLASS || classKind == ClassKind.ENUM_CLASS)
 
     protected fun computeDelegateSource(): Member? {
         if (!kmProperty.isDelegated) return null
@@ -91,16 +113,20 @@ internal abstract class KotlinKProperty<out V>(
                 return kmProperty.annotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
 
-            // For annotations in classes, we should also support $annotations methods in DefaultImpls, and properties in companion objects.
-            require(container is KPackageImpl) {
-                "Annotations are only supported for top-level properties for now: $container/$name $signature"
-            }
-
+            val annotationContainer = if ((container as? KClassImpl<*>)?.classKind == ClassKind.INTERFACE) {
+                container.jClass.classes.firstOrNull { it.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME }
+                    ?.kotlin as KDeclarationContainerImpl? ?: container
+            } else container
             val syntheticMethod = kmProperty.syntheticMethodForAnnotations ?: return emptyList()
-            val annotations = container.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)?.annotations?.toList()
+            val annotations = annotationContainer.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
+                ?.annotations?.toList()
                 ?: throw KotlinReflectionInternalError("No synthetic method found: $this")
             return annotations.unwrapKotlinRepeatableAnnotations()
         }
+
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    override val isCompanionBlockMember: Boolean
+        get() = container is KClassImpl<*> && kmProperty.isStatic
 
     abstract class Accessor<out PropertyType, out ReturnType> :
         KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
@@ -123,6 +149,8 @@ internal abstract class KotlinKProperty<out V>(
         override val isOperator: Boolean get() = false
         override val isInfix: Boolean get() = false
         override val isSuspend: Boolean get() = false
+
+        override val isCompanionBlockMember: Boolean get() = property.isCompanionBlockMember
 
         final override fun shallowCopy(
             container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
@@ -157,7 +185,7 @@ internal abstract class KotlinKProperty<out V>(
             computeCallerForAccessor(isGetter = true)
         }
 
-        override fun equals(other: Any?): Boolean = other is Getter<*> && property == other.property
+        override fun equals(other: Any?): Boolean = other is KProperty.Getter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
         override fun toString(): String = "getter of $property"
     }
@@ -190,7 +218,7 @@ internal abstract class KotlinKProperty<out V>(
             computeCallerForAccessor(isGetter = false)
         }
 
-        override fun equals(other: Any?): Boolean = other is Setter<*> && property == other.property
+        override fun equals(other: Any?): Boolean = other is KMutableProperty.Setter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
         override fun toString(): String = "setter of $property"
     }
@@ -213,12 +241,12 @@ internal val KotlinKProperty.Accessor<*, *>.boundReceiver: Any?
 internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): Caller<*> {
     val property = property
     if (property.isLocalDelegated) return ThrowingCaller
+    val kmProperty = property.kmProperty
 
-    fun isJvmStaticProperty(): Boolean {
-        // For class properties, we'll need to check if the synthetic `$annotations` method contains `@JvmStatic`.
-        require(container is KPackageImpl) { "Only top-level properties are supported for now: $container/$name" }
-        return false
-    }
+    fun isJvmStaticProperty(): Boolean =
+        container is KClassImpl<*> && kmProperty.annotations.any {
+            it.className == JvmStandardClassIds.Annotations.JvmStatic.asString()
+        }
 
     fun isNotNullProperty(): Boolean =
         !property.returnType.isNullableType()
@@ -243,15 +271,21 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
             else CallerImpl.FieldSetter.Static(field, isNotNullProperty())
     }
 
-    val kmProperty = property.kmProperty
-    val accessorSignature = if (isGetter) kmProperty.getterSignature else kmProperty.setterSignature
+    val accessorSignature = when {
+        isGetter -> kmProperty.getterSignature ?: run {
+            // If both getter and field signatures are absent, it's a builtin property, so we need to compute the signature and use
+            // the accessor only (which must be getter, as there are no builtin mutable properties so far).
+            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.container) else null
+        }
+        else -> kmProperty.setterSignature
+    }
     val accessor = accessorSignature?.let { signature ->
         property.container.findMethodBySignature(signature.name, signature.descriptor)
     }
     return when {
         accessor == null -> {
             if (property.isUnderlyingPropertyOfValueClass() && property.visibility == KVisibility.INTERNAL) {
-                val unboxMethod = property.parameters.single().type.toInlineClass()?.getInlineClassUnboxMethod(property)
+                val unboxMethod = property.allParameters.single().type.toInlineClass()?.getInlineClassUnboxMethod(property)
                     ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
                 if (isBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
                 else InternalUnderlyingValOfInlineClass.Unbound(unboxMethod)

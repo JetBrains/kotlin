@@ -47,6 +47,8 @@ internal class KotlinKConstructor(
 
     override val overridden: Collection<ReflectKFunction> get() = emptyList()
 
+    override val isCompanionBlockMember: Boolean get() = false
+
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> {
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
         return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, kmConstructor)
