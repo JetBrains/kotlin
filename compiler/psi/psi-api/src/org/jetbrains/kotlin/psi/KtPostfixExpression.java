@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * // ^_^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtPostfixExpression extends KtUnaryExpression {
     @KtImplementationDetail
     public KtPostfixExpression(@NotNull ASTNode node) {

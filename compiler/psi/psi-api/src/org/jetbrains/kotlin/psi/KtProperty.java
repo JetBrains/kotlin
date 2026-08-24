@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -39,6 +40,7 @@ import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
  * // The entire property
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         implements KtVariableDeclaration {
 

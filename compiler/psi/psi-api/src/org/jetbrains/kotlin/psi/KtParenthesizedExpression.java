@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * //      ^_____^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtParenthesizedExpression>> {
     @KtImplementationDetail
     public KtParenthesizedExpression(@NotNull ASTNode node) {

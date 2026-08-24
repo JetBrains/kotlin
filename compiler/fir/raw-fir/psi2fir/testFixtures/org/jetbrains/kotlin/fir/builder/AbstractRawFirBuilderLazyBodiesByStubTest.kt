@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -44,6 +45,7 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
     override val alternativeTestPrefix: String? get() = "stub"
 
     companion object {
+        @OptIn(KtImplementationDetail::class)
         fun createKtFile(originalFile: KtFile, disposable: Disposable): KtFile {
             val project = originalFile.project
             val originalProvider = originalFile.viewProvider

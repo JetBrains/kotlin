@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * //            ^^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtEscapeStringTemplateEntry extends KtStringTemplateEntry {
     @KtImplementationDetail
     public KtEscapeStringTemplateEntry(@NotNull ASTNode node) {

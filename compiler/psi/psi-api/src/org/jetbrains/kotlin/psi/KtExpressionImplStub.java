@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
  *
  * @param <T> the type of stub backing this element
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtExpression {
     @KtImplementationDetail
     public KtExpressionImplStub(@NotNull T stub, @NotNull IElementType nodeType) {

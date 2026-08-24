@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
  * //                    ^________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjectionStub> {
 
     @KtImplementationDetail

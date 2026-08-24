@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * //      ^^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtPrefixExpression extends KtUnaryExpression {
     @KtImplementationDetail
     public KtPrefixExpression(@NotNull ASTNode node) {

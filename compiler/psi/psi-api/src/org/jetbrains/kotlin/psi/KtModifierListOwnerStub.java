@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -25,6 +26,7 @@ import java.util.List;
  *
  * @param <T> the type of stub backing this element
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtModifierListOwner {
     @KtImplementationDetail
     public KtModifierListOwnerStub(@NotNull ASTNode node) {

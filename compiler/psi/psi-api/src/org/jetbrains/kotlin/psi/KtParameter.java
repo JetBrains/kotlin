@@ -14,6 +14,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -71,6 +72,7 @@ import java.util.List;
  * @see #isContextParameter()
  * @see #hasValOrVar()
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration, KtValVarKeywordOwner {
 
     @KtImplementationDetail

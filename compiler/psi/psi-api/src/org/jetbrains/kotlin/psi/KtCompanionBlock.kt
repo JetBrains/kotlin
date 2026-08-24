@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
  */
 @KtExperimentalApi
+@OptIn(KtImplementationDetail::class)
 class KtCompanionBlock : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlock>>, KtDeclarationContainer {
     @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtCompanionBlock>) : super(stub, KtStubBasedElementTypes.COMPANION_BLOCK)

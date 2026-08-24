@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * // Non-interpolated parts are simple string literals
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtLiteralStringTemplateEntry extends KtStringTemplateEntry {
     @KtImplementationDetail
     public KtLiteralStringTemplateEntry(@NotNull ASTNode node) {

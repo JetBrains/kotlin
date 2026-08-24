@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
  * //           ^___________________________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

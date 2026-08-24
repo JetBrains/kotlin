@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * //        ^________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDotQualifiedExpression>>, KtQualifiedExpression {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

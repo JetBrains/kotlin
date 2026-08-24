@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
  *  */
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KDocLink : KtElementImpl {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

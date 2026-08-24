@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -25,6 +26,7 @@ import java.util.List;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<KtInitializerList>> {
     @KtImplementationDetail
     public KtInitializerList(@NotNull ASTNode node) {

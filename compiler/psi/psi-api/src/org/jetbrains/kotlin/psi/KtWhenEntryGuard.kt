@@ -19,6 +19,7 @@ import com.intellij.lang.ASTNode
  * }
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtWhenEntryGuard : KtElementImpl {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

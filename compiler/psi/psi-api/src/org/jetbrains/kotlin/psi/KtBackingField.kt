@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
  *
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer,
     KtDeclarationWithReturnType {
     @KtImplementationDetail

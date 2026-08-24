@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * // ^_____________________________________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtThrowExpression extends KtExpressionImpl implements KtStatementExpression {
     @KtImplementationDetail
     public KtThrowExpression(@NotNull ASTNode node) {

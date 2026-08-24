@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.psi
  * This is the common base for the concrete node types [KtClassInitializer] (an `init` block in a class or object) and [KtScriptInitializer]
  * (a top-level statement in a script).
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
     /**
      * The class, object, or script that this initializer belongs to.

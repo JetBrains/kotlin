@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * //        ^___________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtBinaryExpressionWithTypeRHS extends KtExpressionImpl implements KtOperationExpression {
     @KtImplementationDetail
     public KtBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {

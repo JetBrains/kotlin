@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * // The entire block from 'do' to ')'
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtDoWhileExpression extends KtWhileExpressionBase {
     @KtImplementationDetail
     public KtDoWhileExpression(@NotNull ASTNode node) {

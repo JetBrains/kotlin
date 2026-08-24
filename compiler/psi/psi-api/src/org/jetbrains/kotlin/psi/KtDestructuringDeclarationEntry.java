@@ -12,6 +12,7 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -35,6 +36,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
  * }</pre>
  */
 @SuppressWarnings("deprecation")
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration, KtResolvableCall {
 
     @KtImplementationDetail

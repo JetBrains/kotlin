@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
@@ -26,6 +27,7 @@ import java.util.List;
  * // A block string template entry
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtStringTemplateEntryWithExpression extends KtStringTemplateEntry {
     @KtImplementationDetail
     public KtStringTemplateEntryWithExpression(@NotNull ASTNode node) {

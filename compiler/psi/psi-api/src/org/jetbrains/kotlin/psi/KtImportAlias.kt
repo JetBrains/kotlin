@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
  * //                    ^^^^^^^^^^^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifierOwner {
     @Suppress("unused")
     @KtImplementationDetail

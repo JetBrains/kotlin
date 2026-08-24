@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolution.KtResolvable
 /**
  * A single part of a qualified name in the tag subject or link.
  */
+@OptIn(KtImplementationDetail::class)
 class KDocName : KtElementImpl, KtResolvable {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

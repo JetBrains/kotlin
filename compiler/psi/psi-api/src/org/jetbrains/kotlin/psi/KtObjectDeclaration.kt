@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
  * // The entire object
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtObjectDeclaration : KtClassOrObject {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

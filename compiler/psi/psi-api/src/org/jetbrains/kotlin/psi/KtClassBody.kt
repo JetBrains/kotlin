@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
  * // The block from '{' to '}'
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
     private val lBraceTokenSet = TokenSet.create(KtTokens.LBRACE)
     private val rBraceTokenSet = TokenSet.create(KtTokens.RBRACE)

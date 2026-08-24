@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -25,6 +26,7 @@ import java.util.List;
  * <p>
  * For a single annotation entry, see {@link KtAnnotationEntry}.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnnotation>> {
 
     @KtImplementationDetail

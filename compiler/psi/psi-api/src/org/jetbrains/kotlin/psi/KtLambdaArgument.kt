@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
  * //           ^_____________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtLambdaArgument : KtValueArgument, LambdaArgument {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

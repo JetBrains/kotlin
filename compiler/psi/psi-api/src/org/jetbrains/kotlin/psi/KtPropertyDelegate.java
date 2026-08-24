@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * //               ^________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtPropertyDelegate extends KtElementImpl implements KtResolvableCall {
     @KtImplementationDetail
     public KtPropertyDelegate(@NotNull ASTNode node) {

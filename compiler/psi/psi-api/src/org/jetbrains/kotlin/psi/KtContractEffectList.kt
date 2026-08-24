@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * }
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffectList>> {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

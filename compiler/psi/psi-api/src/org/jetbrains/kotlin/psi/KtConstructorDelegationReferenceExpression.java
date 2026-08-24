@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtConstructorDelegationReferenceExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
     @KtImplementationDetail
     public KtConstructorDelegationReferenceExpression(@NotNull ASTNode node) {

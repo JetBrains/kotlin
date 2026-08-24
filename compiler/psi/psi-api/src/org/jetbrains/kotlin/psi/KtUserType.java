@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -49,6 +50,7 @@ import java.util.List;
  * //               ^^^^^^^^  resolves to the class one.two.TopLevel
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements KtTypeElement, KtResolvable {
     @KtImplementationDetail
     public KtUserType(@NotNull ASTNode node) {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -41,6 +42,7 @@ import java.util.List;
  * @see KtParameter
  * @see #getOwnerFunction()
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtParameterList>> {
     @KtImplementationDetail
     public KtParameterList(@NotNull ASTNode node) {

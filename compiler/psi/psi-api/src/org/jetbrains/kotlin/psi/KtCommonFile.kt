@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
  * PSI files.
  */
 @Deprecated("Don't use directly, use file.getFileType() instead")
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     PsiFileBase(viewProvider, KotlinLanguage.INSTANCE),
     KtDeclarationContainer,

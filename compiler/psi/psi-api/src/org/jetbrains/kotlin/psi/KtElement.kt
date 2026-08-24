@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,7 @@ import com.intellij.psi.PsiReference
  * Prefer type-safe traversal via the visitors ([accept], [acceptChildren], [KtVisitor], [KtTreeVisitor]) over the generic
  * [com.intellij.psi.PsiElement] navigation methods where possible.
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtElement : NavigatablePsiElement, KtPureElement {
     /**
      * Passes each direct child of this element to the given [visitor].

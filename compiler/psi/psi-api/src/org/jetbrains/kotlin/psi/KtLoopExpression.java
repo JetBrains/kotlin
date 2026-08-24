@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * <p>This is the common base for the concrete node types {@link KtForExpression}, {@link KtWhileExpression}, and
  * {@link KtDoWhileExpression}. It gives access to the loop body shared by all loop kinds.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtLoopExpression extends KtExpressionImpl implements KtStatementExpression {
     @KtImplementationDetail
     public KtLoopExpression(@NotNull ASTNode node) {

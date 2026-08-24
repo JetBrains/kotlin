@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
  * The file represents a decompiled .knm file
  *
  * @see KlibMetaFileType
  */
+@OptIn(KtImplementationDetail::class)
 class KlibDecompiledFile(provider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(provider)

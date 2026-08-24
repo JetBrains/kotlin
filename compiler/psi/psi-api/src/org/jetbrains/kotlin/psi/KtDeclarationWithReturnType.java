@@ -1,16 +1,18 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
 
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a Kotlin declaration that semantically has a return type (ex. function, property, parameter, and so on).
  * The return type itself may not be present in the source code in case it is inferred.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public interface KtDeclarationWithReturnType extends KtDeclaration {
 
     /**

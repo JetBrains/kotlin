@@ -17,6 +17,7 @@ import com.intellij.lang.ASTNode
  * //        ^_________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtSafeQualifiedExpression : KtExpressionImpl, KtQualifiedExpression {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
