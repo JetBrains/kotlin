@@ -554,7 +554,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSimpleOrMulti
             return
         }
 
-        is KaSingleCall<*, *> -> {
+        is KaSimpleCall<*, *> -> {
             // The rest of the function body validates it
         }
     }

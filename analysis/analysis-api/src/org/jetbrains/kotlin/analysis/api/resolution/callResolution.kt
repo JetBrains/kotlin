@@ -78,7 +78,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * ```kotlin
  * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
  *   val call = expression.resolveCall() ?: return null
- *   val callableCall = call as? KaSingleCall<*, *> ?: return null
+ *   val callableCall = call as? KaSimpleCall<*, *> ?: return null
  *   return callableCall.symbol
  * }
  * ```
@@ -228,7 +228,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
  * }
  * ```
  *
- * Returns the corresponding [KaSingleCall] if resolution succeeds;
+ * Returns the corresponding [KaSimpleCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on call elements
@@ -419,7 +419,7 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
  * }
  * ```
  *
- * Returns the corresponding [KaSingleCall] if resolution succeeds; otherwise, it returns `null`
+ * Returns the corresponding [KaSimpleCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on destructuring declaration entries
@@ -429,7 +429,7 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
+public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
@@ -444,7 +444,7 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
  * //        ^________^
  * ```
  *
- * Calling `resolveCall()` on the [KtQualifiedExpression] (`str.length`) returns the corresponding [KaSingleCall]
+ * Calling `resolveCall()` on the [KtQualifiedExpression] (`str.length`) returns the corresponding [KaSimpleCall]
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on qualified expressions
@@ -454,7 +454,7 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? {
+public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
@@ -561,7 +561,7 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
  * //      ^^^
  * ```
  *
- * Calling `resolveCall()` on the [KtNameReferenceExpression] (`foo`) returns the corresponding [KaSingleCall]
+ * Calling `resolveCall()` on the [KtNameReferenceExpression] (`foo`) returns the corresponding [KaSimpleCall]
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on name reference expressions
@@ -571,7 +571,7 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
+public fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }
