@@ -39,7 +39,7 @@ object UnitStatsJsonDumper {
 
                     dynamicStats?.let {
                         appendArray(::dynamicStats, dynamicStats, indent = 1, trailingComma = true) {
-                            appendKeyValue(it::parentPhaseType, it.parentPhaseType, indent = 3)
+                            appendKeyValue(it::parentPhaseType, it.parentPhaseType.name, indent = 3)
                             appendKeyValue(it::name, it.name, indent = 3)
                             appendTime(it::time, it.time, indent = 3, trailingComma = false)
                         }
