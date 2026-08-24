@@ -10,19 +10,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.native.pipeline.*
@@ -90,7 +83,6 @@ class KlibSerializerNativeCliFacade(
             module = module,
             outputKlibPath = output.outputKlibPath,
             dependencyLibraries = input.phaseContext.config.loadedKlibs.all,
-            languageVersionSettings = input.configuration.languageVersionSettings,
         )
 
         return BinaryArtifacts.KLib(File(output.outputKlibPath), input.configuration.diagnosticsCollector)
@@ -100,9 +92,8 @@ class KlibSerializerNativeCliFacade(
         module: TestModule,
         outputKlibPath: String,
         dependencyLibraries: Collection<KotlinLibrary>,
-        languageVersionSettings: LanguageVersionSettings,
     ) {
-        val [builtIns, dependencyModuleDescriptors] = loadDependencies(dependencyLibraries, languageVersionSettings)
+        val [builtIns, dependencyModuleDescriptors] = loadDependencies(dependencyLibraries)
 
         val libraryLoadingResult = KlibLoader { libraryPaths(outputKlibPath) }.load()
         testServices.assertions.assertTrue(!libraryLoadingResult.hasProblems && libraryLoadingResult.librariesStdlibFirst.size == 1) {
@@ -114,12 +105,10 @@ class KlibSerializerNativeCliFacade(
         val storageManager = LockBasedStorageManager("ModulesStructure")
         val moduleName = special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
-        @OptIn(K1Deprecation::class)
-        val builtInsToUse = builtIns ?: KonanBuiltIns(storageManager)
         val moduleDescriptor = ModuleDescriptorImpl(
             moduleName,
             storageManager,
-            builtInsToUse,
+            builtIns,
             capabilities = mapOf(
                 KlibModuleOrigin.CAPABILITY to moduleOrigin,
                 @OptIn(K1Deprecation::class)
@@ -127,10 +116,6 @@ class KlibSerializerNativeCliFacade(
             ),
             platform = NativePlatforms.unspecifiedNativePlatform
         )
-
-        if (builtIns == null) {
-            builtInsToUse.builtInsModule = moduleDescriptor
-        }
 
         moduleDescriptor.setDependencies(dependencyModuleDescriptors + moduleDescriptor)
 
@@ -140,23 +125,30 @@ class KlibSerializerNativeCliFacade(
 
     private fun loadDependencies(
         dependencyLibraries: Collection<KotlinLibrary>,
-        languageVersionSettings: LanguageVersionSettings,
-    ): Pair<KotlinBuiltIns?, List<ModuleDescriptorImpl>> {
+    ): Pair<KotlinBuiltIns, List<ModuleDescriptorImpl>> {
         val allModuleDescriptors = ArrayList<ModuleDescriptorImpl>()
         val createdModuleDescriptors = ArrayList<ModuleDescriptorImpl>()
 
         val stdlib: KotlinLibrary? = dependencyLibraries.firstOrNull { it.isNativeStdlib }
-        var builtIns: KotlinBuiltIns? = null
+        val storageManager = LockBasedStorageManager("ModulesStructure")
+
+        @OptIn(K1Deprecation::class)
+        val builtIns: KotlinBuiltIns = KonanBuiltIns(storageManager)
 
         fun loadOrCreateModuleDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
             val moduleDescriptor = testServices.libraryProvider.getOrCreateStdlibByPath(library.path.absolutePathString()) {
-                val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                    library,
-                    languageVersionSettings,
-                    // TODO: check safety of the approach of creating a separate storage manager per library
-                    LockBasedStorageManager("ModulesStructure"),
+                val moduleName = special("<${library.uniqueName}>")
+                val moduleOrigin = DeserializedKlibModuleOrigin(library)
+                val moduleDescriptor = ModuleDescriptorImpl(
+                    moduleName,
+                    storageManager,
                     builtIns,
-                    lookupTracker = LookupTracker.DO_NOTHING
+                    capabilities = mapOf(
+                        KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                        @OptIn(K1Deprecation::class)
+                        ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+                    ),
+                    platform = NativePlatforms.unspecifiedNativePlatform
                 )
 
                 createdModuleDescriptors += moduleDescriptor
@@ -170,7 +162,7 @@ class KlibSerializerNativeCliFacade(
         }
 
         // first, create or load stdlib
-        builtIns = stdlib?.let { loadOrCreateModuleDescriptor(it) }?.builtIns
+        stdlib?.let { loadOrCreateModuleDescriptor(it) }
 
         // then, other dependencies
         for (library in dependencyLibraries) {
@@ -188,11 +180,6 @@ class KlibSerializerNativeCliFacade(
 
     override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
-    }
-
-    companion object {
-        @OptIn(K1Deprecation::class)
-        private val klibFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
     }
 }
 
