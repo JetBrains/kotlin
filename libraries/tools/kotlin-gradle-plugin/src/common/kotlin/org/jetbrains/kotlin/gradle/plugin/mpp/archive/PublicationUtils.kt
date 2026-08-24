@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.archive
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationPublications
+import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
@@ -23,6 +27,13 @@ private fun Configuration.addOutgoingKarArtifactTo(karPackTask: TaskProvider<Pac
     outgoing.attributes.attribute(KarLayout.Attributes.compressionMethod, KarLayout.Attributes.CompressionMethod.XZ)
 }
 
+private fun ConfigurationPublications.capabilityFromCoorinates(coordinates: ModuleVersionIdentifier) {
+    capability("${coordinates.group}:${coordinates.name}:${coordinates.version}")
+}
+
+private fun ModuleVersionIdentifier.isValidForCapability(): Boolean =
+    !group.isNullOrEmpty() && !name.isNullOrEmpty() && !version.isNullOrEmpty()
+
 internal fun Project.defaultKotlinUsageContextMaybeReplacedWithKar(
     isStoredInKotlinArchive: Provider<Boolean>?,
     compilation: KotlinCompilation<*>,
@@ -33,6 +44,7 @@ internal fun Project.defaultKotlinUsageContextMaybeReplacedWithKar(
 ): DefaultKotlinUsageContext {
     val overrideConfigurationArtifacts: Provider<Set<PublishArtifact>>? = isStoredInKotlinArchive?.map { if (it) emptySet<PublishArtifact>() else null }
     val karTaskProvider = karPackTask
+    val rootSoftwareComponent = project.multiplatformExtensionOrNull?.rootSoftwareComponent
     return DefaultKotlinUsageContext(
         compilation = compilation,
         mavenScope = mavenScope,
@@ -40,9 +52,16 @@ internal fun Project.defaultKotlinUsageContextMaybeReplacedWithKar(
         includeIntoProjectStructureMetadata = includeIntoProjectStructureMetadata,
         publishOnlyIf = publishOnlyIf,
         overrideConfigurationArtifacts = overrideConfigurationArtifacts,
-        configurePublishedConfiguration = {
+        configurePublishedConfiguration = { kotlinComponent ->
             if (isStoredInKotlinArchive?.orNull == true) {
                 addOutgoingKarArtifactTo(karTaskProvider)
+                if (kotlinComponent is ComponentWithCoordinates && rootSoftwareComponent is ComponentWithCoordinates) {
+                    // It can be invalid, if no publications are configured. We don't care about capabilities in that case
+                    if (kotlinComponent.coordinates.isValidForCapability() && rootSoftwareComponent.coordinates.isValidForCapability()) {
+                        outgoing.capabilityFromCoorinates(kotlinComponent.coordinates)
+                        outgoing.capabilityFromCoorinates(rootSoftwareComponent.coordinates)
+                    }
+                }
             }
         }
     )
