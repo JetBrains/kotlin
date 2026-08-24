@@ -233,10 +233,36 @@ public val KaSimpleOrMultiCall.simple: KaSimpleCall<*, *>?
  * For `function()`, [function] is the call to `function`. For `int`, which is a [KaVariableAccessCall], [function] is `null`.
  *
  * @see KaFunctionCall
+ * @see variable
  */
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.function: KaFunctionCall<*>?
     get() = this as? KaFunctionCall<*>
+
+/**
+ * [this] call as a [KaVariableAccessCall], or `null` if it is not an access to a variable.
+ *
+ * ### Example
+ * ```kotlin
+ * class Foo {
+ *    fun function() {}
+ *    var int: Int = 1
+ * }
+ *
+ * fun Foo.usage() {
+ *    int
+ *    function()
+ * }
+ * ```
+ *
+ * For `int`, [variable] is the read access to `int`. For `function()`, which is a [KaFunctionCall], [variable] is `null`.
+ *
+ * @see KaVariableAccessCall
+ * @see function
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.variable: KaVariableAccessCall?
+    get() = this as? KaVariableAccessCall
 
 /**
  * The resolved [KaCallableSymbol] of the [KaSimpleCall].
