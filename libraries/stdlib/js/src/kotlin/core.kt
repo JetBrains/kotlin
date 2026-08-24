@@ -54,7 +54,6 @@ public actual external val definedExternally: Nothing
  *        including parameters. You can't refer to functions, properties and classes by their short names.
  */
 @Suppress("EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE")
-@Effects(EffectsKind.WRITE)
 public actual external fun js(code: String): dynamic
 
 
