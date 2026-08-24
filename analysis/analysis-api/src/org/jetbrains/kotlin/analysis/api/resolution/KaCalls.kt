@@ -215,6 +215,30 @@ public val KaSimpleOrMultiCall.simple: KaSimpleCall<*, *>?
     get() = this as? KaSimpleCall<*, *>
 
 /**
+ * [this] call as a [KaFunctionCall], or `null` if it is not a call to a function.
+ *
+ * ### Example
+ * ```kotlin
+ * class Foo {
+ *    fun function() {}
+ *    var int: Int = 1
+ * }
+ *
+ * fun Foo.usage() {
+ *    function()
+ *    int
+ * }
+ * ```
+ *
+ * For `function()`, [function] is the call to `function`. For `int`, which is a [KaVariableAccessCall], [function] is `null`.
+ *
+ * @see KaFunctionCall
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.function: KaFunctionCall<*>?
+    get() = this as? KaFunctionCall<*>
+
+/**
  * The resolved [KaCallableSymbol] of the [KaSimpleCall].
  *
  * This is a short-cut for [KaCallableSignature.symbol].
