@@ -61,12 +61,17 @@ expect fun getSize(): SizeT
 
 expect fun acceptULong(length: ULong)
 
-fun acceptNSIntegerOrInt(num: NSInteger) {
-    sum += 101
+sealed class OverloadVariant {
+    data object NSInteger : OverloadVariant()
+    data object Long : OverloadVariant()
+    data object Int : OverloadVariant()
 }
-fun acceptNSIntegerOrInt(num: Int) {
-    sum += 100
-}
+
+fun acceptNSIntegerOrInt(num: NSInteger) = OverloadVariant.NSInteger
+fun acceptNSIntegerOrInt(num: Int) = OverloadVariant.Int
+
+fun acceptLongOrInt(num: Long) = OverloadVariant.Long
+fun acceptLongOrInt(num: Int) = OverloadVariant.Int
 
 fun common(): String {
     acceptNSInteger(10)
@@ -76,7 +81,8 @@ fun common(): String {
     acceptULong(getSize())
     acceptSizeT(30u)
 
-    acceptNSIntegerOrInt(10)
+    val _ignore1: OverloadVariant.Int = acceptNSIntegerOrInt(20)
+    val _ignore2: OverloadVariant.Long = acceptLongOrInt(getNSInteger())
 
     var a: NSInteger = 10
     acceptNSInteger(a)
@@ -97,7 +103,7 @@ fun common(): String {
 
     return when {
         a <= 0 -> "FAIL: a == $a <= 0"
-        sum == 1_000_000_000_395L -> "OK"
+        sum == 1_000_000_000_295L -> "OK"
         else -> "FAIL: sum = $sum"
     }
 }

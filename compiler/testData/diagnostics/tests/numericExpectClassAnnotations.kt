@@ -15,7 +15,14 @@ annotation class NumericClass(
 	vararg val actualizations: KClass<*>,
 )
 
+// FILE: Cinterop.kt
+package kotlinx.cinterop
+
+public inline fun <reified R : Any> Int.convert(): R = TODO()
+
 // FILE: Main.kt
+
+import kotlinx.cinterop.convert
 
 @support.NumericClass(Long::class)
 expect class NSInteger {
@@ -30,8 +37,20 @@ expect class NSInteger {
 fun acceptNSInteger(num: NSInteger) {}
 expect fun getNSInteger(): NSInteger
 
-fun acceptNSIntegerOrInt(num: NSInteger) {}
-fun acceptNSIntegerOrInt(num: Int) {}
+sealed class OverloadVariant {
+    data object NSInteger : OverloadVariant()
+    data object Long : OverloadVariant()
+    data object Int : OverloadVariant()
+}
+
+fun acceptNSIntegerOrInt(num: NSInteger) = OverloadVariant.NSInteger
+fun acceptNSIntegerOrInt(num: Int) = OverloadVariant.Int
+
+fun acceptLongOrInt(num: Long) = OverloadVariant.Long
+fun acceptLongOrInt(num: Int) = OverloadVariant.Int
+
+fun Long.callOverLongOrInt() = OverloadVariant.Long
+fun Int.callOverLongOrInt() = OverloadVariant.Int
 
 fun acceptULong(num: ULong) {}
 fun acceptLong(num: Long) {}
@@ -60,7 +79,10 @@ fun main() {
     acceptNSInteger(1_000_000_000_000L)
     acceptNSInteger(<!ARGUMENT_TYPE_MISMATCH!>30u<!>)
 
-    acceptNSIntegerOrInt(20)
+    val _ignore1: OverloadVariant.Int = acceptNSIntegerOrInt(20)
+    val _ignore2: OverloadVariant.Long = acceptLongOrInt(getNSInteger())
+    val _ignore3: OverloadVariant.Int = getNSInteger().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>callOverLongOrInt<!>()
+    val _ignore4: OverloadVariant.Long = acceptNSIntegerOrInt(0.<!CANNOT_INFER_PARAMETER_TYPE!>convert<!>())
 
     acceptLong(getNSInteger())
     acceptULong(<!ARGUMENT_TYPE_MISMATCH!>getNSInteger()<!>)
