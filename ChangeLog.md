@@ -1,3 +1,22 @@
+## 2.4.20-RC2
+
+### Compiler
+
+- [`KT-88316`](https://youtrack.jetbrains.com/issue/KT-88316) K/N: StackOverflowError in CastsOptimization when two nullable local variables are assigned to each other across nested loops
+
+### Compose compiler
+
+- [`b/549552317`](https://issuetracker.google.com/issues/549552317) Fixed a bug that, in certain cases, prevented execution of non-local return `statements` inside lambdas called from `when` expressions.
+
+### JavaScript
+
+- [`KT-88571`](https://youtrack.jetbrains.com/issue/KT-88571) K/JS: "llegalStateException: Internal error: cannot find external signature" caused by  `@Serializable` enum in 2.4.20-RC
+
+### Tools. Gradle. Wasm
+
+- [`KT-88566`](https://youtrack.jetbrains.com/issue/KT-88566) K/Wasm: Webpack configuration generated after user defined chunks from the webpack.config.d directory
+
+
 ## 2.4.20-RC
 
 ### Backend. J2KLIB
