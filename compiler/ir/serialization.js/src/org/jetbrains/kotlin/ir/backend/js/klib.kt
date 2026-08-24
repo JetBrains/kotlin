@@ -65,32 +65,20 @@ private fun deserializeDependencies(
     filesToLoad: Set<String>?,
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleDependencies {
-    val all: MutableList<IrModuleFragment> = mutableListOf()
-    var stdlib: IrModuleFragment? = null
-    var included: IrModuleFragment? = null
-
-    klibs.all.forEach { klib: KotlinLibrary ->
+    val dependencies = klibs.all.map { klib: KotlinLibrary ->
         val descriptor: ModuleDescriptor = mapping(klib)
-        val module: IrModuleFragment = when {
+        when {
             klibs.included == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             filesToLoad != null && klib == klibs.included -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
             filesToLoad != null && klib != klibs.included -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
             klib == klibs.included -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
             else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
         }
-
-        all += module
-        when {
-            klib.isAnyPlatformStdlib -> stdlib = module
-            klib == klibs.included -> included = module
-        }
     }
 
     return IrModuleDependencies(
-        all = all,
-        stdlib = stdlib,
-        included = included,
-        fragmentNames = all.getUniqueNameForEachFragment(),
+        allDependencies = dependencies,
+        fragmentNames = dependencies.getUniqueNameForEachFragment(),
     )
 }
 
@@ -170,9 +158,7 @@ fun loadIrForSingleModule(
     val isStdlibCompilation = mainFragment == stdlibFragment
 
     val moduleDependencies = IrModuleDependencies(
-        all = deserializedFragments,
-        stdlib = stdlibFragment.takeIf { !isStdlibCompilation },
-        included = mainFragment,
+        allDependencies = deserializedFragments,
         fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
     )
 
@@ -238,7 +224,7 @@ private fun getIrModuleInfoForKlib(
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
-        module = moduleDependencies.included!!,
+        module = moduleDependencies.allDependencies.single { it.kotlinLibrary == klibs.included },
         dependencies = moduleDependencies,
         bultins = irBuiltIns,
         symbolTable = symbolTable,

@@ -24,16 +24,22 @@ data class IrModuleInfo(
 /**
  * The dependencies of [IrModuleInfo]
  *
- * @property all All the dependencies.
- *   If [stdlib] is not null, then it is expected as the very first element in [all].
- *   If [included] is not null, then it is expected as the very last element in [all].
- * @property stdlib The standard library dependency (if any).
- * @property included The "included library" dependency (if any).
+ * @property allDependencies All the dependencies.
  * @property fragmentNames The mapping from [IrModuleFragment] to its name. Used only in Kotlin/JS.
  */
 data class IrModuleDependencies(
-    val all: List<IrModuleFragment>,
-    val stdlib: IrModuleFragment?,
-    val included: IrModuleFragment?,
+    val allDependencies: List<IrModuleFragment>,
     val fragmentNames: Map<IrModuleFragment, String> = emptyMap()
-)
+) {
+    init {
+        val extraFragments = fragmentNames.keys - allDependencies.toSet()
+        require(extraFragments.isEmpty()) {
+            buildString {
+                appendLine("The set of module fragments in 'fragmentNames' is wider than in 'allDependencies'.")
+                appendLine()
+                appendLine("Extra fragments in 'fragmentNames' (${extraFragments.size}):")
+                extraFragments.map { it.name }.sorted().joinTo(this, separator = "\n") { "- $it" }
+            }
+        }
+    }
+}
