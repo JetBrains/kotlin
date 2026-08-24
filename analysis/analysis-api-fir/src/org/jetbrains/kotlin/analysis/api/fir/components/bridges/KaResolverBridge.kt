@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols as tryReso
  * Routes the legacy [KaResolver] surface through the new public `context(session: KaSession)` resolution endpoints, which in turn reach the
  * [KaInternalsResolver] proxy. Members without a public endpoint (the legacy reference-based API) are forwarded straight to the proxy.
  */
-@OptIn(KtExperimentalApi::class)
 internal class KaResolverBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaResolver {

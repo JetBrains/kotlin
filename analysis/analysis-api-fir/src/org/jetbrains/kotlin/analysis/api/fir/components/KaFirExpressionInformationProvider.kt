@@ -440,7 +440,6 @@ internal class KaFirExpressionInformationProvider(
  *
  *  If it resolves to a non-class declaration, it does _not_ refer to a type.
  */
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
     val reference = when (val inner = lhs.unwrapParenthesesLabelsAndAnnotations()) {
@@ -452,7 +451,6 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
     return reference.canReferenceCallable
 }
 
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 private val KtResolvable.canReferenceCallable: Boolean
     get() {

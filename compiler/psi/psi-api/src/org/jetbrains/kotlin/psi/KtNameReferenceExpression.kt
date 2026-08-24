@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * //      ^^^^^^^^  resolves to the object `MyObject`
  * ```
  */
-@OptIn(KtExperimentalApi::class)
 class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression, KtResolvableCall {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

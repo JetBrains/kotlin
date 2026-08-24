@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetS
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -53,7 +52,6 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
-    @OptIn(KtExperimentalApi::class)
     context(_: KaSession)
     private fun getCallableSymbol(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): KaCallableSymbol {
         val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)

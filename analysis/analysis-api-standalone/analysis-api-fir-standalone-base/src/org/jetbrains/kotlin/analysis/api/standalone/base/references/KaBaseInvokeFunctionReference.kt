@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaBaseInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaBaseReference {
-    @OptIn(KtExperimentalApi::class, KaExperimentalApi::class)
+    @OptIn(KaExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = when (val callResult = element.tryResolveCall()) {
         // There is no way to distinguish between the error regular and implicit calls, so by default only relevant errors are shown
         is KaCallResolutionError -> callResult.candidateCalls.filterIsInstance<KaImplicitInvokeCall>().map { it.symbol }

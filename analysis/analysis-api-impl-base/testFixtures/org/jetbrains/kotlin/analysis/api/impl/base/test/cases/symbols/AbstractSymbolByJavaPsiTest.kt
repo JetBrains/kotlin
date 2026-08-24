@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByJavaPsiTest : AbstractSymbolTest() {
-    @OptIn(KtExperimentalApi::class)
     context(_: KaSession)
     override fun collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(ktFile)

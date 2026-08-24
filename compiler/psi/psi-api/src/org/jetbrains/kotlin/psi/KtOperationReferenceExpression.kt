@@ -75,7 +75,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * @see KtBinaryExpression
  * @see KtUnaryExpression
  */
-@OptIn(KtExperimentalApi::class, KtImplementationDetail::class)
+@OptIn(KtImplementationDetail::class)
 class KtOperationReferenceExpression :
     KtExpressionImplStub<KotlinOperationReferenceExpressionStub>,
     KtSimpleNameExpression,

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.test.framework.targets.getTestTargetSymbols
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -107,7 +106,6 @@ abstract class AbstractGetExpectsForActualByCoordinatesTest : AbstractGetExpects
 }
 
 abstract class AbstractGetExpectsForActualByMarkerTest : AbstractGetExpectsForActualTest() {
-    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(mainFile) {

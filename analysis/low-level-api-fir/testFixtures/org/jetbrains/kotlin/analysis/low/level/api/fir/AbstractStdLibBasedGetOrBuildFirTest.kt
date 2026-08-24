@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.services.TestServices
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override val configurator = LLSourceLikeTestConfigurator()
 
-    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val project = mainFile.project
         assert(!project.isDisposed) { "$project is disposed" }

@@ -98,7 +98,6 @@ fun KtElement.renderLocationDescription(): String {
  *
  * In case of ambiguity, returns `null`.
  */
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 fun KtResolvable.resolveSymbolPreferringCall(): KaSymbol? {
     return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSimpleOrMultiCall::symbols)?.singleOrNull()

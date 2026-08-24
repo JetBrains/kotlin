@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractMapToJvmTypeDescriptorTest : AbstractAnalysisApiBasedTest() {
-    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(mainFile) {

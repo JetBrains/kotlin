@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  * @see KaSymbolResolutionError
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
     @OptIn(KaImplementationDetail::class)
@@ -67,7 +66,6 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  * @see KaSymbolResolutionSuccess
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvable.resolveSuccessfulSymbols(): Collection<KaSymbol> {
     @OptIn(KaImplementationDetail::class)
@@ -87,7 +85,6 @@ public fun KtResolvable.resolveSuccessfulSymbols(): Collection<KaSymbol> {
     ),
 )
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = resolveSuccessfulSymbols()
 
@@ -113,7 +110,6 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = resolveSuccessf
  * @see KaSymbolResolutionSuccess
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvable.resolveSuccessfulSymbol(): KaSymbol? {
     @OptIn(KaImplementationDetail::class)
@@ -133,7 +129,6 @@ public fun KtResolvable.resolveSuccessfulSymbol(): KaSymbol? {
     ),
 )
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvable.resolveSymbol(): KaSymbol? = resolveSuccessfulSymbol()
 

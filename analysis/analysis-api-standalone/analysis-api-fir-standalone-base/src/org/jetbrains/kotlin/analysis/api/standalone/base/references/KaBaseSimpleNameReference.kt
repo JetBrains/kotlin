@@ -31,7 +31,7 @@ internal class KaBaseSimpleNameReference(
         return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
-    @OptIn(KtExperimentalApi::class, KaExperimentalApi::class)
+    @OptIn(KaExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         // Resolved calls are preferable for navigation since they provide a more precise location.
         // For instance, it is the case for constructor calls
