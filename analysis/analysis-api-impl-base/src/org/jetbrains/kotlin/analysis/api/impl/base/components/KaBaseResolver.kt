@@ -185,7 +185,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         }
     }
 
-    final override fun resolveCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall? = tryResolveCall(resolvableCall)?.successfulCall
+    final override fun resolveCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall? = tryResolveCall(resolvableCall)?.successful
 
     private inline fun <reified R : KaSimpleOrMultiCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall(this) as? R
 

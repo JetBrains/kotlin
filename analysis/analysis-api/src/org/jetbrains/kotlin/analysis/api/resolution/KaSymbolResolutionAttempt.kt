@@ -168,7 +168,7 @@ public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
 /**
  * The resolved symbols if the resolution succeeded, or an empty list if it failed.
  *
- * @see KaCallResolutionAttempt.successfulCall
+ * @see KaCallResolutionAttempt.successful
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.successfulSymbols: List<KaSymbol>
