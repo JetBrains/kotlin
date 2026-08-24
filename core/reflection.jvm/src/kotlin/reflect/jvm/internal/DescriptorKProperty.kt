@@ -177,7 +177,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override fun toString(): String = "getter of $property"
 
         override fun equals(other: Any?): Boolean =
-            other is Getter<*> && property == other.property
+            other is KProperty.Getter<*> && property == other.property
 
         override fun hashCode(): Int =
             property.hashCode()
@@ -200,7 +200,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override fun toString(): String = "setter of $property"
 
         override fun equals(other: Any?): Boolean =
-            other is Setter<*> && property == other.property
+            other is KMutableProperty.Setter<*> && property == other.property
 
         override fun hashCode(): Int =
             property.hashCode()
