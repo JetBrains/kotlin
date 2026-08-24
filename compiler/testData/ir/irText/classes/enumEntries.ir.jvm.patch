@@ -1,0 +1,13 @@
+--- a/enumEntries.ir.txt
++++ b/enumEntries.ir.jvm_ir.txt
+@@ -22,6 +22,10 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.MyEnum
+       overridden:
+         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
++    FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.MyEnum?>?>? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.MyEnum>
++      overridden:
++        public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] E of kotlin.Enum?>?>? declared in kotlin.Enum
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.MyEnum>
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

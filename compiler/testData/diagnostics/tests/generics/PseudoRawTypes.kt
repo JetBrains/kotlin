@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// JAVAC_OPTIONS: --release 8
 // FILE: java/util/Collection.java
 package java.util;
 

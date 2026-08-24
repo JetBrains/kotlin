@@ -44,7 +44,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         checkStderr: (String) -> Unit,
         expectedExitCode: Int,
         workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
         launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
@@ -68,7 +68,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
         launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
@@ -142,7 +142,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             tmpdir.path,
             K2JSCompilerArguments::moduleName.cliArgument,
             "out",
-            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         )
     }
 
@@ -156,7 +156,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             KotlinWasmCompilerArguments::nopack.cliArgument,
             KotlinWasmCompilerArguments::outputDir.cliArgument(tmpdir.path),
             KotlinWasmCompilerArguments::moduleName.cliArgument("out"),
-            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         )
     }
 
@@ -228,7 +228,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
             expectedExitCode = 1,
-            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
+            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt\n"
         )
         runProcess("kotlinr", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }

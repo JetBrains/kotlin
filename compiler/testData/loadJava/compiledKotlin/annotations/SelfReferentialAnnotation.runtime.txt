@@ -25,6 +25,7 @@ public final annotation class Ann : kotlin.Annotation {
             public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ test.MyRequiresOptIn.MyLevel): kotlin.Int
+        @kotlin.Deprecated(level = ..., message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ...) public final override /*1*/ /*fake_override*/ fun describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<test.MyRequiresOptIn.MyLevel!>!>!
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
         public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.MyRequiresOptIn.MyLevel!>!
 

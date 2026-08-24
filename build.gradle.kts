@@ -418,7 +418,6 @@ tasks {
     // === intermediate task ===
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest") {
         dependsOn(":compiler:incremental-compilation-impl:test")
-        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
     // === intermediate task ===

@@ -36,5 +36,6 @@ public open class ModalityOfFakeOverrides : java.util.AbstractList<kotlin.String
     public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+    @kotlin.Deprecated(level = ..., message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ...) public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
 }

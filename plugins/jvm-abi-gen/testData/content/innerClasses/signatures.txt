@@ -48,6 +48,7 @@ public class Outer$Middle {
 public class Outer {
     // source: 'Outer.java'
     public inner class Outer$Middle
+    public inner class Outer$Middle$Inner
     public method <init>(): void
 }
 @kotlin.Metadata

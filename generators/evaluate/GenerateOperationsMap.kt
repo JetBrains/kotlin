@@ -20,7 +20,23 @@ import kotlin.reflect.full.memberFunctions
 
 val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS: List<String> = listOf(
-    "rangeTo", "rangeUntil", "hashCode", "subSequence", "chars", "codePoints", "strip", "stripLeading", "stripTrailing",
+    "rangeTo",
+    "rangeUntil",
+    "hashCode",
+    "subSequence",
+    "chars",
+    "codePoints",
+    "strip",
+    "stripLeading",
+    "stripTrailing",
+    "stripIndent",
+    "describeConstable",
+    "resolveConstantDesc",
+    "translateEscapes",
+    "isEmpty",
+    "formatted",
+    "indent",
+    "transform",
 )
 
 fun main() {

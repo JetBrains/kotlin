@@ -50,7 +50,7 @@ val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
  * javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
  * ```
  */
-val DEFAULT_JAVA_LAUNCHER_FOR_TESTS = JdkMajorVersion.JDK_11_0
+val DEFAULT_JAVA_LAUNCHER_FOR_TESTS = JdkMajorVersion.JDK_17_0
 
 fun Project.configureJvmDefaultToolchain() {
     configureJvmToolchain(DEFAULT_JVM_TOOLCHAIN)
