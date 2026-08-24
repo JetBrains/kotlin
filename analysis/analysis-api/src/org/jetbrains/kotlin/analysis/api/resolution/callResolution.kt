@@ -77,9 +77,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * ### Usage Example:
  * ```kotlin
  * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
- *   val call = expression.resolveSuccessfulCall() ?: return null
- *   val callableCall = call as? KaSimpleCall<*, *> ?: return null
- *   return callableCall.symbol
+ *   return expression.resolveSuccessfulCall()?.simple?.symbol
  * }
  * ```
  *
