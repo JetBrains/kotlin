@@ -89,6 +89,21 @@ internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Verify recompiling an actual declaration together with its expect declaration")
+    @TestMetadata("expect-actual-metadata")
+    fun testRecompilationOfActualAndExpect(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = expectActualModule()
+            module.execute("MainKt", "KMP output: fooJvm")
+
+            module.replaceFileWithVersion("jvmMain/actualFoo.kt", "change")
+
+            module.compile(setOf("jvmMain/actualFoo.kt", "commonMain/expectFoo.kt"))
+            module.execute("MainKt", "KMP output: fooJvm")
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Verify removed package does not break incremental compilation")
     @TestMetadata("metadata-header-merge")
     fun testRemovedPackageDoesNotBreakIncrementalCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -112,6 +127,15 @@ private typealias JvmScenario = Scenario<JvmCompilationOperation.Builder, JvmSna
 private fun JvmScenario.jvmClasspathMetadataModule(enabled: Boolean) = module(
     "jvm-classpath-metadata",
     compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = enabled),
+    icOptionsConfigAction = {
+        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+    },
+)
+
+@OptIn(ExperimentalCompilerArgument::class)
+private fun JvmScenario.expectActualModule() = module(
+    "expect-actual-metadata",
+    compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
     icOptionsConfigAction = {
         it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
     },
