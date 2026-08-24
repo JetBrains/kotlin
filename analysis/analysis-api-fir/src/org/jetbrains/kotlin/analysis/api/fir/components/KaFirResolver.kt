@@ -1394,7 +1394,7 @@ internal class KaFirResolver(
 
 
         val operationError = findErrorCall(firOperationCall, psi)
-        val operationAttempt: KaSingleCallResolutionAttempt
+        val operationAttempt: KaSimpleCallResolutionAttempt
         val compoundOperation: KaCompoundOperation?
 
         if (operationError != null) {
@@ -1570,10 +1570,10 @@ internal class KaFirResolver(
     }
 
     /**
-     * Resolves a [FirFunctionCall] into a [KaSingleCallResolutionAttempt].
+     * Resolves a [FirFunctionCall] into a [KaSimpleCallResolutionAttempt].
      * If the call has an error, returns [KaCallResolutionError]; otherwise builds a [KaCallResolutionSuccess].
      */
-    private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSingleCallResolutionAttempt {
+    private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpleCallResolutionAttempt {
         findErrorCall(call, psi)?.let { return it }
 
         return when (val kaCall = buildNamedFunctionCall(call)) {
@@ -1706,7 +1706,7 @@ internal class KaFirResolver(
 
         // Build getter call or error
         val getterError = findErrorCall(firGetCall, psi)
-        val getterAttempt: KaSingleCallResolutionAttempt
+        val getterAttempt: KaSimpleCallResolutionAttempt
         if (getterError != null) {
             getterAttempt = getterError
         } else {
@@ -1732,7 +1732,7 @@ internal class KaFirResolver(
 
         // Build operation call or error
         val operationError = findErrorCall(firOperationCall, psi)
-        val operationAttempt: KaSingleCallResolutionAttempt
+        val operationAttempt: KaSimpleCallResolutionAttempt
         val compoundOperation: KaCompoundOperation?
         if (operationError != null) {
             operationAttempt = operationError
@@ -1761,7 +1761,7 @@ internal class KaFirResolver(
 
         // Build setter call or error
         val setterError = findErrorCall(firCall, psi)
-        val setterAttempt: KaSingleCallResolutionAttempt
+        val setterAttempt: KaSimpleCallResolutionAttempt
         if (setterError != null) {
             setterAttempt = setterError
         } else {
