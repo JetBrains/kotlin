@@ -600,6 +600,25 @@ class CompositionTests {
             }
         }
     }
+
+    /**
+     * This is a regression test against a bug that caused groups to be generated incorrectly
+     * whenever a `when` expression had a result that was computed by another `when` expression, and
+     * the inner `when` expression had a `@Composable` call in one of its conditions.
+     * For more details, see https://issuetracker.google.com/issues/546101628.
+     */
+    @Test
+    fun testComposableCallInWhenConditionNestedInWhenResult() = compositionTest {
+        val eligible = mutableStateOf(true)
+
+        compose {
+            val enabled = eligible.value && (getCondition() || false)
+            val one = remember { 1 }
+        }
+
+        eligible.value = false
+        advance()
+    }
 }
 
 @Composable

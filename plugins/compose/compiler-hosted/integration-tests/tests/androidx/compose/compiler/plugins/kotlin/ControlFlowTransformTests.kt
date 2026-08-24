@@ -2818,4 +2818,29 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    /**
+     * This is a regression test against a bug that caused groups to be generated incorrectly
+     * whenever a `when` expression had a result that was computed by another `when` expression, and
+     * the inner `when` expression had a `@Composable` call in one of its conditions.
+     * For more details, see https://issuetracker.google.com/issues/546101628.
+     */
+    @Test
+    fun testComposableCallInWhenConditionNestedInWhenResult() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            val a = true
+            val c = false
+
+            @Composable fun Test() {
+                val enabled = a && (GetTrue() || c)
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun GetTrue(): Boolean = true
+        """
+    )
 }

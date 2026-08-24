@@ -3943,12 +3943,12 @@ class ComposableFunctionBodyTransformer(
                     resultScopes.add(resultScope)
 
                     // the first condition is always executed so if it has a composable call in it,
-                    // it doesn't necessitate a group. However, non-skipping group optimization is
-                    // enabled, we need a wrapping group if any conditions have a composable call.
+                    // it doesn't necessitate a group.
                     needsWrappingGroup = needsWrappingGroup || ((index != 0) && condScope.hasComposableCalls)
 
-                    if (resultScope.hasComposableCalls && !it.result.isGroupBalanced())
+                    if (resultScope.hasComposableCalls) {
                         resultsWithCalls++
+                    }
 
                     transformed.branches.add(
                         IrBranchImpl(
@@ -4043,14 +4043,6 @@ class ComposableFunctionBodyTransformer(
                 transformed.asCoalescableGroup(whenScope)
             else -> transformed
         }
-    }
-
-    // Returns true if the number of groups added are required to be fix and a group is inserted  to balance the groups if they are not.
-    // Currently this is only guaranteed for IrWhen nodes when the group non-skipping group optimization is enabled. This avoids
-    // inserting a redundant group to balance an already balanced set of groups.
-    private fun IrExpression.isGroupBalanced(): Boolean = when (this) {
-        is IrWhen -> FeatureFlag.OptimizeNonSkippingGroups.enabled
-        else -> false
     }
 
     sealed class Scope(val name: String) {
