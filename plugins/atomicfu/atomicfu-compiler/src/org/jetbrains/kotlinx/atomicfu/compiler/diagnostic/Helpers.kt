@@ -38,6 +38,16 @@ internal fun ClassId.isAtomicArrayType(): Boolean {
     return className in ATOMIC_ARRAY_TYPES
 }
 
+internal fun ClassId.isAtomicRefType(): Boolean {
+    if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
+    return relativeClassName.toString() == "AtomicRef"
+}
+
+internal fun ClassId.isAtomicRefArrayType(): Boolean {
+    if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
+    return relativeClassName.toString() == "AtomicArray"
+}
+
 internal fun FirNamedReference.isAtomicFactory(): Boolean {
     if (symbol?.packageFqName()?.asString() != KOTLINX_ATOMICFU) return false
     val nameStr = name.asString()

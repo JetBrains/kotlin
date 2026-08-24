@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -29,5 +29,6 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN by error0<KtExpression>(SourceElementPositioningStrategies.DEFAULT)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }

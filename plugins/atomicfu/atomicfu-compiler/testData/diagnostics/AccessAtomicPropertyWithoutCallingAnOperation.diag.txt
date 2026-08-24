@@ -1,0 +1,1 @@
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:56:18: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
