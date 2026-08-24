@@ -81,7 +81,7 @@ enum class ClassLevelProperty(val shortName: String) {
     DEPEND_ON_PLATFORM_LIBS("dependOnPlatformLibs")
     ;
 
-    internal val propertyName = fullPropertyName(shortName)
+    val propertyName = fullPropertyName(shortName)
 
     fun <T> readValue(enforcedProperties: EnforcedProperties, transform: (String) -> T?, default: T): T {
         val propertyValue = enforcedProperties[this] ?: System.getProperty(propertyName)
