@@ -106,22 +106,17 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompile
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_VISIBILITY
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_WHEN_GUARDS
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.AnnotationDefaultTargetMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.ExplicitApiMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.ReturnValueCheckerMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.VerifyIrMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.AnnotationDefaultTargetMode as CompatArgumentsEnumsAnnotationDefaultTargetMode
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.ExplicitApiMode as CompatArgumentsEnumsExplicitApiMode
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.KotlinVersion as CompatArgumentsEnumsKotlinVersion
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.ReturnValueCheckerMode as CompatArgumentsEnumsReturnValueCheckerMode
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.VerifyIrMode as CompatArgumentsEnumsVerifyIrMode
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode as ApiArgumentsEnumsAnnotationDefaultTargetMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode as ApiArgumentsEnumsExplicitApiMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion as ApiArgumentsEnumsKotlinVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode as ApiArgumentsEnumsReturnValueCheckerMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode as ApiArgumentsEnumsVerifyIrMode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
@@ -139,10 +134,10 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
 
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = CommonCompilerArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = CommonCompilerArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -164,20 +159,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     level = DeprecationLevel.ERROR,
   )
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
-
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    is ApiArgumentsEnumsExplicitApiMode if directionToInternal -> CompatArgumentsEnumsExplicitApiMode.entries.first { it.name == this.name }
-    is CompatArgumentsEnumsExplicitApiMode if !directionToInternal-> ApiArgumentsEnumsExplicitApiMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsAnnotationDefaultTargetMode if directionToInternal -> CompatArgumentsEnumsAnnotationDefaultTargetMode.entries.first { it.name == this.name }
-    is CompatArgumentsEnumsAnnotationDefaultTargetMode if !directionToInternal-> ApiArgumentsEnumsAnnotationDefaultTargetMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsReturnValueCheckerMode if directionToInternal -> CompatArgumentsEnumsReturnValueCheckerMode.entries.first { it.name == this.name }
-    is CompatArgumentsEnumsReturnValueCheckerMode if !directionToInternal-> ApiArgumentsEnumsReturnValueCheckerMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsVerifyIrMode if directionToInternal -> CompatArgumentsEnumsVerifyIrMode.entries.first { it.name == this.name }
-    is CompatArgumentsEnumsVerifyIrMode if !directionToInternal-> ApiArgumentsEnumsVerifyIrMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsKotlinVersion if directionToInternal -> CompatArgumentsEnumsKotlinVersion.entries.first { it.name == this.name }
-    is CompatArgumentsEnumsKotlinVersion if !directionToInternal-> ApiArgumentsEnumsKotlinVersion.entries.first { it.name == this.name }
-    else -> this
-  }
 
   abstract override fun build(): CommonCompilerArgumentsImpl
 
@@ -280,7 +261,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     super.applyCompilerArguments(arguments)
     try { this[P] = arguments.pluginOptions } catch (_: NoSuchMethodError) {  }
     try { this[XX_DEBUG_LEVEL_COMPILER_CHECKS] = arguments.debugLevelCompilerChecks } catch (_: NoSuchMethodError) {  }
-    try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { CompatArgumentsEnumsExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[XX_LENIENT_MODE] = arguments.lenientMode } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = arguments.allowConditionImpliesReturnsContracts } catch (_: NoSuchMethodError) {  }
@@ -288,7 +269,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
-    try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { CompatArgumentsEnumsAnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
     try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
     try { this[X_COMMON_SOURCES] = arguments.commonSources } catch (_: NoSuchMethodError) {  }
@@ -307,7 +288,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_DUMP_PERF] = arguments.dumpPerf?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_ENABLE_INCREMENTAL_COMPILATION] = arguments.incrementalCompilation } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_API] = arguments.explicitApi.let { CompatArgumentsEnumsExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_REFINES] = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
@@ -338,7 +319,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { CompatArgumentsEnumsReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
@@ -352,12 +333,12 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_K2] = arguments.getUsingReflection<Boolean>("useK2") } catch (_: NoSuchMethodError) {  }
     try { this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR] = arguments.verifyIr?.let { CompatArgumentsEnumsVerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_VERIFY_IR] = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR_VISIBILITY] = arguments.getUsingReflection<Boolean>("verifyIrVisibility") } catch (_: NoSuchMethodError) {  }
     try { this[X_WHEN_GUARDS] = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
-    try { this[API_VERSION] = arguments.apiVersion?.let { CompatArgumentsEnumsKotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { CompatArgumentsEnumsKotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[OPT_IN] = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
@@ -380,8 +361,8 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val XX_DEBUG_LEVEL_COMPILER_CHECKS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XX_DEBUG_LEVEL_COMPILER_CHECKS")
 
-    public val XX_EXPLICIT_RETURN_TYPES: CommonCompilerArgument<CompatArgumentsEnumsExplicitApiMode>
-        = CommonCompilerArgument("XX_EXPLICIT_RETURN_TYPES")
+    public val XX_EXPLICIT_RETURN_TYPES: CommonCompilerArgument<ExplicitApiMode> =
+        CommonCompilerArgument("XX_EXPLICIT_RETURN_TYPES")
 
     public val XX_LENIENT_MODE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XX_LENIENT_MODE")
@@ -404,8 +385,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_ALLOW_REIFIED_TYPE_IN_CATCH: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH")
 
-    public val X_ANNOTATION_DEFAULT_TARGET:
-        CommonCompilerArgument<CompatArgumentsEnumsAnnotationDefaultTargetMode?> =
+    public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<AnnotationDefaultTargetMode?> =
         CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET")
 
     public val X_ANNOTATION_TARGET_ALL: CommonCompilerArgument<Boolean> =
@@ -462,7 +442,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_EXPECT_ACTUAL_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPECT_ACTUAL_CLASSES")
 
-    public val X_EXPLICIT_API: CommonCompilerArgument<CompatArgumentsEnumsExplicitApiMode> =
+    public val X_EXPLICIT_API: CommonCompilerArgument<ExplicitApiMode> =
         CommonCompilerArgument("X_EXPLICIT_API")
 
     public val X_FRAGMENT_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
@@ -552,8 +532,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_PERF")
 
-    public val X_RETURN_VALUE_CHECKER:
-        CommonCompilerArgument<CompatArgumentsEnumsReturnValueCheckerMode> =
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER")
 
     public val X_SEPARATE_KMP_COMPILATION: CommonCompilerArgument<Boolean> =
@@ -595,7 +574,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_VERBOSE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_VERBOSE_PHASES")
 
-    public val X_VERIFY_IR: CommonCompilerArgument<CompatArgumentsEnumsVerifyIrMode?> =
+    public val X_VERIFY_IR: CommonCompilerArgument<VerifyIrMode?> =
         CommonCompilerArgument("X_VERIFY_IR")
 
     public val X_VERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
@@ -604,13 +583,13 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_WHEN_GUARDS")
 
-    public val API_VERSION: CommonCompilerArgument<CompatArgumentsEnumsKotlinVersion?> =
+    public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("API_VERSION")
 
     public val KOTLIN_HOME: CommonCompilerArgument<java.nio.`file`.Path?> =
         CommonCompilerArgument("KOTLIN_HOME")
 
-    public val LANGUAGE_VERSION: CommonCompilerArgument<CompatArgumentsEnumsKotlinVersion?> =
+    public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")
 
     public val OPT_IN: CommonCompilerArgument<List<String>> = CommonCompilerArgument("OPT_IN")

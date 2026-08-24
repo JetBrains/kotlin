@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_NEW_EXCEPTION_PROPOSAL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -54,8 +55,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArgument
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget as InternalArgumentsEnumsWasmTarget
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget as ApiArgumentsEnumsWasmTarget
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -85,10 +84,10 @@ internal class WasmArgumentsImpl(
 
   public operator fun contains(key: WasmArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = WasmArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = WasmArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -134,12 +133,6 @@ internal class WasmArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
-  }
-
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    is ApiArgumentsEnumsWasmTarget if directionToInternal -> InternalArgumentsEnumsWasmTarget.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsWasmTarget if !directionToInternal-> ApiArgumentsEnumsWasmTarget.entries.first { it.name == this.name }
-    else -> this
   }
 
   override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
@@ -204,7 +197,7 @@ internal class WasmArgumentsImpl(
     try { this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { InternalArgumentsEnumsWasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_STACK_SWITCHING_PROPOSAL] = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
@@ -321,8 +314,7 @@ internal class WasmArgumentsImpl(
     public val X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES: WasmArgument<Boolean> =
         WasmArgument("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES")
 
-    public val X_WASM_TARGET: WasmArgument<InternalArgumentsEnumsWasmTarget?> =
-        WasmArgument("X_WASM_TARGET")
+    public val X_WASM_TARGET: WasmArgument<WasmTarget?> = WasmArgument("X_WASM_TARGET")
 
     public val X_WASM_USE_NEW_EXCEPTION_PROPOSAL: WasmArgument<Boolean?> =
         WasmArgument("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")

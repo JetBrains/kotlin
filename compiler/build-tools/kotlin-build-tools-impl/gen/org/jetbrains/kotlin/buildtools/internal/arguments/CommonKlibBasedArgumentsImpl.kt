@@ -35,6 +35,10 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgum
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KlibIrInlinerMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageLogLevel
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
@@ -42,14 +46,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsKli
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.DuplicatedUniqueNameStrategy as InternalArgumentsEnumsDuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KlibIrInlinerMode as InternalArgumentsEnumsKlibIrInlinerMode
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageLogLevel as InternalArgumentsEnumsPartialLinkageLogLevel
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageMode as InternalArgumentsEnumsPartialLinkageMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.DuplicatedUniqueNameStrategy as ApiArgumentsEnumsDuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.KlibIrInlinerMode as ApiArgumentsEnumsKlibIrInlinerMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.PartialLinkageLogLevel as ApiArgumentsEnumsPartialLinkageLogLevel
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.PartialLinkageMode as ApiArgumentsEnumsPartialLinkageMode
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -75,10 +71,10 @@ internal abstract class CommonKlibBasedArgumentsImpl(
 
   public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = CommonKlibBasedArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = CommonKlibBasedArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -126,18 +122,6 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     this[key.id] = `value`
   }
 
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    is ApiArgumentsEnumsDuplicatedUniqueNameStrategy if directionToInternal -> InternalArgumentsEnumsDuplicatedUniqueNameStrategy.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsDuplicatedUniqueNameStrategy if !directionToInternal-> ApiArgumentsEnumsDuplicatedUniqueNameStrategy.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsKlibIrInlinerMode if directionToInternal -> InternalArgumentsEnumsKlibIrInlinerMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsKlibIrInlinerMode if !directionToInternal-> ApiArgumentsEnumsKlibIrInlinerMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsPartialLinkageMode if directionToInternal -> InternalArgumentsEnumsPartialLinkageMode.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsPartialLinkageMode if !directionToInternal-> ApiArgumentsEnumsPartialLinkageMode.entries.first { it.name == this.name }
-    is ApiArgumentsEnumsPartialLinkageLogLevel if directionToInternal -> InternalArgumentsEnumsPartialLinkageLogLevel.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsPartialLinkageLogLevel if !directionToInternal-> ApiArgumentsEnumsPartialLinkageLogLevel.entries.first { it.name == this.name }
-    else -> this
-  }
-
   abstract override fun build(): CommonKlibBasedArgumentsImpl
 
   @Suppress("DEPRECATION")
@@ -166,14 +150,14 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     super.applyCompilerArguments(arguments)
     try { this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.getUsingReflection<Boolean>("fakeOverrideValidator") } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy?.let { InternalArgumentsEnumsDuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { InternalArgumentsEnumsKlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.getUsingReflection<Boolean>("normalizeAbsolutePath") } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
-    try { this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode?.let { InternalArgumentsEnumsPartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel?.let { InternalArgumentsEnumsPartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS] = arguments.skipLibrarySpecialCompatibilityChecks } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
@@ -212,13 +196,13 @@ internal abstract class CommonKlibBasedArgumentsImpl(
         CommonKlibBasedArgument("X_KLIB_ABI_VERSION")
 
     public val X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY:
-        CommonKlibBasedArgument<InternalArgumentsEnumsDuplicatedUniqueNameStrategy?> =
+        CommonKlibBasedArgument<DuplicatedUniqueNameStrategy?> =
         CommonKlibBasedArgument("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY")
 
     public val X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
 
-    public val X_KLIB_IR_INLINER: CommonKlibBasedArgument<InternalArgumentsEnumsKlibIrInlinerMode> =
+    public val X_KLIB_IR_INLINER: CommonKlibBasedArgument<KlibIrInlinerMode> =
         CommonKlibBasedArgument("X_KLIB_IR_INLINER")
 
     public val X_KLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgument<Boolean> =
@@ -230,11 +214,10 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     public val X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT: CommonKlibBasedArgument<Int> =
         CommonKlibBasedArgument("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
 
-    public val X_PARTIAL_LINKAGE: CommonKlibBasedArgument<InternalArgumentsEnumsPartialLinkageMode?>
-        = CommonKlibBasedArgument("X_PARTIAL_LINKAGE")
+    public val X_PARTIAL_LINKAGE: CommonKlibBasedArgument<PartialLinkageMode?> =
+        CommonKlibBasedArgument("X_PARTIAL_LINKAGE")
 
-    public val X_PARTIAL_LINKAGE_LOGLEVEL:
-        CommonKlibBasedArgument<InternalArgumentsEnumsPartialLinkageLogLevel?> =
+    public val X_PARTIAL_LINKAGE_LOGLEVEL: CommonKlibBasedArgument<PartialLinkageLogLevel?> =
         CommonKlibBasedArgument("X_PARTIAL_LINKAGE_LOGLEVEL")
 
     public val X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS: CommonKlibBasedArgument<Boolean> =

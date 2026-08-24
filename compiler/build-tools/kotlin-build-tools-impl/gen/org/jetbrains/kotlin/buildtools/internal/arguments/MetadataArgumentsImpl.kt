@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_LEGACY_METADATA_JAR_K2
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_REFINES_PATHS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_TARGET_PLATFORM
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.MetadataTargetPlatform
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -44,8 +45,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.MetadataTargetPlatform as InternalArgumentsEnumsMetadataTargetPlatform
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.MetadataTargetPlatform as ApiArgumentsEnumsMetadataTargetPlatform
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -71,10 +70,10 @@ internal class MetadataArgumentsImpl(
 
   public operator fun contains(key: MetadataArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = MetadataArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = MetadataArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -90,12 +89,6 @@ internal class MetadataArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
-  }
-
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    is ApiArgumentsEnumsMetadataTargetPlatform if directionToInternal -> InternalArgumentsEnumsMetadataTargetPlatform.entries.first { it.name == this.name }
-    is InternalArgumentsEnumsMetadataTargetPlatform if !directionToInternal-> ApiArgumentsEnumsMetadataTargetPlatform.entries.first { it.name == this.name }
-    else -> this
   }
 
   override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
@@ -130,7 +123,7 @@ internal class MetadataArgumentsImpl(
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_LEGACY_METADATA_JAR_K2] = arguments.legacyMetadataJar } catch (_: NoSuchMethodError) {  }
     try { this[X_REFINES_PATHS] = arguments.refinesPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { InternalArgumentsEnumsMetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
@@ -204,8 +197,7 @@ internal class MetadataArgumentsImpl(
     public val X_REFINES_PATHS: MetadataArgument<List<java.nio.`file`.Path>> =
         MetadataArgument("X_REFINES_PATHS")
 
-    public val X_TARGET_PLATFORM:
-        MetadataArgument<List<InternalArgumentsEnumsMetadataTargetPlatform>> =
+    public val X_TARGET_PLATFORM: MetadataArgument<List<MetadataTargetPlatform>> =
         MetadataArgument("X_TARGET_PLATFORM")
 
     public val CLASSPATH: MetadataArgument<List<java.nio.`file`.Path>?> =

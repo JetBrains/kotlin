@@ -70,10 +70,10 @@ internal abstract class CommonToolArgumentsImpl(
 
   public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
 
-  private operator fun `get`(key: String): Any? = optionsMap[key]?.mapEnums(false)
+  private operator fun `get`(key: String): Any? = CommonToolArgumentValueAdapter.toApi(optionsMap[key])
 
   private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = `value`?.mapEnums(true)
+    optionsMap[key] = CommonToolArgumentValueAdapter.toImpl(`value`)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -96,10 +96,6 @@ internal abstract class CommonToolArgumentsImpl(
     level = DeprecationLevel.ERROR,
   )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
-
-  private fun Any?.mapEnums(directionToInternal: Boolean): Any? = when (this) {
-    else -> this
-  }
 
   abstract override fun build(): CommonToolArgumentsImpl
 

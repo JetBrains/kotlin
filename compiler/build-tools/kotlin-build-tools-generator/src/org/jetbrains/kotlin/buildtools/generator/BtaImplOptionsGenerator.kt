@@ -109,8 +109,10 @@ internal class BtaImplOptionsGenerator(
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
                 val constructorSpecBuilder = constructorSpecBuilder()
 
+                val adapterClassName = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
+
                 generateOptionsMap()
-                generateOwnGetPutFunctions(argumentImplTypeName)
+                generateOwnGetPutFunctions(argumentImplTypeName, adapterClassName)
 
                 if (syntheticInterfaces.isEmpty()) {
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
@@ -122,8 +124,7 @@ internal class BtaImplOptionsGenerator(
                         generateGetPutFunctions(argumentTypeName, level)
                     }
                 }
-                val mapEnumsFun = generateMapEnumsFunBuilder()
-
+                var mirroredEnums: Set<KClass<*>> = emptySet()
                 addType(TypeSpec.companionObjectBuilder().apply {
                     property(
                         "knownArguments",
@@ -132,19 +133,18 @@ internal class BtaImplOptionsGenerator(
                     ) {
                         initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
-                    generateOptions(
+                    mirroredEnums = generateOptions(
                         arguments = level.transformImplArguments(),
                         implClassName = implClassName,
                         argumentTypeName = argumentImplTypeName,
                         applyCompilerArgumentsFun = applyCompilerArgumentsFun,
                         toCompilerConverterFun = toCompilerConverterFun,
                         toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
-                        mapEnumsFun = mapEnumsFun,
                         level = level
                     )
                 }.build())
 
-                addFunction(mapEnumsFun.build())
+                outputs += generateValueAdapterFile(adapterClassName, mirroredEnums)
 
                 // Initialize default values for custom arguments
                 defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
@@ -216,13 +216,58 @@ internal class BtaImplOptionsGenerator(
         return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
     }
 
-    private fun generateMapEnumsFunBuilder(): FunSpec.Builder {
-        return FunSpec.builder("mapEnums").apply {
-            receiver(Any::class.asClassName().copy(nullable = true))
-            returns(Any::class.asClassName().copy(nullable = true))
-            addParameter("directionToInternal", Boolean::class)
-            modifiers.add(KModifier.PRIVATE)
+    /**
+     * Generates the object converting argument values between their API and [targetPackage] representations.
+     */
+    private fun generateValueAdapterFile(
+        adapterClassName: ClassName,
+        mirroredEnums: Set<KClass<*>>,
+    ): Pair<Path, String> {
+        fun conversionFun(toApi: Boolean): FunSpec {
+            val name = if (toApi) "toApi" else "toImpl"
+            return FunSpec.builder(name).apply {
+                returns(ANY.copy(nullable = true))
+                addParameter("value", ANY.copy(nullable = true))
+                beginControlFlow("return when (value)")
+                addStatement(
+                    "is %T if value.firstOrNull() is %T -> value.map { %N(it) }",
+                    LIST.parameterizedBy(STAR),
+                    ClassName("kotlin", "Enum").parameterizedBy(STAR),
+                    name,
+                )
+                mirroredEnums.forEach { enumType ->
+                    val apiType = enumType.toBtaEnumClassName()
+                    val implEnumType = enumType.toBtaImplEnumClassName(targetPackage)
+                    val sourceType = if (toApi) implEnumType else apiType
+                    val targetType = if (toApi) apiType else implEnumType
+                    val converter = if (toApi) "toApiEnum" else "toImplEnum"
+                    addStatement("is %T -> value.%N<%T>()", sourceType, converter, targetType)
+                }
+                addStatement("else -> value")
+                endControlFlow()
+            }.build()
         }
+
+        val appendable = createGeneratedFileAppendable()
+        val fileSpec = FileSpec.builder(adapterClassName).apply {
+            addAnnotation(
+                AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
+                    .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
+            )
+            addType(TypeSpec.objectBuilder(adapterClassName).apply {
+                addModifiers(KModifier.INTERNAL)
+                addKdoc(
+                    "Converts argument values between the representation used by the API and the one used by " +
+                            "`$targetPackage`.\n\n" +
+                            "A value needs converting whenever the two sides declare its type separately, as they do " +
+                            "for the mirrored argument enums.\n"
+                )
+                addFunction(conversionFun(toApi = true))
+                addFunction(conversionFun(toApi = false))
+            }.build())
+        }.build()
+        fileSpec.writeTo(appendable)
+        return Path(fileSpec.relativePath) to appendable.toString()
     }
 
     private fun constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
@@ -260,9 +305,8 @@ internal class BtaImplOptionsGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         toCompilerConverterFun: FunSpec.Builder,
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
-        mapEnumsFun: FunSpec.Builder,
         level: KotlinCompilerArgumentsLevel,
-    ) {
+    ): Set<KClass<*>> {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
 
         /**
@@ -307,8 +351,6 @@ internal class BtaImplOptionsGenerator(
                     val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                     when {
                         classifier.java.isEnum -> {
-//                            val classifier = type.classifier as KClass<*>
-//                            classifier.toBtaEnumClassName()
                             generatedEnumType(classifier)
                         }
                         classifier == List::class && (type.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
@@ -357,22 +399,10 @@ internal class BtaImplOptionsGenerator(
             }
         }
 
-        mapEnumsFun.beginControlFlow("return when (this)")
         enumsToGenerate.forEach { [type, typeSpecBuilder] ->
             outputs += writeEnumFile(typeSpecBuilder.build(), type, targetPackage)
-            mapEnumsFun.addStatement(
-                "is %T if directionToInternal -> %T.entries.first { it.name == this.name }",
-                type.toBtaEnumClassName(),
-                type.toBtaImplEnumClassName(targetPackage),
-            )
-            mapEnumsFun.addStatement(
-                "is %T if !directionToInternal-> %T.entries.first { it.name == this.name }",
-                type.toBtaImplEnumClassName(targetPackage),
-                type.toBtaEnumClassName(),
-            )
         }
-        mapEnumsFun.addStatement("else -> this")
-        mapEnumsFun.endControlFlow()
+        return enumsToGenerate.keys
     }
 
     private fun generateCustomRepresentation(
@@ -708,6 +738,7 @@ internal class BtaImplOptionsGenerator(
 
     fun TypeSpec.Builder.generateOwnGetPutFunctions(
         implParameter: ClassName,
+        adapterClassName: ClassName,
     ) {
         function("get") {
             val typeParameter = TypeVariableName("V")
@@ -740,13 +771,13 @@ internal class BtaImplOptionsGenerator(
             returns(Any::class.asClassName().copy(nullable = true))
             addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
             addParameter("key", String::class)
-            addStatement("return optionsMap[key]?.mapEnums(false)")
+            addStatement("return %T.toApi(optionsMap[key])", adapterClassName)
         }
         function("set") {
             addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
             addParameter("key", String::class)
             addParameter("value", Any::class.asClassName().copy(nullable = true))
-            addStatement("optionsMap[key] = %N?.mapEnums(true)", "value")
+            addStatement("optionsMap[key] = %T.toImpl(%N)", adapterClassName, "value")
         }
     }
 
