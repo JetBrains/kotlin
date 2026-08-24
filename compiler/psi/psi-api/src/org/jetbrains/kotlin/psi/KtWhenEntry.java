@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtWhenEntry extends KtElementImpl {
     @KtImplementationDetail
     public KtWhenEntry(@NotNull ASTNode node) {

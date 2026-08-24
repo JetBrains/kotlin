@@ -1,17 +1,19 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolution
 
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
  * A marker interface for all elements that can be resolved into a symbol in the Analysis API.
  *
  * See [References and calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for more details
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtResolvable : KtElement
 
 /**
@@ -19,4 +21,5 @@ interface KtResolvable : KtElement
  *
  * See [References and calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for more details
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtResolvableCall : KtResolvable

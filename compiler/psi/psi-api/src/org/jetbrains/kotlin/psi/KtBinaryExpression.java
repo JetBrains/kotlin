@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -26,6 +27,7 @@ import java.util.Arrays;
  * //      ^___^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtBinaryExpression>>
         implements KtOperationExpression, KtResolvableCall {
     @KtImplementationDetail

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * }
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectionType>>, KtTypeElement {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

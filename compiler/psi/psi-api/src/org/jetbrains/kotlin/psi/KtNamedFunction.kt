@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
  *
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, KtFunction, KtDeclarationWithInitializer {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

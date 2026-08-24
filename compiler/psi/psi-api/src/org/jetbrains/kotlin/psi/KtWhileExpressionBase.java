@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * <p>This is the common base for the concrete node types {@link KtWhileExpression} and {@link KtDoWhileExpression}, adding access to the
  * loop condition on top of {@link KtLoopExpression}.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtWhileExpressionBase extends KtLoopExpression {
     @KtImplementationDetail
     public KtWhileExpressionBase(@NotNull ASTNode node) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -24,6 +25,7 @@ import java.util.Objects;
  * // The entire block from 'object :' to the closing curly brace
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtObjectLiteralExpression>> {
     @KtImplementationDetail
     public KtObjectLiteralExpression(@NotNull ASTNode node) {

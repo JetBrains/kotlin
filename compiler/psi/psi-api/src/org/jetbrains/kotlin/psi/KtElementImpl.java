@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
  * not intended to be used or subclassed outside of the PSI implementation. For elements that may also be backed by a stub, see
  * {@link KtElementImplStub}.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @KtImplementationDetail
     public KtElementImpl(@NotNull ASTNode node) {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
  * @see KtNameReferenceExpression a plain identifier reference
  * @see KtOperationReferenceExpression an operation sign that references a declaration
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtSimpleNameExpression : KtReferenceExpression {
 
     /**

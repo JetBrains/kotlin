@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolution.KtResolvable;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtReturnExpression extends KtExpressionWithLabel implements KtStatementExpression, KtResolvable {
     @KtImplementationDetail
     public KtReturnExpression(@NotNull ASTNode node) {

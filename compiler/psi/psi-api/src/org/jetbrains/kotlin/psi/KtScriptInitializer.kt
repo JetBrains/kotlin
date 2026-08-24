@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.utils.sure
  * // ^______________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtScriptInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtScriptInitializer>>, KtAnonymousInitializer {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

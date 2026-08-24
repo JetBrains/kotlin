@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi;
 
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
 /**
@@ -15,5 +16,6 @@ import org.jetbrains.kotlin.resolution.KtResolvable;
  * {@link KtResolvable} facilities together with the Analysis API. Resolution may fail (for example, in unresolved or erroneous code), so
  * callers must handle the absence of a target.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public interface KtReferenceExpression extends KtExpression, KtResolvable {
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
  * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside of the PSI
  * implementation. For expressions that may also be backed by a stub, see [KtExpressionImplStub].
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtExpressionImpl : KtElementImpl, KtExpression {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

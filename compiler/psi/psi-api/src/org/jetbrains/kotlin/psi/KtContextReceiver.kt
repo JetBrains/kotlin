@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  *
  * Deprecated in favor of context parameters.
  */
+@OptIn(KtImplementationDetail::class)
 class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

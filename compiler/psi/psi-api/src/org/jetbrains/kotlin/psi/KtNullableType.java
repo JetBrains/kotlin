@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -30,6 +31,7 @@ import java.util.List;
  * element of their own. {@code (@A Int)?} and {@code @A Int?} denote the same type, but in the former the modifier
  * list belongs to this element rather than to the enclosing {@link KtTypeReference}.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStub<KtNullableType>>
         implements KtTypeElement, KtResolvable {
     @KtImplementationDetail

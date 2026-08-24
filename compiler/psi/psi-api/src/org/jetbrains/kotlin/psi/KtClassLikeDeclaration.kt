@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
  * This is the common base type for [KtClassOrObject] and [KtTypeAlias]. It abstracts over "how a classifier is addressed" rather than "how
  * it is defined", which is why its central capability is [getClassId].
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtClassLikeDeclaration : KtNamedDeclaration {
     /**
      * Return [ClassId], if the class is not local (e.g., if a class can be accessed by that [ClassId] from another context)

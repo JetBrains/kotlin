@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.utils.sure
  * }
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitializer>>, KtAnonymousInitializer {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

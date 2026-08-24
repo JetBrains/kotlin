@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.file
 
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
  * The file represents a decompiled .class (Kotlin/JVM)
  */
+@OptIn(KtImplementationDetail::class)
 class KtClsFile(provider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(provider)

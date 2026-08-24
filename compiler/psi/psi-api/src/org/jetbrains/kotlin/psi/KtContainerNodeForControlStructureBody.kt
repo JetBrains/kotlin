@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode
  * // Each branch body is wrapped in a KtContainerNodeForControlStructureBody
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtContainerNodeForControlStructureBody : KtContainerNode {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

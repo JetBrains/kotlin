@@ -13,6 +13,7 @@ import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.SubclassOptInRequired;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,7 @@ import static org.jetbrains.kotlin.KtNodeTypes.BLOCK;
  * }</pre>
  */
 @SuppressWarnings("deprecation")
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtBlockExpression extends LazyParseablePsiElement implements KtElement, KtExpression, KtStatementExpression {
 
     @KtImplementationDetail

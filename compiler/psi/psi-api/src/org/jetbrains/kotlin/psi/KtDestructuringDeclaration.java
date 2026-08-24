@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -33,6 +34,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
  *
  * @see KtDestructuringDeclarationEntry
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestructuringDeclarationStub>
         implements KtValVarKeywordOwner, KtDeclarationWithInitializer, KtDeclarationWithReturnType {
 

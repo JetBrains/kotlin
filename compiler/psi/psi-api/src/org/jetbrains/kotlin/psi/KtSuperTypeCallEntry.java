@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -23,6 +24,7 @@ import java.util.List;
  * //          ^___^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {
     @KtImplementationDetail
     public KtSuperTypeCallEntry(@NotNull ASTNode node) {

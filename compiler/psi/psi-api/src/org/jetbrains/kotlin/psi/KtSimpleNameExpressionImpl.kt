@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.Name
  * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside of the PSI
  * implementation. Use [KtSimpleNameExpression] instead.
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtSimpleNameExpressionImpl : KtExpressionImpl, KtSimpleNameExpression {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
