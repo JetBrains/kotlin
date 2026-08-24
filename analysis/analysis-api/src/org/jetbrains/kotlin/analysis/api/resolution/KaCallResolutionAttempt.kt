@@ -33,7 +33,7 @@ public sealed interface KaCallResolutionAttempt : KaLifetimeOwner
  * Represents an attempt to resolve a single call (as opposed to a [multi-call][KaMultiCallResolutionAttempt]),
  * which is either a [success][KaCallResolutionSuccess] or an [error][KaCallResolutionError].
  *
- * Both [KaCallResolutionSuccess.call] and [KaCallResolutionError.candidateCalls] always contain [KaSingleCall]s.
+ * Both [KaCallResolutionSuccess.call] and [KaCallResolutionError.candidateCalls] always contain [KaSimpleCall]s.
  */
 @KaExperimentalApi
 public sealed interface KaSingleCallResolutionAttempt : KaCallResolutionAttempt
@@ -69,7 +69,7 @@ public interface KaCallResolutionError : KaSingleCallResolutionAttempt {
     /**
      * The list of candidate calls that were considered during the resolution. Can be empty
      */
-    public val candidateCalls: List<KaSingleCall<*, *>>
+    public val candidateCalls: List<KaSimpleCall<*, *>>
 }
 
 /**
@@ -84,9 +84,9 @@ public interface KaCallResolutionError : KaSingleCallResolutionAttempt {
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCallResolutionSuccess : KaSingleCallResolutionAttempt {
     /**
-     * The resolved [KaSingleCall].
+     * The resolved [KaSimpleCall].
      */
-    public val call: KaSingleCall<*, *>
+    public val call: KaSimpleCall<*, *>
 }
 
 /**

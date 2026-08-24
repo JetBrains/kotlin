@@ -97,9 +97,9 @@ public interface KaInternalsResolver {
 
     public fun resolveCall(whenConditionInRange: KtWhenConditionInRange): KaFunctionCall<KaNamedFunctionSymbol>?
 
-    public fun resolveCall(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaSingleCall<*, *>?
+    public fun resolveCall(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaSimpleCall<*, *>?
 
-    public fun resolveCall(qualifiedExpression: KtQualifiedExpression): KaSingleCall<*, *>?
+    public fun resolveCall(qualifiedExpression: KtQualifiedExpression): KaSimpleCall<*, *>?
 
     public fun resolveCall(forExpression: KtForExpression): KaForLoopCall?
 
@@ -107,7 +107,7 @@ public interface KaInternalsResolver {
 
     public fun resolveCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>?
 
-    public fun resolveCall(nameReferenceExpression: KtNameReferenceExpression): KaSingleCall<*, *>?
+    public fun resolveCall(nameReferenceExpression: KtNameReferenceExpression): KaSimpleCall<*, *>?
 
     public fun collectCallCandidates(resolvableCall: KtResolvableCall): List<KaCallCandidate>
 

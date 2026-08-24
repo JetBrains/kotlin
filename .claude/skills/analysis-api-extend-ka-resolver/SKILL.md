@@ -58,14 +58,14 @@ Use `AskUserQuestion` to ask these questions (all in one call):
 - `KaAnnotationCall`
 - `KaFunctionCall<KaNamedFunctionSymbol>`
 
-(Allow "Other" for types like `KaSingleCall<*, *>`, `KaFunctionCall<*>`, etc.)
+(Allow "Other" for types like `KaSimpleCall<*, *>`, `KaFunctionCall<*>`, etc.)
 
 ---
 
 ## Phase 3: Execute changes
 
 Use the answers from Phase 2 to determine: `RESOLUTION_KIND` (`KtResolvable` or `KtResolvableCall`),
-`SYMBOL_TYPE` (e.g. `KaCallableSymbol`), and `CALL_TYPE` (e.g. `KaSingleCall<*, *>`).
+`SYMBOL_TYPE` (e.g. `KaCallableSymbol`), and `CALL_TYPE` (e.g. `KaSimpleCall<*, *>`).
 
 ### Step 1: PSI type — add interface implementation
 
@@ -192,7 +192,7 @@ and **before** `KtReference.resolveToSymbol()`.
 
 #### 3b: Add `resolveCall()` override (only if `KtResolvableCall`)
 
-Insert **after** the last existing `resolveCallSafe()`/`resolveSingleCallSafe()` line
+Insert **after** the last existing `resolveCallSafe()`/`resolveSimpleCallSafe()` line
 (currently `KtDestructuringDeclarationEntry.resolveCall()`) and **before** `KtElement.resolveToCall()`.
 
 Choose the helper based on the call return type:
@@ -200,9 +200,9 @@ Choose the helper based on the call return type:
   ```kotlin
       final override fun <KtPsiType>.resolveCall(): <CALL_TYPE>? = resolveCallSafe()
   ```
-- If CALL_TYPE is fully specified (no wildcards) → use `resolveSingleCallSafe()`:
+- If CALL_TYPE is fully specified (no wildcards) → use `resolveSimpleCallSafe()`:
   ```kotlin
-      final override fun <KtPsiType>.resolveCall(): <CALL_TYPE>? = resolveSingleCallSafe()
+      final override fun <KtPsiType>.resolveCall(): <CALL_TYPE>? = resolveSimpleCallSafe()
   ```
 
 #### 3c: Add to `canBeResolvedAsCall` (only if `KtResolvableCall`)

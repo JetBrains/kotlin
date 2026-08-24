@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedPropertyCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
 @KaImplementationDetail
@@ -32,7 +32,7 @@ class KaBaseDelegatedPropertyCall(
         get() = withValidityAssertion { backingProvideDelegateCall }
 
     @KaExperimentalApi
-    override val calls: List<KaSingleCall<*, *>>
+    override val calls: List<KaSimpleCall<*, *>>
         get() = withValidityAssertion {
             listOfNotNull(backingValueGetterCall, backingValueSetterCall, backingProvideDelegateCall)
         }

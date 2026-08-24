@@ -62,8 +62,8 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     private fun Any.asCallResolutionAttempt(): KaCallResolutionAttempt = when (this) {
         is KaCallResolutionAttempt -> this
         is KaSuccessCallInfo -> {
-            val singleCall = (call as KaSimpleOrMultiCall).calls.first()
-            KaBaseCallResolutionSuccess(singleCall)
+            val simpleCall = (call as KaSimpleOrMultiCall).calls.first()
+            KaBaseCallResolutionSuccess(simpleCall)
         }
 
         is KaErrorCallInfo -> KaBaseCallResolutionError(

@@ -1046,7 +1046,7 @@ internal class KaFirResolver(
         calleeReference: FirReference?,
         candidate: Candidate?,
         mappingResult: TypeArgumentsMappingResult,
-    ): KaSingleCall<*, *>? {
+    ): KaSimpleCall<*, *>? {
         val targetSymbol = mappingResult.targetSymbol
         val firTypeArgumentsMapping = mappingResult.firTypeArgumentsMapping
         val typeArgumentsMapping = mappingResult.typeArgumentsMapping
