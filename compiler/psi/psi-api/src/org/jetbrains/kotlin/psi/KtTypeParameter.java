@@ -10,6 +10,7 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.types.Variance;
  * //        ^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterStub> {
     /** A shared empty array, which can be reused to avoid unnecessary allocations. */
     public static final KtTypeParameter[] EMPTY_ARRAY = new KtTypeParameter[0];

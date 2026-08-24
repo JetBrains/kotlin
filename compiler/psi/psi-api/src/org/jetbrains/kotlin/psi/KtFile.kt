@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
  *
  * Obtain the containing file of any [KtElement] via [KtPureElement.getContainingKtFile].
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppress("DEPRECATION") KtCommonFile(viewProvider, isCompiled),
     PsiClassOwner {
     /**

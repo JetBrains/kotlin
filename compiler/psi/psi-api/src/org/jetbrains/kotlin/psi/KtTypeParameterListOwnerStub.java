@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -24,6 +25,7 @@ import java.util.List;
  *
  * @param <T> the type of stub backing this declaration, carrying its fully qualified name
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqName<?>>
         extends KtNamedDeclarationStub<T> implements KtTypeParameterListOwner {
     @KtImplementationDetail

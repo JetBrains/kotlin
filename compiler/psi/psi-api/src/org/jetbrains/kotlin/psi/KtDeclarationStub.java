@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @param <T> the type of stub backing this declaration
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModifierListOwnerStub<T> implements KtDeclaration {
     private final AtomicLong modificationStamp = new AtomicLong();
 

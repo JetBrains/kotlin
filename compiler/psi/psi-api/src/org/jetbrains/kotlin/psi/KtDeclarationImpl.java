@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -24,6 +25,7 @@ import java.util.List;
  * not intended for direct use or subclassing outside of the PSI implementation. For declarations that may also be backed by a stub, see
  * {@link KtDeclarationStub}.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDeclaration {
     @KtImplementationDetail
     public KtDeclarationImpl(@NotNull ASTNode node) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.psi.KtCodeFragment.Companion.IMPORT_SEPARATOR
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 /**
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
  * @param imports optional imports, separated by [IMPORT_SEPARATOR]
  * @param context the element the fragment is conceptually placed at, used to resolve references from the fragment
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtCodeFragment(
     viewProvider: FileViewProvider,
     imports: String?, // Should be separated by KtCodeFragment.IMPORT_SEPARATOR

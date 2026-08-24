@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -31,6 +32,7 @@ import java.util.List;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtArrayAccessExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
     @KtImplementationDetail
     public KtArrayAccessExpression(@NotNull ASTNode node) {

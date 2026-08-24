@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
  * // The entire class
  * ```
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtClass : KtClassOrObject {
     private val classInterfaceTokenSet = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
 

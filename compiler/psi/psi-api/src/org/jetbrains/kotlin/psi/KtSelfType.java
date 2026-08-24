@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.List;
         message = "This class is obsolete. The parser logic for self-types was removed in 2015."
 )
 @Deprecated
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtSelfType extends KtElementImpl implements KtTypeElement {
     @KtImplementationDetail
     public KtSelfType(@NotNull ASTNode node) {

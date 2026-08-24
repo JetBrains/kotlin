@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
  * $$"I'm $$name" // I'm Kotlin
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtStringInterpolationPrefix : KtElementImplStub<KotlinStringInterpolationPrefixStub> {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

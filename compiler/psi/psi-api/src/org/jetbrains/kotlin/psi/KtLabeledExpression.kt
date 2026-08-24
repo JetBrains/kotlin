@@ -23,6 +23,7 @@ import com.intellij.psi.search.LocalSearchScope
  * // The entire `for` block from `outer@` to `}`
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtLabeledExpression : KtExpressionWithLabel, PsiNameIdentifierOwner {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

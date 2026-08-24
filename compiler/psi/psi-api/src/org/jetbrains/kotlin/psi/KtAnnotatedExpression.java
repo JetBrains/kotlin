@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -22,6 +23,7 @@ import java.util.List;
  * //      ^______________________________________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtAnnotatedExpression extends KtExpressionImpl implements KtAnnotated, KtAnnotationsContainer {
     @KtImplementationDetail
     public KtAnnotatedExpression(@NotNull ASTNode node) {

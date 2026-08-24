@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -26,6 +27,7 @@ import java.util.List;
  * // The entire block from 'catch' to the closing curly brace
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtCatchClause extends KtElementImpl {
     @KtImplementationDetail
     public KtCatchClause(@NotNull ASTNode node) {

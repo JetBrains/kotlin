@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.resolution.KtResolvable;
@@ -38,6 +39,7 @@ import java.util.Objects;
  * @see KtThisExpression
  * @see KtSuperExpression
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtInstanceExpressionWithLabel extends KtExpressionWithLabel implements KtResolvable {
 
     @KtImplementationDetail

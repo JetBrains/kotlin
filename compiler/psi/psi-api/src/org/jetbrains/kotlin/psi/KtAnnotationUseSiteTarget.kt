@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
  * val foo: String = "bar"
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
 
     @KtImplementationDetail

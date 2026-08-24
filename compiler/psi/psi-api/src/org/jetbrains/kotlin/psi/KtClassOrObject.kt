@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
  * // The entire class-or-object declaration
  * ```
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtClassOrObject :
     KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration,
     KtPureClassOrObject, KtClassLikeDeclaration {

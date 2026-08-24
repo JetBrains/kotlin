@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  * //     ^____^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeReference>>,
     KtAnnotated, KtAnnotationsContainer, KtResolvable {
 

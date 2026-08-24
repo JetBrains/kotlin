@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtWhenConditionInRange extends KtWhenCondition implements KtResolvableCall {
     @KtImplementationDetail
     public KtWhenConditionInRange(@NotNull ASTNode node) {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
  * }
  * ```
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtExpressionWithLabel : KtExpressionImpl {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)

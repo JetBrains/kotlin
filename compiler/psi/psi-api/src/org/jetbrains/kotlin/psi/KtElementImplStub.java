@@ -13,6 +13,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
  *
  * @param <T> the type of stub backing this element
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiElementBase<T>
         implements KtElement, StubBasedPsiElement<T> {
     @KtImplementationDetail

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
  * // ^_________________________________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDeclaration, KtClassLikeDeclaration {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
