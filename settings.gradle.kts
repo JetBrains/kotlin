@@ -507,6 +507,7 @@ include(
     ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:raw-fir:light-tree2fir",
+    ":compiler:fir:raw-fir:mp-parsing2fir",
     ":compiler:fir:fir2ir",
     ":compiler:fir:fir2ir:jvm-backend",
     ":compiler:fir:providers",
