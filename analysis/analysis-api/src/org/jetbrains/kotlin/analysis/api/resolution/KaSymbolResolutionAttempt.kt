@@ -19,7 +19,7 @@ import kotlin.contracts.contract
 /**
  * This interface represents an attempt on resolving some [KtResolvable] through [KaResolver.tryResolveSymbols] API.
  *
- * [KaSymbolResolutionAttempt] represents either a [single symbol attempt][KaSimpleSymbolResolutionAttempt]
+ * [KaSymbolResolutionAttempt] represents either a [simple symbol attempt][KaSimpleSymbolResolutionAttempt]
  * or a [compound error][KaCompoundSymbolResolutionError].
  *
  * @see KaResolver.tryResolveSymbols
@@ -28,8 +28,8 @@ import kotlin.contracts.contract
 public sealed interface KaSymbolResolutionAttempt : KaLifetimeOwner
 
 /**
- * Represents an attempt to resolve a single symbol, which is either a [success][KaSymbolResolutionSuccess]
- * or an [error][KaSymbolResolutionError].
+ * Represents an attempt to resolve a simple (non-compound) [KtResolvable], which is either
+ * a [success][KaSymbolResolutionSuccess] or an [error][KaSymbolResolutionError].
  *
  * @see KaSymbolResolutionAttempt
  */
@@ -125,7 +125,7 @@ public interface KaSymbolResolutionError : KaSimpleSymbolResolutionAttempt {
  * - At least two entries in total
  *
  * When all sub-calls succeed, [KaSymbolResolutionSuccess] is returned instead.
- * When a single call fails, [KaSymbolResolutionError] is returned instead.
+ * When a simple call fails, [KaSymbolResolutionError] is returned instead.
  *
  * Unlike [KaMultiCallResolutionAttempt], this type does not distinguish between specific compound call kinds
  * (for-loop, delegated property, etc.) — it simply holds a flat list of sub-call resolution attempts.
