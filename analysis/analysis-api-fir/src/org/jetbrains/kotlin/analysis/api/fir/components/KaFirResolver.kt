@@ -945,7 +945,7 @@ internal class KaFirResolver(
         calleeReference = fir.calleeReference,
         candidate = candidate,
         resolveFragmentOfCall = resolveFragmentOfCall,
-    )?.successfulCall
+    )?.successful
 
     private fun Candidate.toFirTypeArgumentsMapping(symbol: FirCallableSymbol<*>): Map<FirTypeParameterSymbol, ConeKotlinType> {
         val typeParameters = symbol.typeParameterSymbols.ifEmpty { return emptyMap() }

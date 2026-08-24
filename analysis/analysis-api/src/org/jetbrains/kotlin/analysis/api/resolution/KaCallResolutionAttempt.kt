@@ -312,8 +312,24 @@ public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
  *   if all sub-calls succeeded, or `null` otherwise.
  */
 @KaExperimentalApi
-public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
+public val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?
     get() = fold(onSuccess = { it }, onFailure = { null })
+
+/**
+ * The former name of [successful].
+ *
+ * @see successful
+ */
+@Deprecated(
+    message = "Use 'successful' instead",
+    replaceWith = ReplaceWith(
+        expression = "successful",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.successful"],
+    ),
+)
+@KaExperimentalApi
+public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
+    get() = successful
 
 /**
  * Folds over a [KaCallResolutionAttempt] depending on whether the resolution succeeded.
