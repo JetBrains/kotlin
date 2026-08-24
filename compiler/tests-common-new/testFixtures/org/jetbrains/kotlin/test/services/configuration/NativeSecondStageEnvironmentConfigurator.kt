@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
@@ -24,11 +27,21 @@ class NativeSecondStageEnvironmentConfigurator(testServices: TestServices) : Nat
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         super.configureCompilerConfiguration(configuration, module)
 
-        configuration.konanProducedArtifactKind = CompilerOutputKind.PROGRAM
+        // Load all dependencies (including transitive dependencies).
+        val dependencies = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency).map { it.absolutePath }
+        val friends = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency).map { it.absolutePath }
+
+        val runtimeDependencies = getRuntimeLibraryProviders(module).flatMap { provider ->
+            // Ignore `KlibNativeDistributionLibraryProvider`, because it is anyway applied in loadNativeKlibs().
+            if (provider is KlibNativeDistributionLibraryProvider) emptyList() else provider.getLibraryPaths()
+        }
 
         val includedLibrary = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib).outputFile.absolutePath
 
-        configuration.konanLibraries += includedLibrary
+        configuration.konanLibraries = runtimeDependencies + dependencies + friends + includedLibrary
+        configuration.konanFriendLibraries = friends
         configuration.konanIncludedLibraries = listOf(includedLibrary)
+
+        configuration.konanProducedArtifactKind = CompilerOutputKind.PROGRAM
     }
 }
