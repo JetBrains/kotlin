@@ -33,7 +33,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
-        val kaptContext = info.kaptContext
+        val kaptContext = info.kaptContext ?: assertions.fail { "KAPT context is not created" }
 
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
 

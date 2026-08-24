@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.kapt.test.integration
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -29,8 +27,6 @@ import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import java.io.File
 import javax.annotation.processing.Completion
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -41,30 +37,17 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
-class FirKaptExtensionProvider(private val testServices: TestServices) : TestService {
+class FirKaptExtensionProvider(@Suppress("unused") testServices: TestServices) : TestService {
     private val cache: MutableMap<TestModule, FirKaptExtensionForTests> = mutableMapOf()
 
-    fun createExtension(
+    fun getOrCreateExtension(
         module: TestModule,
         kaptOptions: KaptOptions,
         processorOptions: Map<String, String>,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit,
         supportedAnnotations: List<String>,
-        sourceFiles: List<File>,
-    ): FirKaptExtensionForTests {
-        if (module in cache) {
-            testServices.assertions.fail { "FirKaptExtensionForTests for module $module already registered" }
-        }
-
-        val extension = FirKaptExtensionForTests(
-            processorOptions,
-            kaptOptions,
-            process,
-            supportedAnnotations,
-            sourceFiles
-        )
-        cache[module] = extension
-        return extension
+    ): FirKaptExtensionForTests = cache.getOrPut(module) {
+        FirKaptExtensionForTests(processorOptions, kaptOptions, process, supportedAnnotations)
     }
 
     operator fun get(module: TestModule): FirKaptExtensionForTests {
@@ -79,7 +62,6 @@ class FirKaptExtensionForTests(
     options: KaptOptions,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit,
     val supportedAnnotations: List<String>,
-    val sourceFiles: List<File>,
     val messageCollector: MessageCollectorImpl = MessageCollectorImpl()
 ) : FirKaptAnalysisHandlerExtension(
     CompilerConfigurationBackedKaptLogger(
@@ -169,12 +151,6 @@ class FirKaptExtensionForTests(
         this.savedBindings = converter.bindings
 
         super.saveIncrementalData(kaptContext, converter)
-    }
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        configuration.contentRoots += sourceFiles.map {
-            KotlinSourceRoot(it.canonicalPath, isCommon = false, hmppModuleName = null)
-        }
     }
 
     private class TestProcessorLoader(
