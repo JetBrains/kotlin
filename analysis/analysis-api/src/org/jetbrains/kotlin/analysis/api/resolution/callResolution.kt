@@ -83,7 +83,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * }
  * ```
  *
- * Returns the resolved [KaSingleOrMultiCall] on success; otherwise, `null`
+ * Returns the resolved [KaSimpleOrMultiCall] on success; otherwise, `null`
  *
  * @see tryResolveCall
  * @see collectCallCandidates
@@ -91,7 +91,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
 context(session: KaSession)
-public fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? {
+public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveCall(this)
 }

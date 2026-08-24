@@ -127,13 +127,13 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     private fun sortCandidates(candidates: List<*>): List<*> = candidates.sortedWith { a, b ->
         val call1 = when (a) {
             is KaCallCandidate -> a.candidate
-            is KaCallCandidateInfo -> a.candidate as KaSingleOrMultiCall
+            is KaCallCandidateInfo -> a.candidate as KaSimpleOrMultiCall
             else -> return@sortedWith 0
         }
 
         val call2 = when (b) {
             is KaCallCandidate -> b.candidate
-            is KaCallCandidateInfo -> b.candidate as KaSingleOrMultiCall
+            is KaCallCandidateInfo -> b.candidate as KaSimpleOrMultiCall
             else -> return@sortedWith 0
         }
 

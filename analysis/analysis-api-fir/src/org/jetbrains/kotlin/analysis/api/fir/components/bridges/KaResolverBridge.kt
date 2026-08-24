@@ -95,7 +95,7 @@ internal class KaResolverBridge(
     override fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutionAttempt? =
         context(analysisSession) { tryResolveCallEndpoint() }
 
-    override fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = context(analysisSession) { resolveCallEndpoint() }
 
     override fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = context(analysisSession) { resolveCallEndpoint() }
 
