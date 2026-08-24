@@ -380,12 +380,12 @@ abstract class AbstractComposeLowering(
         return binaryOperatorCall(lhs, rhs, OperatorNameConventions.PLUS, lhsType = int, rhsType = int)
     }
 
-    protected fun irImplicitCast(argument: IrExpression, type: IrType): IrExpression =
+    protected fun irReinterpretCast(argument: IrExpression, type: IrType): IrExpression =
         IrTypeOperatorCallImpl(
             argument.startOffset,
             argument.endOffset,
             type,
-            IrTypeOperator.IMPLICIT_CAST,
+            IrTypeOperator.REINTERPRET_CAST,
             type,
             argument
         )

@@ -1520,7 +1520,7 @@ class ComposableFunctionBodyTransformer(
                         slotIndex,
                         irShl(
                             irPlus(
-                                irImplicitCast(isChanged, context.irBuiltIns.intType),
+                                irReinterpretCast(isChanged, context.irBuiltIns.intType),
                                 irConst(1)
                             ),
                             irConst(bitShiftForSlot(slotIndex))
@@ -1610,7 +1610,7 @@ class ComposableFunctionBodyTransformer(
                     dirty.irOrSetBitsAtSlot(
                         slotIndex,
                         irShl(
-                            irImplicitCast(
+                            irReinterpretCast(
                                 irChanged(
                                     irMethodCall(irGet(param), sizeGetter),
                                     fileContainingValue = fileContainingParameters,
@@ -1638,7 +1638,7 @@ class ComposableFunctionBodyTransformer(
                         dirty.irOrSetBitsAtSlot(
                             slotIndex,
                             irShl(
-                                irImplicitCast(changedCall, context.irBuiltIns.intType),
+                                irReinterpretCast(changedCall, context.irBuiltIns.intType),
                                 irConst(bitShiftForSlot(slotIndex) + 1)
                             )
                         )
