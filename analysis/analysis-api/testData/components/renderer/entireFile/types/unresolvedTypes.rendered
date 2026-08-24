@@ -1,0 +1,13 @@
+class Wrapper<T>
+
+val simple: Unresolved
+  get()
+
+val generic: Unresolved<String>
+  get()
+
+val qualified: some.unknown.Unresolved
+  get()
+
+val nested: Wrapper<Unresolved>
+  get()

@@ -1,0 +1,11 @@
+enum class Level {
+  HIGH,
+  LOW
+}
+
+annotation class Nested(val id: Int)
+
+annotation class Anno(val int: Int, val string: String, val char: Char, val boolean: Boolean, val double: Double, val level: Level, val type: KClass<*>, val nested: Nested, val ints: IntArray, val strings: Array<String>, vararg val names: String)
+
+@Anno(int = 42, string = "text", char = `@`, boolean = false, double = 1.5, level = Level.HIGH, type = String::class, nested = @Nested(id = 1), ints = [1, 2, 3], strings = ["a", "b"], names = ["x", "y"])
+class Annotated

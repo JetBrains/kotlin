@@ -64,9 +64,27 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("annotationArguments.kt")
+    public void testAnnotationArguments() {
+      run("annotationArguments.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnDeclarations.kt")
     public void testAnnotationOnDeclarations() {
       run("annotationOnDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnPrimaryConstructor.kt")
+    public void testAnnotationOnPrimaryConstructor() {
+      run("annotationOnPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationUseSiteTargets.kt")
+    public void testAnnotationUseSiteTargets() {
+      run("annotationUseSiteTargets.kt");
     }
   }
 
@@ -84,15 +102,39 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("constructorVisibility.kt")
+    public void testConstructorVisibility() {
+      run("constructorVisibility.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() {
+      run("dataClass.kt");
+    }
+
+    @Test
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() {
       run("derivedClass.kt");
     }
 
     @Test
+    @TestMetadata("funInterface.kt")
+    public void testFunInterface() {
+      run("funInterface.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClass.kt")
     public void testInlineClass() {
       run("inlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("modality.kt")
+    public void testModality() {
+      run("modality.kt");
     }
 
     @Test
@@ -123,6 +165,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     @TestMetadata("superClass.kt")
     public void testSuperClass() {
       run("superClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClass.kt")
+    public void testValueClass() {
+      run("valueClass.kt");
     }
   }
 
@@ -210,15 +258,39 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("defaultParameterValues.kt")
+    public void testDefaultParameterValues() {
+      run("defaultParameterValues.kt");
+    }
+
+    @Test
+    @TestMetadata("functionModifiers.kt")
+    public void testFunctionModifiers() {
+      run("functionModifiers.kt");
+    }
+
+    @Test
     @TestMetadata("genericFunctions.kt")
     public void testGenericFunctions() {
       run("genericFunctions.kt");
     }
 
     @Test
+    @TestMetadata("inlineFunctionParameters.kt")
+    public void testInlineFunctionParameters() {
+      run("inlineFunctionParameters.kt");
+    }
+
+    @Test
     @TestMetadata("simpleFun.kt")
     public void testSimpleFun() {
       run("simpleFun.kt");
+    }
+
+    @Test
+    @TestMetadata("unitReturnType.kt")
+    public void testUnitReturnType() {
+      run("unitReturnType.kt");
     }
 
     @Test
@@ -242,6 +314,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("companionObjects.kt")
+    public void testCompanionObjects() {
+      run("companionObjects.kt");
+    }
+
+    @Test
     @TestMetadata("constructorInObject.kt")
     public void testConstructorInObject() {
       run("constructorInObject.kt");
@@ -261,6 +339,74 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/options")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Options {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/entireFile/options/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInOptions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/options"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classTypeQualificationFullyQualified.kt")
+    public void testClassTypeQualificationFullyQualified() {
+      run("classTypeQualificationFullyQualified.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeQualificationSimple.kt")
+    public void testClassTypeQualificationSimple() {
+      run("classTypeQualificationSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeRenderingModeAbbreviationWithExpansionComment.kt")
+    public void testClassTypeRenderingModeAbbreviationWithExpansionComment() {
+      run("classTypeRenderingModeAbbreviationWithExpansionComment.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeRenderingModeExpansion.kt")
+    public void testClassTypeRenderingModeExpansion() {
+      run("classTypeRenderingModeExpansion.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeRenderingModeExpansionWithAbbreviationComment.kt")
+    public void testClassTypeRenderingModeExpansionWithAbbreviationComment() {
+      run("classTypeRenderingModeExpansionWithAbbreviationComment.kt");
+    }
+
+    @Test
+    @TestMetadata("noExtraLineBetweenMembers.kt")
+    public void testNoExtraLineBetweenMembers() {
+      run("noExtraLineBetweenMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorAsMember.kt")
+    public void testPrimaryConstructorAsMember() {
+      run("primaryConstructorAsMember.kt");
+    }
+
+    @Test
+    @TestMetadata("typeApproximationToDenotableSubtype.kt")
+    public void testTypeApproximationToDenotableSubtype() {
+      run("typeApproximationToDenotableSubtype.kt");
+    }
+
+    @Test
+    @TestMetadata("typeApproximationToDenotableSupertype.kt")
+    public void testTypeApproximationToDenotableSupertype() {
+      run("typeApproximationToDenotableSupertype.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/renderer/entireFile/properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
@@ -274,9 +420,27 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("constProperties.kt")
+    public void testConstProperties() {
+      run("constProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      run("contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperties.kt")
     public void testDelegatedProperties() {
       run("delegatedProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingField.kt")
+    public void testExplicitBackingField() {
+      run("explicitBackingField.kt");
     }
 
     @Test
@@ -309,6 +473,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     @TestMetadata("nestedOfAliasedType.kt")
     public void testNestedOfAliasedType() {
       run("nestedOfAliasedType.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAlias.kt")
+    public void testNestedTypeAlias() {
+      run("nestedTypeAlias.kt");
     }
 
     @Test
@@ -354,6 +524,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     public void testWhere() {
       run("where.kt");
     }
+
+    @Test
+    @TestMetadata("whereCallables.kt")
+    public void testWhereCallables() {
+      run("whereCallables.kt");
+    }
   }
 
   @Nested
@@ -367,6 +543,24 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     @Test
     public void testAllFilesPresentInTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/entireFile/types"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationOnFlexibleTypes.kt")
+    public void testAnnotationOnFlexibleTypes() {
+      run("annotationOnFlexibleTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnFlexibleTypesNoShrinking.kt")
+    public void testAnnotationOnFlexibleTypesNoShrinking() {
+      run("annotationOnFlexibleTypesNoShrinking.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnFunctionTypes.kt")
+    public void testAnnotationOnFunctionTypes() {
+      run("annotationOnFunctionTypes.kt");
     }
 
     @Test
@@ -400,6 +594,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("functionTypeParameterNames.kt")
+    public void testFunctionTypeParameterNames() {
+      run("functionTypeParameterNames.kt");
+    }
+
+    @Test
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() {
       run("functionTypes.kt");
@@ -415,6 +615,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     @TestMetadata("intersectionType.kt")
     public void testIntersectionType() {
       run("intersectionType.kt");
+    }
+
+    @Test
+    @TestMetadata("mutabilityFlexibleTypes.kt")
+    public void testMutabilityFlexibleTypes() {
+      run("mutabilityFlexibleTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedTypes.kt")
+    public void testUnresolvedTypes() {
+      run("unresolvedTypes.kt");
     }
   }
 }

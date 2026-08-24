@@ -1,0 +1,7 @@
+fun interface Action {
+  fun run()
+}
+
+fun interface Transformer<T, R> {
+  fun transform(value: T): R
+}
