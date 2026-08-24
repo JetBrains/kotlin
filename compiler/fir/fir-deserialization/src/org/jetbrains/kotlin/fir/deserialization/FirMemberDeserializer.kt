@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -374,7 +373,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadProperty(
         proto: ProtoBuf.Property,
         classProto: ProtoBuf.Class? = null,
-        classSymbol: FirClassSymbol<*>? = null
+        classSymbol: FirClassSymbol<*>? = null,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     ): FirProperty {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
         val callableName = c.nameResolver.getName(proto.name)
@@ -411,7 +411,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val isFromAnnotation = classProto != null && Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.ANNOTATION_CLASS
         return buildProperty {
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = deserializationOrigin
             this.returnTypeRef = returnTypeRef
             receiverParameter = proto.receiverOrCompanionExtensionReceiverType(c.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
@@ -419,7 +419,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     annotations += receiverAnnotations
                     this.symbol = FirReceiverParameterSymbol()
                     this.moduleData = c.moduleData
-                    this.origin = FirDeclarationOrigin.Library
+                    this.origin = deserializationOrigin
                     containingDeclarationSymbol = symbol
                 }
             }
