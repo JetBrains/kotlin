@@ -29,7 +29,7 @@ import java.util.List;
  * <h3>Analysis API Resolver Notes:</h3>
  *
  * <p>Resolution of a {@link KtUserType} delegates to its {@link #getReferenceExpression() referenceExpression}, so calling
- * {@code resolveSymbol()} returns the same symbol as resolving the inner simple-name expression.
+ * {@code resolveSuccessfulSymbol()} returns the same symbol as resolving the inner simple-name expression.
  *
  * <p>For a well-formed type, the result is a {@code KaClassifierSymbol} (a class, type alias, or type parameter):
  *

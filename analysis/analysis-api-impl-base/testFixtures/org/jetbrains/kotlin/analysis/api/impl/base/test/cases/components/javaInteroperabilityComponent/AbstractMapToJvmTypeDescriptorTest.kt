@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent
 
 import org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
@@ -37,7 +37,7 @@ abstract class AbstractMapToJvmTypeDescriptorTest : AbstractAnalysisApiBasedTest
                 if (resolvable != null) {
                     require(resolvable is KtResolvable)
 
-                    val symbol = resolvable.resolveSymbol() ?: error("Failed to resolve symbol")
+                    val symbol = resolvable.resolveSuccessfulSymbol() ?: error("Failed to resolve symbol")
                     require(symbol is KaCallableSymbol)
 
                     type = symbol.returnType
