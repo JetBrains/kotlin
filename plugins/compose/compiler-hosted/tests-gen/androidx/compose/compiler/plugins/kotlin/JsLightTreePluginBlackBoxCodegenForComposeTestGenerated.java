@@ -40,6 +40,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("testParamsDirtyFlagsJs.kt")
+  public void testTestParamsDirtyFlagsJs() {
+    run("testParamsDirtyFlagsJs.kt");
+  }
+
+  @Test
   @TestMetadata("testValueClassJs.kt")
   public void testTestValueClassJs() {
     run("testValueClassJs.kt");

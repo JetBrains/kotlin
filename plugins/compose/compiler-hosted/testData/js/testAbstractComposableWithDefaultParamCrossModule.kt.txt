@@ -34,21 +34,15 @@ interface TestValue {
       when {
         EQEQ(arg0 = $default.and(other = 1), arg1 = 0).not() -> $dirty = $dirty.or(other = 6)
         EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-          when {
-            EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = modifier)
-            else -> $composer.changedInstance(value = modifier)
-          } -> 4
-          else -> 2
-        })
+          EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = modifier)
+          else -> $composer.changedInstance(value = modifier)
+        } /*=> Int */.plus(other = 1).shl(bitCount = 1))
       }
       when {
         EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
-          when {
-            EQEQ(arg0 = $changed.and(other = 64), arg1 = 0) -> $composer.changed(value = $this$)
-            else -> $composer.changedInstance(value = $this$)
-          } -> 32
-          else -> 16
-        })
+          EQEQ(arg0 = $changed.and(other = 64), arg1 = 0) -> $composer.changed(value = $this$)
+          else -> $composer.changedInstance(value = $this$)
+        } /*=> Int */.plus(other = 1).shl(bitCount = 4))
       }
       when {
         $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -158,10 +152,7 @@ class TestContainerImpl : TestContainer {
     }
     val $dirty: Int = $changed
     when {
-      EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-        $composer.changedInstance(value = content) -> 4
-        else -> 2
-      })
+      EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changedInstance(value = content) /*=> Int */.plus(other = 1).shl(bitCount = 1))
     }
     when {
       $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK

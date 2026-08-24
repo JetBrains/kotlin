@@ -43,27 +43,26 @@ FILE fqName:<root> fileName:/composableSingletonCovariantArgument.kt
                             then: SET_VAR 'val $dirty: kotlin.Int declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.Unit origin=null
                               CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
                                 ARG <this>: GET_VAR 'val $dirty: kotlin.Int declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.Int origin=null
-                                ARG other: WHEN type=kotlin.Int origin=IF
-                                  BRANCH
-                                    if: WHEN type=kotlin.Boolean origin=IF
-                                      BRANCH
-                                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                                          ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                                            ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.Int origin=null
-                                            ARG other: CONST Int type=kotlin.Int value=8
-                                          ARG arg1: CONST Int type=kotlin.Int value=0
-                                        then: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                                          ARG value: GET_VAR 'it: kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> origin=null
-                                      BRANCH
-                                        if: CONST Boolean type=kotlin.Boolean value=true
-                                        then: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                                          ARG value: GET_VAR 'it: kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> origin=null
-                                    then: CONST Int type=kotlin.Int value=4
-                                  BRANCH
-                                    if: CONST Boolean type=kotlin.Boolean value=true
-                                    then: CONST Int type=kotlin.Int value=2
+                                ARG other: CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                                  ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                                    ARG <this>: TYPE_OP type=kotlin.Int origin=REINTERPRET_CAST typeOperand=kotlin.Int
+                                      WHEN type=kotlin.Boolean origin=IF
+                                        BRANCH
+                                          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                                            ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                                              ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.Int origin=null
+                                              ARG other: CONST Int type=kotlin.Int value=8
+                                            ARG arg1: CONST Int type=kotlin.Int value=0
+                                          then: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                                            ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                                            ARG value: GET_VAR 'it: kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> origin=null
+                                        BRANCH
+                                          if: CONST Boolean type=kotlin.Boolean value=true
+                                          then: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                                            ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                                            ARG value: GET_VAR 'it: kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> declared in <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>' type=kotlin.collections.List<S of <root>.ComposableSingletons$ComposableSingletonCovariantArgumentKt.<get-lambda$1040298885>.<anonymous>> origin=null
+                                    ARG other: CONST Int type=kotlin.Int value=1
+                                  ARG bitCount: CONST Int type=kotlin.Int value=1
                         WHEN type=kotlin.Unit origin=IF
                           BRANCH
                             if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
@@ -137,27 +136,26 @@ FILE fqName:<root> fileName:/composableSingletonCovariantArgument.kt
           then: SET_VAR 'val $dirty: kotlin.Int declared in <root>.Effect' type=kotlin.Unit origin=null
             CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               ARG <this>: GET_VAR 'val $dirty: kotlin.Int declared in <root>.Effect' type=kotlin.Int origin=null
-              ARG other: WHEN type=kotlin.Int origin=IF
-                BRANCH
-                  if: WHEN type=kotlin.Boolean origin=IF
-                    BRANCH
-                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                        ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                          ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.Effect' type=kotlin.Int origin=null
-                          ARG other: CONST Int type=kotlin.Int value=8
-                        ARG arg1: CONST Int type=kotlin.Int value=0
-                      then: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Effect' type=androidx.compose.runtime.Composer? origin=null
-                        ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Effect> declared in <root>.Effect' type=kotlin.collections.List<S of <root>.Effect> origin=null
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Effect' type=androidx.compose.runtime.Composer? origin=null
-                        ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Effect> declared in <root>.Effect' type=kotlin.collections.List<S of <root>.Effect> origin=null
-                  then: CONST Int type=kotlin.Int value=4
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CONST Int type=kotlin.Int value=2
+              ARG other: CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Int origin=REINTERPRET_CAST typeOperand=kotlin.Int
+                    WHEN type=kotlin.Boolean origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                          ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                            ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.Effect' type=kotlin.Int origin=null
+                            ARG other: CONST Int type=kotlin.Int value=8
+                          ARG arg1: CONST Int type=kotlin.Int value=0
+                        then: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Effect' type=androidx.compose.runtime.Composer? origin=null
+                          ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Effect> declared in <root>.Effect' type=kotlin.collections.List<S of <root>.Effect> origin=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Effect' type=androidx.compose.runtime.Composer? origin=null
+                          ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Effect> declared in <root>.Effect' type=kotlin.collections.List<S of <root>.Effect> origin=null
+                  ARG other: CONST Int type=kotlin.Int value=1
+                ARG bitCount: CONST Int type=kotlin.Int value=1
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
@@ -251,27 +249,26 @@ FILE fqName:<root> fileName:/composableSingletonCovariantArgument.kt
           then: SET_VAR 'val $dirty: kotlin.Int declared in <root>.Test' type=kotlin.Unit origin=null
             CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               ARG <this>: GET_VAR 'val $dirty: kotlin.Int declared in <root>.Test' type=kotlin.Int origin=null
-              ARG other: WHEN type=kotlin.Int origin=IF
-                BRANCH
-                  if: WHEN type=kotlin.Boolean origin=IF
-                    BRANCH
-                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                        ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                          ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.Test' type=kotlin.Int origin=null
-                          ARG other: CONST Int type=kotlin.Int value=8
-                        ARG arg1: CONST Int type=kotlin.Int value=0
-                      then: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Test' type=androidx.compose.runtime.Composer? origin=null
-                        ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Test> declared in <root>.Test' type=kotlin.collections.List<S of <root>.Test> origin=null
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Test' type=androidx.compose.runtime.Composer? origin=null
-                        ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Test> declared in <root>.Test' type=kotlin.collections.List<S of <root>.Test> origin=null
-                  then: CONST Int type=kotlin.Int value=4
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CONST Int type=kotlin.Int value=2
+              ARG other: CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Int origin=REINTERPRET_CAST typeOperand=kotlin.Int
+                    WHEN type=kotlin.Boolean origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                          ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                            ARG <this>: GET_VAR '$changed: kotlin.Int declared in <root>.Test' type=kotlin.Int origin=null
+                            ARG other: CONST Int type=kotlin.Int value=8
+                          ARG arg1: CONST Int type=kotlin.Int value=0
+                        then: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Test' type=androidx.compose.runtime.Composer? origin=null
+                          ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Test> declared in <root>.Test' type=kotlin.collections.List<S of <root>.Test> origin=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Test' type=androidx.compose.runtime.Composer? origin=null
+                          ARG value: GET_VAR 'vm: kotlin.collections.List<S of <root>.Test> declared in <root>.Test' type=kotlin.collections.List<S of <root>.Test> origin=null
+                  ARG other: CONST Int type=kotlin.Int value=1
+                ARG bitCount: CONST Int type=kotlin.Int value=1
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
@@ -293,15 +290,14 @@ FILE fqName:<root> fileName:/composableSingletonCovariantArgument.kt
           then: SET_VAR 'val $dirty: kotlin.Int declared in <root>.Test' type=kotlin.Unit origin=null
             CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               ARG <this>: GET_VAR 'val $dirty: kotlin.Int declared in <root>.Test' type=kotlin.Int origin=null
-              ARG other: WHEN type=kotlin.Int origin=IF
-                BRANCH
-                  if: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Test' type=androidx.compose.runtime.Composer? origin=null
-                    ARG value: GET_VAR 'content: kotlin.Function3<kotlin.collections.List<S of <root>.Test>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? declared in <root>.Test' type=kotlin.Function3<kotlin.collections.List<S of <root>.Test>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
-                  then: CONST Int type=kotlin.Int value=32
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CONST Int type=kotlin.Int value=16
+              ARG other: CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Int origin=REINTERPRET_CAST typeOperand=kotlin.Int
+                    CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                      ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Test' type=androidx.compose.runtime.Composer? origin=null
+                      ARG value: GET_VAR 'content: kotlin.Function3<kotlin.collections.List<S of <root>.Test>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? declared in <root>.Test' type=kotlin.Function3<kotlin.collections.List<S of <root>.Test>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
+                  ARG other: CONST Int type=kotlin.Int value=1
+                ARG bitCount: CONST Int type=kotlin.Int value=4
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
