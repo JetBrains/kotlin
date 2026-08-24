@@ -2398,8 +2398,11 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2432,8 +2435,11 @@ public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2466,8 +2472,11 @@ public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2505,8 +2514,11 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2544,8 +2556,11 @@ public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2580,8 +2595,11 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2614,8 +2632,11 @@ public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2664,8 +2685,11 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2700,8 +2724,11 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunction
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2734,8 +2761,11 @@ public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFu
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2775,8 +2805,11 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2813,8 +2846,11 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2845,8 +2881,11 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2884,8 +2923,11 @@ public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2922,8 +2964,11 @@ public fun KtForExpression.resolveCall(): KaForLoopCall? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2956,8 +3001,11 @@ public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2990,8 +3038,11 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveCall' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulCall()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi

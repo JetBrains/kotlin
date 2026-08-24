@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus as contextSensitiveResolutionStatusEndpoint
 import org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion as isImplicitReferenceToCompanionEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.collectCallCandidates as collectCallCandidatesEndpoint
-import org.jetbrains.kotlin.analysis.api.resolution.resolveCall as resolveCallEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol as resolveSymbolEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols as resolveSymbolsEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall as tryResolveCallEndpoint
@@ -95,47 +94,47 @@ internal class KaResolverBridge(
     override fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutionAttempt? =
         context(analysisSession) { tryResolveCallEndpoint() }
 
-    override fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtCallElement.resolveCall(): KaFunctionCall<*>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtCallElement.resolveCall(): KaFunctionCall<*>? = context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<*, *>? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtForExpression.resolveCall(): KaForLoopCall? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtForExpression.resolveCall(): KaForLoopCall? = context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? =
-        context(analysisSession) { resolveCallEndpoint() }
+        context(analysisSession) { resolveSuccessfulCall() }
 
-    override fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveCallEndpoint() }
+    override fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? = context(analysisSession) { resolveSuccessfulCall() }
 
     override fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> =
         context(analysisSession) { collectCallCandidatesEndpoint() }
