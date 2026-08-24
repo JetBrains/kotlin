@@ -32,7 +32,7 @@
 # Incremental compilation runners never run in the IDE context.
 -dontwarn org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase
 
-# The LightTree parser is deliberately excluded from the IDE artifacts (KT-86408);
+# The LightTree -> raw FIR converter is deliberately excluded from the IDE artifacts (KT-86408);
 # the dangling reference from 'fir:entrypoint' is a known, separate problem.
 -dontwarn org.jetbrains.kotlin.fir.lightTree.**
 
