@@ -115,7 +115,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                 val reason = when {
                     project.isInIdeaSync.get() -> "Idea sync is in progress"
                     !project.kotlinPropertiesProvider.enableFusMetricsCollection -> "Fus was disabled for the build"
-                    !project.isCustomLoggerRootPathIsProvided && isCiBuild() -> "CI build is detected via environment variable ${detectedCiProperty()}"
+                    !project.isCustomLoggerRootPathProvided && isCiBuild() -> "CI build is detected via environment variable ${detectedCiProperty()}"
                     else -> "BuildFusService should not be created."
                 }
                 project.logger.debug("Fus metrics won't be collected: $reason.")
@@ -262,7 +262,7 @@ class MetricContainer : Serializable {
 }
 
 internal val Project.buildServiceShouldBeCreated
-    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && (isCustomLoggerRootPathIsProvided || !isCiBuild())
+    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && (isCustomLoggerRootPathProvided || !isCiBuild())
 
 internal fun BuildFusService.Parameters.finalizeGeneralConfigurationMetrics() {
     if (generalMetricsFinalized.get()) return

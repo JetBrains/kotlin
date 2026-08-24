@@ -20,5 +20,5 @@ private fun Project.getFusRootDirectoryFromPropertyService() = propertiesService
     }?.let { File(it) } ?: project.gradle.gradleUserHomeDir
 
 
-internal val Project.isCustomLoggerRootPathIsProvided
+internal val Project.isCustomLoggerRootPathProvided
     get() = PropertiesBuildService.registerIfAbsent(this).get().get(FUS_STATISTICS_PATH, this) != null

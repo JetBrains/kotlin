@@ -2064,6 +2064,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMe
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricsBuildFusParameters : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters {
 	public abstract fun getConfigurationMetrics ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getFailBuildOnFusError ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKotlinVersion ()Lorg/gradle/api/provider/Property;
 }
 
@@ -2090,6 +2091,10 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBu
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBuildFusService$Companion {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/FusException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/GradleFileReportService : org/jetbrains/kotlin/build/report/statistics/file/ReadableFileReportService {
