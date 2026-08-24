@@ -6,23 +6,32 @@ plugins {
 }
 
 // The production `*-for-ide` artifacts that are directly consumed by the IntelliJ Kotlin plugin on its production classpath.
-// Compiler plugin modules are deliberately excluded: they contain both K1 and K2 components.
-// The scripting compiler plugin is an exception, as it's effectively a part of the compiler.
+// Test artifacts (`*-tests-for-ide`) are deliberately excluded.
 val forIdeModules = listOf(
+    "allopen-compiler-plugin-for-ide",
     "analysis-api-for-ide",
     "analysis-api-impl-base-for-ide",
     "analysis-api-k2-for-ide",
     "analysis-api-platform-interface-for-ide",
     "analysis-api-standalone-for-ide",
+    "assignment-compiler-plugin-for-ide",
+    "compose-compiler-plugin-for-ide",
+    "js-plain-objects-compiler-plugin-for-ide",
     "kotlin-compiler-cli-for-ide",
     "kotlin-compiler-common-for-ide",
     "kotlin-compiler-fir-for-ide",
     "kotlin-compiler-ir-for-ide",
+    "kotlin-dataframe-compiler-plugin-for-ide",
     "kotlin-gradle-statistics-for-ide",
     "kotlin-jps-common-for-ide",
     "kotlin-objcexport-header-generator-for-ide",
     "kotlin-swift-export-for-ide",
+    "kotlinx-serialization-compiler-plugin-for-ide",
+    "lombok-compiler-plugin-for-ide",
     "low-level-api-fir-for-ide",
+    "noarg-compiler-plugin-for-ide",
+    "parcelize-compiler-plugin-for-ide",
+    "sam-with-receiver-compiler-plugin-for-ide",
     "scripting-compiler-plugin-for-ide",
     "symbol-light-classes-for-ide",
 )
@@ -83,6 +92,9 @@ dependencies {
     ideProvidedClasspath(libs.kotlinx.coroutines.core.jvm)
     ideProvidedClasspath(libs.gson)
     ideProvidedClasspath(libs.caffeine)
+
+    // Included separately in the IDE classpath (see 'intellij.libraries.kotlinx.dataframe.core')
+    ideProvidedClasspath(libs.dataframe.core.dev)
 
     // Align the transitive tool dependencies with the versions already used in the repository,
     // so 'verification-metadata.xml' doesn't need to be extended with additional versions

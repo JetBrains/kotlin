@@ -23,10 +23,11 @@
 -dontwarn org.jetbrains.kotlin.js.parser.**
 -dontwarn org.jetbrains.kotlin.wasm.ir.**
 
-# Compiler plugins are shipped to the IDE as separate artifacts and are not checked here
-# (the shipped artifacts mix K1 and K2 implementations).
--dontwarn org.jetbrains.kotlin.assignment.plugin.**
+# The power-assert plugin is not shipped as a `*-for-ide` artifact as it isn't used in the IDE.
 -dontwarn org.jetbrains.kotlin.powerassert.**
+
+# The DataFrame library classes embedded into 'kotlin-dataframe-compiler-plugin-for-ide' are duplicated by the 'dataframe-core' library.
+-dontwarn org.jetbrains.kotlinx.dataframe.**
 
 # Incremental compilation runners never run in the IDE context.
 -dontwarn org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase
@@ -48,6 +49,9 @@
 -dontwarn io.vavr.**
 -dontwarn org.fusesource.jansi.**
 -dontwarn org.jline.**
+
+# Used by 'compose-compiler-plugin-for-ide'.
+-dontwarn android.**
 
 # The IntelliJ platform bundles a different version of the library than the compiler
 # is built against; the affected members are not used on IDE code paths.

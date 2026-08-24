@@ -25,6 +25,7 @@ Warning: org.jetbrains.kotlin.incremental.JavaClassesTrackerImpl: can't find sup
 Warning: org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment: can't find superclass or interface org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 Warning: org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer: can't find superclass or interface org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 Warning: org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl$initializePackageFragmentProvider$enumEntriesDeserializationSupport$1: can't find superclass or interface org.jetbrains.kotlin.serialization.deserialization.EnumEntriesDeserializationSupport
+Warning: org.jetbrains.kotlin.noarg.NoArgConstructorBodyIrGenerationTransformer: can't find superclass or interface org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 Warning: org.jetbrains.kotlin.resolve.CompilerEnvironment: can't find superclass or interface org.jetbrains.kotlin.resolve.TargetEnvironment
 Warning: org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtension: can't find superclass or interface org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 Warning: org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension: can't find superclass or interface org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
@@ -48,6 +49,24 @@ Warning: org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExt
 Warning: org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension: can't find superclass or interface org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 Warning: org.jetbrains.kotlin.scripting.resolve.LazyScriptClassMemberScope: can't find superclass or interface org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope
 Warning: org.jetbrains.kotlin.scripting.resolve.LazyScriptDescriptor: can't find superclass or interface org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find superclass or interface org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find superclass or interface org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
+Warning: androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering: can't find referenced class org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering: can't find referenced class org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+Warning: androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+Warning: androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+Warning: androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrInlineUtilsKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrInlineUtilsKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.PromisedValueKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.PromisedValueKt
+Warning: androidx.compose.compiler.plugins.kotlin.lower.FunctionReferenceBuilder: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+Warning: androidx.compose.compiler.plugins.kotlin.lower.FunctionReferenceBuilder: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+Warning: androidx.compose.compiler.plugins.kotlin.lower.FunctionReferenceBuilder: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+Warning: androidx.compose.compiler.plugins.kotlin.lower.FunctionReferenceBuilder: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 Warning: org.jetbrains.kotlin.analysis.api.fir.components.KaFirCompilerFacility: can't find referenced class org.jetbrains.kotlin.codegen.state.GenerationState$GenerateClassFilter
 Warning: org.jetbrains.kotlin.analysis.api.fir.components.KaFirCompilerFacility: can't find referenced class org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 Warning: org.jetbrains.kotlin.analysis.api.fir.components.KaFirCompilerFacility: can't find referenced class org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -1094,6 +1113,13 @@ Warning: org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptor
 Warning: org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl: can't find referenced class org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 Warning: org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl: can't find referenced class org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 Warning: org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl: can't find referenced class org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
+Warning: org.jetbrains.kotlin.noarg.NoArgConstructorBodyIrGenerationTransformer: can't find referenced class org.jetbrains.kotlin.extensions.AnnotationBasedExtension
+Warning: org.jetbrains.kotlin.parcelize.IrListParcelSerializer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlin.parcelize.IrListParcelSerializer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlin.parcelize.IrMapParcelSerializer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlin.parcelize.IrMapParcelSerializer: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlin.parcelize.IrUtilsKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlin.parcelize.IrUtilsKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
 Warning: org.jetbrains.kotlin.resolve.CompilerEnvironment: can't find referenced class org.jetbrains.kotlin.resolve.TargetEnvironment
 Warning: org.jetbrains.kotlin.resolve.CompilerEnvironment: can't find referenced class org.jetbrains.kotlin.resolve.TargetEnvironment
 Warning: org.jetbrains.kotlin.resolve.CompilerEnvironment: can't find referenced class org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -1956,7 +1982,99 @@ Warning: org.jetbrains.kotlin.scripting.resolve.ScriptAnnotationsPreprocessingKt
 Warning: org.jetbrains.kotlin.scripting.resolve.ScriptAnnotationsPreprocessingKt: can't find referenced class org.jetbrains.kotlin.resolve.BindingTrace
 Warning: org.jetbrains.kotlin.scripting.resolve.ScriptAnnotationsPreprocessingKt: can't find referenced class org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 Warning: org.jetbrains.kotlin.scripting.resolve.ScriptAnnotationsPreprocessingKt: can't find referenced class org.jetbrains.kotlin.resolve.BindingTrace
-Warning: there were 1945 unresolved references to classes or interfaces.
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.Instantiator: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.Instantiator: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrGeneratorUtilsKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmIrLowerUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrGeneratorUtilsKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmIrLowerUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrGeneratorUtilsKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmIrLowerUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrPredicatesKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrPredicatesKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrPredicatesKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrPredicatesKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer$AnnotationPropertyImplementor
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer$AnnotationPropertyImplementor
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer$AnnotationPropertyImplementor
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer$AnnotationPropertyImplementor
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMappingKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMappingKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner$OperationKind
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner$OperationKind
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner$Companion
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner$Companion
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrTypeUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport: can't find referenced class org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.PromisedValueKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.PromisedValueKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.codegen.IrFrameMap
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.codegen.IrFrameMap
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.codegen.CodegenUtilKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.codegen.CodegenUtilKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.codegen.IrFrameMap
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport$ReifiedSerializerMethod: can't find referenced class org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerForEnumsGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerForEnumsGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerForInlineClassGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerForInlineClassGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmSymbolsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator: can't find referenced class org.jetbrains.kotlin.codegen.CompilationException
+Warning: org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator: can't find referenced class org.jetbrains.kotlin.codegen.CompilationException
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension: can't find referenced class org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassPreLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassPreLowering: can't find referenced class org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt
+Warning: there were 2063 unresolved references to classes or interfaces.
          You may need to add missing library jars or update their versions.
          If your code works fine without the missing classes, you can suppress
          the warnings with '-dontwarn' options.
