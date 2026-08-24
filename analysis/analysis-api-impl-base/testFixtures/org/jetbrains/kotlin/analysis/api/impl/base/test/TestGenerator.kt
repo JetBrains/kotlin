@@ -492,6 +492,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
         test<AbstractMapToJvmTypeDescriptorTest> {
             model(it, "mapToJvmTypeDescriptor")
         }
+
+        test<AbstractIsPrimitiveBackedTest> {
+            model(it, "isPrimitiveBacked")
+        }
     }
 
     component("resolveExtensionInfoProvider") {
