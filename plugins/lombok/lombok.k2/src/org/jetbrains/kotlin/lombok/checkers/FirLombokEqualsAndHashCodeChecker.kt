@@ -104,7 +104,11 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
             )
         }
 
-        checkIncludeAndExcludeAnnotations(declaredMemberScope, LombokNames.EQUALS_AND_HASH_CODE_ID)
+        checkIncludeAndExcludeAnnotations(
+            declaredMemberScope,
+            LombokNames.EQUALS_AND_HASH_CODE_ID,
+            annotationInfo.onlyExplicitlyIncluded ?: config.equalsAndHashCodeOnlyExplicitlyIncluded,
+        )
     }
 
     /** The closest superclass declaring a final `equals`/`hashCode` that the generated ones would override. */

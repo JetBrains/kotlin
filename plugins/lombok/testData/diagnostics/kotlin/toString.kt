@@ -74,6 +74,33 @@ class WithDollarPrefixedPropertyIncludedAndExcluded(
 @ToString
 class WithRegularExcludedProperty(val regular: String, @ToString.Exclude val excluded: String)
 
+// `onlyExplicitlyIncluded` leaves nothing for an `@Exclude` to take out - a property is in only if it says
+// `@Include` - so the annotation says nothing the class-level argument does not already say, KT-88655.
+@ToString(onlyExplicitlyIncluded = true)
+class OnlyExplicitlyIncludedExample(
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@ToString.Exclude<!> val id: Long,
+    val name: String,
+)
+
+// Only one redundancy is reported per property, `onlyExplicitlyIncluded` first: Lombok chains the two with
+// `else if`, and once the whole class is opt-in there is nothing left for `$` to explain.
+@ToString(onlyExplicitlyIncluded = true)
+class OnlyExplicitlyIncludedDollarPrefixed(
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@ToString.Exclude<!> val `$dollarPrefixed`: String,
+)
+
+// The clash is reported on top of it, the two being separate checks in Lombok as well.
+@ToString(onlyExplicitlyIncluded = true)
+class OnlyExplicitlyIncludedIncludedAndExcluded(
+    <!EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE!>@ToString.Include<!>
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@ToString.Exclude<!>
+    val both: String,
+)
+
+// No warning: `onlyExplicitlyIncluded = false` puts every property back in, so the `@Exclude` does the work.
+@ToString(onlyExplicitlyIncluded = false)
+class OnlyExplicitlyIncludedFalse(@ToString.Exclude val excluded: String, val included: String)
+
 // No CALL_SUPER_NOT_CALLED warning: `lombok.toString.callSuper` defaults to `skip`, unlike
 // `lombok.equalsAndHashCode.callSuper`, which defaults to `warn`, KT-88653.
 open class Base(val baseProp: Int)

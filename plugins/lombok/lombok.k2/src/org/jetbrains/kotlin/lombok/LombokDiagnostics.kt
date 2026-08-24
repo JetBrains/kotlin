@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNC
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
@@ -78,6 +79,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE by error1<KtAnnotationEntry, Name>()
     val EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY by warning1<KtAnnotationEntry, Name>()
+    val EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED by warning1<KtAnnotationEntry, Name>()
     val DO_NOT_USE_GETTERS_IRRELEVANT by warning0<KtExpression>()
     val CALL_SUPER_NOT_CALLED by warning2<KtAnnotationEntry, String, Name>()
     val CALL_SUPER_TO_ANY_IS_POINTLESS by error1<KtExpression, String>()
@@ -160,6 +162,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY,
             "''@{0}.Exclude'' is not needed: a property whose name starts with ''$'' is not included anyway.",
+            CommonRenderers.NAME,
+        )
+        map.put(
+            EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED,
+            "''@{0}.Exclude'' is not needed: ''onlyExplicitlyIncluded'' is set, so this property is not included anyway.",
             CommonRenderers.NAME,
         )
         map.put(

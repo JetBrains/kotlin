@@ -249,9 +249,17 @@ fun checkLombokAnnotations(annotations: List<FirAnnotation>, defaultTargets: Lis
  * Validates the `@Include`/`@Exclude` pair of [annotationClassId] - `@ToString` or `@EqualsAndHashCode` - on every
  * property of [declaredMemberScope]. Both ids are derived from the outer one exactly as [LombokNames] derives
  * them, so the pair can never be mismatched at a call site.
+ *
+ * [onlyExplicitlyIncluded] is the feature's resolved `onlyExplicitlyIncluded` - the annotation argument, or the
+ * `lombok.<feature>.onlyExplicitlyIncluded` setting where the argument is absent - as the generator resolves it,
+ * since that is what decides whether an `@Exclude` had anything left to exclude.
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun checkIncludeAndExcludeAnnotations(declaredMemberScope: FirContainingNamesAwareScope, annotationClassId: ClassId) {
+fun checkIncludeAndExcludeAnnotations(
+    declaredMemberScope: FirContainingNamesAwareScope,
+    annotationClassId: ClassId,
+    onlyExplicitlyIncluded: Boolean,
+) {
     val includeClassId = annotationClassId.createNestedClassId(LombokNames.INCLUDE_NAME)
     val excludeClassId = annotationClassId.createNestedClassId(LombokNames.EXCLUDE_NAME)
     val annotationName = annotationClassId.shortClassName
@@ -269,11 +277,22 @@ fun checkIncludeAndExcludeAnnotations(declaredMemberScope: FirContainingNamesAwa
             }
         }
 
-        // Mirrors Lombok Java behaviour: "The @Exclude annotation is not needed; fields that start with $ aren't
-        // included anyway". Reported independently of the clash above, exactly as Lombok does.
-        if (excludeAnnotation != null && property.isExcludedByDollarPrefix) {
-            excludeAnnotation.source?.let {
-                reporter.reportOn(it, LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY, annotationName)
+        // Both of Lombok's "The @Exclude annotation is not needed" warnings, reported independently of the clash
+        // above, exactly as Lombok does - but only one of them per property: `InclusionExclusionUtils` chains
+        // them with `else if` and puts `onlyExplicitlyIncluded` first, nothing being left for `$` to explain
+        // once the whole class is opt-in (KT-88655).
+        //
+        // Lombok has a third one for a static field, which has no counterpart here: only a Kotlin declaration
+        // reaches this checker, and none of those is static in the sense `@Exclude` would be redundant for.
+        if (excludeAnnotation != null) {
+            val redundancy = when {
+                onlyExplicitlyIncluded -> LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED
+                property.isExcludedByDollarPrefix -> LombokFirDiagnostics.EXCLUDE_IS_REDUNDANT_FOR_DOLLAR_PREFIXED_PROPERTY
+                else -> null
+            }
+
+            if (redundancy != null) {
+                excludeAnnotation.source?.let { reporter.reportOn(it, redundancy, annotationName) }
             }
         }
     }
