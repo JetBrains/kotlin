@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionS
 import org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion as isImplicitReferenceToCompanionEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.collectCallCandidates as collectCallCandidatesEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol as resolveSymbolEndpoint
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols as resolveSymbolsEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall as tryResolveCallEndpoint
 import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols as tryResolveSymbolsEndpoint
 
@@ -36,7 +35,7 @@ internal class KaResolverBridge(
 
     override fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? = context(analysisSession) { tryResolveSymbolsEndpoint() }
 
-    override fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = context(analysisSession) { resolveSymbolsEndpoint() }
+    override fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = context(analysisSession) { resolveSuccessfulSymbols() }
 
     override fun KtResolvable.resolveSymbol(): KaSymbol? = context(analysisSession) { resolveSymbolEndpoint() }
 
