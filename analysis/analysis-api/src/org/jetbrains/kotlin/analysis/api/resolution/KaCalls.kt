@@ -194,6 +194,27 @@ public val KaSimpleOrMultiCall.symbols: List<KaSymbol>
     }
 
 /**
+ * [this] call as a [KaSimpleCall], or `null` if it is a [KaMultiCall].
+ *
+ * ### Example
+ * ```kotlin
+ * var int: Int = 1
+ *
+ * fun usage() {
+ *    int = 2
+ *    int++
+ * }
+ * ```
+ *
+ * For `int = 2`, [simple] is the write access to `int`. For `int++`, which is a [KaMultiCall], [simple] is `null`.
+ *
+ * @see KaSimpleCall
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.simple: KaSimpleCall<*, *>?
+    get() = this as? KaSimpleCall<*, *>
+
+/**
  * The resolved [KaCallableSymbol] of the [KaSimpleCall].
  *
  * This is a short-cut for [KaCallableSignature.symbol].
