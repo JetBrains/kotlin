@@ -5,6 +5,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("require-explicit-types")
+    id("power-assert-convention")
 }
 
 dependencies {
