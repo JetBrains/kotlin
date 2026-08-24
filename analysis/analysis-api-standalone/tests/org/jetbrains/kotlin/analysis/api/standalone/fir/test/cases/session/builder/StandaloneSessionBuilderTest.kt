@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
-import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
@@ -70,6 +68,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     override val suiteName: String
         get() = "sessionBuilder"
 
+    @OptIn(KtExperimentalApi::class)
     @Test
     fun testJdkSessionBuilder() {
         lateinit var sourceModule: KaSourceModule
@@ -97,9 +96,9 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         analyze(ktFile) {
             val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-            val ktCallInfo = ktCallExpression.resolveToCall()
-            Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
-            val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
+            val attempt = ktCallExpression.tryResolveCall()
+            Assertions.assertInstanceOf(KaCallResolutionSuccess::class.java, attempt)
+            val symbol = attempt?.successful?.function?.symbol
             Assertions.assertInstanceOf(KaConstructorSymbol::class.java, symbol); symbol as KaConstructorSymbol
             Assertions.assertEquals(ClassId.topLevel(FqName("java.lang.Thread")), symbol.containingClassId)
         }

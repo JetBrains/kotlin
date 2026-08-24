@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue
-import org.jetbrains.kotlin.analysis.api.resolution.singleConstructorCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.constructor
+import org.jetbrains.kotlin.analysis.api.resolution.single
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -67,6 +68,7 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
 
     override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
 
+    @OptIn(KtExperimentalApi::class)
     private fun getAttributeValue(name: String?, useDefault: Boolean): PsiAnnotationMemberValue? {
         val attributeName = name ?: "value"
         parameterList.attributes
@@ -76,8 +78,9 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
         if (useDefault) {
             val callElement = kotlinOrigin ?: return null
             return analyzeForLightClasses(callElement) {
-                val valueParameter = callElement.resolveToCall()
-                    ?.singleConstructorCallOrNull()
+                val valueParameter = callElement.tryResolveCall()
+                    ?.single
+                    ?.constructor
                     ?.symbol
                     ?.valueParameters
                     ?.find { it.name.identifierOrNullIfSpecial == attributeName }
