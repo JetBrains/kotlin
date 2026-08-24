@@ -227,6 +227,12 @@ fun main(args: Array<String>) {
             ) {
                 model("InterfaceV1HeaderTests")
             }
+            // Same goldens, but produced by the IR-based discovery (must be byte-identical to the K1 mode).
+            testClass<AbstractNativeCExportInterfaceV1HeaderIrTest>(
+                "CExportInterfaceV1HeaderIrTestGenerated",
+            ) {
+                model("InterfaceV1HeaderTests")
+            }
         }
         // GC tests
         testGroup(testsRoot, "native/native.tests/testData/gc") {
