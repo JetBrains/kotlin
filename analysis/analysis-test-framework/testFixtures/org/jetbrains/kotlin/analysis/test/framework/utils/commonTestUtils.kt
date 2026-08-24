@@ -92,7 +92,7 @@ fun KtElement.renderLocationDescription(): String {
 }
 
 /**
- * Preferes to call [resolveCall], but falls back to [resolveSymbol] if [resolveCall] fails.
+ * Preferes to call [tryResolveCall], but falls back to [tryResolveSymbols] if [tryResolveCall] fails.
  *
  * Handles error calls as well.
  *

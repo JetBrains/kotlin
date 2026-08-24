@@ -30,10 +30,11 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  *
  * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
  *
- * **Note:** Unlike other `KtResolvableCall` entry points that provide both `resolveCall`
- * and `resolveSymbol` specializations, `KtNameReferenceExpression.resolveCall` may return a different `KaSymbol`.
+ * **Note:** Unlike other `KtResolvableCall` entry points that provide both `resolveSuccessfulCall`
+ * and `resolveSuccessfulSymbol` specializations, `KtNameReferenceExpression.resolveSuccessfulCall` may return a
+ * different `KaSymbol`.
  *
- * For instance, this happens for constructor references. While `resolveCall` returns a
+ * For instance, this happens for constructor references. While `resolveSuccessfulCall` returns a
  * `KaConstructorSymbol`, this method returns the corresponding `KaClassLikeSymbol`.
  *
  * #### Example #1
@@ -45,7 +46,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * //      ^^^
  * ```
  *
- * Calling `resolveSymbol()` on the `KtNameReferenceExpression` (`foo`) returns the `KaDeclarationSymbol` of `foo`
+ * Calling `resolveSuccessfulSymbol()` on the `KtNameReferenceExpression` (`foo`) returns the `KaDeclarationSymbol` of `foo`
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * [KtNameReferenceExpression] might be resolved not only to callables but also to types.

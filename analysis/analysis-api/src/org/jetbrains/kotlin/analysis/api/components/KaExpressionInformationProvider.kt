@@ -244,7 +244,10 @@ public sealed class KaWhenMissingCase {
 /**
  * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
  */
-@Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
+@Deprecated(
+    "The API is obsolete. Use `resolveSuccessfulSymbol()` instead.",
+    ReplaceWith("resolveSuccessfulSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"),
+)
 @KaIdeApi
 @KaContextParameterApi
 context(session: KaSession)
