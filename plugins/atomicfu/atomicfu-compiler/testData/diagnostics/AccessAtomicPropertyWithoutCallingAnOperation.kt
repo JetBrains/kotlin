@@ -53,7 +53,7 @@ class C {
         // did not forget
         println((ar as AtomicRef<Any?>).value)
         // even though it's illegal
-        println((ar as? AtomicRef<Any?>)?.value)
+        println((<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>ar as? AtomicRef<Any?><!>)?.value)
     }
 
     fun prohibitedAccesses() {

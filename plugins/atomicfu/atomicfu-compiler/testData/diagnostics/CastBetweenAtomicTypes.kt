@@ -17,183 +17,185 @@ class C {
 
     fun castAtomicInt() {
         val expressions = listOf(
-            { (mai as AtomicInt).value },
-            { (mai as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicInt<!>)?.value },
 
-            { (mai as AtomicLong).value },
-            { (mai as? AtomicLong)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicLong<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicLong<!>)?.value },
 
-            { (mai as AtomicBoolean).value },
-            { (mai as? AtomicBoolean)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicBoolean<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicBoolean<!>)?.value },
 
-            { (mai as AtomicRef<Any?>).value },
-            { (mai as? AtomicRef<Any?>)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicRef<Any?><!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicRef<Any?><!>)?.value },
 
-            { (mai as Int) },
-            { (mai as? Int)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as Int<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? Int<!>)!! },
 
-            { (mai as AtomicIntArray)[0].value },
-            { (mai as? AtomicIntArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicIntArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicIntArray<!>)!![0].value },
 
-            { (mai as AtomicLongArray)[0].value },
-            { (mai as? AtomicLongArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicLongArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicLongArray<!>)!![0].value },
 
-            { (mai as AtomicBooleanArray)[0].value },
-            { (mai as? AtomicBooleanArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicBooleanArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicBooleanArray<!>)!![0].value },
 
-            { (mai as AtomicArray<Any?>)[0].value },
-            { (mai as? AtomicArray<Any?>)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as AtomicArray<Any?><!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai as? AtomicArray<Any?><!>)!![0].value },
         )
     }
 
     fun castAtomicRef() {
         val expressions = listOf(
-            { (mar as AtomicInt).value },
-            { (mar as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicInt<!>)?.value },
 
-            { (mar as AtomicLong).value },
-            { (mar as? AtomicLong)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicLong<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicLong<!>)?.value },
 
-            { (mar as AtomicBoolean).value },
-            { (mar as? AtomicBoolean)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicBoolean<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicBoolean<!>)?.value },
 
             { (mar as AtomicRef<Any?>).value },
-            { (mar as? AtomicRef<Any?>)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicRef<Any?><!>)?.value },
 
-            { (mar as Any) },
-            { (mar as? Any)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as Any<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? Any<!>)!! },
 
-            { (mar as AtomicIntArray)[0].value },
-            { (mar as? AtomicIntArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicIntArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicIntArray<!>)!![0].value },
 
-            { (mar as AtomicLongArray)[0].value },
-            { (mar as? AtomicLongArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicLongArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicLongArray<!>)!![0].value },
 
-            { (mar as AtomicBooleanArray)[0].value },
-            { (mar as? AtomicBooleanArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicBooleanArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicBooleanArray<!>)!![0].value },
 
-            { (mar as AtomicArray<Any?>)[0].value },
-            { (mar as? AtomicArray<Any?>)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as AtomicArray<Any?><!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar as? AtomicArray<Any?><!>)!![0].value },
         )
     }
 
     fun castAtomicIntArray() {
         val expressions = listOf(
-            { (maia as AtomicInt).value },
-            { (maia as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicInt<!>)?.value },
 
-            { (maia as AtomicLong).value },
-            { (maia as? AtomicLong)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicLong<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicLong<!>)?.value },
 
-            { (maia as AtomicBoolean).value },
-            { (maia as? AtomicBoolean)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicBoolean<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicBoolean<!>)?.value },
 
-            { (maia as AtomicRef<Any?>).value },
-            { (maia as? AtomicRef<Any?>)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicRef<Any?><!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicRef<Any?><!>)?.value },
 
-            { (maia as Any) },
-            { (maia as? Any)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as Any<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? Any<!>)!! },
 
-            { (maia as AtomicIntArray)[0].value },
-            { (maia as? AtomicIntArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicIntArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicIntArray<!>)!![0].value },
 
-            { (maia as AtomicLongArray)[0].value },
-            { (maia as? AtomicLongArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicLongArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicLongArray<!>)!![0].value },
 
-            { (maia as AtomicBooleanArray)[0].value },
-            { (maia as? AtomicBooleanArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicBooleanArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicBooleanArray<!>)!![0].value },
 
-            { (maia as AtomicArray<Any?>)[0].value },
-            { (maia as? AtomicArray<Any?>)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as AtomicArray<Any?><!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia as? AtomicArray<Any?><!>)!![0].value },
 
-            { (maia[0] as Int) },
-            { (maia[0] as? Int) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] as Int<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] as? Int<!>) },
 
-            { (maia[0] as AtomicInt).value },
-            { (maia[0] as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] as? AtomicInt<!>)?.value },
         )
     }
 
     fun castAtomicArray() {
         val expressions = listOf(
-            { (mara as AtomicInt).value },
-            { (mara as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicInt<!>)?.value },
 
-            { (mara as AtomicLong).value },
-            { (mara as? AtomicLong)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicLong<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicLong<!>)?.value },
 
-            { (mara as AtomicBoolean).value },
-            { (mara as? AtomicBoolean)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicBoolean<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicBoolean<!>)?.value },
 
-            { (mara as AtomicRef<Any?>).value },
-            { (mara as? AtomicRef<Any?>)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicRef<Any?><!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicRef<Any?><!>)?.value },
 
-            { (mara as Any) },
-            { (mara as? Any)!! },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as Any<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? Any<!>)!! },
 
-            { (mara as AtomicIntArray)[0].value },
-            { (mara as? AtomicIntArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicIntArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicIntArray<!>)!![0].value },
 
-            { (mara as AtomicLongArray)[0].value },
-            { (mara as? AtomicLongArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicLongArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicLongArray<!>)!![0].value },
 
-            { (mara as AtomicBooleanArray)[0].value },
-            { (mara as? AtomicBooleanArray)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as AtomicBooleanArray<!>)[0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicBooleanArray<!>)!![0].value },
 
             { (mara as AtomicArray<String?>)[0].value },
-            { (mara as? AtomicArray<String?>)!![0].value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara as? AtomicArray<String?><!>)!![0].value },
 
-            { (mara[0] as Int) },
-            { (mara[0] as? Int) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara[0] as Int<!>) },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara[0] as? Int<!>) },
 
-            { (mara[0] as AtomicInt).value },
-            { (mara[0] as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara[0] as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara[0] as? AtomicInt<!>)?.value },
 
             { (mara[0] as AtomicRef<String?>).value },
-            { (mara[0] as? AtomicRef<String?>)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara[0] as? AtomicRef<String?><!>)?.value },
         )
     }
     
     fun isAtomicInt() {
         val expressions = listOf(
-            { mai is AtomicInt },
-            { mai !is AtomicInt },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai is AtomicInt<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mai !is AtomicInt<!> },
         )
     }
 
     fun isAtomicRef() {
         val expressions = listOf(
-            { mar is Any },
-            { mar !is Any },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mar !is Any<!> },
         )
     }
 
     fun isAtomicIntArray() {
         val expressions = listOf(
-            { maia is Any },
-            { maia !is Any },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia !is Any<!> },
 
-            { maia is AtomicIntArray },
-            { maia !is AtomicIntArray },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia is AtomicIntArray<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia !is AtomicIntArray<!> },
 
-            { maia[0] is AtomicInt },
-            { maia[0] !is AtomicInt },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] is AtomicInt<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>maia[0] !is AtomicInt<!> },
         )
     }
 
     fun isAtomicArray() {
         val expressions = listOf(
-            { mara is Any },
-            { mara !is Any },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara is Any<!> },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara !is Any<!> },
         )
     }
 
     fun anyAsAtomic() {
         val expressions = listOf(
-            { (any as AtomicInt).value },
-            { (any as? AtomicInt)?.value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>any as AtomicInt<!>).value },
+            { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>any as? AtomicInt<!>)?.value },
 
-            { any is AtomicInt },
+            { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>any is AtomicInt<!> },
         )
     }
+
+
 }
