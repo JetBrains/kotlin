@@ -169,38 +169,42 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
 
             // Also skip publishing when a project dependency disables cross-compilation (KT-87394).
             if (this@createTargetSpecificMavenPublications is KotlinNativeTarget) {
-                skipPublicationTasksWhenCrossCompilationWithDependenciesUnsupported(componentPublication)
+                /**
+                 * The publication is created eagerly, but the target's compilation may be skipped by the dependency-aware
+                 * cross-compilation check. Gate its publish tasks on the same check so they don't fail on a missing KLIB.
+                 */
+                publishOnlyIf(
+                    publication = componentPublication,
+                    skipReason = "Cross-compilation of target '$targetName' with project dependencies is not supported on this host"
+                ) {
+                    val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                    val crossCompilationSharedData = mainCompilation.crossCompilationSharedData
+                    crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
+                }
             }
         }
 }
 
-/**
- * The publication is created eagerly, but the target's compilation may be skipped by the dependency-aware
- * cross-compilation check. Gate its publish tasks on the same check so they don't fail on a missing KLIB.
- */
-private fun KotlinNativeTarget.skipPublicationTasksWhenCrossCompilationWithDependenciesUnsupported(
-    publication: MavenPublication
+private fun KotlinTarget.publishOnlyIf(
+    publication: MavenPublication,
+    skipReason: String,
+    condition: () -> Boolean
 ) {
-    val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-    val crossCompilationSharedData = mainCompilation.crossCompilationSharedData
-    fun isCrossCompilationSupported() = crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
-
-    val skipReason = "Cross-compilation of target '$targetName' with project dependencies is supported on this host"
-
     // These tasks expose the publication they operate on, so match by identity.
+    // It's important to match identity inside onlyIf, as otherwise, it can break, if configure actions are run in different order
     project.tasks.withType<GenerateModuleMetadata>().configureEach { task ->
-        if (task.publication.orNull === publication) {
-            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        task.onlyIf(skipReason) {
+            task.publication.orNull !== publication || condition()
         }
     }
     project.tasks.withType<GenerateMavenPom>().configureEach { task ->
-        if (task.pom === publication.pom) {
-            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        task.onlyIf(skipReason) {
+            task.pom !== publication.pom || condition()
         }
     }
     project.tasks.withType<AbstractPublishToMaven>().configureEach { task ->
-        if (task.publication === publication) {
-            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        task.onlyIf(skipReason) {
+            task.publication !== publication || condition()
         }
     }
 
@@ -209,7 +213,7 @@ private fun KotlinNativeTarget.skipPublicationTasksWhenCrossCompilationWithDepen
     val signTaskName = lowerCamelCaseName("sign", publication.name, "publication")
     project.tasks.withType<Sign>().configureEach { task ->
         if (task.name == signTaskName) {
-            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+            task.onlyIf(skipReason) { condition() }
         }
     }
 }
