@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -23,7 +21,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -35,8 +32,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         when (resolvable) {
             is KtOperationReferenceExpression -> resolvable.tryResolveSymbolsForOperationReference()
             is KtResolvableCall -> resolvable.tryResolveSymbolsForResolvableCall()
-            is KtElement -> resolvable.tryResolveSymbolsForElement()
-            else -> null
+            else -> resolvable.tryResolveSymbolsForElement()
         }
     }
 
@@ -97,7 +93,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         }
     }
 
-    private fun <T> T.tryResolveSymbolsForElement(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtElement {
+    private fun KtResolvable.tryResolveSymbolsForElement(): KaSymbolResolutionAttempt? {
         checkValidity()
         return performSymbolResolution(this)
     }
@@ -176,12 +172,8 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     protected abstract fun performCallResolution(psi: KtElement): KaCallResolutionAttempt?
 
     final override fun tryResolveCall(resolvableCall: KtResolvableCall): KaCallResolutionAttempt? = withValidityAssertion {
-        if (resolvableCall is KtElement) {
-            resolvableCall.checkValidity()
-            resolvableCall.tryResolveCallImpl()
-        } else {
-            null
-        }
+        resolvableCall.checkValidity()
+        resolvableCall.tryResolveCallImpl()
     }
 
     final override fun resolveSuccessfulCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall? = tryResolveCall(resolvableCall)?.successful
@@ -194,7 +186,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
             call is KaSimpleCall<*, *>,
             { "Expected call of type ${KaSimpleCall::class.simpleName}, got ${call::class.simpleName}" },
         ) {
-            withResolvableEntry(this@resolveSimpleCallSafe)
+            withPsiEntry("psi", this@resolveSimpleCallSafe)
         }
 
         val callableSymbol = call.symbol
@@ -206,7 +198,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
                 KaDebugRenderer(renderExtra = true).render(analysisSession, callableSymbol)
             }
 
-            withResolvableEntry(this@resolveSimpleCallSafe)
+            withPsiEntry("psi", this@resolveSimpleCallSafe)
         }
 
         checkWithAttachment(
@@ -217,7 +209,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
                 KaDebugRenderer(renderExtra = true).render(analysisSession, callableSymbol)
             }
 
-            withResolvableEntry(this@resolveSimpleCallSafe)
+            withPsiEntry("psi", this@resolveSimpleCallSafe)
         }
 
         return call
@@ -285,12 +277,8 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     protected abstract fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidate>
 
     final override fun collectCallCandidates(resolvableCall: KtResolvableCall): List<KaCallCandidate> = withValidityAssertion {
-        if (resolvableCall is KtElement) {
-            resolvableCall.checkValidity()
-            resolvableCall.collectCallCandidatesImpl()
-        } else {
-            emptyList()
-        }
+        resolvableCall.checkValidity()
+        resolvableCall.collectCallCandidatesImpl()
     }
 
     final override fun resolveToCallCandidates(element: KtElement): List<KaCallCandidateInfo> = element.withPsiValidityAssertion {
@@ -491,13 +479,5 @@ private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
             backingKind = KaBaseVariableReadAccess,
             backingIsContextSensitive = false,
         )
-    }
-}
-
-private fun ExceptionAttachmentBuilder.withResolvableEntry(resolvable: KtResolvable) {
-    if (resolvable is PsiElement) {
-        withPsiEntry("psi", resolvable)
-    } else {
-        withEntry("ktResolvableCallClass", resolvable::class.simpleName)
     }
 }
