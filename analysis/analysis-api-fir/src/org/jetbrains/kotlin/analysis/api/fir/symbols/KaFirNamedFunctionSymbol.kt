@@ -154,7 +154,6 @@ internal class KaFirNamedFunctionSymbol private constructor(
             psiHasModifierConsideringInheritance(KtTokens.INFIX_KEYWORD) ?: firSymbol.isInfix
         }
 
-    @OptIn(KtExperimentalApi::class)
     override val isStatic: Boolean
         get() = withValidityAssertion {
             // Kotlin doesn't have static functions

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 @KaImplementationDetail
-@OptIn(KtExperimentalApi::class)
 abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsResolver {
     protected abstract fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt?
 
@@ -495,7 +494,6 @@ private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
     }
 }
 
-@OptIn(KtExperimentalApi::class)
 private fun ExceptionAttachmentBuilder.withResolvableEntry(resolvable: KtResolvable) {
     if (resolvable is PsiElement) {
         withPsiEntry("psi", resolvable)

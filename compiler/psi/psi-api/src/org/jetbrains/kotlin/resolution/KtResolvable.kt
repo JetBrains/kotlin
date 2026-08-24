@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.resolution
 
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-
 /**
  * A marker interface for all elements that can be resolved into a symbol in the Analysis API.
  *
  * See [References and calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for more details
  */
-@KtExperimentalApi
 interface KtResolvable
 
 /**
@@ -20,5 +17,4 @@ interface KtResolvable
  *
  * See [References and calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for more details
  */
-@KtExperimentalApi
 interface KtResolvableCall : KtResolvable

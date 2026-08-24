@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * @see KtDotQualifiedExpression
  * @see KtSafeQualifiedExpression
  */
-@OptIn(KtExperimentalApi::class)
 interface KtQualifiedExpression : KtExpression, KtResolvableCall {
     /**
      * The receiver on the left-hand side of the `.` or `?.` operator. Throws if the receiver is missing; use [receiverExpressionOrNull]

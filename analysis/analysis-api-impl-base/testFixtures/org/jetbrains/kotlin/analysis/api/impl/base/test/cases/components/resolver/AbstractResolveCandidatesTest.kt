@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compare
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "candidates"
 
-    @OptIn(KtExperimentalApi::class)
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
         val candidates = collectCallCandidates(mainElement)
         val candidatesAgain = collectCallCandidates(mainElement)
@@ -104,7 +102,6 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     /**
      * Returns either [List]<[KaCallCandidate]> (new API) or [List]<[KaCallCandidateInfo]> (old API).
      */
-    @OptIn(KtExperimentalApi::class)
     context(_: KaSession)
     private fun collectCallCandidates(element: KtElement): List<*> = if (element is KtResolvableCall) {
         element.collectCallCandidates()

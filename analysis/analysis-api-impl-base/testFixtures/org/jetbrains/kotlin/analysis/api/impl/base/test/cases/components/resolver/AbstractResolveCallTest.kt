@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpe
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-@OptIn(KtExperimentalApi::class)
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 

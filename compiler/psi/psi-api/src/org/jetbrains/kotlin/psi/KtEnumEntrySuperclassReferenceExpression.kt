@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * }
  * ```
  */
-@OptIn(KtExperimentalApi::class)
 class KtEnumEntrySuperclassReferenceExpression : KtExpressionImplStub<KotlinEnumEntrySuperclassReferenceExpressionStub>,
     KtSimpleNameExpression,
     KtResolvableCall {

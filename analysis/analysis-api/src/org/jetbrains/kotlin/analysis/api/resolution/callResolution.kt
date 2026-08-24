@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolution.*
  * @see resolveSuccessfulCall
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
     @OptIn(KaImplementationDetail::class)
@@ -89,7 +88,6 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * @see collectCallCandidates
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvableCall.resolveSuccessfulCall(): KaSimpleOrMultiCall? {
     @OptIn(KaImplementationDetail::class)
@@ -109,7 +107,6 @@ public fun KtResolvableCall.resolveSuccessfulCall(): KaSimpleOrMultiCall? {
     ),
 )
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = resolveSuccessfulCall()
 
@@ -859,7 +856,6 @@ public fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? = resolv
  * @see resolveSuccessfulCall
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
     @OptIn(KaImplementationDetail::class)

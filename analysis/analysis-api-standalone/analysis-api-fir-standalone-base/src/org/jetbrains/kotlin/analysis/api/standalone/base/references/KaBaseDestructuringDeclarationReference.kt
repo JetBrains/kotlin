@@ -31,7 +31,7 @@ internal class KaBaseDestructuringDeclarationReference(
                 (element.parent as? KtDestructuringDeclaration)?.hasSquareBrackets() != true
     }
 
-    @OptIn(KtExperimentalApi::class, KaExperimentalApi::class)
+    @OptIn(KaExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val element = element
         // TODO(KT-82708): Only the initializer symbol is expected

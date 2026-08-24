@@ -43,7 +43,6 @@ public interface KaResolver : KaSessionComponent {
      * @see KaSymbolResolutionError
      */
     @KaExperimentalApi
-    @OptIn(KtExperimentalApi::class)
     public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt?
 
     /**
@@ -69,7 +68,6 @@ public interface KaResolver : KaSessionComponent {
      * @see KaSymbolResolutionSuccess
      */
     @KaExperimentalApi
-    @OptIn(KtExperimentalApi::class)
     public fun KtResolvable.resolveSymbols(): Collection<KaSymbol>
 
     /**
@@ -94,7 +92,6 @@ public interface KaResolver : KaSessionComponent {
      * @see KaSymbolResolutionSuccess
      */
     @KaExperimentalApi
-    @OptIn(KtExperimentalApi::class)
     public fun KtResolvable.resolveSymbol(): KaSymbol?
 
     /**
@@ -708,7 +705,6 @@ public interface KaResolver : KaSessionComponent {
      * @see resolveCall
      */
     @KaExperimentalApi
-    @OptIn(KtExperimentalApi::class)
     public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?
 
     /**
@@ -751,7 +747,6 @@ public interface KaResolver : KaSessionComponent {
      * @see collectCallCandidates
      */
     @KaExperimentalApi
-    @OptIn(KtExperimentalApi::class)
     public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall?
 
     /**
@@ -1180,7 +1175,6 @@ public interface KaResolver : KaSessionComponent {
      * @see resolveCall
      */
     @KaExperimentalApi
-    @OptIn(KtExperimentalApi::class)
     public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>
 
     /**
@@ -1376,7 +1370,6 @@ public interface KaResolver : KaSessionComponent {
  * @see KaSymbolResolutionError
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 @Deprecated(
     message = "Use the 'tryResolveSymbols' resolution endpoint instead",
     replaceWith = ReplaceWith("this.tryResolveSymbols()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols"),
@@ -1413,7 +1406,6 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  * @see KaSymbolResolutionSuccess
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 @Deprecated(
     message = "Use the 'resolveSuccessfulSymbols' resolution endpoint instead",
     replaceWith = ReplaceWith(
@@ -1452,7 +1444,6 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  * @see KaSymbolResolutionSuccess
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 @Deprecated(
     message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith(
@@ -2388,7 +2379,6 @@ public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
  * @see resolveCall
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 @Deprecated(
     message = "Use the 'tryResolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
@@ -2464,7 +2454,6 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * @see collectCallCandidates
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 @Deprecated(
     message = "Use the 'resolveSuccessfulCall' resolution endpoint instead",
     replaceWith = ReplaceWith(
@@ -3131,7 +3120,6 @@ public fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? {
  * @see resolveCall
  */
 @KaExperimentalApi
-@OptIn(KtExperimentalApi::class)
 @Deprecated(
     message = "Use the 'collectCallCandidates' resolution endpoint instead",
     replaceWith = ReplaceWith("this.collectCallCandidates()", "org.jetbrains.kotlin.analysis.api.resolution.collectCallCandidates"),
