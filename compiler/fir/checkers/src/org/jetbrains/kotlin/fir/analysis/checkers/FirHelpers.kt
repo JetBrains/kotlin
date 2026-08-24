@@ -515,6 +515,10 @@ fun checkTypeMismatch(
                     rValueType = rValueType.fullyExpandedType(),
                 )
             ) return
+            if (
+                lValueType.toSymbol()?.supportsNumericClassConversionFrom(rValueType, context.session) == true ||
+                rValueType.toSymbol()?.supportsNumericClassConversionTo(lValueType, context.session) == true
+            ) return
 
             val factory = when {
                 !isInitializer -> FirErrors.ASSIGNMENT_TYPE_MISMATCH

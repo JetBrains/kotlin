@@ -814,6 +814,8 @@ class CallAndReferenceGenerator(
                 ?: variableAssignment.lValue.resolvedType
 
         val irRhsWithCast = visitor.convertToIrExpression(variableAssignment.rValue, expectedType = expectedType)
+            .applyBuiltinToNumericClassCoercionIfNeeded(variableAssignment.rValue, expectedType)
+            .applyNumericClassToBuiltinCoercionIfNeeded(variableAssignment.rValue, expectedType)
 
         // For compatibility with K1, special constructs on the RHS like if, when, etc. should have the type of the LHS, see KT-68401.
         if (variableAssignment.rValue.toResolvedCallableSymbol(session)?.origin == FirDeclarationOrigin.Synthetic.FakeFunction) {
@@ -1251,18 +1253,22 @@ class CallAndReferenceGenerator(
     private fun IrExpression.applyBuiltinToNumericClassCoercionIfNeeded(
         argument: FirExpression,
         parameter: FirValueParameter?,
+    ): IrExpression = parameter?.let { applyBuiltinToNumericClassCoercionIfNeeded(argument, parameter.returnTypeRef.coneType) }
+        ?: this
+
+    fun IrExpression.applyBuiltinToNumericClassCoercionIfNeeded(
+        expression: FirExpression,
+        expectedType: ConeKotlinType,
     ): IrExpression {
-        if (parameter == null) return this
+        val expectedTypeSymbol = expectedType.toSymbol(session) ?: return this
+        if (!expectedTypeSymbol.supportsNumericClassConversionFrom(expression.resolvedType, session)) return this
 
-        val expectedTypeSymbol = parameter.returnTypeRef.coneType.toSymbol(session) ?: return this
-        if (!expectedTypeSymbol.supportsNumericClassConversionFrom(argument.resolvedType, session)) return this
-
-        val [firSymbol, irSymbol] = builtins.getCinteropConvertFunctionOver(argument.resolvedType) ?: return this
+        val [firSymbol, irSymbol] = builtins.getCinteropConvertFunctionOver(expression.resolvedType) ?: return this
 
         return IrCallImpl(startOffset, endOffset, firSymbol.resolvedReturnType.toIrType(), irSymbol)
             .apply { arguments[0] = this@applyBuiltinToNumericClassCoercionIfNeeded }
             .applyTypeArguments(
-                typeArguments = listOf(parameter.returnTypeRef.coneType),
+                typeArguments = listOf(expectedType),
                 typeParameters = firSymbol.typeParameterSymbols.map { it.fir },
             )
     }
@@ -1270,11 +1276,16 @@ class CallAndReferenceGenerator(
     private fun IrExpression.applyNumericClassToBuiltinCoercionIfNeeded(
         argument: FirExpression,
         parameter: FirValueParameter?,
-    ): IrExpression {
-        val parameterType = parameter?.returnTypeRef?.coneType ?: return this
-        if (argument.resolvedType.toSymbol(session)?.supportsNumericClassConversionTo(parameterType, session) != true) return this
+    ): IrExpression = parameter?.let { applyNumericClassToBuiltinCoercionIfNeeded(argument, parameter.returnTypeRef.coneType) }
+        ?: this
 
-        val [firSymbol, irFunction] = builtins.getMemberConvertionFunction(argument.resolvedType, parameterType) ?: return this
+    fun IrExpression.applyNumericClassToBuiltinCoercionIfNeeded(
+        expression: FirExpression,
+        expectedType: ConeKotlinType,
+    ): IrExpression {
+        if (expression.resolvedType.toSymbol(session)?.supportsNumericClassConversionTo(expectedType, session) != true) return this
+
+        val [firSymbol, irFunction] = builtins.getMemberConvertionFunction(expression.resolvedType, expectedType) ?: return this
 
         return IrCallImpl(startOffset, endOffset, firSymbol.fir.returnTypeRef.toIrType(), irFunction)
             .apply { arguments[0] = this@applyNumericClassToBuiltinCoercionIfNeeded }

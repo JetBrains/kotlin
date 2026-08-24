@@ -75,8 +75,25 @@ fun common(): String {
 
     acceptNSIntegerOrInt(10)
 
+    var a: NSInteger = 10
+    acceptNSInteger(a)
+    acceptLong(a)
+    a = 20
+    acceptNSInteger(a)
+    acceptLong(a)
+
+    var b: Long = getNSInteger()
+    acceptLong(b)
+    b = getNSInteger()
+    acceptLong(b)
+
+    var c: ULong = getSize()
+    acceptULong(c)
+    c = getSize()
+    acceptULong(c)
+
     return when {
-        sum == 1_000_000_000_275L -> "OK"
+        sum == 1_000_000_000_395L -> "OK"
         else -> "FAIL: sum = $sum"
     }
 }
