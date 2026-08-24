@@ -741,7 +741,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun jsInteropNotNullTypeSignature(type: IrType): String {
         if (isExternalType(type)) {
-            return type.classFqName?.asString() ?: "Js"
+            val klass = type.classOrNull?.owner
+            // External interfaces have no runtime type checks.
+            if (klass != null && klass.isInterface) {
+                return "Js"
+            }
+            // External classes retain distinct names to prevent type check collisions.
+            return klass?.fqNameWhenAvailable?.asString() ?: "Js"
         }
         require(type is IrSimpleType)
         if (type.isFunction()) {
