@@ -1456,8 +1456,11 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1490,8 +1493,11 @@ public fun KtResolvable.resolveSymbol(): KaSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1524,8 +1530,11 @@ public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1564,8 +1573,11 @@ public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1604,8 +1616,11 @@ public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1640,8 +1655,11 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1674,8 +1692,11 @@ public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1724,8 +1745,11 @@ public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1760,8 +1784,11 @@ public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1797,8 +1824,11 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1837,8 +1867,11 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClas
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1879,8 +1912,11 @@ public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1919,8 +1955,11 @@ public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1957,8 +1996,11 @@ public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -1989,8 +2031,11 @@ public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2023,8 +2068,11 @@ public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2072,8 +2120,11 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2108,8 +2159,11 @@ public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2143,8 +2197,11 @@ public fun KtNullableType.resolveSymbol(): KaClassifierSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2186,8 +2243,11 @@ public fun KtFunctionType.resolveSymbol(): KaClassSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2222,8 +2282,11 @@ public fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2257,8 +2320,11 @@ public fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
@@ -2290,8 +2356,11 @@ public fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
  */
 @KaExperimentalApi
 @Deprecated(
-    message = "Use the 'resolveSymbol' resolution endpoint instead",
-    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    message = "Use the 'resolveSuccessfulSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.resolveSuccessfulSymbol()",
+        "org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol",
+    ),
     level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
