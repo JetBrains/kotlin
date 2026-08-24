@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import org.jetbrains.kotlin.java.direct.model.JavaAnnotationOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.readJavaSourceFileText
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  * are merged.
  */
 internal class JavaPackageInfoIndexer(
-    private val resolutionContextFactory: (JavaLightTree) -> JavaResolutionContext,
+    private val resolutionContextFactory: (LightSyntaxTree) -> JavaResolutionContext,
 ) {
     private val packageAnnotationNodes: ConcurrentHashMap<FqName, List<JavaAnnotation>> = ConcurrentHashMap()
 

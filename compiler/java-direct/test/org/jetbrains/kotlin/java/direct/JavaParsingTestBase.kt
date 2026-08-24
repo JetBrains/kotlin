@@ -10,11 +10,11 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
@@ -27,9 +27,9 @@ import java.io.File
  * component or the [tree] property for tests that need direct AST navigation.
  */
 data class ParsedSource(
-    val root: JavaLightNode,
+    val root: LightNode,
     val context: JavaResolutionContext,
-    val tree: JavaLightTree,
+    val tree: LightSyntaxTree,
 )
 
 open class JavaParsingTestBase {
