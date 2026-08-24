@@ -104,7 +104,7 @@ MODULE_FRAGMENT
                 ARG <this>: GET_VAR 'val $dirty: kotlin.Int [val] declared in com.example.home.ttt' type=kotlin.Int origin=null
                 ARG other: CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                   ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                    ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                    ARG <this>: TYPE_OP type=kotlin.Int origin=REINTERPRET_CAST typeOperand=kotlin.Int
                       WHEN type=kotlin.Boolean origin=IF
                         BRANCH
                           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
