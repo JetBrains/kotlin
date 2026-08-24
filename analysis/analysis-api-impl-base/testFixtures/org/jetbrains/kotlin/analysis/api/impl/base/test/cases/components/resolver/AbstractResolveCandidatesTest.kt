@@ -50,7 +50,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         candidates: List<KaCallCandidate>,
         testServices: TestServices,
     ) {
-        val resolvedCall = callAttempt?.successfulCall
+        val resolvedCall = callAttempt?.successful
         if (candidates.isEmpty()) {
             testServices.assertions.assertEquals(null, resolvedCall) {
                 "Inconsistency between candidates and resolved call. " +
