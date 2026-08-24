@@ -181,28 +181,28 @@ public fun <KtPsiType>.resolveCall(): <CALL_TYPE>? {
 
 **File:** `analysis/analysis-api-impl-base/src/org/jetbrains/kotlin/analysis/api/impl/base/components/KaBaseResolver.kt`
 
-#### 3a: Add `resolveSymbol()` override (always)
+#### 3a: Add `resolveSuccessfulSymbol()` override (always)
 
-Insert **after** the last existing `resolveSymbolSafe()` line (currently `KtDestructuringDeclarationEntry.resolveSymbol()`)
-and **before** `KtReference.resolveToSymbol()`.
+Insert **after** the last existing `resolveSymbolSafe()` line (currently `resolveSuccessfulSymbol(destructuringDeclarationEntry)`)
+and **before** `resolveToSymbols()`.
 
 ```kotlin
-    final override fun <KtPsiType>.resolveSymbol(): <SYMBOL_TYPE>? = resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(<paramName>: <KtPsiType>): <SYMBOL_TYPE>? = <paramName>.resolveSymbolSafe()
 ```
 
-#### 3b: Add `resolveCall()` override (only if `KtResolvableCall`)
+#### 3b: Add `resolveSuccessfulCall()` override (only if `KtResolvableCall`)
 
 Insert **after** the last existing `resolveCallSafe()`/`resolveSimpleCallSafe()` line
-(currently `KtDestructuringDeclarationEntry.resolveCall()`) and **before** `KtElement.resolveToCall()`.
+(currently `resolveSuccessfulCall(nameReferenceExpression)`) and **before** `resolveToCall()`.
 
 Choose the helper based on the call return type:
 - If CALL_TYPE contains wildcards (`*`) → use `resolveCallSafe()`:
   ```kotlin
-      final override fun <KtPsiType>.resolveCall(): <CALL_TYPE>? = resolveCallSafe()
+      final override fun resolveSuccessfulCall(<paramName>: <KtPsiType>): <CALL_TYPE>? = <paramName>.resolveCallSafe()
   ```
 - If CALL_TYPE is fully specified (no wildcards) → use `resolveSimpleCallSafe()`:
   ```kotlin
-      final override fun <KtPsiType>.resolveCall(): <CALL_TYPE>? = resolveSimpleCallSafe()
+      final override fun resolveSuccessfulCall(<paramName>: <KtPsiType>): <CALL_TYPE>? = <paramName>.resolveSimpleCallSafe()
   ```
 
 #### 3c: Add to `canBeResolvedAsCall` (only if `KtResolvableCall`)

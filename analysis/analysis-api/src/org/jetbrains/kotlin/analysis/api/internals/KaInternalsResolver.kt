@@ -21,53 +21,53 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
 public interface KaInternalsResolver {
     public fun tryResolveSymbols(resolvable: KtResolvable): KaSymbolResolutionAttempt?
 
-    public fun resolveSymbols(resolvable: KtResolvable): Collection<KaSymbol>
+    public fun resolveSuccessfulSymbols(resolvable: KtResolvable): Collection<KaSymbol>
 
-    public fun resolveSymbol(resolvable: KtResolvable): KaSymbol?
+    public fun resolveSuccessfulSymbol(resolvable: KtResolvable): KaSymbol?
 
-    public fun resolveSymbol(annotationEntry: KtAnnotationEntry): KaConstructorSymbol?
+    public fun resolveSuccessfulSymbol(annotationEntry: KtAnnotationEntry): KaConstructorSymbol?
 
-    public fun resolveSymbol(superTypeCallEntry: KtSuperTypeCallEntry): KaConstructorSymbol?
+    public fun resolveSuccessfulSymbol(superTypeCallEntry: KtSuperTypeCallEntry): KaConstructorSymbol?
 
-    public fun resolveSymbol(constructorDelegationCall: KtConstructorDelegationCall): KaConstructorSymbol?
+    public fun resolveSuccessfulSymbol(constructorDelegationCall: KtConstructorDelegationCall): KaConstructorSymbol?
 
-    public fun resolveSymbol(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaConstructorSymbol?
+    public fun resolveSuccessfulSymbol(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaConstructorSymbol?
 
-    public fun resolveSymbol(callElement: KtCallElement): KaFunctionSymbol?
+    public fun resolveSuccessfulSymbol(callElement: KtCallElement): KaFunctionSymbol?
 
-    public fun resolveSymbol(callableReferenceExpression: KtCallableReferenceExpression): KaCallableSymbol?
+    public fun resolveSuccessfulSymbol(callableReferenceExpression: KtCallableReferenceExpression): KaCallableSymbol?
 
-    public fun resolveSymbol(arrayAccessExpression: KtArrayAccessExpression): KaNamedFunctionSymbol?
+    public fun resolveSuccessfulSymbol(arrayAccessExpression: KtArrayAccessExpression): KaNamedFunctionSymbol?
 
-    public fun resolveSymbol(collectionLiteralExpression: KtCollectionLiteralExpression): KaNamedFunctionSymbol?
+    public fun resolveSuccessfulSymbol(collectionLiteralExpression: KtCollectionLiteralExpression): KaNamedFunctionSymbol?
 
-    public fun resolveSymbol(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaNamedClassSymbol?
+    public fun resolveSuccessfulSymbol(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaNamedClassSymbol?
 
-    public fun resolveSymbol(labelReferenceExpression: KtLabelReferenceExpression): KaDeclarationSymbol?
+    public fun resolveSuccessfulSymbol(labelReferenceExpression: KtLabelReferenceExpression): KaDeclarationSymbol?
 
-    public fun resolveSymbol(returnExpression: KtReturnExpression): KaFunctionSymbol?
+    public fun resolveSuccessfulSymbol(returnExpression: KtReturnExpression): KaFunctionSymbol?
 
-    public fun resolveSymbol(whenConditionInRange: KtWhenConditionInRange): KaNamedFunctionSymbol?
+    public fun resolveSuccessfulSymbol(whenConditionInRange: KtWhenConditionInRange): KaNamedFunctionSymbol?
 
-    public fun resolveSymbol(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaCallableSymbol?
+    public fun resolveSuccessfulSymbol(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaCallableSymbol?
 
-    public fun resolveSymbol(qualifiedExpression: KtQualifiedExpression): KaCallableSymbol?
+    public fun resolveSuccessfulSymbol(qualifiedExpression: KtQualifiedExpression): KaCallableSymbol?
 
-    public fun resolveSymbol(constructorCalleeExpression: KtConstructorCalleeExpression): KaConstructorSymbol?
+    public fun resolveSuccessfulSymbol(constructorCalleeExpression: KtConstructorCalleeExpression): KaConstructorSymbol?
 
-    public fun resolveSymbol(instanceExpressionWithLabel: KtInstanceExpressionWithLabel): KaDeclarationSymbol?
+    public fun resolveSuccessfulSymbol(instanceExpressionWithLabel: KtInstanceExpressionWithLabel): KaDeclarationSymbol?
 
-    public fun resolveSymbol(nullableType: KtNullableType): KaClassifierSymbol?
+    public fun resolveSuccessfulSymbol(nullableType: KtNullableType): KaClassifierSymbol?
 
-    public fun resolveSymbol(functionType: KtFunctionType): KaClassSymbol?
+    public fun resolveSuccessfulSymbol(functionType: KtFunctionType): KaClassSymbol?
 
-    public fun resolveSymbol(typeReference: KtTypeReference): KaClassifierSymbol?
+    public fun resolveSuccessfulSymbol(typeReference: KtTypeReference): KaClassifierSymbol?
 
-    public fun resolveSymbol(classLiteralExpression: KtClassLiteralExpression): KaClassifierSymbol?
+    public fun resolveSuccessfulSymbol(classLiteralExpression: KtClassLiteralExpression): KaClassifierSymbol?
 
-    public fun resolveSymbol(superTypeEntry: KtSuperTypeEntry): KaClassifierSymbol?
+    public fun resolveSuccessfulSymbol(superTypeEntry: KtSuperTypeEntry): KaClassifierSymbol?
 
-    public fun resolveSymbol(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry): KaClassifierSymbol?
+    public fun resolveSuccessfulSymbol(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry): KaClassifierSymbol?
 
     public fun tryResolveCall(resolvableCall: KtResolvableCall): KaCallResolutionAttempt?
 
@@ -75,39 +75,39 @@ public interface KaInternalsResolver {
 
     public fun tryResolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCallResolutionAttempt?
 
-    public fun resolveCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall?
+    public fun resolveSuccessfulCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall?
 
-    public fun resolveCall(annotationEntry: KtAnnotationEntry): KaAnnotationCall?
+    public fun resolveSuccessfulCall(annotationEntry: KtAnnotationEntry): KaAnnotationCall?
 
-    public fun resolveCall(superTypeCallEntry: KtSuperTypeCallEntry): KaFunctionCall<KaConstructorSymbol>?
+    public fun resolveSuccessfulCall(superTypeCallEntry: KtSuperTypeCallEntry): KaFunctionCall<KaConstructorSymbol>?
 
-    public fun resolveCall(constructorDelegationCall: KtConstructorDelegationCall): KaDelegatedConstructorCall?
+    public fun resolveSuccessfulCall(constructorDelegationCall: KtConstructorDelegationCall): KaDelegatedConstructorCall?
 
-    public fun resolveCall(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaDelegatedConstructorCall?
+    public fun resolveSuccessfulCall(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaDelegatedConstructorCall?
 
-    public fun resolveCall(callElement: KtCallElement): KaFunctionCall<*>?
+    public fun resolveSuccessfulCall(callElement: KtCallElement): KaFunctionCall<*>?
 
-    public fun resolveCall(callableReferenceExpression: KtCallableReferenceExpression): KaCallableReferenceCall<*, *>?
+    public fun resolveSuccessfulCall(callableReferenceExpression: KtCallableReferenceExpression): KaCallableReferenceCall<*, *>?
 
-    public fun resolveCall(arrayAccessExpression: KtArrayAccessExpression): KaFunctionCall<KaNamedFunctionSymbol>?
+    public fun resolveSuccessfulCall(arrayAccessExpression: KtArrayAccessExpression): KaFunctionCall<KaNamedFunctionSymbol>?
 
-    public fun resolveCall(collectionLiteralExpression: KtCollectionLiteralExpression): KaFunctionCall<KaNamedFunctionSymbol>?
+    public fun resolveSuccessfulCall(collectionLiteralExpression: KtCollectionLiteralExpression): KaFunctionCall<KaNamedFunctionSymbol>?
 
-    public fun resolveCall(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaDelegatedConstructorCall?
+    public fun resolveSuccessfulCall(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaDelegatedConstructorCall?
 
-    public fun resolveCall(whenConditionInRange: KtWhenConditionInRange): KaFunctionCall<KaNamedFunctionSymbol>?
+    public fun resolveSuccessfulCall(whenConditionInRange: KtWhenConditionInRange): KaFunctionCall<KaNamedFunctionSymbol>?
 
-    public fun resolveCall(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaSimpleCall<*, *>?
+    public fun resolveSuccessfulCall(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaSimpleCall<*, *>?
 
-    public fun resolveCall(qualifiedExpression: KtQualifiedExpression): KaSimpleCall<*, *>?
+    public fun resolveSuccessfulCall(qualifiedExpression: KtQualifiedExpression): KaSimpleCall<*, *>?
 
-    public fun resolveCall(forExpression: KtForExpression): KaForLoopCall?
+    public fun resolveSuccessfulCall(forExpression: KtForExpression): KaForLoopCall?
 
-    public fun resolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCall?
+    public fun resolveSuccessfulCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCall?
 
-    public fun resolveCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>?
+    public fun resolveSuccessfulCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>?
 
-    public fun resolveCall(nameReferenceExpression: KtNameReferenceExpression): KaSimpleCall<*, *>?
+    public fun resolveSuccessfulCall(nameReferenceExpression: KtNameReferenceExpression): KaSimpleCall<*, *>?
 
     public fun collectCallCandidates(resolvableCall: KtResolvableCall): List<KaCallCandidate>
 
