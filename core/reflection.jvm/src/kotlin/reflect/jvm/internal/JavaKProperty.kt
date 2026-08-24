@@ -94,6 +94,7 @@ internal abstract class JavaKProperty<out V>(
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
         override val name: String get() = "<get-${property.name}>"
 
+        // TODO (KT-80710): recreate parameters to put accessor, not the property, into `ReflectKParameter.callable`
         override val allParameters: List<KParameter> get() = property.allParameters
         override val parameters: List<KParameter> get() = property.parameters
 
@@ -110,14 +111,12 @@ internal abstract class JavaKProperty<out V>(
 
     abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
         override val name: String get() = "<set-${property.name}>"
-        override val allParameters: List<KParameter>
-            get() = property.allParameters + setterParameter.value
-        override val parameters: List<KParameter>
-            get() = property.parameters + setterParameter.value
 
-        private val setterParameter: Lazy<KParameter> = lazy(PUBLICATION) {
-            DefaultSetterValueParameter(property)
-        }
+        // TODO (KT-80710): recreate parameters to put accessor, not the property, into `ReflectKParameter.callable`
+        override val allParameters: List<KParameter>
+            get() = property.allParameters + DefaultSetterValueParameter(property, property.allParameters.size)
+        override val parameters: List<KParameter>
+            get() = property.parameters + DefaultSetterValueParameter(property, property.parameters.size)
 
         override val returnType: KType get() = StandardKTypes.UNIT_RETURN_TYPE
 
