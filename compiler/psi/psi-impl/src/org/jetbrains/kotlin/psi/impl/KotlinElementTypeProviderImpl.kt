@@ -255,7 +255,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
         get() = KtStubElementTypes.OBJECT_LITERAL
 
     // Arguments
-    override val typeArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList>
+    override val typeArgumentListType: KtNodeType
         get() = KtStubElementTypes.TYPE_ARGUMENT_LIST
 
     override val valueArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList>

@@ -103,8 +103,7 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtNodeType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION", KtEnumEntrySuperclassReferenceExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
+    @NotNull KtNodeType TYPE_ARGUMENT_LIST = new KtNodeType("TYPE_ARGUMENT_LIST", KtTypeArgumentList::new);
 
     @NotNull KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
             new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_LIST", KtValueArgumentList.class);
