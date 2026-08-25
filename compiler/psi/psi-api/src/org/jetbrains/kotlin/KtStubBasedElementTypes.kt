@@ -146,8 +146,7 @@ internal object KtStubBasedElementTypes {
         provider.modifierListType
 
     @JvmField
-    val ANNOTATION: KtStubElementType<out KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation> =
-        provider.annotationType
+    val ANNOTATION: KtNodeType = provider.annotationType
 
     @JvmField
     val ANNOTATION_ENTRY: KtNodeType = provider.annotationEntryType

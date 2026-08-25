@@ -28,6 +28,8 @@ import java.util.List;
  * For a single annotation entry, see {@link KtAnnotationEntry}.
  */
 public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnnotation>> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtAnnotation[] EMPTY_ARRAY = new KtAnnotation[0];
 
     @KtImplementationDetail
     public KtAnnotation(@NotNull ASTNode node) {
@@ -36,7 +38,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
 
     @KtImplementationDetail
     public KtAnnotation(KotlinPlaceHolderStub<KtAnnotation> stub) {
-        super(stub, KtStubBasedElementTypes.ANNOTATION);
+        super(stub, KtNodeTypes.ANNOTATION);
     }
 
     @Override

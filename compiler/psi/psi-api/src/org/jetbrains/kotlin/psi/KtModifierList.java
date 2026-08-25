@@ -12,11 +12,13 @@ import com.intellij.psi.tree.TokenSet;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,7 +55,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     @Override
     @NotNull
     public List<KtAnnotation> getAnnotations() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.ANNOTATION, KtAnnotation.EMPTY_ARRAY));
     }
 
     /**
