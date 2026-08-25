@@ -12,6 +12,7 @@ abstract class AbstractTestGenerator {
         testClass: TestGroup.TestClass,
         dryRun: Boolean,
         allowGenerationOnTeamCity: Boolean,
+        tolerateEmptyModels: Boolean,
         mainClassName: String?,
     ): GenerationResult
 

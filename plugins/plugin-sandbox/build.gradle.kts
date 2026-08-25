@@ -91,7 +91,9 @@ projectTests {
         compilerPluginDependencies = listOf(sandboxPluginForTests)
     )
 
-    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true)
+    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true) {
+        args("tolerateEmptyModels")
+    }
 
     withJvmStdlibAndReflect()
     withScriptRuntime()

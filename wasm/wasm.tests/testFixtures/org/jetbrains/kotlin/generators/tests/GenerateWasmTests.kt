@@ -26,7 +26,6 @@ fun main(args: Array<String>) {
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
 
     val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
-    val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"
     val jsTranslatorEsModulesExcludedDirs = listOf(
         // JsExport is not supported for classes
         "jsExport", "native", "export", "escapedIdentifiers",
@@ -111,7 +110,6 @@ fun main(args: Array<String>) {
                 model("native/", pattern = jsTranslatorTestPattern)
                 model("esModules/", pattern = jsTranslatorTestPattern, excludeDirs = jsTranslatorEsModulesExcludedDirs)
                 model("jsQualifier/", pattern = jsTranslatorTestPattern)
-                model("reflection/", pattern = jsTranslatorReflectionPattern)
                 model("kotlin.test/", pattern = jsTranslatorTestPattern)
             }
         }
