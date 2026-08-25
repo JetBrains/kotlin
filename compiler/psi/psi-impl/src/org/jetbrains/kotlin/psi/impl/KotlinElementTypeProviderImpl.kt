@@ -251,7 +251,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
         get() = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
 
-    override val objectLiteralType: KtStubElementType<out KotlinPlaceHolderStub<KtObjectLiteralExpression>, KtObjectLiteralExpression>
+    override val objectLiteralType: KtNodeType
         get() = KtStubElementTypes.OBJECT_LITERAL
 
     // Arguments
