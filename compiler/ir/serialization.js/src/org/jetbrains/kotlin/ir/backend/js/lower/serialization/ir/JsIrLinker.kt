@@ -94,11 +94,6 @@ class JsIrLinker(
         }
     }
 
-    val modules
-        get() = deserializersForModules.values
-            .map { it.moduleFragment }
-
-
     fun moduleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {
         return deserializersForModules[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
     }
