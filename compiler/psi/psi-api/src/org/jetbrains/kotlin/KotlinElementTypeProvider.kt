@@ -135,7 +135,7 @@ interface KotlinElementTypeProvider {
     val valueArgumentNameType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName>
 
     // Special
-    val packageDirectiveType: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective>
+    val packageDirectiveType: KtNodeType
     val fileAnnotationListType: KtNodeType
     val importListType: KtNodeType
     val importDirectiveType: KtNodeType

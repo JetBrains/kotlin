@@ -107,7 +107,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * The package directive of this file, or `null` if the file has no explicit `package` statement (root package).
      */
     val packageDirective: KtPackageDirective?
-        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubBasedElementTypes.PACKAGE_DIRECTIVE)
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtNodeTypes.PACKAGE_DIRECTIVE)
 
     /**
      * The fully qualified name of the file's package, or [FqName.ROOT] for the default (root) package.

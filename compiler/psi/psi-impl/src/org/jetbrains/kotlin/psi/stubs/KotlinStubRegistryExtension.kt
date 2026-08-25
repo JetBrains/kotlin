@@ -152,6 +152,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.IMPORT_ALIAS,
             factory = KtImportAliasStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.PACKAGE_DIRECTIVE,
+            psiFactory = ::KtPackageDirective,
+        )
     }
 }
 
