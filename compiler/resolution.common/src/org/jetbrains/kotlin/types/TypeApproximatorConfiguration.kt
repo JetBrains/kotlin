@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.types.model.*
 abstract class TypeApproximatorConfiguration {
     enum class IntersectionStrategy {
         ALLOWED,
-        TO_FIRST,
         TO_COMMON_SUPERTYPE,
 
         @AllowedToUsedOnlyInK1
