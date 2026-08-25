@@ -31,6 +31,8 @@ object ParcelizeNames {
     val IGNORED_ON_PARCEL_CLASS_IDS = createClassIds("IgnoredOnParcel")
     val PARCELER_CLASS_IDS = createClassIds("Parceler")
     val PARCELIZE_CLASS_CLASS_IDS = createClassIds("Parcelize")
+    val POLYMORPHIC_SEALED_CLASS_IDS = createClassIds("PolymorphicSealed")
+    val PARCEL_TAG_CLASS_IDS = createClassIds("ParcelTag")
     val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
     val DATA_CLASS_ANNOTATION_CLASS_ID = ClassId(RUNTIME_PACKAGE, Name.identifier("DataClass"))
 
@@ -45,6 +47,8 @@ object ParcelizeNames {
     val WRITE_WITH_FQ_NAMES = WRITE_WITH_CLASS_IDS.fqNames()
     val IGNORED_ON_PARCEL_FQ_NAMES = IGNORED_ON_PARCEL_CLASS_IDS.fqNames()
     val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = PARCELIZE_CLASS_CLASS_IDS.fqNames()
+    val POLYMORPHIC_SEALED_CLASS_FQ_NAMES: List<FqName> = POLYMORPHIC_SEALED_CLASS_IDS.fqNames()
+    val PARCEL_TAG_CLASS_FQ_NAMES: List<FqName> = PARCEL_TAG_CLASS_IDS.fqNames()
     val RAW_VALUE_ANNOTATION_FQ_NAMES = RAW_VALUE_ANNOTATION_CLASS_IDS.fqNames()
     val DATA_CLASS_ANNOTATION_FQ_NAME = DATA_CLASS_ANNOTATION_CLASS_ID.asSingleFqName()
 
