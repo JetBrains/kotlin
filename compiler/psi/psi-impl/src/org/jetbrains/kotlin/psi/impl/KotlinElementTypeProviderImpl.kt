@@ -143,7 +143,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val annotationEntryType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION_ENTRY
 
-    override val annotationTargetType: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>
+    override val annotationTargetType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION_TARGET
 
 

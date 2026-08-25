@@ -152,8 +152,7 @@ internal object KtStubBasedElementTypes {
     val ANNOTATION_ENTRY: KtNodeType = provider.annotationEntryType
 
     @JvmField
-    val ANNOTATION_TARGET: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget> =
-        provider.annotationTargetType
+    val ANNOTATION_TARGET: KtNodeType = provider.annotationTargetType
 
 
     // Type references
