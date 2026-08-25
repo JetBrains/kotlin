@@ -105,7 +105,7 @@ interface KotlinElementTypeProvider {
     val stringTemplateType: KtNodeType
     val longStringTemplateEntryType: KtNodeType
     val shortStringTemplateEntryType: KtNodeType
-    val literalStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry>
+    val literalStringTemplateEntryType: KtNodeType
     val escapeStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry>
     val stringInterpolationPrefixType: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
 
