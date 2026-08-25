@@ -11,7 +11,6 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.ILazyParseableElementType
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 @KtImplementationDetail
 interface KotlinElementTypeProvider {

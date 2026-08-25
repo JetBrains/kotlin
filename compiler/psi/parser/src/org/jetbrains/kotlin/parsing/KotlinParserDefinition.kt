@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 /**
  * Creates [org.jetbrains.kotlin.psi.KtCommonFile] when java psi is not available e.g. on JB Client.
@@ -52,7 +51,6 @@ open class KotlinCommonParserDefinition : ParserDefinition {
 
     @OptIn(KtImplementationDetail::class)
     override fun createElement(astNode: ASTNode): PsiElement = when (val elementType = astNode.elementType) {
-        is KtStubElementType<*, *> -> elementType.createPsiFromAst(astNode)
         KtNodeTypes.TYPE_CODE_FRAGMENT,
         KtNodeTypes.EXPRESSION_CODE_FRAGMENT,
         KtNodeTypes.BLOCK_CODE_FRAGMENT,

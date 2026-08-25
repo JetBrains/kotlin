@@ -1473,7 +1473,6 @@ public class org/jetbrains/kotlin/psi/KtElementImplStub : com/intellij/extapi/ps
 	public fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getReference ()Lcom/intellij/psi/PsiReference;
 	public fun getReferences ()[Lcom/intellij/psi/PsiReference;
-	protected fun getStubOrPsiChildrenAsList (Lorg/jetbrains/kotlin/psi/stubs/elements/KtStubElementType;)Ljava/util/List;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4051,18 +4050,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinUserTypeStu
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinValueArgumentStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub {
 	public abstract fun isSpread ()Z
-}
-
-public abstract class org/jetbrains/kotlin/psi/stubs/elements/KtStubElementType : com/intellij/psi/stubs/IStubElementType {
-	public fun <init> (Ljava/lang/String;Ljava/lang/Class;Ljava/lang/Class;)V
-	public synthetic fun createPsi (Lcom/intellij/psi/stubs/StubElement;)Lcom/intellij/psi/PsiElement;
-	public fun createPsi (Lcom/intellij/psi/stubs/StubElement;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
-	public fun createPsiFromAst (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
-	public fun getArrayFactory ()Lcom/intellij/util/ArrayFactory;
-	public fun getExternalId ()Ljava/lang/String;
-	public synthetic fun indexStub (Lcom/intellij/psi/stubs/Stub;Lcom/intellij/psi/stubs/IndexSink;)V
-	public fun indexStub (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IndexSink;)V
-	public fun shouldCreateStub (Lcom/intellij/lang/ASTNode;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/elements/KtTokenSets {

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.kdoc.parser.KDocParser
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @KtImplementationDetail
