@@ -92,8 +92,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType PREFIX_EXPRESSION = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
+    @NotNull KtNodeType POSTFIX_EXPRESSION = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression::new);
+
     @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION =
             new KtPlaceHolderStubElementType<>("BINARY_EXPRESSION", KtBinaryExpression.class);
     @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED =

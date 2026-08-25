@@ -236,7 +236,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val prefixExpressionType: KtNodeType
         get() = KtStubElementTypes.PREFIX_EXPRESSION
 
-    override val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
+    override val postfixExpressionType: KtNodeType
         get() = KtStubElementTypes.POSTFIX_EXPRESSION
 
     override val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
