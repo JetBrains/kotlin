@@ -88,6 +88,9 @@ abstract class KotlinIrLinker(
     val allModuleDeserializers: List<IrModuleDeserializer>
         get() = deserializersForModules.values.toList()
 
+    val allModuleFragments: List<IrModuleFragment>
+        get() = deserializersForModules.values.map { it.moduleFragment }
+
     abstract val irMangler: KotlinMangler.IrMangler
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider

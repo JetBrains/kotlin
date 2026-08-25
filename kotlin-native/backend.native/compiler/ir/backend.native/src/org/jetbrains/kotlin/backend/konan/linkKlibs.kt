@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
@@ -87,7 +88,7 @@ internal fun LinkKlibsContext.linkKlibs(
     ensureCStructsAndEnumsAreLoadedForCaching(irLinker, libraryToCacheModule)
 
     // Get the list of all dependencies (including potentially unused platform libraries).
-    val originalModuleDependencies = IrModuleDependencies(irLinker.allModuleDeserializers.map { it.moduleFragment })
+    val originalModuleDependencies = IrModuleDependencies(irLinker.allModuleFragments)
 
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
@@ -99,8 +100,6 @@ internal fun LinkKlibsContext.linkKlibs(
     generateImplForCStructsAndEnums(irLinker, irBuiltIns, symbols)
 
     config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
-
-    val modules = irLinker.modules
 
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
@@ -118,10 +117,14 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
+    val irModulesForLinkKlibsOutput: Map<Path, IrModuleFragment> = originalModuleDependencies.allDependencies
+            .filter { it.name != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
+            .associateBy { it.kotlinLibrary!!.path }
+
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
         LinkKlibsOutput(
-                irModules = modules,
+                irModules = irModulesForLinkKlibsOutput,
                 irModule = mainModule,
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
@@ -130,9 +133,9 @@ internal fun LinkKlibsContext.linkKlibs(
         )
     } else {
         val libraryPath: Path = libraryToCache.klib.path
-        val libraryModule = modules[libraryPath] ?: error("No module for the library being cached: $libraryPath")
+        val libraryModule = irModulesForLinkKlibsOutput[libraryPath] ?: error("No module for the library being cached: $libraryPath")
         LinkKlibsOutput(
-                irModules = modules.filterKeys { it != libraryPath },
+                irModules = irModulesForLinkKlibsOutput.filterKeys { it != libraryPath },
                 irModule = libraryModule,
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
@@ -214,7 +217,8 @@ private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, lib
 
 private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrBuiltIns, symbols: BackendNativeSymbols) {
     val implGen = IrImplementationGeneratorForCStructsAndEnums(builtIns, symbols)
-    for (module in linker.modules.values) {
+    for (deserializer in linker.allModuleDeserializers) {
+        val module = deserializer.moduleFragment
         if (module.kotlinLibrary?.isCInteropLibrary() == true) {
             for (file in module.files) {
                 for (declaration in file.declarations) {
