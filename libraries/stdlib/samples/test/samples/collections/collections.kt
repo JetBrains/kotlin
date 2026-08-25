@@ -736,6 +736,16 @@ class Collections {
             // Sets do not support duplicates, so there is no way to add yet another 'c'
             assertFalse(set.add('c'))
             assertPrints(set, "[a, b, c]")
+
+            class User(val id: Int, val name: String) {
+                override fun equals(other: Any?): Boolean = other is User && id == other.id
+                override fun hashCode(): Int = id
+                override fun toString(): String = name
+            }
+
+            val users = mutableSetOf(User(1, "Alice"))
+            users.add(User(1, "Alicia"))
+            assertPrints(users, "[Alice]")
         }
 
         @Sample
