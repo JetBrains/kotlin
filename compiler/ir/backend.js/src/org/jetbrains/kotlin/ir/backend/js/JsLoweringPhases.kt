@@ -32,18 +32,6 @@ import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorL
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 
-private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<LoweringContext> {
-    return IrValidationAfterInliningPrivateFunctionsKlibPhase(
-        context
-    )
-}
-
-private fun createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<LoweringContext> {
-    return IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
-        context
-    )
-}
-
 @Suppress("unused")
 private fun createInventNamesForLocalFunctionsPhase(context: JsIrBackendContext): KlibInventNamesForLocalFunctions {
     return KlibInventNamesForLocalFunctions(suggestUniqueNames = false)
@@ -123,10 +111,10 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
     ::createSyntheticAccessorGenerationPhase,
-    ::createIrValidationAfterInliningPrivateFunctionsKlibPhase,
+    ::IrValidationAfterInliningPrivateFunctionsKlibPhase,
     ::JsAllFunctionInlining,
     ::RedundantCastsRemoverLowering,
-    ::createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
+    ::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
     // END: Common Native/JS/Wasm prefix.
 
     ::createConstEvaluationPhase,
