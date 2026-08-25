@@ -199,7 +199,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
 
                         generationState.cStubsManager.addStub(location, impl.split('\n'), language)
                         if (libraryName.isNotEmpty()) {
-                            val library = generationState.config.librariesWithDependencies().firstOrNull { it.uniqueName == libraryName }
+                            val library = generationState.config.loadedKlibs.all.firstOrNull { it.uniqueName == libraryName }
                                     ?: error("Library with name $libraryName not found in the dependencies")
                             generationState.dependenciesTracker.add(library)
                         }
