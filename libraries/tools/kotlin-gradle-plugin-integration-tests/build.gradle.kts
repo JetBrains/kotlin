@@ -513,6 +513,9 @@ tasks.withType<Test>().configureEach {
     // (e.g. .../configuration-cache-report.html) during test runs.
     systemProperty("junit.jupiter.tempdir.cleanup.mode.default", "on_success")
 
+    // Prevent a single hanging tests from blocking CI agents for hours by providing a 10-minute default timeout
+    systemProperty("junit.jupiter.execution.timeout.default", "10m")
+
     testLogging {
         // set options for log level LIFECYCLE
         events("started", "passed", "skipped", "failed", "standardOut")
