@@ -12,17 +12,18 @@ private inline fun AtomicInt.hashCode(seed: Int): Int = seed xor value
 private inline fun <T> AtomicRef<T>.toString(prefix: String): String = "prefix: $value"
 
 fun test() {
-    println(i.hashCode())
-    println(i.toString())
-    println(i.equals(null))
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>i.hashCode()<!>)
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>i.toString()<!>)
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>i.equals(null)<!>)
 
-    println(r.hashCode())
-    println(r.toString())
-    println(r.equals(null))
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>r.hashCode()<!>)
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>r.toString()<!>)
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>r.equals(null)<!>)
 
-    println(arr.hashCode())
-    println(arr.toString())
-    println(arr.equals(null))
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>arr.hashCode()<!>)
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>arr.toString()<!>)
+    println(<!ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY!>arr.equals(null)<!>)
 
     println(i.hashCode(13))
+    println(r.toString("atomic"))
 }
