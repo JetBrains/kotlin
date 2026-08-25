@@ -343,8 +343,7 @@ internal object KtStubBasedElementTypes {
     val IMPORT_DIRECTIVE: KtNodeType = provider.importDirectiveType
 
     @JvmField
-    val IMPORT_ALIAS: KtStubElementType<out KotlinImportAliasStub, KtImportAlias> =
-        provider.importAliasType
+    val IMPORT_ALIAS: KtNodeType = provider.importAliasType
 
     @JvmField
     val SCRIPT: KtStubElementType<out KotlinScriptStub, KtScript> =

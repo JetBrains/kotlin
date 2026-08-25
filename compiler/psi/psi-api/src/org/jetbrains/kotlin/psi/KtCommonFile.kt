@@ -383,8 +383,7 @@ private fun KtImportList.computeHasImportAlias(): Boolean {
     val stub = greenStub
     if (stub != null) {
         return stub.childrenStubs.any {
-            @Suppress("DEPRECATION") // KT-78356
-            it is KotlinImportDirectiveStub && it.findChildStubByType(KtStubBasedElementTypes.IMPORT_ALIAS) != null
+            it is KotlinImportDirectiveStub && it.findChildStubByElementType(KtNodeTypes.IMPORT_ALIAS) != null
         }
     }
 
