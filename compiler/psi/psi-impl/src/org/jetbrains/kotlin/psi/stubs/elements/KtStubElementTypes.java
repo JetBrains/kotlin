@@ -46,8 +46,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType ANNOTATION_TARGET = new KtNodeType("ANNOTATION_TARGET", KtAnnotationUseSiteTarget::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtClassBody> CLASS_BODY =
-            new KtPlaceHolderStubElementType<>("CLASS_BODY", KtClassBody.class);
+    @NotNull KtNodeType CLASS_BODY = new KtNodeType("CLASS_BODY", KtClassBody::new);
 
     @NotNull KtPlaceHolderStubElementType<KtCompanionBlock> COMPANION_BLOCK =
             new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock.class);

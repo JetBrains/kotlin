@@ -33,8 +33,7 @@ internal object KtStubBasedElementTypes {
     val TYPEALIAS: KtNodeType = provider.typeAliasType
 
     @JvmField
-    val CLASS_BODY: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody> =
-        provider.classBodyType
+    val CLASS_BODY: KtNodeType = provider.classBodyType
 
     @JvmField
     @KtExperimentalApi
