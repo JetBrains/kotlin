@@ -205,7 +205,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val literalStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY
 
-    override val escapeStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry>
+    override val escapeStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
 
     override val stringInterpolationPrefixType: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
