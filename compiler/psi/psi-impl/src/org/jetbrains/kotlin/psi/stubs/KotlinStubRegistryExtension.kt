@@ -365,6 +365,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY,
             factory = KtBlockStringTemplateEntryStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderWithTextFactory(
+            type = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+            psiFactory = ::KtSimpleNameStringTemplateEntry,
+        )
     }
 }
 
@@ -386,4 +391,14 @@ private fun <Psi : KtValueArgument> StubRegistry.registerValueArgumentFactory(
     psiFactory: (KotlinValueArgumentStub<Psi>) -> Psi,
 ) {
     registerStubSerializingFactory(type, KtValueArgumentStubSerializingElementFactory(type, psiFactory))
+}
+
+/**
+ * Registers a factory for an element whose stub carries only its source text.
+ */
+private fun <Psi : KtElementImplStub<out StubElement<*>>> StubRegistry.registerPlaceHolderWithTextFactory(
+    type: IElementType,
+    psiFactory: (KotlinPlaceHolderWithTextStub<Psi>) -> Psi,
+) {
+    registerStubSerializingFactory(type, KtPlaceHolderWithTextStubSerializingElementFactory(type, psiFactory))
 }
