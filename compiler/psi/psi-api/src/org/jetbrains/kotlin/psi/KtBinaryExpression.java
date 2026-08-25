@@ -11,7 +11,6 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
@@ -36,7 +35,7 @@ public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderSt
 
     @KtImplementationDetail
     public KtBinaryExpression(@NotNull KotlinPlaceHolderStub<KtBinaryExpression> stub) {
-        super(stub, KtStubBasedElementTypes.BINARY_EXPRESSION);
+        super(stub, KtNodeTypes.BINARY_EXPRESSION);
     }
 
     @Override
