@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,11 +19,9 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
-    /**
-     * This version is used for .kotlin_builtins and is not used for .kotlin_metadata files:
-     * K1 IDE and K2 IDE produce different decompiled files and stubs for .kotlin_builtins, but not for .kotlin_metadata
-     */
-    override fun getStubVersion(): Int = KotlinStubVersions.BUILTIN_STUB_VERSION + KotlinBuiltInStubVersionOffsetProvider.getVersionOffset()
+    /** This version is used for .kotlin_builtins and is not used for .kotlin_metadata files */
+    override fun getStubVersion(): Int = KotlinStubVersions.BUILTIN_STUB_VERSION + 100000
+
     override val supportedFileType: FileType get() = KotlinBuiltInFileType
     override val expectedBinaryVersion: BinaryVersion get() = BuiltInsBinaryVersion.INSTANCE
 
