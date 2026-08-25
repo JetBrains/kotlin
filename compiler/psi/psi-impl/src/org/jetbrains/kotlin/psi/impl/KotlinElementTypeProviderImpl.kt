@@ -242,7 +242,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val binaryExpressionType: KtNodeType
         get() = KtStubElementTypes.BINARY_EXPRESSION
 
-    override val parenthesizedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression>
+    override val parenthesizedExpressionType: KtNodeType
         get() = KtStubElementTypes.PARENTHESIZED
 
     override val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
