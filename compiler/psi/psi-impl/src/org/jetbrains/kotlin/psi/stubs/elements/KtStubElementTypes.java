@@ -126,8 +126,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType SUPER_TYPE_CALL_ENTRY = new KtNodeType("SUPER_TYPE_CALL_ENTRY", KtSuperTypeCallEntry::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtSuperTypeEntry> SUPER_TYPE_ENTRY =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_ENTRY", KtSuperTypeEntry.class);
+    @NotNull KtNodeType SUPER_TYPE_ENTRY = new KtNodeType("SUPER_TYPE_ENTRY", KtSuperTypeEntry::new);
+
     @NotNull KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
