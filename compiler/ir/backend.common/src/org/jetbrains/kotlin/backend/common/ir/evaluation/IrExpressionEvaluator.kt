@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.evaluation.IrConstFieldInliner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -68,10 +69,10 @@ private class IrExpressionEvaluator(
         val builder = StringBuilder()
         for (argument in expression.arguments) {
             val const = argument.evaluateAsConst() ?: return null
-            if (!isFloatingPointOptimizationEnabled && const.type.isFloatOrDouble()) return null
+            if (!isFloatingPointOptimizationEnabled && const.isFloatOrDouble()) return null
             builder.append(const.getCastedValue() ?: return null)
         }
-        return builder.toString().toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)
+        return IrConstImpl.string(expression.startOffset, expression.endOffset, expression.type, builder.toString())
     }
 
     private fun evaluateBuiltinCall(expression: IrCall): IrExpression? {
@@ -80,7 +81,7 @@ private class IrExpressionEvaluator(
         val operands = expression.arguments.mapNotNull { argument ->
             if (argument == null) return@mapNotNull null
             val const = argument.evaluateAsConst() ?: return null
-            if (!isFloatingPointOptimizationEnabled && const.type.isFloatOrDouble()) return null
+            if (!isFloatingPointOptimizationEnabled && const.isFloatOrDouble()) return null
             const
         }
 
@@ -108,7 +109,7 @@ private class IrExpressionEvaluator(
 
         if (computed == null) return null
         return computed.toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)?.takeUnless {
-            !isFloatingPointOptimizationEnabled && it.type.isFloatOrDouble()
+            !isFloatingPointOptimizationEnabled && it.isFloatOrDouble()
         }
     }
 
@@ -119,8 +120,8 @@ private class IrExpressionEvaluator(
         val boundArgs = callableReference.boundValues.toList() // make a copy
         val owner = callableReference.reflectionTargetSymbol?.owner as? IrDeclarationWithName
 
-        val constName = owner?.name?.asString()?.toIrConst(irBuiltIns.stringType, expression.startOffset, expression.endOffset)
-            ?: return null
+        val name = owner?.name?.asString() ?: return null
+        val constName = IrConstImpl.string(expression.startOffset, expression.endOffset, irBuiltIns.stringType, name)
 
         val boundArgsWithSideEffects = boundArgs.filterNot { it is IrGetValue || it is IrConst }
         if (boundArgsWithSideEffects.isEmpty()) return constName
@@ -134,7 +135,7 @@ private class IrExpressionEvaluator(
     private fun inlineEnumName(expression: IrCall): IrConst? {
         val enumValue = expression.dispatchReceiver as? IrGetEnumValue ?: return null
         val enumEntry = enumValue.symbol.owner
-        return enumEntry.name.asString().toIrConst(irBuiltIns.stringType, expression.startOffset, expression.endOffset)
+        return IrConstImpl.string(expression.startOffset, expression.endOffset, irBuiltIns.stringType, enumEntry.name.asString())
     }
 
     companion object {
@@ -151,8 +152,7 @@ private class IrExpressionEvaluator(
                 }
             }
 
-        private fun IrType.isFloatOrDouble(): Boolean =
-            getPrimitiveType().let { it == PrimitiveType.FLOAT || it == PrimitiveType.DOUBLE }
+        private fun IrConst.isFloatOrDouble() = kind == IrConstKind.Double || kind == IrConstKind.Float
 
         private fun IrType.toCompileTimeType(): CompileTimeType? {
             if (this.isAny() || type.isNullableAny()) return CompileTimeType.ANY
@@ -209,26 +209,18 @@ private class IrExpressionEvaluator(
 
         private fun IrConst.getCastedValue(): Any? {
             if (value == null) return null
-            val constType = this.type.makeNotNull().removeAnnotations()
-            return when (this.type.getPrimitiveType()) {
-                PrimitiveType.BOOLEAN -> this.value as Boolean
-                PrimitiveType.CHAR -> this.value as Char
-                PrimitiveType.BYTE -> (this.value as Number).toByte()
-                PrimitiveType.SHORT -> (this.value as Number).toShort()
-                PrimitiveType.INT -> (this.value as Number).toInt()
-                PrimitiveType.FLOAT -> (this.value as Number).toFloat()
-                PrimitiveType.LONG -> (this.value as Number).toLong()
-                PrimitiveType.DOUBLE -> (this.value as Number).toDouble()
-                null -> when (constType.getUnsignedType()) {
-                    UnsignedType.UBYTE -> if (this.value is UByte) this.value else (this.value as Number).toLong().toUByte()
-                    UnsignedType.USHORT -> if (this.value is UShort) this.value else (this.value as Number).toLong().toUShort()
-                    UnsignedType.UINT -> if (this.value is UInt) this.value else (this.value as Number).toLong().toUInt()
-                    UnsignedType.ULONG -> if (this.value is ULong) this.value else (this.value as Number).toLong().toULong()
-                    null -> when {
-                        constType.isString() -> this.value as String
-                        else -> error("Cannot convert IrConst ${this.render()} to ConstantValue")
-                    }
-                }
+            val constType = this.type.makeNotNull()
+            return when (kind) {
+                IrConstKind.Null -> null
+                IrConstKind.Boolean -> this.value as Boolean
+                IrConstKind.Char -> this.value as Char
+                IrConstKind.Byte -> if (constType.isUByte()) (this.value as Byte).toUByte() else (this.value as Byte)
+                IrConstKind.Short -> if (constType.isUShort()) (this.value as Short).toUShort() else (this.value as Short)
+                IrConstKind.Int -> if (constType.isUInt()) (this.value as Int).toUInt() else (this.value as Int)
+                IrConstKind.Long -> if (constType.isULong()) (this.value as Long).toULong() else (this.value as Long)
+                IrConstKind.Double -> this.value as Double
+                IrConstKind.Float -> this.value as Float
+                IrConstKind.String -> this.value as String
             }
         }
 
@@ -261,6 +253,32 @@ private class IrExpressionEvaluator(
             if (!owner.hasShape(dispatchReceiver = true, regularParameters = 0)) return false
             val property = owner.correspondingPropertySymbol?.owner ?: return false
             return this.dispatchReceiver is IrGetEnumValue && property.name.asString() == "name"
+        }
+
+        private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst? {
+            if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
+
+            val constType = irType.makeNotNull().removeAnnotations()
+            return when (irType.getPrimitiveType()) {
+                PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
+                PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, convertTo(this))
+                null -> when (constType.getUnsignedType()) {
+                    UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
+                    UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
+                    UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
+                    UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
+                    null -> when {
+                        constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
+                        else -> null
+                    }
+                }
+            }
         }
     }
 }

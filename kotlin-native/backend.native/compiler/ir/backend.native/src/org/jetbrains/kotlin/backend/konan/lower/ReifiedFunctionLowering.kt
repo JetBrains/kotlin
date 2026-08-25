@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal class ReifiedFunctionLowering(private val backendContext: NativeLoweringContext) : FileLoweringPass, IrElementTransformerVoid() {
@@ -38,8 +38,10 @@ internal class ReifiedFunctionLowering(private val backendContext: NativeLowerin
         fun IrBuilderWithScope.throwException(): IrExpression {
             return irThrow(
                     irCall(backendContext.symbols.throwIllegalStateExceptionWithMessage.owner).apply {
-                        arguments[0] = "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`"
-                                .toIrConst(backendContext.irBuiltIns.stringType)
+                        arguments[0] = IrConstImpl.string(
+                                type = backendContext.irBuiltIns.stringType,
+                                value = "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`"
+                        )
                     }
             )
         }

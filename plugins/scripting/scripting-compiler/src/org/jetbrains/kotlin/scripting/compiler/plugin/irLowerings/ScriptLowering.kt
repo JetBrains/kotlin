@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -537,7 +538,7 @@ private class ScriptAccessCallsGenerator(
                 }
             val getPrevScriptObjectExpression = builder.irCall(objArrayGet).apply {
                 arguments[0] = irGetEarlierScripts
-                arguments[1] = earlierScriptIndex.toIrConst(objArrayGet.owner.parameters[1].type)
+                arguments[1] = IrConstImpl.int(type = objArrayGet.owner.parameters[1].type, value = earlierScriptIndex)
             }
             val prevScriptClassType =
                 when {

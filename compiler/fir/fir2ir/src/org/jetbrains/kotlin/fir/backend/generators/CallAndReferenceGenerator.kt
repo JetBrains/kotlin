@@ -1501,7 +1501,7 @@ class CallAndReferenceGenerator(
 
                         // This logic is used by `js-plain-object` plugin.
                         // It could be removed only after "static members" will be available in the language
-                        !declarationSiteSymbol.shouldHaveReceiver(session) -> null.toIrConst(builtins.nothingNType)
+                        !declarationSiteSymbol.shouldHaveReceiver(session) -> IrConstImpl.constNull(type = builtins.nothingNType)
                         !statement.isConstructorCallOnTypealiasWithInnerRhs() -> statement.findIrDispatchReceiver(explicitReceiverExpression)
                         else -> statement.findIrExtensionReceiver(explicitReceiverExpression)
                     }
