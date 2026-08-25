@@ -55,7 +55,7 @@ class IrModuleDependencyTrackerImpl : IrModuleDependencyTracker {
     override fun reverseTopoOrder(moduleDependencies: IrModuleDependencies): IrModuleDependencies {
         val modulesToSort = moduleDependencies.allDependencies.toSet()
 
-        val untrackedModules = trackedModules.keys - modulesToSort
+        val untrackedModules = modulesToSort - trackedModules.keys
         check(untrackedModules.isEmpty()) {
             "The following modules are not being tracked in ${this::class}: ${untrackedModules.joinToString { it.name.asString() }}"
         }
