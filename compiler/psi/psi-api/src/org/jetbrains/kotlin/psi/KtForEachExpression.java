@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
- * Represents a {@code miau} loop.
+ * Represents a {@code foreach} loop.
  *
  * <h3>Example:</h3>
  * <pre>{@code
- *    miau (item in list) {
+ *    foreach (item in list) {
  *        println(item)
  *    }
  * // ^__________________^
- * // The entire block from 'miau' to the closing curly brace
+ * // The entire block from 'foreach' to the closing curly brace
  * }</pre>
  */
 public class KtForEachExpression extends KtLoopExpression implements KtResolvableCall {

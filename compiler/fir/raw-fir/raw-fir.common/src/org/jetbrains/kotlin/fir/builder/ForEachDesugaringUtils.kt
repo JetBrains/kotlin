@@ -9,11 +9,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirContractViolation
 import org.jetbrains.kotlin.fir.FirElement
@@ -108,11 +103,11 @@ fun FirBlockBuilder.generateForEachGuard(
 }
 
 fun FirBlockBuilder.generateForEachEpilogue(scope: ForEachScope.Completed) {
-    val outerScope = scope.previousCompletedScope ?: scope.previousScope
+    val outerScope = scope.previousScope
     scope.outerJumpableUses.forEach { use ->
         use.asLoopUse()?.let { loopUse ->
             loopUse.asBreak()?.let {
-                val sourceElement = source!!.fakeElement(KtFakeSourceElementKind.DesugaredForEachGuard(it.breakSources))
+                val sourceElement = source!!.fakeElement(KtFakeSourceElementKind.DesugaredForEachGuard.Break(it.breakSources))
                 generateForEachGuard(
                     sourceElement = sourceElement,
                     scope = scope,
@@ -121,7 +116,7 @@ fun FirBlockBuilder.generateForEachEpilogue(scope: ForEachScope.Completed) {
                 )
             }
             loopUse.asContinue()?.let {
-                val sourceElement = source!!.fakeElement(KtFakeSourceElementKind.DesugaredForEachGuard(it.continueSources))
+                val sourceElement = source!!.fakeElement(KtFakeSourceElementKind.DesugaredForEachGuard.Continue(it.continueSources))
                 generateForEachGuard(
                     sourceElement = sourceElement,
                     scope = scope,
@@ -131,7 +126,7 @@ fun FirBlockBuilder.generateForEachEpilogue(scope: ForEachScope.Completed) {
             }
         }
         use.asFunctionUse()?.let {
-            val sourceElement = source!!.fakeElement(KtFakeSourceElementKind.DesugaredForEachGuard(it.returnSources))
+            val sourceElement = source!!.fakeElement(KtFakeSourceElementKind.DesugaredForEachGuard.Return(it.returnSources))
             generateForEachGuard(
                 sourceElement = sourceElement,
                 scope = scope,
@@ -151,13 +146,13 @@ fun FirBlockBuilder.generateForEachEpilogue(scope: ForEachScope.Completed) {
 inline fun AbstractRawFirBuilder<*>.desugarJumpExpression(
     labelName: String?,
     sourceElement: KtSourceElement,
-    markJump: ForEachScope.(String?, KtSourceElement) -> JumpDesugaringData,
+    markJump: ForEachScope.(String?, KtSourceElement) -> JumpDesugaringData?,
     defaultExpression: () -> FirExpression
 ): FirExpression = context.currentForEachScope?.let { scope ->
     // If there is immediate forEach scope enclosing this expression, no desugaring is necessary
     if (scope.previousCompletedScope == null) return@let null
-    // Consider only exising loop targets, i.e., fail silently
-    scope.markJump(labelName, sourceElement).generateDesugaredJumpExpression(sourceElement)
+    // Consider only exising loop targets, i.e., fail silently so we do not interfere with other cone diagnostics
+    scope.markJump(labelName, sourceElement)?.generateDesugaredJumpExpression(sourceElement)
 } ?: defaultExpression()
 
 inline fun <E : FirElement> AbstractRawFirBuilder<*>.desugarLoopTarget(target: FirLoopTarget, block: () -> E): E =
@@ -192,13 +187,3 @@ inline fun <E> AbstractRawFirBuilder<*>.desugarAnonymousFunctionTarget(
     scope -= target
     element to target.resultVariables
 } ?: (block() to emptySet())
-
-context(context: DiagnosticContext)
-fun DiagnosticReporter.reportOnGuardOrItself(
-    source: KtSourceElement?,
-    factory: KtDiagnosticFactory0,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
-): Unit = (source?.kind as? KtFakeSourceElementKind.DesugaredForEachGuard)
-    ?.jumpExpressionSources
-    ?.forEach { source -> reportOn(source, factory, positioningStrategy) }
-    ?: reportOn(source, factory, positioningStrategy)

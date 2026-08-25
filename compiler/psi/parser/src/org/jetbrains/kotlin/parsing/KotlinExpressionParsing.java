@@ -1410,8 +1410,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * for | miau
-     *   : ("for" | "miau") "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
+     * for | foreach
+     *   : ("for" | "foreach") "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
      *   ;
      *
      *   TODO: empty loop body (at the end of the block)?

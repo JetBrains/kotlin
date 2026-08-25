@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.config.LanguageFeature.AllowReturnInExpressionBodyWi
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.builder.reportOnGuardOrItself
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnGuardOrItself
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic

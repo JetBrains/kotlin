@@ -3138,7 +3138,7 @@ open class PsiRawFirBuilder(
                 ?: buildUnitExpression { this.source = source }
             return desugarJumpExpression(
                 labelName = expression.getLabelName(),
-                sourceElement = source.fakeElement(KtFakeSourceElementKind.DesugaredForEachReturn),
+                sourceElement = source.fakeElement(KtFakeSourceElementKind.DesugaredForEachJump.Return),
                 markJump = { name, sourceElement -> markReturn(name, sourceElement, result) },
                 defaultExpression = {
                     result.toReturn(source, expression.getTargetLabel()?.getReferencedName(), fromKtReturnExpression = true)
@@ -3536,7 +3536,7 @@ open class PsiRawFirBuilder(
                 label = this@PsiRawFirBuilder.context.getLastLabel(this@constructLambdaFromForEachBody)
                 forEachTarget = FirFunctionTarget(label?.name, isLambda = true)
                 // The context should not remember the target in the stack of function targets, as the unlabelled returns should instead
-                // point to a functions enclosing the `miau` loop
+                // point to a functions enclosing the `foreach` loop
                 scope = this@PsiRawFirBuilder.context.pushCompletedForEachScope(forEachTarget, sourceElement, baseModuleData)
                 val ktBody = this@constructLambdaFromForEachBody.body
                 body = withForcedLocalContext {
@@ -3615,7 +3615,7 @@ open class PsiRawFirBuilder(
         override fun visitBreakExpression(expression: KtBreakExpression, data: FirElement?): FirElement =
             desugarJumpExpression(
                 labelName = expression.getLabelName(),
-                sourceElement = expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachBreak),
+                sourceElement = expression.toFirSourceElement(),
                 markJump = ForEachScope::markBreak,
                 defaultExpression = {
                     FirBreakExpressionBuilder().apply {
@@ -3627,7 +3627,7 @@ open class PsiRawFirBuilder(
         override fun visitContinueExpression(expression: KtContinueExpression, data: FirElement?): FirElement =
             desugarJumpExpression(
                 labelName = expression.getLabelName(),
-                sourceElement = expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachContinue),
+                sourceElement = expression.toFirSourceElement(),
                 markJump = ForEachScope::markContinue,
                 defaultExpression = {
                     FirContinueExpressionBuilder().apply {

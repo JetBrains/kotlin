@@ -245,7 +245,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object DesugaredForLoop : KtFakeSourceElementKind()
 
     /**
-     *  `miau (i in list) { println(i) }` is converted to
+     *  `foreach (i in list) { println(i) }` is converted to
      *  ```
      *  list.forEach { i ->
      *      println(i)
@@ -253,7 +253,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      *  ```
      *  where the generated forEach call has source element of initial FOR loop
      *
-     *  and `miau (i in list) { println(i); break }` is converted to
+     *  and `foreach (i in list) { println(i); break }` is converted to
      *  ```
      *  list.forEachWhile { i ->
      *      prinln(i)
@@ -266,13 +266,25 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     class DesugaredForEachTemporaryVariable(val name: Name) : KtFakeSourceElementKind()
 
-    object DesugaredForEachBreak : KtFakeSourceElementKind()
+    sealed class DesugaredForEachJump : KtFakeSourceElementKind() {
 
-    object DesugaredForEachContinue : KtFakeSourceElementKind()
+        object Break : DesugaredForEachJump()
 
-    object DesugaredForEachReturn : KtFakeSourceElementKind()
+        object Continue : DesugaredForEachJump()
 
-    data class DesugaredForEachGuard(val jumpExpressionSources: Set<KtSourceElement>) : KtFakeSourceElementKind()
+        object Return : DesugaredForEachJump()
+    }
+
+    sealed class DesugaredForEachGuard : KtFakeSourceElementKind() {
+
+        abstract val sources: Set<KtSourceElement>
+
+        data class Break(override val sources: Set<KtSourceElement>) : DesugaredForEachGuard()
+
+        data class Continue(override val sources: Set<KtSourceElement>) : DesugaredForEachGuard()
+
+        data class Return(override val sources: Set<KtSourceElement>) : DesugaredForEachGuard()
+    }
 
     data class DesugaredForEachWhenGeneratedSubject(val name: Name) : KtFakeSourceElementKind()
 

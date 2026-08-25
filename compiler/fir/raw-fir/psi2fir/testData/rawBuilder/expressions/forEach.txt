@@ -217,7 +217,7 @@ FILE: forEach.kt
 
     }
     public? final? fun simpleFunctionReturn(): R|kotlin/Unit| {
-        foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        foo#(<L> = foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
              {
                 lvar <return-simpleFunctionReturn>: R|kotlin/Boolean|
                 IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
@@ -264,7 +264,7 @@ FILE: forEach.kt
          {
             lvar <return-simpleFunctionReturn>: R|kotlin/Boolean|
             IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
-                foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                foo#(<L> = foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     R|<local>/<return-simpleFunctionReturn>| = Boolean(true)
                     ^ Boolean(false)
                 }
@@ -285,7 +285,7 @@ FILE: forEach.kt
 
          {
             IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
-                foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                foo#(<L> = foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     ^@foo Unit
                 }
                 )
@@ -301,7 +301,7 @@ FILE: forEach.kt
             outer@while(R|<local>/<iterator>|.hasNext#()) {
                 [IsForLoopParameterProperty=true] lval i: <implicit> = R|<local>/<iterator>|.next#()
                  {
-                    foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    foo#(<L> = foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                          {
                             lvar <continue-outer>: R|kotlin/Boolean|
                             IntegerLiteral(10).forEachWhile#(<L> = fun <anonymous>(j: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
@@ -328,10 +328,10 @@ FILE: forEach.kt
 
         }
 
-        foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        foo#(<L> = foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
              {
                 IntegerLiteral(10).forEachWhile#(<L> = fun <anonymous>(j: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
-                    bar#(<L> = [ResultVariablesKey=[]] bar@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    bar#(<L> = bar@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                         ^ Boolean(false)
                     }
                     )

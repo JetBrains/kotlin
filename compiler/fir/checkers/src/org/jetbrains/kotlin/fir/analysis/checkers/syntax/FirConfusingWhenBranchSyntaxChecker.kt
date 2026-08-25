@@ -83,7 +83,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
     ) {
         val subjectType = element.subjectVariable?.initializer?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
         val booleanSubject = subjectType.isBooleanOrNullableBoolean
-        // Note: this cast has to fail silently due to the synthetic when-expressions guards generated during `miau` desugaring
+        // Note: this cast has to fail silently due to the synthetic when-expressions guards generated during `foreach` desugaring
         // Additionally, such expressions cannot possibly have confusing syntax because the condition in each branch is essentially
         // a simple equality operator call on the subject variable and some constant boolean value
         if (source.kind is KtFakeSourceElementKind.DesugaredForEachGuard) return

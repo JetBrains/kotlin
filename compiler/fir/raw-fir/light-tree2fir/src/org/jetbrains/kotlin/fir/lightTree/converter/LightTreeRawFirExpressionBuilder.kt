@@ -1768,7 +1768,7 @@ class LightTreeRawFirExpressionBuilder(
         }
         return desugarJumpExpression(
             labelName = labelName,
-            sourceElement = returnExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachReturn),
+            sourceElement = returnExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachJump.Return),
             markJump = { name, sourceElement -> markReturn(name, sourceElement, firExpression) },
             defaultExpression = {
                 calculatedFirExpression.toReturn(

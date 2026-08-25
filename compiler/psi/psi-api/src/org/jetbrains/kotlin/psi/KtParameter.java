@@ -45,9 +45,9 @@ import java.util.List;
  * //   ^__^
  * }</pre>
  *
- * <h3>miau-loop parameter:</h3>
+ * <h3>foreach-loop parameter:</h3>
  * <pre>{@code
- * miau (item in list) {}
+ * foreach (item in list) {}
  * //   ^__^
  * }</pre>
  *

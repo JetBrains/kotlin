@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeForEachDesugaringDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeForEachExpectedAnyLoop
-import org.jetbrains.kotlin.fir.diagnostics.ConeForEachTargetDoesNotExist
 import org.jetbrains.kotlin.fir.diagnostics.ConeForEachUnexpectedTargetInInnermostScope
 import org.jetbrains.kotlin.fir.diagnostics.ConeForEachUnknownTarget
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -227,13 +226,17 @@ typealias FunctionPosition = JumpablePosition<FunctionTarget>
 
 sealed interface JumpDesugaringKind<U : JumpableUse<*>> {
 
+    val sourceElementKind: KtFakeSourceElementKind.DesugaredForEachJump
+
     fun buildDesugaredExpression(sourceElement: KtSourceElement, scope: ForEachScope.Completed, jumpableUse: U): FirBlock =
         buildBlock {
-            source = sourceElement
-            buildDesugaredStatements(sourceElement, jumpableUse)
+            val fakeSource = sourceElement.takeIf { it.kind is KtFakeSourceElementKind.DesugaredForEachGuard }
+                ?: sourceElement.fakeElement(sourceElementKind)
+            source = fakeSource
+            buildDesugaredStatements(fakeSource, jumpableUse)
             // Desugaring of any jump expression always has to break the iteration of the innermost `forEach` loop
             statements += buildReturnExpression {
-                source = sourceElement
+                source = fakeSource
                 target = scope.target.firTarget
                 result = buildLiteralExpression(sourceElement, ConstantValueKind.Boolean, false, setType = true)
             }
@@ -253,6 +256,9 @@ sealed interface JumpDesugaringKind<U : JumpableUse<*>> {
     }
 
     data class ResultAndReturnFlag(val resultExpression: FirExpression?) : WithFlag<FunctionUse>() {
+
+        override val sourceElementKind: KtFakeSourceElementKind.DesugaredForEachJump = KtFakeSourceElementKind.DesugaredForEachJump.Return
+
         override fun FirBlockBuilder.buildDesugaredStatements(sourceElement: KtSourceElement, jumpableUse: FunctionUse) {
             jumpableUse.resultVariable?.let { resultVariable ->
                 statements += buildVariableAssignment {
@@ -266,11 +272,17 @@ sealed interface JumpDesugaringKind<U : JumpableUse<*>> {
     }
 
     data object BreakFlag : WithFlag<LoopUse.Break>() {
+
+        override val sourceElementKind: KtFakeSourceElementKind.DesugaredForEachJump = KtFakeSourceElementKind.DesugaredForEachJump.Break
+
         override fun FirBlockBuilder.buildDesugaredStatements(sourceElement: KtSourceElement, jumpableUse: LoopUse.Break): Unit =
             buildFlagAssignment(sourceElement, jumpableUse, LoopUse.Break::breakVariable)
     }
 
     data object ContinueFlag : WithFlag<LoopUse.Continue>() {
+
+        override val sourceElementKind: KtFakeSourceElementKind.DesugaredForEachJump = KtFakeSourceElementKind.DesugaredForEachJump.Continue
+
         override fun FirBlockBuilder.buildDesugaredStatements(sourceElement: KtSourceElement, jumpableUse: LoopUse.Continue): Unit =
             buildFlagAssignment(sourceElement, jumpableUse, LoopUse.Continue::continueVariable)
     }
@@ -280,12 +292,10 @@ sealed interface JumpDesugaringData {
 
     fun generateDesugaredJumpExpression(sourceElement: KtSourceElement): FirExpression
 
-    fun generateDesugaredJumpExpressionAsBlock(sourceElement: KtSourceElement): FirBlock
+    fun generateDesugaredJumpExpressionAsBlock(sourceElement: KtSourceElement): FirBlock =
+        buildSingleExpressionBlock(statement = generateDesugaredJumpExpression(sourceElement))
 
-    fun interface DefaultDesugaringOrNone : JumpDesugaringData {
-        override fun generateDesugaredJumpExpressionAsBlock(sourceElement: KtSourceElement): FirBlock =
-            buildSingleExpressionBlock(statement = generateDesugaredJumpExpression(sourceElement))
-    }
+    fun interface DefaultDesugaringOrNone : JumpDesugaringData
 
     data class Error(val errorDiagnostic: ConeForEachDesugaringDiagnostic) : JumpDesugaringData {
         override fun generateDesugaredJumpExpression(sourceElement: KtSourceElement): FirExpression =
@@ -293,9 +303,6 @@ sealed interface JumpDesugaringData {
                 source = sourceElement
                 diagnostic = errorDiagnostic
             }
-
-        override fun generateDesugaredJumpExpressionAsBlock(sourceElement: KtSourceElement): FirBlock =
-            buildSingleExpressionBlock(statement = generateDesugaredJumpExpression(sourceElement))
     }
 
     data class DesugaringGivenUse<U : JumpableUse<*>>(
@@ -321,8 +328,8 @@ sealed interface ForEachScope : Set<JumpableTarget<*>> {
 
     fun findFunction(name: String?, nextCompleted: Completed? = null): FunctionPosition?
 
-    fun markBreak(name: String?, sourceElement: KtSourceElement): JumpDesugaringData {
-        val position = findLoop(name) ?: return JumpDesugaringData.Error(ConeForEachTargetDoesNotExist)
+    fun markBreak(name: String?, sourceElement: KtSourceElement): JumpDesugaringData? {
+        val position = findLoop(name) ?: return null
         return markBreak(position, sourceElement)
     }
 
@@ -331,8 +338,8 @@ sealed interface ForEachScope : Set<JumpableTarget<*>> {
 
     fun markBreak(loopPosition: LoopPosition, sources: Set<KtSourceElement>): JumpDesugaringData
 
-    fun markContinue(name: String?, sourceElement: KtSourceElement): JumpDesugaringData {
-        val position = findLoop(name) ?: return JumpDesugaringData.Error(ConeForEachTargetDoesNotExist)
+    fun markContinue(name: String?, sourceElement: KtSourceElement): JumpDesugaringData? {
+        val position = findLoop(name) ?: return null
         return markContinue(position, sourceElement)
     }
 
@@ -341,8 +348,8 @@ sealed interface ForEachScope : Set<JumpableTarget<*>> {
 
     fun markContinue(loopPosition: LoopPosition, sources: Set<KtSourceElement>): JumpDesugaringData
 
-    fun markReturn(name: String?, sourceElement: KtSourceElement, resultExpression: FirExpression? = null): JumpDesugaringData {
-        val position = findFunction(name) ?: return JumpDesugaringData.Error(ConeForEachTargetDoesNotExist)
+    fun markReturn(name: String?, sourceElement: KtSourceElement, resultExpression: FirExpression? = null): JumpDesugaringData? {
+        val position = findFunction(name) ?: return null
         return markReturn(position, sourceElement, resultExpression)
     }
 
@@ -564,7 +571,7 @@ sealed interface ForEachScope : Set<JumpableTarget<*>> {
                 // Breaking from the current `forEach` loop does not cause desugaring
                 target -> JumpDesugaringData.DefaultDesugaringOrNone { sourceElement ->
                     buildReturnExpression {
-                        source = sourceElement
+                        source = sourceElement.fakeElement(KtFakeSourceElementKind.DesugaredForEachJump.Break)
                         // For some reason, `loop` is not smartcast into LoopTarget.ForEach
                         target = this@Completed.target.firTarget
                         result = buildLiteralExpression(source, ConstantValueKind.Boolean, false, setType = true)
@@ -585,7 +592,7 @@ sealed interface ForEachScope : Set<JumpableTarget<*>> {
                 // Breaking from the current `forEach` loop does not cause desugaring
                 target -> JumpDesugaringData.DefaultDesugaringOrNone { sourceElement ->
                     buildReturnExpression {
-                        source = sourceElement
+                        source = sourceElement.fakeElement(KtFakeSourceElementKind.DesugaredForEachJump.Continue)
                         // For some reason, `loop` is not smartcast into LoopTarget.ForEach
                         target = this@Completed.target.firTarget
                         result = buildLiteralExpression(source, ConstantValueKind.Boolean, true, setType = true)
@@ -594,7 +601,7 @@ sealed interface ForEachScope : Set<JumpableTarget<*>> {
                 // Breaking from outer loops causes desugaring in `forEach` lambdas
                 else -> {
                     val prevLoopUse = actualOuterJumpableUses[loop]?.asLoopUse()
-                    val continueVariable = prevLoopUse?.breakVariable ?: loop.generateContinueVariable()
+                    val continueVariable = prevLoopUse?.continueVariable ?: loop.generateContinueVariable()
                     val loopUse = prevLoopUse?.markContinue(continueVariable, sources)
                         ?: LoopUse.ContinueOnly(loopPosition, continueVariable, sources)
                     actualOuterJumpableUses[loop] = loopUse

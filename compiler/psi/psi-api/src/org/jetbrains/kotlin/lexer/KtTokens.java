@@ -203,7 +203,7 @@ public interface KtTokens {
     @NotNull KtKeywordToken VAR_KEYWORD              = KtKeywordToken.keyword("var", VAR_KEYWORD_Id);
     @NotNull KtModifierKeywordToken FUN_KEYWORD      = KtModifierKeywordToken.keywordModifier("fun", FUN_KEYWORD_Id);
     @NotNull KtKeywordToken FOR_KEYWORD              = KtKeywordToken.keyword("for", FOR_KEYWORD_Id);
-    @NotNull KtKeywordToken FOREACH_KEYWORD          = KtKeywordToken.keyword("miau", FOREACH_KEYWORD_Id);
+    @NotNull KtKeywordToken FOREACH_KEYWORD          = KtKeywordToken.keyword("foreach", FOREACH_KEYWORD_Id);
     @NotNull KtKeywordToken NULL_KEYWORD             = KtKeywordToken.keyword("null", NULL_KEYWORD_Id);
     @NotNull KtKeywordToken TRUE_KEYWORD             = KtKeywordToken.keyword("true", TRUE_KEYWORD_Id);
     @NotNull KtKeywordToken FALSE_KEYWORD            = KtKeywordToken.keyword("false", FALSE_KEYWORD_Id);

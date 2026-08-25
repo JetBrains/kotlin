@@ -5,11 +5,11 @@ operator fun IntRange.forEachWhile(action: (Int) -> Boolean): Unit = forEach {
 fun testSimple() {
     var result = ""
 
-    outer@ miau (i in 1..10) {
+    outer@ foreach (i in 1..10) {
         result += "$i:"
-        miau (j in 1..10) {
+        foreach (j in 1..10) {
             result += j
-            miau (k in 1..10) {
+            foreach (k in 1..10) {
                 break@outer
             }
             result += ","
@@ -23,11 +23,11 @@ fun testSimple() {
 fun testSimpleModified() {
     var result = ""
 
-    outer@ miau (i in 1..10) {
+    outer@ foreach (i in 1..10) {
         result += "$i:"
-        miau (j in 1..10) {
+        foreach (j in 1..10) {
             result += j
-            miau (k in 1..10) {
+            foreach (k in 1..10) {
                 continue@outer
             }
             result += ","
@@ -44,11 +44,11 @@ fun testMixedJumps() {
     outer@ for (i in 1..10) {
         result += "$i:"
         for (j in 1..10) {
-            a@ miau (k in 1..10) {
+            a@ foreach (k in 1..10) {
                 result += "$j|"
                 for (l in 1..10) {
                     result += "$l"
-                    miau (m in 1..10) {
+                    foreach (m in 1..10) {
                         if (l == 4) continue@a
                         break@outer
                     }
@@ -69,11 +69,11 @@ fun testMixedJumpsModified() {
     outer@ for (i in 1..10) {
         result += "$i:"
         for (j in 1..5) {
-            a@ miau (k in 1..4) {
+            a@ foreach (k in 1..4) {
                 result += "$k|"
                 for (l in 1..10) {
                     result += "$l"
-                    miau (m in 1..2) {
+                    foreach (m in 1..2) {
                         if (l == 4) continue@a
                         if (k == 3) break@outer
                     }
@@ -95,7 +95,7 @@ inline fun bar(block: () -> Unit): Unit = Unit
 fun testFunctions() {
     var result = ""
     foo {
-        miau (i in 1..10) {
+        foreach (i in 1..10) {
             result += i
             foo {
                 break
@@ -110,7 +110,7 @@ inline fun baz(value: () -> String): String = value()
 fun testFunctionsWithResult() {
     var result: String = ""
     val output = baz {
-        miau (i in 1..10) {
+        foreach (i in 1..10) {
             if (i == 7) return@baz "test"
             result += i
         }

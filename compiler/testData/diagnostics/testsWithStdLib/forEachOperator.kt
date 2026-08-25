@@ -7,17 +7,20 @@ inline fun foo(block: () -> String): String = block()
 fun bar(block: () -> Unit): Unit = block()
 
 fun test() {
-    foo {
-        miau (i in 1..10) {
-            bar {
-                <!RETURN_NOT_ALLOWED!>return<!>
-                <!RETURN_NOT_ALLOWED!>return@foo<!> "test"
-                return@bar
-                <!RETURN_NOT_ALLOWED!>break<!>
-                <!RETURN_NOT_ALLOWED!>continue<!>
+    outer@ foreach (i in 1..10) {
+        foo {
+            foreach (j in 1..10) {
+                bar {
+                    <!RETURN_NOT_ALLOWED!>return<!>
+                    <!RETURN_NOT_ALLOWED!>return@foo<!> "test"
+                    return@bar
+                    <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
+                    <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
+                    <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break@outer<!>
+                }
             }
+            "<unreachable>"
         }
-        "<unreachable>"
     }
 }
 

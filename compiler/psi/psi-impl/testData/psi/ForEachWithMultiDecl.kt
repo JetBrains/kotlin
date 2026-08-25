@@ -1,30 +1,30 @@
 // COMPILATION_ERRORS
 
 fun main() {
-    miau ((a) in b) {}
-    miau ((a, b) in b) {}
-    miau ((a: Int, b: Int) in b) {}
-    miau ((a: Int, b) in b) {}
-    miau ((a, b: Int) in b) {}
+    foreach ((a) in b) {}
+    foreach ((a, b) in b) {}
+    foreach ((a: Int, b: Int) in b) {}
+    foreach ((a: Int, b) in b) {}
+    foreach ((a, b: Int) in b) {}
 
-    miau (val (a) in b) {}
-    miau (val (a, b) in b) {}
-    miau (val (a: Int, b: Int) in b) {}
-    miau (val (a: Int, b) in b) {}
-    miau (val (a, b: Int) in b) {}
+    foreach (val (a) in b) {}
+    foreach (val (a, b) in b) {}
+    foreach (val (a: Int, b: Int) in b) {}
+    foreach (val (a: Int, b) in b) {}
+    foreach (val (a, b: Int) in b) {}
 
-    miau (var (a) in b) {}
-    miau (var (a, b) in b) {}
-    miau (var (a: Int, b: Int) in b) {}
-    miau (var (a: Int, b) in b) {}
-    miau (var (a, b: Int) in b) {}
+    foreach (var (a) in b) {}
+    foreach (var (a, b) in b) {}
+    foreach (var (a: Int, b: Int) in b) {}
+    foreach (var (a: Int, b) in b) {}
+    foreach (var (a, b: Int) in b) {}
 
-    miau ((a in b) {}
-    miau ((a, ) in b) {}
-    miau ((a: ) in b) {}
-    miau ((a: , ) in b) {}
-    miau ((, b: Int) in b) {}
+    foreach ((a in b) {}
+    foreach ((a, ) in b) {}
+    foreach ((a: ) in b) {}
+    foreach ((a: , ) in b) {}
+    foreach ((, b: Int) in b) {}
 
-    miau ((a: in b) {}
-    miau (( ) {}
+    foreach ((a: in b) {}
+    foreach (( ) {}
 }

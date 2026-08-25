@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.diagnostics
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirAbstractTarget
-import org.jetbrains.kotlin.fir.FirAbstractTarget
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -138,10 +137,6 @@ object ConeSmartcastToTypeVariable : ConeDiagnostic {
 
 sealed interface ConeForEachDesugaringDiagnostic : ConeDiagnostic
 
-object ConeForEachTargetDoesNotExist : ConeForEachDesugaringDiagnostic {
-    override val reason: String get() = "Unable to find the label target in the current scope-nest."
-}
-
 class ConeForEachUnknownTarget(val target: FirAbstractTarget<*>) : ConeForEachDesugaringDiagnostic {
     override val reason: String get() = "Unknown target $target encountered during desugaring."
 }
@@ -153,22 +148,6 @@ class ConeForEachUnexpectedTargetInInnermostScope(val target: FirAbstractTarget<
 object ConeForEachExpectedAnyLoop : ConeForEachDesugaringDiagnostic {
     override val reason: String get() = "Expected any loop at the innermost pending scope position."
 }
-
-object ConeForEachMissingOuterScope : ConeForEachDesugaringDiagnostic {
-    override val reason: String get() = "Desugaring requires that an outer scope is present."
-}
-//
-//object ConeForEachExpectedForEach : ConeForEachDesugaringDiagnostic {
-//    override val reason: String get() = "Expected for each loop at the innermost pending scope position."
-//}
-//
-//object ConeForEachDefaultDesugaringUnknownLoopTarget : ConeForEachDesugaring {
-//    override val reason: String get() = "Cannot create default jump expression for an unknown loop target."
-//}
-//
-//class ConeForEachDesugaringUnknownTarget(val target: FirAbstractTarget<*>) : ConeForEachDesugaring {
-//    override val reason: String get() = "Trying to desugar a jump expression for an unknown target $target."
-//}
 
 enum class DiagnosticKind {
     ExpressionExpected,

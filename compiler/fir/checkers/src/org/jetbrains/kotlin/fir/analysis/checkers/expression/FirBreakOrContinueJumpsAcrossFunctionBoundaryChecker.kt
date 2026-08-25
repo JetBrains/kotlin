@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker.DeclarationKind.InlinedLambda
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker.DeclarationKind.NotInalienableDeclaration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.builder.reportOnGuardOrItself
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnGuardOrItself
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled

@@ -305,7 +305,7 @@ LONELY_BACKTICK=`
 "var"        { return KtTokens.VAR_KEYWORD ;}
 "fun"        { return KtTokens.FUN_KEYWORD ;}
 "for"        { return KtTokens.FOR_KEYWORD ;}
-"miau"       { return KtTokens.FOREACH_KEYWORD;}
+"foreach"       { return KtTokens.FOREACH_KEYWORD;}
 "is"         { return KtTokens.IS_KEYWORD ;}
 "in"         { return KtTokens.IN_KEYWORD ;}
 "if"         { return KtTokens.IF_KEYWORD ;}
