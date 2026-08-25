@@ -77,7 +77,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * The enum entries declared in this body, in source order; empty if the owner is not an enum class.
      */
     val enumEntries: List<KtEnumEntry>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ENUM_ENTRY)
+        get() = getStubOrPsiChildren(KtNodeTypes.ENUM_ENTRY, KtEnumEntry.EMPTY_ARRAY).asList()
 
     /**
      * The companion objects declared in this body, in source order; empty if there are none. Valid Kotlin allows at most one, but several

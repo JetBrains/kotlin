@@ -1466,6 +1466,7 @@ public final class org/jetbrains/kotlin/psi/KtElementUtilsKt {
 }
 
 public class org/jetbrains/kotlin/psi/KtEnumEntry : org/jetbrains/kotlin/psi/KtClass, org/jetbrains/kotlin/psi/KtDeclarationWithReturnType {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtEnumEntry;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun delete ()V
 	public fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;

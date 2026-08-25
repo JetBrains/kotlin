@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.ClassId;
@@ -34,6 +35,9 @@ import java.util.Objects;
  * }</pre>
  */
 public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtEnumEntry[] EMPTY_ARRAY = new KtEnumEntry[0];
+
     @KtImplementationDetail
     public KtEnumEntry(@NotNull ASTNode node) {
         super(node);
@@ -41,7 +45,7 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
 
     @KtImplementationDetail
     public KtEnumEntry(@NotNull KotlinClassStub stub) {
-        super(stub, KtStubBasedElementTypes.ENUM_ENTRY);
+        super(stub, KtNodeTypes.ENUM_ENTRY);
     }
 
     @NotNull
