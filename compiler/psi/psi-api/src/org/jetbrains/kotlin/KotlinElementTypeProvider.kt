@@ -113,7 +113,7 @@ interface KotlinElementTypeProvider {
     val blockExpressionType: IElementType
     val lambdaExpressionType: IElementType
     val referenceExpressionType: KtNodeType
-    val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
+    val enumEntrySuperclassReferenceExpressionType: KtNodeType
     val operationReferenceType: KtNodeType
     val dotQualifiedExpressionType: KtNodeType
     val callExpressionType: KtNodeType

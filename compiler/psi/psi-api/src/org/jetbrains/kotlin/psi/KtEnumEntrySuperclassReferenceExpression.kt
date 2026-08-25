@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -36,7 +36,7 @@ class KtEnumEntrySuperclassReferenceExpression : KtExpressionImplStub<KotlinEnum
 
     @KtImplementationDetail
     constructor(stub: KotlinEnumEntrySuperclassReferenceExpressionStub) :
-            super(stub, KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
+            super(stub, KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
 
     // It is the owner enum class (not an enum entry but the whole enum)
     private val referencedElement: KtClass?

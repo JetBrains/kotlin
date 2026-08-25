@@ -257,6 +257,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.OBJECT_LITERAL,
             psiFactory = ::KtObjectLiteralExpression,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION,
+            factory = KtEnumEntrySuperclassReferenceExpressionStubSerializingElementFactory,
+        )
     }
 }
 
