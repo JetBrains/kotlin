@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
@@ -27,7 +28,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
+    constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtNodeTypes.PRIMARY_CONSTRUCTOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
 
