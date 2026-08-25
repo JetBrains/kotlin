@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
+import org.jetbrains.kotlin.ir.builders.typeOperator
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -119,7 +120,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             irExprBody(irBlock {
                 +delegateReference.getterFunction.inline(
                     getter,
-                    createAccessorArgumentsList(getter, delegateReference.getterFunction, isGetter = true, receiverProvider)
+                    createAccessorArgumentsList(getter, delegateReference.getterFunction, isGetter = true, receiverProvider),
+                    moveBody = false,
                 )
             })
         }
@@ -134,7 +136,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         return irExprBody(irBlock {
             +delegateSetter.inline(
                 setter,
-                createAccessorArgumentsList(setter, delegateSetter, isGetter = false, receiverProvider)
+                createAccessorArgumentsList(setter, delegateSetter, isGetter = false, receiverProvider),
+                moveBody = false,
             )
         })
     }
@@ -154,7 +157,22 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             if (boundReceiverOrNull != null) add(createTmpVariable(boundReceiverOrNull.deepCopyWithSymbols(accessor)))
             if (size + (if (isGetter) 0 else 1) < delegateAccessor.parameters.size) {
                 val unboundReceiver = accessor.getReceiverParameterOrNull()
-                if (unboundReceiver != null) add(unboundReceiver)
+                if (unboundReceiver != null) {
+                    add(
+                        createTmpVariable(
+                            /**
+                             * This implicit cast is needed so that [org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering]
+                             * correctly selects the parent class for the synthetic accessor.
+                             */
+                            typeOperator(
+                                delegateAccessor.parameters.first().type,
+                                irGet(unboundReceiver),
+                                IrTypeOperator.IMPLICIT_CAST,
+                                unboundReceiver.type
+                            )
+                        )
+                    )
+                }
             }
             if (setterParam != null) add(setterParam)
         }.also {
