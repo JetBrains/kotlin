@@ -36,7 +36,7 @@ interface KotlinElementTypeProvider {
     val fileType: IFileElementType
 
     // Classifiers
-    val classType: KtStubElementType<out KotlinClassStub, KtClass>
+    val classType: KtNodeType
     val objectType: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration>
     val typeAliasType: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias>
     val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
