@@ -10,7 +10,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -54,7 +53,6 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
      */
     @Nullable
     @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtExpression getImportedReference() {
         KtExpression[] references = getStubOrPsiChildren(KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
         if (references.length > 0) {
@@ -65,9 +63,8 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
 
     /** Returns the {@code as} alias of this import, or {@code null} if the import has no alias. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtImportAlias getAlias() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.IMPORT_ALIAS);
+        return getStubOrPsiChild(KtNodeTypes.IMPORT_ALIAS, KtImportAlias.class);
     }
 
     @Override

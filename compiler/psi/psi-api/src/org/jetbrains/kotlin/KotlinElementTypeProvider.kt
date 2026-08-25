@@ -139,7 +139,7 @@ interface KotlinElementTypeProvider {
     val fileAnnotationListType: KtNodeType
     val importListType: KtNodeType
     val importDirectiveType: KtNodeType
-    val importAliasType: KtStubElementType<out KotlinImportAliasStub, KtImportAlias>
+    val importAliasType: KtNodeType
     val scriptType: KtStubElementType<out KotlinScriptStub, KtScript>
 
     // Code fragments
