@@ -252,6 +252,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.PARENTHESIZED,
             psiFactory = ::KtParenthesizedExpression,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.OBJECT_LITERAL,
+            psiFactory = ::KtObjectLiteralExpression,
+        )
     }
 }
 

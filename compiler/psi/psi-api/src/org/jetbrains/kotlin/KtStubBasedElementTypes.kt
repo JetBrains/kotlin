@@ -274,8 +274,7 @@ internal object KtStubBasedElementTypes {
         provider.collectionLiteralExpressionType
 
     @JvmField
-    val OBJECT_LITERAL: KtStubElementType<out KotlinPlaceHolderStub<KtObjectLiteralExpression>, KtObjectLiteralExpression> =
-        provider.objectLiteralType
+    val OBJECT_LITERAL: KtNodeType = provider.objectLiteralType
 
     // Arguments
 

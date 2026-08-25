@@ -98,8 +98,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType PARENTHESIZED = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtObjectLiteralExpression> OBJECT_LITERAL =
-            new KtPlaceHolderStubElementType<>("OBJECT_LITERAL", KtObjectLiteralExpression.class);
+    @NotNull KtNodeType OBJECT_LITERAL = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression::new);
 
     @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
