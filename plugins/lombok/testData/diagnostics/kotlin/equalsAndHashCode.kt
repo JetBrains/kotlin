@@ -18,7 +18,8 @@ typealias TA = String
 
 val onAnonymous = <!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!> object {}
 
-@EqualsAndHashCode // TODO: it should be ANNOTATION_HAS_NO_EFFECT, KT-88507
+// An enum inherits final `equals`/`hashCode` from `java.lang.Enum`, so a generated one wouldn't load, KT-88507.
+<!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
 enum class Color(val hex: String) {
     RED("#FF0000")
 }
