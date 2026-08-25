@@ -53,7 +53,7 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
       val tmp0_return = receiver.test(
         index = p0
       )
-      tmp0_return
+      return tmp0_return
     }
     scrollState()::test
   }, %composer, 0)
@@ -75,7 +75,7 @@ fun rememberFoo(%composer: Composer?, %changed: Int): Int {
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
       fun ScrollState.test(p0: Int): Int {
-        receiver.test(
+        return receiver.test(
           index = p0
         )
       }

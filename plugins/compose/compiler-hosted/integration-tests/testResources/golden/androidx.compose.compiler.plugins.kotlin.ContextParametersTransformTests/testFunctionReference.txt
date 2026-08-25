@@ -1,0 +1,93 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+
+@Composable
+fun Test(foo: Foo) {
+    with(foo) {
+        val refA: @Composable (Int) -> Unit = ::A
+        refA(42)
+        Caller(foo, Foo::ExtA)
+
+        val refB: @Composable String.(Int) -> Unit = String::B
+        "Hello".refB(42)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@FunctionKeyMeta(key = 526939746, startOffset = 57, endOffset = 288)
+fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)N(foo)*<::A>,<::A>,<refA(4...>,<Foo::E...>,<Caller...>,<String...>,<String...>,<refB(4...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(foo)
+    } else {
+      %composer.changedInstance(foo)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    with(foo) {
+      val refA = <block>{
+        val tmp0 = %this%with
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
+          ::A<kotlin.reflect.KFunction3> {
+            @Composable
+            @FunctionKeyMeta(key = -951514801, startOffset = 140, endOffset = 143)
+            fun A(c0: Foo, p0: @[ParameterName(name = 'a')] Int, %composer: Composer?, %changed: Int) {
+              A(c0, p0, %composer, Foo.%stable or 0b1110 and %changed or 0b01110000 and %changed)
+            }
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      refA(42, %composer, 6)
+      Caller(foo, <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp1_group = %composer.cache(false) {
+          ::ExtA
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp1_group
+      }, %composer, 0b00110000 or Foo.%stable or 0b1110 and %dirty)
+      val refB = <block>{
+        val tmp0 = %this%with
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp2_group = %composer.cache(%composer.changedInstance(tmp0)) {
+          ::B<kotlin.reflect.KFunction4> {
+            @Composable
+            @FunctionKeyMeta(key = -357558262, startOffset = 246, endOffset = 255)
+            fun B(c0: Foo, p0: String, p1: @[ParameterName(name = 'a')] Int, %composer: Composer?, %changed: Int) {
+              p0.B(c0, p1, %composer, Foo.%stable or 0b1110 and %changed or 0b01110000 and %changed or 0b001110000000 and %changed)
+            }
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp2_group
+      }
+      refB("Hello", 42, %composer, 54)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(foo, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
