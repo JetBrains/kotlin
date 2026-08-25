@@ -9,14 +9,20 @@ object CompilerModules {
     )
 
     /**
-     * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
+     * Modules of the Kotlin PSI
      */
-    val commonCompilerModules = descriptorsCompilerModules + arrayOf(
+    val psiModules = arrayOf(
         ":compiler:psi:psi-api",
         ":compiler:psi:psi-impl",
         ":compiler:psi:psi-utils",
         ":compiler:psi:psi-frontend-utils",
         ":compiler:psi:parser",
+    )
+
+    /**
+     * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
+     */
+    val commonCompilerModules = descriptorsCompilerModules + psiModules + arrayOf(
         ":compiler:frontend.common-psi",
         ":compiler:frontend.common",
         ":compiler:util",
@@ -225,7 +231,7 @@ object CompilerModules {
 
     /**
      * The array of Analysis API modules that aren't part of [commonCompilerModules] (e.g., `:compiler:psi:psi-api`).
-     * It only covers production modules and is used only as a part of [projectsDependingOnStableStdlib].
+     * It only covers production modules, so modules that hold nothing but tests have to be listed separately.
      */
     val analysisApiModules = arrayOf(
         *analysisApiSurfaceModules,
