@@ -87,6 +87,29 @@ class JavaParsingImplicitOuterTypeArgumentsTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testStaticOuterContributesItsOwnParametersButSeversTheChainAboveIt() {
+        // `S` has no enclosing instance, so A's T is not an argument of `Inner` — but S's own U is:
+        // `Inner` denotes `S<U>.Inner`. FIR gives `Inner` the matching arity, and a missing argument
+        // is silently truncated by `JavaTypeConversion` instead of being reported.
+        val source = """
+            public class A<T> {
+                static class S<U> {
+                    class Inner {
+                        Inner foo() { return null; }
+                    }
+                }
+            }
+        """.trimIndent()
+        val a = parseFirstClass(source)
+        val s = a.findInnerClass(Name.identifier("S"))!!
+        val inner = s.findInnerClass(Name.identifier("Inner"))!!
+
+        val args = inner.implicitOuterArgumentsOfReturnTypeOf("foo")
+        assertEquals(1, args.size, "`Inner` denotes `S<U>.Inner`, so only S contributes")
+        assertSame(s.typeParameters[0], args[0], "The implicit outer argument must be S's own U")
+    }
+
+    @Test
     fun testImplicitOuterArgumentsOfNestedOuterChain() {
         // Both enclosing levels contribute, innermost first, and neither is shadowed by `Inner`'s own `U`.
         val source = """

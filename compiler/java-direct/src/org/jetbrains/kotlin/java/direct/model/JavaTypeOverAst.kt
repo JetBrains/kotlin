@@ -238,42 +238,39 @@ class JavaClassifierTypeOverAst(
             return explicitArgs
         }
 
-        // Each parameter is kept together with the class that declares it: the implicit outer
-        // argument is a parameter *of that class*, so the only correct answer is that class's own
-        // instance — FIR matches `JavaTypeParameter`s to `FirTypeParameterSymbol`s by identity
-        // through the per-class `JavaTypeParameterStack`, which is keyed by exactly these objects.
+        // Each parameter is kept together with its declaring class: the implicit argument is a
+        // parameter *of that class*, and FIR matches `JavaTypeParameter`s to
+        // `FirTypeParameterSymbol`s by identity through the per-class `JavaTypeParameterStack`,
+        // which is keyed by exactly these instances. A `static` outer still contributes its own
+        // parameters (`static class S<T> { class Inner {} }` ⇒ `S<T>.Inner`) but severs the chain
+        // above itself.
         val outerTypeParams = mutableListOf<JavaTypeParameter>()
         val outerTypeParamOwners = mutableListOf<JavaClass>()
         var outer = javaClass.outerClass
-        while (outer != null && !outer.isStatic) {
+        while (outer != null) {
             for (typeParam in outer.typeParameters) {
                 outerTypeParams.add(typeParam)
                 outerTypeParamOwners.add(outer)
             }
-            outer = outer.outerClass
+            outer = if (outer.isStatic) null else outer.outerClass
         }
 
-        // A declared parameter is available at this reference only if the reference is written
-        // inside the declaring class. This is an *identity* test on the enclosing chain, not a
-        // lexical lookup by name: a same-named parameter of a nested class or of the enclosing
-        // generic method shadows the outer one for name resolution, but it is not the parameter
-        // this implicit argument denotes (`class A<T> { class Inner<T> { Inner<String> foo(); } }`
-        // means `A<A.T>.Inner<String>`). Mirrors PSI, whose `JavaClassifierTypeImpl` substitutes an
-        // unmapped `PsiTypeParameter` to itself and never looks names up in the lexical scope.
-        // `null` means "not available here" and routes to the inherited recovery below.
+        // A parameter is available here only if the reference is written inside its declaring
+        // class, tested by identity rather than by name: a same-named parameter of a nested class
+        // or of an enclosing generic method shadows the outer one for name resolution but is not
+        // the parameter this implicit argument denotes (`class A<T> { class Inner<T> {
+        // Inner<String> foo(); } }` means `A<A.T>.Inner<String>`). `null` routes to the recovery
+        // below.
         val lexicalArgs = outerTypeParams.mapIndexed { index, typeParam ->
             typeParam.takeIf { isInScopeOfDeclaringClass(outerTypeParamOwners[index]) }
         }
 
-        // Inherited case: the inner class is non-static but its outer arguments are neither written
-        // in source nor lexically in scope — either the outer chain declares no parameters at all
-        // (top-level / cross-file outer, so the lexical walk above stops), or the outer class only
-        // *declares* them while the reference sits in a class that merely *inherits* the inner
-        // class, e.g. `class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`.
-        // In the latter case the declaring class's own parameters are out of scope here and would
-        // render as unresolved names, so the arguments have to come from the containing class's
-        // supertype hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
-        // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
+        // Inherited case: the outer arguments are neither written in source nor lexically in scope,
+        // so they have to come from the containing class's supertype hierarchy — e.g. for a class
+        // that merely *inherits* the inner class (`class Outer<E1, E2> extends BaseOuter<Integer,
+        // E1>` referencing `BaseInner`). `outerTypeParams` is also empty when the model cannot see
+        // the outer chain at all (cross-file outer resolved under a cycle guard), which the
+        // hierarchy walk still can.
         if (outerTypeParams.isEmpty() || lexicalArgs.any { it == null }) {
             val classId = javaClass.classId
             if (classId != null) {
@@ -282,7 +279,7 @@ class JavaClassifierTypeOverAst(
             }
         }
 
-        // Nothing recovered: keep the declaration-side parameters as the best available answer.
+        // Nothing recovered: the declaring class's own parameters are the best available answer.
         val implicitArgs = outerTypeParams.mapIndexed { index, typeParam ->
             JavaTypeParameterTypeOverAst(lexicalArgs[index] ?: typeParam)
         }
@@ -295,8 +292,7 @@ class JavaClassifierTypeOverAst(
      * [declaringClass]'s own type parameters denote the enclosing instance's ones here.
      *
      * Walks the classes lexically enclosing the reference, innermost first. Per JLS a `static`
-     * class has no enclosing instance, which severs the chain of implicit outer type arguments —
-     * the same break the collection walk above and PSI's `PsiUtil.typeParametersIterable` make.
+     * class has no enclosing instance, which severs the chain of implicit outer type arguments.
      *
      * Classes are compared by [JavaClass.classId] when both have one, so that a reference resolved
      * through the class finder (a distinct instance for the same class) is still recognised; the
