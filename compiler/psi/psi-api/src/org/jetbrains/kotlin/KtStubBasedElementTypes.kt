@@ -162,8 +162,7 @@ internal object KtStubBasedElementTypes {
     val DYNAMIC_TYPE: KtNodeType = provider.dynamicTypeType
 
     @JvmField
-    val FUNCTION_TYPE: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType> =
-        provider.functionTypeType
+    val FUNCTION_TYPE: KtNodeType = provider.functionTypeType
 
     @JvmField
     val FUNCTION_TYPE_RECEIVER: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver> =

@@ -41,7 +41,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     @KtImplementationDetail
     public KtFunctionType(@NotNull KotlinFunctionTypeStub stub) {
-        super(stub, KtStubBasedElementTypes.FUNCTION_TYPE);
+        super(stub, KtNodeTypes.FUNCTION_TYPE);
     }
 
     @NotNull
