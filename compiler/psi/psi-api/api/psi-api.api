@@ -1447,6 +1447,7 @@ public class org/jetbrains/kotlin/psi/KtElementImplStub : com/intellij/extapi/ps
 	public fun getContainingKtFile ()Lorg/jetbrains/kotlin/psi/KtFile;
 	protected final fun getExpressionFromStub ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	protected final fun getExpressionsFromStub ()[Lorg/jetbrains/kotlin/psi/KtExpression;
+	public fun getIElementType ()Lcom/intellij/psi/tree/IElementType;
 	public fun getLanguage ()Lcom/intellij/lang/Language;
 	public fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getReference ()Lcom/intellij/psi/PsiReference;
@@ -2432,6 +2433,8 @@ public final class org/jetbrains/kotlin/psi/KtScriptInitializer : org/jetbrains/
 }
 
 public final class org/jetbrains/kotlin/psi/KtSecondaryConstructor : org/jetbrains/kotlin/psi/KtConstructor {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtSecondaryConstructor$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtSecondaryConstructor;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getBodyExpression ()Lorg/jetbrains/kotlin/psi/KtBlockExpression;
 	public synthetic fun getBodyExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -2441,6 +2444,9 @@ public final class org/jetbrains/kotlin/psi/KtSecondaryConstructor : org/jetbrai
 	public final fun getDelegationCallOrNull ()Lorg/jetbrains/kotlin/psi/KtConstructorDelegationCall;
 	public final fun hasImplicitDelegationCall ()Z
 	public final fun replaceImplicitDelegationCallWithExplicit (Z)Lorg/jetbrains/kotlin/psi/KtConstructorDelegationCall;
+}
+
+public final class org/jetbrains/kotlin/psi/KtSecondaryConstructor$Companion {
 }
 
 public class org/jetbrains/kotlin/psi/KtSelfType : org/jetbrains/kotlin/psi/KtElementImpl, org/jetbrains/kotlin/psi/KtTypeElement {

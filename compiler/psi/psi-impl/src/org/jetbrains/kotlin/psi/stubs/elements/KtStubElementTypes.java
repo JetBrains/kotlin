@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.stubs.StubElementTypeHolderEP;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.*;
 
@@ -32,8 +34,7 @@ public interface KtStubElementTypes {
     @NotNull KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
             new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
     @NotNull KtPlaceHolderStubElementType<KtScriptInitializer> SCRIPT_INITIALIZER = KtScriptInitializerElementType.INSTANCE;
-    @NotNull KtSecondaryConstructorElementType SECONDARY_CONSTRUCTOR =
-            new KtSecondaryConstructorElementType("SECONDARY_CONSTRUCTOR");
+    @NotNull KtNodeType SECONDARY_CONSTRUCTOR = new KtNodeType("SECONDARY_CONSTRUCTOR", KtSecondaryConstructor::new);
     @NotNull KtPrimaryConstructorElementType PRIMARY_CONSTRUCTOR =
             new KtPrimaryConstructorElementType("PRIMARY_CONSTRUCTOR");
 

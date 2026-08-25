@@ -281,7 +281,7 @@ org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(KotlinPlaceHolderStub<KtCo
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(KotlinConstantExpressionStub)
 org.jetbrains.kotlin.psi.KtConstructor:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtConstructor:constructor(KotlinConstructorStub<T>, KtStubElementType<out KotlinConstructorStub<T>, T>)
+org.jetbrains.kotlin.psi.KtConstructor:constructor(KotlinConstructorStub<T>, IElementType)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(KotlinPlaceHolderStub<KtConstructorCalleeExpression>)
 org.jetbrains.kotlin.psi.KtConstructorDelegationCall:constructor(ASTNode)
@@ -931,6 +931,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub.isSpread
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:constructor(String, Class<PsiT>, Class<?>)
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:createPsiFromAst(ASTNode)
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:createStubDependingOnParent(ASTNode)
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:getArrayFactory()
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_AND_COMPANION_BLOCK_TYPES

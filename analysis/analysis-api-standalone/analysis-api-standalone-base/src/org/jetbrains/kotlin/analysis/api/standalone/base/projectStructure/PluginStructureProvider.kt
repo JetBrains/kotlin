@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.ide.plugins.*
+import com.intellij.ide.plugins.DataLoader
+import com.intellij.ide.plugins.PluginXmlPathResolver
+import com.intellij.ide.plugins.convert
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
@@ -191,6 +193,11 @@ object PluginStructureProvider {
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
         "org.jetbrains.kotlin.psiReferenceProvider",
         "com.intellij.psi.classFileDecompiler",
+
+        // Stub support is decoupled from element types, so the Kotlin file stub definition and the stub
+        // factory/serializer registry have to be registered for Standalone to resolve stubs
+        "com.intellij.languageStubDefinition",
+        "com.intellij.stubElementRegistryExtension",
     )
 
     private val MockComponentManager.classLoader
