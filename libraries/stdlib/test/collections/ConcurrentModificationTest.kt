@@ -30,7 +30,7 @@ class ConcurrentModificationTest {
 
             val iterator = collection.createIterator()
 
-            iteratorOp.precedingFunction?.invoke(iterator)
+            val _ = iteratorOp.precedingFunction?.invoke(iterator)
             collectionOp.function.invoke(collection)
 
             val message = "listOp: ${collectionOp.description}, iteratorOp: ${iteratorOp.description}"
@@ -125,9 +125,9 @@ class ConcurrentModificationTest {
             CollectionOperation("retainAll(emptyList())") { retainAll(emptyList()) },
 
             CollectionOperation("clear()") { clear() },
-            CollectionOperation("iterator.remove()") { iterator().apply { next(); remove() } },
+            CollectionOperation("iterator.remove()") { iterator().apply { val _ = next(); remove() } },
         ).also { ops ->
-            ops + ops.map {
+            val _ = ops + ops.map {
                 CollectionOperation("subList(1, size)." + it.description, it.throwsCME) { it.function.invoke(subList(1, size)) }
             }
         }
@@ -145,7 +145,7 @@ class ConcurrentModificationTest {
         }
 
         testThrowsCME { action ->
-            buildList(4) {
+            val _ = buildList(4) {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
             }
@@ -170,7 +170,7 @@ class ConcurrentModificationTest {
         }
 
         testThrowsCME { action ->
-            buildList(10) {
+            val _ = buildList(10) {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
             }
@@ -257,6 +257,7 @@ class ConcurrentModificationTest {
     }
 
     @Test
+    @Suppress("RETURN_VALUE_NOT_USED", "RETURN_VALUE_NOT_USED_COERCION")
     fun subList() {
         if (TestPlatform.current == TestPlatform.Js) return
 
@@ -309,7 +310,7 @@ class ConcurrentModificationTest {
         }
 
         testThrowsCME { action ->
-            buildList {
+            val _ = buildList {
                 addAll(listOf("a", "b", "c", "d"))
                 val subList = subList(0, size)
                 add("e")
@@ -359,7 +360,7 @@ class ConcurrentModificationTest {
             CollectionOperation("retainAll(emptyList())") { retainAll(emptyList()) },
 
             CollectionOperation("clear()") { clear() },
-            CollectionOperation("iterator.remove()") { iterator().apply { next(); remove() } },
+            CollectionOperation("iterator.remove()") { iterator().apply { val _ = next(); remove() } },
         )
 
         fun testThrowsCME(withMutableSet: WithCollection<MutableSet<String>>) {
@@ -389,7 +390,7 @@ class ConcurrentModificationTest {
         }
 
         testThrowsCME { action ->
-            buildSet(10) {
+            val _ = buildSet(10) {
                 addAll(elements)
                 action(this)
             }
@@ -428,7 +429,7 @@ class ConcurrentModificationTest {
             CollectionOperation("putAll(non-existing)") { putAll(mapOf("e" to "e", "f" to "f")) },
 
             CollectionOperation("clear()") { clear() },
-            CollectionOperation("iterator.remove()") { iterator().apply { next(); remove() } },
+            CollectionOperation("iterator.remove()") { iterator().apply { val _ = next(); remove() } },
         )
 
         fun testThrowsCME(withMutableMap: WithCollection<MutableMap<String, String>>) {
@@ -461,7 +462,7 @@ class ConcurrentModificationTest {
             }
         }
         testThrowsCME { action ->
-            buildMap(10) {
+            val _ = buildMap(10) {
                 putAll(entries)
                 action(this)
             }
@@ -494,14 +495,16 @@ private class CollectionOperation<C>(
 
 private class IteratorOperation<I>(
     val description: String,
-    val precedingFunction: (I.() -> Unit)? = null,
+    val precedingFunction: (I.() -> Any?)? = null,
     val function: I.() -> Unit
 )
 
 private fun <E> iteratorOperations() = listOf<IteratorOperation<MutableIterator<E>>>(
-    IteratorOperation("next()") { next() },
+    IteratorOperation("next()") { val _ = next() },
     IteratorOperation("remove()", { next() }) { remove() }
 )
+
+@Suppress("RETURN_VALUE_NOT_USED_COERCION")
 private val listIteratorOperations = listOf<IteratorOperation<MutableListIterator<String>>>(
     IteratorOperation("next()") { next() },
     IteratorOperation("remove()", { next() }) { remove() },

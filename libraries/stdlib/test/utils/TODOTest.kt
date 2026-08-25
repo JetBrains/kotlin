@@ -44,6 +44,7 @@ class TODOTest {
 
 
     @Test
+    @Suppress("RETURN_VALUE_NOT_USED", "RETURN_VALUE_NOT_USED_COERCION")
     fun usage() {
         val inst = PartiallyImplementedClass()
 

@@ -144,6 +144,7 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
         }
     }
 
+    @IgnorableReturnValue
     private inline fun <reified T> testDeleteMaybeFailsWith(path: Path): Boolean {
         return try {
             testDeleteSucceeds(path)

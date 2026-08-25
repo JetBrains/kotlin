@@ -473,9 +473,11 @@ public class RangeTest {
         assertTrue(("empty"..<"empty").isEmpty())
     }
 
-    private fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith<IllegalArgumentException> { f() }
+    @IgnorableReturnValue
+    private fun assertFailsWithIllegalArgument(f: () -> Any?) = assertFailsWith<IllegalArgumentException> { f() }
 
-    @Test fun illegalProgressionCreation() {
+    @Test
+    fun illegalProgressionCreation() {
         // create Progression explicitly with increment = 0
         assertFailsWithIllegalArgument { IntProgression.fromClosedRange(0, 5, 0) }
         assertFailsWithIllegalArgument { LongProgression.fromClosedRange(0, 5, 0) }

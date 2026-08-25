@@ -224,7 +224,7 @@ class ReversedViewsTest {
         compare(copyIter, iter) {
             propertyFailsWith<IllegalStateException> { remove() }
             propertyEquals {
-                next()
+                val _ = next()
                 remove()
             }
             propertyEquals { previousIndex() }
@@ -237,7 +237,7 @@ class ReversedViewsTest {
 
         compare(copyIter, iter) {
             propertyEquals {
-                next()
+                val _ = next()
                 remove()
             }
             propertyEquals { previousIndex() }
@@ -339,6 +339,6 @@ class ReversedViewsTest {
 
 private fun Iterator<*>.seekEnd() {
     while (hasNext()) {
-        next()
+        val _ = next()
     }
 }
