@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -36,7 +35,7 @@ public class KtFileAnnotationList extends KtElementImplStub<KotlinPlaceHolderStu
 
     @KtImplementationDetail
     public KtFileAnnotationList(@NotNull KotlinPlaceHolderStub<KtFileAnnotationList> stub) {
-        super(stub, KtStubBasedElementTypes.FILE_ANNOTATION_LIST);
+        super(stub, KtNodeTypes.FILE_ANNOTATION_LIST);
     }
 
     @Override
