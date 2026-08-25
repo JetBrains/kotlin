@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
-
 interface FeatureFlag<OptionType : Any> {
     val default: OptionType
 }
