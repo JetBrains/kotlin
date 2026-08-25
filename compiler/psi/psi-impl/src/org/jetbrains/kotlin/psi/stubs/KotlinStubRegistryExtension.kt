@@ -297,6 +297,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.VALUE_ARGUMENT_NAME,
             psiFactory = ::KtValueArgumentName,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.SUPER_TYPE_LIST,
+            psiFactory = ::KtSuperTypeList,
+        )
     }
 }
 

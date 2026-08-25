@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.util.IncorrectOperationException;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
@@ -36,7 +36,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
 
     @KtImplementationDetail
     public KtSuperTypeList(@NotNull KotlinPlaceHolderStub<KtSuperTypeList> stub) {
-        super(stub, KtStubBasedElementTypes.SUPER_TYPE_LIST);
+        super(stub, KtNodeTypes.SUPER_TYPE_LIST);
     }
 
     @Override
