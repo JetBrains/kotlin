@@ -119,8 +119,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType SUPER_TYPE_LIST = new KtNodeType("SUPER_TYPE_LIST", KtSuperTypeList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtInitializerList> INITIALIZER_LIST =
-            new KtPlaceHolderStubElementType<>("INITIALIZER_LIST", KtInitializerList.class);
+    @NotNull KtNodeType INITIALIZER_LIST = new KtNodeType("INITIALIZER_LIST", KtInitializerList::new);
 
     @NotNull KtPlaceHolderStubElementType<KtDelegatedSuperTypeEntry> DELEGATED_SUPER_TYPE_ENTRY =
             new KtPlaceHolderStubElementType<>("DELEGATED_SUPER_TYPE_ENTRY", KtDelegatedSuperTypeEntry.class);
