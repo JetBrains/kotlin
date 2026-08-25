@@ -1846,6 +1846,8 @@ public final class org/jetbrains/kotlin/psi/KtNamedDeclarationUtil {
 }
 
 public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi/KtTypeParameterListOwnerStub, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtFunction {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtNamedFunction$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtNamedFunction;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getBodyBlockExpression ()Lorg/jetbrains/kotlin/psi/KtBlockExpression;
 	public fun getBodyExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -1871,6 +1873,9 @@ public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi
 	public fun mayHaveContract (Z)Z
 	public fun setTypeReference (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public fun shouldChangeModificationCount (Lcom/intellij/psi/PsiElement;)Z
+}
+
+public final class org/jetbrains/kotlin/psi/KtNamedFunction$Companion {
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/psi/KtNonPublicApi : java/lang/annotation/Annotation {

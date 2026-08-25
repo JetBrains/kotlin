@@ -59,7 +59,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     // Callables
 
-    override val functionType: KtStubElementType<out KotlinFunctionStub, KtNamedFunction>
+    override val functionType: KtNodeType
         get() = KtStubElementTypes.FUNCTION
 
     override val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>

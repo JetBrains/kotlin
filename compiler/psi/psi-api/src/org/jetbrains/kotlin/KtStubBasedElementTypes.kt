@@ -58,8 +58,7 @@ internal object KtStubBasedElementTypes {
     // Callables
 
     @JvmField
-    val FUNCTION: KtStubElementType<out KotlinFunctionStub, KtNamedFunction> =
-        provider.functionType
+    val FUNCTION: KtNodeType = provider.functionType
 
     @JvmField
     val PROPERTY: KtStubElementType<out KotlinPropertyStub, KtProperty> =

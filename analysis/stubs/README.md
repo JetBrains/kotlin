@@ -49,7 +49,8 @@ but exposed due to the current technical limitations.
   instances). API consumers reference element-type constants through `KtStubBasedElementTypes`
   (psi-api).
 - **Serialization** — each element type writes/reads its fields via `StubOutputStream`/
-  `StubInputStream` (see e.g. `KtFunctionElementType.serialize/deserialize`). Stub data classes live in
+  `StubInputStream` (see e.g. `KtPropertyElementType.serialize/deserialize`, or
+  `KtFunctionStubSerializingElementFactory` for an already migrated one). Stub data classes live in
   `org.jetbrains.kotlin.psi.stubs.impl`.
 - `KotlinElementTypeProvider` (`compiler/psi/psi-api/.../KotlinElementTypeProvider.kt`) is a bridge between element types and their
   implementations (`KotlinElementTypeProviderImpl`).
