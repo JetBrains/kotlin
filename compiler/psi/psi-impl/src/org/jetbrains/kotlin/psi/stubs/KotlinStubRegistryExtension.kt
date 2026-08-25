@@ -355,6 +355,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION,
             factory = KtCollectionLiteralExpressionStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.STRING_TEMPLATE,
+            psiFactory = ::KtStringTemplateExpression,
+        )
     }
 }
 
