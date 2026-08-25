@@ -370,6 +370,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
             psiFactory = ::KtSimpleNameStringTemplateEntry,
         )
+
+        registry.registerPlaceHolderWithTextFactory(
+            type = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
+            psiFactory = ::KtLiteralStringTemplateEntry,
+        )
     }
 }
 

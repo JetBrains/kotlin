@@ -151,8 +151,8 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType SHORT_STRING_TEMPLATE_ENTRY =
             new KtNodeType("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry::new);
 
-    @NotNull KtPlaceHolderWithTextStubElementType<KtLiteralStringTemplateEntry> LITERAL_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry.class);
+    @NotNull KtNodeType LITERAL_STRING_TEMPLATE_ENTRY =
+            new KtNodeType("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry::new);
 
     @NotNull KtPlaceHolderWithTextStubElementType<KtEscapeStringTemplateEntry> ESCAPE_STRING_TEMPLATE_ENTRY =
             new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
