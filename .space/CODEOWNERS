@@ -74,6 +74,7 @@
 /.idea/kotlinTestDataPluginTestDataPaths.xml dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com sergej.jaskiewicz@jetbrains.com
 
 /.space/ "Kotlin Build Infrastructure"
+/.github/ "Kotlin Build Infrastructure"
 
 # AI
 /.ai/ "Kotlin" "Kotlin Analysis API" "Kotlin Build Infrastructure"

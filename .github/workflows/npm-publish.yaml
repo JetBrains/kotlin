@@ -1,0 +1,43 @@
+name: Publish to npm
+on:
+  repository_dispatch:
+    types: [npm_publish]
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.jetbrains.team/p/kt/containers-public/kotlin-build-env:v48
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.client_payload.branch }}
+      - name: Download and Unpack ZIP
+        shell: bash
+        run: |
+          # 1. Read URL from payload
+          ZIP_URL="${{ github.event.client_payload.zip_url }}"
+          
+          if [ -z "$ZIP_URL" ]; then
+            echo "Error: zip_url parameter is missing from client_payload"
+            exit 1
+          fi
+          # 2. Define directory paths
+          DEST_DIR="${GITHUB_WORKSPACE}/dist"
+          mkdir -p "$DEST_DIR"
+          echo "Downloading from: $ZIP_URL"
+          echo "Extracting to: $DEST_DIR"
+          # 3. Download using curl (-L follows redirects)
+          curl -L -o archive.zip "$ZIP_URL"
+          # 4. Extract directly into /dist/
+          unzip -q archive.zip -d "$DEST_DIR"
+      - name: Publish to npm
+        run: >
+          ./gradlew -p js/npm -PdryRun=true
+          -Pkotlin.deploy.tag=${{ github.event.client_payload.deploy_tag }}
+          -Pkotlin.deploy.version=${{ github.event.client_payload.deploy_version }}
+          publishAll
+
