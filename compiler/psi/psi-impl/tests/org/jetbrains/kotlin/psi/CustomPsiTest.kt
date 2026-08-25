@@ -16,6 +16,24 @@ import org.junit.jupiter.api.Test
 class CustomPsiTest : AbstractAnalysisApiExecutionTest("testData/custom") {
     override val configurator: AnalysisApiTestConfigurator get() = DummyAnalysisApiTestConfigurator
 
+    /**
+     * The REPL mark has to survive tree unloading, as the tree can be dropped at any moment,
+     * and the reloaded tree consists of new elements.
+     *
+     * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
+     */
+    @Test
+    @OptIn(KtExperimentalApi::class)
+    fun replScriptTreeReload(testServices: TestServices) {
+        val project = testServices.environmentManager.getProject()
+        val replFile = KtPsiFactory(project).createReplSnippet("val foo = 1").containingKtFile
+        testServices.assertions.assertEquals(true, replFile.script?.isReplSnippet)
+
+        replFile.setTreeElementPointer(null)
+        replFile.calcTreeElement()
+        testServices.assertions.assertEquals(true, replFile.script?.isReplSnippet)
+    }
+
     @Test
     @OptIn(KtExperimentalApi::class)
     fun replScriptCopy(testServices: TestServices) {
