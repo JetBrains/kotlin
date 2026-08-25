@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// COMPARE_WITH_LIGHT_TREE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun noArgs() {}
@@ -63,6 +64,8 @@ fun testLambdaArg() {
     oneLambdaArg() {} <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {}
     <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
+    oneLambdaArg()
+    {}<!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {} // comment
     <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 }
