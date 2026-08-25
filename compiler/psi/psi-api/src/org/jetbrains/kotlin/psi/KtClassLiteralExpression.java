@@ -38,7 +38,7 @@ public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiter
 
     private static final TokenSet CLASS_REFS = TokenSet.create(
             KtNodeTypes.REFERENCE_EXPRESSION,
-            KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION
+            KtNodeTypes.DOT_QUALIFIED_EXPRESSION
     );
 
     @Nullable

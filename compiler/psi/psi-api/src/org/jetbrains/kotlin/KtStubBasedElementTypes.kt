@@ -249,8 +249,7 @@ internal object KtStubBasedElementTypes {
         provider.operationReferenceType
 
     @JvmField
-    val DOT_QUALIFIED_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression> =
-        provider.dotQualifiedExpressionType
+    val DOT_QUALIFIED_EXPRESSION: KtNodeType = provider.dotQualifiedExpressionType
 
     @JvmField
     val CALL_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
