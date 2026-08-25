@@ -1,6 +1,11 @@
 // Klib ABI Dump
 // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm32Hfp, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
 // Alias: native => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm32Hfp, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Alias: androidNative => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86]
+// Alias: linux => [linuxArm32Hfp, linuxArm64, linuxX64]
+// Alias: ios => [iosArm64, iosSimulatorArm64, iosX64]
+// Alias: macos => [macosArm64, macosX64]
+// Alias: tvos => [tvosArm64, tvosSimulatorArm64, tvosX64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -9250,6 +9255,11 @@ final inline fun kotlin/ulongArrayOf(kotlin/ULongArray...): kotlin/ULongArray //
 final inline fun kotlin/ushortArrayOf(kotlin/UShortArray...): kotlin/UShortArray // kotlin/ushortArrayOf|ushortArrayOf(kotlin.UShortArray...){}[0]
 final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturn(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines/suspendCoroutine(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Unit>): #A // kotlin.coroutines/suspendCoroutine|suspendCoroutine(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
+
+// Targets: [androidNative, ios, js, linux, macos, mingwX64, tvos, wasmJs, wasmWasi, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+open annotation class kotlin/ExperimentalCollectionLiteralsApi : kotlin/Annotation { // kotlin/ExperimentalCollectionLiteralsApi|null[0]
+    constructor <init>() // kotlin/ExperimentalCollectionLiteralsApi.<init>|<init>(){}[0]
+}
 
 // Targets: [native, wasmJs, wasmWasi]
 open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/JsFileName|null[1]
