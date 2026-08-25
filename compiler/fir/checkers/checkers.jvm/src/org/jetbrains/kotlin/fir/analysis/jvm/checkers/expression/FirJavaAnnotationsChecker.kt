@@ -54,9 +54,16 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
         val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol() ?: return
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
 
-        val lookupTag = classSymbol.toLookupTag()
-        javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->
-            reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName())
+        val classId = classSymbol.toLookupTag().classId
+        // Java's 'since' and 'forRemoval' cannot be represented by 'kotlin.Deprecated'.
+        // In particular, dropping 'forRemoval = true' changes the javac lint category
+        // for Java callers from '[removal]' to '[deprecation]'.
+        val hasJavaSpecificArguments = classId == JvmStandardClassIds.Annotations.Java.Deprecated &&
+                expression.argumentMapping.mapping.isNotEmpty()
+        if (!hasJavaSpecificArguments) {
+            javaToKotlinNameMap[classId]?.let { betterName ->
+                reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName())
+            }
         }
 
         if (expression is FirAnnotationCall) {
