@@ -256,18 +256,12 @@ class ConstraintInjector(
     }
 
     private inner class TypeCheckerStateForConstraintInjector(
-        baseState: TypeCheckerState,
         val c: Context,
         val position: IncorporationConstraintPosition
     ) : TypeCheckerStateForConstraintSystem(
         c,
-        baseState,
+        c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
     ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
-        constructor(c: Context, position: IncorporationConstraintPosition) : this(
-            c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
-            c,
-            position
-        )
 
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
