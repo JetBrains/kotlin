@@ -65,8 +65,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
      */
     open val parameterList: KtParameterList?
         get() =
-            @Suppress("DEPRECATION") // KT-78356
-            getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+            getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList::class.java)
 
     /**
      * The single parameter of a setter (the new value), or `null` for a getter or when it is absent.
