@@ -43,7 +43,7 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
     }
 }
 
-open class IrValidationAfterInliningPrivateFunctionsKlibPhase<Context : LoweringContext>(
+class IrValidationAfterInliningPrivateFunctionsKlibPhase<Context : LoweringContext>(
     context: Context,
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
@@ -76,7 +76,7 @@ class IrValidationAfterInliningAllFunctionsKlibFirstStagePhase<Context : Lowerin
             .withoutCheckersByName(context.configuration.disableIrCheckers)
 }
 
-open class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : LoweringContext>(
+class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : LoweringContext>(
     context: Context,
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig

@@ -24,18 +24,6 @@ import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorL
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 
-private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<*> {
-    return IrValidationAfterInliningPrivateFunctionsKlibPhase(
-        context
-    )
-}
-
-private fun createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<*> {
-    return IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
-        context
-    )
-}
-
 private fun createKotlinNothingValueExceptionPhase(context: CommonBackendContext): KotlinNothingValueExceptionLowering {
     return KotlinNothingValueExceptionLowering(context)
 }
@@ -115,10 +103,10 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createSyntheticAccessorGenerationPhase,
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
-    ::createIrValidationAfterInliningPrivateFunctionsKlibPhase,
+    ::IrValidationAfterInliningPrivateFunctionsKlibPhase,
     ::WasmAllFunctionInlining,
     ::RedundantCastsRemoverLowering,
-    ::createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
+    ::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
     // END: Common Native/JS/Wasm prefix.
 
     ::createConstEvaluationPhase,

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningAllFunctionsKlibSecondStagePhase
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningPrivateFunctionsKlibPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringsSecondStagePhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
@@ -182,14 +184,14 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
                 // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
                 fragmentWithState.runSpecifiedLowerings(getLoweringsUpToAndIncludingSyntheticAccessors())
-                fragmentWithState.runSpecifiedLowering(::NativeIrValidationAfterInliningPrivateFunctionsKlibPhase)
+                fragmentWithState.runSpecifiedLowering(::IrValidationAfterInliningPrivateFunctionsKlibPhase)
                 fragmentWithState.runSpecifiedLowerings(createNativePhases(::NativeAllFunctionInlining))
                 fragmentWithState.runSpecifiedLowerings(
                         createNativePhases(::SpecialObjCValidationLowering, ::RedundantCastsRemoverLowering)
                 )
             }
 
-            fragmentWithState.runSpecifiedLowering(::NativeIrValidationAfterInliningAllFunctionsKlibSecondStagePhase)
+            fragmentWithState.runSpecifiedLowering(::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase)
             fragmentWithState.runSpecifiedLowerings(context.config.getLoweringsAfterInlining())
             fragmentWithState.runSpecifiedLowering(::IrValidationAfterLoweringsSecondStagePhase)
 
