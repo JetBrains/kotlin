@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.factories.*
+import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
 
 /**
  * Associates Kotlin stub serializers and factories with their element types, decoupling stub support from the
@@ -337,6 +338,13 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.CONTEXT_PARAMETER_LIST,
             psiFactory = ::KtContextReceiverList,
         )
+
+        for (kind in ConstantValueKind.entries) {
+            registry.registerStubSerializingFactory(
+                type = kind.toConstantExpressionElementType(),
+                factory = KtConstantExpressionStubSerializingElementFactory(kind),
+            )
+        }
     }
 }
 

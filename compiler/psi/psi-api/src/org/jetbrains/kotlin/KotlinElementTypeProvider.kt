@@ -95,11 +95,11 @@ interface KotlinElementTypeProvider {
     val typeProjectionType: KtNodeType
 
     // Constants
-    val nullType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
-    val booleanConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
-    val floatConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
-    val characterConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
-    val integerConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    val nullType: KtNodeType
+    val booleanConstantType: KtNodeType
+    val floatConstantType: KtNodeType
+    val characterConstantType: KtNodeType
+    val integerConstantType: KtNodeType
 
     // String templates
     val stringTemplateType: KtStubElementType<out KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression>

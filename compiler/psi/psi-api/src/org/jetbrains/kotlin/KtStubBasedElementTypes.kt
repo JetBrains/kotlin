@@ -172,24 +172,19 @@ internal object KtStubBasedElementTypes {
     // Constants
 
     @JvmField
-    val NULL: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
-        provider.nullType
+    val NULL: KtNodeType = provider.nullType
 
     @JvmField
-    val BOOLEAN_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
-        provider.booleanConstantType
+    val BOOLEAN_CONSTANT: KtNodeType = provider.booleanConstantType
 
     @JvmField
-    val FLOAT_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
-        provider.floatConstantType
+    val FLOAT_CONSTANT: KtNodeType = provider.floatConstantType
 
     @JvmField
-    val CHARACTER_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
-        provider.characterConstantType
+    val CHARACTER_CONSTANT: KtNodeType = provider.characterConstantType
 
     @JvmField
-    val INTEGER_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
-        provider.integerConstantType
+    val INTEGER_CONSTANT: KtNodeType = provider.integerConstantType
 
 
     // String templates
