@@ -39,7 +39,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val objectType: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration>
         get() = KtStubElementTypes.OBJECT_DECLARATION
 
-    override val typeAliasType: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias>
+    override val typeAliasType: KtNodeType
         get() = KtStubElementTypes.TYPEALIAS
 
     override val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
