@@ -694,6 +694,8 @@ class NewConstraintSystemImpl(
         constraintInjector.addInitialEqualityConstraint(variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
+        substituteConstraintsReferringTypeVariableBeingFixed(freshTypeConstructor, resultType, position)
+
         val variableWithConstraints =
             notFixedTypeVariables.remove(freshTypeConstructor) ?: error("Seems that $variable is being fixed second time")
 
@@ -703,9 +705,8 @@ class NewConstraintSystemImpl(
             }
         }
 
-        for (otherVariableWithConstraints in notFixedTypeVariables.values) {
-            otherVariableWithConstraints.removeConstraints { it.type.containsTypeVariable(freshTypeConstructor) }
-        }
+        // NOOP once EliminateSecondKindIncorporation is enabled
+        removeConstraintsReferringTypeVariableBeingFixed(freshTypeConstructor)
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
         inferenceLogger?.logFixVariable(variable, resultType, this@NewConstraintSystemImpl)
@@ -713,6 +714,56 @@ class NewConstraintSystemImpl(
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
         doPostponedComputationsIfAllVariablesAreFixed()
+    }
+
+    private fun removeConstraintsReferringTypeVariableBeingFixed(freshTypeConstructor: TypeVariableTypeConstructorMarker) {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)) return
+        for (otherVariableWithConstraints in notFixedTypeVariables.values) {
+            otherVariableWithConstraints.removeConstraints { it.type.containsTypeVariable(freshTypeConstructor) }
+        }
+    }
+
+    /**
+     * Given a type variable T and its ResultType used for fixation, for all other type variables F and their
+     * constraints like F <: SomeOtherType<T>, it removes the original constraint and adds
+     * F <: SomeOtherType<ResultType> instead.
+     *
+     * NB: Constraints still mentioning T afterwards (derived by the incorporation of the replacements)
+     * are removed by the sweep in [NewConstraintSystemImpl.fixVariable].
+     *
+     * Before [LanguageFeature.EliminateSecondKindIncorporation], it was performed at [ConstraintIncorporator.insideOtherConstraint]
+     */
+    private fun substituteConstraintsReferringTypeVariableBeingFixed(
+        freshTypeConstructor: TypeVariableTypeConstructorMarker,
+        resultType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)) return
+        val substitutor = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
+
+        val constraintsToBeAdded = mutableListOf<Triple<MutableVariableWithConstraints, KotlinTypeMarker, Constraint>>()
+
+        for ([otherVariableConstructor, otherVariableWithConstraints] in notFixedTypeVariables.entries) {
+            if (freshTypeConstructor == otherVariableConstructor) continue
+            for (constraint in otherVariableWithConstraints.constraints) {
+                substitutor.substituteOrNull(constraint.type)?.let { newConstraintType ->
+                    constraintsToBeAdded += Triple(otherVariableWithConstraints, newConstraintType, constraint)
+                }
+            }
+
+            otherVariableWithConstraints.removeConstraints { it.type.containsTypeVariable(freshTypeConstructor) }
+        }
+
+        if (resultType.isError()) return
+
+        for ([otherVariableWithConstraints, newConstraintType, existingConstraint] in constraintsToBeAdded) {
+            constraintInjector.addSubstitutedConstraintReplacementAfterVariableFixation(
+                otherVariableWithConstraints.typeVariable,
+                existingConstraint,
+                newConstraintType,
+                position,
+            )
+        }
     }
 
     override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? {

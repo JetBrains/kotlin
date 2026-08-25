@@ -92,6 +92,5 @@ CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     )
      <: RecordId<kotlin/String, TypeVariable(Id)>
      = MyRecordId
-     <: RecordId<kotlin/String, MyRecordId> (inferred during fixation)
     FIXED TO: MyRecordId
 ********************************

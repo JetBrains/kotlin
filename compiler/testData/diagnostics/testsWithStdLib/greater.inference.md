@@ -141,15 +141,11 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
     1. `kotlin/Long <: TypeVariable(T)`
 4. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
     1. `TypeVariable(T) <: kotlin/Long`
-5. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: kotlin/Comparable<kotlin/Long>`
-6. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Long>?`
-7. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Long`
+5. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Long`
     1. `TypeVariable(T) == kotlin/Long`
-8. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/Long`
+6. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/Long`
     1. `TypeVariable(S) <: kotlin/Long?`
-9. Choose `TypeVariable(T)` with `Readiness(
+7. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -157,7 +153,7 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
@@ -239,11 +235,7 @@ R|<local>/countExpr|.greater#(String(0))
 5. Combine `TypeVariable(S) == it(kotlin/Long & kotlin/String)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
     1. `TypeVariable(T) <: kotlin/Long`
     2. `TypeVariable(T) <: kotlin/String`
-6. Combine `it(kotlin/Long & kotlin/String) <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: kotlin/Comparable<it(kotlin/Long & kotlin/String)>`
-7. Combine `it(kotlin/Long & kotlin/String) <: TypeVariable(T)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<it(kotlin/Long & kotlin/String)>?`
-8. Choose `TypeVariable(T)` with `Readiness(
+6. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -259,9 +251,7 @@ R|<local>/countExpr|.greater#(String(0))
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-9. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-10. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: kotlin/Comparable<kotlin/String>`
+7. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 
 ### Call 5
 
@@ -353,4 +343,3 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
 5. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 6. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
     1. `TypeVariable(T) <: kotlin/String`
-    2. `TypeVariable(T) <: kotlin/Comparable<kotlin/String>`

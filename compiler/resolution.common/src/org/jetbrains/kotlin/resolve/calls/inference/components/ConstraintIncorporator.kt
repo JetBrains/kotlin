@@ -33,6 +33,8 @@ class ConstraintIncorporator(
     @OptIn(AllowedToUsedOnlyInK1::class)
     val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
 
+    // Superseded by EliminateSecondKindIncorporation: with that feature enabled, insideOtherConstraint
+    // (the second incorporation kind) is not invoked at all, so this flag is never read.
     private val enhancementOfSecondIncorporationKindEnabled =
         languageVersionSettings.supportsFeature(LanguageFeature.EnhancementsOfSecondIncorporationKind25)
 
@@ -183,7 +185,7 @@ class ConstraintIncorporator(
         constraint: Constraint,
         isCausedByFixation: Boolean,
     ) {
-        if (secondIncorporationKindRestrictedToFixation && !isCausedByFixation) return
+        if (secondIncorporationKindRestrictedToFixation) return
 
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()

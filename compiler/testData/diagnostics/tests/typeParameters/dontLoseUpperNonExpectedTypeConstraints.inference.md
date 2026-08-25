@@ -275,7 +275,8 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
     1. `TypeVariable(R) <: Z?`
 7. Combine `TypeVariable(S) == Z` with `TypeVariable(S) == TypeVariable(K)`
     1. `Z <: TypeVariable(K)`
-8. Choose `TypeVariable(K)` with `Readiness(
+8. `TypeVariable(K) == Z` _from Fix variable S_
+9. Choose `TypeVariable(K)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -307,7 +308,6 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-9. `TypeVariable(K) == Z` _from Fix variable K_
 10. Choose `TypeVariable(R)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
