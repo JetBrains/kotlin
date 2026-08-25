@@ -167,7 +167,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val nullableTypeType: KtNodeType
         get() = KtStubElementTypes.NULLABLE_TYPE
 
-    override val intersectionTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType>
+    override val intersectionTypeType: KtNodeType
         get() = KtStubElementTypes.INTERSECTION_TYPE
 
     override val typeProjectionType: KtStubElementType<out KotlinTypeProjectionStub, KtTypeProjection>

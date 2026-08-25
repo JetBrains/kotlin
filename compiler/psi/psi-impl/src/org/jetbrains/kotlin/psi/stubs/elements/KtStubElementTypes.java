@@ -68,8 +68,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType NULLABLE_TYPE = new KtNodeType("NULLABLE_TYPE", KtNullableType::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtIntersectionType> INTERSECTION_TYPE =
-            new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType.class);
+    @NotNull KtNodeType INTERSECTION_TYPE = new KtNodeType("INTERSECTION_TYPE", KtIntersectionType::new);
 
     @NotNull KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
             new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
