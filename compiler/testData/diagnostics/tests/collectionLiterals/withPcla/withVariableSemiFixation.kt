@@ -1,6 +1,6 @@
 // LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-88681
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // DUMP_INFERENCE_LOGS: MARKDOWN
@@ -28,17 +28,17 @@ fun testWithSemifixation() {
     }
 
     // TODO: KT-84797
-    <!TYPE_MISMATCH("String; Int")!>buildBox {
-        x = <!ASSIGNMENT_TYPE_MISMATCH("Set<String>; Set<Int>")!>setOf<!>(1, 2, 3)
+    buildBox {
+        x = setOf(1, 2, 3)
         x = ["!"]
-        <!TYPE_MISMATCH("String; Int")!>x<!>.size
-    }<!>
+        x.size
+    }
 
-    <!TYPE_MISMATCH("String; Int")!>buildBox {
+    buildBox {
         x = ["!"]
-        x = <!ASSIGNMENT_TYPE_MISMATCH("Collection<String>; Set<Int>")!>setOf<!>(1, 2, 3)
-        <!TYPE_MISMATCH("String; Int")!>x<!>.size
-    }<!>
+        x = setOf(1, 2, 3)
+        x.size
+    }
 
     buildBox {
         x = [1, 2, 3]
@@ -49,7 +49,7 @@ fun testWithSemifixation() {
     buildBox {
         x = [1, 2, 3]
         x.size
-        x = [<!ARGUMENT_TYPE_MISMATCH("String; Int")!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH("String; Int")!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH("String; Int")!>"3"<!>]
+        x = ["1", "2", "3"]
     }
 }
 

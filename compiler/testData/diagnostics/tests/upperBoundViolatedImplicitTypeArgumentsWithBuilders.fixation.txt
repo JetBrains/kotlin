@@ -301,9 +301,7 @@ TypeVariable(B) --- Readiness(
     )
      <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(S)>
      <: AbstractShapeBuilder<*, *>
-     <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, TypeVariable(S)>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape> (inferred during fixation)
-     <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -323,7 +321,6 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     )
      <: AbstractShapeBuilder<*, *>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
-     <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
      = CapturedType(*) (inferred during fixation)
      <: AbstractShapeBuilder<CapturedType(*), SimpleShape> (inferred during fixation)
     FIXED TO: CapturedType(*)
@@ -369,14 +366,7 @@ TypeVariable(B) --- Readiness(
      = AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
      >: AbstractShapeBuilder<*, *>
      <: kotlin/Nothing
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, TypeVariable(S)>
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<*, *>, TypeVariable(S)>
-     <: AbstractShapeBuilder<kotlin/Nothing, TypeVariable(S)>
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape> (inferred during fixation)
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape> (inferred during fixation)
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
-     <: AbstractShapeBuilder<kotlin/Nothing, SimpleShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -398,11 +388,7 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
      = AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
      >: AbstractShapeBuilder<*, *>
      <: kotlin/Nothing
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape>
-     <: AbstractShapeBuilder<in AbstractShapeBuilder<*, *>, SimpleShape>
-     <: AbstractShapeBuilder<kotlin/Nothing, SimpleShape>
      <: AbstractShapeBuilder<AbstractShapeBuilder<AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape>, SimpleShape> (inferred during fixation)
     FIXED TO: AbstractShapeBuilder<AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape>
 ********************************
@@ -444,9 +430,7 @@ TypeVariable(B) --- Readiness(
      <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(S)>
      = AbstractShapeBuilder<*, SimpleShape>
      <: AbstractShapeBuilder<*, *>
-     <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, TypeVariable(S)>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape> (inferred during fixation)
-     <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -467,7 +451,6 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
      = AbstractShapeBuilder<*, SimpleShape>
      <: AbstractShapeBuilder<*, *>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
-     <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
      <: AbstractShapeBuilder<AbstractShapeBuilder<*, SimpleShape>, SimpleShape> (inferred during fixation)
     FIXED TO: AbstractShapeBuilder<*, SimpleShape>
 ********************************

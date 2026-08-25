@@ -104,9 +104,6 @@ TreeSet#(Q|Wrapper|.R?C|/Wrapper.reverseOrder|())
     2. `TypeVariable(E) <: TypeVariable(W)!`
 2. Combine `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
     1. `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
-    2. `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-3. Combine `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-    1. `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
 
 #### Candidate 2: `FirConstructorSymbol java/util/TreeSet.TreeSet` --- `constructor<E : Any!>(p0: ft<MutableCollection<out E!>, Collection<out E!>?>): TreeSet<E>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
@@ -186,31 +183,9 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     2. `TypeVariable(R) <: TypeVariable(W)!`
 4. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
     1. `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
-5. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-6. Combine `TypeVariable(R) <: TypeVariable(E)` with `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)`
-    1. `ft<TypeVariable(R) & Any, TypeVariable(R)?> <: TypeVariable(W)`
-7. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-8. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-9. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
+5. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
     1. `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>!`
-10. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-11. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<TypeVariable(R)!>!`
-12. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<TypeVariable(R)!>?`
-13. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-14. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-15. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<TypeVariable(R)!>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>!`
-16. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<TypeVariable(R)!>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>?`
-17. `(TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)> <: (TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
+6. `(TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)> <: (TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
 
 #### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
@@ -235,31 +210,9 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     2. `TypeVariable(R) <: TypeVariable(W)!`
 4. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
     1. `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
-5. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-6. Combine `TypeVariable(R) <: TypeVariable(E)` with `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)`
-    1. `ft<TypeVariable(R) & Any, TypeVariable(R)?> <: TypeVariable(W)`
-7. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-8. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-9. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
+5. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
     1. `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>!`
-10. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!`
-11. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<TypeVariable(R)!>!`
-12. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<TypeVariable(R)!>?`
-13. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-14. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-15. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<TypeVariable(R)!>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>!`
-16. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<TypeVariable(R)!>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>?`
-17. `(TypeVariable(T)) -> kotlin/sequences/Sequence<TypeVariable(R)> <: (TypeVariable(T)) -> kotlin/sequences/Sequence<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
+6. `(TypeVariable(T)) -> kotlin/sequences/Sequence<TypeVariable(R)> <: (TypeVariable(T)) -> kotlin/sequences/Sequence<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
 
 ##### Some compareCallsByUsedArguments() call:
 
@@ -536,26 +489,14 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     1. `kotlin/Int! <: TypeVariable(W)`
 5. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
     1. `TypeVariable(W) <: kotlin/Int!`
-6. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?`
-    1. `TypeVariable(E) <: kotlin/Int?`
-7. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(R) <: kotlin/Int?`
-8. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>!`
-    1. `TypeVariable(R) <: kotlin/Int!`
-9. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<kotlin/Int!>?`
-10. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<kotlin/Int!>!`
-11. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>!`
-12. Combine `kotlin/Int <: TypeVariable(R)` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>?`
-13. Combine `kotlin/Int! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Int!`
+6. Combine `kotlin/Int! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Int!`
     1. `TypeVariable(W) == kotlin/Int!`
-14. Combine `TypeVariable(R) <: kotlin/Int?` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
-    1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Int?>`
-15. Combine `TypeVariable(R) <: kotlin/Int!` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
-    1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Int!>`
+7. Combine `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)` with `TypeVariable(W) == kotlin/Int!`
+    1. `TypeVariable(E) <: kotlin/Int?`
+8. Combine `TypeVariable(R)! <: TypeVariable(W)` with `TypeVariable(W) == kotlin/Int!`
+    1. `TypeVariable(R) <: kotlin/Int!`
+9. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Int?`
+    1. `TypeVariable(R) <: kotlin/Int?`
 
 ##### Call Completion:
 
@@ -646,29 +587,26 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     1. `TypeVariable(R) <: kotlin/Int!`
 5. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
     1. `TypeVariable(W) <: kotlin/Int!`
-6. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(W) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(R) <: kotlin/Int?`
-7. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<in kotlin/Int!>!`
-8. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: TypeVariable(W)!`
+    2. `TypeVariable(W) <: kotlin/Comparable<in kotlin/Int!>!`
+6. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: TypeVariable(W)!`
     1. `TypeVariable(E) <: kotlin/Int!`
-9. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
+7. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
     1. `TypeVariable(E) <: kotlin/Comparable<in kotlin/Int!>?`
-10. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
+8. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
     1. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>?`
-11. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>!`
+9. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>!`
     1. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!`
-12. Combine `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>?` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
+10. Combine `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>?` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>`
-13. Combine `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
+11. Combine `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>`
-14. Choose `TypeVariable(R)` with `Readiness(
+12. Choose `TypeVariable(R)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -700,7 +638,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
@@ -726,20 +664,14 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-15. `TypeVariable(R) == kotlin/Int` _from Fix variable R_
-16. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: TypeVariable(E)`
+13. `TypeVariable(R) == kotlin/Int` _from Fix variable R_
+14. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: TypeVariable(E)`
     1. `kotlin/Int <: TypeVariable(E)`
-17. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
+15. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
     1. `TypeVariable(C) <: kotlin/collections/MutableCollection<in kotlin/Int>`
-18. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<kotlin/Int!>?`
-19. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>!`
-20. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>?`
-21. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
+16. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Int>`
-22. Choose `TypeVariable(E)` with `Readiness(
+17. Choose `TypeVariable(E)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -787,10 +719,10 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-23. `TypeVariable(E) == kotlin/Int` _from Fix variable E_
-24. Combine `TypeVariable(E) == kotlin/Int` with `java/util/TreeSet<TypeVariable(E)> <: TypeVariable(C)`
+18. `TypeVariable(E) == kotlin/Int` _from Fix variable E_
+19. Combine `TypeVariable(E) == kotlin/Int` with `java/util/TreeSet<TypeVariable(E)> <: TypeVariable(C)`
     1. `java/util/TreeSet<kotlin/Int> <: TypeVariable(C)`
-25. Choose `TypeVariable(C)` with `Readiness(
+20. Choose `TypeVariable(C)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -822,8 +754,8 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-26. `TypeVariable(C) == java/util/TreeSet<kotlin/Int>` _from Fix variable C_
-27. Choose `TypeVariable(_R)` with `Readiness(
+21. `TypeVariable(C) == java/util/TreeSet<kotlin/Int>` _from Fix variable C_
+22. Choose `TypeVariable(_R)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -839,7 +771,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )`
-28. `TypeVariable(_R) == kotlin/collections/MutableSet<kotlin/Int>` _from Fix variable _R_
+23. `TypeVariable(_R) == kotlin/collections/MutableSet<kotlin/Int>` _from Fix variable _R_
 
 ### Call 5
 
