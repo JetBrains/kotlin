@@ -260,8 +260,7 @@ internal object KtStubBasedElementTypes {
     val POSTFIX_EXPRESSION: KtNodeType = provider.postfixExpressionType
 
     @JvmField
-    val BINARY_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression> =
-        provider.binaryExpressionType
+    val BINARY_EXPRESSION: KtNodeType = provider.binaryExpressionType
 
     @JvmField
     val PARENTHESIZED: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression> =

@@ -239,7 +239,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val postfixExpressionType: KtNodeType
         get() = KtStubElementTypes.POSTFIX_EXPRESSION
 
-    override val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
+    override val binaryExpressionType: KtNodeType
         get() = KtStubElementTypes.BINARY_EXPRESSION
 
     override val parenthesizedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression>
