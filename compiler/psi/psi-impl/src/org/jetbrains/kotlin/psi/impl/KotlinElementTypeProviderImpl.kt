@@ -233,7 +233,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val operationReferenceType: KtNodeType
         get() = KtStubElementTypes.OPERATION_REFERENCE
 
-    override val prefixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression>
+    override val prefixExpressionType: KtNodeType
         get() = KtStubElementTypes.PREFIX_EXPRESSION
 
     override val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
