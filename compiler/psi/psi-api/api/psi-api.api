@@ -1756,7 +1756,12 @@ public final class org/jetbrains/kotlin/psi/KtLabeledExpression : org/jetbrains/
 }
 
 public final class org/jetbrains/kotlin/psi/KtLambdaArgument : org/jetbrains/kotlin/psi/KtValueArgument, org/jetbrains/kotlin/psi/LambdaArgument {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtLambdaArgument$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtLambdaArgument;
 	public fun getLambdaExpression ()Lorg/jetbrains/kotlin/psi/KtLambdaExpression;
+}
+
+public final class org/jetbrains/kotlin/psi/KtLambdaArgument$Companion {
 }
 
 public class org/jetbrains/kotlin/psi/KtLambdaExpression : com/intellij/psi/impl/source/tree/LazyParseablePsiElement, org/jetbrains/kotlin/psi/KtExpression {
