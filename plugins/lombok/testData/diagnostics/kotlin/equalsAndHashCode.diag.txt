@@ -1,39 +1,41 @@
-/equalsAndHashCode.kt:3:1: warning: This annotation has no effect on target 'file'. Relevant targets: class, object, enum class, local class.
+/equalsAndHashCode.kt:3:1: warning: This annotation has no effect on target 'file'. Relevant targets: class, object, local class.
 
-/equalsAndHashCode.kt:7:1: warning: This annotation has no effect on target 'interface'. Relevant targets: class, object, enum class, local class.
+/equalsAndHashCode.kt:7:1: warning: This annotation has no effect on target 'interface'. Relevant targets: class, object, local class.
 
-/equalsAndHashCode.kt:10:1: warning: This annotation has no effect on target 'annotation class'. Relevant targets: class, object, enum class, local class.
+/equalsAndHashCode.kt:10:1: warning: This annotation has no effect on target 'annotation class'. Relevant targets: class, object, local class.
 
 /equalsAndHashCode.kt:13:1: error: This annotation is not applicable to target 'top level function'. Applicable targets: class, file, expression
 
 /equalsAndHashCode.kt:16:1: error: This annotation is not applicable to target 'typealias'. Applicable targets: class, file, expression
 
-/equalsAndHashCode.kt:19:19: warning: This annotation has no effect on target 'object literal'. Relevant targets: class, object, enum class, local class.
+/equalsAndHashCode.kt:19:19: warning: This annotation has no effect on target 'object literal'. Relevant targets: class, object, local class.
 
-/equalsAndHashCode.kt:27:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:22:1: warning: This annotation has no effect on target 'enum class'. Relevant targets: class, object, local class.
 
-/equalsAndHashCode.kt:34:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:28:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:40:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:35:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:46:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:41:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:59:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
+/equalsAndHashCode.kt:47:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:74:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:60:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
 
-/equalsAndHashCode.kt:77:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:75:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:81:15: warning: Lombok annotation argument 'exclude' is not supported in Kotlin.
+/equalsAndHashCode.kt:78:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:82:10: warning: Lombok annotation argument 'of' is not supported in Kotlin.
+/equalsAndHashCode.kt:82:15: warning: Lombok annotation argument 'exclude' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:83:23: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:83:10: warning: Lombok annotation argument 'of' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:84:21: warning: Lombok annotation argument 'cacheStrategy' is not supported in Kotlin.
+/equalsAndHashCode.kt:84:23: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:85:15: warning: Lombok annotation argument 'onParam' is not supported in Kotlin.
+/equalsAndHashCode.kt:85:21: warning: Lombok annotation argument 'cacheStrategy' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:89:20: warning: Lombok annotation argument 'replaces' is not supported in Kotlin.
+/equalsAndHashCode.kt:86:15: warning: Lombok annotation argument 'onParam' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:90:16: warning: Lombok annotation argument 'rank' is not supported in Kotlin.
+/equalsAndHashCode.kt:90:20: warning: Lombok annotation argument 'replaces' is not supported in Kotlin.
+
+/equalsAndHashCode.kt:91:16: warning: Lombok annotation argument 'rank' is not supported in Kotlin.
