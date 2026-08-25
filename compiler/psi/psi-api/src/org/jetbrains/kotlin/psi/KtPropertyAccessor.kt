@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
@@ -31,7 +32,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
+    constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtNodeTypes.PROPERTY_ACCESSOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitPropertyAccessor(this, data)
@@ -175,4 +176,10 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     )
     open val rightParenthesis: PsiElement?
         get() = parameterList?.rightParenthesis
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtPropertyAccessor> = emptyArray()
+    }
 }

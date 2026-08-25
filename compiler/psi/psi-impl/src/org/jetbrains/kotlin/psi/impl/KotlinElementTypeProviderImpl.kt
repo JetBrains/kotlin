@@ -77,7 +77,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val constructorCalleeType: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>
         get() = KtStubElementTypes.CONSTRUCTOR_CALLEE
 
-    override val propertyAccessorType: KtStubElementType<out KotlinPropertyAccessorStub, KtPropertyAccessor>
+    override val propertyAccessorType: KtNodeType
         get() = KtStubElementTypes.PROPERTY_ACCESSOR
 
     override val backingFieldType: KtStubElementType<out KotlinBackingFieldStub, KtBackingField>
