@@ -551,7 +551,7 @@ class CacheBuilder(
                 this.konanHome = it
             }
             val libraryPath = library.canonicalPath.pathString
-            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.canonicalPath.pathString }
+            val libraries = dependencies.map { it.canonicalPath.pathString }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.canonicalPath.pathString to it.second }
             configuration.reportLog(
                     "-p static_cache -Xadd-cache=${library.path} \\\n" +
