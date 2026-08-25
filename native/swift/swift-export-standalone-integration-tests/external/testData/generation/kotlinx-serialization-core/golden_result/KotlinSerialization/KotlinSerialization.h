@@ -895,14 +895,6 @@ void * _Nullable kotlinx_serialization_internal_AbstractPolymorphicSerializer_fi
 
 _Bool kotlinx_serialization_internal_AbstractPolymorphicSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * encoder, void * value);
 
-void * kotlinx_serialization_internal_ElementMarker_init_allocate();
-
-_Bool kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(void * __kt, void * descriptor, _Bool (^readIfAbsent)(void *, int32_t));
-
-_Bool kotlinx_serialization_internal_ElementMarker_mark__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
-
-int32_t kotlinx_serialization_internal_ElementMarker_nextUnmarkedIndex(void * self);
-
 void * kotlinx_serialization_internal_GeneratedSerializer_childSerializers(void * self);
 
 void * kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers(void * self);
@@ -1050,8 +1042,6 @@ _Bool kotlinx_serialization_internal_TaggedEncoder_endStructure__TypesOfArgument
 void * kotlinx_serialization_internal_TaggedEncoder_serializersModule_get(void * self);
 
 void * kotlinx_serialization_internal_TaggedEncoder_serializersModule_get_direct(void * self);
-
-NSSet<NSString *> * kotlinx_serialization_internal_jsonCachedSerialNames__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * receiver);
 
 _Bool kotlinx_serialization_internal_throwArrayMissingFieldException__TypesOfArguments__ExportedKotlinPackages_kotlin_IntArray_ExportedKotlinPackages_kotlin_IntArray_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * seenArray, void * goldenMaskArray, void * descriptor);
 
