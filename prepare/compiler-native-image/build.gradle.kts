@@ -150,7 +150,8 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val classpathFiles = files(nativeImageClasspath, resources)
 
     val basicNativeArgs = listOf(
-        "-J-Xmx8g",
+        "-J-Xmx10g",
+        "-J-XX:MaxHeapFreeRatio=30",
         "-Os",
         "-H:+AddAllCharsets",
         "-H:+UnlockExperimentalVMOptions",
