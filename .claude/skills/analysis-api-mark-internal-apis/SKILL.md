@@ -173,7 +173,7 @@ Tools to run the search:
 | `@LLFirInternals`         | Only inside `analysis/low-level-api-fir/` (own tests/testFixtures, no usages outside)   | **Keep.** No change. This is precisely what `@LLFirInternals` is for: making a `src/` declaration accessible to LL FIR's own tests. |
 | `@LLFirInternals`         | Anywhere outside `analysis/low-level-api-fir/`                                          | **Upgrade.** Replace the `@LLFirInternals` line with `@KaImplementationDetail`. Swap imports accordingly.                           |
 
-Apply edits with `mcp__idea__replace_text_in_file`. **Import housekeeping:** when removing or replacing an annotation,
+Apply edits with `mcp__idea__apply_patch`. **Import housekeeping:** when removing or replacing an annotation,
 also remove the corresponding import if no other declaration in the file still uses it. When adding `@KaImplementationDetail`,
 ensure `import org.jetbrains.kotlin.analysis.api.KaImplementationDetail` is present.
 

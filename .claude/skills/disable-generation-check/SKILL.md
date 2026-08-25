@@ -16,7 +16,7 @@ Ask the user whether they want to **disable** the generation check (for branchin
 
 For each `GeneratorsFileUtil.writeFileIfContentChanged(...)` call in the 2 files below, ensure it has `forbidGenerationOnTeamcity = false`. Depending on the current state, either add the parameter or swap `true` to `false`.
 
-Use `replace_text_in_file` with `forbidGenerationOnTeamcity = true` -> `forbidGenerationOnTeamcity = false` as a `replaceAll` replacement in each file. If no match is found (first-time application), add the parameter instead — see the "First-time" examples below.
+Use `apply_patch` to swap `forbidGenerationOnTeamcity = true` -> `forbidGenerationOnTeamcity = false` in each file, with one hunk per call site. If no match is found (first-time application), add the parameter instead — see the "First-time" examples below.
 
 ### Files and call sites
 
@@ -38,7 +38,7 @@ GeneratorsFileUtil.writeFileIfContentChanged(versionsFilePath.toFile(), sortedVe
 
 ### How to apply
 
-Use JetBrains MCP `replace_text_in_file` for each replacement. All replacements are independent — make them in parallel.
+Use JetBrains MCP `apply_patch`, one call per file covering all its call sites. The two files are independent — patch them in parallel.
 
 ### Commit pattern (disable)
 ```
@@ -51,7 +51,7 @@ Use JetBrains MCP `replace_text_in_file` for each replacement. All replacements 
 
 After branching is complete, re-enable the check by swapping `false` to `true` in all call sites across the 2 files.
 
-Use `replace_text_in_file` with `forbidGenerationOnTeamcity = false` -> `forbidGenerationOnTeamcity = true` as a `replaceAll` replacement in each of the 2 files.
+Use `apply_patch` to swap `forbidGenerationOnTeamcity = false` -> `forbidGenerationOnTeamcity = true` in each of the 2 files, with one hunk per call site.
 
 ### Commit pattern (revert)
 ```
@@ -68,7 +68,7 @@ The `DisableCacheInKotlinVersion` generator uses a rolling deprecation cycle: N 
 
 Find all usages of `DisableCacheInKotlinVersion.\`<old_version>\`` and replace with the next version constant (e.g. `2_3_20` → `2_4_0`). There are typically 3 usages — 2 in string templates and 1 in Kotlin code. The existing `@Suppress("DEPRECATION")` annotations handle the WARNING level on N-1 constants.
 
-Use `replace_text_in_file` with `replaceAll: true` to swap all occurrences at once.
+Use a single `apply_patch` call with one hunk per occurrence to swap them all at once.
 
 ### Commit pattern (bump version in tests)
 ```

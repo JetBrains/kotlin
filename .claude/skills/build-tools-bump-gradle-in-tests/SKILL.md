@@ -72,7 +72,7 @@ Per the project `CLAUDE.md`, use JetBrains IDE MCP tools for every read and
 write on these project files. Specifically:
 
 - Read with `mcp__idea__read_file` or `mcp__idea__get_symbol_info`.
-- Edit with `mcp__idea__replace_text_in_file`.
+- Edit with `mcp__idea__apply_patch`.
 - After each edit, run `mcp__idea__get_file_problems` with `errorsOnly: false`
   and fix any warning attributable to the change.
 
