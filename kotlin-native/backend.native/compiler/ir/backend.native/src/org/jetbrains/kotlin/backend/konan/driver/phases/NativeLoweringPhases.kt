@@ -5,27 +5,26 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.backend.common.CompilationException
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
-import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.common.phaser.createFilePhases
 import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
+import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
+import org.jetbrains.kotlin.backend.konan.optimizations.ComputeTypesPass
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
-import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
-import org.jetbrains.kotlin.backend.konan.optimizations.ComputeTypesPass
+import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
@@ -75,10 +74,7 @@ internal fun <Context : NativeLoweringContext> PhaseEngine<Context>.runModuleWis
     }
 }
 
-internal fun <Context : NativeLoweringContext> createNativePhases(vararg phases: ((Context) -> FileLoweringPass)?) =
-        createFilePhases(*phases, actions = getDefaultIrActions())
-
-internal fun getLoweringsUpToAndIncludingSyntheticAccessors() = createNativePhases(
+internal fun getLoweringsUpToAndIncludingSyntheticAccessors() = createFilePhases(
         ::TestProcessor,
         ::UpgradeCallableReferences,
         ::NativeAssertionWrapperLowering,
@@ -103,7 +99,7 @@ private fun getLoweringsAfterInlining(
         optimizationsEnabled: Boolean,
         genericSafeCasts: Boolean,
         isCache: Boolean,
-) = createNativePhases(
+) = createFilePhases(
         ::ConstEvaluationLowering,
         ::ReifiedFunctionLowering,
         ::TypeOfProcessingLowering,
