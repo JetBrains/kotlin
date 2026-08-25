@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 // ---------------------- AssertJ declarations --------------------------
 // FILE: AbstractComparableAssert.java
@@ -31,7 +31,7 @@ public class Assertions {
 abstract class MyComparableClass : Comparable<MyComparableClass>
 
 fun test(a: MyComparableClass?) {
-    <!TYPE_MISMATCH!>Assertions.<!UPPER_BOUND_VIOLATED!>assertThat<!>(a)<!>.<!UNRESOLVED_REFERENCE!>inObject<!>()
+    Assertions.assertThat(a).inObject()
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty, propertyDeclaration,
