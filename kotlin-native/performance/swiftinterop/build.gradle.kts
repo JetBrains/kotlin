@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.tasks.Exec
+import org.jetbrains.kotlin.dryRun
 
 plugins {
     id("swift-benchmarking")
@@ -48,16 +49,15 @@ val dumpWeakRefLayout by tasks.registering(Exec::class) {
     dependsOn(swiftBenchmark.buildSwift)
     inputs.file(swiftInteropBinary)
     outputs.dir(weakRefLayoutDirectory)
-
-    doFirst {
-        weakRefLayoutDirectory.get().asFile.mkdirs()
-    }
+    outputs.upToDateWhen { false }
 
     environment("BINARY", swiftInteropBinary.get().asFile.absolutePath)
     environment("OUT", weakRefLayoutDirectory.get().asFile.absolutePath)
     commandLine(
         "/bin/zsh", "-uc",
         """
+        set -e
+        /bin/mkdir -p "${'$'}OUT"
         /usr/bin/shasum -a 256 "${'$'}BINARY" > "${'$'}OUT/sha256.txt"
         /usr/bin/stat -f "%z bytes" "${'$'}BINARY" > "${'$'}OUT/size.txt"
         /usr/bin/nm -nm "${'$'}BINARY" > "${'$'}OUT/nm.txt"
@@ -67,18 +67,12 @@ val dumpWeakRefLayout by tasks.registering(Exec::class) {
         /usr/bin/xcrun llvm-objdump --macho --arch=arm64 --disassemble --demangle \
             "${'$'}BINARY" > "${'$'}OUT/disassembly.txt" 2>&1 || true
         /bin/cp "${'$'}BINARY" "${'$'}OUT/swiftInterop"
+        /bin/echo "##teamcity[publishArtifacts '${'$'}OUT => weakref-layout']"
         """.trimIndent(),
     )
-
-    doLast {
-        println(
-            "##teamcity[publishArtifacts " +
-                "'${weakRefLayoutDirectory.get().asFile.absolutePath} => weakref-layout']"
-        )
-    }
 }
 
-if (shouldDumpWeakRefLayout.get()) {
+if (shouldDumpWeakRefLayout.get() && !dryRun) {
     swiftBenchmark.konanRun.configure {
         finalizedBy(dumpWeakRefLayout)
     }
