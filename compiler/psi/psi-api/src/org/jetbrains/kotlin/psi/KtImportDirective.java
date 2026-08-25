@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.resolve.ImportPath;
  * }</pre>
  */
 public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveStub> implements KtImportInfo {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtImportDirective[] EMPTY_ARRAY = new KtImportDirective[0];
 
     @KtImplementationDetail
     public KtImportDirective(@NotNull ASTNode node) {
@@ -35,7 +38,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
 
     @KtImplementationDetail
     public KtImportDirective(@NotNull KotlinImportDirectiveStub stub) {
-        super(stub, KtStubBasedElementTypes.IMPORT_DIRECTIVE);
+        super(stub, KtNodeTypes.IMPORT_DIRECTIVE);
     }
 
     private volatile FqName importedFqName;

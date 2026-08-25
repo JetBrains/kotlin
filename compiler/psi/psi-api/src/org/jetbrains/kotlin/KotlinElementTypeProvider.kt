@@ -138,7 +138,7 @@ interface KotlinElementTypeProvider {
     val packageDirectiveType: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective>
     val fileAnnotationListType: KtNodeType
     val importListType: KtNodeType
-    val importDirectiveType: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective>
+    val importDirectiveType: KtNodeType
     val importAliasType: KtStubElementType<out KotlinImportAliasStub, KtImportAlias>
     val scriptType: KtStubElementType<out KotlinScriptStub, KtScript>
 

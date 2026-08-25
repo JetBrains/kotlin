@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +45,6 @@ public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImpo
     /** Returns the import directives in this list, in source order; empty if there are none. */
     @NotNull
     public List<KtImportDirective> getImports() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.IMPORT_DIRECTIVE);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.IMPORT_DIRECTIVE, KtImportDirective.EMPTY_ARRAY));
     }
 }

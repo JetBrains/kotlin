@@ -1665,6 +1665,7 @@ public final class org/jetbrains/kotlin/psi/KtImportAlias : org/jetbrains/kotlin
 }
 
 public class org/jetbrains/kotlin/psi/KtImportDirective : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtImportInfo {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtImportDirective;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAlias ()Lorg/jetbrains/kotlin/psi/KtImportAlias;
 	public fun getAliasName ()Ljava/lang/String;
