@@ -114,7 +114,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val typeConstraintListType: KtNodeType
         get() = KtStubElementTypes.TYPE_CONSTRAINT_LIST
 
-    override val typeConstraintType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint>
+    override val typeConstraintType: KtNodeType
         get() = KtStubElementTypes.TYPE_CONSTRAINT
 
 

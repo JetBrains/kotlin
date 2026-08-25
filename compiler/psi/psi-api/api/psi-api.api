@@ -2637,6 +2637,7 @@ public final class org/jetbrains/kotlin/psi/KtTypeCodeFragment : org/jetbrains/k
 }
 
 public class org/jetbrains/kotlin/psi/KtTypeConstraint : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtAnnotated, org/jetbrains/kotlin/psi/KtAnnotationsContainer {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtTypeConstraint;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;

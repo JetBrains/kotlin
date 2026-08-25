@@ -27,6 +27,9 @@ import java.util.List;
  */
 public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraint>>
         implements KtAnnotated, KtAnnotationsContainer {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtTypeConstraint[] EMPTY_ARRAY = new KtTypeConstraint[0];
+
     @KtImplementationDetail
     public KtTypeConstraint(@NotNull ASTNode node) {
         super(node);
@@ -34,7 +37,7 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
 
     @KtImplementationDetail
     public KtTypeConstraint(@NotNull KotlinPlaceHolderStub<KtTypeConstraint> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT);
+        super(stub, KtNodeTypes.TYPE_CONSTRAINT);
     }
 
     @Override
