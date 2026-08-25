@@ -122,8 +122,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:VALUE_ARGUMENT_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:VALUE_ARGUMENT_NAME
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:VALUE_PARAMETER
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:VALUE_PARAMETER_LIST
-org.jetbrains.kotlin.psi.stubs.elements.KtTypeParameterElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtTypeParameterElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtUserTypeElementType

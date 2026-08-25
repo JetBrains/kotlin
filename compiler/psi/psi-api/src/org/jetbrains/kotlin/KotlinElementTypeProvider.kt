@@ -68,7 +68,7 @@ interface KotlinElementTypeProvider {
 
     // Type parameters
     val typeParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList>
-    val typeParameterType: KtStubElementType<out KotlinTypeParameterStub, KtTypeParameter>
+    val typeParameterType: KtNodeType
     val typeConstraintListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList>
     val typeConstraintType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint>
 
