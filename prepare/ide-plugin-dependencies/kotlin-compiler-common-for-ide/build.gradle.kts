@@ -12,7 +12,6 @@ val descriptorsCompilerModules: Array<String> = CompilerModules.descriptorsCompi
  * but still somewhere between the PSI and the Analysis API implementations. Mostly related to PSI.
  */
 val otherAnalysisApiModules = listOf(
-    ":analysis:decompiled:decompiler-js",
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-to-psi",
