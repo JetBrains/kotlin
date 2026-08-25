@@ -32,6 +32,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.IgnorableReturnValue,
         StandardClassIds.Annotations.jsExportDefault,
         StandardClassIds.Annotations.jsNoRuntime,
+        StandardClassIds.Annotations.NumericClass,
         OptInNames.OPT_IN_CLASS_ID,
         OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
     )
