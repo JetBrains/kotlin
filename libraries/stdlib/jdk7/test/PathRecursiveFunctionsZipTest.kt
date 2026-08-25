@@ -5,7 +5,6 @@
 
 package kotlin.jdk7.test
 
-import org.junit.jupiter.api.assertThrows
 import test.testOnJvm8
 import test.testOnJvm9AndAbove
 import java.nio.file.*
