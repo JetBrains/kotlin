@@ -11,7 +11,7 @@ interface ConeDiagnostic {
     val readableDescriptionAsTypeConstructor: String get() = reason
 }
 
-class ConeSimpleBareInferenceFailed(override val reason: String) : ConeDiagnostic
+class ConeSimpleBareInferenceFailed(override val reason: String = "", val data: Any? = null) : ConeDiagnostic
 
 /**
  * A [ConeDiagnostic] that is never reported.

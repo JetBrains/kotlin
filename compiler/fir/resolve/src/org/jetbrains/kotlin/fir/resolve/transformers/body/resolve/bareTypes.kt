@@ -114,7 +114,12 @@ private fun BodyResolveComponents.trySimpleInference(
         }
 
         val directInheritanceArguments = containingArguments.filter { [argumentType, idx] ->
-            argumentType is ConeTypeParameterType && argumentType.lookupTag.typeParameterSymbol == typeParameter
+            val argType = if (argumentType is ConeFlexibleType) {
+                argumentType.lowerBound
+            } else {
+                argumentType
+            }
+            argType is ConeTypeParameterType && argType.lookupTag.typeParameterSymbol == typeParameter
         }
 
         if (directInheritanceArguments.size != 1) {
@@ -137,12 +142,13 @@ private fun BodyResolveComponents.trySimpleInference(
             containingArguments.size, directInheritanceArguments.size, isSameConstraints, isSameVariance, isOriginalUnconstrained, null
         )
 
-        onDiagnostic(ConeSimpleBareInferenceFailed(stats.toString()))
+        onDiagnostic(ConeSimpleBareInferenceFailed(data = stats))
     }
 
     for (i in originalArguments.indices) {
         val originalArgument = originalArguments[i]
-        val supertypeArgument = supertypeArguments[i]
+        val preSupertypeArgument = supertypeArguments[i]
+        val supertypeArgument = if (preSupertypeArgument is ConeFlexibleType) preSupertypeArgument.lowerBound else preSupertypeArgument
         val typeParameterType = supertypeArgument as? ConeTypeParameterType ?: continue
         if (typeParameterType.isMarkedNullable) return null
         val typeParameterSymbol = typeParameterType.lookupTag.typeParameterSymbol
@@ -156,7 +162,7 @@ private fun BodyResolveComponents.trySimpleInference(
 private fun BodyResolveComponents.areBoundsEqual(a: ConeTypeParameterType, b: ConeTypeParameterType): Boolean {
     val aBounds = a.collectUpperBounds(session.typeContext)
     val bBounds = b.collectUpperBounds(session.typeContext)
-    return aBounds.size == bBounds.size && aBounds.all { bBounds.contains(it) } && bBounds.all { aBounds.contains(it) }
+    return aBounds.size == bBounds.size && aBounds.all { bBounds.contains(it) }
 }
 
 private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
