@@ -50,8 +50,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType COMPANION_BLOCK = new KtNodeType("COMPANION_BLOCK", KtCompanionBlock::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtImportList> IMPORT_LIST =
-            new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList.class);
+    @NotNull KtNodeType IMPORT_LIST = new KtNodeType("IMPORT_LIST", KtImportList::new);
 
     @NotNull KtPlaceHolderStubElementType<KtFileAnnotationList> FILE_ANNOTATION_LIST =
             new KtPlaceHolderStubElementType<>("FILE_ANNOTATION_LIST", KtFileAnnotationList.class);

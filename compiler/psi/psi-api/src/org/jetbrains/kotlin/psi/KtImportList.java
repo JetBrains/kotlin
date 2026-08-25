@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -23,6 +24,8 @@ import java.util.List;
  * }</pre>
  */
 public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImportList>> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtImportList[] EMPTY_ARRAY = new KtImportList[0];
 
     @KtImplementationDetail
     public KtImportList(@NotNull ASTNode node) {
@@ -31,7 +34,7 @@ public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImpo
 
     @KtImplementationDetail
     public KtImportList(@NotNull KotlinPlaceHolderStub<KtImportList> stub) {
-        super(stub, KtStubBasedElementTypes.IMPORT_LIST);
+        super(stub, KtNodeTypes.IMPORT_LIST);
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -57,8 +58,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         get() {
             val stub = greenStub
             if (stub != null) {
-                @Suppress("DEPRECATION") // KT-78356
-                return stub.findChildStubByType(KtStubBasedElementTypes.IMPORT_LIST)?.psi
+                return stub.findChildStubByElementType(KtNodeTypes.IMPORT_LIST)?.psi as KtImportList?
             }
 
             return findChildByClass(KtImportList::class.java)
@@ -85,9 +85,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         get() {
             val stub = greenStub
             if (stub != null) {
-                val elementType = KtStubBasedElementTypes.IMPORT_LIST
-                @Suppress("DEPRECATION") // KT-78356
-                return stub.getChildrenByType(elementType, elementType.arrayFactory).asList()
+                return stub.getChildrenByType(KtNodeTypes.IMPORT_LIST, KtImportList.EMPTY_ARRAY).asList()
             }
 
             return findChildrenByClass(KtImportList::class.java).asList()
