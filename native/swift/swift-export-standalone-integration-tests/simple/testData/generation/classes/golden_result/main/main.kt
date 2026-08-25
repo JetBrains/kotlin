@@ -1,5 +1,6 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(intersection_overrides.AbstractBaz::class, "22ExportedKotlinPackages22intersection_overridesO4mainE11AbstractBazC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(intersection_overrides.AbstractBazFoo::class, "22ExportedKotlinPackages22intersection_overridesO4mainE14AbstractBazFooC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(intersection_overrides.AbstractFooBar::class, "22ExportedKotlinPackages22intersection_overridesO4mainE14AbstractFooBarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(intersection_overrides.Baz::class, "22ExportedKotlinPackages22intersection_overridesO4mainE3BazC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(intersection_overrides.Bar::class, "_ExportedKotlinPackages_intersection_overrides_Bar")
 @file:kotlin.native.internal.objc.BindClassToObjCName(intersection_overrides.Foo::class, "_ExportedKotlinPackages_intersection_overrides_Foo")
@@ -49,23 +50,23 @@ import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ImportedBridge("intersection_overrides_AbstractBaz_baz_get__reverse_swift")
-internal external fun intersection_overrides_AbstractBaz_baz_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+@ImportedBridge("intersection_overrides_AbstractFooBar_baz_get__reverse_swift")
+internal external fun intersection_overrides_AbstractFooBar_baz_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
 
-@BindReverseBridgeToMethod(intersection_overrides.AbstractBaz::class, "<get-baz>")
-public fun intersection_overrides_AbstractBaz_baz_get__reverse(self: intersection_overrides.AbstractBaz): Int {
+@BindReverseBridgeToMethod(intersection_overrides.AbstractFooBar::class, "<get-baz>")
+public fun intersection_overrides_AbstractFooBar_baz_get__reverse(self: intersection_overrides.AbstractFooBar): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val _result = intersection_overrides_AbstractBaz_baz_get__reverse_swift(__self)
+    val _result = intersection_overrides_AbstractFooBar_baz_get__reverse_swift(__self)
     return _result
 }
 
-@ImportedBridge("intersection_overrides_AbstractBaz_fooBar_get__reverse_swift")
-internal external fun intersection_overrides_AbstractBaz_fooBar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+@ImportedBridge("intersection_overrides_AbstractFooBar_fooBar_get__reverse_swift")
+internal external fun intersection_overrides_AbstractFooBar_fooBar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
 
-@BindReverseBridgeToMethod(intersection_overrides.AbstractBaz::class, "<get-fooBar>")
-public fun intersection_overrides_AbstractBaz_fooBar_get__reverse(self: intersection_overrides.AbstractBaz): Int {
+@BindReverseBridgeToMethod(intersection_overrides.AbstractFooBar::class, "<get-fooBar>")
+public fun intersection_overrides_AbstractFooBar_fooBar_get__reverse(self: intersection_overrides.AbstractFooBar): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val _result = intersection_overrides_AbstractBaz_fooBar_get__reverse_swift(__self)
+    val _result = intersection_overrides_AbstractFooBar_fooBar_get__reverse_swift(__self)
     return _result
 }
 
@@ -87,6 +88,26 @@ public fun intersection_overrides_Bar_baz_get__reverse(self: intersection_overri
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = intersection_overrides_Bar_baz_get__reverse_swift(__self)
     return _result
+}
+
+@ImportedBridge("intersection_overrides_Baz_bar_get__reverse_swift")
+internal external fun intersection_overrides_Baz_bar_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(intersection_overrides.Baz::class, "<get-bar>")
+public fun intersection_overrides_Baz_bar_get__reverse(self: intersection_overrides.Baz): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = intersection_overrides_Baz_bar_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("intersection_overrides_Baz_foo_get__reverse_swift")
+internal external fun intersection_overrides_Baz_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(intersection_overrides.Baz::class, "<get-foo>")
+public fun intersection_overrides_Baz_foo_get__reverse(self: intersection_overrides.Baz): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = intersection_overrides_Baz_foo_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("intersection_overrides_Foo_baz_get__reverse_swift")
@@ -787,16 +808,16 @@ public fun __root___OBJECT_WITH_GENERIC_INHERITANCE_get(): kotlin.native.interna
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("intersection_overrides_AbstractBaz_baz_get")
-public fun intersection_overrides_AbstractBaz_baz_get(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.AbstractBaz
+@ExportedBridge("intersection_overrides_AbstractFooBar_baz_get")
+public fun intersection_overrides_AbstractFooBar_baz_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.AbstractFooBar
     val _result = run { __self.baz }
     return _result
 }
 
-@ExportedBridge("intersection_overrides_AbstractBaz_fooBar_get")
-public fun intersection_overrides_AbstractBaz_fooBar_get(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.AbstractBaz
+@ExportedBridge("intersection_overrides_AbstractFooBar_fooBar_get")
+public fun intersection_overrides_AbstractFooBar_fooBar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.AbstractFooBar
     val _result = run { __self.fooBar }
     return _result
 }
@@ -822,6 +843,13 @@ public fun intersection_overrides_Baz_bar_get(self: kotlin.native.internal.Nativ
     return _result.objcPtr()
 }
 
+@ExportedBridge("intersection_overrides_Baz_bar_get_direct", nonVirtualTargetMethod = "<get-bar>")
+public fun intersection_overrides_Baz_bar_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.Baz
+    val _result = run { __self.bar }
+    return _result.objcPtr()
+}
+
 @ExportedBridge("intersection_overrides_Baz_baz_get")
 public fun intersection_overrides_Baz_baz_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.Baz
@@ -838,6 +866,13 @@ public fun intersection_overrides_Baz_fooBar_get(self: kotlin.native.internal.Na
 
 @ExportedBridge("intersection_overrides_Baz_foo_get")
 public fun intersection_overrides_Baz_foo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.Baz
+    val _result = run { __self.foo }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("intersection_overrides_Baz_foo_get_direct", nonVirtualTargetMethod = "<get-foo>")
+public fun intersection_overrides_Baz_foo_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.Baz
     val _result = run { __self.foo }
     return _result.objcPtr()

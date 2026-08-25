@@ -134,7 +134,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
     private val intersectionOverrideDeclarations: List<SirDeclaration> by lazyWithSessions {
         if (ktSymbol.modality != KaSymbolModality.ABSTRACT) return@lazyWithSessions emptyList()
         ktSymbol.combinedMemberScope.declarations
+            .filterIsInstance<KaCallableSymbol>()
             .filter { it.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE }
+            .filter { it.intersectionOverriddenSymbols.all { it.modality == KaSymbolModality.ABSTRACT } }
             .extractDeclarations()
             .toList()
     }
