@@ -824,6 +824,7 @@ public class org/jetbrains/kotlin/psi/KtAnnotatedExpression : org/jetbrains/kotl
 }
 
 public class org/jetbrains/kotlin/psi/KtAnnotation : org/jetbrains/kotlin/psi/KtElementImplStub {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtAnnotation;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getEntries ()Ljava/util/List;
 	public fun getUseSiteTarget ()Lorg/jetbrains/kotlin/psi/KtAnnotationUseSiteTarget;

@@ -137,7 +137,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val modifierListType: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList>
         get() = KtStubElementTypes.MODIFIER_LIST
 
-    override val annotationType: KtStubElementType<out KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation>
+    override val annotationType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION
 
     override val annotationEntryType: KtNodeType
