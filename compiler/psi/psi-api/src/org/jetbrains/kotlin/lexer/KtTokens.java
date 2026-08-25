@@ -129,24 +129,24 @@ public interface KtTokens {
     int CONSTRUCTOR_KEYWORD_Id = 110;
     int INIT_KEYWORD_Id = 111;
     int CONTEXT_KEYWORD_Id = 112;
-    int ABSTRACT_KEYWORD_Id = 113;
-    int ENUM_KEYWORD_Id = 114;
-    int CONTRACT_KEYWORD_Id = 115;
-    int OPEN_KEYWORD_Id = 116;
-    int INNER_KEYWORD_Id = 117;
-    int OVERRIDE_KEYWORD_Id = 118;
-    int PRIVATE_KEYWORD_Id = 119;
-    int PUBLIC_KEYWORD_Id = 120;
-    int INTERNAL_KEYWORD_Id = 121;
-    int PROTECTED_KEYWORD_Id = 122;
-    int CATCH_KEYWORD_Id = 123;
-    int OUT_KEYWORD_Id = 124;
-    int VARARG_KEYWORD_Id = 125;
-    int REIFIED_KEYWORD_Id = 126;
-    int DYNAMIC_KEYWORD_Id = 127;
-    int COMPANION_KEYWORD_Id = 128;
-    int SEALED_KEYWORD_Id = 129;
-    int FINALLY_KEYWORD_Id = 130;
+    int CATCH_KEYWORD_Id = 113;
+    int DYNAMIC_KEYWORD_Id = 114;
+    int FINALLY_KEYWORD_Id = 115;
+    int ABSTRACT_KEYWORD_Id = 116;
+    int ENUM_KEYWORD_Id = 117;
+    int CONTRACT_KEYWORD_Id = 118;
+    int OPEN_KEYWORD_Id = 119;
+    int INNER_KEYWORD_Id = 120;
+    int OVERRIDE_KEYWORD_Id = 121;
+    int PRIVATE_KEYWORD_Id = 122;
+    int PUBLIC_KEYWORD_Id = 123;
+    int INTERNAL_KEYWORD_Id = 124;
+    int PROTECTED_KEYWORD_Id = 125;
+    int OUT_KEYWORD_Id = 126;
+    int VARARG_KEYWORD_Id = 127;
+    int REIFIED_KEYWORD_Id = 128;
+    int COMPANION_KEYWORD_Id = 129;
+    int SEALED_KEYWORD_Id = 130;
     int FINAL_KEYWORD_Id = 131;
     int LATEINIT_KEYWORD_Id = 132;
     int DATA_KEYWORD_Id = 133;
@@ -296,6 +296,9 @@ public interface KtTokens {
     @NotNull KtKeywordToken CONSTRUCTOR_KEYWORD = KtKeywordToken.softKeyword("constructor", CONSTRUCTOR_KEYWORD_Id);
     @NotNull KtKeywordToken INIT_KEYWORD        = KtKeywordToken.softKeyword("init", INIT_KEYWORD_Id);
     @NotNull KtKeywordToken CONTEXT_KEYWORD     = KtKeywordToken.softKeyword("context", CONTEXT_KEYWORD_Id);
+    @NotNull KtKeywordToken CATCH_KEYWORD     = KtKeywordToken.softKeyword("catch", CATCH_KEYWORD_Id);
+    @NotNull KtKeywordToken DYNAMIC_KEYWORD   = KtKeywordToken.softKeyword("dynamic", DYNAMIC_KEYWORD_Id);
+    @NotNull KtKeywordToken FINALLY_KEYWORD   = KtKeywordToken.softKeyword("finally", FINALLY_KEYWORD_Id);
 
     @NotNull KtModifierKeywordToken ABSTRACT_KEYWORD  = KtModifierKeywordToken.softKeywordModifier("abstract", ABSTRACT_KEYWORD_Id);
     @NotNull KtModifierKeywordToken ENUM_KEYWORD      = KtModifierKeywordToken.softKeywordModifier("enum", ENUM_KEYWORD_Id);
@@ -307,17 +310,14 @@ public interface KtTokens {
     @NotNull KtModifierKeywordToken PUBLIC_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("public", PUBLIC_KEYWORD_Id);
     @NotNull KtModifierKeywordToken INTERNAL_KEYWORD  = KtModifierKeywordToken.softKeywordModifier("internal", INTERNAL_KEYWORD_Id);
     @NotNull KtModifierKeywordToken PROTECTED_KEYWORD = KtModifierKeywordToken.softKeywordModifier("protected", PROTECTED_KEYWORD_Id);
-    @NotNull KtKeywordToken CATCH_KEYWORD     = KtKeywordToken.softKeyword("catch", CATCH_KEYWORD_Id);
     @NotNull KtModifierKeywordToken OUT_KEYWORD       = KtModifierKeywordToken.softKeywordModifier("out", OUT_KEYWORD_Id);
     @NotNull KtModifierKeywordToken VARARG_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("vararg", VARARG_KEYWORD_Id);
     @NotNull KtModifierKeywordToken REIFIED_KEYWORD   = KtModifierKeywordToken.softKeywordModifier("reified", REIFIED_KEYWORD_Id);
-    @NotNull KtKeywordToken DYNAMIC_KEYWORD   = KtKeywordToken.softKeyword("dynamic", DYNAMIC_KEYWORD_Id);
     @NotNull KtModifierKeywordToken COMPANION_KEYWORD = KtModifierKeywordToken.softKeywordModifier("companion", COMPANION_KEYWORD_Id);
     @NotNull KtModifierKeywordToken SEALED_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("sealed", SEALED_KEYWORD_Id);
 
     @NotNull KtModifierKeywordToken DEFAULT_VISIBILITY_KEYWORD = PUBLIC_KEYWORD;
 
-    @NotNull KtKeywordToken FINALLY_KEYWORD   = KtKeywordToken.softKeyword("finally", FINALLY_KEYWORD_Id);
     @NotNull KtModifierKeywordToken FINAL_KEYWORD     = KtModifierKeywordToken.softKeywordModifier("final", FINAL_KEYWORD_Id);
 
     @NotNull KtModifierKeywordToken LATEINIT_KEYWORD = KtModifierKeywordToken.softKeywordModifier("lateinit", LATEINIT_KEYWORD_Id);
