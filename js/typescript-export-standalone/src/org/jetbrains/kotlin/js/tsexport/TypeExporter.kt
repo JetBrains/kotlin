@@ -168,7 +168,7 @@ internal class TypeExporter(
         val isExported = isJsImplicitExport || symbol.isEffectivelyExported(config)
         return when (symbol) {
             is KaNamedClassSymbol -> {
-                if (inlineClassesShouldBeUnboxed && symbol.isInline) {
+                if (inlineClassesShouldBeUnboxed && symbol.isValue) {
                     val underlyingType = symbol.inlineClassUnderlyingType
 
                     if (underlyingType != null) {
@@ -180,7 +180,7 @@ internal class TypeExporter(
                             }
                         }.substitute(underlyingType)
 
-                        return exportType(substitutedType, (underlyingType.symbol as? KaNamedClassSymbol)?.isInline == true)
+                        return exportType(substitutedType, (underlyingType.symbol as? KaNamedClassSymbol)?.isValue == true)
                     }
                 }
 

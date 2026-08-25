@@ -692,7 +692,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             return Exportability.NotNeeded
         }
 
-        if (klass.isInline)
+        if (klass.isValue)
             return Exportability.Prohibited("Inline class ${klass.classId?.asSingleFqName()}")
 
         return Exportability.Allowed
