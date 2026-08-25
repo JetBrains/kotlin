@@ -11,8 +11,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
@@ -70,7 +68,6 @@ class JvmReplIdeTest {
         }
 
         private fun registerDecompilerServices(application: MockApplication) {
-            application.registerService(FileAttributeService::class.java, DummyFileAttributeService())
             application.registerService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
         }
     }

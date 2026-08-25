@@ -49,8 +49,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Standa
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -125,7 +123,6 @@ object StandaloneProjectFactory {
                     BuiltinsVirtualFileProvider::class.java,
                     BuiltinsVirtualFileProviderCliImpl()
                 )
-                registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }
         }
     }

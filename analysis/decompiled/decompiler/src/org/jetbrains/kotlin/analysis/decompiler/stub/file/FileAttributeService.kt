@@ -30,6 +30,10 @@ interface FileAttributeService {
 }
 
 
+@Deprecated(
+    "Leave `FileAttributeService` unregistered instead. Clients acquire the service via `serviceOrNull` " +
+            "and treat its absence exactly as this no-op implementation."
+)
 class DummyFileAttributeService : FileAttributeService {
     override fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
         return CachedAttributeData(value, 0)
