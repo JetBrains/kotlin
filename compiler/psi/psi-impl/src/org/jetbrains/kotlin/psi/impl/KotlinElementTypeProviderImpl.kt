@@ -196,7 +196,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val stringTemplateType: KtNodeType
         get() = KtStubElementTypes.STRING_TEMPLATE
 
-    override val longStringTemplateEntryType: KtStubElementType<out KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry>
+    override val longStringTemplateEntryType: KtNodeType
         get() = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY
 
     override val shortStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry>

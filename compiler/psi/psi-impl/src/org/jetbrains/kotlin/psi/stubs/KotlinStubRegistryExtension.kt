@@ -360,6 +360,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.STRING_TEMPLATE,
             psiFactory = ::KtStringTemplateExpression,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY,
+            factory = KtBlockStringTemplateEntryStubSerializingElementFactory,
+        )
     }
 }
 
