@@ -37,6 +37,7 @@ val generateSources = tasks.register<GenerateSupportSources>("generateSources") 
     sourceTemplateDir.set(layout.projectDirectory.dir("src-template"))
     rawSourceDir.set(layout.projectDirectory.dir("src"))
     outputDir.set(layout.buildDirectory.dir("src-gen"))
+    bootstrapEnabled.set(project.kotlinBuildProperties.localBootstrap)
 }
 
 kotlin {
@@ -104,8 +105,11 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
         freeCompilerArgs.add("-XXLanguage:+AllowExpectValueClassesWithNoPrimaryConstructor")
         freeCompilerArgs.add("-XXLanguage:+AllowMultipleExpectsForSameActual")
-        freeCompilerArgs.add("-XXLanguage:+ExpectRefinement")
-        optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
+
+        // Drop after bootstrap
+        if (!kotlinBuildProperties.localBootstrap.getOrElse(false)) {
+            freeCompilerArgs.add("-XXLanguage:+ExpectRefinement")
+        }
     }
 }
 

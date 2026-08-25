@@ -5,6 +5,8 @@
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
@@ -28,6 +30,10 @@ abstract class GenerateSupportSources : DefaultTask() {
 
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
+
+    // Drop after bootstrap
+    @get:Input
+    abstract val bootstrapEnabled: Property<Boolean>
 
     @TaskAction
     fun run() {
@@ -63,6 +69,11 @@ abstract class GenerateSupportSources : DefaultTask() {
         val kotlinxCinteropFilesMapByDestination = mutableMapOf<File, File>()
         val kotlinRangesFilesMapByDestination = mutableMapOf<File, File>()
 
+        fun List<String>.toSuppressCall() = when {
+            isEmpty() -> null
+            else -> joinToString(", ") { "\"$it\"" }.let { "@Suppress($it)" }
+        }
+
         traverseRawSources(rawSourceDir.get().asFile) { file, destination, destinationRoot ->
             var contents = file.readText().replace("package support.raw", "package support")
             val kotlinxXCinteropFileContents = mutableListOf<String>()
@@ -83,19 +94,30 @@ abstract class GenerateSupportSources : DefaultTask() {
                 val ranges = listOf("AnyNumberRange", "SignedNumberRange", "UnsignedNumberRange")
                 val iterators = listOf("AnyNumberIterator")
 
+                val nonBootstrapSuppressions = when {
+                    !bootstrapEnabled.getOrElse(false) -> listOf(
+                        "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
+                        "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "REDECLARATION", "CONFLICTING_OVERLOADS",
+                    )
+                    else -> emptyList()
+                }
+                val nonBootstrapAnnotations = when {
+                    !bootstrapEnabled.getOrElse(false) -> """
+                            @OptIn(ExperimentalMultiplatform::class)
+                            @kotlin.experimental.ExpectRefinement
+                        """.trimIndent()
+                    else -> null
+                }
+
                 val adjustedContent = similarToContent.replace(similarToName, name)
                     .withAppendixIfMentioned(ranges, similarToSearchIndex) { rangeName ->
                         classesThatNeedRange.add(name)
 
-                        val untilFunction = """
-                            @Suppress(
-                                "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
-                                "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "CONFLICTING_OVERLOADS",
-                            )
-                            @OptIn(ExperimentalMultiplatform::class)
-                            @kotlin.experimental.ExpectRefinement
-                            expect inline infix fun support.$name.until(to: support.$name): support.${name}Range
-                        """.trimIndent()
+                        val untilFunction = listOfNotNull(
+                            nonBootstrapSuppressions.toSuppressCall(),
+                            nonBootstrapAnnotations,
+                            "expect inline infix fun support.$name.until(to: support.$name): support.${name}Range"
+                        ).joinToString("\n")
 
                         kotlinRangesFileContents += untilFunction
                         replace(rangeName, "${name}Range")
@@ -105,26 +127,22 @@ abstract class GenerateSupportSources : DefaultTask() {
                         replace(iteratorName, "${name}Iterator")
                     }
                     .let {
-                        val varOfVariant = "expect class ${name}VarOf<T : $name> : kotlinx.cinterop.CVariable"
-                        val valueAccessor = """
-                            @Suppress(
-                                "WRONG_MODIFIER_TARGET", "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
-                                "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "REDECLARATION",
-                            )
-                            @OptIn(ExperimentalMultiplatform::class)
-                            @kotlin.experimental.ExpectRefinement
-                            expect inline var <T : support.$name> support.${name}VarOf<T>.value: T
+                        val varOfVariant = """
+                            @kotlinx.cinterop.ExperimentalForeignApi
+                            expect class ${name}VarOf<T : $name> : kotlinx.cinterop.CVariable
                         """.trimIndent()
-                        val allocFunction = """
-                            @Suppress(
-                                "FINAL_UPPER_BOUND", "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
-                                "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "CONFLICTING_OVERLOADS",
-                            )
-                            @OptIn(ExperimentalMultiplatform::class)
-                            @kotlin.experimental.ExpectRefinement
-                            @ExperimentalForeignApi
-                            expect inline fun <T : support.$name> NativePlacement.alloc(value: T): support.${name}VarOf<T>
-                        """.trimIndent()
+                        val valueAccessor = listOfNotNull(
+                            nonBootstrapSuppressions.toSuppressCall(),
+                            nonBootstrapAnnotations,
+                            "@ExperimentalForeignApi",
+                            "expect inline var <T : support.$name> support.${name}VarOf<T>.value: T"
+                        ).joinToString("\n")
+                        val allocFunction = listOfNotNull(
+                            (nonBootstrapSuppressions + "FINAL_UPPER_BOUND").toSuppressCall(),
+                            nonBootstrapAnnotations,
+                            "@ExperimentalForeignApi",
+                            "expect inline fun <T : support.$name> NativePlacement.alloc(value: T): support.${name}VarOf<T>",
+                        ).joinToString("\n")
 
                         if (name in classesThatNeedVar) {
                             kotlinxXCinteropFileContents += valueAccessor
@@ -161,7 +179,7 @@ abstract class GenerateSupportSources : DefaultTask() {
                     cinteropFolder.resolve("Bridges.kt").also { it.writeText("package kotlinx.cinterop\n") }
                 }
 
-                cinteropFile.appendText("\n" + kotlinxXCinteropFileContents.joinToString("\n") + "\n")
+                cinteropFile.appendText("\n" + kotlinxXCinteropFileContents.joinToString("\n\n") + "\n")
             }
 
             if (kotlinRangesFileContents.isNotEmpty()) {
@@ -170,7 +188,7 @@ abstract class GenerateSupportSources : DefaultTask() {
                     cinteropFolder.resolve("Bridges.kt").also { it.writeText("package kotlin.ranges\n") }
                 }
 
-                rangesFile.appendText("\n" + kotlinRangesFileContents.joinToString("\n") + "\n")
+                rangesFile.appendText("\n" + kotlinRangesFileContents.joinToString("\n\n") + "\n")
             }
         }
 
@@ -183,7 +201,10 @@ abstract class GenerateSupportSources : DefaultTask() {
                 val iteratorAppendix = if (name in classesThatNeedIterator) "\nactual typealias ${name}Iterator = ${expansion}Iterator" else ""
 
                 val varAppendix = if (name in classesThatNeedVar) {
-                    val varOfVariant = "actual typealias ${name}VarOf<T> = ${expansion}VarOf<T>"
+                    val varOfVariant = """
+                        @kotlinx.cinterop.ExperimentalForeignApi
+                        actual typealias ${name}VarOf<T> = ${expansion}VarOf<T>
+                    """.trimIndent()
 
                     val expandsToBuiltin = expansion in listOf("Byte", "Short", "Int", "Long", "UByte", "UShort", "UInt", "ULong", "Float", "Double")
                     val getterBody = when {
