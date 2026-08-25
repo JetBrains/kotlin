@@ -490,7 +490,7 @@ private class InteropTransformerPart1(
 
         builder.at(expression)
 
-        val constructedClass = outerClasses.peek()!!
+        val constructedClass = outerClasses.peek() ?: return expression
 
         if (!constructedClass.isObjCClass()) {
             return expression

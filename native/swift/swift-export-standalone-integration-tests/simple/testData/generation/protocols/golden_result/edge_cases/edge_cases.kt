@@ -159,6 +159,13 @@ public fun SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_In
     return run { _result; true }
 }
 
+@ExportedBridge("__root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, ClassC()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("conflictingTypealiases_Bar_Conflict_init_allocate")
 public fun conflictingTypealiases_Bar_Conflict_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Bar.Conflict>() }

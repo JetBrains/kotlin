@@ -11,8 +11,11 @@ public protocol _INTERFACE {
 public protocol __INTERFACE: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
-    package init() {
-        fatalError()
+    public init() {
+        precondition(Self.self != main.ABSTRACT_CLASS.self, "main.ABSTRACT_CLASS is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -230,7 +233,12 @@ public final class Demo: KotlinRuntime.KotlinBase {
 }
 open class OPEN_CLASS: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___OPEN_CLASS_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.OPEN_CLASS.self {
+             __kt = __root___OPEN_CLASS_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }

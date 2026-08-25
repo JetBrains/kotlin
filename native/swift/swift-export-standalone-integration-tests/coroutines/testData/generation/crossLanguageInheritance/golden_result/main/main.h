@@ -89,6 +89,8 @@ _Bool AsyncOverloaded_same__TypesOfArguments__Swift_String___direct(void * self,
 
 _Bool AsyncOverloaded_same__TypesOfArguments__Swift_Int32___direct(void * self, int32_t arg, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
+_Bool __root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___AsyncBase_init_allocate();
 
 _Bool __root___AsyncBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

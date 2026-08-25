@@ -111,10 +111,13 @@ open class Box: KotlinRuntime.KotlinBase {
             return { switch Box_t_get(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
-    package init(
+    public init(
         t: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) {
-        fatalError()
+        precondition(Self.self != main.Box.self, "main.Box is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -289,7 +292,12 @@ public final class Pair: KotlinRuntime.KotlinBase {
 }
 open class StringProducer: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___StringProducer_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.StringProducer.self {
+             __kt = __root___StringProducer_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___StringProducer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }

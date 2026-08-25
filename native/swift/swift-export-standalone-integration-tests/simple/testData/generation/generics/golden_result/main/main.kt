@@ -276,6 +276,14 @@ public fun __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMuta
     return run { _result; true }
 }
 
+@ExportedBridge("__root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___", nonVirtualTargetMethod = "<init>")
+public fun __root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, t: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __t = if (t == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(t) as kotlin.Any
+    val _result = run { kotlin.native.internal.initInstance(____kt, Box<kotlin.Any?>(__t)) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___CPImpl_init_allocate")
 public fun __root___CPImpl_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<CPImpl>() }

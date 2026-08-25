@@ -274,10 +274,12 @@ private class AutoboxingTransformer(val context: NativeLoweringContext) : Abstra
             symbols.initInstance -> {
                 val instance = expression.arguments[0]!!
                 val constructorCall = expression.arguments[1]!!
-                check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
+                check(constructorCall is IrConstructorCall || constructorCall is IrDelegatingConstructorCall) {
+                    "Expected a constructor call: ${constructorCall.render()}"
+                }
                 expression.arguments[0] = instance.transform(this, data = null).useAs(irBuiltIns.anyType)
-                // Leave the second argument of [initInstance] as is.
-                super.visitConstructorCall(constructorCall)
+                // Leave the second argument of [initInstance] as is, but coerce its arguments.
+                super.visitFunctionAccess(constructorCall)
 
                 expression
             }
@@ -378,6 +380,7 @@ private class InlineClassTransformer(private val context: NativeLoweringContext)
 
         val instance = expression.arguments[0]!!
         val constructorCall = expression.arguments[1]!!
+        if (constructorCall is IrDelegatingConstructorCall) return super.visitCall(expression)
         check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
         val constructor = constructorCall.symbol.owner
         return if (!constructor.constructedClass.isInlined())
