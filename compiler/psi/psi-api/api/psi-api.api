@@ -2736,6 +2736,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtValVarKeywordOwner : 
 }
 
 public class org/jetbrains/kotlin/psi/KtValueArgument : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/ValueArgument {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtValueArgument;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun asElement ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getArgumentExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;

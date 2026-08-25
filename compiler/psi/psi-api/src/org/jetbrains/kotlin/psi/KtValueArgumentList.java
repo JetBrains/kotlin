@@ -11,11 +11,11 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,7 +49,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      */
     @NotNull
     public List<KtValueArgument> getArguments() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_ARGUMENT);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.VALUE_ARGUMENT, KtValueArgument.EMPTY_ARRAY));
     }
 
     /** Returns the closing parenthesis, or {@code null} if it is absent in incomplete code. */
