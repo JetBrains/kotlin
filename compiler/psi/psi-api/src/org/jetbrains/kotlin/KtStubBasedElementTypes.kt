@@ -278,8 +278,7 @@ internal object KtStubBasedElementTypes {
     // Arguments
 
     @JvmField
-    val TYPE_ARGUMENT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList> =
-        provider.typeArgumentListType
+    val TYPE_ARGUMENT_LIST: KtNodeType = provider.typeArgumentListType
 
     @JvmField
     val VALUE_ARGUMENT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList> =

@@ -45,8 +45,7 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
     }
 
     override fun getTypeArgumentList(): KtTypeArgumentList? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtNodeTypes.TYPE_ARGUMENT_LIST, KtTypeArgumentList::class.java)
     }
 
     /**

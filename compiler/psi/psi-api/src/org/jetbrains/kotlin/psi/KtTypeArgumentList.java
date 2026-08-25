@@ -11,7 +11,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -36,7 +35,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
 
     @KtImplementationDetail
     public KtTypeArgumentList(@NotNull KotlinPlaceHolderStub<KtTypeArgumentList> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
+        super(stub, KtNodeTypes.TYPE_ARGUMENT_LIST);
     }
 
     @Override

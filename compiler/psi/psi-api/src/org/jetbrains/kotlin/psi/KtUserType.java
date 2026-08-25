@@ -11,7 +11,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
@@ -68,9 +67,8 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
 
     /** Returns the angle-bracketed type argument list, or {@code null} if this type has no type arguments. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeArgumentList getTypeArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_ARGUMENT_LIST, KtTypeArgumentList.class);
     }
 
     /** Returns the type arguments (as projections), or an empty list if this type has none. */
