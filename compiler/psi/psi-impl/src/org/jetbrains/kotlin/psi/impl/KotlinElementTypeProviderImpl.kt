@@ -267,7 +267,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val contractEffectListType: KtNodeType
         get() = KtStubElementTypes.CONTRACT_EFFECT_LIST
 
-    override val contractEffectType: KtStubElementType<out KotlinContractEffectStub, KtContractEffect>
+    override val contractEffectType: KtNodeType
         get() = KtStubElementTypes.CONTRACT_EFFECT
 
     override val lambdaArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument>

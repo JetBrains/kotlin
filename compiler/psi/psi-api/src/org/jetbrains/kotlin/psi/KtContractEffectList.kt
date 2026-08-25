@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -38,4 +37,4 @@ class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractE
  * Returns the individual contract effects declared in this list, in source order.
  */
 fun KtContractEffectList.getContractEffects(): List<KtContractEffect> =
-    getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTRACT_EFFECT)
+    getStubOrPsiChildren(KtNodeTypes.CONTRACT_EFFECT, KtContractEffect.EMPTY_ARRAY).asList()
