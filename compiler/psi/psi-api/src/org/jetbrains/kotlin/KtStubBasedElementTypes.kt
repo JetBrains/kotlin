@@ -10,7 +10,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 @OptIn(KtImplementationDetail::class)
 internal object KtStubBasedElementTypes {

@@ -9,7 +9,6 @@ import com.intellij.psi.stubs.*
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -20,20 +19,15 @@ class KtStubElementTypesExternalIdTest {
     fun testExternalIds() {
         val serializationMapping = serializationMapping()
         for (declaredField in KtStubElementTypes::class.java.declaredFields) {
-            val elementType = declaredField.get(null) as IElementType
+            // Every Kotlin element type is a plain node type, its stub support is provided by a separately registered factory
+            val elementType = declaredField.get(null) as KtNodeType
             val fieldName = declaredField.name
 
             // StubElementTypeHolderEP explicitly says that the debug name must be the same as the field
             assertEquals(fieldName, elementType.toString())
 
-            val stubSerializer = when (elementType) {
-                is KtStubElementType<*, *> -> elementType
-                is KtNodeType -> serializationMapping[elementType] ?: error("Serializer for $elementType not found")
-                else -> error("Unexpected element type: ${elementType::class.simpleName}")
-            }
-
-            val externalId = stubSerializer.externalId
-            assertEquals("kotlin.$fieldName", externalId)
+            val stubSerializer = serializationMapping[elementType] ?: error("Serializer for $elementType not found")
+            assertEquals("kotlin.$fieldName", stubSerializer.externalId)
         }
     }
 
