@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -28,7 +28,7 @@ public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceH
 
     @KtImplementationDetail
     public KtParenthesizedExpression(@NotNull KotlinPlaceHolderStub<KtParenthesizedExpression> stub) {
-        super(stub, KtStubBasedElementTypes.PARENTHESIZED);
+        super(stub, KtNodeTypes.PARENTHESIZED);
     }
 
     @Override

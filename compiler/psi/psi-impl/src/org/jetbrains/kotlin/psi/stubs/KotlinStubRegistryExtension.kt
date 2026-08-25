@@ -247,6 +247,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.BINARY_EXPRESSION,
             psiFactory = ::KtBinaryExpression,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.PARENTHESIZED,
+            psiFactory = ::KtParenthesizedExpression,
+        )
     }
 }
 

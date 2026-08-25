@@ -96,8 +96,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType BINARY_EXPRESSION = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED =
-            new KtPlaceHolderStubElementType<>("PARENTHESIZED", KtParenthesizedExpression.class);
+    @NotNull KtNodeType PARENTHESIZED = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression::new);
+
     @NotNull KtPlaceHolderStubElementType<KtObjectLiteralExpression> OBJECT_LITERAL =
             new KtPlaceHolderStubElementType<>("OBJECT_LITERAL", KtObjectLiteralExpression.class);
 
