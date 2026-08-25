@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.isRootProject
 
 @ExperimentalWasmDsl
 abstract class D8Plugin internal constructor() : Plugin<Project> {
@@ -22,7 +23,7 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
 
         val spec = project.extensions.createD8EnvSpec()
 
-        if (project == project.rootProject) {
+        if (project.isRootProject()) {
             @Suppress("DEPRECATION")
             project.extensions.create(
                 D8RootExtension.EXTENSION_NAME,

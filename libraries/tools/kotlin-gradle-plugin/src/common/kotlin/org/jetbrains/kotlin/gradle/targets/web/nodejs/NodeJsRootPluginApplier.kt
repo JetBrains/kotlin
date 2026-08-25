@@ -15,6 +15,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -45,8 +47,8 @@ internal class NodeJsRootPluginApplier(
 ) {
 
     fun apply(project: Project) {
-        check(project == project.rootProject) {
-            "${this::class.java.name} can be applied only to root project"
+        checkIsJsToolingProject(project) {
+            "Cannot register ${this::class.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
         }
 
         project.plugins.apply(BasePlugin::class.java)
