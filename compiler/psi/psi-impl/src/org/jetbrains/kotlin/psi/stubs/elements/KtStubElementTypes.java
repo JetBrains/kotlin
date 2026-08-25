@@ -130,7 +130,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType CONSTRUCTOR_CALLEE = new KtNodeType("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression::new);
 
-    @NotNull KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
+    @NotNull KtNodeType CONTEXT_RECEIVER = new KtNodeType("CONTEXT_RECEIVER", KtContextReceiver::new);
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @NotNull KtPlaceHolderStubElementType<KtContextParameterList> CONTEXT_PARAMETER_LIST =

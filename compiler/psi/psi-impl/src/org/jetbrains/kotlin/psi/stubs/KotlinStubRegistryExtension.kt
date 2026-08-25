@@ -327,6 +327,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.CONSTRUCTOR_CALLEE,
             psiFactory = ::KtConstructorCalleeExpression,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.CONTEXT_RECEIVER,
+            factory = KtContextReceiverStubSerializingElementFactory,
+        )
     }
 }
 
