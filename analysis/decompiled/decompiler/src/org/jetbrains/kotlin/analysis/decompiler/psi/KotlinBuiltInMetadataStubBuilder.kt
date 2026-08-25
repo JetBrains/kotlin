@@ -27,7 +27,18 @@ object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
 
     override fun readFile(virtualFile: VirtualFile, content: ByteArray?): FileWithMetadata? {
         val content = content ?: virtualFile.contentsToByteArray(false)
-        return KotlinBuiltInDecompilationInterceptor.readFile(content, virtualFile) ?: BuiltInDefinitionFile.read(content, virtualFile)
+
+        // .kotlin_builtins files of the kotlin-stdlib on the analysis classpath must be decompiled without class filtering:
+        // their classes back the built-ins symbol provider in all modules, including non-JVM ones. For common modules in particular,
+        // filtering them out leads to unresolved code, as the declarations are not published in .kotlin_metadata files
+        // of kotlin-stdlib-common.
+        val isBuiltInFromClasspath = virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()
+
+        return BuiltInDefinitionFile.read(
+            content,
+            virtualFile,
+            filterOutClassesExistingAsClassFiles = !isBuiltInFromClasspath,
+        )
     }
 
     override fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? {
