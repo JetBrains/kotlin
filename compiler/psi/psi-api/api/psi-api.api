@@ -1008,12 +1008,17 @@ public final class org/jetbrains/kotlin/psi/KtClassBody : org/jetbrains/kotlin/p
 }
 
 public final class org/jetbrains/kotlin/psi/KtClassInitializer : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtAnonymousInitializer {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtClassInitializer$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtClassInitializer;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getBody ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getContainingDeclaration ()Lorg/jetbrains/kotlin/psi/KtClassOrObject;
 	public synthetic fun getContainingDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 	public final fun getInitKeyword ()Lcom/intellij/psi/PsiElement;
 	public final fun getOpenBraceNode ()Lcom/intellij/psi/PsiElement;
+}
+
+public final class org/jetbrains/kotlin/psi/KtClassInitializer$Companion {
 }
 
 public final class org/jetbrains/kotlin/psi/KtClassKt {

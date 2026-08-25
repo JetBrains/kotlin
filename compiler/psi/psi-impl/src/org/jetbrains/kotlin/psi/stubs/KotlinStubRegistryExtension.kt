@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
+import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -75,5 +77,20 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.OBJECT_DECLARATION,
             factory = KtObjectStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.CLASS_INITIALIZER,
+            psiFactory = ::KtClassInitializer,
+        )
     }
+}
+
+/**
+ * Registers a factory for an element whose stub carries no data beyond its own presence.
+ */
+private fun <Psi : KtElementImplStub<out StubElement<*>>> StubRegistry.registerPlaceHolderFactory(
+    type: IElementType,
+    psiFactory: (KotlinPlaceHolderStub<Psi>) -> Psi,
+) {
+    registerStubSerializingFactory(type, KtPlaceHolderStubSerializingElementFactory(type, psiFactory))
 }
