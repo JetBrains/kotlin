@@ -9,7 +9,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Collections;
@@ -42,9 +41,8 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
 
     @NotNull
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public KtConstructorCalleeExpression getCalleeExpression() {
-        return getRequiredStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
+        return getRequiredStubOrPsiChild(KtNodeTypes.CONSTRUCTOR_CALLEE, KtConstructorCalleeExpression.class);
     }
 
     @Override
