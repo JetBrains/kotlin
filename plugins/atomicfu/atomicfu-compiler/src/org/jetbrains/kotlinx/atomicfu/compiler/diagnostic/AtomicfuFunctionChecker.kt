@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.text
 
 object AtomicfuFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -33,9 +33,14 @@ object AtomicfuFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(declaration.source, AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE)
             }
         }
-        declaration.valueParameters.forEach { parameter ->
+        declaration.valueParameters.forEach { checkParameter(it) }
+        declaration.contextParameters.forEach { checkParameter(it) }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkParameter(parameter: FirValueParameter) {
         if (parameter.returnTypeRef.coneType.classId?.isAtomicType() == true) {
-            reporter.reportOn(parameter.source, AtomicfuErrors.ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN)}
+            reporter.reportOn(parameter.source, AtomicfuErrors.ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN)
         }
     }
 }

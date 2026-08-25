@@ -21,5 +21,5 @@ private inline fun AtomicInt.f8(<!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: A
 
 public class X private constructor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicInt)
 
-context(a: AtomicRef<Any>)
+context(<!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicRef<Any>)
 private fun loadValue(): Any = a.value
