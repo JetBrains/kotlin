@@ -8,8 +8,8 @@ package org.jetbrains.kotlin
 import com.intellij.psi.impl.source.tree.ICodeFragmentElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.*
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 @OptIn(KtImplementationDetail::class)
@@ -205,8 +205,7 @@ internal object KtStubBasedElementTypes {
     val ESCAPE_STRING_TEMPLATE_ENTRY: KtNodeType = provider.escapeStringTemplateEntryType
 
     @JvmField
-    val STRING_INTERPOLATION_PREFIX: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix> =
-        provider.stringInterpolationPrefixType
+    val STRING_INTERPOLATION_PREFIX: KtNodeType = provider.stringInterpolationPrefixType
 
 
     // Expressions

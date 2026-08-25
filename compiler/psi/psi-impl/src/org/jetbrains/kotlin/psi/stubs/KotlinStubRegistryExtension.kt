@@ -385,6 +385,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.SCRIPT,
             factory = KtScriptStubSerializingElementFactory,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.STRING_INTERPOLATION_PREFIX,
+            factory = KtStringInterpolationPrefixStubSerializingElementFactory,
+        )
     }
 }
 
