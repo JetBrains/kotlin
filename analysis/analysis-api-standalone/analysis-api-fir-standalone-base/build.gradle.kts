@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
+    implementation(libs.analysis.api.intellij.patched.kotlinx.coroutines.core.jvm)
 }
 
 sourceSets {

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
+import com.intellij.psi.stubs.*
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -15,15 +18,44 @@ class KtStubElementTypesExternalIdTest {
     @Test
     @OptIn(KtImplementationDetail::class)
     fun testExternalIds() {
+        val serializationMapping = serializationMapping()
         for (declaredField in KtStubElementTypes::class.java.declaredFields) {
-            val elementType = declaredField.get(null) as KtStubElementType<*, *>
+            val elementType = declaredField.get(null) as IElementType
             val fieldName = declaredField.name
 
             // StubElementTypeHolderEP explicitly says that the debug name must be the same as the field
             assertEquals(fieldName, elementType.toString())
 
-            val externalId = elementType.externalId
+            val stubSerializer = when (elementType) {
+                is KtStubElementType<*, *> -> elementType
+                is KtNodeType -> serializationMapping[elementType] ?: error("Serializer for $elementType not found")
+                else -> error("Unexpected element type: ${elementType::class.simpleName}")
+            }
+
+            val externalId = stubSerializer.externalId
             assertEquals("kotlin.$fieldName", externalId)
         }
     }
+
+    private fun serializationMapping(): Map<IElementType, ObjectStubSerializer<*, *>> =
+        hashMapOf<IElementType, ObjectStubSerializer<*, *>>().apply {
+            val clazz = Class.forName("org.jetbrains.kotlin.psi.stubs.KotlinStubRegistryExtension")
+            val registry = clazz.newInstance() as StubRegistryExtension
+            registry.register(object : StubRegistry {
+                override fun registerStubFactory(type: IElementType, factory: StubElementFactory<*, *>) {}
+
+                override fun registerLightStubFactory(
+                    type: IElementType,
+                    factory: LightStubElementFactory<*, *>,
+                ) {
+                }
+
+                override fun registerStubSerializer(
+                    type: IElementType,
+                    serializer: ObjectStubSerializer<*, *>,
+                ) {
+                    put(type, serializer)
+                }
+            })
+        }
 }

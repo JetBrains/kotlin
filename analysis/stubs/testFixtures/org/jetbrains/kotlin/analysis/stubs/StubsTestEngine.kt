@@ -92,11 +92,13 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
 ): S {
     buffer.reset()
 
-    val serializer = if (originalStub is PsiFileStub<*>) {
+    val elementType = if (originalStub is PsiFileStub<*>) {
         originalStub.fileElementType
     } else {
         originalStub.elementType
     }
+
+    val serializer = StubElementRegistryService.getInstance().getStubSerializer(elementType)
 
     @Suppress("UNCHECKED_CAST")
     serializer as ObjectStubSerializer<StubElement<*>, StubElement<*>>
@@ -104,7 +106,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
     serializer.serialize(originalStub, StubOutputStream(buffer, storage))
 
     val stubInputStream = StubInputStream(buffer.toInputStream(), storage)
-    val deserializedStub = serializer.deserialize(stubInputStream, deserializedParentStub)
+    val deserializedStub = serializer.deserialize(stubInputStream, deserializedParentStub) as StubElement<*>
     assertEquals(-1, stubInputStream.read(), "The deserializer has to read the same amount of bytes as the serializer wrote")
     assertEquals(originalStub::class, deserializedStub::class, "The stub class must be the same")
     assertEquals(originalStub.elementType, deserializedStub.elementType, "The stub type must be the same")

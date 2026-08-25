@@ -13,6 +13,7 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.ILazyParseableElementType
 import org.jetbrains.kotlin.BlockExpressionElementType
 import org.jetbrains.kotlin.KotlinElementTypeProvider
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.LambdaExpressionElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocLexer
@@ -70,7 +71,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val primaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>
         get() = KtStubElementTypes.PRIMARY_CONSTRUCTOR
 
-    override val secondaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor>
+    override val secondaryConstructorType: KtNodeType
         get() = KtStubElementTypes.SECONDARY_CONSTRUCTOR
 
     override val constructorCalleeType: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>

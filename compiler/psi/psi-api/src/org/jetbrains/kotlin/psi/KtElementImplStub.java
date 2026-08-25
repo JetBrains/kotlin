@@ -46,6 +46,11 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
         super(node);
     }
 
+    @Override
+    public IElementType getIElementType() {
+        return getElementTypeImpl();
+    }
+
     @NotNull
     @Override
     public Language getLanguage() {
