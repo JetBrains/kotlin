@@ -21,8 +21,6 @@ org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText()
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId(StubOutputStream, ClassId?)
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText(String?)
 org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationUseSiteTargetElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtBlockStringTemplateEntryElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
