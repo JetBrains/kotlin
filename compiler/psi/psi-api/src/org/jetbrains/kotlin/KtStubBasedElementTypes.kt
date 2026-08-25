@@ -61,8 +61,7 @@ internal object KtStubBasedElementTypes {
     val FUNCTION: KtNodeType = provider.functionType
 
     @JvmField
-    val PROPERTY: KtStubElementType<out KotlinPropertyStub, KtProperty> =
-        provider.propertyType
+    val PROPERTY: KtNodeType = provider.propertyType
 
     @JvmField
     val ENUM_ENTRY: KtStubElementType<out KotlinClassStub, KtEnumEntry> =

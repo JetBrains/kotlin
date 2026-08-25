@@ -40,5 +40,10 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.FUNCTION,
             factory = KtFunctionStubSerializingElementFactory,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.PROPERTY,
+            factory = KtPropertyStubSerializingElementFactory,
+        )
     }
 }
