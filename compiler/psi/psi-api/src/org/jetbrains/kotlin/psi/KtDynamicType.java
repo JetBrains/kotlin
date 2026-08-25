@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Collections;
@@ -30,7 +30,7 @@ public class KtDynamicType extends KtElementImplStub<KotlinPlaceHolderStub<KtDyn
 
     @KtImplementationDetail
     public KtDynamicType(@NotNull KotlinPlaceHolderStub<KtDynamicType> stub) {
-        super(stub, KtStubBasedElementTypes.DYNAMIC_TYPE);
+        super(stub, KtNodeTypes.DYNAMIC_TYPE);
     }
 
     @Override
