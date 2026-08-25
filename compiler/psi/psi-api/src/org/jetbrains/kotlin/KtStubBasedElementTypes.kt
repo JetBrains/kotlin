@@ -37,8 +37,7 @@ internal object KtStubBasedElementTypes {
 
     @JvmField
     @KtExperimentalApi
-    val COMPANION_BLOCK: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock> =
-        provider.companionBlockType
+    val COMPANION_BLOCK: KtNodeType = provider.companionBlockType
 
 
     // Initializers
