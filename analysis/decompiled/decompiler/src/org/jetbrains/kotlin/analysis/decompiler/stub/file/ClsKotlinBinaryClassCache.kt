@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
@@ -82,7 +83,7 @@ class ClsKotlinBinaryClassCache {
 
         val isKotlinBinaryClass = kotlinBinaryClass != null
         if (file is VirtualFileWithId && isKotlinBinaryClass != isKotlinBinary) {
-            attributeService.writeBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file, isKotlinBinaryClass)
+            attributeService?.writeBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file, isKotlinBinaryClass)
         }
 
         val headerInfo = if (isKotlinBinaryClass) createHeaderInfo(kotlinBinaryClass) else null
@@ -107,7 +108,7 @@ class ClsKotlinBinaryClassCache {
         return createHeaderInfo(kotlinBinaryClass)
     }
 
-    private val attributeService = ApplicationManager.getApplication().getService(FileAttributeService::class.java)
+    private val attributeService = ApplicationManager.getApplication().serviceOrNull<FileAttributeService>()
 
     private fun createHeaderInfo(kotlinBinaryClass: KotlinJvmBinaryClass): KotlinBinaryClassHeaderData {
         val classId = kotlinBinaryClass.classId
@@ -121,7 +122,7 @@ class ClsKotlinBinaryClassCache {
         )
 
     private val KOTLIN_IS_COMPILED_FILE_ATTRIBUTE: String = "kotlin-is-binary-compiled".apply {
-        attributeService.register(this, 2)
+        attributeService?.register(this, 2)
     }
 
     private val KOTLIN_BINARY_DATA_KEY = Key.create<SoftReference<KotlinBinaryData>>(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE)
@@ -133,7 +134,7 @@ class ClsKotlinBinaryClassCache {
         }
 
         val isKotlinBinaryAttribute = if (file is VirtualFileWithId) {
-            attributeService.readBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file)
+            attributeService?.readBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file)
         } else {
             null
         }
