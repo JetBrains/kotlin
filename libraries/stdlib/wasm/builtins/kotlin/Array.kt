@@ -97,6 +97,18 @@ internal constructor(size: Int) {
     /** Creates an [Iterator] for iterating over the elements of the array. */
     public actual operator fun iterator(): Iterator<T> =
         ArrayIterator(this)
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.arrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun <T> of(vararg elements: T): Array<T> =
+            elements as Array<T>
+    }
 }
 
 private class ArrayIterator<T> constructor(val array: Array<T>) : Iterator<T> {

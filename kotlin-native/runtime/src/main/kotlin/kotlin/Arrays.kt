@@ -82,6 +82,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.byteArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Byte): ByteArray =
+            elements
+    }
 }
 
 private class ByteArrayIterator constructor(val array: ByteArray) : ByteIterator() {
@@ -161,6 +173,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_CharArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.charArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Char): CharArray =
+            elements
+    }
 }
 
 private class CharArrayIterator constructor(val array: CharArray) : CharIterator() {
@@ -240,6 +264,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_ShortArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.shortArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Short): ShortArray =
+            elements
+    }
 }
 
 private class ShortArrayIterator constructor(val array: ShortArray) : ShortIterator() {
@@ -319,6 +355,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_IntArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.intArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Int): IntArray =
+            elements
+    }
 }
 
 private class IntArrayIterator constructor(val array: IntArray) : IntIterator() {
@@ -398,6 +446,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_LongArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.longArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Long): LongArray =
+            elements
+    }
 }
 
 private class LongArrayIterator constructor(val array: LongArray) : LongIterator() {
@@ -477,6 +537,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_FloatArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.floatArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Float): FloatArray =
+            elements
+    }
 }
 
 private class FloatArrayIterator constructor(val array: FloatArray) : FloatIterator() {
@@ -556,6 +628,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_DoubleArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.doubleArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Double): DoubleArray =
+            elements
+    }
 }
 
 private class DoubleArrayIterator constructor(val array: DoubleArray) : DoubleIterator() {
@@ -635,6 +719,18 @@ public actual constructor(size: Int) {
     @GCUnsafeCall("Kotlin_BooleanArray_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.booleanArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun of(vararg elements: Boolean): BooleanArray =
+            elements
+    }
 }
 
 private class BooleanArrayIterator constructor(val array: BooleanArray) : BooleanIterator() {

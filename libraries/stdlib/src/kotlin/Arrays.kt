@@ -68,6 +68,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [ByteIterator] for iterating over the elements of the array. */
     public operator fun iterator(): ByteIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.byteArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Byte): ByteArray
+    }
 }
 
 /**
@@ -130,6 +141,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [CharIterator] for iterating over the elements of the array. */
     public operator fun iterator(): CharIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.charArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Char): CharArray
+    }
 }
 
 /**
@@ -192,6 +214,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [ShortIterator] for iterating over the elements of the array. */
     public operator fun iterator(): ShortIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.shortArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Short): ShortArray
+    }
 }
 
 /**
@@ -254,6 +287,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [IntIterator] for iterating over the elements of the array. */
     public operator fun iterator(): IntIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.intArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Int): IntArray
+    }
 }
 
 /**
@@ -316,6 +360,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [LongIterator] for iterating over the elements of the array. */
     public operator fun iterator(): LongIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.longArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Long): LongArray
+    }
 }
 
 /**
@@ -378,6 +433,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [FloatIterator] for iterating over the elements of the array. */
     public operator fun iterator(): FloatIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.floatArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Float): FloatArray
+    }
 }
 
 /**
@@ -440,6 +506,17 @@ public constructor(size: Int) {
 
     /** Creates a specialized [DoubleIterator] for iterating over the elements of the array. */
     public operator fun iterator(): DoubleIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.doubleArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Double): DoubleArray
+    }
 }
 
 /**
@@ -502,4 +579,15 @@ public constructor(size: Int) {
 
     /** Creates a specialized [BooleanIterator] for iterating over the elements of the array. */
     public operator fun iterator(): BooleanIterator
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.booleanArrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun of(vararg elements: Boolean): BooleanArray
+    }
 }

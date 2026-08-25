@@ -83,6 +83,18 @@ public actual class Array<T> {
     @GCUnsafeCall("Kotlin_Array_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.arrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun <T> of(vararg elements: T): Array<T> =
+            elements as Array<T>
+    }
 }
 
 private class ArrayIterator<T> constructor(val array: Array<T>) : Iterator<T> {

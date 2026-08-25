@@ -161,6 +161,7 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     private var companionObject: CompanionObjectBuilder? = null
 
     private var builders: MutableList<PrimitiveBuilder> = mutableListOf()
+    private val companionBlockBuilders: MutableList<PrimitiveBuilder> = mutableListOf()
 
     fun primaryConstructor(init: PrimaryConstructorBuilder.() -> Unit): PrimaryConstructorBuilder {
         val builder = PrimaryConstructorBuilder().apply(init)
@@ -204,6 +205,13 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
         return methodBuilder
     }
 
+    fun companionMethod(init: MethodBuilder.() -> Unit): MethodBuilder {
+        val methodBuilder = MethodBuilder()
+        methodBuilder.expectActual = ExpectActualModifier.Inherited(from = ::expectActual)
+        companionBlockBuilders.add(methodBuilder.apply(init))
+        return methodBuilder
+    }
+
     fun property(init: PropertyBuilder.() -> Unit): PropertyBuilder {
         val propertyBuilder = PropertyBuilder()
         propertyBuilder.expectActual = ExpectActualModifier.Inherited(from = ::expectActual)
@@ -244,6 +252,13 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 
             if (builders.isNotEmpty()) {
                 appendLine(builders.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
+            }
+
+            if (companionBlockBuilders.isNotEmpty()) {
+                appendLine()
+                appendLine("companion {".shift())
+                appendLine(companionBlockBuilders.joinToString(separator = END_LINE + END_LINE) { it.build().shift().shift() })
+                appendLine("}".shift())
             }
             append("}")
         }
@@ -360,6 +375,7 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
     var isOperator: Boolean = false
 
     var methodName: String? = null
+    val typeParameters: MutableList<String> = mutableListOf()
     private val parameters: MutableList<MethodParameterBuilder> = mutableListOf()
     var returnType: String? = null
 
@@ -375,6 +391,10 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
         return argBuilder
     }
 
+    fun typeParam(name: String) {
+        typeParameters += name
+    }
+
     override fun build(): String {
         throwIfWasNotInitialized(methodName, "methodName", "MethodSignatureBuilder")
         throwIfWasNotInitialized(returnType, "returnType", "MethodSignatureBuilder")
@@ -387,7 +407,11 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
             if (isInline) append("inline ")
             if (isInfix) append("infix ")
             if (isOperator) append("operator ")
-            append("fun $methodName(${parameters.joinToString { it.build() }}): $returnType")
+            append("fun ")
+            if (typeParameters.isNotEmpty()) {
+                typeParameters.joinTo(this, prefix = "<", postfix = "> ")
+            }
+            append("$methodName(${parameters.joinToString { it.build() }}): $returnType")
         }
     }
 }
@@ -399,11 +423,12 @@ internal enum class MethodVisibility {
 internal class MethodParameterBuilder : PrimitiveBuilder {
     var name: String? = null
     var type: String? = null
+    var vararg: Boolean = false
 
     override fun build(): String {
         throwIfWasNotInitialized(name, "name", "MethodParameterBuilder")
         throwIfWasNotInitialized(type, "type", "MethodParameterBuilder")
-        return "$name: $type"
+        return "${"vararg ".takeIf { vararg } ?: ""}$name: $type"
     }
 }
 
