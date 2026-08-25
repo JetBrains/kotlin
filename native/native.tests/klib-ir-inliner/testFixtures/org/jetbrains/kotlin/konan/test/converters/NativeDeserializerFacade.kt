@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
@@ -170,12 +169,12 @@ class NativeDeserializerFacade(
     }
 }
 
-object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory {
+object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory<Nothing> {
     override fun createIrModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
         linker: KonanIrLinker,
-    ): IrModuleDeserializer {
+    ): Nothing {
         TODO("TODO (KT-85312): Implement IR deserialization for C-interop libraries in tests")
     }
 }

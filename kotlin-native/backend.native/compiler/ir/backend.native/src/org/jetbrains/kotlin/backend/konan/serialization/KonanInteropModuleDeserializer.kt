@@ -59,7 +59,7 @@ internal class KonanInteropModuleDeserializer(
         override val klib: KotlinLibrary,
         private val isLibraryCached: Boolean,
         private val linker: KonanIrLinker,
-) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
     init {
         require(klib.isCInteropLibrary())
     }
@@ -83,6 +83,10 @@ internal class KonanInteropModuleDeserializer(
             super.onNewClass(clazz)
             linker.fakeOverrideBuilder.enqueueClass(clazz, clazz.symbol.signature!!, CompatibilityMode.CURRENT)
         }
+    }
+
+    override fun hasAnyLinkedIrDeclarations(): Boolean {
+        return declarationTracker.deserializedDeclarations.isNotEmpty()
     }
 
     private val transformer = CInteropKlibMetadata2IRTransformer(
