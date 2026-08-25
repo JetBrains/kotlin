@@ -218,7 +218,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     override val lambdaExpressionType: IElementType = LambdaExpressionElementType()
 
-    override val referenceExpressionType: KtStubElementType<out KotlinNameReferenceExpressionStub, KtNameReferenceExpression>
+    override val referenceExpressionType: KtNodeType
         get() = KtStubElementTypes.REFERENCE_EXPRESSION
 
     override val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>

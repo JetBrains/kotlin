@@ -82,7 +82,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType FUNCTION_TYPE_RECEIVER = new KtNodeType("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver::new);
 
-    @NotNull KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
+    @NotNull KtNodeType REFERENCE_EXPRESSION = new KtNodeType("REFERENCE_EXPRESSION", KtNameReferenceExpression::new);
+
     @NotNull KtPlaceHolderStubElementType<KtDotQualifiedExpression> DOT_QUALIFIED_EXPRESSION =
             new KtPlaceHolderStubElementType<>("DOT_QUALIFIED_EXPRESSION", KtDotQualifiedExpression.class);
     @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION =
