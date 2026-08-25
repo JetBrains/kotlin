@@ -101,15 +101,13 @@ internal class WasmUsefulDeclarationProcessor(
             }
             context.wasmSymbols.boxIntrinsic -> {
                 val type = call.typeArguments[0]!!
-                if (type == context.irBuiltIns.booleanType) {
-                    context.wasmSymbols.getBoxedBoolean.owner.enqueue(from, "intrinsic boxIntrinsic")
-                } else {
-                    type.enqueueRuntimeClassOrAny(from, "intrinsic boxIntrinsic")
-                }
+                val getOrBox = context.wasmSymbols.getOrBoxForPrimitives[type]
+                getOrBox?.owner?.let { it.enqueue(from, "intrinsic ${it.name}") }
+                type.enqueueRuntimeClassOrAny(from, "intrinsic boxIntrinsic")
                 true
             }
-            context.wasmSymbols.boxBoolean -> {
-                context.irBuiltIns.booleanType.enqueueRuntimeClassOrAny(from, "intrinsic boxBoolean")
+            context.wasmSymbols.createBoxIntrinsic -> {
+                context.irBuiltIns.booleanType.enqueueRuntimeClassOrAny(from, "intrinsic boxPrimitive")
                 true
             }
             else -> false

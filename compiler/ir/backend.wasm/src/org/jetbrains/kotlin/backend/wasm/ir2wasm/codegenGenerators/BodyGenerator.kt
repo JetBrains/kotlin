@@ -820,17 +820,23 @@ class BodyGenerator(
 
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
-        if (call.symbol == wasmSymbols.boxBoolean) {
-            generateBox(call.arguments[0]!!, irBuiltIns.booleanType)
+        if (call.symbol == wasmSymbols.createBoxIntrinsic) {
+            val boxType = call.typeArguments[0]!!
+            generateBox(call.arguments[0]!!, boxType)
             return
         }
+
         if (call.symbol == wasmSymbols.boxIntrinsic) {
+            val argument = call.arguments[0]!!
             val type = call.typeArguments[0]!!
-            if (type == irBuiltIns.booleanType) {
-                generateExpression(call.arguments[0]!!)
-                body.buildCall(declarationCodegenContext.referenceFunction(backendContext.wasmSymbols.getBoxedBoolean), location)
+            val getOrBox = wasmSymbols.getOrBoxForPrimitives[type]
+            if (getOrBox != null) {
+                generateExpression(argument)
+                body.buildCall(declarationCodegenContext.referenceFunction(getOrBox), location)
+                val klassSymbol = type.getRuntimeClass(irBuiltIns).symbol
+                body.buildRefCastStatic(typeCodegenContext.referenceHeapType(klassSymbol), location)
             } else {
-                generateBox(call.arguments[0]!!, type)
+                generateBox(argument, type)
             }
             return
         }
