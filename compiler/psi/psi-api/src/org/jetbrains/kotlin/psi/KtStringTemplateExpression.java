@@ -48,7 +48,7 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
 
     private static final TokenSet STRING_ENTRIES_TYPES = TokenSet.create(
             KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY,
-            KtStubBasedElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+            KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY,
             KtStubBasedElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
             KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
     );
