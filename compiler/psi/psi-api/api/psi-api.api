@@ -831,6 +831,7 @@ public class org/jetbrains/kotlin/psi/KtAnnotation : org/jetbrains/kotlin/psi/Kt
 }
 
 public class org/jetbrains/kotlin/psi/KtAnnotationEntry : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtCallElement {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtAnnotationEntry;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAtSymbol ()Lcom/intellij/psi/PsiElement;
 	public fun getCalleeExpression ()Lorg/jetbrains/kotlin/psi/KtConstructorCalleeExpression;

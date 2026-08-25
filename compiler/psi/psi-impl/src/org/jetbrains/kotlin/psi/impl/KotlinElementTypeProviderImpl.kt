@@ -140,7 +140,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val annotationType: KtStubElementType<out KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation>
         get() = KtStubElementTypes.ANNOTATION
 
-    override val annotationEntryType: KtStubElementType<out KotlinAnnotationEntryStub, KtAnnotationEntry>
+    override val annotationEntryType: KtNodeType
         get() = KtStubElementTypes.ANNOTATION_ENTRY
 
     override val annotationTargetType: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>

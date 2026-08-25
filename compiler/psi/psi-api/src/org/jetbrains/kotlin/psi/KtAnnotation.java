@@ -9,9 +9,11 @@ import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,7 +46,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
 
     /** Returns the individual annotation entries in this bracketed group, in source order. */
     public List<KtAnnotationEntry> getEntries() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION_ENTRY);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.ANNOTATION_ENTRY, KtAnnotationEntry.EMPTY_ARRAY));
     }
 
     /**
