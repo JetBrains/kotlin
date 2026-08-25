@@ -1257,6 +1257,8 @@ public abstract class org/jetbrains/kotlin/psi/KtContextParameterList : org/jetb
 }
 
 public final class org/jetbrains/kotlin/psi/KtContextReceiver : org/jetbrains/kotlin/psi/KtElementImplStub {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtContextReceiver$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtContextReceiver;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun getOwnerDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 	public final fun labelName ()Ljava/lang/String;
@@ -1264,6 +1266,9 @@ public final class org/jetbrains/kotlin/psi/KtContextReceiver : org/jetbrains/ko
 	public final fun name ()Ljava/lang/String;
 	public final fun targetLabel ()Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
 	public final fun typeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
+}
+
+public final class org/jetbrains/kotlin/psi/KtContextReceiver$Companion {
 }
 
 public final class org/jetbrains/kotlin/psi/KtContextReceiverList : org/jetbrains/kotlin/psi/KtContextParameterList {
