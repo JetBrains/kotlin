@@ -59,7 +59,15 @@ public interface KtTokenSets {
             OBJECT_LITERAL
     );
 
-    @Deprecated
+    /**
+     * The set of constant expressions.
+     */
     @NotNull
-    TokenSet CONSTANT_EXPRESSIONS = STUBBED_EXPRESSIONS;
+    TokenSet CONSTANT_EXPRESSIONS = TokenSet.create(
+            NULL,
+            BOOLEAN_CONSTANT,
+            FLOAT_CONSTANT,
+            CHARACTER_CONSTANT,
+            INTEGER_CONSTANT
+    );
 }

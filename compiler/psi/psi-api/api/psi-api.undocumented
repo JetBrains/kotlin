@@ -933,7 +933,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:constructor(String, Cl
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:createPsiFromAst(ASTNode)
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:getArrayFactory()
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:CONSTANT_EXPRESSIONS
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_AND_COMPANION_BLOCK_TYPES
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:DECLARATION_TYPES
 org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:INSIDE_DIRECTIVE_EXPRESSIONS
