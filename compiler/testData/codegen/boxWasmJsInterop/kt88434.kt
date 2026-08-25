@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // RUN_THIRD_PARTY_OPTIMIZER
+// TARGET_BACKEND: WASM
 
 // KT-88434
 //
@@ -7,8 +8,8 @@
 // argument/return type collapse to the same JS-erased signature string
 // `(Js)->Js` in JsInteropFunctionsLowering. The JS->Kotlin closure converter is
 // cached per that signature string, so the converter created for the first
-// type is reused for the second, carrying the first type's runtime checks
-// (e.g. an instanceof/ref.test for `Array`). When the reused converter is
+// type was reused for the second, carrying the first type's runtime checks
+// (e.g. an instanceof/ref.test for `Array`). When the reused converter was
 // invoked on a value of the second type the check fails and a
 // ClassCastException is thrown.
 
