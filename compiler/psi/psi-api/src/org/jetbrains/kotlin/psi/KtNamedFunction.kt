@@ -9,6 +9,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
@@ -37,7 +38,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinFunctionStub) : super(stub, /* nodeType = */ KtStubBasedElementTypes.FUNCTION)
+    constructor(stub: KotlinFunctionStub) : super(stub, /* nodeType = */ KtNodeTypes.FUN)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
@@ -228,5 +229,11 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             return it.mayHaveContract
         }
         return isContractPresentPsiCheck(isAllowedOnMembers)
+    }
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtNamedFunction> = emptyArray()
     }
 }

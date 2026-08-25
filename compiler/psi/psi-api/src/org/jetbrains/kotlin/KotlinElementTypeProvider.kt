@@ -49,7 +49,7 @@ interface KotlinElementTypeProvider {
     val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
 
     // Callables
-    val functionType: KtStubElementType<out KotlinFunctionStub, KtNamedFunction>
+    val functionType: KtNodeType
     val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>
     val enumEntryType: KtStubElementType<out KotlinClassStub, KtEnumEntry>
     val primaryConstructorType: KtNodeType
