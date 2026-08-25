@@ -156,8 +156,12 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
 
-    @Deprecated("Deprecated stub API")
-    @Suppress("DEPRECATION") // KT-78356
+    /**
+     * Kotlin element types are not [IStubElementType]s anymore, so this deprecated accessor cannot be implemented.
+     * The call is delegated to the declaration to fail with the platform diagnostic pointing at [getIElementType].
+     */
+    @Deprecated("Deprecated stub API", ReplaceWith("iElementType"))
+    @Suppress("DEPRECATION")
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType
     override fun getIElementType(): IElementType? = classOrObjectDeclaration?.iElementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObjectDeclaration?.stub
