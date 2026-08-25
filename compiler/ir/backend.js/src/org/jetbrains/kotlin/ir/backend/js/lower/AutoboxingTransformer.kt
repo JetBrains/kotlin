@@ -118,7 +118,7 @@ abstract class AbstractValueUsageLowering(
     }
 }
 
-class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideInlinedFunctionBlock: Boolean = false) :
+open class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideInlinedFunctionBlock: Boolean = false) :
     AbstractValueUsageLowering(context, replaceTypesInsideInlinedFunctionBlock) {
     private var processingReturnStack = mutableListOf<IrReturn>()
 
