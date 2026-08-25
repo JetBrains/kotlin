@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 
@@ -33,7 +33,7 @@ open class KtClass : KtClassOrObject {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinClassStub) : super(stub, KtStubBasedElementTypes.CLASS)
+    constructor(stub: KotlinClassStub) : super(stub, KtNodeTypes.CLASS)
 
     @KtImplementationDetail
     constructor(stub: KotlinClassStub, nodeType: IElementType) : super(stub, nodeType)
