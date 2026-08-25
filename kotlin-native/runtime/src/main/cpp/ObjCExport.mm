@@ -400,6 +400,23 @@ extern "C" void Kotlin_ObjCExport_initialize() {
   });
 }
 
+// Bind ObjC type adapters that were loaded separately from the host executable.
+// The adapter pointers must remain valid for the lifetime of the program.
+extern "C" void Kotlin_ObjCExport_bindTypeAdaptersToTypeInfos(
+    const ObjCTypeAdapter** classAdapters, int classAdaptersNum,
+    const ObjCTypeAdapter** protocolAdapters, int protocolAdaptersNum) {
+  Kotlin_ObjCExport_initialize();
+
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
+  if (classAdapters != nullptr && classAdaptersNum > 0) {
+    initTypeAdaptersFrom(classAdapters, classAdaptersNum);
+  }
+  if (protocolAdapters != nullptr && protocolAdaptersNum > 0) {
+    initTypeAdaptersFrom(protocolAdapters, protocolAdaptersNum);
+  }
+}
+
 static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }

@@ -238,6 +238,8 @@ void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
 void CommitTLSStorage(MemoryState* memory) RUNTIME_NOTHROW;
+// Reopen committed TLS storage so dynamic initializers can add records.
+void ReopenTLSStorage(MemoryState* memory) RUNTIME_NOTHROW;
 // Clear TLS object storage.
 void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.

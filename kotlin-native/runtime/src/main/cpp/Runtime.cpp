@@ -16,6 +16,7 @@
 #include "Worker.h"
 #include "KString.h"
 #include "CrashHandler.hpp"
+#include "HotReload.hpp"
 #include <atomic>
 #include <cstdint>
 #include <cstdlib>
@@ -158,6 +159,11 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif
+#ifdef KONAN_HOT_RELOAD
+    if (compiler::hotReloadEnabled()) {
+        hot::HotReload::InitModule();
+    }
+#endif
     return true;
 }
 
@@ -173,6 +179,15 @@ RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
     initTailNode->next = next;
   }
   initTailNode = next;
+}
+
+void ReinitializeGlobalVariablesAndTLS() {
+  auto* memoryState = kotlin::mm::GetMemoryState();
+  ReopenTLSStorage(memoryState);
+  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, memoryState);
+  CommitTLSStorage(memoryState);
+  InitOrDeinitGlobalVariables(INIT_GLOBALS, memoryState);
+  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, memoryState);
 }
 
 PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
