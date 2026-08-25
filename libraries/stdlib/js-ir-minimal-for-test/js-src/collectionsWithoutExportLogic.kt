@@ -44,6 +44,19 @@ public actual interface List<out E> : Collection<E> {
     public actual fun listIterator(): ListIterator<E>
     public actual fun listIterator(index: Int): ListIterator<E>
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+    companion {
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): List<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): List<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): List<E> = TODO("Use WITH_STDLIB pragma to use this function")
+    }
 }
 
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
@@ -60,6 +73,19 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     actual override fun listIterator(): MutableListIterator<E>
     actual override fun listIterator(index: Int): MutableListIterator<E>
     actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+    companion {
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): MutableList<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): MutableList<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): MutableList<E> = TODO("Use WITH_STDLIB pragma to use this function")
+    }
 }
 
 public actual interface Set<out E> : Collection<E> {
@@ -68,6 +94,19 @@ public actual interface Set<out E> : Collection<E> {
     actual override fun contains(element: @UnsafeVariance E): Boolean
     actual override fun iterator(): Iterator<E>
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+    companion {
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): Set<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): Set<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): Set<E> = TODO("Use WITH_STDLIB pragma to use this function")
+    }
 }
 
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
@@ -78,6 +117,19 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @IgnorableReturnValue actual override fun removeAll(elements: Collection<E>): Boolean
     @IgnorableReturnValue actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
+    companion {
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): MutableSet<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): MutableSet<E> = TODO("Use WITH_STDLIB pragma to use this function")
+
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): MutableSet<E> = TODO("Use WITH_STDLIB pragma to use this function")
+    }
 }
 
 public actual interface Map<K, out V> {

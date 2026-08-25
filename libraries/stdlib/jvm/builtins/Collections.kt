@@ -298,6 +298,44 @@ public actual interface List<out E> : Collection<E> {
      * @sample samples.collections.Collections.Lists.subList
      */
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    companion {
+        /**
+         * Returns an empty read-only list.
+         *
+         * The returned list is serializable.
+         *
+         * @sample samples.collections.Collections.Lists.emptyReadOnlyListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(): List<E>
+
+        /**
+         * Returns a new read-only list containing only the specified [element].
+         *
+         * The returned list is serializable.
+         *
+         * @sample samples.collections.Collections.Lists.singletonReadOnlyListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(element: E): List<E>
+
+        /**
+         * Returns a new read-only list of given elements.
+         *
+         * The returned list is serializable.
+         *
+         * @sample samples.collections.Collections.Lists.readOnlyListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(vararg elements: E): List<E>
+    }
 }
 
 /**
@@ -429,6 +467,39 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      * @sample samples.collections.Collections.Lists.subList
      */
     actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    companion {
+        /**
+         * Returns an empty new [MutableList].
+         *
+         * @sample samples.collections.Collections.Lists.emptyMutableListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(): MutableList<E>
+
+        /**
+         * Returns a new [MutableList] containing only the specified [element].
+         *
+         * @sample samples.collections.Collections.Lists.singleElementMutableListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(element: E): MutableList<E>
+
+        /**
+         * Returns a new [MutableList] with the given elements.
+         *
+         * @sample samples.collections.Collections.Lists.mutableListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(vararg elements: E): MutableList<E>
+    }
+
 }
 
 /**
@@ -473,6 +544,45 @@ public actual interface Set<out E> : Collection<E> {
 
     // Bulk Operations
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    companion {
+        /**
+         * Returns an empty read-only set.
+         *
+         * The returned set is serializable.
+         *
+         * @sample samples.collections.Collections.Sets.emptyReadOnlySetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(): Set<E>
+
+        /**
+         * Returns a new read-only set containing only the specified object [element].
+         *
+         * The returned set is serializable.
+         *
+         * @sample samples.collections.Collections.Sets.singletonReadOnlySetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(element: E): Set<E>
+
+        /**
+         * Returns a new read-only set with the given elements.
+         *
+         * Elements of the set are iterated in the order they were specified.
+         * The returned set is serializable.
+         *
+         * @sample samples.collections.Collections.Sets.readOnlySetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(vararg elements: E): Set<E>
+    }
 }
 
 /**
@@ -521,6 +631,44 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
+
+    companion {
+        /**
+         * Returns an empty new [MutableSet].
+         *
+         * The returned set preserves the element iteration order.
+         *
+         * @sample samples.collections.Collections.Sets.emptyMutableSetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(): MutableSet<E>
+
+        /**
+         * Returns a new [MutableSet] set containing only the specified object [element].
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.singleElementMutableSetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(element: E): MutableSet<E>
+
+        /**
+         * Returns a new [MutableSet] with the given elements.
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.mutableSetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        public actual operator fun <E> of(vararg elements: E): MutableSet<E>
+    }
 }
 
 /**

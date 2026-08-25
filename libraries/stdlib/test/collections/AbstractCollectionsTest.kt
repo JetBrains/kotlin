@@ -104,7 +104,7 @@ class AbstractCollectionsTest {
         override fun add(element: String): Boolean = storage.add(element)
     }
 
-    class MutList(val storage: MutableList<String> = mutableListOf()) : AbstractMutableList<String>() {
+    class MutList(val storage: MutableList<String> = []) : AbstractMutableList<String>() {
         override val size: Int get() = storage.size
         override fun get(index: Int): String = storage.get(index)
         override fun add(index: Int, element: String) = storage.add(index, element)
@@ -112,7 +112,7 @@ class AbstractCollectionsTest {
         override fun set(index: Int, element: String): String = storage.set(index, element)
     }
 
-    class MutSet(val storage: MutableSet<String> = mutableSetOf<String>()) : AbstractMutableSet<String>() {
+    class MutSet(val storage: MutableSet<String> = []) : AbstractMutableSet<String>() {
         override val size: Int get() = storage.size
         override fun iterator(): MutableIterator<String> = storage.iterator()
         override fun add(element: String): Boolean = storage.add(element)

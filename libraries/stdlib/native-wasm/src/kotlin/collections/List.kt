@@ -111,6 +111,38 @@ public actual interface List<out E> : Collection<E> {
      * @sample samples.collections.Collections.Lists.subList
      */
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    companion {
+        /**
+         * Returns an empty read-only list.
+         *
+         * @sample samples.collections.Collections.Lists.emptyReadOnlyListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): List<E> =
+            emptyList()
+
+        /**
+         * Returns a new read-only list containing only the specified [element].
+         *
+         * @sample samples.collections.Collections.Lists.singletonReadOnlyListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): List<E> =
+            listOf(element)
+
+        /**
+         * Returns a new read-only list of given elements.
+         *
+         * @sample samples.collections.Collections.Lists.readOnlyListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): List<E> =
+            if (elements.size > 0) elements.asList() else emptyList()
+    }
 }
 
 /**
@@ -240,4 +272,35 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      * @sample samples.collections.Collections.Lists.subList
      */
     actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    companion {
+        /**
+         * Returns an empty new [MutableList].
+         *
+         * @sample samples.collections.Collections.Lists.emptyMutableListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): MutableList<E> = mutableListOf()
+
+        /**
+         * Returns a new [MutableList] containing only the specified [element].
+         *
+         * @sample samples.collections.Collections.Lists.singleElementMutableListLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): MutableList<E> = mutableListOf(element)
+
+        /**
+         * Returns a new [MutableList] with the given elements.
+         *
+         * @sample samples.collections.Collections.Lists.mutableListLiteral
+        */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): MutableList<E> =
+            if (elements.size == 0) ArrayList() else elements.asArrayList()
+    }
+
 }

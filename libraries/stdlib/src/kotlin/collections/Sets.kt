@@ -70,6 +70,11 @@ public inline fun <T> setOf(): Set<T> = emptySet()
 @kotlin.internal.InlineOnly
 public inline fun <T> mutableSetOf(): MutableSet<T> = LinkedHashSet()
 
+// runtime support function for MutableSet.of(element)
+@PublishedApi
+@SinceKotlin("2.5")
+internal fun <T> mutableSetOf(element: T): MutableSet<T> = mutableSetOf<T>().apply { add(element) }
+
 /**
  * Returns a new [MutableSet] with the given elements.
  * Elements of the set are iterated in the order they were specified.

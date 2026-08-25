@@ -8,8 +8,8 @@ package test.collections
 import kotlin.test.*
 
 class ListSpecificTest {
-    val data = listOf("foo", "bar")
-    val empty = listOf<String>()
+    val data = ["foo", "bar"]
+    val empty = List.of<String>()
 
     @Test
     fun _toString() {
@@ -18,30 +18,30 @@ class ListSpecificTest {
 
     @Test
     fun tail() {
-        val data = listOf("foo", "bar", "whatnot")
+        val data = ["foo", "bar", "whatnot"]
         val actual = data.drop(1)
-        assertEquals(listOf("bar", "whatnot"), actual)
+        assertEquals(["bar", "whatnot"], actual)
     }
 
     @Test
     fun slice() {
-        val list = listOf('A', 'B', 'C', 'D')
+        val list = ['A', 'B', 'C', 'D']
 
-        assertEquals(emptyList(), list.slice(IntRange.EMPTY))
+        assertEquals([], list.slice(IntRange.EMPTY))
 
         // ABCD
         // 0123
-        assertEquals(listOf('B', 'C', 'D'), list.slice(1..3))
-        assertEquals(listOf('D', 'C', 'B'), list.slice(3 downTo 1))
+        assertEquals(['B', 'C', 'D'], list.slice(1..3))
+        assertEquals(['D', 'C', 'B'], list.slice(3 downTo 1))
 
         val iter = listOf(2, 0, 3)
-        assertEquals(listOf('C', 'A', 'D'), list.slice(iter))
+        assertEquals(['C', 'A', 'D'], list.slice(iter))
 
         for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
             val bounds = "range: $range"
             val exClass = IndexOutOfBoundsException::class
-            assertFailsWith(exClass, bounds) { listOf("x").slice(range) }
-            assertFailsWith(exClass, bounds) { listOf("x").slice(range.asIterable()) }
+            assertFailsWith(exClass, bounds) { ["x"].slice(range) }
+            assertFailsWith(exClass, bounds) { ["x"].slice(range.asIterable()) }
         }
     }
 

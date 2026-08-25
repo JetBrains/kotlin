@@ -162,12 +162,38 @@ class Collections {
         }
 
         @Sample
+        fun emptyReadOnlyListLiteral() {
+            // when creating an empty list with a collection literal,
+            // the element type parameter can be inferred only from the expected type
+            val list: List<Int> = []
+            // or the operator function can be invoked by its name
+            val other = List.of<Int>()
+
+            assertTrue(list == other, "Empty lists are equal")
+            assertPrints(list, "[]")
+            assertFails { list[0] }
+        }
+
+        @Sample
         fun readOnlyList() {
             val list = listOf('a', 'b', 'c')
             assertPrints(list.size, "3")
             assertTrue(list.contains('a'))
             assertPrints(list.indexOf('b'), "1")
             assertPrints(list[2], "c")
+        }
+
+        @Sample
+        fun readOnlyListLiteral() {
+            val list = ['a', 'b', 'c']
+            assertPrints(list.size, "3")
+            assertTrue(list.contains('a'))
+            assertPrints(list.indexOf('b'), "1")
+            assertPrints(list[2], "c")
+
+            // the operator function can also be invoked by its name
+            val stringList = List.of("abc", "def")
+            assertPrints(stringList, "[abc, def]")
         }
 
         @Sample
@@ -178,12 +204,39 @@ class Collections {
         }
 
         @Sample
+        fun sinlgetonReadOnlyListLiteral() {
+            val list = ['a']
+            assertPrints(list, "[a]")
+            assertPrints(list.size, "1")
+
+            // the operator function can also be invoked by its name
+            val anotherList = List.of('a')
+            assertTrue(list == anotherList)
+        }
+
+        @Sample
         fun emptyMutableList() {
             val list = mutableListOf<Int>()
             assertTrue(list.isEmpty())
 
             list.addAll(listOf(1, 2, 3))
             assertPrints(list, "[1, 2, 3]")
+        }
+
+        @Sample
+        fun emptyMutableListLiteral() {
+            // when creating an empty list with a collection literal,
+            // the element type parameter can be inferred only from the expected type
+            val list: MutableList<Int> = []
+            assertTrue(list.isEmpty())
+
+            list.addAll([1, 2, 3])
+            assertPrints(list, "[1, 2, 3]")
+
+            // or the operator function can be invoked by its name
+            val anotherList = MutableList.of<Int>()
+            anotherList.addAll(list)
+            assertTrue(list == anotherList)
         }
 
         @Sample
@@ -202,6 +255,20 @@ class Collections {
 
             list += listOf(4, 5)
             assertPrints(list, "[1, 2, 3, 4, 5]")
+        }
+
+        @Sample
+        fun mutableListLiteral() {
+            // when creating a mutable list with a literal, `MutableList` type must be specified in the expected type
+            val list: MutableList<Int> = [1, 2, 3]
+            assertPrints(list, "[1, 2, 3]")
+
+            list += listOf(4, 5)
+            assertPrints(list, "[1, 2, 3, 4, 5]")
+
+            // or the operator function can be invoked by its name
+            val anotherList = MutableList.of(1, 2, 3)
+            assertTrue(list.subList(0, 3) == anotherList)
         }
 
         @Sample

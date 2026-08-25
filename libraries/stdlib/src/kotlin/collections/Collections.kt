@@ -113,6 +113,11 @@ public inline fun <T> mutableListOf(): MutableList<T> = ArrayList()
 @kotlin.internal.InlineOnly
 public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
 
+// runtime support function for MutableList.of(element)
+@SinceKotlin("2.5")
+@PublishedApi
+internal fun <T> mutableListOf(element: T): MutableList<T> = ArrayList<T>().apply { add(element) }
+
 /**
  * Returns a new [MutableList] with the given elements.
  * @sample samples.collections.Collections.Lists.mutableList

@@ -47,6 +47,37 @@ public actual interface Set<out E> : Collection<E> {
 
     // Bulk Operations
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    companion {
+        /**
+         * Returns an empty read-only set.
+         *
+         * @sample samples.collections.Collections.Sets.emptyReadOnlySetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): Set<E> = setOf()
+
+        /**
+         * Returns a new read-only set containing only the specified object [element].
+         *
+         * @sample samples.collections.Collections.Sets.singletonReadOnlySetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): Set<E> = setOf(element)
+
+        /**
+         * Returns a new read-only set with the given elements.
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.readOnlySetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): Set<E> = elements.toSet()
+    }
 }
 
 /**
@@ -93,4 +124,41 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
+
+    companion {
+        /**
+         * Returns an empty new [MutableSet].
+         *
+         * The returned set preserves the element iteration order.
+         *
+         * @sample samples.collections.Collections.Sets.emptyMutableSetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(): MutableSet<E> = mutableSetOf()
+
+        /**
+         * Returns a new [MutableSet] set containing only the specified object [element].
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.singleElementMutableSetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(element: E): MutableSet<E> = mutableSetOf(element)
+
+        /**
+         * Returns a new [MutableSet] with the given elements.
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.mutableSetLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): MutableSet<E> =
+            elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
+    }
+
 }
