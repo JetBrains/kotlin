@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
@@ -105,15 +106,22 @@ internal fun LinkKlibsContext.linkKlibs(
     ExternalDependenciesGenerator(irLinker.symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
-    generateImplForCStructsAndEnums(irLinker, irBuiltIns, symbols)
+    // Drop those platform library modules which remain unused (untouched) during the deserialization.
+    val usefulModuleDependencies = originalModuleDependencies.filterOutUnusedPlatformLibraryModules(irLinker)
+
+    // Generate stubs only for useful modules.
+    generateImplForCStructsAndEnums(usefulModuleDependencies, irBuiltIns, symbols)
 
     config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+
+    // Also, sort modules in RTO according to their actual dependencies DAG.
+    val sortedUsefulModuleDependencies = usefulModuleDependencies.reverseTopoOrder(irLinker)
 
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
     // where the files are being initialized in order one by one.
-    originalModuleDependencies.allDependencies.forEach { module -> module.files.sortBy { it.fileEntry.name } }
+    sortedUsefulModuleDependencies.allDependencies.forEach { module -> module.files.sortBy { it.fileEntry.name } }
 
     if (stdlibIsBeingCached) {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
@@ -125,7 +133,7 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
-    val irModulesForLinkKlibsOutput: Map<Path, IrModuleFragment> = originalModuleDependencies.allDependencies
+    val irModulesForLinkKlibsOutput: Map<Path, IrModuleFragment> = sortedUsefulModuleDependencies.allDependencies
             .filter { it.name != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
             .associateBy { it.kotlinLibrary!!.path }
 
@@ -244,10 +252,13 @@ private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, lib
     }
 }
 
-private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrBuiltIns, symbols: BackendNativeSymbols) {
+private fun generateImplForCStructsAndEnums(
+        usefulModuleDependencies: IrModuleDependencies,
+        builtIns: IrBuiltIns,
+        symbols: BackendNativeSymbols,
+) {
     val implGen = IrImplementationGeneratorForCStructsAndEnums(builtIns, symbols)
-    for (deserializer in linker.allModuleDeserializers) {
-        val module = deserializer.moduleFragment
+    for (module in usefulModuleDependencies.allDependencies) {
         if (module.kotlinLibrary?.isCInteropLibrary() == true) {
             for (file in module.files) {
                 for (declaration in file.declarations) {
@@ -258,6 +269,20 @@ private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrB
             }
         }
     }
+}
+
+private fun IrModuleDependencies.filterOutUnusedPlatformLibraryModules(linker: KonanIrLinker): IrModuleDependencies {
+    val omittedModuleFragments: Set<IrModuleFragment> = linker.allModuleDeserializers.asSequence()
+            .filter { it is CInteropModuleDeserializer && !it.hasAnyLinkedIrDeclarations() }
+            .map { it.moduleFragment }
+            .filter { it.kotlinLibrary?.isImplicitlyLoadedFromKotlinNativeDistribution == true }
+            .toSet()
+
+    return copy(allDependencies = allDependencies - omittedModuleFragments)
+}
+
+private fun IrModuleDependencies.reverseTopoOrder(linker: KonanIrLinker): IrModuleDependencies {
+    return linker.moduleDependencyTracker.reverseTopoOrder(this)
 }
 
 internal class KonanCInteropModuleDeserializerFactory(
