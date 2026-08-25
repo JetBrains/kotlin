@@ -14,27 +14,20 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtPsiUtil.unquoteIdentifier
 
 abstract class AbstractLightTreeRawFirBuilder(
     baseSession: FirSession,
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
-) : AbstractRawFirBuilder<LighterASTNode>(baseSession, context) {
+) : AbstractTreeRawFirBuilder<LighterASTNode>(baseSession, context) {
     companion object {
         protected val ignoredTokens: TokenSet = TokenSet.orSet(
             COMMENTS,
             TokenSet.create(WHITE_SPACE, SEMICOLON, TokenType.ERROR_ELEMENT, TokenType.BAD_CHARACTER),
         )
     }
-
-    protected val implicitType: FirImplicitTypeRef = FirImplicitTypeRefImplWithoutSource
 
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = tree.getStartOffset(this)
@@ -47,10 +40,6 @@ abstract class AbstractLightTreeRawFirBuilder(
 
     override val LighterASTNode.asText: String
         get() = this.toString()
-
-    override fun LighterASTNode.getReferencedNameAsName(): Name {
-        return this.asText.nameAsSafeName()
-    }
 
     override fun LighterASTNode.getLabelName(): String? {
         if (tokenType == KtNodeTypes.FUN) {
@@ -65,15 +54,9 @@ abstract class AbstractLightTreeRawFirBuilder(
         return null
     }
 
-    override fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? = getFirstChildExpression()
-
-    override fun LighterASTNode.getAnnotatedExpression(): LighterASTNode? = getFirstChildExpression()
-
-    override fun LighterASTNode.getLabeledExpression(): LighterASTNode? = getLastChildExpression()
-
     fun LighterASTNode.getChildExpression(): LighterASTNode? = getFirstChildExpression()
 
-    private fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
+    override fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
         forEachChildren {
             if (it.isExpression()) return it
         }
@@ -90,7 +73,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
     }
 
-    fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
+    override fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
         var result: LighterASTNode? = null
         forEachChildren {
             if (it.isExpression()) {
@@ -128,9 +111,6 @@ abstract class AbstractLightTreeRawFirBuilder(
             }
             return null
         }
-
-    override val LighterASTNode?.arrayExpression: LighterASTNode?
-        get() = this?.getFirstChildExpression()
 
     override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
         get() = this?.getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
