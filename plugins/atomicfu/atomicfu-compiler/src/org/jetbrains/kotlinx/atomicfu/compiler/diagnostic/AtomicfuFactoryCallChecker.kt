@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -15,6 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 /**
  * Checks that an atomicfu's atomic factory call happens either to initialize a property,
@@ -26,22 +27,20 @@ object AtomicfuFactoryCallChecker : FirFunctionCallChecker(MppCheckerKind.Common
         if (!expression.calleeReference.isAtomicFactory()) return
 
         val parentElement = context.secondToLastContainer ?: return
-        // Immediate property initialization or delegation
-        if (expression.isPropertyInitializerOrDelegate(parentElement)) return
-        // Relaxed initialization check: we only verify that the call is on the RHS of the assignment.
-        // If the LHS does not make sense, other checkers should catch and report it.
-        if (expression.isAssignmentRhs(parentElement)) return
+        if (parentElement is FirProperty) {
+            // Immediate property initialization or delegation
+            val isValidInitialization =
+                parentElement.initializer == expression && parentElement.symbol.resolvedReturnType.classId?.isAtomicType() == true
+            if (isValidInitialization) return
+            if (parentElement.delegate == expression) return
+        } else if (parentElement is FirVariableAssignment) {
+            // Relaxed initialization check: we only verify that the call is on the RHS of the assignment.
+            // If the LHS does not make sense, other checkers should catch and report it.
+            if (parentElement.rValue == expression && parentElement.lValue.resolvedType.classId?.isAtomicType() == true) {
+                return // legal
+            }
+        }
 
         reporter.reportOn(expression.source, AtomicfuErrors.ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY)
-    }
-
-    private fun FirFunctionCall.isPropertyInitializerOrDelegate(element: FirElement): Boolean {
-        if (element !is FirProperty) return false
-        return element.initializer === this || element.delegate === this
-    }
-
-    private fun FirFunctionCall.isAssignmentRhs(element: FirElement): Boolean {
-        if (element !is FirVariableAssignment) return false
-        return element.rValue == this
     }
 }
