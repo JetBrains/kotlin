@@ -33,11 +33,7 @@ private fun createSyntheticAccessorGeneration(context: LoweringContext): Synthet
 
 private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<LoweringContext> {
     return IrValidationAfterInliningPrivateFunctionsKlibPhase(
-        context,
-        checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-            // Call sites of only non-private functions are allowed at this stage.
-            !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-        }
+        context
     )
 }
 
