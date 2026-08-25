@@ -65,5 +65,10 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.TYPEALIAS,
             factory = KtTypeAliasStubSerializingElementFactory,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.ENUM_ENTRY,
+            factory = KtEnumEntryStubSerializingElementFactory,
+        )
     }
 }

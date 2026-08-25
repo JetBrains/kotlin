@@ -1,26 +1,32 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
-package org.jetbrains.kotlin.psi.stubs.elements
+package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
-import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
 
-internal object KtEnumEntryElementType : KtStubElementType<KotlinEnumEntryStubImpl, KtEnumEntry>(
-    "ENUM_ENTRY",
-    KtEnumEntry::class.java,
-    KotlinClassStub::class.java,
-) {
-    override fun createStub(psi: KtEnumEntry, parentStub: StubElement<*>): KotlinEnumEntryStubImpl {
+internal object KtEnumEntryStubSerializingElementFactory :
+    KtStubSerializingElementFactory<KotlinEnumEntryStubImpl, KtClass>(
+        type = KtNodeTypes.ENUM_ENTRY,
+    ) {
+
+    override fun createPsi(stub: KotlinEnumEntryStubImpl): KtEnumEntry = KtEnumEntry(stub)
+
+    override fun createStub(psi: KtClass, parentStub: StubElement<*>?): KotlinEnumEntryStubImpl {
         val fqName = psi.safeFqNameForLazyResolve()?.asString()
         val name = psi.getName()
         val isLocal = psi.isLocal()
