@@ -164,7 +164,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val functionTypeReceiverType: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>
         get() = KtStubElementTypes.FUNCTION_TYPE_RECEIVER
 
-    override val nullableTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtNullableType>, KtNullableType>
+    override val nullableTypeType: KtNodeType
         get() = KtStubElementTypes.NULLABLE_TYPE
 
     override val intersectionTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType>
