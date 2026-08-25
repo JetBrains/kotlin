@@ -11,6 +11,7 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -30,6 +31,9 @@ import java.util.List;
  * }</pre>
  */
 public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtAnnotationEntry[] EMPTY_ARRAY = new KtAnnotationEntry[0];
+
     @KtImplementationDetail
     public KtAnnotationEntry(@NotNull ASTNode node) {
         super(node);
@@ -37,7 +41,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
 
     @KtImplementationDetail
     public KtAnnotationEntry(@NotNull KotlinAnnotationEntryStub stub) {
-        super(stub, KtStubBasedElementTypes.ANNOTATION_ENTRY);
+        super(stub, KtNodeTypes.ANNOTATION_ENTRY);
     }
 
     @Override
