@@ -338,8 +338,7 @@ internal object KtStubBasedElementTypes {
         provider.fileAnnotationListType
 
     @JvmField
-    val IMPORT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtImportList>, KtImportList> =
-        provider.importListType
+    val IMPORT_LIST: KtNodeType = provider.importListType
 
     @JvmField
     val IMPORT_DIRECTIVE: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective> =

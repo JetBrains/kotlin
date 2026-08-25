@@ -1699,6 +1699,7 @@ public final class org/jetbrains/kotlin/psi/KtImportInfo$ImportContent$FqNameBas
 }
 
 public class org/jetbrains/kotlin/psi/KtImportList : org/jetbrains/kotlin/psi/KtElementImplStub {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtImportList;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getImports ()Ljava/util/List;
 }
