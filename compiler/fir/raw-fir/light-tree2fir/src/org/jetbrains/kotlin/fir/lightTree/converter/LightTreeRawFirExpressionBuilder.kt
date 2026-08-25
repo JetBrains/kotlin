@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,8 +51,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets.CONSTANT_EXPRESSIONS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -131,7 +130,7 @@ class LightTreeRawFirExpressionBuilder(
             ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
             COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(expression)
             STRING_TEMPLATE -> convertStringTemplate(expression)
-            is KtConstantExpressionElementType -> convertConstantExpression(expression)
+            in CONSTANT_EXPRESSIONS -> convertConstantExpression(expression)
             REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
             FOR -> convertFor(expression) // FirBlock
             TRY -> convertTryExpression(expression)
@@ -685,7 +684,7 @@ class LightTreeRawFirExpressionBuilder(
                     if (isEffectiveSelector) {
                         val callExpressionCallee = if (tokenType == CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
                         firSelector =
-                            if (tokenType is KtNameReferenceExpressionElementType ||
+                            if (tokenType == REFERENCE_EXPRESSION ||
                                 (tokenType == CALL_EXPRESSION && callExpressionCallee?.tokenType != LAMBDA_EXPRESSION)
                             ) {
                                 firExpression
