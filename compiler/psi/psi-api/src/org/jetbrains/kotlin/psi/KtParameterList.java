@@ -10,11 +10,13 @@ import com.intellij.psi.PsiElement;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,7 +62,7 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     /** Returns the parameters in this list, in source order; empty if there are none. */
     @NotNull
     public List<KtParameter> getParameters() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.VALUE_PARAMETER, KtParameter.EMPTY_ARRAY));
     }
 
     /**
