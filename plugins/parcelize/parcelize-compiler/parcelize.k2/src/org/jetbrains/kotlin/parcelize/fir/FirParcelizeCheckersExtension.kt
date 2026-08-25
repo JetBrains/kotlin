@@ -25,7 +25,7 @@ class FirParcelizeCheckersExtension(
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val classCheckers: Set<FirClassChecker>
-            get() = setOf(FirParcelizeClassChecker(parcelizeAnnotations))
+            get() = setOf(FirParcelizeClassChecker(parcelizeAnnotations), FirPolymorphicSealedClassChecker(parcelizeAnnotations))
 
         override val propertyCheckers: Set<FirPropertyChecker>
             get() = setOf(FirParcelizePropertyChecker(parcelizeAnnotations))

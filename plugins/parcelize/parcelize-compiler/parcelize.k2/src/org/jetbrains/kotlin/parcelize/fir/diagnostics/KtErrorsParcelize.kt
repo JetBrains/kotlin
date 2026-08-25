@@ -57,5 +57,16 @@ object KtErrorsParcelize : KtDiagnosticsContainer() {
     val INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY by warning0<PsiElement>()
     val VALUE_PARAMETER_USED_IN_CLASS_BODY by error0<PsiElement>()
 
+    val POLYMORPHIC_SEALED_MUST_BE_SEALED by error0<PsiElement>(NAME_IDENTIFIER)
+    val POLYMORPHIC_SEALED_WITHOUT_PARCELIZE by error0<PsiElement>(NAME_IDENTIFIER)
+    val POLYMORPHIC_SEALED_CANNOT_HAVE_OPEN_SUBCLASSES by error0<PsiElement>(NAME_IDENTIFIER)
+    val POLYMORPHIC_SEALED_CANNOT_HAVE_ABSTRACT_SUBCLASSES by error0<PsiElement>(NAME_IDENTIFIER)
+    val POLYMORPHIC_SEALED_CANNOT_HAVE_SEALED_SUBCLASSES by error0<PsiElement>(NAME_IDENTIFIER)
+    val POLYMORPHIC_SEALED_SUBCLASS_MUST_BE_NESTED by error0<PsiElement>(NAME_IDENTIFIER)
+    val MULTIPLE_POLYMORPHIC_SEALED_SUPERTYPES by error0<PsiElement>(NAME_IDENTIFIER)
+    val DUPLICATE_PARCEL_TAG by error0<PsiElement>()
+    val INCONSISTENT_PARCEL_TAG by error0<PsiElement>(NAME_IDENTIFIER)
+    val INAPPLICABLE_PARCEL_TAG by error0<PsiElement>()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultErrorMessagesParcelize
 }
