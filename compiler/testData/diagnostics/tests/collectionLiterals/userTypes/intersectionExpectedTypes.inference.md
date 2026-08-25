@@ -452,8 +452,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 3. `TypeVariable(X) == A` _from Fix variable X_
 4. Combine `TypeVariable(X) == A` with `TypeVariable(X) <: TypeVariable(T)?`
     1. `A <: TypeVariable(T)`
-5. Combine `TypeVariable(X) == A` with `it(B & TypeVariable(X) & Any) <: TypeVariable(T)`
-    1. `it(B & A) <: TypeVariable(T)`
+5. `it(B & A) <: TypeVariable(T)` _from Fix variable X_
 6. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS

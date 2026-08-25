@@ -320,7 +320,6 @@ TypeVariable(PNT) --- Readiness(
      <: TypeVariable(OT)
      <: CapturedType(in TypeVariable(OT))
      = ScopeOwner
-     <: CapturedType(in ScopeOwner)
      <: CapturedType(in ScopeOwner) (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(PNT) --- Readiness(
@@ -340,7 +339,6 @@ CHOSEN for fixation: TypeVariable(PNT) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      = ScopeOwner
-     <: CapturedType(in ScopeOwner)
      <: CapturedType(in ScopeOwner)
     FIXED TO: ScopeOwner
 ********************************
@@ -420,8 +418,6 @@ CHOSEN for fixation: TypeVariable(OT) --- Readiness(
      <: CapturedType(in TypeVariable(OT))
      >: Interloper
      = BaseType (inferred during fixation)
-     <: CapturedType(in BaseType) (inferred during fixation)
-     <: CapturedType(in BaseType) (inferred during fixation)
     FIXED TO: BaseType
 TypeVariable(PNT) --- Readiness(
     	 true ALLOWED
@@ -446,7 +442,6 @@ TypeVariable(PNT) --- Readiness(
      <: BaseType (inferred during fixation)
      <: CapturedType(in BaseType) (inferred during fixation)
      = BaseType (inferred during fixation)
-     <: CapturedType(in BaseType) (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(PNT) --- Readiness(
     	 true ALLOWED
@@ -465,9 +460,9 @@ CHOSEN for fixation: TypeVariable(PNT) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: Interloper
+     <: BaseType
      <: CapturedType(in BaseType)
      = BaseType
-     <: CapturedType(in BaseType)
     FIXED TO: BaseType
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(

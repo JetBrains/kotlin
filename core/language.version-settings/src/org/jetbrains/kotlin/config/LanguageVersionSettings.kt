@@ -539,6 +539,9 @@ enum class LanguageFeature(
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
     FixApplicabilityOfEmptyIntersection(sinceVersion = KOTLIN_2_5, "KT-86740"),
+    // Superseded by EliminateSecondKindIncorporation: with that feature enabled, the second incorporation
+    // kind does not run at all, so this one has no effect.
+    // TODO: Remove it once EliminateSecondKindIncorporation is being released under 2.5
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
     EliminateSecondKindIncorporation(sinceVersion = KOTLIN_2_5, issue = "KT-86022"),
     NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
