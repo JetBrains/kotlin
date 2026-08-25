@@ -119,6 +119,7 @@ class KonanIrLinker(
 
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()
 
+    // TODO(KT-61096): Drop it in favor of KotlinIrLinker.allModuleDeserializers
     val modules: Map<Path, IrModuleFragment>
         get() = mutableMapOf<Path, IrModuleFragment>().apply {
             deserializersForModules
