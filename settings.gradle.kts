@@ -728,7 +728,6 @@ include(
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
-    ":analysis:decompiled:decompiler-js",
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:light-classes-for-decompiled",
     ":tools:ide-plugin-dependencies-validator"

@@ -241,7 +241,6 @@ object CompilerModules {
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-internal-utils",
-        ":analysis:decompiled:decompiler-js",
         ":analysis:decompiled:decompiler-native",
         ":analysis:decompiled:decompiler-to-file-stubs",
         ":analysis:decompiled:decompiler-to-psi",

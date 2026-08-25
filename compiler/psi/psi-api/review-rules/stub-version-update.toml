@@ -1,6 +1,5 @@
 # Changes to the stub format
 watch = [
-    "analysis/decompiled/decompiler-js/src/",
     "analysis/decompiled/decompiler-native/src/",
     "analysis/decompiled/decompiler-to-file-stubs/src/",
     "analysis/decompiled/decompiler-to-psi/src/",

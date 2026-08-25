@@ -10,7 +10,9 @@ import com.intellij.openapi.application.ApplicationManager
 abstract class KotlinLabelProviderService {
     abstract fun getLabelForBuiltInFileType(): String
     abstract fun getLabelForKlibMetaFileType(): String
-    abstract fun getLabelForKotlinJavaScriptMetaFileType(): String
+
+    @Deprecated("The function is unused. Its implementation should be dropped")
+    open fun getLabelForKotlinJavaScriptMetaFileType(): String = ""
 
     companion object {
         fun getService(): KotlinLabelProviderService? =
