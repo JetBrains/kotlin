@@ -140,7 +140,7 @@ interface KotlinElementTypeProvider {
     val importListType: KtNodeType
     val importDirectiveType: KtNodeType
     val importAliasType: KtNodeType
-    val scriptType: KtStubElementType<out KotlinScriptStub, KtScript>
+    val scriptType: KtNodeType
 
     // Code fragments
     val expressionCodeFragmentType: ICodeFragmentElementType

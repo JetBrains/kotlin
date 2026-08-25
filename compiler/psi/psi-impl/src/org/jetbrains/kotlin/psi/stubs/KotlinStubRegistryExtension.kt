@@ -380,6 +380,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY,
             psiFactory = ::KtEscapeStringTemplateEntry,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.SCRIPT,
+            factory = KtScriptStubSerializingElementFactory,
+        )
     }
 }
 
