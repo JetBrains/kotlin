@@ -91,8 +91,7 @@ internal object KtStubBasedElementTypes {
     val VALUE_PARAMETER: KtNodeType = provider.valueParameterType
 
     @JvmField
-    val CONTEXT_PARAMETER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContextParameterList>, KtContextParameterList> =
-        provider.contextParameterListType
+    val CONTEXT_PARAMETER_LIST: KtNodeType = provider.contextParameterListType
 
     @JvmField
     val CONTEXT_RECEIVER: KtNodeType = provider.contextReceiverType

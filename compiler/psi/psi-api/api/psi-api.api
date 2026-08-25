@@ -1248,12 +1248,17 @@ public final class org/jetbrains/kotlin/psi/KtContainerNodeForControlStructureBo
 }
 
 public abstract class org/jetbrains/kotlin/psi/KtContextParameterList : org/jetbrains/kotlin/psi/KtElementImplStub {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtContextParameterList$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtContextParameterList;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun contextParameters ()Ljava/util/List;
 	public final fun contextReceivers ()Ljava/util/List;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getOwnerDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 	public final fun typeReferences ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/psi/KtContextParameterList$Companion {
 }
 
 public final class org/jetbrains/kotlin/psi/KtContextReceiver : org/jetbrains/kotlin/psi/KtElementImplStub {
