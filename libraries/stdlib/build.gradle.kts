@@ -103,6 +103,7 @@ val commonTestOptIns = listOf(
     "kotlin.io.encoding.ExperimentalEncodingApi",
     "kotlin.uuid.ExperimentalUuidApi",
     "kotlin.time.ExperimentalTime",
+    "kotlin.ExperimentalCollectionLiteralsApi", // temporary until it's automatically made with -Xcollection-literals
 )
 
 kotlin {
