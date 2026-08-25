@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
@@ -34,7 +35,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
 
     @KtImplementationDetail
     public KtValueArgumentList(@NotNull KotlinPlaceHolderStub<KtValueArgumentList> stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
+        super(stub, KtNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
     @Override

@@ -105,8 +105,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType TYPE_ARGUMENT_LIST = new KtNodeType("TYPE_ARGUMENT_LIST", KtTypeArgumentList::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_LIST", KtValueArgumentList.class);
+    @NotNull KtNodeType VALUE_ARGUMENT_LIST = new KtNodeType("VALUE_ARGUMENT_LIST", KtValueArgumentList::new);
 
     @NotNull KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
             new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
