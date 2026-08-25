@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.configuration.useNewExceptionHandling
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.wasm.test.tools.WasiComponentizer
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
@@ -40,11 +41,10 @@ class WasiBoxRunner(
     testServices: TestServices,
     executeWithNodeJsOnly: Boolean = false, // Klib backward compatibility testsuite needs only one best Wasi runner
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal val vmsToCheck: List<WasmVM> = if (executeWithNodeJsOnly) {
-        listOf(WasmVM.NodeJs)
-    } else {
-        listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
-    }
+    // HACK (KT-87723): only wasmtime can run these tests for now - the stdlib imports `wasi:*` 0.2 interfaces, so the
+    // test binary has to be turned into a component (see WasiComponentizer), and neither Node's WASI preview1 shim nor
+    // WasmEdge can instantiate that. `executeWithNodeJsOnly` is ignored for the same reason.
+    internal val vmsToCheck: List<WasmVM> = listOf(WasmVM.Wasmtime)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -122,6 +122,12 @@ class WasiBoxRunner(
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir,
                     outputCollector = outputCollector,
+                    // HACK (KT-87723): the unit test runner prints the TeamCity messages the grouping stage greps for
+                    wasiEntryPoint = if (startUnitTests) {
+                        WasiComponentizer.UNIT_TESTS_ENTRY_POINT
+                    } else {
+                        WasiComponentizer.BOX_ENTRY_POINT
+                    },
                 )
             }
 
@@ -160,7 +166,8 @@ open class WasmWasiFolderGroupingStageBoxRunner(
 ) : AbstractWasmGroupingStageBoxRunner(testServices), WasmArtifactsCollector {
     private val firstNonGroupingTestServices: TestServices
         get() = testServices.groupingStageInputs.first().testServices
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    // HACK (KT-87723): wasmtime only, see the comment in WasiBoxRunner
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.Wasmtime)
 
     override fun shouldUseBoxExportMode(): Boolean {
         // WASI tests always use the unit-test runner, never box export mode
@@ -188,6 +195,8 @@ open class WasmWasiFolderGroupingStageBoxRunner(
                 jsFilePaths = emptyList(),
                 workingDirectory = folder,
                 outputCollector = collectedOutputs,
+                // HACK (KT-87723): this runner always drives the unit test runner
+                wasiEntryPoint = WasiComponentizer.UNIT_TESTS_ENTRY_POINT,
             )
         }
     }

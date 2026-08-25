@@ -28,6 +28,8 @@ internal sealed class WasmVM(
         useNewExceptionHandling: Boolean = false,
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
+        // HACK (KT-87723): which export the WASI VMs invoke - the box test entry point or the unit test runner
+        wasiEntryPoint: String = WasiComponentizer.BOX_ENTRY_POINT,
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -38,6 +40,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryPoint: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -58,6 +61,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryPoint: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -75,7 +79,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryPoint: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -93,11 +98,12 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryPoint: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
-                "startTest",
+                wasiEntryPoint,
                 workingDirectory = workingDirectory,
             )
     }
@@ -110,16 +116,20 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
-        ) =
-            tool.run(
+            wasiEntryPoint: String,
+        ): String {
+            // HACK (KT-87723): the stdlib imports `wasi:*` 0.2 interfaces, which are only available to a component
+            val component = WasiComponentizer.componentize(File(workingDirectory, entryFile))
+            return tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",
                 "gc,function-references,exceptions",
                 "--invoke",
-                "startTest",
-                entryFile,
+                "$wasiEntryPoint()",
+                component.name,
                 workingDirectory = workingDirectory,
             )
+        }
     }
 
     object NodeJs : WasmVM(property = "wasm.javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
@@ -129,7 +139,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryPoint: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),

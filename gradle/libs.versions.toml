@@ -59,6 +59,7 @@ rwmutex-idea = "0.0.10"
 # Wasm specific
 wasmedge = "0.16.3"
 wasmtime = "47.0.3"
+wasmTools = "1.253.0"
 jscTahoe = "312950"
 jscLinux = "312950"
 jscWindows = "312950"

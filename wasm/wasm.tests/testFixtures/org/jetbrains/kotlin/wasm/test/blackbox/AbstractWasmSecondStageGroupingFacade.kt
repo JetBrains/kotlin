@@ -313,10 +313,9 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     private fun generateWasiStartTest(proxyClassNames: List<String>): String = buildString {
         appendLine(
             """
-            @kotlin.wasm.WasmImport("wasi_snapshot_preview1", "proc_exit")
-            private external fun wasiProcExit(code: Int)
-
-            @kotlin.wasm.WasmExport
+            // HACK (KT-87723): kebab-case, see WasiComponentizer.BOX_ENTRY_POINT; failures escape as a trap rather
+            // than through the preview1 `proc_exit`, which would make this binary need a preview1 adapter
+            @kotlin.wasm.WasmExport("start-test")
             fun startTest() {
                 try {
             """.trimIndent()
@@ -330,7 +329,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
                     println("Failed with exception!")
                     println(e.message)
                     e.printStackTrace()
-                    wasiProcExit(1)
+                    error("Test failed: " + e.message)
                 }
             }
             """.trimIndent()
