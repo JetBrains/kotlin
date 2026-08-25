@@ -85,8 +85,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         ItemPresentationProviders.getItemPresentation(/* element = */ this)
 
     override fun getValueParameterList(): KtParameterList? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+        getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList::class.java)
 
     override fun getValueParameters(): List<KtParameter> =
         valueParameterList?.parameters.orEmpty()
