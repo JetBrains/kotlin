@@ -86,8 +86,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType DOT_QUALIFIED_EXPRESSION = new KtNodeType("DOT_QUALIFIED_EXPRESSION", KtDotQualifiedExpression::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION =
-            new KtPlaceHolderStubElementType<>("CALL_EXPRESSION", KtCallExpression.class);
+    @NotNull KtNodeType CALL_EXPRESSION = new KtNodeType("CALL_EXPRESSION", KtCallExpression::new);
+
     @NotNull KtOperationReferenceExpressionElementType OPERATION_REFERENCE = KtOperationReferenceExpressionElementType.INSTANCE;
 
     @NotNull KtPlaceHolderStubElementType<KtPrefixExpression> PREFIX_EXPRESSION =

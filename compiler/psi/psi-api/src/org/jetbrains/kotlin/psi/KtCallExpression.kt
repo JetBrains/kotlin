@@ -28,7 +28,7 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtStubBasedElementTypes.CALL_EXPRESSION)
+    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtNodeTypes.CALL_EXPRESSION)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitCallExpression(this, data)
