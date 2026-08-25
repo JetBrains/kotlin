@@ -265,13 +265,11 @@ class JavaClassifierTypeOverAst(
             typeParam.takeIf { isInScopeOfDeclaringClass(outerTypeParamOwners[index]) }
         }
 
-        // Inherited case: the outer arguments are neither written in source nor lexically in scope,
-        // so they have to come from the containing class's supertype hierarchy — e.g. for a class
-        // that merely *inherits* the inner class (`class Outer<E1, E2> extends BaseOuter<Integer,
-        // E1>` referencing `BaseInner`). `outerTypeParams` is also empty when the model cannot see
-        // the outer chain at all (cross-file outer resolved under a cycle guard), which the
-        // hierarchy walk still can.
-        if (outerTypeParams.isEmpty() || lexicalArgs.any { it == null }) {
+        // A parameter is out of scope when the reference sits in a class that merely *inherits* the
+        // inner class (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`):
+        // the declaring class's own parameters have no binding at this reference and would convert to
+        // unresolved names, so the arguments come from the containing class's supertype hierarchy.
+        if (lexicalArgs.any { it == null }) {
             val classId = javaClass.classId
             if (classId != null) {
                 val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
