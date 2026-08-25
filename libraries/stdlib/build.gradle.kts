@@ -41,20 +41,6 @@ description = "Kotlin Standard Library"
 
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
-fun resolvingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
-    configurations.create(name) {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-        configure(this)
-    }
-
-fun outgoingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
-    configurations.create(name) {
-        isCanBeResolved = false
-        isCanBeConsumed = true
-        configure(this)
-    }
-
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
     // languageVersion = KotlinVersion.KOTLIN_...
