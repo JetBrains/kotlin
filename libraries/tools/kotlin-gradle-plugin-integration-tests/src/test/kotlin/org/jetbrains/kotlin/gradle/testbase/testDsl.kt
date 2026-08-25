@@ -63,7 +63,7 @@ fun KGPBaseTest.project(
     enableOfflineMode: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = if (buildOptions.androidVersion != null) 1024 else 512,
+    enableGradleDaemonMemoryLimitInMb: Int? = 2048,
     enableKotlinDaemonMemoryLimitInMb: Int? = 256,
     kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
@@ -771,6 +771,7 @@ private fun collectGradleJvmOptions(
     }
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
     if (enableGradleDaemonMemoryLimitInMb != null) {
+        add("-XX:+UseG1GC")
         add("-Xmx${enableGradleDaemonMemoryLimitInMb}m")
         addAll(heapShrinkingJvmOptions)
     }
