@@ -202,6 +202,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.FUNCTION_TYPE,
             factory = KtFunctionTypeStubSerializingElementFactory,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.TYPE_PROJECTION,
+            factory = KtTypeProjectionStubSerializingElementFactory,
+        )
     }
 }
 
