@@ -232,6 +232,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.OPERATION_REFERENCE,
             factory = KtOperationReferenceExpressionStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.PREFIX_EXPRESSION,
+            psiFactory = ::KtPrefixExpression,
+        )
     }
 }
 
