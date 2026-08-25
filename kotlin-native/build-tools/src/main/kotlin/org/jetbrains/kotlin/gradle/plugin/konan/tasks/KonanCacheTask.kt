@@ -54,6 +54,10 @@ open class KonanCacheTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val klib: DirectoryProperty = objectFactory.directoryProperty()
 
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val klibFiles: ConfigurableFileCollection = objectFactory.fileCollection()
+
     @get:Input
     val target: Property<String> = objectFactory.property(String::class.java)
 
@@ -125,6 +129,12 @@ open class KonanCacheTask @Inject constructor(
             add(target.get())
             add("-produce")
             add("static_cache")
+            add("-nostdlib") // the stdlib must be passed explicitly via `klibFiles`
+            add("-no-default-libs") // the necessary platform libs must be passed explicitly via `klibFiles`
+            klibFiles.forEach {
+                add("-library")
+                add(it.canonicalPath)
+            }
             add("-Xadd-cache=${klibFile.absolutePath}")
             add("-Xcache-directory=${cacheDirectory.get().asFile.absolutePath}")
             PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
