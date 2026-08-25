@@ -63,8 +63,7 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     /**
      * Returns the type reference of this context receiver, or `null` if it is absent in incomplete code.
      */
-    @Suppress("DEPRECATION") // KT-78356
-    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
+    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference::class.java)
 
     /**
      * Returns the effective name used to reference this context receiver: the explicit [labelName] if present, otherwise the receiver

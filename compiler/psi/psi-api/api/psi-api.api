@@ -2696,6 +2696,8 @@ public class org/jetbrains/kotlin/psi/KtTypeProjection : org/jetbrains/kotlin/ps
 }
 
 public final class org/jetbrains/kotlin/psi/KtTypeReference : org/jetbrains/kotlin/psi/KtModifierListOwnerStub, org/jetbrains/kotlin/psi/KtAnnotated, org/jetbrains/kotlin/psi/KtAnnotationsContainer, org/jetbrains/kotlin/resolution/KtResolvable {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtTypeReference$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;
@@ -2705,6 +2707,9 @@ public final class org/jetbrains/kotlin/psi/KtTypeReference : org/jetbrains/kotl
 	public final fun hasParentheses ()Z
 	public final fun isPlaceholder ()Z
 	public final fun nameForReceiverLabel ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/psi/KtTypeReference$Companion {
 }
 
 public abstract class org/jetbrains/kotlin/psi/KtUnaryExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtOperationExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {

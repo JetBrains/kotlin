@@ -187,6 +187,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.DYNAMIC_TYPE,
             psiFactory = ::KtDynamicType,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.TYPE_REFERENCE,
+            psiFactory = ::KtTypeReference,
+        )
     }
 }
 

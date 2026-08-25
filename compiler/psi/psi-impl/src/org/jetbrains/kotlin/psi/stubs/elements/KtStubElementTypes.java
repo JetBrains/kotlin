@@ -70,8 +70,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType INTERSECTION_TYPE = new KtNodeType("INTERSECTION_TYPE", KtIntersectionType::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
-            new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
+    @NotNull KtNodeType TYPE_REFERENCE = new KtNodeType("TYPE_REFERENCE", KtTypeReference::new);
 
     @NotNull KtUserTypeElementType USER_TYPE = new KtUserTypeElementType("USER_TYPE");
     @NotNull KtNodeType DYNAMIC_TYPE = new KtNodeType("DYNAMIC_TYPE", KtDynamicType::new);
