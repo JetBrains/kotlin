@@ -84,8 +84,7 @@ internal object KtStubBasedElementTypes {
     val BACKING_FIELD: KtNodeType = provider.backingFieldType
 
     @JvmField
-    val DESTRUCTURING_DECLARATION: KtStubElementType<out KotlinDestructuringDeclarationStub, KtDestructuringDeclaration> =
-        provider.destructuringDeclarationType
+    val DESTRUCTURING_DECLARATION: KtNodeType = provider.destructuringDeclarationType
 
     @JvmField
     val INITIALIZER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList> =
