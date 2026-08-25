@@ -92,6 +92,12 @@ class ConstraintIncorporator(
     private fun directWithVariable(typeVariable: TypeVariableMarker, constraint: Constraint) {
         val shouldBeTypeVariableFlexible = with(utilContext) { typeVariable.shouldBeFlexible() }
 
+        val isThereFlexibleEquality by lazy(LazyThreadSafetyMode.NONE) {
+            c.getConstraintsForVariable(typeVariable).any {
+                it.kind == ConstraintKind.EQUALITY && it.type.hasFlexibleNullability()
+            }
+        }
+
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
             typeVariable.forEachConstraint {
@@ -100,10 +106,13 @@ class ConstraintIncorporator(
                         typeVariable, it,
                         typeVariable, constraint,
                     ) {
+                        val forceInflexibilityForUpperType =
+                            constraint.forceInflexibilityForUpperTypeAtDirectIncorporation && !isThereFlexibleEquality
+
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = it.type,
-                            upperType = constraint.type,
-                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                            upperType = constraint.type.lowerFlexibleBoundIfTrue(forceInflexibilityForUpperType),
+                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible && !forceInflexibilityForUpperType,
                             newDerivedFrom = constraint.computeNewDerivedFrom(it),
                             isFromNullabilityConstraint = it.isNullabilityConstraint,
                             isFromDeclaredUpperBound = false,
@@ -125,13 +134,16 @@ class ConstraintIncorporator(
                         typeVariable, constraint,
                         typeVariable, it,
                     ) {
+                        val forceInflexibilityForUpperType =
+                            it.forceInflexibilityForUpperTypeAtDirectIncorporation && !isThereFlexibleEquality
+
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = constraint.type,
-                            upperType = it.type,
-                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                            upperType = it.type.lowerFlexibleBoundIfTrue(forceInflexibilityForUpperType),
+                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible && !forceInflexibilityForUpperType,
                             newDerivedFrom = constraint.computeNewDerivedFrom(it),
-                            isFromDeclaredUpperBound = isFromDeclaredUpperBound,
                             isFromNullabilityConstraint = false,
+                            isFromDeclaredUpperBound = isFromDeclaredUpperBound,
                             isNoInfer = constraint.isNoInfer || it.isNoInfer,
                         )
                     }
@@ -139,6 +151,10 @@ class ConstraintIncorporator(
             }
         }
     }
+
+    context(c: Context)
+    private fun KotlinTypeMarker.lowerFlexibleBoundIfTrue(b: Boolean): KotlinTypeMarker =
+        if (b) lowerBoundIfFlexible() else this
 
     // NB: The result is reflexive
     private fun Constraint.computeNewDerivedFrom(other: Constraint): Set<TypeVariableMarker> =
