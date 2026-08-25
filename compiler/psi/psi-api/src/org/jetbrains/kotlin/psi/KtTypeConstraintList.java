@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -29,7 +30,7 @@ public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStu
 
     @KtImplementationDetail
     public KtTypeConstraintList(@NotNull KotlinPlaceHolderStub<KtTypeConstraintList> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
+        super(stub, KtNodeTypes.TYPE_CONSTRAINT_LIST);
     }
 
     @Override
