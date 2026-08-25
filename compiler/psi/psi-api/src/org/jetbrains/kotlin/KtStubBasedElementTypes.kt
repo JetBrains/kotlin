@@ -156,8 +156,7 @@ internal object KtStubBasedElementTypes {
     val TYPE_REFERENCE: KtNodeType = provider.typeReferenceType
 
     @JvmField
-    val USER_TYPE: KtStubElementType<out KotlinUserTypeStub, KtUserType> =
-        provider.userTypeType
+    val USER_TYPE: KtNodeType = provider.userTypeType
 
     @JvmField
     val DYNAMIC_TYPE: KtNodeType = provider.dynamicTypeType

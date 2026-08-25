@@ -72,7 +72,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType TYPE_REFERENCE = new KtNodeType("TYPE_REFERENCE", KtTypeReference::new);
 
-    @NotNull KtUserTypeElementType USER_TYPE = new KtUserTypeElementType("USER_TYPE");
+    @NotNull KtNodeType USER_TYPE = new KtNodeType("USER_TYPE", KtUserType::new);
+
     @NotNull KtNodeType DYNAMIC_TYPE = new KtNodeType("DYNAMIC_TYPE", KtDynamicType::new);
 
     @NotNull KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
