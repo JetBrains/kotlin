@@ -67,7 +67,7 @@ interface KotlinElementTypeProvider {
     val contextReceiverType: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver>
 
     // Type parameters
-    val typeParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList>
+    val typeParameterListType: KtNodeType
     val typeParameterType: KtNodeType
     val typeConstraintListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList>
     val typeConstraintType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint>

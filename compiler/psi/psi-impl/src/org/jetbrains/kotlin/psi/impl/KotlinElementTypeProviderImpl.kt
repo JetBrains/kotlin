@@ -105,7 +105,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
 
     // Type parameters
-    override val typeParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList>
+    override val typeParameterListType: KtNodeType
         get() = KtStubElementTypes.TYPE_PARAMETER_LIST
 
     override val typeParameterType: KtNodeType

@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
 
@@ -38,9 +39,8 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeParameterList getTypeParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_PARAMETER_LIST, KtTypeParameterList.class);
     }
 
     @Override
