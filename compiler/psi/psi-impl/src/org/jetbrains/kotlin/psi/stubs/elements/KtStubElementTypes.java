@@ -134,11 +134,11 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType CONTEXT_PARAMETER_LIST = new KtNodeType("CONTEXT_PARAMETER_LIST", KtContextReceiverList::new);
 
-    @NotNull KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
-    @NotNull KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
-    @NotNull KtConstantExpressionElementType FLOAT_CONSTANT      = new KtConstantExpressionElementType("FLOAT_CONSTANT");
-    @NotNull KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
-    @NotNull KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
+    @NotNull KtNodeType NULL               = new KtNodeType("NULL", KtConstantExpression::new);
+    @NotNull KtNodeType BOOLEAN_CONSTANT   = new KtNodeType("BOOLEAN_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType FLOAT_CONSTANT     = new KtNodeType("FLOAT_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType CHARACTER_CONSTANT = new KtNodeType("CHARACTER_CONSTANT", KtConstantExpression::new);
+    @NotNull KtNodeType INTEGER_CONSTANT   = new KtNodeType("INTEGER_CONSTANT", KtConstantExpression::new);
     @NotNull KtClassLiteralExpressionElementType CLASS_LITERAL_EXPRESSION = new KtClassLiteralExpressionElementType("CLASS_LITERAL_EXPRESSION");
     @NotNull KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
 

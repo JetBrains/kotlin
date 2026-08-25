@@ -175,19 +175,19 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
 
     // Constants
-    override val nullType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val nullType: KtNodeType
         get() = KtStubElementTypes.NULL
 
-    override val booleanConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val booleanConstantType: KtNodeType
         get() = KtStubElementTypes.BOOLEAN_CONSTANT
 
-    override val floatConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val floatConstantType: KtNodeType
         get() = KtStubElementTypes.FLOAT_CONSTANT
 
-    override val characterConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val characterConstantType: KtNodeType
         get() = KtStubElementTypes.CHARACTER_CONSTANT
 
-    override val integerConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    override val integerConstantType: KtNodeType
         get() = KtStubElementTypes.INTEGER_CONSTANT
 
 
