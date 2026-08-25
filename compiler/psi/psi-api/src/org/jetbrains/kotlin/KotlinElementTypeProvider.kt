@@ -79,7 +79,7 @@ interface KotlinElementTypeProvider {
     val superTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry>
 
     // Modifiers and annotations
-    val modifierListType: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList>
+    val modifierListType: KtNodeType
     val annotationType: KtNodeType
     val annotationEntryType: KtNodeType
     val annotationTargetType: KtNodeType

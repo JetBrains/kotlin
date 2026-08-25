@@ -179,10 +179,8 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingModifierLists: Array<out KtModifierList>
-        get() = greenStub?.getChildrenByType(
-            KtStubBasedElementTypes.MODIFIER_LIST,
-            KtStubBasedElementTypes.MODIFIER_LIST.arrayFactory
-        ) ?: findChildrenByClass(KtModifierList::class.java)
+        get() = greenStub?.getChildrenByType(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.EMPTY_ARRAY)
+            ?: findChildrenByClass(KtModifierList::class.java)
 
     /**
      * @return annotations that do not belong to any declaration due to incomplete code or syntax errors

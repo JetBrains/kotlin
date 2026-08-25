@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -115,5 +114,5 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingModifierLists: List<KtModifierList>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST)
+        get() = getStubOrPsiChildren(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.EMPTY_ARRAY).asList()
 }

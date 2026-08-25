@@ -32,8 +32,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtEnumEntrySuperClassReferenceExpression
 org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 org.jetbrains.kotlin.psi.stubs.elements.KtFunctionTypeElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType:constructor(String, Class<T>)
 org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
