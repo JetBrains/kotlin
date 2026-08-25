@@ -2,7 +2,6 @@ org.jetbrains.kotlin.BlockExpressionElementType
 org.jetbrains.kotlin.ElementTypeUtils
 org.jetbrains.kotlin.ElementTypeUtils.getKotlinBlockImbalanceCount(CharSequence)
 org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol(FlyweightCapableTreeStructure<LighterASTNode>)
-org.jetbrains.kotlin.ElementTypeUtils.isExpression()
 org.jetbrains.kotlin.LambdaExpressionElementType
 org.jetbrains.kotlin.LambdaExpressionElementType:constructor()
 org.jetbrains.kotlin.kdoc.psi.impl.KDocCommentDescriptorImpl
