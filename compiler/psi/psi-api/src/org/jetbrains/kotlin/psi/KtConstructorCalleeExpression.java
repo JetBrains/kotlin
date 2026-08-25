@@ -9,7 +9,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
@@ -31,7 +30,7 @@ public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPl
 
     @KtImplementationDetail
     public KtConstructorCalleeExpression(@NotNull KotlinPlaceHolderStub<KtConstructorCalleeExpression> stub) {
-        super(stub, KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
+        super(stub, KtNodeTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override
@@ -41,7 +40,6 @@ public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPl
 
     /** Returns the type reference naming the class being constructed, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }

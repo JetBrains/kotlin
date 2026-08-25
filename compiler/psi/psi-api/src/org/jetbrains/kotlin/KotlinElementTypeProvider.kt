@@ -54,7 +54,7 @@ interface KotlinElementTypeProvider {
     val enumEntryType: KtNodeType
     val primaryConstructorType: KtNodeType
     val secondaryConstructorType: KtNodeType
-    val constructorCalleeType: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>
+    val constructorCalleeType: KtNodeType
     val propertyAccessorType: KtNodeType
     val backingFieldType: KtNodeType
     val destructuringDeclarationType: KtNodeType
