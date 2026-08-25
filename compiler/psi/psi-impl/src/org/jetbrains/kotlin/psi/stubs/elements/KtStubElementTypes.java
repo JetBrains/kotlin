@@ -58,8 +58,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType IMPORT_ALIAS = new KtNodeType("IMPORT_ALIAS", KtImportAlias::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtPackageDirective> PACKAGE_DIRECTIVE =
-            new KtPlaceHolderStubElementType<>("PACKAGE_DIRECTIVE", KtPackageDirective.class);
+    @NotNull KtNodeType PACKAGE_DIRECTIVE = new KtNodeType("PACKAGE_DIRECTIVE", KtPackageDirective::new);
 
     @NotNull KtModifierListElementType<KtDeclarationModifierList> MODIFIER_LIST =
             new KtModifierListElementType<>("MODIFIER_LIST", KtDeclarationModifierList.class);
