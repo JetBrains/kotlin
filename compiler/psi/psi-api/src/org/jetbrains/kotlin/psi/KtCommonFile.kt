@@ -14,7 +14,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
@@ -143,7 +142,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             isScript?.let { if (!it) return null }
             greenStub?.let { if (!it.isScript()) return null }
 
-            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubBasedElementTypes.SCRIPT)
+            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtNodeTypes.SCRIPT)
             if (isScript == null) {
                 isScript = result != null
             }

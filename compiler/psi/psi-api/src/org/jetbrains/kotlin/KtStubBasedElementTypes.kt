@@ -297,8 +297,7 @@ internal object KtStubBasedElementTypes {
     val IMPORT_ALIAS: KtNodeType = provider.importAliasType
 
     @JvmField
-    val SCRIPT: KtStubElementType<out KotlinScriptStub, KtScript> =
-        provider.scriptType
+    val SCRIPT: KtNodeType = provider.scriptType
 
 
     // Code fragments

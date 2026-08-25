@@ -157,7 +157,7 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType ESCAPE_STRING_TEMPLATE_ENTRY =
             new KtNodeType("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry::new);
 
-    @NotNull KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
+    @NotNull KtNodeType SCRIPT = new KtNodeType("SCRIPT", KtScript::new);
 
     @NotNull KtStringInterpolationPrefixElementType STRING_INTERPOLATION_PREFIX = new KtStringInterpolationPrefixElementType("STRING_INTERPOLATION_PREFIX");
 }
