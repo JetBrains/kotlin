@@ -9,7 +9,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -50,14 +49,12 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
      * incomplete code.
      */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getSubjectTypeParameterName() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
+        return getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
     }
 
     /** Returns the upper bound type reference (the part after {@code :}), or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getBoundTypeReference() {
         return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }

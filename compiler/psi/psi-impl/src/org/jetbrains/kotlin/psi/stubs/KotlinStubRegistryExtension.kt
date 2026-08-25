@@ -212,6 +212,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.FUNCTION_TYPE_RECEIVER,
             psiFactory = ::KtFunctionTypeReceiver,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.REFERENCE_EXPRESSION,
+            factory = KtNameReferenceExpressionStubSerializingElementFactory,
+        )
     }
 }
 

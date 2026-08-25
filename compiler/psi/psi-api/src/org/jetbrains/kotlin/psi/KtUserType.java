@@ -98,7 +98,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     @Nullable @IfNotParsed
     @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getReferenceExpression() {
-        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
+        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
         return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
     }
 
