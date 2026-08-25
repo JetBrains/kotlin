@@ -36,7 +36,7 @@ class KonanIrLinker(
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
-    private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory,
+    private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
     exportedDependencies: List<ModuleDescriptor>,
     partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,

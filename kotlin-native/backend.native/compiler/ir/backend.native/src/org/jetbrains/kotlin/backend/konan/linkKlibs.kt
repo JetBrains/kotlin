@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
@@ -220,12 +219,12 @@ private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrB
 internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
         private val deserializationConfiguration: DeserializationConfiguration,
-) : CInteropModuleDeserializerFactory {
+) : CInteropModuleDeserializerFactory<KonanInteropModuleDeserializer> {
     override fun createIrModuleDeserializer(
             moduleFragment: IrModuleFragment,
             klib: KotlinLibrary,
             linker: KonanIrLinker,
-    ): IrModuleDeserializer = KonanInteropModuleDeserializer(
+    ) = KonanInteropModuleDeserializer(
             deserializationConfiguration,
             moduleFragment,
             klib,

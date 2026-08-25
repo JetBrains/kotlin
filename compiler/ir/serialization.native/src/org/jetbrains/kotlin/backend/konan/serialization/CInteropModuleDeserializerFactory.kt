@@ -9,10 +9,18 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-interface CInteropModuleDeserializerFactory {
+interface CInteropModuleDeserializerFactory<D> where D : IrModuleDeserializer, D : CInteropModuleDeserializer {
     fun createIrModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
         linker: KonanIrLinker,
-    ): IrModuleDeserializer
+    ): D
+}
+
+interface CInteropModuleDeserializer {
+    /**
+     * Whether there are any declarations that were actually loaded and linked from the
+     * C-interop library represented by the current module deserializer.
+     */
+    fun hasAnyLinkedIrDeclarations(): Boolean
 }
