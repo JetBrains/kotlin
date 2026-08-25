@@ -172,6 +172,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.TYPE_CONSTRAINT,
             psiFactory = ::KtTypeConstraint,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.NULLABLE_TYPE,
+            psiFactory = ::KtNullableType,
+        )
     }
 }
 
