@@ -29,7 +29,7 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType TYPEALIAS = new KtNodeType("TYPEALIAS", KtTypeAlias::new);
 
     @NotNull KtNodeType ENUM_ENTRY = new KtNodeType("ENUM_ENTRY", KtEnumEntry::new);
-    @NotNull KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
+    @NotNull KtNodeType OBJECT_DECLARATION = new KtNodeType("OBJECT_DECLARATION", KtObjectDeclaration::new);
     @NotNull KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
             new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
     @NotNull KtPlaceHolderStubElementType<KtScriptInitializer> SCRIPT_INITIALIZER = KtScriptInitializerElementType.INSTANCE;
