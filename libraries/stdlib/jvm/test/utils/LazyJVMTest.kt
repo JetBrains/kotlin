@@ -27,7 +27,12 @@ class LazyJVMTest {
 
         val threads = 3
         val barrier = CyclicBarrier(threads)
-        val accessThreads = List(threads) { thread { barrier.await(); lazy.value } }
+        val accessThreads = List(threads) {
+            thread {
+                barrier.await()
+                val _ = lazy.value
+            }
+        }
         accessThreads.forEach { it.join() }
 
         assertEquals(1, counter.get())
@@ -59,7 +64,7 @@ class LazyJVMTest {
         val lazy1 = lazy(lock, initializer)
         val lazy2 = lazy(lock, initializer)
 
-        val accessThreads = listOf(lazy1, lazy2).map { thread { it.value } }
+        val accessThreads = listOf(lazy1, lazy2).map { thread { val _ = it.value } }
         accessThreads.forEach { it.join() }
 
         assertEquals(2, counter.get())
@@ -108,7 +113,12 @@ class LazyJVMTest {
         val lazy = lazy(LazyThreadSafetyMode.PUBLICATION, initializer)
 
         val barrier = CyclicBarrier(threads)
-        val accessThreads = List(threads) { thread { barrier.await(); lazy.value } }
+        val accessThreads = List(threads) {
+            thread {
+                barrier.await()
+                val _ = lazy.value
+            }
+        }
         val result = run { while (!lazy.isInitialized()) Thread.sleep(1); lazy.value }
         accessThreads.forEach { it.join() }
 

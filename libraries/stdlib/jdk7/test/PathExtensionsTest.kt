@@ -638,8 +638,8 @@ class PathExtensionsTest : AbstractPathTest() {
 
         // The default value of these depends on the current operating system, so just check that
         // they don't throw an exception.
-        file.isExecutable()
-        file.isHidden()
+        val _ = file.isExecutable()
+        val _ = file.isHidden()
     }
 
     @Test
@@ -654,8 +654,8 @@ class PathExtensionsTest : AbstractPathTest() {
         assertTrue(file.isWritable())
         assertTrue(file.isSameFileAs(file))
 
-        file.isExecutable()
-        file.isHidden()
+        val _ = file.isExecutable()
+        val _ = file.isHidden()
     }
 
     @Test
@@ -670,7 +670,7 @@ class PathExtensionsTest : AbstractPathTest() {
         assertFalse(file.isWritable())
         assertTrue(file.isSameFileAs(file))
 
-        file.isExecutable()
+        val _ = file.isExecutable()
         // This function will either throw an exception or return false,
         // depending on the operating system.
         try {

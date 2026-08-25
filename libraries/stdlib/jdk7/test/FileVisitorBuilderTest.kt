@@ -81,7 +81,7 @@ class FileVisitorBuilderTest : AbstractPathTest() {
     @Test
     fun overrideInAlreadyBuilt() {
         val builder: FileVisitorBuilder
-        fileVisitor { builder = this }
+        val _ = fileVisitor { builder = this }
         assertFailsWith<IllegalStateException> {
             builder.onVisitFile { _, _ -> FileVisitResult.CONTINUE }
         }

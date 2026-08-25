@@ -33,18 +33,17 @@ class TODOTest {
         }
     }
 
-    private fun assertNotImplemented(block: () -> Unit) {
+    private fun assertNotImplemented(block: () -> Any?) {
         assertFailsWith<NotImplementedError>(block = block)
     }
 
-    private fun assertNotImplementedWithMessage(message: String, block: () -> Unit) {
+    private fun assertNotImplementedWithMessage(message: String, block: () -> Any?) {
         val e = assertFailsWith<NotImplementedError>(block = block)
         assertTrue(message in e.message!!)
     }
 
 
     @Test
-    @Suppress("RETURN_VALUE_NOT_USED", "RETURN_VALUE_NOT_USED_COERCION")
     fun usage() {
         val inst = PartiallyImplementedClass()
 

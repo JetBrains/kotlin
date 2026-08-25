@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
@@ -1053,4 +1054,20 @@ for (name in listOf("sources", "distSources")) {
 // Disabling IC for JS tasks as they may produce false-positive compilation failure
 tasks.withType<Kotlin2JsCompile>().configureEach {
     incremental = false
+}
+
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    doFirst {
+        val rvcModes = compilerOptions.freeCompilerArgs.orNull.orEmpty().filter { "return-value-checker" in it }
+        if (rvcModes.isEmpty()) {
+            logger.warn("[$path] return-value-check not configured")
+        } else if (rvcModes.size > 1) {
+            logger.warn("[$path] return-value-checker is configured multiple times: $rvcModes")
+        } else {
+            val rvcMode = rvcModes.single()
+            if (!rvcMode.endsWith("=full", ignoreCase = true)) {
+                logger.warn("[$path] return-value-checker incorrect mode $rvcMode")
+            }
+        }
+    }
 }

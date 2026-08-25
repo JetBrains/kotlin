@@ -5,9 +5,9 @@
 
 package kotlin.jdk7.test
 
+import org.junit.jupiter.api.assertThrows
 import test.testOnJvm8
 import test.testOnJvm9AndAbove
-import java.lang.NullPointerException
 import java.nio.file.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
@@ -256,12 +256,10 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
 
         withZip("Archive2.zip", listOf("normal", "//")) { root, zipRoot ->
             // Fails in jvm8, succeeds in jvm9+
-            try {
+            assertFailsWith<FileSystemLoopException> {
                 zipRoot.walkIncludeDirectories().toList()
                 // ["/", "//", "normal"] in jvm9-10
                 // ["/", "/normal"] in jvm11
-            } catch (exception: Exception) {
-                assertIs<FileSystemLoopException>(exception)
             }
 
             val target = root.resolve("UnzipArchive2")
@@ -277,12 +275,10 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
             val aFile = zipRoot.resolve("a")
             val aDir = zipRoot.resolve("a/")
             // Fails in jvm8, succeeds in jvm9+
-            try {
+            assertFailsWith<FileSystemLoopException> {
                 zipRoot.walkIncludeDirectories().toList()
                 // ["/", "/a", "/a/"] in jvm9-10
                 // ["/", "/a"] in jvm11
-            } catch (exception: Exception) {
-                assertIs<FileSystemLoopException>(exception)
             }
             testWalkMaybeFailsWith<FileSystemLoopException>(aFile, setOf(aFile))
             testWalkMaybeFailsWith<FileSystemLoopException>(aDir, setOf(aFile))

@@ -5,6 +5,7 @@
 
 package kotlin.jdk7.test
 
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.*
 import kotlin.io.path.*
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.createTestFiles
@@ -376,12 +377,16 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
                 assertEquals("1/3", source.relativePathString(src))
                 OnErrorResult.SKIP_SUBTREE
             }) { source, target ->
-                try {
-                    source.copyToIgnoringExistingDirectory(target, followLinks = false)
-                } catch (exception: Throwable) {
-                    assertIs<java.nio.file.AccessDeniedException>(exception)
+                @IgnorableReturnValue
+                fun copySourceToTarget() = source.copyToIgnoringExistingDirectory(target, followLinks = false)
+
+                if (source.relativePathString(src) == "7.txt") {
+                    val exception = assertFailsWith<java.nio.file.AccessDeniedException> {
+                        copySourceToTarget()
+                    }
                     assertEquals(source.toString(), exception.file)
-                    assertEquals("7.txt", source.relativePathString(src))
+                } else {
+                    copySourceToTarget()
                 }
                 CopyActionResult.CONTINUE
             }
@@ -702,7 +707,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             if (source.name == "2") {
                 nested.copyToRecursively(target, followLinks = false)
             } else {
-                source.copyToIgnoringExistingDirectory(target, followLinks = false)
+                val _ = source.copyToIgnoringExistingDirectory(target, followLinks = false)
             }
             CopyActionResult.CONTINUE
         }
@@ -717,7 +722,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         val dst = createTempDirectory().cleanupRecursively().resolve("dst")
 
         src.copyToRecursively(dst, followLinks = false) { source, target ->
-            source.copyToIgnoringExistingDirectory(target, followLinks = false)
+            val _ = source.copyToIgnoringExistingDirectory(target, followLinks = false)
             if (source.name == "3" || source.name == "9.txt") {
                 CopyActionResult.SKIP_SUBTREE
             } else {
@@ -740,7 +745,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         val dst = createTempDirectory().cleanupRecursively().resolve("dst")
 
         src.copyToRecursively(dst, followLinks = false) { source, target ->
-            source.copyToIgnoringExistingDirectory(target, followLinks = false)
+            val _ = source.copyToIgnoringExistingDirectory(target, followLinks = false)
             if (source.name == "3" || source.name == "9.txt") {
                 CopyActionResult.TERMINATE
             } else {
@@ -765,7 +770,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             assertTrue(source.name == "3" || source.name == "9.txt")
             OnErrorResult.TERMINATE
         }) { source, target ->
-            source.copyToIgnoringExistingDirectory(target, followLinks = false)
+            val _ = source.copyToIgnoringExistingDirectory(target, followLinks = false)
             if (source.name == "3" || source.name == "9.txt") throw IllegalArgumentException()
             CopyActionResult.CONTINUE
         }

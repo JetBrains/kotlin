@@ -17,7 +17,7 @@ class SynchronizedLazyValTest {
 
     @Test fun doTest() {
         val _ = synchronized(this) {
-            kotlin.concurrent.thread { val _ = a } // not available in js
+            val _ = kotlin.concurrent.thread { val _ = a } // not available in js
             result = 1
             a
         }
