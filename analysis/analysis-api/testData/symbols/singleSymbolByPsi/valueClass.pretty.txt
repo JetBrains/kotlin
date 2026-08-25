@@ -1,2 +1,2 @@
 @kotlin.jvm.JvmInline
-inline class ValueClass(value: kotlin.String)
+value class ValueClass(value: kotlin.String)

@@ -1,5 +1,5 @@
 @kotlin.jvm.JvmInline
-inline class Some(value: kotlin.String) {
+value class Some(value: kotlin.String) {
   val value: kotlin.String
 }
 

@@ -296,7 +296,7 @@ internal class KaFirJavaInteroperabilityComponent(
                 }
 
                 val classSymbol = type.symbol
-                if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
+                if (classSymbol is KaNamedClassSymbol && classSymbol.isValue) {
                     val onlyProperty = classSymbol.memberScope.callables
                         .singleOrNull { it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null }
 

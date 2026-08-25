@@ -81,9 +81,7 @@ public interface KaRendererOtherModifiersProvider {
 
                 if (symbol is KaNamedClassSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
-                    if (symbol.isInline) {
-                        add(KtTokens.INLINE_KEYWORD)
-                    } else if (symbol.isValue) {
+                    if (symbol.isValue) {
                         add(KtTokens.VALUE_KEYWORD)
                     }
                     if (symbol.isData) add(KtTokens.DATA_KEYWORD)
