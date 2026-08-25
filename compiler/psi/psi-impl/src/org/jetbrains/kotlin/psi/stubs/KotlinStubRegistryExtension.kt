@@ -284,9 +284,9 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             psiFactory = ::KtContractEffectList,
         )
 
-        registry.registerStubSerializingFactory(
+        registry.registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTRACT_EFFECT,
-            factory = KtContractEffectStubSerializingElementFactory,
+            psiFactory = ::KtContractEffect,
         )
 
         registry.registerValueArgumentFactory(
@@ -346,9 +346,9 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             )
         }
 
-        registry.registerStubSerializingFactory(
+        registry.registerPlaceHolderFactory(
             type = KtStubElementTypes.CLASS_LITERAL_EXPRESSION,
-            factory = KtClassLiteralExpressionStubSerializingElementFactory,
+            psiFactory = ::KtClassLiteralExpression,
         )
 
         registry.registerStubSerializingFactory(
