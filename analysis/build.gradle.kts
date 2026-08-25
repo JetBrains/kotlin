@@ -4,46 +4,44 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
 }
 
-tasks.register("analysisApiArtifactTests") {
+/**
+ * Analysis API modules that hold nothing but tests, so they are absent from [CompilerModules.analysisApiModules].
+ */
+val analysisApiTestModules = listOf(
+    ":analysis:analysis-test-framework",
+    ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
+    ":analysis:test-data-manager",
+)
+
+/**
+ * Analysis API modules that are only part of the build when Kotlin/Native is enabled.
+ */
+val analysisApiNativeModules = listOf(
+    ":analysis:analysis-api-standalone:analysis-api-standalone-native",
+    ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
+)
+
+val analysisApiArtifactTests = tasks.register("analysisApiArtifactTests") {
     group = "verification"
+    description = "Checks the published Analysis API artifacts"
 
-    val analysisApiProjects = CompilerModules.analysisApiArtifacts
-
-    val analysisApiProjectChecks = analysisApiProjects
-        .map { "$it:check" }
-
-    dependsOn(*analysisApiProjectChecks.toTypedArray())
+    dependsOn(CompilerModules.analysisApiArtifacts.map { "$it:check" })
 }
 
 tasks.register("analysisAllTests") {
     group = "verification"
+    description = "Checks the Analysis API, its PSI foundation, and the published artifacts"
 
-    dependsOn(
-        ":analysis:analysisApiArtifactTests",
-        ":analysis:analysis-api:check",
-        ":analysis:analysis-api-fir:check",
-        ":analysis:analysis-api-impl-base:check",
-        ":analysis:analysis-api-platform-interface:check",
-        ":analysis:analysis-api-standalone:check",
-        ":analysis:decompiled:decompiler-js:check",
-        ":analysis:decompiled:decompiler-native:check",
-        ":analysis:decompiled:decompiler-to-file-stubs:check",
-        ":analysis:decompiled:decompiler-to-psi:check",
-        ":analysis:low-level-api-fir:check",
-        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:check",
-        ":analysis:stubs:check",
-        ":analysis:symbol-light-classes:check",
-        ":analysis:test-data-manager:check",
-        ":compiler:psi:psi-api:check",
-        ":compiler:psi:psi-impl:check",
-        ":compiler:psi:psi-utils:check",
-        ":compiler:psi:psi-frontend-utils:check",
-    )
+    val modules = buildList {
+        addAll(CompilerModules.analysisApiModules)
+        addAll(CompilerModules.psiModules)
+        addAll(analysisApiTestModules)
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        dependsOn(
-            ":analysis:analysis-api-standalone:analysis-api-standalone-native:check",
-            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:check",
-        )
+        if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+            addAll(analysisApiNativeModules)
+        }
     }
+
+    dependsOn(analysisApiArtifactTests)
+    dependsOn(modules.map { "$it:check" })
 }
