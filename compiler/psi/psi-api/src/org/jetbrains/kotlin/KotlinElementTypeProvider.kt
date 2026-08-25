@@ -89,7 +89,7 @@ interface KotlinElementTypeProvider {
     val userTypeType: KtNodeType
     val dynamicTypeType: KtNodeType
     val functionTypeType: KtNodeType
-    val functionTypeReceiverType: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>
+    val functionTypeReceiverType: KtNodeType
     val nullableTypeType: KtNodeType
     val intersectionTypeType: KtNodeType
     val typeProjectionType: KtNodeType

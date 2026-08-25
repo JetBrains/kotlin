@@ -89,9 +89,8 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      * type has no receiver.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtFunctionTypeReceiver getReceiver() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
+        return getStubOrPsiChild(KtNodeTypes.FUNCTION_TYPE_RECEIVER, KtFunctionTypeReceiver.class);
     }
 
     /** Returns the receiver type reference of a function type with receiver, or {@code null} if the function type has no receiver. */

@@ -165,8 +165,7 @@ internal object KtStubBasedElementTypes {
     val FUNCTION_TYPE: KtNodeType = provider.functionTypeType
 
     @JvmField
-    val FUNCTION_TYPE_RECEIVER: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver> =
-        provider.functionTypeReceiverType
+    val FUNCTION_TYPE_RECEIVER: KtNodeType = provider.functionTypeReceiverType
 
     @JvmField
     val NULLABLE_TYPE: KtNodeType = provider.nullableTypeType
