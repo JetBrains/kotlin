@@ -28,7 +28,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType.Companio
 org.jetbrains.kotlin.psi.stubs.elements.KtContextReceiverElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectListElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtEnumEntrySuperClassReferenceExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
