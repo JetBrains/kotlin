@@ -78,8 +78,7 @@ internal object KtStubBasedElementTypes {
         provider.constructorCalleeType
 
     @JvmField
-    val PROPERTY_ACCESSOR: KtStubElementType<out KotlinPropertyAccessorStub, KtPropertyAccessor> =
-        provider.propertyAccessorType
+    val PROPERTY_ACCESSOR: KtNodeType = provider.propertyAccessorType
 
     @JvmField
     val BACKING_FIELD: KtStubElementType<out KotlinBackingFieldStub, KtBackingField> =

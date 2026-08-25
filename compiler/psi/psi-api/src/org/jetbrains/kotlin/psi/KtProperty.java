@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -199,7 +200,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     /** Returns the explicitly declared accessors (getter and/or setter), in source order; empty if none are declared. */
     @NotNull
     public List<KtPropertyAccessor> getAccessors() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY_ACCESSOR);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.PROPERTY_ACCESSOR, KtPropertyAccessor.EMPTY_ARRAY));
     }
 
     /** Returns the explicitly declared getter, or {@code null} if the property uses the default getter. */
