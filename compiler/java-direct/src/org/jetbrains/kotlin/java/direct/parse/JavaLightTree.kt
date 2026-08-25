@@ -194,6 +194,11 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
     val productionMarkers = prepareProduction(builder).productionMarkers
     val tokens = builder.tokens
     val markerCount = productionMarkers.size
+    if (markerCount == 0) error("No production markers")
+
+    // The outermost marker pair is the `JAVA_FILE` node opened by [parse]; both passes skip it and attribute
+    // its children to the tree root instead, so the root remains the compilation unit.
+    val fileDoneIndex = markerCount - 1
 
     val parentStartIndex = IntArray(markerCount) { markerCount }
     val doneForStart = IntArray(markerCount) { -1 }
@@ -203,7 +208,7 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
     val compositeEndOffsets = IntArray(markerCount)
     val tokenParentStart = IntArray(tokens.tokenCount) { markerCount }
     buildCompositeAndTokenIndices(
-        productionMarkers, tokens, markerCount, markerCount,
+        productionMarkers, tokens, fileDoneIndex, markerCount,
         parentStartIndex, doneForStart, compositeTypes, errorFlags, compositeStartOffsets, compositeEndOffsets,
         tokenParentStart,
     )
@@ -215,13 +220,10 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
         childrenByIndex[idx] = emptyChildren
     }
     buildChildrenIndex(
-        productionMarkers, tokens, markerCount, markerCount, doneForStart, errorFlags, childrenByIndex, emptyChildren,
+        productionMarkers, tokens, fileDoneIndex, markerCount, doneForStart, errorFlags, childrenByIndex, emptyChildren,
     )
 
-    val rootNodeType = if (markerCount > 0)
-        productionMarkers.getMarker(markerCount - 1).getNodeType()
-    else
-        error("No production markers")
+    val rootNodeType = productionMarkers.getMarker(fileDoneIndex).getNodeType()
 
     return JavaLightTree(
         tokens = tokens,
@@ -247,7 +249,7 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
 private fun buildCompositeAndTokenIndices(
     productionMarkers: ProductionMarkerList,
     tokens: TokenList,
-    markerCount: Int,
+    fileDoneIndex: Int,
     rootIndex: Int,
     parentStartIndex: IntArray,
     doneForStart: IntArray,
@@ -284,7 +286,7 @@ private fun buildCompositeAndTokenIndices(
         prevTokenIndex = upToExclusive
     }
 
-    for (i in 0 until markerCount) {
+    for (i in 1 until fileDoneIndex) {
         val marker = productionMarkers.getMarker(i)
         when {
             productionMarkers.isDoneMarker(i) -> {
@@ -324,7 +326,7 @@ private fun buildCompositeAndTokenIndices(
 private fun buildChildrenIndex(
     productionMarkers: ProductionMarkerList,
     tokens: TokenList,
-    markerCount: Int,
+    fileDoneIndex: Int,
     rootIndex: Int,
     doneForStart: IntArray,
     errorFlags: BooleanArray,
@@ -346,8 +348,7 @@ private fun buildChildrenIndex(
         }
     }
 
-    fun buildChildrenFor(startIdx: Int, doneIdx: Int, firstTokenIndex: Int, lastTokenIndex: Int) {
-        val isRoot = startIdx < 0
+    fun buildChildrenFor(startIdx: Int, doneIdx: Int, firstTokenIndex: Int, lastTokenIndex: Int, isRoot: Boolean = false) {
         val childIndices = ArrayList<Int>(8)
 
         var prevTokenIndex = firstTokenIndex
@@ -372,13 +373,13 @@ private fun buildChildrenIndex(
         }
         addTokensInRange(childIndices, prevTokenIndex, lastTokenIndex, isRoot)
 
-        val slot = if (startIdx < 0) rootIndex else startIdx
+        val slot = if (isRoot) rootIndex else startIdx
         childrenByIndex[slot] = if (childIndices.isEmpty()) emptyChildren
         else ChildrenList(childIndices.toIntArray())
     }
 
     // Build children for each non-error, non-DONE composite.
-    for (i in 0 until markerCount) {
+    for (i in 1 until fileDoneIndex) {
         if (productionMarkers.isDoneMarker(i) || errorFlags[i]) continue
         val doneIdx = doneForStart[i]
         val firstToken = productionMarkers.getMarker(i).getStartTokenIndex()
@@ -386,8 +387,10 @@ private fun buildChildrenIndex(
         buildChildrenFor(i, doneIdx, firstToken, lastToken)
     }
 
-    // Build children for the synthetic root (startIdx=-1 routes to childrenByIndex[rootIndex]).
-    buildChildrenFor(startIdx = -1, doneIdx = markerCount, firstTokenIndex = 0, lastTokenIndex = tokens.tokenCount)
+    // The `JAVA_FILE` children become the root's ones (routed to childrenByIndex[rootIndex]).
+    buildChildrenFor(
+        startIdx = 0, doneIdx = fileDoneIndex, firstTokenIndex = 0, lastTokenIndex = tokens.tokenCount, isRoot = true,
+    )
 }
 
 /**

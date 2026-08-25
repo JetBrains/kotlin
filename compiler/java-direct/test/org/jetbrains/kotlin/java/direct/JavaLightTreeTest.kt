@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.dump
@@ -204,6 +205,60 @@ class JavaLightTreeTest {
         val identifier = tree.findChildByType(ref!!, JavaSyntaxTokenType.IDENTIFIER)
         assertNotNull(identifier)
         assertEquals("example", tree.getText(identifier!!).toString())
+    }
+
+    @Test
+    fun testHeaderCommentWithoutPackageKeepsImportList() {
+        // Imports with no `package`, preceded by trivia: the package statement's marker is the first of the
+        // parse, so it starts on that trivia and its rollback parks the lexer there. Unless the file parser
+        // runs inside the `JAVA_FILE` root marker, the whole import list is then consumed as invalid elements
+        // and the imports never reach the tree. A license header is used here; a blank first line is enough.
+        val source = """
+            /*
+             * File header.
+             */
+            import java.util.List;
+
+            public class A {}
+        """.trimIndent()
+        val tree = parse(source)
+        val root = tree.getRoot()
+
+        assertTrue(tree.getChildren(root).none { tree.getType(it) == SyntaxTokenTypes.ERROR_ELEMENT })
+
+        val importLists = tree.getChildrenByType(root, JavaSyntaxElementType.IMPORT_LIST)
+        assertEquals(1, importLists.size)
+        val importStatement = tree.findChildByType(importLists.single(), JavaSyntaxElementType.IMPORT_STATEMENT)
+        assertNotNull(importStatement)
+        val codeRef = tree.findChildByType(importStatement!!, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
+        assertNotNull(codeRef)
+        assertEquals("java.util.List", tree.getText(codeRef!!).toString())
+    }
+
+    @Test
+    fun testHeaderCommentWithoutPackageKeepsModuleImport() {
+        // Same shape as `testHeaderCommentWithoutPackageKeepsImportList`, for `import module M;` (JLS 7.5.5):
+        // there the lost import list additionally hides the `module` soft keyword from the parser.
+        val source = """
+            /*
+             * File header.
+             */
+            import module java.base;
+
+            public class A {}
+        """.trimIndent()
+        val tree = parse(source)
+        val root = tree.getRoot()
+
+        val importList = tree.findChildByType(root, JavaSyntaxElementType.IMPORT_LIST)
+        assertNotNull(importList)
+        val moduleImport = tree.findChildByType(importList!!, JavaSyntaxElementType.IMPORT_MODULE_STATEMENT)
+        assertNotNull(moduleImport)
+        val moduleRef = tree.findChildByType(moduleImport!!, JavaSyntaxElementType.MODULE_REFERENCE)
+        assertNotNull(moduleRef)
+        assertEquals("java.base", tree.getText(moduleRef!!).toString())
+
+        assertEquals(1, tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).size)
     }
 
     @Test
