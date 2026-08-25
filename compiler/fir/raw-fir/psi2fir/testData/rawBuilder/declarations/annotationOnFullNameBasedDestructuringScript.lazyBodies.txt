@@ -1,5 +1,7 @@
 FILE: annotationOnFullNameBasedDestructuringScript.kts
     SCRIPT: <script-annotationOnFullNameBasedDestructuringScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ContainingScriptKey=FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
             public? [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.x] x: String = LAZY_EXPRESSION): R|Ann| {

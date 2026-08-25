@@ -9,6 +9,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 dependencies {
