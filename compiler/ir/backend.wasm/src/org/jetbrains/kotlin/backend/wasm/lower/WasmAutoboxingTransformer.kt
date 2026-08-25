@@ -10,8 +10,13 @@ import org.jetbrains.kotlin.ir.backend.js.lower.AutoboxingTransformer
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-class WasmAutoboxingTransformer(context: WasmBackendContext) : AutoboxingTransformer(context) {
+class WasmAutoboxingTransformer(val ctx: WasmBackendContext) : AutoboxingTransformer(ctx) {
     override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.symbol == ctx.wasmSymbols.consumeAnyIntoVoid) {
+            expression.apply { transformChildrenVoid() }
+            return expression
+        }
+
         val handledCall = super.visitCall(expression)
         if (handledCall !is IrCall) return handledCall
         return expression.useAs(expression.type)

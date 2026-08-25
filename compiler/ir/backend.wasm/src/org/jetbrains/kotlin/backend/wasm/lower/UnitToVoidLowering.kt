@@ -146,7 +146,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
         }
 
         return IrCallImpl(
-            expr.startOffset, expr.endOffset, symbols.voidType, symbols.findVoidConsumer(expr.type),
+            expr.startOffset, expr.endOffset, symbols.voidType, symbols.consumeAnyIntoVoid,
             typeArgumentsCount = 0,
         ).apply {
             arguments[0] = expr

@@ -105,38 +105,47 @@ internal fun <R> wasm_call_ref(f: Function<R>): R =
 internal class Void private constructor()
 
 // This is the only way to introduce Void type.
+@UsedFromCompilerGeneratedCode
 @WasmOp(WasmOp.DROP)
 internal fun consumeAnyIntoVoid(a: Any?): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeBooleanIntoVoid(a: Boolean): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeByteIntoVoid(a: Byte): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeShortIntoVoid(a: Short): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeCharIntoVoid(a: Char): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeIntIntoVoid(a: Int): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeLongIntoVoid(a: Long): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeFloatIntoVoid(a: Float): Void =
     implementedAsIntrinsic
 
+//TODO Remove after bootstrap
 @WasmOp(WasmOp.DROP)
 internal fun consumeDoubleIntoVoid(a: Double): Void =
     implementedAsIntrinsic

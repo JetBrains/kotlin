@@ -100,33 +100,7 @@ class BackendWasmSymbols(
 
     val voidType by ClassIds.Void.defaultType()
 
-    private val consumeAnyIntoVoid by CallableIds.consumeAnyIntoVoid.functionSymbol()
-
-    private val consumePrimitiveIntoVoid: Map<IrType, IrSimpleFunctionSymbol> by run {
-        val consumeBooleanIntoVoid by CallableIds.consumeBooleanIntoVoid.functionSymbol()
-        val consumeByteIntoVoid by CallableIds.consumeByteIntoVoid.functionSymbol()
-        val consumeShortIntoVoid by CallableIds.consumeShortIntoVoid.functionSymbol()
-        val consumeCharIntoVoid by CallableIds.consumeCharIntoVoid.functionSymbol()
-        val consumeIntIntoVoid by CallableIds.consumeIntIntoVoid.functionSymbol()
-        val consumeLongIntoVoid by CallableIds.consumeLongIntoVoid.functionSymbol()
-        val consumeFloatIntoVoid by CallableIds.consumeFloatIntoVoid.functionSymbol()
-        val consumeDoubleIntoVoid by CallableIds.consumeDoubleIntoVoid.functionSymbol()
-        lazy {
-            mapOf(
-                irBuiltIns.booleanType to consumeBooleanIntoVoid,
-                irBuiltIns.byteType to consumeByteIntoVoid,
-                irBuiltIns.shortType to consumeShortIntoVoid,
-                irBuiltIns.charType to consumeCharIntoVoid,
-                irBuiltIns.intType to consumeIntIntoVoid,
-                irBuiltIns.longType to consumeLongIntoVoid,
-                irBuiltIns.floatType to consumeFloatIntoVoid,
-                irBuiltIns.doubleType to consumeDoubleIntoVoid,
-            )
-        }
-    }
-
-    fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
-        consumePrimitiveIntoVoid[type] ?: consumeAnyIntoVoid
+    val consumeAnyIntoVoid by CallableIds.consumeAnyIntoVoid.functionSymbol()
 
     val equalityFunctions: Map<IrType, IrSimpleFunctionSymbol> by run {
         val wasm_i32_eq by CallableIds.wasm_i32_eq.functionSymbol()
@@ -536,14 +510,7 @@ private object CallableIds {
     val enumValuesIntrinsic = "enumValuesIntrinsic".wasmCallableId
     val wasm_unreachable = "wasm_unreachable".wasmCallableId
     val consumeAnyIntoVoid = "consumeAnyIntoVoid".wasmCallableId
-    val consumeBooleanIntoVoid = "consumeBooleanIntoVoid".wasmCallableId
-    val consumeByteIntoVoid = "consumeByteIntoVoid".wasmCallableId
-    val consumeShortIntoVoid = "consumeShortIntoVoid".wasmCallableId
-    val consumeCharIntoVoid = "consumeCharIntoVoid".wasmCallableId
-    val consumeIntIntoVoid = "consumeIntIntoVoid".wasmCallableId
-    val consumeLongIntoVoid = "consumeLongIntoVoid".wasmCallableId
-    val consumeFloatIntoVoid = "consumeFloatIntoVoid".wasmCallableId
-    val consumeDoubleIntoVoid = "consumeDoubleIntoVoid".wasmCallableId
+
     val wasm_i32_eq = "wasm_i32_eq".wasmCallableId
     val wasm_i64_eq = "wasm_i64_eq".wasmCallableId
     val wasm_f32_eq = "wasm_f32_eq".wasmCallableId
