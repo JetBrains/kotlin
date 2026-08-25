@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -33,10 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.decamelize
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -380,26 +376,6 @@ internal constructor(
 
     internal companion object {
         private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
-
-        /** Check whether [Project.getIsolated] is available. */
-        private val isIsolatedProjectAvailable: Boolean
-            get() = GradleVersion.current() >= GradleVersion.version("8.8")
-
-        /** Check if this [Project] is the root project (in an isolated-project-friendly way, if possible). */
-        private fun Project.isRootProject(): Boolean =
-            if (isIsolatedProjectAvailable) {
-                isolated == isolated.rootProject
-            } else {
-                this == rootProject
-            }
-
-        /** Get the root project name (in an isolated-project-friendly way, if possible). */
-        private fun Project.rootProjectName(): String =
-            if (isIsolatedProjectAvailable) {
-                isolated.rootProject.name
-            } else {
-                rootProject.name
-            }
 
         internal fun buildNpmProjectName(
             project: Project,

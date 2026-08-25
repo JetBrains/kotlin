@@ -18,6 +18,8 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
@@ -41,8 +43,8 @@ abstract class BaseYarnRootExtension internal constructor(
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
 
     init {
-        check(project == project.rootProject) {
-            "Yarn plugin can be applied only to the root project, but was applied to ${project.path}"
+        checkIsJsToolingProject(project) {
+            "Cannot register ${BaseYarnRootExtension::class.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
         }
     }
 
