@@ -155,7 +155,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val userTypeType: KtStubElementType<out KotlinUserTypeStub, KtUserType>
         get() = KtStubElementTypes.USER_TYPE
 
-    override val dynamicTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtDynamicType>, KtDynamicType>
+    override val dynamicTypeType: KtNodeType
         get() = KtStubElementTypes.DYNAMIC_TYPE
 
     override val functionTypeType: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType>

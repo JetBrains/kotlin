@@ -182,6 +182,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.INTERSECTION_TYPE,
             psiFactory = ::KtIntersectionType,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.DYNAMIC_TYPE,
+            psiFactory = ::KtDynamicType,
+        )
     }
 }
 
