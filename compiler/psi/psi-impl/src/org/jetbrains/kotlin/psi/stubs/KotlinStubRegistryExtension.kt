@@ -292,6 +292,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.LAMBDA_ARGUMENT,
             psiFactory = ::KtLambdaArgument,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.VALUE_ARGUMENT_NAME,
+            psiFactory = ::KtValueArgumentName,
+        )
     }
 }
 

@@ -115,8 +115,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType LAMBDA_ARGUMENT = new KtNodeType("LAMBDA_ARGUMENT", KtLambdaArgument::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtValueArgumentName> VALUE_ARGUMENT_NAME =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
+    @NotNull KtNodeType VALUE_ARGUMENT_NAME = new KtNodeType("VALUE_ARGUMENT_NAME", KtValueArgumentName::new);
 
     @NotNull KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
             new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList.class);
