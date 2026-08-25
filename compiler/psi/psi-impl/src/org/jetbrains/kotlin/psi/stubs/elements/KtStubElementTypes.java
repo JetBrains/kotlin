@@ -48,8 +48,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType CLASS_BODY = new KtNodeType("CLASS_BODY", KtClassBody::new);
 
-    @NotNull KtPlaceHolderStubElementType<KtCompanionBlock> COMPANION_BLOCK =
-            new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock.class);
+    @NotNull KtNodeType COMPANION_BLOCK = new KtNodeType("COMPANION_BLOCK", KtCompanionBlock::new);
 
     @NotNull KtPlaceHolderStubElementType<KtImportList> IMPORT_LIST =
             new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList.class);

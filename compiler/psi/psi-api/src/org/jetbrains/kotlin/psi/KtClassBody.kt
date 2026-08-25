@@ -91,7 +91,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      */
     @KtExperimentalApi
     val companionBlocks: List<KtCompanionBlock>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.COMPANION_BLOCK)
+        get() = getStubOrPsiChildren(KtNodeTypes.COMPANION_BLOCK, KtCompanionBlock.EMPTY_ARRAY).asList()
 
     /**
      * The closing brace `}` of the body, or `null` if it is absent in incomplete code.
