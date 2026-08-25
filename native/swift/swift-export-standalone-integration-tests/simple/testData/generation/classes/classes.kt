@@ -282,16 +282,18 @@ interface Bar {
     val baz: Int
 }
 
-class Baz : Foo, Bar {
+open class Baz : Foo, Bar {
     override val foo: String get() = TODO()
     override val bar: String get() = TODO()
-    override val baz: Int get() = TODO()
+    final override val baz: Int get() = TODO()
     val fooBar: Int get() = TODO()
 }
 
-abstract class AbstractBaz : Foo, Bar {
+abstract class AbstractFooBar : Foo, Bar {
     abstract val fooBar: Int
 }
+
+abstract class AbstractBazFoo : Baz(), Foo
 
 // MODULE: inheritance
 // EXPORT_TO_SWIFT
