@@ -272,6 +272,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.VALUE_ARGUMENT_LIST,
             psiFactory = ::KtValueArgumentList,
         )
+
+        registry.registerValueArgumentFactory(
+            type = KtStubElementTypes.VALUE_ARGUMENT,
+            psiFactory = ::KtValueArgument,
+        )
     }
 }
 
@@ -283,4 +288,14 @@ private fun <Psi : KtElementImplStub<out StubElement<*>>> StubRegistry.registerP
     psiFactory: (KotlinPlaceHolderStub<Psi>) -> Psi,
 ) {
     registerStubSerializingFactory(type, KtPlaceHolderStubSerializingElementFactory(type, psiFactory))
+}
+
+/**
+ * Registers a factory for an element which represents an argument of a call.
+ */
+private fun <Psi : KtValueArgument> StubRegistry.registerValueArgumentFactory(
+    type: IElementType,
+    psiFactory: (KotlinValueArgumentStub<Psi>) -> Psi,
+) {
+    registerStubSerializingFactory(type, KtValueArgumentStubSerializingElementFactory(type, psiFactory))
 }
