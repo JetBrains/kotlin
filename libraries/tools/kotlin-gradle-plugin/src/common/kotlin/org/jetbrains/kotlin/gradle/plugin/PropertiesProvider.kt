@@ -621,7 +621,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * platform declarations. See KT-86703.
      */
     val enableJvmIncrementalCompilationOfCommonSources: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
+        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(true)
 
     /**
      * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.

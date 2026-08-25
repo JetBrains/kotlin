@@ -311,8 +311,12 @@ data class BuildOptions(
             arguments.add("-Pkotlin.test.languageVersion=$languageVersion")
         }
 
-        if (enableJvmIncrementalCompilationOfCommonSources != null) {
-            arguments.add("-Pkotlin.jvm.enableIncrementalCompilationOfCommonSources=$enableJvmIncrementalCompilationOfCommonSources")
+        // KT-88811: incremental compilation of common sources puts metadata on the JVM incremental classpath,
+        // which crashes the compiler under the separate KMP compilation scheme. Keep it off until that is fixed.
+        val jvmIncrementalCompilationOfCommonSources =
+            if (separateCompilation == true) false else enableJvmIncrementalCompilationOfCommonSources
+        if (jvmIncrementalCompilationOfCommonSources != null) {
+            arguments.add("-Pkotlin.jvm.enableIncrementalCompilationOfCommonSources=$jvmIncrementalCompilationOfCommonSources")
         }
 
         if (enableJsUnsafeIncrementalCompilationForMultiplatform != null) {
