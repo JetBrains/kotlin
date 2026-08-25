@@ -196,5 +196,55 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
             VALUE_PARAMETER_USED_IN_CLASS_BODY,
             "Parcelized class non-property arguments can only be used as arguments to the super classes constructor."
         )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_MUST_BE_SEALED,
+            "'@PolymorphicSealed' is only applicable to 'sealed class' or 'sealed interface'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_WITHOUT_PARCELIZE,
+            "'@PolymorphicSealed' must be paired with '@Parcelize'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_CANNOT_HAVE_OPEN_SUBCLASSES,
+            "Subclasses in a '@PolymorphicSealed' hierarchy cannot be 'open'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_CANNOT_HAVE_ABSTRACT_SUBCLASSES,
+            "Subclasses in a '@PolymorphicSealed' hierarchy cannot be 'abstract'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_CANNOT_HAVE_SEALED_SUBCLASSES,
+            "Nested sealed classes or interfaces are not supported in a '@PolymorphicSealed' hierarchy."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_SUBCLASS_MUST_BE_NESTED,
+            "Subclasses of a '@PolymorphicSealed' class or interface must be declared directly inside its body."
+        )
+
+        map.put(
+            KtErrorsParcelize.MULTIPLE_POLYMORPHIC_SEALED_SUPERTYPES,
+            "Implementing multiple '@PolymorphicSealed' classes or interfaces is not supported."
+        )
+
+        map.put(
+            KtErrorsParcelize.DUPLICATE_PARCEL_TAG,
+            "Duplicate '@ParcelTag' value. All tags in a '@PolymorphicSealed' hierarchy must be unique."
+        )
+
+        map.put(
+            KtErrorsParcelize.INCONSISTENT_PARCEL_TAG,
+            "All subclasses in a '@PolymorphicSealed' hierarchy must be annotated with '@ParcelTag' if any subclass is annotated with '@ParcelTag'."
+        )
+
+        map.put(
+            KtErrorsParcelize.INAPPLICABLE_PARCEL_TAG,
+            "'@ParcelTag' is only applicable to concrete subclasses of a '@PolymorphicSealed' hierarchy."
+        )
     }
 }
