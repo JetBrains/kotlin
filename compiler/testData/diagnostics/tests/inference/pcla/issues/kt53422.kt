@@ -1,11 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // API_VERSION: 1.9
 // DUMP_INFERENCE_LOGS: MARKDOWN
 fun test() {
     foo(
         flow { emit(0) }
-    ) { <!ARGUMENT_TYPE_MISMATCH!>it<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>collect<!> {} }
+    ) { it.collect {} }
 
     // 0. Initial
     // W <: Any / declared upper bound
@@ -19,10 +19,10 @@ fun test() {
     // Int <: W / from For builder inference call
     // Flow<Int> <: F / from For builder inference call
 
-    // 2. after analyze for { it.collect {} }
+    // 2. inside { it.collect {} }
+    // F == Flow<W> / F is fixed on demand to resolve the `it.collect` call, with W left not fixed
+    // so `it` is Flow<Int> (once W := Int) and `collect` is resolved
     // Unit <: Unit / from Lambda argument, probably { it.collect {} }
-    // Flow<*> <: F / from For builder inference call
-    // ERROR_TYPE <: W / from For builder inference call
 }
 
 fun <F : Any> foo(
