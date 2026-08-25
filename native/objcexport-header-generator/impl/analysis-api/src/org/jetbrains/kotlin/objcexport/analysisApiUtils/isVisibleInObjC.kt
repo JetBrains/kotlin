@@ -181,10 +181,11 @@ private fun KaSession.isHiddenFromObjCByDeprecation(symbol: KaClassSymbol): Bool
     return false
 }
 
+@OptIn(KaExperimentalApi::class)
 private fun KaSession.isInlined(symbol: KaClassSymbol): Boolean {
     if (symbol !is KaNamedClassSymbol) return false
     if (isUnsignedPrimitive(symbol)) return false
-    if (symbol.isInline) return true
+    if (symbol.isValue) return true
     return false
 }
 

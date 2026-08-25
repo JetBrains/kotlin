@@ -56,6 +56,7 @@ internal fun ObjCExportContext.translateToObjCReferenceType(type: KaType): ObjCR
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
+@OptIn(KaExperimentalApi::class)
 internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaType): ObjCNonNullReferenceType {
     with(analysisSession) {
 
@@ -99,7 +100,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
         run check@{
             if (classId == null) return@check
             if (classSymbol !is KaNamedClassSymbol) return@check
-            if (classSymbol.isInline) return ObjCIdType
+            if (classSymbol.isValue) return ObjCIdType
         }
 
         /* 'Irregular' inline class: Not marked as inline, but special K/N type that still gets inlined  */

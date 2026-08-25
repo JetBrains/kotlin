@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -45,8 +46,9 @@ internal fun KaSession.getInlineTargetTypeOrNull(symbol: KaNamedClassSymbol): Ka
  * However, there seemingly exist classes like 'kotlin.native.internal.NativePtr' which shall also be considered 'inline'
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
+@OptIn(KaExperimentalApi::class)
 private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaNamedClassSymbol): Boolean {
-    if (symbol.isInline) return true
+    if (symbol.isValue) return true
     val classId = symbol.classId ?: return false
 
     /* Top Level symbols can be special K/N types */
