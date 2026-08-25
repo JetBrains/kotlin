@@ -59,6 +59,17 @@ internal constructor(@PublishedApi internal val storage: IntArray) : Collection<
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
+    
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: UInt): UIntArray = elements
+    }
+    
 }
 
 /**
@@ -75,6 +86,9 @@ public inline fun UIntArray(size: Int, init: (Int) -> UInt): UIntArray {
     return UIntArray(IntArray(size) { index -> init(index).toInt() })
 }
 
+/**
+ * Returns an array containing the specified elements.
+ */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly

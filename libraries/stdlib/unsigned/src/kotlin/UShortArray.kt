@@ -59,6 +59,17 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
+    
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: UShort): UShortArray = elements
+    }
+    
 }
 
 /**
@@ -75,6 +86,9 @@ public inline fun UShortArray(size: Int, init: (Int) -> UShort): UShortArray {
     return UShortArray(ShortArray(size) { index -> init(index).toShort() })
 }
 
+/**
+ * Returns an array containing the specified elements.
+ */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly

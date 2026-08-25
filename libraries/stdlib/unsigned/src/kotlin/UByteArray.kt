@@ -59,6 +59,17 @@ internal constructor(@PublishedApi internal val storage: ByteArray) : Collection
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
+    
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: UByte): UByteArray = elements
+    }
+    
 }
 
 /**
@@ -75,6 +86,9 @@ public inline fun UByteArray(size: Int, init: (Int) -> UByte): UByteArray {
     return UByteArray(ByteArray(size) { index -> init(index).toByte() })
 }
 
+/**
+ * Returns an array containing the specified elements.
+ */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly

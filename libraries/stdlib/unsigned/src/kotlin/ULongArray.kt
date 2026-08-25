@@ -59,6 +59,17 @@ internal constructor(@PublishedApi internal val storage: LongArray) : Collection
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
+    
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: ULong): ULongArray = elements
+    }
+    
 }
 
 /**
@@ -75,6 +86,9 @@ public inline fun ULongArray(size: Int, init: (Int) -> ULong): ULongArray {
     return ULongArray(LongArray(size) { index -> init(index).toLong() })
 }
 
+/**
+ * Returns an array containing the specified elements.
+ */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly

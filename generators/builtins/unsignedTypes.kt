@@ -527,7 +527,18 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         return (elements as Collection<*>).all { it is $elementType && storage.contains(it.to$storageElementType()) }
     }
 
-    override fun isEmpty(): Boolean = this.storage.size == 0"""
+    override fun isEmpty(): Boolean = this.storage.size == 0
+    
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        @kotlin.internal.InlineOnly
+        public inline operator fun of(vararg elements: $elementType): $arrayType = elements
+    }
+    """
         )
 
         out.println("}")
@@ -548,6 +559,9 @@ public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
+/**
+ * Returns an array containing the specified elements.
+ */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
