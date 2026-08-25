@@ -282,6 +282,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.CONTRACT_EFFECT_LIST,
             psiFactory = ::KtContractEffectList,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.CONTRACT_EFFECT,
+            factory = KtContractEffectStubSerializingElementFactory,
+        )
     }
 }
 

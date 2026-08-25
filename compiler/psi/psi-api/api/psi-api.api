@@ -1275,6 +1275,11 @@ public class org/jetbrains/kotlin/psi/KtContinueExpression : org/jetbrains/kotli
 }
 
 public final class org/jetbrains/kotlin/psi/KtContractEffect : org/jetbrains/kotlin/psi/KtElementImplStub {
+	public static final field Companion Lorg/jetbrains/kotlin/psi/KtContractEffect$Companion;
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtContractEffect;
+}
+
+public final class org/jetbrains/kotlin/psi/KtContractEffect$Companion {
 }
 
 public final class org/jetbrains/kotlin/psi/KtContractEffectKt {
