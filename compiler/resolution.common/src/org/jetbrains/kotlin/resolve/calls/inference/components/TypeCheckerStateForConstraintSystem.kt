@@ -27,6 +27,14 @@ abstract class TypeCheckerStateForConstraintSystem(
     baseTypeCheckerState.kotlinTypePreparator,
     baseTypeCheckerState.kotlinTypeRefiner,
 ) {
+    /**
+     * A part of the artificial-flexibility hack for flexible type variables.
+     * This flag tracks that the constraint comes from an EQUALITY input constraint on a flexible type variable like `T! == SomeType`
+     * and enforce not to set [Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation] to true because we make an
+     * exception for EQUALITY.
+     * TODO: Remove it once KT-88593 is addressed, thus we always would reduce `T! <: SomeType` to `T <: SomeType`
+     */
+    private var isEqualityConstraintForFlexibleTypeVariable = false
     abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
@@ -36,10 +44,10 @@ abstract class TypeCheckerStateForConstraintSystem(
         typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker,
         isNoInfer: Boolean,
         /**
-         * If we're processing T! <: SomeType case
+         * If we're processing T! <: SomeType case, but not T! = SomeType
          * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
          */
-        isFromFlexibleTypeVariablePosition: Boolean = false,
+        isFromFlexibleNotEqualityPosition: Boolean = false,
     )
 
     abstract fun addLowerConstraint(
@@ -103,6 +111,23 @@ abstract class TypeCheckerStateForConstraintSystem(
 
         if (result == null && result2 == null) return null
         return (result ?: true) && (result2 ?: true)
+    }
+
+    override fun runForEquality(
+        a: KotlinTypeMarker,
+        b: KotlinTypeMarker,
+        block: () -> Boolean,
+    ): Boolean {
+        return try {
+            isEqualityConstraintForFlexibleTypeVariable = a.isFlexibleTypeVariable() || b.isFlexibleTypeVariable()
+            block()
+        } finally {
+            isEqualityConstraintForFlexibleTypeVariable = false
+        }
+    }
+
+    private fun KotlinTypeMarker.isFlexibleTypeVariable(): Boolean = context(extensionTypeContext) {
+        asFlexibleType()?.lowerBound()?.isTypeVariableType() == true
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {
@@ -456,7 +481,10 @@ abstract class TypeCheckerStateForConstraintSystem(
             superType
         }
 
-        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer, isFromFlexible)
+        addUpperConstraint(
+            typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer,
+            isFromFlexibleNotEqualityPosition = isFromFlexible && !isEqualityConstraintForFlexibleTypeVariable
+        )
 
         // T? <: Type
         if (typeVariableLowerBound.isMarkedNullable()) {
