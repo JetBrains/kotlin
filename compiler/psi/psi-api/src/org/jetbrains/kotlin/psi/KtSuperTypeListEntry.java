@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.resolution.KtResolvable;
  * }</pre>
  */
 public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>> implements KtResolvable {
-    private static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
 
     /** A factory for creating arrays of {@link KtSuperTypeListEntry}, used by the PSI child-access machinery. */
     public static ArrayFactory<KtSuperTypeListEntry> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtSuperTypeListEntry[count];
