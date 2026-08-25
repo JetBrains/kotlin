@@ -307,6 +307,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.INITIALIZER_LIST,
             psiFactory = ::KtInitializerList,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY,
+            psiFactory = ::KtDelegatedSuperTypeEntry,
+        )
     }
 }
 
