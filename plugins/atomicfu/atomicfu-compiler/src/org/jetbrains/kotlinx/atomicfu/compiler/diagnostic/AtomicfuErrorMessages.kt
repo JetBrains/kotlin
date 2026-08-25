@@ -69,7 +69,7 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         "Callable references to atomic member or extension functions are prohibited."
 
     private const val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY_MESSAGE =
-        "Atomic factories can only be called to initialize a property or as delegates."
+        "Atomic factories can only be called to initialize an atomic property or as delegates."
 
     private const val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE = "Atomic properties must have a backing field."
 

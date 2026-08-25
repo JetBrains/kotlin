@@ -49,12 +49,12 @@ abstract class AbstractAtomicProperty {
 
 fun typeMismatch() {
     val a: Any
-    a = atomic(0)
+    a = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>
     val array = Array<Any?>(10) { null }
     array[0] = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>AtomicIntArray(1)<!>
 
-    val b: Any = atomic(0)
-    val arr: Any? = AtomicLongArray(2)
+    val b: Any = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>
+    val arr: Any? = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>AtomicLongArray(2)<!>
 
     val d: Any by atomic("r")
 }
