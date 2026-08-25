@@ -22,35 +22,23 @@ import java.io.File
 import java.nio.file.Path
 
 class LightTree2Fir(
-    val session: FirSession,
+    override val session: FirSession,
     private val scopeProvider: FirScopeProvider,
     private val diagnosticsReporter: DiagnosticReporter? = null,
-) {
-    fun buildFirFile(path: Path): FirFile {
-        return buildFirFile(path.toFile())
+) : AbstractTree2Fir() {
+    override fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
+        val errorListener = makeErrorListener(sourceFile)
+        val lightTree = KotlinLightParser.buildLightTree(code, sourceFile, errorListener)
+        return buildFirFile(lightTree, sourceFile, linesMapping)
     }
 
-    fun buildFirFile(file: File): FirFile {
-        val sourceFile = KtIoFileSourceFile(file)
-        val [code, linesMapping] = file.inputStream().reader(Charsets.UTF_8).use {
-            it.readSourceFileWithMapping()
-        }
-        return buildFirFile(code, sourceFile, linesMapping)
-    }
-
-    fun buildFirFile(
+    private fun buildFirFile(
         lightTree: FlyweightCapableTreeStructure<LighterASTNode>,
         sourceFile: KtSourceFile,
         linesMapping: KtSourceFileLinesMapping,
     ): FirFile {
         return LightTreeRawFirDeclarationBuilder(session, scopeProvider, lightTree)
             .convertFile(lightTree.root, sourceFile, linesMapping)
-    }
-
-    fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
-        val errorListener = makeErrorListener(sourceFile)
-        val lightTree = KotlinLightParser.buildLightTree(code, sourceFile, errorListener)
-        return buildFirFile(lightTree, sourceFile, linesMapping)
     }
 
     private fun makeErrorListener(sourceFile: KtSourceFile): KotlinLightParser.LightTreeParsingErrorListener? {
