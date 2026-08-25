@@ -597,6 +597,8 @@ class NativeSecondStageCompilationConfig(
             append("-with_crash_dumps")
         if (runtimeLogsEnabled)
             append("-runtime_logs_enabled")
+        if (isUsingSplitCompilationScheme)
+            append("-hot_reload_enabled")
     }
 
     private val userCacheFlavorString = buildString {
@@ -622,6 +624,10 @@ class NativeSecondStageCompilationConfig(
     }
     internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.resolve(userCacheFlavorString)
     internal val dumpBuiltCachesTo = configuration.dumpBuiltCachesTo
+
+    internal val compilationScheme: CompilationScheme = configuration.compilationScheme ?: CompilationScheme.DEFAULT
+    internal val isUsingSplitCompilationScheme: Boolean
+        get() = compilationScheme == CompilationScheme.SPLIT_HOST
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"

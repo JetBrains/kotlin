@@ -62,7 +62,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 LLVMIsAFunction(value) != null -> {
                     val valueOrSpecial = value.takeIf { !it.isLLVMBuiltin }
                             ?: LLVMConstIntToPtr(llvm.int64(CALLED_LLVM_BUILTIN), llvm.pointerType)!!
-                    ExternalCallInfo(value.valueName!!, valueOrSpecial).takeIf { value.isExternalFunction() }
+                    ExternalCallInfo(value.valueName!!, valueOrSpecial).takeIf { value.isExternalFunction }
                 }
                 LLVMIsACastInst(value) != null -> cleanCalledFunction(LLVMGetOperand(value, 0)!!)
                 isIndirectCallArgument(value) -> ExternalCallInfo(null, value) // this is a callback call
@@ -85,7 +85,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
 
     private fun processBasicBlock(functionName: String, block: LLVMBasicBlockRef) {
         val calls = getInstructions(block)
-                .filter { it.isFunctionCall() }
+                .filter { it.isFunctionCall }
                 .toList()
         val builder = LLVMCreateBuilderInContext(llvm.llvmContext)!!
 
@@ -205,7 +205,7 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
 
     val checker = CallsChecker(generationState, goodFunctions)
     getFunctions(llvm.module)
-            .filter { !it.isExternalFunction() && it !in ignoredFunctions }
+            .filter { !it.isExternalFunction && it !in ignoredFunctions }
             .forEach(checker::processFunction)
     verifyModule(llvm.module)
 }

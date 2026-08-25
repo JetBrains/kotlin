@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -78,6 +78,7 @@ extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 extern const int32_t Kotlin_fixedBlockPageSize = 128;
 extern const int32_t Kotlin_pagedAllocator = 1;
 extern const int32_t Kotlin_latin1Strings = 1;
+extern const int32_t Kotlin_hotReload = 0;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();

@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/splitCompilationScheme.kt
+-o
+$TEMP_DIR$/splitCompilationSchemeInvalidValue
+-Xcompilation-scheme=whole-world

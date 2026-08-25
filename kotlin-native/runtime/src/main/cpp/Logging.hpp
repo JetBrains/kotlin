@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -41,8 +41,9 @@ enum class Tag : int32_t {
     kGCMark = 9,
     kGCScheduler = 10,
     kMemoryDump = 11,
+    kHotReload = 12,
 
-    kEnumSize = 12
+    kEnumSize = 13
 };
 
 namespace internal {
@@ -71,6 +72,7 @@ inline const char* name(Tag tag) {
         case Tag::kGCMark: return "gcMark";
         case Tag::kGCScheduler: return "gcScheduler";
         case Tag::kMemoryDump: return "memoryDump";
+        case Tag::kHotReload: return "hotReload";
 
         case Tag::kEnumSize: break;
     }
@@ -141,6 +143,7 @@ inline constexpr auto kTagGC = logging::Tag::kGC;
 inline constexpr auto kTagMM = logging::Tag::kMM;
 inline constexpr auto kTagTLS = logging::Tag::kTLS;
 inline constexpr auto kTagBalancing = logging::Tag::kBalancing;
+inline constexpr auto kTagHotReload = logging::Tag::kHotReload;
 
 } // namespace kotlin
 

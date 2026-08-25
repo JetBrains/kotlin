@@ -379,25 +379,27 @@ internal fun getInstructions(block: LLVMBasicBlockRef) =
 internal fun getGlobals(module: LLVMModuleRef) =
         generateSequence(LLVMGetFirstGlobal(module), { LLVMGetNextGlobal(it) })
 
-fun LLVMTypeRef.isFloatingPoint(): Boolean = when (llvm.LLVMGetTypeKind(this)) {
-    LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind -> true
-    else -> false
-}
+val LLVMTypeRef.isFloatingPoint: Boolean
+    get() = when (LLVMGetTypeKind(this)) {
+        LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind -> true
+        else -> false
+    }
 
-fun LLVMTypeRef.isVectorElementType(): Boolean = when (llvm.LLVMGetTypeKind(this)) {
-    LLVMTypeKind.LLVMIntegerTypeKind,
-    LLVMTypeKind.LLVMFloatTypeKind,
-    LLVMTypeKind.LLVMDoubleTypeKind -> true
-    else -> false
-}
+val LLVMTypeRef.isVectorElementType: Boolean
+    get() = when (LLVMGetTypeKind(this)) {
+        LLVMTypeKind.LLVMIntegerTypeKind,
+        LLVMTypeKind.LLVMFloatTypeKind,
+        LLVMTypeKind.LLVMDoubleTypeKind -> true
+        else -> false
+    }
 
 fun LLVMModuleRef.getName(): String = memScoped {
     val sizeVar = alloc<size_tVar>()
     LLVMGetModuleIdentifier(this@getName, sizeVar.ptr)!!.toKStringFromUtf8()
 }
 
-fun LLVMValueRef.isDefinition() = LLVMIsDeclaration(this) == 0
+val LLVMValueRef.isDefinition get() = LLVMIsDeclaration(this) == 0
 
-fun LLVMValueRef.isFunctionCall() = LLVMIsACallInst(this) != null || LLVMIsAInvokeInst(this) != null
+val LLVMValueRef.isFunctionCall get() = LLVMIsACallInst(this) != null || LLVMIsAInvokeInst(this) != null
 
-fun LLVMValueRef.isExternalFunction() = LLVMGetFirstBasicBlock(this) == null
+val LLVMValueRef.isExternalFunction get() = LLVMGetFirstBasicBlock(this) == null

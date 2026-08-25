@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.LLVMLinkage
+import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
@@ -110,6 +111,8 @@ private fun CodeGenerator.setWritableTypeInfo(
         writableTypeInfoValue: Struct,
 ) {
     if (isExternal(irClass)) {
+        if (context.config.isUsingSplitCompilationScheme) return
+
         // Note: this global replaces the external one with common linkage.
         replaceExternalWeakOrCommonGlobal(
                 irClass.writableTypeInfoSymbolName,
@@ -127,28 +130,43 @@ private fun CodeGenerator.setWritableTypeInfo(
     }
 }
 
-private fun CodeGenerator.buildWritableTypeInfoValue(
+internal fun buildWritableTypeInfoValue(
+        writableTypeInfoType: LLVMTypeRef,
+        typeInfoObjCExportAddition: LLVMTypeRef,
         convertToRetained: ConstPointer?,
-        objCClass: ConstPointer?,
+        objCClass: ConstPointer? = null,
         swiftClass: ConstPointer? = null,
-        typeAdapter: ConstPointer?
+        typeAdapter: ConstPointer? = null,
+        llvmPointerType: LLVMTypeRef
 ): Struct {
     if (convertToRetained != null) {
-        val expectedType = llvm.pointerType
-        assert(convertToRetained.llvmType == expectedType) {
-            "Expected: ${expectedType.toTypeString()} " +
-                    "found: ${convertToRetained.llvmType.toTypeString()}"
+        assert(convertToRetained.llvmType == llvmPointerType) {
+            "Expected: ${llvmPointerType.toTypeString()}, found: ${convertToRetained.llvmType.toTypeString()}"
         }
     }
 
     val objCExportAddition = Struct(
-            runtime.typeInfoObjCExportAddition,
+            typeInfoObjCExportAddition,
             convertToRetained,
             objCClass,
             swiftClass,
             typeAdapter
     )
 
-    val writableTypeInfoType = runtime.writableTypeInfoType!!
     return Struct(writableTypeInfoType, objCExportAddition)
 }
+
+private fun CodeGenerator.buildWritableTypeInfoValue(
+        convertToRetained: ConstPointer?,
+        objCClass: ConstPointer?,
+        swiftClass: ConstPointer? = null,
+        typeAdapter: ConstPointer?
+): Struct = buildWritableTypeInfoValue(
+        writableTypeInfoType = runtime.writableTypeInfoType!!,
+        typeInfoObjCExportAddition = runtime.typeInfoObjCExportAddition,
+        convertToRetained = convertToRetained,
+        objCClass = objCClass,
+        swiftClass = swiftClass,
+        typeAdapter = typeAdapter,
+        llvmPointerType = llvm.pointerType
+)

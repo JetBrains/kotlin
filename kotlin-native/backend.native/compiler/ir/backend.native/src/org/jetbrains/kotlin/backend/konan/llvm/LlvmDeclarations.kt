@@ -186,6 +186,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     override fun visitClass(declaration: IrClass) {
+        if (generationState.config.isUsingSplitCompilationScheme && isExternal(declaration)) {
+            // TypeInfo identity is pointer identity, we only need one source of truth for
+            // TypeInfos when working with split compilation.
+            // Otherwise, we would have a double TypeInfo collision resulting in a conflict of identity.
+            super.visitClass(declaration)
+            return
+        }
+
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
@@ -392,6 +400,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null && !declaration.isStatic) {
+            if (isExternal(containingClass)) return
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())

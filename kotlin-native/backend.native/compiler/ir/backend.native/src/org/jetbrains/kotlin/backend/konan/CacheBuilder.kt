@@ -590,7 +590,7 @@ class CacheBuilder(
             val fileContent = if (lastRebuiltArchives.isEmpty())
                 ""
             else
-                lastRebuiltArchives.joinToString("\n") { it.absolutePathString() } + "\n"
+                lastRebuiltArchives.joinToString("\n") { it.normalize().absolutePathString() } + "\n"
             rebuiltArchivesFile.writeText(fileContent)
         }
     }
