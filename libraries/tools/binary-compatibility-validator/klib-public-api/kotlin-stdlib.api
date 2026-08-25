@@ -7,6 +7,11 @@
 // - Show declarations: true
 
 // Library unique name: <kotlin>
+// Targets: [androidNative, ios, js, linux, macos, native, tvos, wasmJs, wasmWasi]
+open annotation class kotlin/ExperimentalCollectionLiteralsApi : kotlin/Annotation { // kotlin/ExperimentalCollectionLiteralsApi|null[0]
+    constructor <init>() // kotlin/ExperimentalCollectionLiteralsApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.annotation/MustBeDocumented : kotlin/Annotation { // kotlin.annotation/MustBeDocumented|null[0]
     constructor <init>() // kotlin.annotation/MustBeDocumented.<init>|<init>(){}[0]
 }
