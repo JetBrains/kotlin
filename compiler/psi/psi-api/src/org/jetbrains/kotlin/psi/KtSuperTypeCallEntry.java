@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -48,9 +49,8 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentList getValueArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_LIST, KtValueArgumentList.class);
     }
 
     @Override

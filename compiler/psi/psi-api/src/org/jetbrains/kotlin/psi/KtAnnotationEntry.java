@@ -68,9 +68,8 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentList getValueArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_LIST, KtValueArgumentList.class);
     }
 
     @NotNull
