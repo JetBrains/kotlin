@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.types.model.contains
-import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -37,6 +35,9 @@ class ConstraintIncorporator(
 
     private val enhancementOfSecondIncorporationKindEnabled =
         languageVersionSettings.supportsFeature(LanguageFeature.EnhancementsOfSecondIncorporationKind25)
+
+    private val secondIncorporationKindRestrictedToFixation =
+        languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)
 
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -166,6 +167,8 @@ class ConstraintIncorporator(
         constraint: Constraint,
         isCausedByFixation: Boolean,
     ) {
+        if (secondIncorporationKindRestrictedToFixation && !isCausedByFixation) return
+
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in c.getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
