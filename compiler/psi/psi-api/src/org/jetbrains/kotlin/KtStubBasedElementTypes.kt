@@ -119,8 +119,7 @@ internal object KtStubBasedElementTypes {
     // Supertypes
 
     @JvmField
-    val SUPER_TYPE_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeList>, KtSuperTypeList> =
-        provider.superTypeListType
+    val SUPER_TYPE_LIST: KtNodeType = provider.superTypeListType
 
     @JvmField
     val DELEGATED_SUPER_TYPE_ENTRY: KtStubElementType<out KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry> =
