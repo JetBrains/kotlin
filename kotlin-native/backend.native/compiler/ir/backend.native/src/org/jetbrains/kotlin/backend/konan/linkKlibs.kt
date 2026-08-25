@@ -120,7 +120,14 @@ internal fun LinkKlibsContext.linkKlibs(
 
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
-        LinkKlibsOutput(modules, mainModule, irBuiltIns, symbols, symbolTable, irLinker)
+        LinkKlibsOutput(
+                irModules = modules,
+                irModule = mainModule,
+                irBuiltIns = irBuiltIns,
+                symbols = symbols,
+                symbolTable = symbolTable,
+                irLinker = irLinker
+        )
     } else {
         val libraryPath: Path = libraryToCache.klib.path
         val libraryModule = modules[libraryPath] ?: error("No module for the library being cached: $libraryPath")
