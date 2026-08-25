@@ -54,7 +54,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType FILE_ANNOTATION_LIST = new KtNodeType("FILE_ANNOTATION_LIST", KtFileAnnotationList::new);
 
-    @NotNull KtImportDirectiveElementType IMPORT_DIRECTIVE = new KtImportDirectiveElementType("IMPORT_DIRECTIVE");
+    @NotNull KtNodeType IMPORT_DIRECTIVE = new KtNodeType("IMPORT_DIRECTIVE", KtImportDirective::new);
 
     @NotNull KtImportAliasElementType IMPORT_ALIAS = new KtImportAliasElementType("IMPORT_ALIAS");
 
