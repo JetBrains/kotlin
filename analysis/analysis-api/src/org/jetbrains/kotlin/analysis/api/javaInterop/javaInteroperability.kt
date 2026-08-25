@@ -68,6 +68,23 @@ public val KaType.isPrimitiveBacked: Boolean
     }
 
 /**
+ * Whether the given [KaNamedClassSymbol] is represented as an inline class on the JVM.
+ *
+ * This is `true` for classes declared with the deprecated `inline class` syntax and for `value class` declarations annotated with
+ * [JvmInline]. The result does not depend on whether the `FullValueClasses` language feature is enabled.
+ *
+ * For declarations from common modules, the result describes their representation when compiled for the JVM. For declarations from
+ * platform-specific non-JVM modules, this is always `false`.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaNamedClassSymbol.isJvmInline: Boolean
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.javaInteroperabilityComponent.isJvmInline(this)
+    }
+
+/**
  * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
  * [PsiClass]es), and Kotlin light classes.
  */

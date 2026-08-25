@@ -38,6 +38,8 @@ public interface KaInternalsJavaInteroperabilityComponent {
 
     public fun isPrimitiveBacked(type: KaType): Boolean
 
+    public fun isJvmInline(symbol: KaNamedClassSymbol): Boolean
+
     public fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol?
 
     public fun callableSymbol(psiMember: PsiMember): KaCallableSymbol?
