@@ -13,7 +13,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
 import org.jetbrains.kotlin.types.Variance;
@@ -83,9 +82,8 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
      * KtTypeParameterListOwner#getTypeConstraints()} instead.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getExtendsBound() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     @NotNull

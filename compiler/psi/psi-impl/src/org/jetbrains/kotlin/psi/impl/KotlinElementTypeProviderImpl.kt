@@ -149,7 +149,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
 
     // Type references
 
-    override val typeReferenceType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference>
+    override val typeReferenceType: KtNodeType
         get() = KtStubElementTypes.TYPE_REFERENCE
 
     override val userTypeType: KtStubElementType<out KotlinUserTypeStub, KtUserType>

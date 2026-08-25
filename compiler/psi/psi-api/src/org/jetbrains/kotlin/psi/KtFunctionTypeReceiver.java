@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -34,6 +35,6 @@ public class KtFunctionTypeReceiver extends KtElementImplStub<KotlinPlaceHolderS
     @NotNull
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
-        return getRequiredStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getRequiredStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 }
