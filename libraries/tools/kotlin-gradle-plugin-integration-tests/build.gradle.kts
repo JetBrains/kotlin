@@ -57,7 +57,10 @@ fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: Stri
 
 createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
 createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
-createConfigurationToBeConsumedInTests("composeCompilerRuntimeTestUtils", ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils")
+createConfigurationToBeConsumedInTests(
+    "composeCompilerRuntimeTestUtils",
+    ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"
+)
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
@@ -146,12 +149,18 @@ dependencies {
     testImplementation(project(":compose-compiler-gradle-plugin"))
 }
 
-tasks.register<Delete>("cleanTestKitCache") {
+val cleanTestKitCache = tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
     description = "Deletes temporary Gradle TestKit cache"
 
     delete(layout.buildDirectory.dir("testKitCache"))
     delete(layout.buildDirectory.dir("kgpTestInfra"))
+}
+
+val cleanTestKitBuildCache = tasks.register<Delete>("cleanTestKitBuildCache") {
+    group = "Build"
+    description = "Deletes temporary Gradle TestKit build-cache"
+    delete(layout.buildDirectory.dir("testKitCache/caches/build-cache-1"))
 }
 
 val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::class) {
@@ -385,6 +394,13 @@ tasks.withType<Test>().configureEach {
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
     applyKotlinNativeConfiguration()
+
+    /*
+    Test asserting the behavior of the build cache may require a clean build cache up-front
+    As such test will assert that a first build will be executed and the second one may be 'from cache'.
+    If the build cache is not cleaned prior to the test, the assertions may fail
+    */
+    dependsOn(cleanTestKitBuildCache)
 
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
