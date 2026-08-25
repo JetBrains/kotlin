@@ -1133,8 +1133,6 @@ public class org/jetbrains/kotlin/psi/KtCommonFile : com/intellij/extapi/psi/Psi
 	public fun acceptChildren (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)V
 	public fun clearCaches ()V
 	public final fun findAliasByFqName (Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/psi/KtImportAlias;
-	public final fun findChildByTypeOrClass (Lorg/jetbrains/kotlin/psi/stubs/elements/KtStubElementType;Ljava/lang/Class;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
-	public final fun findChildrenByTypeOrClass (Lorg/jetbrains/kotlin/psi/stubs/elements/KtStubElementType;Ljava/lang/Class;)[Lorg/jetbrains/kotlin/psi/KtElementImplStub;
 	public final fun findImportByAlias (Ljava/lang/String;)Lorg/jetbrains/kotlin/psi/KtImportDirective;
 	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;
