@@ -55,5 +55,10 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.BACKING_FIELD,
             factory = KtBackingFieldStubSerializingElementFactory,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.DESTRUCTURING_DECLARATION,
+            factory = KtDestructuringDeclarationStubSerializingElementFactory,
+        )
     }
 }
