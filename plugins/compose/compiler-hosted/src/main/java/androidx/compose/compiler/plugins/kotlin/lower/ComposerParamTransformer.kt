@@ -170,9 +170,6 @@ class ComposerParamTransformer(
             return super.visitRichFunctionReference(expression)
         }
 
-        // Transform invoke function as @Composable
-        expression.invokeFunction.createComposableAnnotationIfAbsent()
-
         val targetFn = when (val target = expression.reflectionTargetSymbol?.owner) {
             is IrSimpleFunction -> if (target.isLambdaInvoke()) {
                 target.lambdaInvokeWithComposerParam(context)
@@ -201,16 +198,10 @@ class ComposerParamTransformer(
     }
 
     override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
-        val property = expression.reflectionTargetSymbol?.owner as? IrProperty
-        val localProperty = expression.reflectionTargetSymbol?.owner as? IrLocalDelegatedProperty
-        val getter = property?.getter ?: localProperty?.getter ?: expression.getterFunction.findCallInBody()?.symbol?.owner
-        if (getter?.hasComposableAnnotation() == true || getter?.isComposableDelegatedAccessor() == true) {
-            expression.getterFunction.createComposableAnnotationIfAbsent()
+        if (expression.getterFunction.hasComposableAnnotation()) {
             expression.getterFunction.isComposableReferenceInvoke = true
         }
-        val setter = property?.setter ?: localProperty?.setter ?: expression.setterFunction?.findCallInBody()?.symbol?.owner
-        if (setter?.hasComposableAnnotation() == true || setter?.isComposableDelegatedAccessor() == true) {
-            expression.setterFunction?.createComposableAnnotationIfAbsent()
+        if (expression.setterFunction?.hasComposableAnnotation() == true) {
             expression.setterFunction?.isComposableReferenceInvoke = true
         }
         return super.visitRichPropertyReference(expression)
@@ -375,30 +366,7 @@ class ComposerParamTransformer(
         return adapter
     }
 
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-        if (declaration.getter.isComposableDelegatedAccessor()) {
-            declaration.getter.createComposableAnnotationIfAbsent()
-        }
 
-        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
-            declaration.setter!!.createComposableAnnotationIfAbsent()
-        }
-
-        return super.visitLocalDelegatedProperty(declaration)
-    }
-
-    private fun IrFunction.createComposableAnnotationIfAbsent() {
-        if (!hasComposableAnnotation()) {
-            annotations += IrAnnotationImpl(
-                startOffset = SYNTHETIC_OFFSET,
-                endOffset = SYNTHETIC_OFFSET,
-                type = composableIrClass.defaultType,
-                symbol = composableIrClass.primaryConstructor!!.symbol,
-                typeArgumentsCount = 0,
-                constructorTypeArgumentsCount = 0
-            )
-        }
-    }
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter) {
         val newFn = when {
@@ -544,10 +512,6 @@ class ComposerParamTransformer(
         // call this with a function that has the synthetic composer parameter, we don't want to
         // transform it further).
         if (transformedFunctionSet.contains(this)) return this
-
-        if (isComposableDelegatedAccessor()) {
-            createComposableAnnotationIfAbsent()
-        }
 
         // if not a composable fn, nothing we need to do
         if (!this.hasComposableAnnotation()) {
