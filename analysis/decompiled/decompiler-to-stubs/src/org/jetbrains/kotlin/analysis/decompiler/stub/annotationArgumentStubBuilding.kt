@@ -216,7 +216,7 @@ private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
 }
 
 private fun createClassLiteralStub(parent: StubElement<*>, value: KClassValue.Value.NormalClass) {
-    val classLiteral = KotlinClassLiteralExpressionStubImpl(parent)
+    val classLiteral = KotlinPlaceHolderStubImpl<KtClassLiteralExpression>(parent, KtNodeTypes.CLASS_LITERAL_EXPRESSION)
     val arrayDimensions = value.arrayDimensions
     if (arrayDimensions == 0) {
         createReferenceChainStub(classLiteral, value.classId.segments())

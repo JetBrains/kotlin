@@ -259,7 +259,7 @@ org.jetbrains.kotlin.psi.KtClassBody:constructor(KotlinPlaceHolderStub<KtClassBo
 org.jetbrains.kotlin.psi.KtClassInitializer:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtClassInitializer:constructor(KotlinPlaceHolderStub<KtClassInitializer>)
 org.jetbrains.kotlin.psi.KtClassLiteralExpression:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtClassLiteralExpression:constructor(KotlinClassLiteralExpressionStub)
+org.jetbrains.kotlin.psi.KtClassLiteralExpression:constructor(KotlinPlaceHolderStub<KtClassLiteralExpression>)
 org.jetbrains.kotlin.psi.KtClassOrObject.addDeclaration(T)
 org.jetbrains.kotlin.psi.KtClassOrObject.addDeclarationAfter(T, PsiElement?)
 org.jetbrains.kotlin.psi.KtClassOrObject.addDeclarationBefore(T, PsiElement?)
@@ -294,7 +294,7 @@ org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(KotlinPlaceHolderStub<KtContextParameterList>)
 org.jetbrains.kotlin.psi.KtContinueExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContractEffect:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtContractEffect:constructor(KotlinContractEffectStub)
+org.jetbrains.kotlin.psi.KtContractEffect:constructor(KotlinPlaceHolderStub<KtContractEffect>)
 org.jetbrains.kotlin.psi.KtContractEffectList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContractEffectList:constructor(KotlinPlaceHolderStub<KtContractEffectList>)
 org.jetbrains.kotlin.psi.KtDeclarationImpl:constructor(ASTNode)
@@ -854,7 +854,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isExtension
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isTopLevel
-org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isLocal
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isTopLevel
@@ -872,7 +871,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.label
-org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.hasInitializer
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.isVar
