@@ -565,8 +565,6 @@ class CacheBuilder(
             // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
             checkDependencies = true
             konanLibraryToAddToCache = libraryPath
-            konanNoDefaultLibs = true
-            konanNoStdlib = true
             konanLibraries = libraries + libraryPath
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
