@@ -31,7 +31,7 @@ import java.util.List;
  * }</pre>
  */
 public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry>> {
-    /** A shared empty array, useful as a zero-length return value. */
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
     public static final KtStringTemplateEntry[] EMPTY_ARRAY = new KtStringTemplateEntry[0];
 
     @KtImplementationDetail

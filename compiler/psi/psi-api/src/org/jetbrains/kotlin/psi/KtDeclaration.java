@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
  * @see KtProperty
  */
 public interface KtDeclaration extends KtExpression, KtModifierListOwner {
-    /** A shared empty array, useful as a zero-length return value. */
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
     KtDeclaration[] EMPTY_ARRAY = new KtDeclaration[0];
 
     /** A factory for creating arrays of {@link KtDeclaration}, used by the PSI child-access machinery. */

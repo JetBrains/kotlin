@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * {@link KtExpression}s as well.
  */
 public interface KtExpression extends KtElement {
-    /** A shared empty array, useful as a zero-length return value. */
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
     KtExpression[] EMPTY_ARRAY = new KtExpression[0];
 
     /** A factory for creating arrays of {@link KtExpression}, used by the PSI child-access machinery. */
