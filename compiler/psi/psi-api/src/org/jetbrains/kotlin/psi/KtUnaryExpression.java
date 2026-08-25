@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
@@ -51,9 +51,8 @@ public abstract class KtUnaryExpression extends KtExpressionImplStub<KotlinPlace
 
     @Override
     @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
     public KtOperationReferenceExpression getOperationReference() {
-        return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OPERATION_REFERENCE));
+        return Objects.requireNonNull(getStubOrPsiChild(KtNodeTypes.OPERATION_REFERENCE, KtOperationReferenceExpression.class));
     }
 
     /** Returns the element type of the operator token (for example, {@code MINUS} for {@code -} or {@code PLUSPLUS} for {@code ++}). */
