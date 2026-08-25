@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
@@ -25,7 +26,7 @@ class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectio
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtStubBasedElementTypes.INTERSECTION_TYPE)
+    constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtNodeTypes.INTERSECTION_TYPE)
 
     /** Always empty: an intersection type has no type arguments (its operands are [getLeftTypeRef] and [getRightTypeRef]). */
     override fun getTypeArgumentsAsTypes(): List<KtTypeReference> = emptyList()

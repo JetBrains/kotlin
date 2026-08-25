@@ -91,7 +91,7 @@ interface KotlinElementTypeProvider {
     val functionTypeType: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType>
     val functionTypeReceiverType: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>
     val nullableTypeType: KtNodeType
-    val intersectionTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType>
+    val intersectionTypeType: KtNodeType
     val typeProjectionType: KtStubElementType<out KotlinTypeProjectionStub, KtTypeProjection>
 
     // Constants

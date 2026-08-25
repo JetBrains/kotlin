@@ -177,6 +177,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.NULLABLE_TYPE,
             psiFactory = ::KtNullableType,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.INTERSECTION_TYPE,
+            psiFactory = ::KtIntersectionType,
+        )
     }
 }
 
