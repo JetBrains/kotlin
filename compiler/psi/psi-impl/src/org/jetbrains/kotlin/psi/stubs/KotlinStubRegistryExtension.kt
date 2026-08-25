@@ -345,6 +345,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
                 factory = KtConstantExpressionStubSerializingElementFactory(kind),
             )
         }
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.CLASS_LITERAL_EXPRESSION,
+            factory = KtClassLiteralExpressionStubSerializingElementFactory,
+        )
     }
 }
 
