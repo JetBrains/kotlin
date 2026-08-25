@@ -11,7 +11,6 @@ import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub;
@@ -136,9 +135,8 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      * @see KtContextParameterList
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtContextParameterList getContextParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList.class);
     }
 
     /** Returns the type references of the context receivers declared for this function type, or an empty list if there are none. */

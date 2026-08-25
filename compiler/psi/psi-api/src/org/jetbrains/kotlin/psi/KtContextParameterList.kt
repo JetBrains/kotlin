@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -34,7 +33,7 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtContextParameterList>) : super(stub, KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST)
+    constructor(stub: KotlinPlaceHolderStub<KtContextParameterList>) : super(stub, KtNodeTypes.CONTEXT_PARAMETER_LIST)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitContextParameterList(this, data)
@@ -98,4 +97,10 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
             val modifierList = parent as? KtModifierList ?: return null
             return modifierList.owner as? KtDeclaration
         }
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtContextParameterList> = emptyArray()
+    }
 }

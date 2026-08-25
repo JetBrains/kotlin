@@ -332,6 +332,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.CONTEXT_RECEIVER,
             factory = KtContextReceiverStubSerializingElementFactory,
         )
+
+        registry.registerPlaceHolderFactory(
+            type = KtStubElementTypes.CONTEXT_PARAMETER_LIST,
+            psiFactory = ::KtContextReceiverList,
+        )
     }
 }
 

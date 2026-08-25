@@ -63,7 +63,7 @@ interface KotlinElementTypeProvider {
     // Value parameters
     val valueParameterListType: KtNodeType
     val valueParameterType: KtNodeType
-    val contextParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextParameterList>, KtContextParameterList>
+    val contextParameterListType: KtNodeType
     val contextReceiverType: KtNodeType
 
     // Type parameters
