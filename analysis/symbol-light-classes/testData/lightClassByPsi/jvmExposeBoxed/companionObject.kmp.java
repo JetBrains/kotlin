@@ -8,18 +8,14 @@ public final class StringWrapper /* StringWrapper*/ {
   public static final @org.jetbrains.annotations.NotNull() StringWrapper.Companion Companion;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getS();//  getS()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 
   class Companion ...
 }
 
 public static final class Companion /* StringWrapper.Companion*/ {
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String unwrap(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  unwrap(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   private  Companion();//  .ctor()
 }

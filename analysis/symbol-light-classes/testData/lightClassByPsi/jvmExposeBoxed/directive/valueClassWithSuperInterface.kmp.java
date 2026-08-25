@@ -1,5 +1,9 @@
 public abstract interface Interface /* pack.Interface*/ {
+  public abstract int getPropertyWithValueClass();//  getPropertyWithValueClass()
+
   public abstract int getRegularVariable();//  getRegularVariable()
+
+  public abstract void functionWithValueParam(int);//  functionWithValueParam(int)
 
   public abstract void regularFunction();//  regularFunction()
 
@@ -19,7 +23,13 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
   @java.lang.Override()
+  public int getPropertyWithValueClass();//  getPropertyWithValueClass()
+
+  @java.lang.Override()
   public int getRegularVariable();//  getRegularVariable()
+
+  @java.lang.Override()
+  public void functionWithValueParam(int);//  functionWithValueParam(int)
 
   @java.lang.Override()
   public void regularFunction();//  regularFunction()
@@ -30,9 +40,5 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   @kotlin.jvm.JvmExposeBoxed()
   public  ValueClass(int);//  .ctor(int)
 
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
   public final int getInt();//  getInt()
-
-  public int hashCode();//  hashCode()
 }

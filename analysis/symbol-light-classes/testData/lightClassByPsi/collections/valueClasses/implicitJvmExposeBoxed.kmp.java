@@ -8,6 +8,9 @@ public abstract class SCollection2 /* test.SCollection2*/ implements java.util.C
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
 
   @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  contains(@org.jetbrains.annotations.NotNull() int)
+
+  @java.lang.Override()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
@@ -23,6 +26,9 @@ public class SCollection3 /* test.SCollection3*/ implements java.util.Collection
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
+
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  contains(@org.jetbrains.annotations.NotNull() int)
 
   @java.lang.Override()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>)

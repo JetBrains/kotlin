@@ -11,6 +11,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.isJvmInline
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
@@ -82,6 +83,7 @@ internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTra
     }
 }
 
+context(_: KaSession)
 internal fun createLightClassNoCache(
     classSymbol: KaNamedClassSymbol,
     ktModule: KaModule,
@@ -103,6 +105,7 @@ internal fun createLightClassNoCache(
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
+        isValueClass = classSymbol.isJvmInline,
     )
 }
 
@@ -866,7 +869,7 @@ internal fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
  */
 context(_: KaSession)
 private fun isNonMaterializedValueClassMember(symbol: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
-    if (owner !is KaNamedClassSymbol || !owner.isInline) return false
+    if (owner !is KaNamedClassSymbol || !owner.isJvmInline) return false
 
     // A member that implements a supertype member keeps an unmangled bridge method
     val isOverride = when (symbol) {
@@ -890,7 +893,7 @@ private fun valueClassSymbol(type: KaType): KaNamedClassSymbol? {
     // A value class is final, so it can only be an upper bound of a type parameter as is
     val candidates = if (type is KaTypeParameterType) type.symbol.upperBounds else listOf(type)
     return candidates.firstNotNullOfOrNull { candidate ->
-        (candidate.expandedSymbol as? KaNamedClassSymbol)?.takeIf { it.isInline }
+        (candidate.expandedSymbol as? KaNamedClassSymbol)?.takeIf { it.isJvmInline }
     }
 }
 

@@ -1,5 +1,9 @@
 public abstract interface Interface /* pack.Interface*/ {
+  public abstract int getPropertyWithValueClass();//  getPropertyWithValueClass()
+
   public abstract int getRegularVariable();//  getRegularVariable()
+
+  public abstract void functionWithValueParam(int);//  functionWithValueParam(int)
 
   public abstract void regularFunction();//  regularFunction()
 
@@ -15,7 +19,13 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int value;
 
   @java.lang.Override()
+  public int getPropertyWithValueClass();//  getPropertyWithValueClass()
+
+  @java.lang.Override()
   public int getRegularVariable();//  getRegularVariable()
+
+  @java.lang.Override()
+  public void functionWithValueParam(int);//  functionWithValueParam(int)
 
   @java.lang.Override()
   public void regularFunction();//  regularFunction()
@@ -24,18 +34,9 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   public void setRegularVariable(int);//  setRegularVariable(int)
 
   @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() pack.ValueClassImpl getValue();//  getValue()
+  public  ValueClass(int);//  .ctor(int)
 
-  @kotlin.jvm.JvmExposeBoxed()
-  public  ValueClass(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  .ctor(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl)
-
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
+  public final int getValue();//  getValue()
 }
 
 @<error>()
@@ -47,7 +48,13 @@ public final class ValueClassImpl /* pack.ValueClassImpl*/ implements pack.Inter
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
   @java.lang.Override()
+  public int getPropertyWithValueClass();//  getPropertyWithValueClass()
+
+  @java.lang.Override()
   public int getRegularVariable();//  getRegularVariable()
+
+  @java.lang.Override()
+  public void functionWithValueParam(int);//  functionWithValueParam(int)
 
   @java.lang.Override()
   public void regularFunction();//  regularFunction()
@@ -58,9 +65,5 @@ public final class ValueClassImpl /* pack.ValueClassImpl*/ implements pack.Inter
   @kotlin.jvm.JvmExposeBoxed()
   public  ValueClassImpl(int);//  .ctor(int)
 
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
   public final int getInt();//  getInt()
-
-  public int hashCode();//  hashCode()
 }

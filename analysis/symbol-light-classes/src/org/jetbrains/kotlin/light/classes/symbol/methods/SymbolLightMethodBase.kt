@@ -13,6 +13,7 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.isJvmInline
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -147,7 +148,8 @@ internal abstract class SymbolLightMethodBase(
         }
     }
 
+    context(_: KaSession)
     private fun isInlineClassType(type: KaType): Boolean {
-        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
+        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isJvmInline == true
     }
 }
