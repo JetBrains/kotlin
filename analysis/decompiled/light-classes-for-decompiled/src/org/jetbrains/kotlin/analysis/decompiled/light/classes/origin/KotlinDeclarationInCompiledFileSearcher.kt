@@ -10,20 +10,20 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.StringValue
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.isCompanion
+import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -474,4 +474,27 @@ class KotlinDeclarationInCompiledFileSearcher {
         fun getInstance(): KotlinDeclarationInCompiledFileSearcher =
             ApplicationManager.getApplication().getService(KotlinDeclarationInCompiledFileSearcher::class.java)
     }
+}
+
+private fun getQualifiedName(typeElement: KtTypeElement?, isSuspend: Boolean): String? {
+    val referencedName = when (typeElement) {
+        is KtUserType -> getQualifiedName(typeElement)
+        is KtFunctionType -> {
+            var parametersCount = typeElement.parameters.size
+            typeElement.receiverTypeReference?.let { parametersCount++ }
+            if (isSuspend) {
+                StandardNames.getSuspendFunctionClassId(parametersCount).asFqNameString()
+            } else {
+                StandardNames.getFunctionClassId(parametersCount).asFqNameString()
+            }
+        }
+        is KtNullableType -> getQualifiedName(typeElement.unwrapNullability(), isSuspend)
+        else -> null
+    }
+    return referencedName
+}
+
+private fun getQualifiedName(userType: KtUserType): String? {
+    val qualifier = userType.qualifier ?: return userType.referencedName
+    return getQualifiedName(qualifier) + "." + userType.referencedName
 }
