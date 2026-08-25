@@ -2653,6 +2653,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtTypeElement : org/jet
 }
 
 public class org/jetbrains/kotlin/psi/KtTypeParameter : org/jetbrains/kotlin/psi/KtNamedDeclarationStub {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtTypeParameter;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getExtendsBound ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public fun getUseScope ()Lcom/intellij/psi/search/SearchScope;
