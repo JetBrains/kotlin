@@ -37,7 +37,7 @@ interface KotlinElementTypeProvider {
 
     // Classifiers
     val classType: KtNodeType
-    val objectType: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration>
+    val objectType: KtNodeType
     val typeAliasType: KtNodeType
     val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
 

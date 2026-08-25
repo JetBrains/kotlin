@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
@@ -31,7 +31,7 @@ class KtObjectDeclaration : KtClassOrObject {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinObjectStub) : super(stub, KtStubBasedElementTypes.OBJECT_DECLARATION)
+    constructor(stub: KotlinObjectStub) : super(stub, KtNodeTypes.OBJECT_DECLARATION)
 
     private val _stub: KotlinObjectStub?
         get() = greenStub as? KotlinObjectStub
@@ -77,4 +77,10 @@ class KtObjectDeclaration : KtClassOrObject {
 
     /** Always empty: an object declaration cannot itself declare companion objects. */
     override fun getCompanionObjects(): List<KtObjectDeclaration> = emptyList()
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtObjectDeclaration> = emptyArray()
+    }
 }
