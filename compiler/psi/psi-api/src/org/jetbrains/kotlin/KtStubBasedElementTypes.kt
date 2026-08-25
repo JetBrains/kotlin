@@ -110,8 +110,7 @@ internal object KtStubBasedElementTypes {
     val TYPE_PARAMETER: KtNodeType = provider.typeParameterType
 
     @JvmField
-    val TYPE_CONSTRAINT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList> =
-        provider.typeConstraintListType
+    val TYPE_CONSTRAINT_LIST: KtNodeType = provider.typeConstraintListType
 
     @JvmField
     val TYPE_CONSTRAINT: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint> =
