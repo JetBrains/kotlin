@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.lang.reflect.InvocationTargetException
@@ -175,6 +172,14 @@ internal class KotlinWrapperPre2_3_20(
 
             override fun build(): JvmCompilationOperation {
                 return copy()
+            }
+
+            override fun clientManagedIcConfigurationBuilder(
+                incrementalCompilationComponents: CompilerIncrementalCompilationComponents,
+            ): JvmClientManagedIncrementalCompilationConfiguration.Builder {
+                throw UnsupportedOperationException(
+                    "JvmClientManagedIncrementalCompilationConfiguration is available from Kotlin compiler version 2.5.20"
+                )
             }
 
             override fun snapshotBasedIcConfigurationBuilder(

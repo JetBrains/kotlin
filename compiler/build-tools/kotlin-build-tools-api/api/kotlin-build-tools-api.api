@@ -1737,6 +1737,64 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/Classpat
 	public abstract fun usePreciseJavaTracking (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerEnumWhenTracker {
+	public abstract fun report (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerExpectActualTracker {
+	public abstract fun report (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun reportExpectOfLenientStub (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerFileMappingTracker {
+	public abstract fun recordOutputFileGeneratedForPlugin (Ljava/lang/String;)V
+	public abstract fun recordSourceFileGeneratedForPlugin (Ljava/lang/String;)V
+	public abstract fun recordSourceFilesToOutputFileMapping (Ljava/util/Collection;Ljava/lang/String;)V
+	public abstract fun recordSourceReferencedByCompilerPlugin (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerImportTracker {
+	public abstract fun report (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerIncrementalCache {
+	public abstract fun close ()V
+	public abstract fun getClassFilePath (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
+	public abstract fun getModuleMappingData ()[B
+	public abstract fun getObsoleteMultifileClasses ()Ljava/util/Collection;
+	public abstract fun getObsoletePackageParts ()Ljava/util/Collection;
+	public abstract fun getPackagePartData (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerPackagePartData;
+	public abstract fun getStableMultifileFacadeParts (Ljava/lang/String;)Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerIncrementalCompilationComponents {
+	public abstract fun getIncrementalCache (Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerTargetId;)Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerIncrementalCache;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/CompilerInlineConstTracker {
+	public abstract fun report (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/CompilerPackagePartData {
+	public fun <init> ([B[Ljava/lang/String;)V
+	public final fun getData ()[B
+	public final fun getStrings ()[Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/CompilerTargetId {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerTargetId;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerTargetId;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerTargetId;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/InaccessibleClassSnapshot : org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
 }
 
@@ -1759,6 +1817,32 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/Incremen
 	public abstract fun useOutputDirs (Ljava/util/Collection;)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseCompilationResultsBackup (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseJavaTracking (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Companion;
+	public static final field ENUM_WHEN_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;
+	public static final field EXPECT_ACTUAL_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;
+	public static final field FILE_MAPPING_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;
+	public static final field IMPORT_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;
+	public static final field INLINE_CONST_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;
+	public static final field LOOKUP_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;)Ljava/lang/Object;
+	public abstract fun getIncrementalCompilationComponents ()Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerIncrementalCompilationComponents;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration {
@@ -1923,6 +2007,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder {
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
+	public abstract fun clientManagedIcConfigurationBuilder (Lorg/jetbrains/kotlin/buildtools/api/jvm/CompilerIncrementalCompilationComponents;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmClientManagedIncrementalCompilationConfiguration$Builder;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;)Ljava/lang/Object;
 	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$Builder;
 	public abstract fun getDestinationDirectory ()Ljava/nio/file/Path;

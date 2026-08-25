@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
-
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -14,8 +12,10 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.jvm.CompilerIncrementalCompilationComponents
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmClientManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -30,23 +30,23 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
-import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
+import org.jetbrains.kotlin.buildtools.internal.trackers.*
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import java.nio.file.Path
 
 internal class JvmCompilationOperationImpl private constructor(
@@ -169,6 +169,11 @@ internal class JvmCompilationOperationImpl private constructor(
         requestedCompilationResults: Array<Int>,
         arguments: K2JVMCompilerArguments,
     ): IncrementalCompilationOptions? {
+        check(get(INCREMENTAL_COMPILATION) !is JvmClientManagedIncrementalCompilationConfigurationImpl) {
+            "JvmClientManagedIncrementalCompilationConfiguration is not supported with the daemon execution policy. " +
+                    "Use ExecutionPolicy.InProcess."
+        }
+
         val aggregatedIcConfigurationOptions = getIcOptionsAccessorOrNull() ?: return null
 
         val sourcesChanges = aggregatedIcConfigurationOptions.sourcesChanges
@@ -210,7 +215,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     override fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         setupIdeaStandaloneExecution()
         return super.compileInProcess(loggerAdapter, executionContext)
@@ -227,7 +232,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2JVMCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val snapshotBasedIcOptionsAccessor = getIcOptionsAccessorOrNull() ?: error("Missing INCREMENTAL_COMPILATION option.")
         arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
@@ -297,11 +302,64 @@ internal class JvmCompilationOperationImpl private constructor(
         return compilationResult
     }
 
-    private fun getIcOptionsAccessorOrNull(): HasSnapshotBasedIcOptionsAccessor? = get(INCREMENTAL_COMPILATION)?.let { icConfiguration ->
-        check(icConfiguration is JvmSnapshotBasedIncrementalCompilationConfiguration) {
-            "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of JvmSnapshotBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
+    override fun Services.Builder.registerPlatformServices(logger: KotlinLogger) {
+        val icConfiguration = get(INCREMENTAL_COMPILATION) as? JvmClientManagedIncrementalCompilationConfigurationImpl ?: return
+
+        register(
+            IncrementalCompilationComponents::class.java,
+            IncrementalCompilationComponentsAdapter(icConfiguration.incrementalCompilationComponents),
+        )
+
+        icConfiguration[JvmClientManagedIncrementalCompilationConfigurationImpl.LOOKUP_TRACKER]?.let { tracker ->
+            if (get(LOOKUP_TRACKER) != null) {
+                logger.warn(
+                    "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
+                            "JvmClientManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. The latter takes precedence."
+                )
+            }
+
+            register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
         }
-        icConfiguration.toOptions()
+        icConfiguration[JvmClientManagedIncrementalCompilationConfigurationImpl.IMPORT_TRACKER]?.let { tracker ->
+            if (get(IMPORT_TRACKER) != null) {
+                logger.warn(
+                    "An import tracker is set both as the compilation operation's \"IMPORT_TRACKER\" option and as " +
+                            "JvmClientManagedIncrementalCompilationConfiguration.IMPORT_TRACKER. The latter takes precedence."
+                )
+            }
+
+            register(ImportTracker::class.java, ServicesImportTrackerAdapter(tracker))
+        }
+        icConfiguration[JvmClientManagedIncrementalCompilationConfigurationImpl.FILE_MAPPING_TRACKER]?.let { tracker ->
+            register(ICFileMappingTracker::class.java, FileMappingTrackerAdapter(tracker))
+        }
+        icConfiguration[JvmClientManagedIncrementalCompilationConfigurationImpl.EXPECT_ACTUAL_TRACKER]?.let { tracker ->
+            register(ExpectActualTracker::class.java, ExpectActualTrackerAdapter(tracker))
+        }
+        icConfiguration[JvmClientManagedIncrementalCompilationConfigurationImpl.ENUM_WHEN_TRACKER]?.let { tracker ->
+            register(EnumWhenTracker::class.java, EnumWhenTrackerAdapter(tracker))
+        }
+        icConfiguration[JvmClientManagedIncrementalCompilationConfigurationImpl.INLINE_CONST_TRACKER]?.let { tracker ->
+            register(InlineConstTracker::class.java, InlineConstTrackerAdapter(tracker))
+        }
+
+    }
+
+    override fun clientManagedIcConfigurationBuilder(
+        incrementalCompilationComponents: CompilerIncrementalCompilationComponents,
+    ): JvmClientManagedIncrementalCompilationConfiguration.Builder =
+        JvmClientManagedIncrementalCompilationConfigurationImpl(incrementalCompilationComponents)
+
+    private fun getIcOptionsAccessorOrNull(): HasSnapshotBasedIcOptionsAccessor? {
+        val icConfiguration = get(INCREMENTAL_COMPILATION) ?: return null
+
+        return when (icConfiguration) {
+            is JvmSnapshotBasedIncrementalCompilationConfiguration -> icConfiguration.toOptions()
+            is JvmClientManagedIncrementalCompilationConfigurationImpl -> null
+            else -> error(
+                "Unexpected incremental compilation configuration: ${icConfiguration::class}."
+            )
+        }
     }
 
     private fun getEffectivePreciseJavaTrackingState(

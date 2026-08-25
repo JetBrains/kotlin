@@ -198,6 +198,14 @@ private class JvmCompilationOperationV1Adapter private constructor(
             compilerArguments.deepCopy())
     }
 
+    override fun clientManagedIcConfigurationBuilder(
+        incrementalCompilationComponents: CompilerIncrementalCompilationComponents,
+    ): JvmClientManagedIncrementalCompilationConfiguration.Builder {
+        throw UnsupportedOperationException(
+            "JvmClientManagedIncrementalCompilationConfiguration is available from Kotlin compiler version 2.5.20"
+        )
+    }
+
     override fun snapshotBasedIcConfigurationBuilder(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
