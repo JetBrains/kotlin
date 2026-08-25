@@ -165,7 +165,7 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
     }
 
     /**
-     * Add [element] to the buffer or fail with [IllegalStateException] if no free space is available in the buffer.
+     * Adds [element] to the buffer or fails with [IllegalStateException] if no free space is available in the buffer.
      */
     fun add(element: T) {
         if (isFull()) {
