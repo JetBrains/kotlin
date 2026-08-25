@@ -30,12 +30,12 @@ class IndexOverflowJVMTest {
             }
         }
 
-        fun assertIndexOverflow(f: () -> Unit) {
+        fun assertIndexOverflow(f: () -> Any) {
             val ex = assertFailsWith<ArithmeticException>(block = f)
             assertTrue(ex.message!!.contains("index", ignoreCase = true))
         }
 
-        fun assertCountOverflow(f: () -> Unit) {
+        fun assertCountOverflow(f: () -> Any) {
             val ex = assertFailsWith<ArithmeticException>(block = f)
             assertTrue(ex.message!!.contains("count", ignoreCase = true))
         }

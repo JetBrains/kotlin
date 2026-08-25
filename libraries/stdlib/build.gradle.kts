@@ -1,4 +1,5 @@
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
@@ -1057,16 +1058,36 @@ tasks.withType<Kotlin2JsCompile>().configureEach {
 }
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    doFirst {
+    val problems = serviceOf<Problems>()
+    val expectedRvcMode = "full"
+    doFirst("ensure return-value-checker is enabled") {
+        val reporter = problems.reporter
+
         val rvcModes = compilerOptions.freeCompilerArgs.orNull.orEmpty().filter { "return-value-checker" in it }
-        if (rvcModes.isEmpty()) {
-            logger.warn("[$path] return-value-check not configured")
-        } else if (rvcModes.size > 1) {
-            logger.warn("[$path] return-value-checker is configured multiple times: $rvcModes")
-        } else {
-            val rvcMode = rvcModes.single()
-            if (!rvcMode.endsWith("=full", ignoreCase = true)) {
-                logger.warn("[$path] return-value-checker incorrect mode $rvcMode")
+        val rvcMode = rvcModes.singleOrNull()
+
+        if (rvcMode == null) {
+            reporter.report(
+                ProblemId.create(
+                    "missing-rvc-mode",
+                    "return-value-checker not set",
+                    ProblemGroup.create("return-value-checker", "return-value-checker")
+                )
+            ) {
+                details("$path has invalid return-value-checker mode. All values: $rvcModes")
+                solution("""Enable return-value-checker""")
+            }
+        } else if (!rvcMode.endsWith("=$expectedRvcMode", ignoreCase = true)) {
+            logger.warn("$path has incorrect return-value-checker mode. Expected: $expectedRvcMode, but actual arg is: $rvcMode")
+            reporter.report(
+                ProblemId.create(
+                    "incorrect-rvc-mode",
+                    "incorrect return-value-checker mode",
+                    ProblemGroup.create("return-value-checker", "return-value-checker")
+                )
+            ) {
+                details("$path has incorrect return-value-checker mode. Expected: $expectedRvcMode, but actual arg is: $rvcMode")
+                solution("""Enable return-value-checker=$expectedRvcMode""")
             }
         }
     }
