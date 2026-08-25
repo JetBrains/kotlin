@@ -140,7 +140,8 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType CHARACTER_CONSTANT = new KtNodeType("CHARACTER_CONSTANT", KtConstantExpression::new);
     @NotNull KtNodeType INTEGER_CONSTANT   = new KtNodeType("INTEGER_CONSTANT", KtConstantExpression::new);
     @NotNull KtNodeType CLASS_LITERAL_EXPRESSION = new KtNodeType("CLASS_LITERAL_EXPRESSION", KtClassLiteralExpression::new);
-    @NotNull KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
+    @NotNull KtNodeType COLLECTION_LITERAL_EXPRESSION =
+            new KtNodeType("COLLECTION_LITERAL_EXPRESSION", KtCollectionLiteralExpression::new);
 
     @NotNull KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
             new KtPlaceHolderStubElementType<>("STRING_TEMPLATE", KtStringTemplateExpression.class);
