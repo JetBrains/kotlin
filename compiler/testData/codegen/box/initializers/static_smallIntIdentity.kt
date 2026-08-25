@@ -1,7 +1,5 @@
 // KT-66088
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// KT-66089
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WITH_STDLIB
 
 import kotlin.test.*

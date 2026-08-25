@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class WasmAutoboxingTransformer(val ctx: WasmBackendContext) : AutoboxingTransformer(ctx) {
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.symbol == ctx.wasmSymbols.consumeAnyIntoVoid) {
+        if (expression.symbol == ctx.wasmSymbols.consumeAnyIntoVoid ||
+            expression.symbol == ctx.wasmSymbols.createBoxIntrinsic
+        ) {
             expression.apply { transformChildrenVoid() }
             return expression
         }
