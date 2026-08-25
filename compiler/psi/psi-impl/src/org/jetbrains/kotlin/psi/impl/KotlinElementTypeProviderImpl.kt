@@ -62,7 +62,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val functionType: KtNodeType
         get() = KtStubElementTypes.FUNCTION
 
-    override val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>
+    override val propertyType: KtNodeType
         get() = KtStubElementTypes.PROPERTY
 
     override val enumEntryType: KtStubElementType<out KotlinClassStub, KtEnumEntry>

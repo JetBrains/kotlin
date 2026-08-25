@@ -2020,6 +2020,7 @@ public final class org/jetbrains/kotlin/psi/KtProjectionKind : java/lang/Enum {
 }
 
 public class org/jetbrains/kotlin/psi/KtProperty : org/jetbrains/kotlin/psi/KtTypeParameterListOwnerStub, org/jetbrains/kotlin/psi/KtVariableDeclaration {
+	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtProperty;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAccessors ()Ljava/util/List;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;

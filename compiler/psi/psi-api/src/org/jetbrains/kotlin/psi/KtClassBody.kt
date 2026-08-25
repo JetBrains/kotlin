@@ -65,7 +65,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * The properties declared directly in this body, in source order; empty if there are none.
      */
     val properties: List<KtProperty>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY)
+        get() = getStubOrPsiChildren(KtNodeTypes.PROPERTY, KtProperty.EMPTY_ARRAY).asList()
 
     /**
      * The named functions declared directly in this body, in source order; empty if there are none.
