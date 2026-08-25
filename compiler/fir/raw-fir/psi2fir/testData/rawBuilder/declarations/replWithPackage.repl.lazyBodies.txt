@@ -38,4 +38,7 @@ FILE: replWithPackage.repl.kts
             public? final? [ReplSnippetTopLevelDeclaration=true] val builder: <implicit> = REPL_EXPRESSION_REF
                 public? [ContainingClassKey=ReplWithPackage_repl] get(): <implicit>
 
+            public final [ReplSnippetTopLevelDeclaration=true] val $$result: <implicit> = REPL_EXPRESSION_REF
+                public get(): <implicit>
+
         }
