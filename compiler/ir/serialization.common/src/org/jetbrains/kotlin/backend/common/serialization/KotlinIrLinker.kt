@@ -85,6 +85,9 @@ abstract class KotlinIrLinker(
     private val moduleDeserializersByPackageName = mutableMapOf<FqName, MutableList<IrModuleDeserializer>>()
     private val moduleDeserializersWithUnknownPackageNames = mutableListOf<IrModuleDeserializer>()
 
+    val allModuleDeserializers: List<IrModuleDeserializer>
+        get() = deserializersForModules.values.toList()
+
     abstract val irMangler: KotlinMangler.IrMangler
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider

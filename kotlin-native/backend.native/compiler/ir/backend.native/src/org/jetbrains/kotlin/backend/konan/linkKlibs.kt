@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
@@ -85,6 +86,9 @@ internal fun LinkKlibsContext.linkKlibs(
     deserializeDependencies(moduleDescriptor, irLinker)
     ensureCStructsAndEnumsAreLoadedForCaching(irLinker, libraryToCacheModule)
 
+    // Get the list of all dependencies (including potentially unused platform libraries).
+    val originalModuleDependencies = IrModuleDependencies(irLinker.allModuleDeserializers.map { it.moduleFragment })
+
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
     val symbols = BackendNativeSymbols(this, irBuiltIns, config.configuration)
@@ -102,7 +106,7 @@ internal fun LinkKlibsContext.linkKlibs(
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
     // where the files are being initialized in order one by one.
-    modules.values.forEach { module -> module.files.sortBy { it.fileEntry.name } }
+    originalModuleDependencies.allDependencies.forEach { module -> module.files.sortBy { it.fileEntry.name } }
 
     if (stdlibIsBeingCached) {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
