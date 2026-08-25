@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -41,7 +40,7 @@ class BuiltInDefinitionFile(
                 // see KT-61757
                 return@let classes
             }
-            if (isMetadata || !FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES || !filterOutClassesExistingAsClassFiles) classes
+            if (isMetadata || !filterOutClassesExistingAsClassFiles) classes
             else classes.filter { classProto ->
                 shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName), packageDirectory)
             }
@@ -53,9 +52,6 @@ class BuiltInDefinitionFile(
     }
 
     companion object {
-        var FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true
-            @TestOnly set
-
         @JvmOverloads
         fun read(
             contents: ByteArray, file: VirtualFile,
