@@ -130,9 +130,8 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
      * from an enclosing {@link KtAnnotation} group, or {@code null} if there is none.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
-        KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
+        KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtNodeTypes.ANNOTATION_TARGET, KtAnnotationUseSiteTarget.class);
 
         if (target == null) {
             PsiElement parent = getParentByStub();
