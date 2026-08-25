@@ -218,3 +218,14 @@ interface MyInterface {
 
     var ExperimentalLibClass.bazProp: Boolean
 }
+
+// FILE: internal_optin.kt
+
+@RequiresOptIn(message = "This needs an OptIn")
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR,
+        AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
+internal annotation class MyInternalOptInApi
+
+@MyInternalOptInApi
+public fun publicFunWithInternalOptIn(): String = TODO()

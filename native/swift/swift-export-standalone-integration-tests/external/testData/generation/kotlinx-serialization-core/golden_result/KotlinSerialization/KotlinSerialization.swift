@@ -644,42 +644,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    @_spi(kotlinx$serialization$internal$CoreFriendModuleApi)
-    public final class ElementMarker: KotlinRuntime.KotlinBase {
-        @_spi(kotlinx$serialization$internal$CoreFriendModuleApi)
-        public func mark(
-            index: Swift.Int32
-        ) -> Swift.Void {
-            return { kotlinx_serialization_internal_ElementMarker_mark__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index); return () }()
-        }
-        @_spi(kotlinx$serialization$internal$CoreFriendModuleApi)
-        public func nextUnmarkedIndex() -> Swift.Int32 {
-            return kotlinx_serialization_internal_ElementMarker_nextUnmarkedIndex(self.__externalRCRef())
-        }
-        @_spi(kotlinx$serialization$internal$CoreFriendModuleApi)
-        public init(
-            descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-            readIfAbsent: @escaping (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
-        ) {
-            let __kt = kotlinx_serialization_internal_ElementMarker_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(__kt, descriptor.__externalRCRef(), {
-                let originalBlock: (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool = readIfAbsent
-                return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.Int32) in
-                    let _arg0: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor.Type.self) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
-                    let _arg1: Swift.Int32 = arg1
-                    let _result = originalBlock(_arg0, _arg1)
-                    return _result
-                }
-            }()); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
     @_spi(kotlinx$serialization$InternalSerializationApi)
     open class MapLikeSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer {
         @_spi(kotlinx$serialization$InternalSerializationApi)
@@ -1187,12 +1151,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     ) -> Swift.Void {
         return { kotlinx_serialization_internal_throwMissingFieldException__TypesOfArguments__Swift_Int32_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(seen, goldenMask, descriptor.__externalRCRef()); return () }()
-    }
-    @_spi(kotlinx$serialization$internal$CoreFriendModuleApi)
-    public static func jsonCachedSerialNames(
-        _ receiver: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
-    ) -> Swift.Set<Swift.String> {
-        return kotlinx_serialization_internal_jsonCachedSerialNames__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef()) as! Swift.Set<Swift.String>
     }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.modules {

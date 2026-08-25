@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
@@ -141,22 +142,28 @@ context(session: KaSession)
 public val KaDeclarationSymbol.allRequiredOptIns: List<ClassId>
     get() = sequence {
         allRequiredOptInClassIds(this@allRequiredOptIns)
-    }.distinct().toList().sortedBy { it.asFqNameString() }
+    }.mapNotNull { it.classId }.distinct().toList().sortedBy { it.asFqNameString() }
 
-private val KaAnnotation.classIdForOptInOrNull: ClassId?
+context(session: KaSession)
+public val KaDeclarationSymbol.hasNonPublicOptIns: Boolean
+    get() = sequence {
+        allRequiredOptInClassIds(this@hasNonPublicOptIns)
+    }.any { it.visibility != KaSymbolVisibility.PUBLIC }
+
+private val KaAnnotation.classSymbolForOptInOrNull: KaClassLikeSymbol?
     get() = this.constructorSymbol?.returnType?.symbol?.let { symbol ->
-        symbol.classId?.takeIf { symbol.requiresOptInAnnotation != null }
+        symbol.takeIf { symbol.requiresOptInAnnotation != null }
     }
 
 context(session: KaSession)
-private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(symbol: KaDeclarationSymbol): Unit = when (symbol) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaDeclarationSymbol): Unit = when (symbol) {
     is KaCallableSymbol -> allRequiredOptInClassIds(symbol)
     is KaClassLikeSymbol -> allRequiredOptInClassIds(symbol)
     else -> {}
 }
 
 context(session: KaSession)
-private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(symbol: KaClassLikeSymbol): Unit = with(session) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaClassLikeSymbol): Unit = with(session) {
     // Add supertype opt-in markers
     (symbol as? KaClassSymbol)?.superTypes.orEmpty().mapNotNull { type ->
         type.symbol as? KaClassSymbol
@@ -169,12 +176,12 @@ private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(symbol: KaCl
     symbol.containingDeclaration?.let { allRequiredOptInClassIds(it) }
 
     // Add own opt-in markers
-    symbol.annotations.forEach { it.classIdForOptInOrNull?.let { yield(it) } }
+    symbol.annotations.forEach { it.classSymbolForOptInOrNull?.let { yield(it) } }
 }
 
 @OptIn(KaExperimentalApi::class)
 context(session: KaSession)
-private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
     type: KaType,
     shouldExpand: Boolean = true,
 ): Unit = with(session) {
@@ -200,12 +207,12 @@ private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(
 
 @OptIn(KaExperimentalApi::class)
 context(session: KaSession)
-private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(symbol: KaCallableSymbol): Unit = with(session) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaCallableSymbol): Unit = with(session) {
     // Add opt-in markers from lexical scope
     symbol.containingDeclaration?.let { allRequiredOptInClassIds(it) }
 
     // Add own opt-in markers
-    symbol.annotations.forEach { it.classIdForOptInOrNull?.let { yield(it) } }
+    symbol.annotations.forEach { it.classSymbolForOptInOrNull?.let { yield(it) } }
 
     // Add opt-in markers from the types used in signature
     symbol.typeParameters.forEach { it.upperBounds.forEach { allRequiredOptInClassIds(it) } }
