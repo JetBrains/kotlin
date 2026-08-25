@@ -78,7 +78,7 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType FUNCTION_TYPE = new KtNodeType("FUNCTION_TYPE", KtFunctionType::new);
 
-    @NotNull KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
+    @NotNull KtNodeType TYPE_PROJECTION = new KtNodeType("TYPE_PROJECTION", KtTypeProjection::new);
 
     @NotNull KtPlaceHolderStubElementType<KtFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
             new KtPlaceHolderStubElementType<>("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver.class);

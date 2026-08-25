@@ -175,8 +175,7 @@ internal object KtStubBasedElementTypes {
     val INTERSECTION_TYPE: KtNodeType = provider.intersectionTypeType
 
     @JvmField
-    val TYPE_PROJECTION: KtStubElementType<out KotlinTypeProjectionStub, KtTypeProjection> =
-        provider.typeProjectionType
+    val TYPE_PROJECTION: KtNodeType = provider.typeProjectionType
 
 
     // Constants

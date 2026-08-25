@@ -10,11 +10,13 @@ import com.intellij.psi.PsiElement;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,7 +47,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
     /** Returns the type arguments (as projections), in source order; empty if there are none. */
     @NotNull
     public List<KtTypeProjection> getArguments() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PROJECTION);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.TYPE_PROJECTION, KtTypeProjection.EMPTY_ARRAY));
     }
 
     /**
