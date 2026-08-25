@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
@@ -56,7 +57,7 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
      * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
      */
     val contextParameters: List<KtParameter>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER)
+        get() = getStubOrPsiChildren(KtNodeTypes.VALUE_PARAMETER, KtParameter.EMPTY_ARRAY).asList()
 
     /**
      * Returns the context receivers within the list.

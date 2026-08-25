@@ -40,8 +40,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType:constructor(String, Class<T>)
 org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType:constructor(String)
-org.jetbrains.kotlin.psi.stubs.elements.KtParameterElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtParameterElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType:constructor(String, Class<T>)
 org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderWithTextStubElementType

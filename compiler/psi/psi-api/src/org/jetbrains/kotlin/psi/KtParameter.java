@@ -72,6 +72,8 @@ import java.util.List;
  * @see #hasValOrVar()
  */
 public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration, KtValVarKeywordOwner {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtParameter[] EMPTY_ARRAY = new KtParameter[0];
 
     @KtImplementationDetail
     public KtParameter(@NotNull ASTNode node) {
@@ -80,7 +82,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     @KtImplementationDetail
     public KtParameter(@NotNull KotlinParameterStub stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_PARAMETER);
+        super(stub, KtNodeTypes.VALUE_PARAMETER);
     }
 
     @Override
