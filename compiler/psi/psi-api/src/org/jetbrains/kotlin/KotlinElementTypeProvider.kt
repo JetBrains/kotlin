@@ -86,7 +86,7 @@ interface KotlinElementTypeProvider {
 
     // Type references
     val typeReferenceType: KtNodeType
-    val userTypeType: KtStubElementType<out KotlinUserTypeStub, KtUserType>
+    val userTypeType: KtNodeType
     val dynamicTypeType: KtNodeType
     val functionTypeType: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType>
     val functionTypeReceiverType: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>

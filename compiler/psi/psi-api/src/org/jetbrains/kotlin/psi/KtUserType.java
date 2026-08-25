@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
@@ -57,7 +58,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
 
     @KtImplementationDetail
     public KtUserType(@NotNull KotlinUserTypeStub stub) {
-        super(stub, KtStubBasedElementTypes.USER_TYPE);
+        super(stub, KtNodeTypes.USER_TYPE);
     }
 
     @Override
@@ -106,9 +107,8 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
      * {@code null} if the type name is unqualified.
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtUserType getQualifier() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.USER_TYPE);
+        return getStubOrPsiChild(KtNodeTypes.USER_TYPE, KtUserType.class);
     }
 
     /**
