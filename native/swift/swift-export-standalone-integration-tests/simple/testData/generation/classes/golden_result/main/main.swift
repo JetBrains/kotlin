@@ -1046,8 +1046,11 @@ extension ExportedKotlinPackages.intersection_overrides {
     public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
     }
     open class AbstractBazFoo: ExportedKotlinPackages.intersection_overrides.Baz {
-        package override init() {
-            fatalError()
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.intersection_overrides.AbstractBazFoo.self, "ExportedKotlinPackages.intersection_overrides.AbstractBazFoo is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { intersection_overrides_AbstractBazFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -1076,10 +1079,10 @@ extension ExportedKotlinPackages.intersection_overrides {
             }
         }
         public init() {
-            precondition(Self.self != ExportedKotlinPackages.intersection_overrides.AbstractBaz.self, "ExportedKotlinPackages.intersection_overrides.AbstractBaz is an abstract class and cannot be instantiated directly")
+            precondition(Self.self != ExportedKotlinPackages.intersection_overrides.AbstractFooBar.self, "ExportedKotlinPackages.intersection_overrides.AbstractFooBar is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { intersection_overrides_AbstractBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+            { intersection_overrides_AbstractFooBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -1118,7 +1121,12 @@ extension ExportedKotlinPackages.intersection_overrides {
             }
         }
         public init() {
-            let __kt = intersection_overrides_Baz_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.intersection_overrides.Baz.self {
+                 __kt = intersection_overrides_Baz_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { intersection_overrides_Baz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }

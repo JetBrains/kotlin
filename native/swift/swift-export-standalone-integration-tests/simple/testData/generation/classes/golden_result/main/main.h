@@ -215,11 +215,13 @@ void * __root___OBJECT_NO_PACKAGE_get();
 
 void * __root___OBJECT_WITH_GENERIC_INHERITANCE_get();
 
+_Bool intersection_overrides_AbstractBazFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 int32_t intersection_overrides_AbstractFooBar_baz_get(void * self);
 
 int32_t intersection_overrides_AbstractFooBar_fooBar_get(void * self);
 
-_Bool intersection_overrides_AbstractBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool intersection_overrides_AbstractFooBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NSString * intersection_overrides_Bar_bar_get(void * self);
 
