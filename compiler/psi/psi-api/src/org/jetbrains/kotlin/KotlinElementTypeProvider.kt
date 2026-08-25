@@ -75,7 +75,7 @@ interface KotlinElementTypeProvider {
     // Supertypes
     val superTypeListType: KtNodeType
     val delegatedSuperTypeEntryType: KtNodeType
-    val superTypeCallEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry>
+    val superTypeCallEntryType: KtNodeType
     val superTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry>
 
     // Modifiers and annotations
