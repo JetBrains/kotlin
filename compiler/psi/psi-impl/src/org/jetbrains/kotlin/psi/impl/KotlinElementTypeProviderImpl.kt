@@ -42,7 +42,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val typeAliasType: KtNodeType
         get() = KtStubElementTypes.TYPEALIAS
 
-    override val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
+    override val classBodyType: KtNodeType
         get() = KtStubElementTypes.CLASS_BODY
 
     @KtExperimentalApi

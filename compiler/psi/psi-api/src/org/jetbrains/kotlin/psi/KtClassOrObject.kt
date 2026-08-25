@@ -82,8 +82,7 @@ abstract class KtClassOrObject :
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
     override fun getBody(): KtClassBody? =
-        @Suppress("DEPRECATION") // KT-78356
-        getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
+        getStubOrPsiChild(KtNodeTypes.CLASS_BODY, KtClassBody::class.java)
 
     @Deprecated(
         message = "Use addMemberDeclaration(declaration) instead",
