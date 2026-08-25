@@ -54,7 +54,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val classInitializerType: KtNodeType
         get() = KtStubElementTypes.CLASS_INITIALIZER
 
-    override val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
+    override val scriptInitializerType: KtNodeType
         get() = KtStubElementTypes.SCRIPT_INITIALIZER
 
     // Callables

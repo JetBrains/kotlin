@@ -46,7 +46,7 @@ interface KotlinElementTypeProvider {
 
     // Initializers
     val classInitializerType: KtNodeType
-    val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
+    val scriptInitializerType: KtNodeType
 
     // Callables
     val functionType: KtNodeType
