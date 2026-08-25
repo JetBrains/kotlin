@@ -52,7 +52,7 @@ interface KotlinElementTypeProvider {
     val functionType: KtStubElementType<out KotlinFunctionStub, KtNamedFunction>
     val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>
     val enumEntryType: KtStubElementType<out KotlinClassStub, KtEnumEntry>
-    val primaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>
+    val primaryConstructorType: KtNodeType
     val secondaryConstructorType: KtNodeType
     val constructorCalleeType: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>
     val propertyAccessorType: KtStubElementType<out KotlinPropertyAccessorStub, KtPropertyAccessor>
