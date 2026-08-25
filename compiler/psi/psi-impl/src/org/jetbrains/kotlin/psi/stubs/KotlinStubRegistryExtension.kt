@@ -82,6 +82,11 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
             type = KtStubElementTypes.CLASS_INITIALIZER,
             psiFactory = ::KtClassInitializer,
         )
+
+        registry.registerStubSerializingFactory(
+            type = KtStubElementTypes.SCRIPT_INITIALIZER,
+            factory = KtScriptInitializerStubSerializingElementFactory,
+        )
     }
 }
 
