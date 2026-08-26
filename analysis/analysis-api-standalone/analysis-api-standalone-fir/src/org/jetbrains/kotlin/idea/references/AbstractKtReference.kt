@@ -42,7 +42,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
             ?: throw IllegalStateException("Cannot handle element rename because KtReferenceMutateService is missing")
 
     @Suppress("UNCHECKED_CAST")
-    override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>
+    override fun getVariants(): Array<Any> = EMPTY_ARRAY as Array<Any>
 
     override fun isSoft(): Boolean = false
 
