@@ -371,8 +371,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean
 
-    fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean
-
     /**
      * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
      */
