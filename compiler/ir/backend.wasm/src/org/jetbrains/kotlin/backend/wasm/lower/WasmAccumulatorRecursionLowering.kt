@@ -74,6 +74,31 @@ internal class WasmAccumulatorRecursionLowering(
         return owner.returnType.classifierOrFail == classifier
     }
 
+    /**
+     * Reassociate `lhs op (x op ... op self(...))` into `(lhs op x op ...) op self(...)`.
+     * Returns the self-call if reassociation succeeded, null otherwise.
+     */
+    private fun reassociateRight(
+        outerCall: IrCall,
+        selfSymbol: IrSimpleFunctionSymbol,
+        classifier: Any?,
+    ): IrCall? {
+        val rhs = outerCall.arguments[1] as? IrCall ?: return null
+        if (!isAccumOp(rhs, classifier)) return null
+        val innerRhs = rhs.arguments[1]
+        if (innerRhs is IrCall && innerRhs.symbol == selfSymbol) {
+            // lhs op (x op self(...)) → (lhs op x) op self(...)
+            val innerLhs = rhs.arguments[0]
+            rhs.arguments[0] = outerCall.arguments[0]
+            rhs.arguments[1] = innerLhs
+            outerCall.arguments[0] = rhs
+            outerCall.arguments[1] = innerRhs
+            return innerRhs
+        }
+        // Try deeper nesting.
+        return reassociateRight(rhs, selfSymbol, classifier)
+    }
+
     private fun collectAccumSites(func: IrSimpleFunction): List<AccumSite>? {
         val classifier = func.returnType.classifierOrFail
         val selfSymbol = func.symbol
@@ -99,6 +124,12 @@ internal class WasmAccumulatorRecursionLowering(
                                 sites += AccumSite(expression, value, rhs, recOnRight = true)
                             lhs is IrCall && lhs.symbol == selfSymbol && rhs.isPure(anyVariable = true) ->
                                 sites += AccumSite(expression, value, lhs, recOnRight = false)
+                            else -> {
+                                val selfCall = reassociateRight(value, selfSymbol, classifier)
+                                if (selfCall != null) {
+                                    sites += AccumSite(expression, value, selfCall, recOnRight = true)
+                                }
+                            }
                         }
                     }
                 }
@@ -216,7 +247,12 @@ internal class WasmAccumulatorRecursionLowering(
                     } else if (lhs is IrCall && lhs.symbol == origFuncSymbol) {
                         recCall = lhs; other = rhs
                     } else {
-                        recCall = null; other = null
+                        val reassociated = reassociateRight(opCall, origFuncSymbol, original.returnType.classifierOrFail)
+                        if (reassociated != null) {
+                            recCall = reassociated; other = opCall.arguments[0]
+                        } else {
+                            recCall = null; other = null
+                        }
                     }
                     if (recCall != null && other != null) {
                         return builder.irBlock {

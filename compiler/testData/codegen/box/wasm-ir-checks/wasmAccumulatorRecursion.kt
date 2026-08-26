@@ -17,6 +17,7 @@
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=boolOrChain$accum
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=boolXorChain$accum
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=mixedCountDown$accum
+// WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=nestedConcat$accum
 
 // --- Int ---
 
@@ -121,6 +122,12 @@ fun repeatStr(s: String, n: Int): String {
     return s + repeatStr(s, n - 1)
 }
 
+// Nested right-associative: a + (b + rec(...)) is reassociated to (a + b) + rec(...).
+fun nestedConcat(n: Int): String {
+    if (n == 0) return ""
+    return "[" + ("." + nestedConcat(n - 1))
+}
+
 fun box(): String {
     if (countDown(1_000_000) != 1_000_000) return "fail countDown"
 
@@ -167,6 +174,11 @@ fun box(): String {
 
     val expected = "ab".repeat(10_000)
     if (repeatStr("ab", 10_000) != expected) return "fail repeatStr"
+
+    // nestedConcat(3) = "[" + ("." + ("[" + ("." + ("[" + ("." + ""))))) = "[.[.[."
+    if (nestedConcat(3) != "[.[.[.") return "fail nestedConcat"
+    // Deep recursion to verify tail call works.
+    if (nestedConcat(100_000).length != 200_000) return "fail nestedConcat deep"
 
     return "OK"
 }
