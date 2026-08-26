@@ -16,6 +16,7 @@
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=boolAndChain$accum
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=boolOrChain$accum
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=boolXorChain$accum
+// WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=mixedCountDown$accum
 
 // --- Int ---
 
@@ -104,6 +105,14 @@ fun boolXorChain(n: Int): Boolean {
     return true xor boolXorChain(n - 1)
 }
 
+// Mixed: some return sites are plain self-calls (already in tail position),
+// others are accum sites. Both become tail calls in the accumulator helper.
+fun mixedCountDown(n: Int): Int {
+    if (n == 0) return 0
+    if (n % 2 == 0) return mixedCountDown(n - 1)
+    return 1 + mixedCountDown(n - 1)
+}
+
 // --- String ---
 
 // String concatenation (associative, not commutative).
@@ -152,6 +161,9 @@ fun box(): String {
     // `true xor` applied an even number of times cancels out.
     if (boolXorChain(1_000_000) != false) return "fail boolXorChain even"
     if (boolXorChain(999_999) != true) return "fail boolXorChain odd"
+
+    // Mixed pattern: 1 is added only for odd n, so result = 500_000.
+    if (mixedCountDown(1_000_000) != 500_000) return "fail mixedCountDown"
 
     val expected = "ab".repeat(10_000)
     if (repeatStr("ab", 10_000) != expected) return "fail repeatStr"

@@ -78,7 +78,6 @@ internal class WasmAccumulatorRecursionLowering(
         val classifier = func.returnType.classifierOrFail
         val selfSymbol = func.symbol
         val sites = mutableListOf<AccumSite>()
-        var totalSelfCalls = 0
         var sawTry = false
 
         func.body?.acceptVoid(object : IrVisitorVoid() {
@@ -87,11 +86,6 @@ internal class WasmAccumulatorRecursionLowering(
             override fun visitClass(declaration: IrClass) {}
             override fun visitTry(aTry: IrTry) {
                 sawTry = true
-            }
-
-            override fun visitCall(expression: IrCall) {
-                if (expression.symbol == selfSymbol) totalSelfCalls++
-                super.visitCall(expression)
             }
 
             override fun visitReturn(expression: IrReturn) {
@@ -113,7 +107,6 @@ internal class WasmAccumulatorRecursionLowering(
         })
 
         if (sawTry || sites.isEmpty()) return null
-        if (totalSelfCalls != sites.size) return null
         if (sites.map { it.opCall.symbol }.distinct().size != 1) return null
         if (sites.map { it.recOnRight }.distinct().size != 1) return null
         return sites
@@ -238,6 +231,20 @@ internal class WasmAccumulatorRecursionLowering(
                                 },
                             )
                         }
+                    }
+                }
+
+                // Plain self-call: delegate to f$accum with the current accumulator.
+                if (value is IrCall && value.symbol == origFuncSymbol) {
+                    return builder.irBlock {
+                        +builder.irReturn(
+                            builder.irCall(fAcc.symbol).apply {
+                                for (i in value.arguments.indices) {
+                                    arguments[i] = value.arguments[i]
+                                }
+                                arguments[value.arguments.size] = builder.irGet(accParam)
+                            },
+                        )
                     }
                 }
 
