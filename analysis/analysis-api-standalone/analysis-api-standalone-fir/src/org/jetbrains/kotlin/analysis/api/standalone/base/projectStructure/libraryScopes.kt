@@ -65,6 +65,7 @@ internal fun createLibrarySearchScope(
             createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
     }
 
+@OptIn(KaImplementationDetail::class)
 internal fun createParentTraversalLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
@@ -97,6 +98,7 @@ private class ParentTraversalLibrarySearchScope(
     override fun toString(): String = "Parent-traversal library search scope over $rootFiles"
 }
 
+@OptIn(KaImplementationDetail::class)
 internal fun createTrieLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,

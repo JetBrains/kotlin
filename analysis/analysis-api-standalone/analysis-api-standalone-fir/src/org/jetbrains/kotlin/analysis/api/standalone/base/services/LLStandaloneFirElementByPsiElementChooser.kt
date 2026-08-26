@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  *
  * TODO: We might be able to remove this service if KT-65836 is viable (using stub-based deserialized symbol providers in Standalone mode).
  */
-@OptIn(KaImplementationDetail::class)
+@KaImplementationDetail
 class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChooser() {
     override fun isMatchingValueParameter(psi: KtParameter, fir: FirValueParameter): Boolean {
         if (fir.realPsi != null) return fir.realPsi === psi
