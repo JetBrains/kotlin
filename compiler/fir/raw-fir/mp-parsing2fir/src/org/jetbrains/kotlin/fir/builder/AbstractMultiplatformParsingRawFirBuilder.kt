@@ -10,7 +10,12 @@ import com.intellij.platform.syntax.SyntaxElementTypeSet
 import com.intellij.platform.syntax.element.SyntaxTokenTypes.BAD_CHARACTER
 import com.intellij.platform.syntax.element.SyntaxTokenTypes.ERROR_ELEMENT
 import com.intellij.platform.syntax.syntaxElementTypeSetOf
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.COMMENTS
@@ -22,6 +27,7 @@ import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 
+@Suppress("UnstableApiUsage")
 abstract class AbstractMultiplatformParsingRawFirBuilder(
     baseSession: FirSession,
     val treeStructure: KotlinLightTreeStructure,
@@ -39,28 +45,25 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.elementType: SyntaxElementType
         get() = tree.getType(this)
 
-    override fun SyntaxElementType.isPlus(): Boolean = this == KtTokens.PLUS
-    override fun SyntaxElementType.isMinus(): Boolean = this == KtTokens.MINUS
+    override fun SyntaxElementType.typeToTokenId(): Int {
+        val nodeTypeId = KtNodeTypes.getElementTypeId(this)
+        if (nodeTypeId != 0) return nodeTypeId
+        return KtTokens.getElementTypeId(this)
+    }
 
-    override fun SyntaxElementType.isIntegerConstant(): Boolean = this == KtTokens.INTEGER_LITERAL
-    override fun SyntaxElementType.isFloatConstant(): Boolean = this == KtTokens.FLOAT_LITERAL
-    override fun SyntaxElementType.isBooleanConstant(): Boolean = this == KtNodeTypes.BOOLEAN_CONSTANT
-    override fun SyntaxElementType.isCharacterConstant(): Boolean = this == KtTokens.CHARACTER_LITERAL
-    override fun SyntaxElementType.isNullConstant(): Boolean = this == KtNodeTypes.NULL
+    override fun KtSourceElement.isChildInParentheses(): Boolean =
+        (treeStructure.getParent(lighterASTNode) as? KotlinLightAstNode)?.node?.tokenType == KtNodeTypes.PARENTHESIZED
 
-    override fun SyntaxElementType.isStringInterpolationPrefix(): Boolean = this == KtNodeTypes.STRING_INTERPOLATION_PREFIX
-    override fun SyntaxElementType.isOpenQuote(): Boolean = this == KtTokens.OPEN_QUOTE
-    override fun SyntaxElementType.isClosingQuote(): Boolean = this == KtTokens.CLOSING_QUOTE
-    override fun SyntaxElementType.isLiteralStringTemplateEntry(): Boolean = this == KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
-    override fun SyntaxElementType.isEscapeStringTemplateEntry(): Boolean = this == KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
-    override fun SyntaxElementType.isShortStringTemplateEntry(): Boolean = this == KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
-    override fun SyntaxElementType.isLongStringTemplateEntry(): Boolean = this == KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
+    override fun LightNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
+        val startOffset = tree.getStartOffset(this)
+        val endOffset = tree.getEndOffset(this)
+        val lighterNode = KotlinLightAstNode(tree, this)
+        return KtLightSourceElement(lighterNode, startOffset, endOffset, treeStructure, kind ?: KtRealSourceElementKind)
+    }
 
-    override fun SyntaxElementType.isArrayAccessExpression(): Boolean = this == KtNodeTypes.ARRAY_ACCESS_EXPRESSION
-    override fun SyntaxElementType.isSafeAccessExpression(): Boolean = this == KtNodeTypes.SAFE_ACCESS_EXPRESSION
-    override fun SyntaxElementType.isParenthesized(): Boolean = this == KtNodeTypes.PARENTHESIZED
-    override fun SyntaxElementType.isLabeledExpression(): Boolean = this == KtNodeTypes.LABELED_EXPRESSION
-    override fun SyntaxElementType.isAnnotatedExpression(): Boolean = this == KtNodeTypes.ANNOTATED_EXPRESSION
+    override fun KtSourceElement.toNode(): LightNode {
+        return ((this as KtLightSourceElement).lighterASTNode as KotlinLightAstNode).node
+    }
 
     val LightNode.tokenType: SyntaxElementType
         get() = tree.getType(this)
@@ -68,88 +71,74 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.asText: String
         get() = tree.getText(this).toString()
 
-    override fun LightNode.getLabelName(): String? {
-        if (tokenType == KtNodeTypes.FUN) {
-            return getParent()?.getLabelName()
-        }
-        this.forEachChildren {
-            when (it.tokenType) {
-                KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
-            }
-        }
-
-        return null
-    }
-
     override fun LightNode.getChildNodeByType(type: SyntaxElementType): LightNode? {
         return tree.getChildren(this).firstOrNull { it.tokenType == type }
     }
 
-    override fun LightNode.getModifierList(): LightNode? = getChildNodeByType(KtNodeTypes.MODIFIER_LIST)
-
-    override fun LightNode.getVarargKeyword(): LightNode? = getChildNodeByType(KtTokens.VARARG_MODIFIER)
-
     override val LightNode?.receiverExpression: LightNode?
         get() {
             var candidate: LightNode? = null
+            var result: LightNode? = null
             this?.forEachChildren {
+                if (result != null) return@forEachChildren
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> return if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
+                    DOT, SAFE_ACCESS -> result = if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
                     else -> candidate = it
                 }
             }
-            return null
+            return result
         }
 
     override val LightNode?.selectorExpression: LightNode?
         get() {
             var isSelector = false
+            var result: LightNode? = null
             this?.forEachChildren {
+                if (result != null) return@forEachChildren
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
-                    else -> if (isSelector) return if (it.tokenType != ERROR_ELEMENT) it else null
+                    else -> if (isSelector) {
+                        result = if (it.tokenType != ERROR_ELEMENT) it else null
+                    }
                 }
             }
-            return null
+            return result
         }
 
     override val LightNode?.indexExpressions: List<LightNode>?
         get() = this?.getLastChildExpression()?.let {
-            tree.getChildren(it).filter { it.isExpression() }
+            tree.getChildren(it).filter { it.toTokenId().isExpression() }
         }
 
-    protected fun LightNode.getParent(): LightNode? {
+    override fun LightNode.getParent(): LightNode? {
         return tree.getParent(this)
     }
 
+    override fun LightNode.getChildren(): List<LightNode> {
+        return tree.getChildren(this)
+    }
+
     override fun LightNode.getFirstChildExpression(): LightNode? {
-        forEachChildren {
-            if (it.isExpression()) return it
-        }
-
-        return null
+        return tree.getChildren(this).firstOrNull { it.toTokenId().isExpression() }
     }
 
-    override fun LightNode.getLastChildExpression(): LightNode? {
-        var result: LightNode? = null
-        forEachChildren {
-            if (it.isExpression()) {
-                result = it
-            }
-        }
-
-        return result
-    }
-
-    protected fun LightNode.isExpression(): Boolean {
-
-    }
-
-    protected inline fun LightNode.forEachChildren(f: (LightNode) -> Unit) {
+    override fun LightNode.forEachChildren(f: (LightNode) -> Unit) {
         val kids = tree.getChildren(this)
         for (kid in kids) {
             if (ignoredTokens.contains(kid.tokenType)) continue
             f(kid)
         }
+    }
+
+    override fun <T> LightNode.forEachChildrenReturnList(f: (LightNode, MutableList<T>) -> Unit): MutableList<T> {
+        val kids = tree.getChildren(this)
+
+        val container = mutableListOf<T>()
+        for (kid in kids) {
+            if (ignoredTokens.contains(kid.tokenType)) continue
+            f(kid, container)
+        }
+
+        return container
     }
 }
