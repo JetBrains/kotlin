@@ -452,6 +452,7 @@
 
 /prepare/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /prepare/analysis-api/ "Kotlin Analysis API"
+/prepare/ide-plugin-dependencies/ide-plugin-dependencies-classpath-check/proguard-warnings.txt "Kotlin Analysis API" "Kotlin Frontend" "Kotlin Common Backend" "Kotlin JVM" "Kotlin Build Infrastructure"
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /repo/auto-code-review svyatoslav.scherbina@jetbrains.com sergey.bogolepov@jetbrains.com simon.ogorodnik@jetbrains.com
