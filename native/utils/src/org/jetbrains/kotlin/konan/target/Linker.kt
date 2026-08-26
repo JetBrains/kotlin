@@ -83,6 +83,16 @@ private fun responseFileArg(tempFiles: TempFiles, responseFilePrefix: String, pa
     return "@${responseFile.absolutePathString()}"
 }
 
+/**
+ * Passes [this] to GCC/lld via a quoted `@response` file.
+ * Quoting is required so paths with spaces are not split when lld expands the file.
+ * Using `@file` also avoids ld.lld error=7 (Argument list too long).
+ */
+private fun List<String>.asGccSpreadArgument(filePrefixName: String, tempFiles: TempFiles): List<String> {
+    if (isEmpty()) return emptyList()
+    return listOf(responseFileArg(tempFiles, filePrefixName, this))
+}
+
 class LinkerArguments(
     val tempFiles: TempFiles,
     val objectFiles: List<ObjectFile>,
@@ -430,6 +440,8 @@ class GccBasedLinker(targetProperties: GccConfigurables)
         }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
+        val staticLibrariesArgs = staticLibraries.asGccSpreadArgument("static", tempFiles)
+        val dynamicLibrariesArgs = dynamicLibraries.asGccSpreadArgument("dynamic", tempFiles)
         // TODO: Can we extract more to the konan.configurables?
         return listOf(Command(absoluteLinker).apply {
             +"--sysroot=${absoluteTargetSysRoot}"
@@ -466,8 +478,8 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                     +provideCompilerRtLibrary("tsan_cxx")!!
                 }
             }
-            +staticLibraries
-            +dynamicLibraries
+            +staticLibrariesArgs
+            +dynamicLibrariesArgs
             +linkerArgs
             // See explanation about `-u__llvm_profile_runtime` here:
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
