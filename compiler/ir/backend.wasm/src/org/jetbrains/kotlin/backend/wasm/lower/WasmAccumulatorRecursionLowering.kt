@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.wasm.config.wasmEnableTailCalls
  */
 internal class WasmAccumulatorRecursionLowering(
     private val context: WasmBackendContext,
-) : FileLoweringPass {
+) : BodyLoweringPass {
     companion object {
         /** Marks the synthesized `f$accum` accumulator-passing helpers. */
         val ACCUM_FUNCTION by IrDeclarationOriginImpl.Regular
@@ -49,21 +49,10 @@ internal class WasmAccumulatorRecursionLowering(
 
     private val enabled = context.configuration.wasmEnableTailCalls
 
-    override fun lower(irFile: IrFile) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!enabled) return
-
-        val allFunctions = mutableListOf<IrSimpleFunction>()
-        irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
-            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                allFunctions += declaration
-                declaration.acceptChildrenVoid(this)
-            }
-        })
-
-        for (func in allFunctions) {
-            tryAccumulatorTransform(func)
-        }
+        val func = container as? IrSimpleFunction ?: return
+        tryAccumulatorTransform(func)
     }
 
     /**
