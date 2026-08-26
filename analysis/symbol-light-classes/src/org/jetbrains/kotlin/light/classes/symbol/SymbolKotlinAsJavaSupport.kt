@@ -635,8 +635,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     //region Bridge
 
     context(_: KaSession)
-    override fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String): String? =
-        computeJavaMethodNameImpl(symbol, defaultName)
+    override fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreValueClassMangling: Boolean): String? =
+        computeJavaMethodNameImpl(symbol, defaultName, ignoreValueClassMangling)
 
     //endregion
 

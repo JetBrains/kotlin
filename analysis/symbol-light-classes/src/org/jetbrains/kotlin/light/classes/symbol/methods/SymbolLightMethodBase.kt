@@ -24,8 +24,11 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 
 internal abstract class SymbolLightMethodBase(
@@ -110,10 +113,12 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
-    protected fun computeJvmExposeBoxedMethodName(
-        symbol: KaCallableSymbol,
-        defaultName: String,
-    ): String = symbol.getJvmExposeBoxedNameFromAnnotation() ?: symbol.getJvmNameFromAnnotation() ?: defaultName
+    context(_: KaSession)
+    protected fun computeJvmExposeBoxedMethodName(symbol: KaCallableSymbol, defaultName: String): String {
+        return symbol.getJvmExposeBoxedNameFromAnnotation()
+            ?: computeJavaMethodName(symbol, defaultName, ignoreValueClassMangling = true)
+            ?: defaultName
+    }
 
     abstract fun isOverride(): Boolean
 
