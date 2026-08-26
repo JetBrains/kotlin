@@ -14,10 +14,12 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
@@ -91,9 +93,11 @@ fun Project.registerForeignClassUsageTasks(
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .optional(true)
 
-        // The task produces nothing, and Gradle reruns a task with no declared outputs unconditionally. Every input
-        // it reads is declared above, so an unchanged set of them means the verdict cannot have changed either.
-        outputs.upToDateWhen { true }
+        reportFile.set(layout.buildDirectory.file("foreign-class-usage/$name.txt"))
+
+        // Opted in per task rather than through '@CacheableTask' on the type: the rewriting half writes into the
+        // source tree, and restoring that from a cache is not something one ever wants.
+        outputs.cacheIf { true }
     }
 
     tasks.named("check").configure { dependsOn(checkTask) }
@@ -126,9 +130,13 @@ abstract class ForeignClassUsageTask : DefaultTask() {
      * Dependencies of [classes] in the same format: directories containing `.class` files, or JAR files with them.
      *
      * If the [classpath] property is set, the task verifies that all foreign API classes are present in it.
+     *
+     * Normalized as a classpath, which is what every caller passes. The task only reads class names, from the entries
+     * of a JAR or from paths relative to a directory, and classpath normalization keeps both while dropping where the
+     * entry itself happens to live. It also brings in the `runtimeClasspath` normalization rules of the build, so
+     * that a stamp such as `META-INF/compiler.version` stops invalidating a result it cannot change.
      */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Classpath
     abstract val classpath: ConfigurableFileCollection
 
     /**
@@ -229,6 +237,19 @@ abstract class ForeignClassUsageTask : DefaultTask() {
     abstract val overwriteDump: Property<Boolean>
 
     /**
+     * File the computed foreign class usage is written to.
+     *
+     * A verifying task produces nothing of its own, and Gradle neither caches nor considers up to date a task with
+     * no declared outputs. This gives it one, in the build directory, holding the very text it compared against the
+     * dump — useful on its own when a failure needs to be inspected.
+     *
+     * Left unset for a rewriting task, whose output is the dump itself.
+     */
+    @get:OutputFile
+    @get:Optional
+    abstract val reportFile: RegularFileProperty
+
+    /**
      * Name of the task that rewrites this dump.
      *
      * A verifying task names it in its failure, so that the fix can be run without looking it up. Unset when the
@@ -275,6 +296,13 @@ abstract class ForeignClassUsageTask : DefaultTask() {
             }
 
             filteredClassNames.add(className)
+        }
+
+        // Written before the comparisons rather than after them: a failure is exactly when one wants to see what
+        // was computed, and a report left over from an earlier run would say something else.
+        reportFile.orNull?.asFile?.let { file ->
+            file.parentFile.mkdirs()
+            file.writeText(renderClassNames(filteredClassNames, processor))
         }
 
         checkAgainstClasspath(filteredClassNames, processor)
