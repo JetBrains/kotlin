@@ -50,8 +50,16 @@ import kotlin.test.fail
 @MppGradlePluginTests
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            gradleDaemonMemoryLimitInMb = 3 * 1024
+        )
+
     @GradleTest
-    fun `import of modular dependencies in platform source sets - passes only platform artifacts to IDE and doesn't leak artifacts to source sets where the dependency is not declared`(gradleVersion: GradleVersion) {
+    fun `import of modular dependencies in platform source sets - passes only platform artifacts to IDE and doesn't leak artifacts to source sets where the dependency is not declared`(
+        gradleVersion: GradleVersion,
+    ) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             jvm()
             linuxX64()
@@ -67,9 +75,11 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileSource("fun common() {}")
                 }
             }
-        }.publish(publisherConfiguration = PublisherConfiguration(
-            group = "producer",
-        ))
+        }.publish(
+            publisherConfiguration = PublisherConfiguration(
+                group = "producer",
+            )
+        )
 
         project("empty", gradleVersion) {
             addPublishedProjectToRepositories(producer)
@@ -650,7 +660,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 dependencies["commonTest"]
                     .assertMatches(expectedJvmDependencies + friendDependencies)
                 dependencies["jvmTest"]
-                    .assertMatches(expectedJvmDependencies + friendDependencies + dependsOnDependency(":/commonTest") )
+                    .assertMatches(expectedJvmDependencies + friendDependencies + dependsOnDependency(":/commonTest"))
             }
         }
     }
@@ -710,6 +720,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     fun `IDE resolution strict mode`(gradleVersion: GradleVersion) {
         class Foo : Exception()
         class Bar : Exception()
+
         val baz = "baz"
         val project = project("empty", gradleVersion) {
             plugins { kotlin("multiplatform") }
@@ -740,9 +751,10 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
         assertThrows<Exception> { project.resolveIdeDependencies(strictMode = true) {} }
 
-        val events = project.catchBuildFailures<org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger.Events>().buildAndReturn(
-            ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
-        ).unwrap().single()
+        val events =
+            project.catchBuildFailures<org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger.Events>().buildAndReturn(
+                ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
+            ).unwrap().single()
         assertEquals<List<Class<*>>>(
             listOf(
                 Foo::class.java,
@@ -829,7 +841,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun `KT-81724 transitive dependency with different scopes lead to false positive green code in common source set`(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         fun TestProject.defaultKmpSetup() = buildScriptInjection {
             project.applyMultiplatform {
