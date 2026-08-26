@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.lightTree.converter.LightTreeRawFirDeclarationBuilder
+import org.jetbrains.kotlin.fir.lightTree.converter.MyBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.parsing.KotlinLightParser
-import org.jetbrains.kotlin.readSourceFileWithMapping
-import java.io.File
-import java.nio.file.Path
 
 class LightTree2Fir(
     override val session: FirSession,
@@ -37,7 +33,7 @@ class LightTree2Fir(
         sourceFile: KtSourceFile,
         linesMapping: KtSourceFileLinesMapping,
     ): FirFile {
-        return LightTreeRawFirDeclarationBuilder(session, scopeProvider, lightTree)
+        return MyBuilder(session, scopeProvider, lightTree)
             .convertFile(lightTree.root, sourceFile, linesMapping)
     }
 

@@ -126,7 +126,7 @@ internal fun generateTemporaryVariable(
     )
 
 context(c: DestructuringContext<KtDestructuringDeclarationEntry>)
-internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
+internal fun AbstractRawFirBuilder<*, *>.generateDestructuringBlock(
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
@@ -146,7 +146,7 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
 }
 
 context(c: DestructuringContext<KtDestructuringDeclarationEntry>)
-internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
+internal fun AbstractRawFirBuilder<*, *>.addDestructuringVariables(
     destination: MutableList<in FirVariable>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
@@ -157,6 +157,7 @@ internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
 ) {
     addDestructuringVariables(
         destination,
+        context,
         moduleData,
         container,
         multiDeclaration.entries,
