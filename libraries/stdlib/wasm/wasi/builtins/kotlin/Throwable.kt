@@ -14,7 +14,7 @@ import kotlin.wasm.internal.*
  * @param cause the cause of this throwable.
  */
 public actual open class Throwable
-public actual constructor(public actual open val message: String?, public actual open val cause: kotlin.Throwable?) {
+public actual constructor(public actual open val message: String?, public actual open val cause: Throwable?) {
     public actual constructor(message: String?) : this(message, null)
 
     public actual constructor(cause: Throwable?) : this(cause?.toString(), cause)
@@ -31,13 +31,15 @@ public actual constructor(public actual open val message: String?, public actual
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val s = getSimpleName(wasmGetObjectRtti(this))
+        val s = getQualifiedName(wasmGetObjectRtti(this))
         return if (message != null) "$s: $message" else s
     }
 }
 
 internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
     get() = this.suppressedExceptionsList
-    set(value) { this.suppressedExceptionsList = value }
+    set(value) {
+        this.suppressedExceptionsList = value
+    }
 
 internal actual val Throwable.stack: String get() = this.stack
