@@ -73,7 +73,6 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         }
     }
 
-    @Ignore("KT-88857")
     @GradleTest
     fun consumeProjectDependencyViaSettingsInjection(version: GradleVersion) {
         // Use Groovy because it loads faster
