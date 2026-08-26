@@ -36,6 +36,42 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-25 — the implicit-outer recovery is entered on scope, not on an untested emptiness
+- **Change**: `computeTypeArguments` entered `recoverInheritedOuterTypeArguments` on
+  `outerTypeParams.isEmpty() || lexicalArgs.any { it == null }`. The first disjunct had no antecedent:
+  the inherited case the comment describes (`J1.NestedSubClass extends NestedInSuperClass`,
+  `KJKComplexHierarchyWithNested.kt`) leaves the list *non-empty* — `SuperClass` does expose its `T` — so
+  it is the `any { it == null }` arm that fires. The only shape that would need it is a cross-file outer
+  whose symbol is momentarily unresolvable under the cycle guard (`FirBackedJavaClassAdapter.typeParameters`
+  returns `emptyList()` when `firRegularClass` is `null`), which could not be reproduced. Dropped, per the
+  module's rule that pushback on a simplification needs a test or a call path; it is also a no-op in the
+  benign empty case (an outer chain declaring nothing makes the recovery return an empty list) and spares
+  a supertype walk on every `Inner` reference under a non-generic outer.
+- **Files**: `model/JavaTypeOverAst.kt` (+5/−7, comment restated to one condition).
+- **Tests**: `JavaUsingAst{Phased,Box}TestGenerated` + all `JavaParsing*`: 2916 executed, 0 FAILED.
+- **Result**: green. If the cycle-guard shape is real its symptom is an arity mismatch, silently truncated
+  by `JavaTypeConversion.buildTypeProjections`; the fix would then belong in the adapter's blindness.
+
+### 2026-08-25 — a `static` outer contributes its own type parameters before severing the chain
+- **Change**: the outer-collection walk in `JavaClassifierTypeOverAst.computeTypeArguments` tested
+  `outer.isStatic` *before* adding that outer's parameters, so `static class S<T> { class Inner {} }` gave
+  `Inner` **no** implicit outer argument. A `static` class severs the enclosing-instance chain *above*
+  itself; its own parameters are still implicit arguments of a non-static class nested in it (JLS:
+  `S<T>.Inner`). Three peers already put the break after the addition — PSI's
+  `JavaClassifierTypeImpl.getTypeParameters`, `JavaTypeConversion.allTypeParametersNumber` and `computeIsRaw`
+  in this same file — and `FirJavaFacade.createFirJavaClass` keys the outer refs on `Inner`'s staticness, so
+  FIR gave `Inner` arity 1 against 0 arguments: an arity mismatch that `buildTypeProjections` truncates with
+  no diagnostic. Walk now adds first and does `outer = if (outer.isStatic) null else outer.outerClass`.
+- **Files**: `model/JavaTypeOverAst.kt`; `JavaParsingImplicitOuterTypeArgumentsTest.kt` (+1 test,
+  `assertSame` against `S`'s own parameter instance and `A`'s `T` absent). Comments in the block rewritten
+  per the Source Comment Conventions (PSI-parity note kept only at `isInScopeOfDeclaringClass`).
+- **Tests**: new test fails on the pre-fix loop and passes after; full `JavaUsingAst{Phased,Box}TestGenerated`
+  2812 executed, 0 FAILED.
+- **Result**: fixed. Left unchanged deliberately: `lexicalArgs.any { it == null }` (mixed lists are reachable
+  only for raw references, where the arguments are discarded anyway) and the `?: typeParam` fallback (a
+  wildcard would substitute a silent `ConeStarProjection` where today you get the right parameter or a
+  visible `ConeErrorType`).
+
 ### 2026-08-21 — a jar opened via `CoreJarFileSystem` outlived its `@TempDir` on Windows
 - **Change**: `ClasspathRestrictionTest` opens a `lib.jar` written under JUnit's `@TempDir` through
   `CoreJarFileSystem`, which caches the opened archive's file handle (`ZipHandler`) process-wide, well past
