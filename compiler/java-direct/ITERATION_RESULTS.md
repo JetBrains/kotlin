@@ -36,49 +36,6 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
-### 2026-09-04 — PR 7920 review round: naming and reuse
-- **Change**: reviewer comments on https://github.com/JetBrains/kotlin/pull/7920.
-  `SimpleClassifierType` → `ImplicitSupertypeForJavaDirect`, now keyed by `ClassId` instead of a
-  qualified-name string (the name promised an arbitrary class-based type; it only ever carried a
-  non-generic implicit supertype). Its three call sites pass `JvmStandardClassIds.Java.{Object,Record,Annotation}`
-  (`Object`/`Annotation` added next to the existing `Record`). `tryResolveAsTopLevel` →
-  `tryResolveAsTopLevelPropertyValue`; its `@JvmName` reading reuses `findJvmNameValue`
-  (`fir-jvm/JavaUtils.kt`) and the local `nullableFirProvider` moved next to `nullableSymbolProvider`
-  in `JavaModelSessionAccess.kt`. `tryBuildFileEntry`'s two default arguments dropped.
-  Not changed: `isEnum`/`isRecord`/`isAnnotationType` stay `findChildByType` — those keywords are
-  direct CLASS children, not `MODIFIER_LIST` entries like `value`/`sealed`.
-- **Files**: `JavaTypeOverAst.kt`, `JavaClassOverAst.kt`, `JavaExternalConstResolver.kt`,
-  `JavaModelSessionAccess.kt`, `JavaPackageIndexer.kt`, `core/.../JvmStandardClassIds.kt`.
-- **Tests**: box + phased + `JavaParsingTest` 2835 executed, 0 FAILED.
-- **Result**: green — renames and reuse only, no behavior change.
-
-### 2026-09-03 — directory source roots no longer index wrong-package root-level files
-- **Change**: follow-up to the entry below. `JavaPackageIndexer.init` walked the top level of every
-  *directory* root and registered each `.java` file under its **declared** package, so a misplaced
-  file resolved in java-direct while PSI (which derives the package from the path) and javac did not.
-  That eager pre-pass is deleted; the declared package now wins only for single-file roots
-  (`FileEntry.isSingleFileRoot`), matching PSI's `SingleJavaFileRootsIndex`. It only ever served
-  test data that has since been realigned (entry below).
-- **Files**: `JavaPackageIndexer.kt` (−18), `JavaParsingClassFinderTest.kt`
-  (`testWrongPackageFileAtDirectoryRoot` → `…IsNotFound`, + `testWrongPackageFileAsSingleFileRootIsFoundByDeclaredPackage`).
-- **Tests**: box + phased 0 FAILED; `JavaParsingClassFinderTest`/`JavaParsingTest`, `CliTestGenerated`
-  (incl. `javaSrcWrongPackage{,Psi}`) and the full `PhasedJvmDiagnosticLightTreeTestGenerated` gate green.
-- **Result**: green — the two Java views agree on wrong-package files under a directory root.
-
-### 2026-09-03 — `withUnitType` broke on the clean branch: flat Java file in a package
-- **Change**: `FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated$Tests$UnnamedLocalVariables.testWithUnitType`
-  failed on the branch without the java-direct test-infra wiring: its `// FILE: JavaUtils.java` sits at the
-  module root but declares `package test;`, so the finder check added by the `ClassId`-contract entry below
-  drops it (`test/JavaUtils` requested, PSI resolves by location only). It passes here only because
-  java-direct is on in `FirFrontendFacade` and registers root-level wrong-package files under their declared
-  package. Test data realigned to the dominant layout — 537 other `// FILE: *.java` blocks with a `package`
-  statement use the matching directory, this was 1 of 2 real outliers.
-- **Files**: `testData/diagnostics/tests/unnamedLocalVariables/withUnitType{,.latestLV}.kt` (header line only).
-- **Tests**: all 5 `UnnamedLocalVariables` diagnostics runners in `:compiler:fir:analysis-tests` green here and
-  on the clean checkout; `JavaUsingAstPhasedTestGenerated$Tests$UnnamedLocalVariables` green.
-- **Result**: green. The residual divergence it left (directory roots still resolving a wrong-package
-  root-level file) is closed by the entry above.
-
 ### 2026-09-03 — comment rules moved from review time to edit time
 - **Change**: the comment gate kept firing only after a change was reported, so the rules were
   restated as an edit-time default. Non-negotiable rule 6 split into 6a (write the edit without the
