@@ -25,4 +25,36 @@ public interface Sequence<out T> {
      * Throws an exception if the sequence is constrained to be iterated once and `iterator` is invoked the second time.
      */
     public operator fun iterator(): Iterator<T>
+
+    companion {
+        /**
+         * Returns an empty read-only list.
+         *
+         * @sample samples.collections.Sequences.Building.sequenceOfEmptyLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public operator fun <T> of(): Sequence<T> =
+            emptySequence()
+
+        /**
+         * Returns a new read-only list containing only the specified [element].
+         *
+         * @sample samples.collections.Sequences.Building.sequenceOfSingleValueLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public operator fun <T> of(element: T): Sequence<T> =
+            sequenceOf(element)
+
+        /**
+         * Returns a new read-only list of given elements.
+         *
+         * @sample samples.collections.Sequences.Building.sequenceOfValuesLiteral
+         */
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public operator fun <T> of(vararg elements: T): Sequence<T> =
+            elements.asSequence()
+    }
 }

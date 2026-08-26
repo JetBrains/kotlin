@@ -764,16 +764,28 @@ public class SequenceTest {
         compare(emptyList<Int>().asSequence(), sequenceOf<Int>()) {
             sequenceBehavior()
         }
+
+        compare(emptyList<String>().asSequence(), []) {
+            sequenceBehavior()
+        }
     }
 
     @Test fun sequenceOfSingleElement() {
         compare(listOf(42).asSequence(), sequenceOf(42)) {
             sequenceBehavior()
         }
+
+        compare(listOf(42).asSequence(), [42]) {
+            sequenceBehavior()
+        }
     }
 
     @Test fun sequenceOfVararg() {
         compare(listOf(1, 2, 3).asSequence(), sequenceOf(1, 2, 3)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(1, 2, 3).asSequence(), [1, 2, 3]) {
             sequenceBehavior()
         }
 
