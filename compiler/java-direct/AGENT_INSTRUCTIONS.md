@@ -1,12 +1,16 @@
 # Java-Direct: Agent Instructions
 
+**Read `AGENT_INSTRUCTIONS_COMMON.md` first** — it holds the module-independent rules
+(command discipline, Gradle/tee, comment and writing style, simplification discipline,
+docs maintenance). This file holds only what is specific to `compiler/java-direct`.
+
 **Current status**: full box + phased suite green, 2839/2839 (100%) — see
 `ITERATION_RESULTS.md` for the authoritative per-suite counts. No known won't-fix.
 The module is feature-complete on the `JavaUsingAst*` suite. `compiler/java-direct/src`
 is PSI-free and no longer depends on `:compiler:cli` (see
 `implDocs/PSI_FREE_ROADMAP.md`); active work is optimization, the platform-free
-(NIO) axis, and closing the IJ-FP regression delta. The public Java-model interface rollback (rule 7) and the
-resolver-unification residue have landed.
+(NIO) axis, and closing the IJ-FP regression delta. The public Java-model interface
+rollback (rule 3 below) and the resolver-unification residue have landed.
 
 > **Caveat on historical numbers.** Before 2026-04-28 the `JavaUsingAst*`
 > generators did **not** route `// FILE: *.java` blocks through `java-direct`'s
@@ -19,25 +23,19 @@ resolver-unification residue have landed.
 `JavaClassFinderOverBinaryIndex.kt`, `JavaModelSessionAccess.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
+**Session temp directory** (see common rules): `export JD_TMP="/tmp/jd_$(date +%Y%m%d_%H%M%S)"`,
+then `mkdir -p "$JD_TMP"`. All temp file paths below use `$JD_TMP`.
+
 ---
 
-## ⚠ Non-Negotiable Rules (stop immediately if violated)
+## ⚠ Module-Specific Non-Negotiable Rules
 
-1. **No command chaining** — NEVER use `&&`, `||`, or `;`. Each command = one tool call.
-   Why: the permission system only checks the first token.
+(In addition to the common rules — no chaining, tee, no subagent Gradle, no commits.)
 
-2. **Always pipe Gradle output to `tee "$JD_TMP/..."`** — no exceptions.
-   If you forgot `tee`: do NOT rerun Gradle. Grep whatever output you have, or ask the user.
-
-3. **Only the main agent runs Gradle** — subagents MUST NOT invoke `./gradlew`.
-   Why: parallel builds corrupt each other's test results and cause excessive CPU and disk load.
-
-4. **NEVER create git commits** — all changes must be reviewed by the user first.
-
-5. **NEVER run `-Pkotlin.test.update.test.data=true`** — corrupts shared test data in
+1. **NEVER run `-Pkotlin.test.update.test.data=true`** — corrupts shared test data in
    `compiler/testData/` and `compiler/fir/analysis-tests/testData/`.
 
-6. **NEVER modify test data to make java-direct tests pass** — fix the implementation,
+2. **NEVER modify test data to make java-direct tests pass** — fix the implementation,
    or document it as a known acceptable difference in `ITERATION_RESULTS.md`.
    Test data files are shared between java-direct and PSI test runners; a diverging
    java-direct result usually means the java-direct implementation is wrong.
@@ -47,7 +45,7 @@ Full map in `implDocs/ARCHITECTURE.md`.
    investigation evidence in the iteration log before declaring won't-fix
    (cf. archived iteration 58 in `ITERATIONS_52_71_DETAILS.md`).
 
-7. **No new public members on Java-model interfaces** in `core/compiler.common.jvm/src/.../load/java/structure/`
+3. **No new public members on Java-model interfaces** in `core/compiler.common.jvm/src/.../load/java/structure/`
    (`JavaType`, `JavaClassifierType`, `JavaAnnotation`, `JavaField`, `JavaAnnotationArgument`,
    etc.). The architectural goal of `java-direct` is that the model presents the same
    public interface surface as PSI/binary impls; members added during `java-direct`
@@ -60,54 +58,13 @@ Full map in `implDocs/ARCHITECTURE.md`.
    shape); the rule remains a standing constraint. Historical inventory:
    `implDocs/archive/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`.
 
----
-
-## Shell Discipline
-
-### Session temp directory
-
-At the start of each session:
-```bash
-export JD_TMP="/tmp/jd_$(date +%Y%m%d_%H%M%S)"
-mkdir -p "$JD_TMP"
-```
-All temp file paths in this document use `$JD_TMP`. **NEVER write directly to `/tmp/`** —
-always use the session directory.
-
-### One command per execution
-
-The permission system matches on the **first token only**. With `cmd1 && cmd2`, only
-`cmd1` is checked — `cmd2` runs without review. Run sequential commands as separate
-tool calls. `|` (piping) is fine; `&&`, `||`, `;` are not.
-
-### Gradle runs: save output, run once
-
-Every Gradle invocation MUST `tee` its output to `$JD_TMP`. Include `--stacktrace` for
-suite and single-test runs. Do NOT use `--info`/`--debug` unless specifically needed.
-After a run, **grep the saved file** — never rerun Gradle just to see a different slice.
-
----
-
-## Ground Rules
-
-- **Use JetBrains MCP tools** for all project file operations (see `.ai/guidelines.md`).
-- **Search before reading**: prefer `search_in_files_by_text` / `search_in_files_by_regex`
-  over `get_file_text_by_path` for large files — search tools return only matching lines.
-- **Oversized MCP results**: when a call exceeds the token limit, the result is auto-saved
-  to `~/.claude/projects/.../tool-results/<tool>-<timestamp>.txt`. Filter it with
-  `grep`/`jq` via Bash rather than loading the full file into context.
-- **Check `git diff` for unintended changes** after every test run.
-- **Run `get_file_problems`** (errorsOnly=false) after edits; fix warnings related to your
-  changes.
-- **FIR terminology**: `simpleImports` / `starImports` (NOT singleType / onDemand).
+**FIR terminology**: `simpleImports` / `starImports` (NOT singleType / onDemand).
 
 ---
 
 ## Test Commands
 
 **Gradle project path is `:compiler:java-direct`.** Test task = `:compiler:java-direct:test`.
-
-**Do not pass `--rerun-tasks` or `--no-build-cache`** on routine test runs — they force full rebuilds even when nothing changed. Gradle's input-change detection reruns the `test` task automatically when sources, test data, or test code change. Use `--rerun` (test-task-only) when you need to re-execute a test whose inputs did not change (e.g. checking flakiness, or after externally clearing results). Use `--rerun-tasks` only for measurement runs where a clean execution is required for valid timing.
 
 ```bash
 # Both suites together (~2793 tests) — preferred for verification
@@ -130,7 +87,7 @@ After a run, **grep the saved file** — never rerun Gradle just to see a differ
 
 # Cross-module bytecode-vs-source regression (MUST run after any edit to shared FIR JVM files
 # below — covers cases the PSI gate above does not, e.g. `@file:JvmPackageName`-shifted
-# top-level callables read across modules. See ITERATION_RESULTS.md 2026-06-02 entry).
+# top-level callables read across modules. See implDocs/archive/ITERATION_RESULTS_2026_07_13.md, 2026-06-02 entry).
 ./gradlew :compiler:fir:fir2ir:test --tests "*FirLightTreeBlackBoxCodegenTestGenerated*CompileKotlinAgainstKotlin*" --stacktrace -q 2>&1 | tee "$JD_TMP/ckk_test.txt"
 ```
 
@@ -183,17 +140,12 @@ test regresses:
 4. **Implement a minimal fix** — then rerun the full suite. **Any regression → revert.**
    A net improvement of +3/-2 is not acceptable.
 5. **Document** — append a short entry to `ITERATION_RESULTS.md` using the template's
-   fixed fields (see *Docs Maintenance*). Keep extended traces in a linked `implDocs/` note.
+   fixed fields. Keep extended traces in a linked `implDocs/` note.
 
 ---
 
-## What NOT to Do
+## What NOT to Do (module-specific)
 
-- Don't rerun Gradle for a different view of results — grep the saved log file.
-- Don't chain shell commands with `&&` — one command per tool call.
-- Don't let subagents run Gradle.
-- Don't use `--info`/`--debug` unless specifically necessary.
-- Don't pass `--rerun-tasks` or `--no-build-cache` on routine test runs — they discard valid cache hits and make every run a full rebuild. Trust Gradle's up-to-date check; use `--rerun` on the test task if you genuinely need to re-execute unchanged tests.
 - Don't hardcode lists for resolution — use the callback pattern
   (see `implDocs/ARCHITECTURE.md`).
 - Don't assume AST token names — always verify (see `implDocs/INVESTIGATION_TECHNIQUES.md`).
@@ -259,60 +211,6 @@ test regresses:
   *typeAnnotations*). Place them on the component for varargs, leave the outer
   array wrapper's member annotations empty for non-varargs.
 
-## Simplification Discipline (justifying complexity, not defending it)
-
-This module's resolution code went through many rounds where a split pipeline, an
-overload, or a lambda parameter was defended as "necessary" — and turned out, after
-the user pushed back two or three times, to exist only for a unit test's convenience
-or to rest on a comment's reasoning that a later refactor had already invalidated.
-The goal below is to reach the same simplified end state in one pass instead of
-several.
-
-- **Default to one generic path.** When the same operation (e.g. resolving a name,
-  walking a hierarchy) is implemented separately per representation/origin (source
-  vs. binary vs. Kotlin, same-file vs. cross-file), treat that split as a hypothesis
-  to disprove, not a given. Actively look for the one existing generic mechanism
-  (a callback-parameterized walk, a shared adapter) that the specialized arms could
-  route through instead of writing a new one.
-- **"A unit test injects a fake here" is not a production justification.** If a
-  function's extra parameter, overload, or lambda exists only so a test can pass in
-  a fake/stub, the fix is to change the test, not to keep the parameter: write an
-  end-to-end/integration test that exercises the real production wiring (a real
-  finder, a real session, a real AST), or add a narrow test double at the correct
-  architectural boundary. Before answering "we need this for testing," check whether
-  a same-shape end-to-end test already exists elsewhere in the module and can be
-  copied.
-- **Re-derive, don't recite.** A comment or a verbal justification for why some
-  complexity is "necessary" or "load-bearing" must be re-verified against the
-  *current* code on every review pass — trace the actual current call sites and data
-  flow again — rather than restated from an earlier round's reasoning, which may
-  already be stale after intervening refactors (this happened more than once this
-  session: a documented split's real reason had silently changed after a merge).
-- **Answer capability questions with evidence, not assumption.** "Is this tested?",
-  "is this reachable?", "does this detect ambiguity?", "is this parameter used?" must
-  be answered by actually grepping call sites / running the suspect scenario, not by
-  inference from the code's shape. If no test demonstrates a claimed hazard, either
-  add one immediately in the same pass, or treat the claim as unproven and prefer the
-  simpler design.
-- **Treat a repeated "are we sure?" from the user as a cue to re-investigate, not to
-  restate the previous answer.** If the same question comes back a second time, that
-  is a signal the first investigation was insufficient — redo it from scratch with a
-  concrete test or a concrete reachable call path as the outcome, don't re-justify
-  the status quo with the same argument.
-- **Healthy resistance is still expected — but only backed by evidence.** Push back
-  on a proposed simplification when you can produce, within the same investigation
-  pass, either a concrete regression test that fails without the extra complexity, or
-  a specific reachable call path/cycle that it guards against. If neither can be
-  produced, implement the simplification rather than defending the status quo on
-  hypothetical grounds.
-- **Prefer collapsing multi-parameter overloads with exactly one production caller.**
-  When a function has a generic, lambda-parameterized form used by only one call
-  site (the rest being test-only), fold it into a single context-bound function and
-  replace the lost test flexibility with an integration test against the real path —
-  mirrors this session's collapse of `resolveInheritedInnerClassToClassId` and
-  `walkSupertypeClassIds` down to their `JavaResolutionContext`-bound, parameter-free
-  production shape.
-
 ---
 
 ## Performance Measurement
@@ -343,7 +241,7 @@ When profiling java-direct code paths:
 
 | Document | When to consult |
 |----------|----------------|
-| `implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md` | PSI removal × resolver unification — Stages 1-4 plan, dependencies, and acceptance criteria. |
+| `AGENT_INSTRUCTIONS_COMMON.md` | Module-independent rules: shell/Gradle discipline, comment & writing style, simplification discipline, docs maintenance. Read every session. |
 | `implDocs/PSI_FREE_ROADMAP.md` | The PSI-free / platform-free axes: what landed, the seams introduced, and the remaining platform-bound list. Read before touching the binary path or the module's dependencies. |
 | `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). **The tracked next step** — but re-baseline first: its code references are stale (see the doc's status banner). |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes. |
@@ -357,117 +255,15 @@ When profiling java-direct code paths:
 | `implDocs/IMPLICIT_OUTER_TYPE_ARGUMENTS_REVIEW_DECISIONS_2026_08_26.md` | Why the implicit outer-type-argument code looks the way it does: the per-outer-class scope check, the `classId` fallback, qualifier-driven raw-ness, and why a recovered type parameter cannot travel through `firBackedJavaType`. Read before touching `computeIsRaw` / `computeTypeArguments` / `recoveredOuterTypeArgument`. |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
 | `ITERATION_RESULTS.md` | Current iteration log — template + brevity rules; new entries on top. |
-| `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, the resolution-pipeline collapse, the model-side outer-arg recovery, the `review.md` responses, and per-iteration logs. `ITERATION_RESULTS_2026_07_13.md` is the most recent log archive. |
+| `implDocs/archive/` | Historical iterations and **landed** design docs: the merged refactoring plan (PSI removal × resolver unification), the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, the resolution-pipeline collapse, the model-side outer-arg recovery, the `review.md` responses, and per-iteration logs. `ITERATION_RESULTS_2026_08_26.md` is the most recent log archive. |
 
 ---
 
-## Source Comment Conventions
-
-These rules apply to **every** source comment or KDoc you add or edit — in
-`compiler/java-direct/src/` and, with extra strictness, in shared compiler modules.
-Comments are reviewed alongside the code; write them for a future reader of the
-**merged** module (an experienced compiler developer), not as a development journal.
-
-**The default is no comment.** Human-maintained compiler code averages ~3% comment lines;
-LLM-authored changes on this branch peaked near 25% and required a full cleanup pass.
-Before writing a comment, pass this gate — a comment is justified only when it:
-
-1. explains **why** a non-obvious decision was made, or how a genuinely difficult piece
-   works when words do it better or shorter than the code itself; or
-2. briefly states an **API contract** that saves the reader a detour into the
-   implementation; or
-3. records a **real trap** (a regression guard, a cycle hazard), ideally with a
-   KT-issue or testData reference.
-
-Everything else — delete. When in doubt, delete. Specific prohibitions:
-
-- **Don't comment the obvious.** If the code says it, or an experienced compiler developer
-  sees it at a glance, no comment. This includes restating a function's body in prose and
-  `@param` entries that paraphrase the parameter name/type (document only non-obvious
-  parameter contracts, or none).
-- **No counterfactuals.** Do not describe hypothetical alternatives, rejected designs, or
-  the previous implementation ("rather than X", "unlike the old Y", "the legacy path
-  returned…"). Exception: the alternative is a real trap a maintainer is likely to fall
-  into — then one terse sentence.
-- **No caller inventories.** Don't enumerate call sites, users, or anything a one-level
-  usages search reveals ("used by X, Y and Z", line numbers in other files).
-- **One fact, one place.** State a fact at the declaration site only; a use site gets at
-  most a short cross-reference, never a repeat of the explanation.
-- **No references to `implDocs/` docs.** They are transient and must never be mentioned
-  in source comments — not by filename, not by section number (`§6.x`), not by stage/phase
-  label (`Stage 2`, `Phase 3`, `pre-§6.5`). Put the (brief) explanation itself in the comment.
-- **Describe the current state only.** No narration of past or superseded attempts
-  ("used to live behind…", "before the … cleanup", "now deleted …", dated history).
-- **Avoid `javac-wrapper` / `TreeBased*` references** (the module is obsolete and being
-  removed). Keep only genuinely useful `javac` / PSI / JLS parity notes.
-- **Keep it short.** 1–3 lines is the norm. A multi-paragraph comment is acceptable only
-  for a genuinely tricky invariant that cannot be compressed — and even then, cut filler
-  ("Note that", "It is worth mentioning") and prefer bullets over prose.
-
-Self-check before finishing any change: reread the diff's comment lines alone. If a
-comment would survive neither the gate above nor a reviewer asking "what does this tell
-me that the code doesn't?", remove it.
-
----
-
-## Docs Maintenance
-
-Keep the working doc set small — these files are read into context every session.
-
-- **`ITERATION_RESULTS.md` is append-only and short.** New entry on top, using the
-  template's fixed fields (`Change` / `Files` / `Tests` / `Result`). Cap each entry at
-  ~15 lines / ~150 words; long rationale, traces, or measurement tables go into a
-  dedicated `implDocs/<TOPIC>.md` and are linked, never inlined. No pasted logs/diffs.
-- **Archive the log when it passes ~600 lines.** `git mv` it to
-  `implDocs/archive/ITERATION_RESULTS_<last-entry-date>.md`, add an archive banner
-  (Archive Date / Coverage / Result / warning), then reset `ITERATION_RESULTS.md` to its
-  template.
-- **Archive an `implDocs/` doc once its refactoring has fully landed or been superseded.**
-  Move it to `implDocs/archive/` and repoint any references here. Keep only living
-  references (`ARCHITECTURE`, `RESOLUTION_PIPELINE`, `INVESTIGATION_TECHNIQUES`) and docs
-  for *active* work in `implDocs/`.
-
----
-
-*Last updated: 2026-07-29 (re-derived the KT-74097 guard rationale after enum-entry annotations went
-lazy: the guard is now defense-in-depth rather than the sole crash preventer, but the cycle class is
-still reachable through the class's own annotations (type-parameter bound enhancement →
-`extractDefaultQualifiers`) and through the three non-annotation `cycleSafeClassLikeSymbol` call
-sites; dropped the two disproven "no drop-in lazy slot" / "compiler-wide change" arguments. Fixed the
-stale `JavaSupertypeLoopChecker` name — the code is `cycleGuardedSupertypeWalk` /
-`JavaModelSupertypeWalkGuard` in `JavaModelSessionAccess.kt` — in the key-files list and Critical
-Patterns.)*
-
-*Previously: 2026-07-28 (rewrote Source Comment Conventions after a branch-wide comment
-cleanup: added the "default is no comment" gate (why-decisions, API contracts, real traps
-only), the ~3% density baseline vs the ~25% this branch's LLM-authored comments reached,
-and explicit bans on counterfactual "rather than" phrasing, caller inventories, obvious
-`@param` restatements and multi-site duplication; extended the rules to shared compiler
-modules; added the missing living docs — `RESOLUTION_SCHEMA`, `BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22`,
-`PERFORMANCE_REVIEW_2026_07_20`, `PARSING_IMPROVEMENTS` — to the reference table.)*
-
-*Previously: 2026-07-13 (docs cleanup: archived the iteration log →
-`implDocs/archive/ITERATION_RESULTS_2026_07_13.md` and reset the live log to its template;
-moved the landed `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06`, `MODEL_SIDE_OUTER_ARG_RECOVERY_2026_06_10`
-and `REVIEW_MD_RESPONSES_2026_07_08` docs (plus the raw `review.md` and the resolved `r*_3_*`
-review rounds) into the archive with banners; repointed the one living reference in
-`RESOLUTION_SCHEMA.md`; flagged `IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` as the active next step
-needing re-baselining.)*
-
-*Previously: 2026-07-08 (added the Simplification Discipline section: default to one
-generic path over per-representation splits, treat "a unit test needs a fake" as a code
-smell rather than a justification, re-verify complexity claims against current code every
-pass instead of reciting earlier reasoning, and back pushback on simplification with a
-concrete test or call path or else implement it — distilled from repeated
-push-collapse-push cycles on the resolver-unification work.)*
-
-*Previously: 2026-06-15 (added the Source Comment Conventions section so review-ready
-comment style — no `implDocs`/stage references, current-state only, no `javac-wrapper`
-mentions, no decl/use-site duplication, bullets over prose — is the default and needs no
-cleanup pass before review.)*
-
-*Previously: 2026-06-09 (docs cleanup: archived `ITERATION_RESULTS` →
-`implDocs/archive/ITERATION_RESULTS_2026_06_01.md` and reset the log to a structured,
-capped template; moved 10 landed/superseded design docs — incl. the interface-rollback
-inventory and FIRSESSION-injection proposal — into `implDocs/archive/`; removed the
-obsolete Binary-Class-Finder-Flag section; added this Docs Maintenance section.)*
+*Last updated: 2026-08-26 (docs pass at branch wrap-up: split the module-independent rules —
+shell discipline, ground rules, Source Comment Conventions, the new Explanation & Writing
+Style section, Simplification & Review Discipline, Docs Maintenance — into
+`AGENT_INSTRUCTIONS_COMMON.md`; the comment/writing rules there were rewritten from the
+branch's session-log complaints and a style comparison against human-written modules.
+Archived `MERGED_REFACTORING_PLAN_2026_05_04.md` (fully landed) and the iteration log →
+`implDocs/archive/ITERATION_RESULTS_2026_08_26.md`; trimmed `ReadMe.md` to the human module
+baseline. Earlier update history is in git.)*

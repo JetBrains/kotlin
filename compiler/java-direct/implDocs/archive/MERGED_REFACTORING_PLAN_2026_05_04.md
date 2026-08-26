@@ -1,4 +1,8 @@
-# Merged Refactoring Plan: PSI Removal × Resolver Unification — 2026-05-04
+# Merged Refactoring Plan: PSI Removal × Resolver Unification — 2026-05-04 (ARCHIVED)
+
+> **ARCHIVED 2026-08-26** — all four stages of this plan have fully landed (PSI removal and
+> resolver unification). Superseded by `../PSI_FREE_ROADMAP.md` for the remaining
+> platform-free (NIO) axis. Kept for historical reference only; code references are stale.
 
 > **Status snapshot (2026-07-13, branch `rr/ic/direct-java-dev2`).** Both tracks this document
 > sequences have **largely landed**, and the code is now ahead of the step-by-step timeline below:
@@ -452,3 +456,4 @@ safer-to-debug ordering wins.
   end-to-end through the *current* architecture.
 - [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) — per-iteration log; each landed step
   in this plan adds a dated entry there.
+

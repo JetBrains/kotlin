@@ -472,7 +472,7 @@ throw IllegalStateException("DEBUG AST:\n${node.dump()}")
 ```
 
 **File-based logging** (when exception debugging is too disruptive). Write to the
-session temp dir (`$JD_TMP` — see `AGENT_INSTRUCTIONS.md` / Shell Discipline), never
+session temp dir (`$JD_TMP` — see `AGENT_INSTRUCTIONS_COMMON.md` / Shell Discipline), never
 directly to `/tmp/`:
 ```kotlin
 java.io.File("<JD_TMP>/debug.log").appendText("DEBUG: $message\n")
