@@ -37,7 +37,7 @@ class KtStaticModuleDependentsProvider(private val modules: List<KaModule>) : Ko
 private inline fun buildDependentsMap(
     modules: List<KaModule>,
     getDependencies: (KaModule) -> Sequence<KaModule>,
-): Map<KaModule, MutableSet<KaModule>> = buildMap<KaModule, MutableSet<KaModule>> {
+): Map<KaModule, MutableSet<KaModule>> = buildMap {
     for (module in modules) {
         for (dependency in getDependencies(module)) {
             // `module` should not be part of its own dependents, per the contract of `KotlinModuleDependentsProvider`.

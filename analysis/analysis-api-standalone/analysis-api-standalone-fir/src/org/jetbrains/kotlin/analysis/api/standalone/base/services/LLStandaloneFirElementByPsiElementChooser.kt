@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 /**
- * In Standalone mode, deserialized elements don't have sources, so we need to implement [org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser] based on
- * component comparison (see [org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser]).
+ * In Standalone mode, deserialized elements don't have sources, so we need to implement [LLFirElementByPsiElementChooser] based on
+ * component comparison (see [LLFirElementByPsiElementChooser]).
  *
  * TODO: We might be able to remove this service if KT-65836 is viable (using stub-based deserialized symbol providers in Standalone mode).
  */
@@ -228,7 +228,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
         return "kotlin.Array<out $this>"
     }
 
-    private val arrayClassIdByElementType: Map<String, String> = buildList<Pair<String, String>> {
+    private val arrayClassIdByElementType: Map<String, String> = buildList {
         StandardClassIds.primitiveArrayTypeByElementType.mapTo(this) { [classId, arrayClassId] ->
             classId.asString().replace('/', '.') to arrayClassId.asString().replace('/', '.')
         }

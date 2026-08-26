@@ -68,7 +68,6 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     override val suiteName: String
         get() = "sessionBuilder"
 
-    @OptIn(KtExperimentalApi::class)
     @Test
     fun testJdkSessionBuilder() {
         lateinit var sourceModule: KaSourceModule

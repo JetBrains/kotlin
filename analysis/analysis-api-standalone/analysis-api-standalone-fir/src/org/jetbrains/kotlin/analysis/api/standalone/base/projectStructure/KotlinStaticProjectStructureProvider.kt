@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
  * Static project structure providers may still create [KaNotUnderContentRootModule]s on the fly, because files which don't belong to any
  * of the pre-registered modules are by definition not part of the *static* module structure.
  */
-public abstract class KotlinStaticProjectStructureProvider : KotlinProjectStructureProviderBase() {
+abstract class KotlinStaticProjectStructureProvider : KotlinProjectStructureProviderBase() {
     /**
      * All [KaModule]s registered with the project structure provider, excluding [KaNotUnderContentRootModule]s and the built-ins module.
      *
      * [allModules] may be used by other services to pre-build caches based on the full module structure.
      */
-    public abstract val allModules: List<KaModule>
+    abstract val allModules: List<KaModule>
 
-    public abstract val allSourceFiles: List<PsiFileSystemItem>
+    abstract val allSourceFiles: List<PsiFileSystemItem>
 }
