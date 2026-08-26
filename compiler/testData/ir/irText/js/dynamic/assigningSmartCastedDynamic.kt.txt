@@ -1,0 +1,18 @@
+external interface A {
+}
+
+external interface I {
+  abstract external var foo: A
+    abstract external get
+    abstract external set
+
+}
+
+fun I.test1(d: dynamic) {
+  when {
+    d != null -> { // BLOCK
+      <this>.<set-foo>(<set-?> = d /*~> A */)
+    }
+  }
+}
+
