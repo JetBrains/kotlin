@@ -44,7 +44,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     GRADLE_CONFIGURATION_CACHE_ENABLED(OR, SAFE),
     GRADLE_PROJECT_ISOLATION_ENABLED(OR, SAFE),
 
-    KOTLIN_OFFICIAL_CODESTYLE(OVERRIDE, SAFE),
     KOTLIN_PROGRESSIVE_MODE(OVERRIDE, SAFE),
     KOTLIN_KTS_USED(OR, SAFE),
     KOTLIN_BTA_USED(OR, SAFE),
@@ -72,8 +71,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KMP_SWIFT_PM_IMPORT_HAS_DIRECT_DEPENDENCIES(OR, SAFE),
     KMP_COCOAPODS_HAS_DIRECT_DEPENDENCIES(OR, SAFE),
     KMP_SWIFT_PM_IMPORT_HAS_TRANSITIVE_DEPENDENCIES_FROM_MODULAR_DEPENDENCIES(OR, SAFE),
-
-    JS_GENERATE_EXTERNALS(OR, SAFE),
 
     JS_SOURCE_MAP(OR, SAFE),
 
@@ -146,6 +143,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 31
+        const val VERSION = 32
     }
 }

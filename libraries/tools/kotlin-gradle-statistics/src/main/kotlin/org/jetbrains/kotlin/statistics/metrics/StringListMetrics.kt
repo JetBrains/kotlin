@@ -50,7 +50,6 @@ enum class StringListMetrics(
     ),
 
     JS_COMPILER_MODE(CONCAT, AllowedListAnonymizer(listOf("ir", "legacy", "both", "UNKNOWN"))),
-    JS_GENERATE_EXECUTABLE_DEFAULT(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_BINARY_TYPE(CONCAT, AllowedListAnonymizer(listOf("both", "library", "executable", "none"))),
 
@@ -85,13 +84,12 @@ enum class StringListMetrics(
 
     // Compiler parameters
     JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
-    USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     KOTLIN_COMPILER_EXECUTION_POLICY(CONCAT, AllowedListAnonymizer(listOf("in-process", "daemon"))),
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
 
     companion object {
-        const val VERSION = 4
+        const val VERSION = 5
     }
 }
