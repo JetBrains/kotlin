@@ -30,7 +30,7 @@ fun test() {
 
     // Bad
     <!NO_VALUE_FOR_PARAMETER!>baz<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
-    <!NO_VALUE_FOR_PARAMETER!>baz<!>() <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+    baz<!NO_VALUE_FOR_PARAMETER!>()<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
     <!NO_VALUE_FOR_PARAMETER!>baz<!>(other = false) <!TOO_MANY_ARGUMENTS!>{}<!>
 }
 

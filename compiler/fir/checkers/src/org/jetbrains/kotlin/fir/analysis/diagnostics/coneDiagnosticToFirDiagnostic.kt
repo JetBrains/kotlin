@@ -240,8 +240,13 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                     )
             is NoValueForParameter -> {
                 val symbol = rootCause.valueParameter.symbol
+                val diagnosticSource = qualifiedAccessSource
+                    ?.getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 2, reverse = true)
+                    ?.takeIf { it.getChild(KtNodeTypes.VALUE_ARGUMENT, depth = 1) == null }
+                    ?: qualifiedAccessSource
+                    ?: source
                 FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
-                    qualifiedAccessSource ?: source,
+                    diagnosticSource,
                     symbol.resolvedReturnType.valueParameterName(session) ?: symbol.name,
                     session
                 )

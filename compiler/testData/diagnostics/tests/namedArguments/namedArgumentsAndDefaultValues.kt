@@ -15,7 +15,7 @@ fun test() {
     foo(1, "", <!TOO_MANY_ARGUMENTS!>""<!>)
 
     bar(z = "")
-    <!NO_VALUE_FOR_PARAMETER!>bar<!>()
+    bar<!NO_VALUE_FOR_PARAMETER!>()<!>
     <!NO_VALUE_FOR_PARAMETER!>bar<!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     bar(1, 1, "")
     bar(1, 1, "")

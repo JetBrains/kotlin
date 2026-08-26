@@ -70,7 +70,7 @@ fun qux(
             f4()
             f4("")
             "".f4()
-            <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>f5<!>()
+            f5<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
             f5(true)
             f5("", true)
             "".f5(true)

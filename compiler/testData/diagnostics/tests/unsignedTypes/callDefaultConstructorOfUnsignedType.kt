@@ -1,4 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-val foo = <!NO_VALUE_FOR_PARAMETER!>UInt<!>()
+val foo = UInt<!NO_VALUE_FOR_PARAMETER!>()<!>
 
 /* GENERATED_FIR_TAGS: propertyDeclaration */

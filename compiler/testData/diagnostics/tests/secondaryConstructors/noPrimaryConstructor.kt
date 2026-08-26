@@ -4,6 +4,6 @@ class A {
     constructor(x: Int)
 }
 
-val x = <!NO_VALUE_FOR_PARAMETER!>A<!>()
+val x = A<!NO_VALUE_FOR_PARAMETER!>()<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, propertyDeclaration, secondaryConstructor */

@@ -17,7 +17,7 @@ class Test {
         typeFunctionalCheck3(1)
 
         with(1){
-            <!NO_VALUE_FOR_PARAMETER!>typeFunctionalCheck<!>()
+            typeFunctionalCheck<!NO_VALUE_FOR_PARAMETER!>()<!>
             typeFunctionalCheck2()
             typeFunctionalCheck3()
         }
@@ -30,7 +30,7 @@ fun usageOutside() {
     Test().typeFunctionalCheck3(1)
 
     with(1){
-        Test().<!NO_VALUE_FOR_PARAMETER!>typeFunctionalCheck<!>()
+        Test().typeFunctionalCheck<!NO_VALUE_FOR_PARAMETER!>()<!>
         Test().typeFunctionalCheck2()
         Test().typeFunctionalCheck3()
     }

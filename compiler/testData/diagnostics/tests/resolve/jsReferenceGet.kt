@@ -6,7 +6,7 @@ interface Data {
 }
 
 fun test(data: Data) {
-    data.<!NO_VALUE_FOR_PARAMETER!>get<!><String>()
+    data.get<String><!NO_VALUE_FOR_PARAMETER!>()<!>
 
     val x: Any = data
     x.<!UNRESOLVED_REFERENCE!>get<!><String>()
