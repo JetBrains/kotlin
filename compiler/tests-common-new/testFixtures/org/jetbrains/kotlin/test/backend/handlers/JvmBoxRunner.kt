@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RESULT_OUTPUT_
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LOAD_METADATA_DIRECTLY_IN_REFLECTION
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
@@ -270,6 +271,9 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
             "$USE_LEGACY_REFLECTION_IMPLEMENTATION is not supported when running the box test in a separate JVM process"
         }
+        checkTestInfrastructure(USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS !in module.directives) {
+            "$USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS is not supported when running the box test in a separate JVM process"
+        }
         val command = listOfNotNull(
             javaExe.absolutePath,
             runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
@@ -359,6 +363,9 @@ fun generatedTestClassLoader(
         checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
             "$USE_LEGACY_REFLECTION_IMPLEMENTATION is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
         }
+        checkTestInfrastructure(USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS !in module.directives) {
+            "$USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
+        }
         val libPathProvider = testServices.standardLibrariesPathProvider
         classpath += libPathProvider.runtimeJarForTests()
         if (withReflection) {
@@ -374,6 +381,8 @@ fun generatedTestClassLoader(
                 testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader()
             USE_LEGACY_REFLECTION_IMPLEMENTATION in module.directives ->
                 testServices.standardLibrariesPathProvider.getRuntimeAndK1ReflectJarClassLoader()
+            USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS in module.directives ->
+                testServices.standardLibrariesPathProvider.getRuntimeAndK1MembersReflectJarClassLoader()
             else -> testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
         }
         return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())

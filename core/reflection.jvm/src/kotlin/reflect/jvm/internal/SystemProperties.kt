@@ -21,6 +21,26 @@ internal var useK1Implementation = runCatching {
 }.getOrNull()?.toBoolean() == true
 
 /**
+ * True if the system property `kotlin.reflect.jvm.useK1ImplementationForMembers` is set to true.
+ *
+ * This system property is a more fine-grained version of `kotlin.reflect.jvm.useK1Implementation`. It changes kotlin-reflect
+ * implementation to the legacy one, based on parts of the K1 compiler, only for the kinds of callables which were migrated to the new
+ * implementation in 2.5.0: Kotlin member functions, Kotlin member properties, and Java member properties. All other kinds of
+ * callables (constructors, top-level functions and properties, local delegated properties, Java member functions, Java static functions
+ * and properties, ...) still use the new implementation, based on kotlin-metadata-jvm and Java reflection.
+ *
+ * Note that if [useK1Implementation] is enabled, this property is ignored and all callables use the K1-based implementation.
+ *
+ * Changing the value of the system property after it has been read (i.e., after any non-trivial operation in kotlin-reflect)
+ * is not supported and might lead to unexpected or incorrect behavior.
+ *
+ * See KT-80710 and related issues for more information.
+ */
+internal var useK1ImplementationForMembers = runCatching {
+    System.getProperty("kotlin.reflect.jvm.useK1ImplementationForMembers")
+}.getOrNull()?.toBoolean() == true
+
+/**
  * True if the system property `kotlin.reflect.jvm.loadMetadataDirectly` is set to true.
  *
  * This system property can be used to instruct the kotlin-reflect implementation to avoid using K1 compiler representation unless
