@@ -706,6 +706,48 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val VALUE_ARGUMENTS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        ): List<TextRange> {
+            node.getAssignmentLhsIfUnwrappable(tree)?.let {
+                return markElement(tree.unwrapParenthesesLabelsAndAnnotations(it), startOffset, endOffset, tree, node)
+            }
+
+            val qualifiedAccess = when (node.tokenType) {
+                KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION -> tree.selector(node) ?: node
+                KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION -> tree.supertypesList(node) ?: node
+                else -> node
+            }
+            val argumentList = qualifiedAccess.takeIf { it.tokenType == KtNodeTypes.VALUE_ARGUMENT_LIST }
+                ?: tree.findChildByType(qualifiedAccess, KtNodeTypes.VALUE_ARGUMENT_LIST)
+
+            if (argumentList != null) {
+                val rightParenthesis = tree.rightParenthesis(argumentList)
+                    ?: return markElement(qualifiedAccess, startOffset, endOffset, tree, node)
+                if (tree.findChildByType(argumentList, KtNodeTypes.VALUE_ARGUMENT) == null) {
+                    return markRange(
+                        tree.findChildByType(argumentList, LPAR) ?: qualifiedAccess,
+                        rightParenthesis,
+                        startOffset,
+                        endOffset,
+                        tree,
+                        node,
+                    )
+                }
+            }
+
+            return when (qualifiedAccess.tokenType) {
+                KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.ANNOTATION_ENTRY ->
+                    REFERENCE_BY_QUALIFIED.mark(qualifiedAccess, startOffset, endOffset, tree)
+                else -> markElement(qualifiedAccess, startOffset, endOffset, tree, node)
+            }
+        }
+    }
+
     val DOT_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
