@@ -18,13 +18,10 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -96,10 +93,6 @@ open class IncrementalJsCache(
                 changesCollector.collectProtoChanges(oldProtoMap[classId], newProtoMap[classId])
             }
         }
-    }
-
-    fun getOutputsBySource(sourceFile: File): Collection<File> {
-        return sourceToJsOutputsMap[sourceFile].orEmpty()
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
@@ -179,17 +172,6 @@ open class IncrementalJsCache(
                 }
             }
         }
-
-    fun updateSourceToOutputMap(
-        generatedFiles: Iterable<GeneratedFile>,
-    ) {
-        for (generatedFile in generatedFiles) {
-            for (source in generatedFile.sourceFiles) {
-                if (dirtySources.contains(source))
-                    sourceToJsOutputsMap.append(source, generatedFile.outputFile)
-            }
-        }
-    }
 }
 
 private object TranslationResultValueExternalizer : DataExternalizer<TranslationResultValue> {
@@ -377,26 +359,6 @@ private class ProtoDataProvider(private val serializerProtocol: SerializerExtens
 
         return classes
     }
-}
-
-// TODO: remove this method once AbstractJsProtoComparisonTest is fixed
-fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData> {
-    val classes = hashMapOf<ClassId, ProtoData>()
-    val proto = ProtoBuf.PackageFragment.parseFrom(metadata, KlibMetadataSerializerProtocol.extensionRegistry)
-    val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
-
-    proto.class_List.forEach {
-        val classId = nameResolver.getClassId(it.fqName)
-        classes[classId] = ClassProtoData(it, nameResolver)
-    }
-
-    proto.`package`.apply {
-        val packageFqName = getExtensionOrNull(KlibMetadataProtoBuf.packageFqName)?.let(nameResolver::getPackageFqName)?.let(::FqName) ?: FqName.ROOT
-        val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
-        classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
-    }
-
-    return classes
 }
 
 private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
