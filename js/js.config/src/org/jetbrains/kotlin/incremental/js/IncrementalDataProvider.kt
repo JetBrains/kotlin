@@ -12,8 +12,5 @@ interface IncrementalDataProvider {
     /** gets non-dirty package parts data from previous compilation */
     val compiledPackageParts: Map<File, TranslationResultValue>
 
-    /** gets non-dirty package metadata from previous compilation */
-    val packageMetadata: Map<String, ByteArray>
-
     val serializedIrFiles: Map<File, IrTranslationResultValue>
 }

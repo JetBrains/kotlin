@@ -22,8 +22,6 @@ interface IncrementalResultsConsumer {
     /** processes new package part metadata and binary tree for compiled source file */
     fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray)
 
-    fun processPackageMetadata(packageName: String, metadata: ByteArray)
-
     fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
@@ -50,13 +48,6 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
 
     override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray) {
         packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata))
-    }
-
-    val packageMetadata: Map<String, ByteArray>
-        field = hashMapOf<String, ByteArray>()
-
-    override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
-        packageMetadata[packageName] = metadata
     }
 
 //    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
