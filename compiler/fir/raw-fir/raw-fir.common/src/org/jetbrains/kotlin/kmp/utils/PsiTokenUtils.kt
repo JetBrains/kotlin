@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kmp.utils
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtToken
 
 /**
@@ -15,7 +16,12 @@ import org.jetbrains.kotlin.lexer.KtToken
  * If the element type is not Kotlin-based, the result is 0.
  */
 fun IElementType.kmpId(): Int =
-    if (this is KtToken) tokenId else IdStorage.map[this] ?: 0
+    when (this) {
+        is KtToken -> tokenId
+        org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT -> KtTokens.DOC_COMMENT_ID
+        org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE -> KtTokens.WHITE_SPACE_ID
+        else -> IdStorage.map[this] ?: -0
+    }
 
 private object IdStorage {
     val map = hashMapOf<IElementType, Int>()

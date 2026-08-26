@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
-import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
@@ -22,52 +20,9 @@ fun String?.nameAsSafeName(defaultName: String = ""): Name {
     }
 }
 
-fun LighterASTNode.getAsStringWithoutBacktick(): String {
-    return this.toString().replace("`", "")
-}
-
 fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>): T {
     argumentList = buildArgumentList {
         arguments += container
     }
     return this
-}
-
-inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
-    if (classNode.getParent()?.getParent()?.tokenType == SCRIPT) return false
-    var currentNode: LighterASTNode? = classNode
-    while (currentNode != null) {
-        val tokenType = currentNode.tokenType
-        val parent = currentNode.getParent()
-        val parentTokenType = parent?.tokenType
-        if (tokenType == PROPERTY || tokenType == FUN) {
-            val grandParent = parent?.getParent()
-            when {
-                parentTokenType == FILE -> return true
-                parentTokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent.getParent()?.tokenType == OBJECT_LITERAL) -> return true
-                parentTokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
-            }
-        }
-        // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
-        if (parentTokenType == ENUM_ENTRY) {
-            return true
-        }
-        if (tokenType == BLOCK) {
-            return true
-        }
-        currentNode = parent
-    }
-    return false
-}
-
-fun isCallableLocal(callableNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
-    val parentNode = callableNode.getParent()
-    return when (parentNode?.tokenType) {
-        FILE, CLASS_BODY -> false
-        BLOCK -> when (parentNode.getParent()?.tokenType) {
-            SCRIPT -> false
-            else -> true
-        }
-        else -> true
-    }
 }

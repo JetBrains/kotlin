@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 
-data class PrimaryConstructor(
+data class PrimaryConstructor<Node : Any>(
     val firConstructor: FirConstructor,
-    val valueParameters: List<ValueParameter>
+    val valueParameters: List<ValueParameter<Node>>
 )
