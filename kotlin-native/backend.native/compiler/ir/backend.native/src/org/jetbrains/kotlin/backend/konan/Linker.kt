@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
@@ -202,7 +201,7 @@ internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: Lis
 
     val extraUserSetupInfo = run {
         // Note: The order of libraries is not important.
-        context.config.resolvedLibraries.getFullList()
+        context.config.loadedKlibs.all
                 .filter { it.isCInteropLibrary() }
                 .mapNotNull { library ->
                     library.manifestProperties["userSetupHint"]?.let {

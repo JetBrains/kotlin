@@ -479,7 +479,7 @@ data class DependenciesTrackingResult(
             val allNativeLibs = DependenciesSerializer.deserialize(path, dependencies.subList(allNativeDepsIndex + 1, allCachedBitcodeDepsIndex)).map { it.libName }
             val allCachedBitcodeDeps = DependenciesSerializer.deserialize(path, dependencies.subList(allCachedBitcodeDepsIndex + 1, dependencies.size))
 
-            val topSortedLibraries = config.resolvedLibraries.getFullList() // Note: Unclear, whether the order of libraries is important or not.
+            val topSortedLibraries = config.loadedKlibs.all // Note: Unclear, whether the order of libraries is important or not.
             val nativeDependenciesToLink = topSortedLibraries.mapNotNull { if (it.uniqueName in nativeLibsToLink) it else null }
             val allNativeDependencies = topSortedLibraries.mapNotNull { if (it.uniqueName in allNativeLibs) it else null }
             val allCachedBitcodeDependencies = allCachedBitcodeDeps.map { unresolvedDep ->
