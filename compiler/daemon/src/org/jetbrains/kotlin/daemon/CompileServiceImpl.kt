@@ -995,12 +995,6 @@ class CompileServiceImpl(
         if (facade.hasEnumWhenTracker()) {
             builder.register(EnumWhenTracker::class.java, RemoteEnumWhenTracker(facade, rpcProfiler))
         }
-        if (facade.hasIncrementalResultsConsumer()) {
-            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, rpcProfiler))
-        }
-        if (facade.hasIncrementalDataProvider()) {
-            builder.register(IncrementalDataProvider::class.java, RemoteIncrementalDataProvider(facade, rpcProfiler))
-        }
 
         return builder.build()
     }

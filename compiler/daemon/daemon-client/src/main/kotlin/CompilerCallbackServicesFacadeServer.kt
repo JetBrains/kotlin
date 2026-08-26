@@ -25,8 +25,6 @@ open class CompilerCallbackServicesFacadeServer(
     val inlineConstTracker: InlineConstTracker? = null,
     val enumWhenTracker: EnumWhenTracker? = null,
     val importTracker: ImportTracker? = null,
-    val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
-    val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : @Suppress("DEPRECATION") CompilerCallbackServicesFacade,
     UnicastRemoteObject(
@@ -48,9 +46,9 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun hasImportTracker(): Boolean = importTracker != null
 
-    override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
+    override fun hasIncrementalResultsConsumer(): Boolean = false
 
-    override fun hasIncrementalDataProvider(): Boolean = incrementalDataProvider != null
+    override fun hasIncrementalDataProvider(): Boolean = false
 
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
@@ -130,9 +128,7 @@ open class CompilerCallbackServicesFacadeServer(
         importTracker?.report(filePath, importedFqName) ?: throw NullPointerException("importTracker was not initialized")
     }
 
-    override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
-        incrementalResultsConsumer!!.processHeader(headerMetadata)
-    }
+    override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {}
 
     override fun incrementalResultsConsumer_processPackagePart(
         sourceFilePath: String,
@@ -140,22 +136,14 @@ open class CompilerCallbackServicesFacadeServer(
         binaryAst: ByteArray,
         inlineData: ByteArray
     ) {
-        incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst, inlineData)
     }
 
     override fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray) {
-        incrementalResultsConsumer!!.processPackageMetadata(packageName, metadata)
     }
 
-    override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = incrementalDataProvider!!.headerMetadata
+    override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = byteArrayOf()
 
-    override fun incrementalDataProvider_getCompiledPackageParts() =
-        incrementalDataProvider!!.compiledPackageParts.entries.map {
-            CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst, it.value.inlineData)
-        }
+    override fun incrementalDataProvider_getCompiledPackageParts(): Collection<CompiledPackagePart> = emptyList()
 
-    override fun incrementalDataProvider_getPackageMetadata(): Collection<PackageMetadata> =
-        incrementalDataProvider!!.packageMetadata.entries.map { (fqName, metadata) ->
-            PackageMetadata(fqName, metadata)
-        }
+    override fun incrementalDataProvider_getPackageMetadata(): Collection<PackageMetadata> = emptyList()
 }
