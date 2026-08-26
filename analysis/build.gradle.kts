@@ -24,6 +24,7 @@ tasks.register("analysisAllTests") {
         ":analysis:analysis-api-impl-base:check",
         ":analysis:analysis-api-platform-interface:check",
         ":analysis:analysis-api-standalone:check",
+        ":analysis:analysis-api-standalone:analysis-api-standalone-fir:check",
         ":analysis:decompiled:decompiler-js:check",
         ":analysis:decompiled:decompiler-native:check",
         ":analysis:decompiled:decompiler-to-file-stubs:check",

@@ -18,6 +18,7 @@
           <option value=":analysis:analysis-api-impl-base:testCodebase" />
           <option value=":analysis:analysis-api-platform-interface:testCodebase" />
           <option value=":analysis:analysis-api-standalone:testCodebase" />
+          <option value=":analysis:analysis-api-standalone:analysis-api-standalone-fir:testCodebase" />
           <option value=":compiler:psi:psi-api:updateKotlinAbi" />
           <option value=":compiler:psi:psi-api:testCodebase" />
           <option value=":compiler:psi:psi-api:checkForeignClassUsage" />
