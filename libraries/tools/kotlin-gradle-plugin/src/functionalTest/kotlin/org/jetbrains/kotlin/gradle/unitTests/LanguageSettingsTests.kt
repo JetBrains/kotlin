@@ -164,6 +164,25 @@ class LanguageSettingsTests {
     }
 
     @Test
+    fun `language settings MonotonousCheck - unstable features`() {
+        val project = kmpProject {
+            with(multiplatformExtension) {
+                sourceSets.commonMain {
+                    @Suppress("DEPRECATION_ERROR")
+                    languageSettings.enableLanguageFeature("InlineClasses")
+                }
+            }
+        }
+
+        val configException = assertThrows<ProjectConfigurationException> { project.evaluate() }
+        val dataException = configException.allCauses.filterIsInstance<InvalidUserDataException>().single()
+        assertContains(
+            expected = "The dependent source set must enable all unstable language features that its dependency has.",
+            actual = dataException.message.toString(),
+        )
+    }
+
+    @Test
     fun `language settings MonotonousCheck - opt-in`() {
         val project = kmpProject {
             with(multiplatformExtension) {
@@ -193,6 +212,8 @@ class LanguageSettingsTests {
                     languageSettings {
                         apiVersion = "1.4"
                         languageVersion = "1.3"
+                        @Suppress("DEPRECATION_ERROR")
+                        enableLanguageFeature("SoundSmartcastForEnumEntries")
                         progressiveMode = true
                     }
                 }

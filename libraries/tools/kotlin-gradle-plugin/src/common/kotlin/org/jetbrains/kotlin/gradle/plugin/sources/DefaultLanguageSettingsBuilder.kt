@@ -68,6 +68,37 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
             }
         }
 
+    private val enabledLanguageFeaturesField = mutableSetOf<String>()
+
+    @Deprecated(
+        "Configures internal Kotlin compiler argument and should not be used in the projects",
+        level = DeprecationLevel.ERROR
+    )
+    override val enabledLanguageFeatures: Set<String>
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow()
+                .freeCompilerArgs
+                .get()
+                .filter { it.startsWith("-XXLanguage:+") }
+                .map { it.substringAfter("-XXLanguage:+") }
+                .toSet()
+        } else {
+            enabledLanguageFeaturesField.toSet()
+        }
+
+    @Deprecated(
+        "Configures internal Kotlin compiler argument and should not be used in the projects",
+        level = DeprecationLevel.ERROR
+    )
+    override fun enableLanguageFeature(name: String) {
+        enabledLanguageFeaturesField.add(name)
+        project.launch {
+            compilationCompilerOptions.await()
+                .freeCompilerArgs
+                .add("-XXLanguage:+$name")
+        }
+    }
+
     private val optInAnnotationsInUseField = mutableSetOf<String>()
 
     override val optInAnnotationsInUse: Set<String>

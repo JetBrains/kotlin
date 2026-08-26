@@ -49,6 +49,15 @@ interface LanguageSettings {
     val progressiveMode: Boolean
 
     /**
+     * @suppress
+     */
+    @Deprecated(
+        "Configures internal Kotlin compiler argument and should not be used in the projects",
+        level = DeprecationLevel.ERROR
+    )
+    val enabledLanguageFeatures: Set<String>
+
+    /**
      * Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
      *
      * Default value: emptyList<String>()
