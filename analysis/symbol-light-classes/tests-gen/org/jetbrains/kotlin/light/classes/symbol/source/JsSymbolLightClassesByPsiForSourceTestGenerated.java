@@ -1548,6 +1548,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("internalDeclarations.kt")
+    public void testInternalDeclarations() {
+      run("internalDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("jvmStatic.kt")
     public void testJvmStatic() {
       run("jvmStatic.kt");
@@ -1780,6 +1786,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("int.kt")
       public void testInt() {
         run("int.kt");
+      }
+
+      @Test
+      @TestMetadata("internalDeclarations.kt")
+      public void testInternalDeclarations() {
+        run("internalDeclarations.kt");
       }
 
       @Test
