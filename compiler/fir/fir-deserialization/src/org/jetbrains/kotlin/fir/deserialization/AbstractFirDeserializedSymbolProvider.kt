@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import java.io.IOException
 import java.nio.file.Path
 
 class PackagePartsCacheData(
@@ -88,8 +89,24 @@ abstract class LibraryPathFilter {
                 if (isAbsolute) normalizedPath else path.toAbsolutePath().normalize()
             }
 
+            val realPath: Path? by lazy {
+                try {
+                    path.toRealPath()
+                } catch (_: IOException) {
+                    null
+                } catch (_: SecurityException) {
+                    null
+                }
+            }
+
             fun startsWith(wrappedPath: WrappedPath): Boolean =
                 path.startsWith(wrappedPath.normalizedPath)
+
+            fun realPathStartsWith(wrappedPath: WrappedPath): Boolean {
+                val realPath = realPath ?: return false
+                val otherRealPath = wrappedPath.realPath ?: return false
+                return realPath.startsWith(otherRealPath)
+            }
         }
 
         // TODO: Migrate to wrappedLibs only use by K2ScriptingCompilerEnviroment
@@ -107,7 +124,7 @@ abstract class LibraryPathFilter {
                     !it.isAbsolute && wrappedPath.isAbsolute -> wrappedPath.absoluteNormalizedPath.startsWith(it.absoluteNormalizedPath)
                     else -> wrappedPath.startsWith(it)
                 }
-            }
+            } || wrappedLibs.any(wrappedPath::realPathStartsWith)
         }
     }
 }
