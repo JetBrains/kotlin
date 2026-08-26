@@ -11,8 +11,15 @@ import org.gradle.api.tasks.testing.Test
 private val CODEBASE_CHECKING_TASK_NAMES = setOf(
     "updateKotlinAbi",
     "checkKotlinAbi",
+)
+
+/**
+ * Prefixes of the names of tasks that cannot be listed exhaustively: `registerForeignClassUsageTasks` appends a
+ * per-dump suffix, so a module tracking more than one dump names its tasks as it sees fit.
+ */
+private val CODEBASE_CHECKING_TASK_NAME_PREFIXES = setOf(
     "checkForeignClassUsage",
-    "checkForeignClassUsageUnstable"
+    "updateForeignClassUsage",
 )
 
 /**
@@ -61,13 +68,14 @@ fun ProjectTestsExtension.testCodebaseTask(
                 .withPathSensitivity(PathSensitivity.RELATIVE)
         }
 
-        val taskNames = project.tasks.names
+        // Since the codebase task shares files with other tasks, we need to run it after all other tasks.
+        // Some modules may not use all checks, so only the names this one registered are matched.
+        val tasksToRunBefore = project.tasks.names.filter { taskName ->
+            taskName in CODEBASE_CHECKING_TASK_NAMES ||
+                    CODEBASE_CHECKING_TASK_NAME_PREFIXES.any { prefix -> taskName.startsWith(prefix) }
+        }
 
-        // Since the codebase task shares files with other tasks, we need to run it after all other tasks
-        for (taskToRunBefore in CODEBASE_CHECKING_TASK_NAMES) {
-            // Some modules may not use all checks
-            if (taskToRunBefore !in taskNames) continue
-
+        for (taskToRunBefore in tasksToRunBefore) {
             mustRunAfter(project.tasks.named(taskToRunBefore))
         }
 

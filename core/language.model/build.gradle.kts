@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -23,6 +23,6 @@ sourceSets {
     "test" { none() }
 }
 
-val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks {
     outputFile = file("api/language-model-api.foreign")
 }

@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -71,12 +71,12 @@ projectTests {
     testCodebaseTask()
 }
 
-val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks {
     outputFile = file("api/analysis-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }
 
-val checkForeignClassUsageUnstable = tasks.register("checkForeignClassUsageUnstable", CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks(nameSuffix = "Unstable") {
     outputFile = file("api-unstable/analysis-api.foreign")
     nonPublicMarkers.addAll(unstableNonPublicMarkers)
 }

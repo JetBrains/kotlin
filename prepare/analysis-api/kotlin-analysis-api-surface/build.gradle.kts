@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
 
 plugins {
     id("common-configuration")
@@ -22,7 +22,7 @@ analysisApiArtifact {
     }
 }
 
-val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks {
     classes.from(tasks.jar)
     classpath.from(configurations.runtimeClasspath)
     missingClasspathEntriesOutputFile = file("api/analysis-api-surface.classpath-issues")
