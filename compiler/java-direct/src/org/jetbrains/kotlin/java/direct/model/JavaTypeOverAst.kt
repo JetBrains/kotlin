@@ -184,7 +184,7 @@ class JavaClassifierTypeOverAst(
             val outerHasExplicitArgs = allRefs.size > 1 && allRefs.dropLast(1).any { pl ->
                 tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
             }
-            if (!outerHasExplicitArgs) {
+            if (!outerHasExplicitArgs && !isQualifiedByInheritor(javaClass)) {
                 // Walk the *enclosing-instance* chain: only the outers whose type parameters are in scope for
                 // this reference can make it raw. The walk therefore stops at the first `static` (or top-level)
                 // enclosing class.
@@ -238,38 +238,26 @@ class JavaClassifierTypeOverAst(
             return explicitArgs
         }
 
-        // Each parameter is kept together with its declaring class: the implicit argument is a
-        // parameter *of that class*, and FIR matches `JavaTypeParameter`s to
-        // `FirTypeParameterSymbol`s by identity through the per-class `JavaTypeParameterStack`,
-        // which is keyed by exactly these instances. A `static` outer still contributes its own
-        // parameters (`static class S<T> { class Inner {} }` ⇒ `S<T>.Inner`) but severs the chain
-        // above itself.
+        // The declaring class's own instances have to be handed over: FIR matches `JavaTypeParameter`s to
+        // `FirTypeParameterSymbol`s by identity through the per-class `JavaTypeParameterStack`. A `static`
+        // outer contributes its parameters (`static class S<T> { class Inner {} }` ⇒ `S<T>.Inner`) but
+        // severs the chain above itself.
         val outerTypeParams = mutableListOf<JavaTypeParameter>()
-        val outerTypeParamOwners = mutableListOf<JavaClass>()
+        var anyOutOfScope = false
         var outer = javaClass.outerClass
         while (outer != null) {
-            for (typeParam in outer.typeParameters) {
-                outerTypeParams.add(typeParam)
-                outerTypeParamOwners.add(outer)
+            if (outer.typeParameters.isNotEmpty()) {
+                if (!isInScopeOfDeclaringClass(outer)) anyOutOfScope = true
+                outerTypeParams.addAll(outer.typeParameters)
             }
             outer = if (outer.isStatic) null else outer.outerClass
         }
 
-        // A parameter is available here only if the reference is written inside its declaring
-        // class, tested by identity rather than by name: a same-named parameter of a nested class
-        // or of an enclosing generic method shadows the outer one for name resolution but is not
-        // the parameter this implicit argument denotes (`class A<T> { class Inner<T> {
-        // Inner<String> foo(); } }` means `A<A.T>.Inner<String>`). `null` routes to the recovery
-        // below.
-        val lexicalArgs = outerTypeParams.mapIndexed { index, typeParam ->
-            typeParam.takeIf { isInScopeOfDeclaringClass(outerTypeParamOwners[index]) }
-        }
-
-        // A parameter is out of scope when the reference sits in a class that merely *inherits* the
-        // inner class (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`):
-        // the declaring class's own parameters have no binding at this reference and would convert to
-        // unresolved names, so the arguments come from the containing class's supertype hierarchy.
-        if (lexicalArgs.any { it == null }) {
+        // Out of scope means the reference sits in a class that merely *inherits* the inner class
+        // (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` referencing `BaseInner`): the declaring
+        // class's parameters have no binding here and would convert to unresolved names, so the
+        // arguments come from the containing class's supertype hierarchy instead.
+        if (anyOutOfScope) {
             val classId = javaClass.classId
             if (classId != null) {
                 val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
@@ -278,29 +266,38 @@ class JavaClassifierTypeOverAst(
         }
 
         // Nothing recovered: the declaring class's own parameters are the best available answer.
-        val implicitArgs = outerTypeParams.mapIndexed { index, typeParam ->
-            JavaTypeParameterTypeOverAst(lexicalArgs[index] ?: typeParam)
-        }
+        return explicitArgs + outerTypeParams.map { JavaTypeParameterTypeOverAst(it) }
+    }
 
-        return explicitArgs + implicitArgs
+    /**
+     * Whether the reference is qualified by a class which *inherits* the classifier instead of by its
+     * declaring outer (`Sub.Inner` with `class Sub extends Outer<String>`) — its outer arguments come
+     * from that subclass's supertypes, so it is not raw, while `Outer.Inner` written in the very same
+     * place is.
+     */
+    private fun isQualifiedByInheritor(javaClass: JavaClass): Boolean {
+        val declaringOuterName = javaClass.outerClass?.name?.asString() ?: return false
+        if (rawTypeNameParts[rawTypeNameParts.size - 2] == declaringOuterName) return false
+        val classId = javaClass.classId ?: return false
+        return with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) } != null
     }
 
     /**
      * Whether this type reference is written inside [declaringClass], i.e. whether
      * [declaringClass]'s own type parameters denote the enclosing instance's ones here.
      *
-     * Walks the classes lexically enclosing the reference, innermost first. Per JLS a `static`
-     * class has no enclosing instance, which severs the chain of implicit outer type arguments.
-     *
-     * Classes are compared by [JavaClass.classId] when both have one, so that a reference resolved
-     * through the class finder (a distinct instance for the same class) is still recognised; the
-     * identity comparison covers local/anonymous classes, which have no `ClassId`.
+     * By identity, not by name: a same-named parameter of a nested class or of an enclosing generic
+     * method shadows the outer one for name resolution but is not the one the implicit argument denotes
+     * (`class A<T> { class Inner<T> { Inner<String> foo(); } }` means `A<A.T>.Inner<String>`).
      */
     private fun isInScopeOfDeclaringClass(declaringClass: JavaClass): Boolean {
         val declaringClassId = declaringClass.classId
         var enclosing: JavaClass? = resolutionContext.scopeContext.containingClass
         while (enclosing != null) {
             if (enclosing === declaringClass) return true
+            // Defensive: `FirBackedJavaClassAdapter` is built fresh per call, so a class visible both as
+            // source and through the symbol provider — e.g. a previous build's `.class` file on the
+            // classpath of an incremental run — can be seen through two non-identical instances.
             if (declaringClassId != null && enclosing.classId == declaringClassId) return true
             if (enclosing.isStatic) return false
             enclosing = enclosing.outerClass

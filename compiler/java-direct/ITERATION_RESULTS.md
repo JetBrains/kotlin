@@ -36,6 +36,69 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-26 — the implicit-outer decisions written down for the reviewer
+- **Change**: the rationale behind the three changes below does not fit the module's source-comment
+  budget, so it moved into one doc: the two hard constraints (FIR's identity-keyed
+  `MutableJavaTypeParameterStack`, scope being per enclosing class), one section per review thread with the
+  javac-verified examples, and a three-option table for "why not wrap a `ConeTypeParameterType` in
+  `firBackedJavaType`" — the fresh wrapper misses the identity map, so that route returns
+  `ConeErrorType(ConeUnresolvedNameError)`, strictly worse than today's wildcard.
+- **Files**: new `implDocs/IMPLICIT_OUTER_TYPE_ARGUMENTS_REVIEW_DECISIONS_2026_08_26.md`;
+  `AGENT_INSTRUCTIONS.md` (Reference Documents row, so it is found before anyone touches `computeIsRaw` /
+  `computeTypeArguments` / `recoveredOuterTypeArgument`).
+- **Tests**: not run — docs-only.
+- **Result**: green.
+
+### 2026-08-26 — a recovered outer type argument is bound by its owner, not by its name
+- **Change**: `recoveredOuterTypeArgument` matched a residual `ConeTypeParameterType` to a
+  `JavaTypeParameter` by *name*, walking the declaration chain innermost-first. That is sound only while the
+  residual belongs to the inheriting class: `substituteTypeArgs` returns the declared supertype unchanged
+  when the actual type has no arguments, so `findTypeArgsForClassInHierarchy` can propagate a parameter of an
+  *intermediate* class, which the walk then silently replaced with a same-named one. It now takes the
+  `FirTypeParameterSymbol` off the `ConeTypeParameterLookupTagImpl`, and
+  `javaTypeParameterInDeclarationChain` matches the symbol's owner `ClassId` first, the name only within that
+  owner (unique per JLS); a parameter outside the chain returns `null` and falls back to a wildcard, which is
+  the right lax answer since it has no binding at the reference.
+- **Files**: `resolution/JavaTypeResolver.kt` (+21/−11, KDoc shortened); new
+  `testData/diagnostics/tests/j+k/outerTypeParameterRecoveredThroughIntermediateClass.kt`
+  (`A<T>.Sub<U> extends Mid<T>`, `Mid<X> extends Outer<X>` — javac: `T cannot be converted to U`).
+- **Tests**: new test fails when the lookup is restricted to the inheriting class and passes after;
+  `:compiler:java-direct:test` green; the same data file green through `PhasedJvmDiagnostic{Psi,LightTree}TestGenerated`
+  and `FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated`.
+- **Result**: fixed — see `implDocs/IMPLICIT_OUTER_TYPE_ARGUMENTS_REVIEW_DECISIONS_2026_08_26.md` §6. The
+  raw-supertype variant is not testable: FIR erases raw supertypes before recovery, so no parameter survives.
+
+### 2026-08-26 — raw-ness follows the written qualifier for an inherited inner class
+- **Change**: `computeIsRaw` derived raw-ness from the declaring-outer chain of the *resolved* class, so
+  `Sub.Inner` with `class Sub extends Outer<String>` was reported raw while `computeTypeArguments` recovered
+  `[String]` for the very same reference — the two answers contradicted each other and raw won, erasing the
+  argument. javac gives no `[rawtypes]` warning there and types `Inner`'s members by `String`. The walk is now
+  skipped when the segment written before the class name is not the declaring outer and recovery does produce
+  arguments (`isQualifiedByInheritor`), so `Outer.Inner` written in the same place stays raw. Also from the
+  same review: `computeTypeArguments` collects outer parameters with one `addAll` per outer class and one
+  `isInScopeOfDeclaringClass` call per outer class (the parallel owners list, the nullable `lexicalArgs` and
+  both `mapIndexed`s are gone — only "was anything out of scope" is consumed); the `classId` branch of
+  `isInScopeOfDeclaringClass` kept with a one-line justification (`FirBackedJavaClassAdapter` is built fresh
+  per call, so a class visible as source *and* through the symbol provider yields two instances).
+- **Files**: `model/JavaTypeOverAst.kt` (+32/−37); new
+  `testData/diagnostics/tests/j+k/inheritedInnerQualifiedRawType.kt` (both directions pinned through erasure
+  of the inner class's own members), `generateTests` rerun.
+- **Tests**: new test fails with the qualifier check neutralized; full `JavaUsingAst{Phased,Box}TestGenerated`
+  + `JavaParsing*` green, 0 FAILED; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` green on the same data.
+- **Result**: fixed — details and the counter-examples to the literal "check the scope once" reading in
+  `implDocs/IMPLICIT_OUTER_TYPE_ARGUMENTS_REVIEW_DECISIONS_2026_08_26.md` §2–§4. Deliberate residual: like
+  `recoverInheritedOuterTypeArguments`, the fix only covers references written inside the inheriting class.
+
+### 2026-08-26 — the incremental Java test compiles through the shared helper
+- **Change**: `IncrementalJavaClassFromPreviousOutputTest` invoked `ToolProvider.getSystemJavaCompiler()`
+  itself and hand-checked the exit code, duplicating `JvmCompilationUtils.compileJavaFiles`, which the same
+  module already uses (`classpathDiff/BasicClassInfoTest`). Its `compileJava` now builds the option list and
+  delegates to `compileJavaFiles(sourceFiles, options).assertSuccessful()`.
+- **Files**: `incremental-compilation-impl/tests/.../IncrementalJavaClassFromPreviousOutputTest.kt`
+  (−javac plumbing, −2 imports).
+- **Tests**: `:compiler:incremental-compilation-impl:test --tests "*IncrementalJavaClassFromPreviousOutputTest"` green.
+- **Result**: green; no behaviour change.
+
 ### 2026-08-25 — the implicit-outer recovery is entered on scope, not on an untested emptiness
 - **Change**: `computeTypeArguments` entered `recoverInheritedOuterTypeArguments` on
   `outerTypeParams.isEmpty() || lexicalArgs.any { it == null }`. The first disjunct had no antecedent:

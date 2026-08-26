@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.java.direct.model.JavaTypeParameterTypeOverAst
@@ -458,12 +461,8 @@ internal fun recoverInheritedOuterTypeArguments(innerClassId: ClassId): List<Jav
  * wildcard; teaching it one would yield `ConeErrorType(ConeUnresolvedNameError)` instead, unless the
  * identity protocol in shared FIR code were changed.
  *
- * The parameter is looked up in [inheritingClass]'s own declaration chain — the class whose
- * supertype the argument was read off, then its outer classes — and not in the lexical scope: a
- * same-named parameter of the enclosing generic method or of a nested class would shadow it there,
- * and handing that one back would silently substitute a different symbol. Names within a single
- * parameter list are unique per JLS, and the innermost-first walk mirrors Java shadowing, so the
- * lookup is unambiguous.
+ * The parameter is looked up by [inheritingClass]'s own declaration chain — the class whose supertype
+ * the argument was read off, then its outer classes — see [javaTypeParameterInDeclarationChain].
  */
 context(c: JavaResolutionContext)
 private fun recoveredOuterTypeArgument(projection: ConeTypeProjection, inheritingClass: JavaClass, session: FirSession): JavaType {
@@ -472,21 +471,30 @@ private fun recoveredOuterTypeArgument(projection: ConeTypeProjection, inheritin
     // the lower bound is what has to be handed over. Without unwrapping, neither branch below
     // matches and everything degrades to an unbounded wildcard.
     val type = (projection as? ConeKotlinType)?.lowerBoundIfFlexible() ?: return firBackedJavaType(projection, session)
-    if (type is ConeTypeParameterType) {
-        findTypeParameterInDeclarationChain(inheritingClass, type.lookupTag.name)?.let { return JavaTypeParameterTypeOverAst(it) }
+    val lookupTag = (type as? ConeTypeParameterType)?.lookupTag
+    if (lookupTag is ConeTypeParameterLookupTagImpl) {
+        javaTypeParameterInDeclarationChain(inheritingClass, lookupTag.typeParameterSymbol)
+            ?.let { return JavaTypeParameterTypeOverAst(it) }
     }
     return firBackedJavaType(type, session)
 }
 
 /**
- * Finds the [JavaTypeParameter] named [name] declared by [startClass] or, failing that, by one of
+ * Finds the [JavaTypeParameter] denoted by [symbol] among those declared by [startClass] or by one of
  * its outer classes, innermost first. A `static` class has no enclosing instance and severs the
  * chain, so its outer classes' parameters are not visible in its declarations.
+ *
+ * The owner class is matched first and only then the parameter by name: a recovered argument may
+ * belong to another class of the hierarchy (`class A<T> { class Sub<U> extends Mid<T> }` recovers
+ * `A`'s `T`), which a plain by-name walk would confuse with a same-named parameter of an inner one.
+ * A parameter of a class outside the chain has no binding at this reference at all, so `null` here
+ * correctly routes it to a wildcard.
  */
-private fun findTypeParameterInDeclarationChain(startClass: JavaClass, name: Name): JavaTypeParameter? {
+private fun javaTypeParameterInDeclarationChain(startClass: JavaClass, symbol: FirTypeParameterSymbol): JavaTypeParameter? {
+    val ownerClassId = (symbol.containingDeclarationSymbol as? FirClassSymbol<*>)?.classId ?: return null
     var current: JavaClass? = startClass
     while (current != null) {
-        current.typeParameters.firstOrNull { it.name == name }?.let { return it }
+        if (current.classId == ownerClassId) return current.typeParameters.firstOrNull { it.name == symbol.name }
         if (current.isStatic) return null
         current = current.outerClass
     }
