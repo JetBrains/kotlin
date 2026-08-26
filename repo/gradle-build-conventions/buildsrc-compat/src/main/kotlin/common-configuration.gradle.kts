@@ -158,6 +158,7 @@ fun Project.configureKotlinCompilationOptions() {
             // However, KGP with Native targets is used in the native-xctest project, and this code fails with
             //  The value for property 'freeCompilerArgs' is final and cannot be changed any further.
             if (project.path != ":native:kotlin-test-native-xctest" &&
+                project.path != ":kotlin-stdlib" &&
                 !project.path.startsWith(":native:objcexport-header-generator") &&
                 !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
                 !project.path.startsWith(":native:external-projects-test-utils") &&
