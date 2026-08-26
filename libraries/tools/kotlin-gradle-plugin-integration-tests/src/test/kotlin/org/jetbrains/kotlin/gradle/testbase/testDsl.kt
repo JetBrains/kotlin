@@ -697,12 +697,14 @@ private fun commonBuildSetup(
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
     val gradleJvmOptions = collectGradleJvmOptions(
-        enableGradleDaemonMemoryLimitInMb,
+        buildOptions.gradleDaemonMemoryLimitInMb ?: enableGradleDaemonMemoryLimitInMb,
         buildOptions.fileLeaksReportFile,
         connectSubprocessVMToDebugger,
         addHeapDumpOptions,
     )
-    val kotlinDaemonJvmArgs = collectKotlinJvmArgs(enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort)
+    val kotlinDaemonJvmArgs = collectKotlinJvmArgs(
+        buildOptions.kotlinDaemonMemoryLimitInMb ?: enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort
+    )
 
     /**
      * Encloses each argument into double quotes to properly handle values with whitespaces based on [enclose] value
