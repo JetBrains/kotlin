@@ -552,8 +552,7 @@ class ComposeIT : KGPBaseTest() {
                 androidVersion = agpVersion,
                 buildCacheEnabled = true,
                 configurationCache = ENABLED
-            ).suppressAgpWarningIsProperty(gradleVersion),
-            enableGradleDaemonMemoryLimitInMb = 1024
+            ).suppressAgpWarningIsProperty(gradleVersion)
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
