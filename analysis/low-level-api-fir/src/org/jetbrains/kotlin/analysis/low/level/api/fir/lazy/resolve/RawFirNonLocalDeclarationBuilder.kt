@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -44,7 +42,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val originalDeclaration: FirDeclaration,
     private val declarationToBuild: KtElement,
     private val declarationsToRebind: List<FirDeclaration>,
-) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
+    context: NonLocalFirBuilderContext,
+) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL, context) {
     companion object {
         fun buildWithSymbolRebind(
             session: FirSession,
@@ -80,12 +79,15 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         ): FirDeclaration {
             check(rootNonLocalDeclaration is KtDeclaration || rootNonLocalDeclaration is KtCodeFragment)
 
+            val originalDeclaration = designation.target as FirDeclaration
+            val delegatingContext = NonLocalFirBuilderContext(originalDeclaration)
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.target as FirDeclaration,
+                originalDeclaration = originalDeclaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 declarationsToRebind = declarationsToRebind,
+                context = delegatingContext,
             )
 
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
@@ -132,28 +134,16 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         return declarationsToRebind.firstOrNull { it is FirPropertyAccessor && it.isGetter == accessor.isGetter && it.psi == accessorPsi }
     }
 
-    override fun addCapturedTypeParameters(
-        status: Boolean,
-        declarationSource: KtSourceElement?,
-        currentFirTypeParameters: List<FirTypeParameterRef>,
-    ) {
-        if (originalDeclaration is FirTypeParameterRefsOwner && declarationSource?.psi == originalDeclaration.psi) {
-            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
-        } else {
-            super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
-        }
-    }
-
     private inner class VisitorWithReplacement(private val containingClass: FirRegularClass?) : Visitor() {
         fun convertDestructuringDeclaration(element: KtDestructuringDeclaration, containingDeclaration: FirDeclaration?): FirVariable {
             return if (containingDeclaration is FirScript) {
-                withContainerSymbol(containingDeclaration.symbol) {
+                context.withContainerSymbol(containingDeclaration.symbol) {
                     // Annotations from script destructuring declarations are linked to the script itself
                     buildScriptDestructuringDeclaration(element)
                 }
             } else {
                 val initializer = element.toInitializerExpression()
-                buildErrorNonLocalDestructuringDeclaration(element.toFirSourceElement(), initializer)
+                buildErrorNonLocalDestructuringDeclaration(element.toFirSourceElement(), initializer, baseModuleData)
             }
         }
 
@@ -167,6 +157,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             }
 
             return buildDestructuringVariable(
+                context,
                 moduleData = baseModuleData,
                 container = container,
                 element,
@@ -352,8 +343,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
         }
 
-        withChildClassName(parent.name, isExpect = parent.isExpect) {
-            withCapturedTypeParameters(
+        context.withChildClassName(parent.name, isExpect = parent.isExpect) {
+            context.withCapturedTypeParameters(
                 status = parent.isInner,
                 declarationSource = null,
                 currentFirTypeParameters = typeParameters,

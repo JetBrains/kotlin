@@ -5,28 +5,27 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
-import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
-open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
-    val annotations: MutableList<LighterASTNode> = mutableListOf()
-    var contextLists: MutableList<LighterASTNode> = mutableListOf()
+open class ModifierList<Node : Any>(var modifiers: Long = ModifierFlag.NONE.value) {
+    val annotations: MutableList<Node> = mutableListOf()
+    var contextLists: MutableList<Node> = mutableListOf()
 
-    fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
-        when (val tokenType = modifier.tokenType) {
-            KtTokens.CONST_KEYWORD -> {
+    fun addModifier(tokenType: Int, isInClass: Boolean = false) {
+        when (tokenType) {
+            KtTokens.CONST_MODIFIER_ID -> {
                 // Specific case because CONST may exist both on parameter and property
                 setFlag(ModifierFlag.PROPERTY_CONST)
                 setFlag(ModifierFlag.PARAMETER_CONST)
             }
-            KtTokens.INLINE_KEYWORD -> {
+            KtTokens.INLINE_MODIFIER_ID -> {
                 setFlag(if (isInClass) ModifierFlag.CLASS_INLINE else ModifierFlag.FUNCTION_INLINE)
             }
-            KtTokens.VALUE_KEYWORD -> {
+            KtTokens.VALUE_MODIFIER_ID -> {
                 setFlag(ModifierFlag.CLASS_VALUE)
             }
             else -> {
