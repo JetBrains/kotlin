@@ -58,7 +58,6 @@ private class ExceptionTraceBuilder {
     private val target = StringBuilder()
     private val visited = mutableListOf<Throwable>()
     private var topStack: String = ""
-    private var topStackStart: Int = 0
 
     fun buildFor(exception: Throwable): String {
         exception.dumpFullTrace("", "")
@@ -86,28 +85,23 @@ private class ExceptionTraceBuilder {
         }
         visited.add(this)
 
-        var stack = this.stack as String?
-        if (stack != null) {
-            val stackStart = stack.indexOf(shortInfo).let { if (it < 0) 0 else it + shortInfo.length }
-            if (stackStart == 0) target.append(shortInfo).append("\n")
+        target.append(shortInfo).append("\n")
+
+        var stack = this.stack
+        if (stack.isNotEmpty()) {
             if (topStack.isEmpty()) {
                 topStack = stack
-                topStackStart = stackStart
             } else {
-                stack = dropCommonFrames(stack, stackStart)
+                stack = dropCommonFrames(stack)
             }
             if (indent.isNotEmpty()) {
-                // indent stack, but avoid indenting exception message lines
-                val messageLines = if (stackStart == 0) 0 else 1 + shortInfo.count { c -> c == '\n' }
-                stack.lineSequence().forEachIndexed { index: Int, line: String ->
-                    if (index >= messageLines) target.append(indent)
-                    target.append(line).append("\n")
+                // indent stack
+                stack.lineSequence().forEach { line: String ->
+                    target.append(indent).append(line).append("\n")
                 }
             } else {
                 target.append(stack).append("\n")
             }
-        } else {
-            target.append(shortInfo).append("\n")
         }
 
         val suppressed = suppressedExceptions
@@ -120,11 +114,11 @@ private class ExceptionTraceBuilder {
         return true
     }
 
-    private fun dropCommonFrames(stack: String, stackStart: Int): String {
-        var commonFrames: Int = 0
-        var lastBreak: Int = 0
-        var preLastBreak: Int = 0
-        for (pos in 0 until minOf(topStack.length - topStackStart, stack.length - stackStart)) {
+    private fun dropCommonFrames(stack: String): String {
+        var commonFrames = 0
+        var lastBreak = 0
+        var preLastBreak = 0
+        for (pos in 0 until minOf(topStack.length, stack.length)) {
             val c = stack[stack.lastIndex - pos]
             if (c != topStack[topStack.lastIndex - pos]) break
             if (c == '\n') {
