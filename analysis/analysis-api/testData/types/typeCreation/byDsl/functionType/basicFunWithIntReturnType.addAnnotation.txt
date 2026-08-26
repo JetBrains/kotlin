@@ -6,8 +6,7 @@ KaFunctionType:
       psi: null
   ]
   classId: kotlin/Function0
-  contextReceivers: []
-  hasContextReceivers: false
+  contextParameterTypes: []
   hasReceiver: false
   isReflectType: false
   isSuspend: false

@@ -37,7 +37,6 @@ public class SirVisibilityCheckerImpl(
     private val enableCoroutinesSupport: Boolean,
     private val hiddenModules: List<KaModule>
 ) : SirVisibilityChecker {
-    @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
         val ktSymbol = this@sirAvailability
 
@@ -120,7 +119,7 @@ public class SirVisibilityCheckerImpl(
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType.let { type ->
                 if (type is KaFunctionType) {
                     val types = buildList {
-                        addAll(type.contextReceivers.map { it.type })
+                        addAll(type.contextParameterTypes)
                         addIfNotNull(type.receiverType)
                         addAll(type.parameterTypes)
                         add(type.returnType)
@@ -276,7 +275,6 @@ private fun hasUnsupportedInputTypeParameters(ktSymbol: KaCallableSymbol): Boole
         hasUnboundInputTypeParameters(it, false)
     } || hasUnboundInputTypeParameters(ktSymbol.returnType, true)
 
-@OptIn(KaExperimentalApi::class)
 context(ka: KaSession, sirSession: SirSession)
 private fun hasUnboundInputTypeParameters(
     type: KaType,
@@ -286,7 +284,7 @@ private fun hasUnboundInputTypeParameters(
     if (classType.classId in SirTypeProviderImpl.FLOW_CLASS_IDS) return@let false
     if (classType is KaFunctionType) {
         return@let buildList {
-            addAll(classType.contextReceivers.map { it.type })
+            addAll(classType.contextParameterTypes)
             classType.receiverType?.let(::add)
             addAll(classType.parameterTypes)
         }.any {

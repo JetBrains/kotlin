@@ -6,26 +6,23 @@ KaFunctionType:
       psi: null
   ]
   classId: kotlin/Function2
-  contextReceivers: [
-    KaContextReceiver:
-      label: null
-      type: KaUsualClassType:
-        abbreviation: null
-        annotations: []
-        classId: kotlin/String
-        qualifiers: [
-          KaResolvedClassTypeQualifier:
-            name: String
-            symbol: KaNamedClassSymbol(kotlin/String)
-            typeArguments: []
-        ]
-        symbol: KaNamedClassSymbol(kotlin/String)
-        typeArguments: []
-        isMarkedNullable: false
-        isNullable: false
-        hasFlexibleNullability: false
+  contextParameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
-  hasContextReceivers: true
   hasReceiver: true
   isReflectType: false
   isSuspend: false
