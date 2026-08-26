@@ -84,18 +84,13 @@ private fun responseFileArg(tempFiles: TempFiles, responseFilePrefix: String, pa
 }
 
 /**
- * Converts a list of strings into a format suitable for use as a GCC spread argument.
+ * Passes [this] to GCC/lld via a quoted `@response` file.
+ * Quoting is required so paths with spaces are not split when lld expands the file.
+ * Using `@file` also avoids ld.lld error=7 (Argument list too long).
  */
 private fun List<String>.asGccSpreadArgument(filePrefixName: String, tempFiles: TempFiles): List<String> {
     if (isEmpty()) return emptyList()
-
-    val argumentsListPath = tempFiles.create(filePrefixName).also {
-        it.writeLines(this@asGccSpreadArgument)
-    }
-
-    // We use the `@` operator to spread the file content into the arg list to avoid
-    // ld.lld error=7 (Argument list too long).
-    return listOf("@${argumentsListPath.absolutePathString()}")
+    return listOf(responseFileArg(tempFiles, filePrefixName, this))
 }
 
 class LinkerArguments(
