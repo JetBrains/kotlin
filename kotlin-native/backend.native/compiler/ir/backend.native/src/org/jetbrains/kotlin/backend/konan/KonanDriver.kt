@@ -155,7 +155,7 @@ class KonanDriver(
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
         if (environment.getSourceFiles().isEmpty()) {
             // Note: The order of libraries is not important.
-            val libraries = config.resolvedLibraries.getFullList()
+            val libraries = config.loadedKlibs.all
             val moduleName = config.moduleId
             if (libraries.any { it.uniqueName == moduleName }) {
                 val kexeModuleName = "${moduleName}_kexe"
