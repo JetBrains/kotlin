@@ -43,6 +43,9 @@ import kotlin.test.fail
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
+private const val defaultGradleDaemonMemoryLimitInMb = 2048
+private const val defaultKotlinDaemonMemoryLimitInMb = 512
+
 /**
  * Create a new test project.
  *
@@ -63,8 +66,8 @@ fun KGPBaseTest.project(
     enableOfflineMode: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 2048,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 256,
+    enableGradleDaemonMemoryLimitInMb: Int? = defaultGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = defaultKotlinDaemonMemoryLimitInMb,
     kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
@@ -145,8 +148,8 @@ fun KGPBaseTest.nativeProject(
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 2048,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 256,
+    enableGradleDaemonMemoryLimitInMb: Int? = defaultGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = defaultKotlinDaemonMemoryLimitInMb,
     kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
