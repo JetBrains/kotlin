@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.js.config.dceUnusedProperties
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -110,7 +112,8 @@ private class ExpressionEffectVisitor : IrVisitorVoid() {
     }
 }
 
-fun IrExpression.computeEffectsKind(): EffectsKind {
+fun IrExpression.computeEffectsKind(context: JsCommonBackendContext): EffectsKind {
+    if (!context.configuration.enableEffectAnalysis) return EffectsKind.WRITE
     val v = ExpressionEffectVisitor()
     acceptVoid(v)
     return v.result
@@ -120,3 +123,6 @@ object EffectAnalysisClassIds {
     val annotation = ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("Effects"))
     val kindParameter = Name.identifier("kind")
 }
+
+val CompilerConfiguration.enableEffectAnalysis
+    get() = this.dceUnusedProperties
