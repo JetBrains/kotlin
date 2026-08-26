@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-87788
 
 sealed class KtSourceElementKind {
@@ -22,7 +22,7 @@ fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceEleme
 	// The safe call produces `(<element?.kind> != Null) implies (<element>: Any)`
     when (element?.kind) {
         // The branch body gives `<subject> != Null`
-        is KtRealSourceElementKind -> SourceCodeAnalysisException(element, this)
+        is KtRealSourceElementKind -> SourceCodeAnalysisException(<!ARGUMENT_TYPE_MISMATCH!>element<!>, this)
         else -> this
     }
 
