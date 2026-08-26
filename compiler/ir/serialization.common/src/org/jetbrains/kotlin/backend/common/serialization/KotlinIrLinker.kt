@@ -354,6 +354,9 @@ abstract class KotlinIrLinker(
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
 
+    fun deserializeExplicitlyExportedModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+
     fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
         return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, {
             if (it in dirtyFiles) DeserializationStrategy.ALL

@@ -206,7 +206,7 @@ private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDes
             // the explicitly exported ones (e.g. top-level property initializers), which are deserialized eagerly.
             // TODO: consider skip deserializing explicitly exported declarations for libraries.
             // Now it's not valid because of all dependencies that must be computed.
-            else -> linker.deserializeIrModuleHeader(module, library, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+            else -> linker.deserializeExplicitlyExportedModule(module, library)
         }
     }
 }

@@ -68,11 +68,11 @@ private fun deserializeDependencies(
     val dependencies = klibs.all.map { klib: KotlinLibrary ->
         val descriptor: ModuleDescriptor = mapping(klib)
         when {
-            klibs.included == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+            klibs.included == null -> irLinker.deserializeExplicitlyExportedModule(descriptor, klib)
             filesToLoad != null && klib == klibs.included -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
             filesToLoad != null && klib != klibs.included -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
-            klib == klibs.included -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
-            else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+            klib == klibs.included -> irLinker.deserializeFullModule(descriptor, klib)
+            else -> irLinker.deserializeExplicitlyExportedModule(descriptor, klib)
         }
     }
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
@@ -154,9 +153,9 @@ class NativeDeserializerFacade(
         libraries.map { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
             if (klib != mainModuleLib)
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+                irLinker.deserializeExplicitlyExportedModule(descriptor, klib)
             else
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
+                irLinker.deserializeFullModule(descriptor, klib)
         }
     )
 
