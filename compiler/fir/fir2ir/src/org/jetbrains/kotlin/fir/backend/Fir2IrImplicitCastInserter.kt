@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.model.isDynamic
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by c {
 
@@ -32,7 +34,6 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
      */
     internal fun IrExpression.insertSpecialCast(
         expression: FirExpression,
-        valueType: ConeKotlinType,
         unsubstitutedExpectedType: ConeKotlinType,
         substitutedExpectedType: ConeKotlinType,
     ): IrExpression {
@@ -44,7 +45,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
             coerceStatementsToUnit(coerceLastExpressionToUnit = type.isUnit())
         }
 
-        val expandedValueType = valueType.fullyExpandedType()
+        val expandedValueType = expression.resolvedType.fullyExpandedType()
         val expandedExpectedType = substitutedExpectedType.fullyExpandedType()
 
         return when {
@@ -117,35 +118,18 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         }
     }
 
-    internal fun IrExpression.insertCastForReceiver(
-        argumentType: ConeKotlinType,
-        expectedType: ConeKotlinType,
-    ): IrExpression {
-        return insertCastForIntersectionTypeOrNull(argumentType, expectedType, forReceiver = true)
-        // When we generate an implicit this receiver, we assign it the type of the IR declaration.
-        // However, dataframe generates FIR and IR anonymous functions with different receiver types
-        // and then relies on the fact that FIR2IR generates an implicit cast from the one to the other.
-        // That's why we insert a seemingly redundant cast to the argumentType (not the expected type) here.
-        // See plugins/kotlin-dataframe/testData/box/groupByAdd.kt and plugins/kotlin-dataframe/testData/box/wrongReceiver.kt.
-        // TODO(KT-77691) Remove when fixed on the plugin side.
-            ?: implicitCastOrExpression(this, argumentType, conversionScope.defaultConversionTypeOrigin())
-    }
-
     internal fun IrExpression.insertCastForIntersectionTypeOrSelf(
-        argumentType: ConeKotlinType,
+        expression: FirExpression,
         expectedType: ConeKotlinType,
+        forReceiver: Boolean = false,
     ): IrExpression {
-        return insertCastForIntersectionTypeOrNull(argumentType, expectedType, forReceiver = false)
-            ?: this
-    }
+        val expandedExpressionType = expression.resolvedType.fullyExpandedType()
+        if (expandedExpressionType is ConeDynamicType) return this
 
-    private fun IrExpression.insertCastForIntersectionTypeOrNull(
-        argumentType: ConeKotlinType,
-        expectedType: ConeKotlinType,
-        forReceiver: Boolean,
-    ): IrExpression? {
-        val argumentTypeLowerBound = argumentType.lowerBoundIfFlexible()
-        if (argumentTypeLowerBound !is ConeIntersectionType) return null
+        val argumentTypeLowerBound = expandedExpressionType.lowerBoundIfFlexible()
+        if (argumentTypeLowerBound !is ConeIntersectionType) {
+            return insertCastToNullableNothingOrSelf(expression, expectedType, argumentTypeLowerBound)
+        }
 
         val approximatedExpectedType = expectedType.approximateForIrOrSelf()
 
@@ -155,12 +139,30 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         // TODO(KT-77692) Remove if fixed on the plugin side.
         if (!forReceiver) {
             val approximatedArgumentType = argumentTypeLowerBound.approximateForIrOrNull() ?: argumentTypeLowerBound
-            if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType, session)) return null
+            if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType, session)) return this
         }
 
         return argumentTypeLowerBound.intersectedTypes
             .firstOrNull { it.isSubtypeOf(approximatedExpectedType, session) }
             ?.let { generateImplicitCast(this, it.toIrType(conversionScope.defaultConversionTypeOrigin())) }
+            ?: this
+    }
+
+    private fun IrExpression.insertCastToNullableNothingOrSelf(
+        expression: FirExpression,
+        expectedType: ConeKotlinType,
+        argumentTypeLowerBound: ConeRigidType,
+    ): IrExpression {
+        // See compiler/testData/codegen/box/smartCasts/nullSmartCast.kt
+        // where an expression of type Int? is smart-casted to Nothing? and then used for the expected type String?.
+        // Not inserting a cast, makes Wasm fail.
+        val argumentTypeWithoutNullableNothing = (expression as? FirSmartCastExpression)?.smartcastTypeWithoutNullableNothing?.coneType
+            ?: return this
+
+        return applyIf(!argumentTypeWithoutNullableNothing.isSubtypeOf(expectedType.approximateForIrOrSelf(), session)) {
+            check(argumentTypeLowerBound.isNullableNothing) { "Expected argument type to be Nothing?" }
+            generateImplicitCast(this, argumentTypeLowerBound.toIrType(conversionScope.defaultConversionTypeOrigin()))
+        }
     }
 
     fun implicitCastOrExpression(

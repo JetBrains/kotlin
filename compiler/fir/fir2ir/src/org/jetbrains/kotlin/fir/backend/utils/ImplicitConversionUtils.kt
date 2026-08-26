@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.render
 context(c: Fir2IrComponents)
 fun IrExpression.prepareExpressionForGivenExpectedType(
     expression: FirExpression,
-    valueType: ConeKotlinType = expression.resolvedType.fullyExpandedType(),
     expectedType: ConeKotlinType,
     // In most cases, it should be the same as `expectedType`.
     // Currently, it's only used for a case of a call argument to a generic function or for a call argument of a vararg parameter.
@@ -39,16 +38,12 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
     }
 
     val expressionWithCast = with(c.implicitCastInserter) {
-        if (forReceiver) {
-            insertCastForReceiver(valueType, expectedType)
-        } else {
-            insertCastForIntersectionTypeOrSelf(valueType, expectedType)
-        }.insertSpecialCast(
-            expression,
-            valueType = valueType,
-            unsubstitutedExpectedType = unsubstitutedExpectedType,
-            substitutedExpectedType = expectedType
-        )
+        insertCastForIntersectionTypeOrSelf(expression, expectedType, forReceiver)
+            .insertSpecialCast(
+                expression,
+                unsubstitutedExpectedType = unsubstitutedExpectedType,
+                substitutedExpectedType = expectedType
+            )
     }
 
     return expressionWithCast
