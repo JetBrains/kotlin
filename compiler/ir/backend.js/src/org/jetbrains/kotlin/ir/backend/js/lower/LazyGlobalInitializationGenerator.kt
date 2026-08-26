@@ -33,13 +33,16 @@ import org.jetbrains.kotlin.name.Name
 abstract class LazyGlobalInitializationGenerator {
     protected abstract val backendContext: JsCommonBackendContext
 
-    private object InitializationState {
+    protected object InitializationState {
         const val UNINITIALIZED: Int = 0
         const val INITIALIZED: Int = 1
         const val ERROR: Int = 2
     }
 
-    protected abstract fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, klass: IrClass?): IrCall
+    protected abstract fun IrBuilderWithScope.generateStaticInitializationStateChecks(
+        getStateField: IrGetField,
+        klass: IrClass?
+    ): List<IrStatement>
 
     protected open fun IrBuilderWithScope.undefinedOrNull(): IrExpression = irNull()
 
@@ -82,8 +85,7 @@ abstract class LazyGlobalInitializationGenerator {
             val builder = backendContext.createIrBuilder(symbol)
             body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
                 with(builder) {
-                    val stateCheck = generateStaticInitializationStateCheck(irGetField(null, stateField), klass)
-                    statements += irIfThen(stateCheck, irReturnUnit())
+                    statements += generateStaticInitializationStateChecks(irGetField(null, stateField), klass)
                     statements += irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
                     val allInitializers = irComposite {
                         beforeAll()
@@ -115,11 +117,13 @@ abstract class LazyGlobalInitializationGenerator {
 }
 
 class JsLazyGlobalInitializationGenerator(override val backendContext: JsIrBackendContext) : LazyGlobalInitializationGenerator() {
-    override fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, klass: IrClass?): IrCall =
-        irCall(backendContext.symbols.checkStaticInitializationState).apply {
+    override fun IrBuilderWithScope.generateStaticInitializationStateChecks(getStateField: IrGetField, klass: IrClass?): List<IrStatement> {
+        val check = irCall(backendContext.symbols.checkStaticInitializationState).apply {
             arguments[0] = getStateField
             arguments[1] = klass?.jsConstructorReference(backendContext) ?: backendContext.getVoid()
         }
+        return listOf(irIfThen(check, irReturnUnit()))
+    }
 
     override fun IrBuilderWithScope.undefinedOrNull(): IrExpression = backendContext.getVoid()
 
