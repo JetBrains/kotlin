@@ -45,7 +45,7 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                     FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
                 )
             }
-            if (LanguageFeature.ExpectRefinement.isDisabled()) {
+            if (LanguageFeature.ExpectRefinement.isDisabled() && LanguageFeature.AllowMultipleExpectsForSameActual.isDisabled()) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_FEATURE,
