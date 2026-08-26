@@ -1,6 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import java.io.File
+import java.util.Properties
 
 // Repo content: https://dl.google.com/android/repository/repository2-1.xml
 plugins {
@@ -149,6 +150,60 @@ fun unzipSdkTask(
     return unzipTask
 }
 
+// SDK artifacts are unpacked manually instead of using sdkmanager (recommended way),
+// so required package metadata (package.xml) is missing. Write the metadata manually.
+//
+// Without the metadata, AGP cannot load the SDK components directly and falls back to a full
+// SDK scan, which *generates* the missing package.xml files inside the SDK directory.
+// Since AGP tracks the existence of these files as configuration cache inputs, such writes
+// invalidate the configuration cache of Android test builds, making tests that assert
+// configuration cache reuse flaky on freshly provisioned machines.
+//
+// Note: this is an 'object' (and not top-level functions) so that it can be used inside
+// task actions without capturing a reference to the build script object.
+object LocalPackageMetadata {
+    const val genericDetailsXml =
+        """<type-details xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns5:genericDetailsType"/>"""
+
+    fun localPackageXml(path: String, displayName: String, revision: String, typeDetails: String): String {
+        val revisionXml = revision.split(".")
+            .mapIndexed { index, part ->
+                val tag = listOf("major", "minor", "micro")[index]
+                "<$tag>$part</$tag>"
+            }
+            .joinToString("")
+        return """
+        |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        |<ns2:repository xmlns:ns2="http://schemas.android.com/repository/android/common/02"
+        |               xmlns:ns3="http://schemas.android.com/repository/android/common/01"
+        |               xmlns:ns4="http://schemas.android.com/repository/android/generic/01"
+        |               xmlns:ns5="http://schemas.android.com/repository/android/generic/02"
+        |               xmlns:ns6="http://schemas.android.com/sdk/android/repo/repository2/01"
+        |               xmlns:ns7="http://schemas.android.com/sdk/android/repo/repository2/02"
+        |               xmlns:ns8="http://schemas.android.com/sdk/android/repo/repository2/03"
+        |               xmlns:ns9="http://schemas.android.com/sdk/android/repo/addon2/01"
+        |               xmlns:ns10="http://schemas.android.com/sdk/android/repo/addon2/02"
+        |               xmlns:ns11="http://schemas.android.com/sdk/android/repo/addon2/03"
+        |               xmlns:ns12="http://schemas.android.com/sdk/android/repo/sys-img2/04"
+        |               xmlns:ns13="http://schemas.android.com/sdk/android/repo/sys-img2/03"
+        |               xmlns:ns14="http://schemas.android.com/sdk/android/repo/sys-img2/02"
+        |               xmlns:ns15="http://schemas.android.com/sdk/android/repo/sys-img2/01">
+        |  <license id="android-sdk-license" type="text">See android-sdk-license in SDK licenses directory.</license>
+        |  <localPackage path="$path" obsolete="false">
+        |    $typeDetails
+        |    <revision>$revisionXml</revision>
+        |    <display-name>$displayName</display-name>
+        |    <uses-license ref="android-sdk-license"/>
+        |  </localPackage>
+        |</ns2:repository>
+        """.trimMargin()
+    }
+
+    fun sourceProperties(packageDir: File): Properties = Properties().apply {
+        packageDir.resolve("source.properties").inputStream().use { load(it) }
+    }
+}
+
 fun androidPlatform(version: String): TaskProvider<Task> {
     val artifactId = if (version.startsWith("22_")) "android" else "platform"
     return unzipSdkTask(
@@ -159,7 +214,27 @@ fun androidPlatform(version: String): TaskProvider<Task> {
         additionalConfig = configurations.implicitDependencies.get(),
         dirLevelsToSkipOnUnzip = 1,
         prepareTask = preparePlatform
-    )
+    ) { platformDir ->
+        val properties = LocalPackageMetadata.sourceProperties(platformDir)
+        val apiLevel = properties.getProperty("AndroidVersion.ApiLevel")
+        val extensionLevel: String? = properties.getProperty("AndroidVersion.ExtensionLevel")
+        val layoutlibApi = properties.getProperty("Layoutlib.Api")
+        platformDir.resolve("package.xml").writeText(
+            LocalPackageMetadata.localPackageXml(
+                path = "platforms;android-$apiLevel",
+                displayName = "Android SDK Platform $apiLevel",
+                revision = properties.getProperty("Pkg.Revision"),
+                typeDetails = buildString {
+                    append("""<type-details xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns8:platformDetailsType">""")
+                    append("<api-level>$apiLevel</api-level>")
+                    if (extensionLevel != null) append("<extension-level>$extensionLevel</extension-level>")
+                    append("<base-extension>true</base-extension>")
+                    append("""<layoutlib api="$layoutlibApi"/>""")
+                    append("</type-details>")
+                }
+            )
+        )
+    }
 }
 
 fun androidBuildTools(version: String): TaskProvider<Task> {
@@ -197,7 +272,16 @@ fun androidBuildTools(version: String): TaskProvider<Task> {
         destinationSubdir = "build-tools/$version",
         coordinatesSuffix = toolsOs,
         dirLevelsToSkipOnUnzip = 1
-    )
+    ) { buildToolsDir ->
+        buildToolsDir.resolve("package.xml").writeText(
+            LocalPackageMetadata.localPackageXml(
+                path = "build-tools;$version",
+                displayName = "Android SDK Build-Tools $version",
+                revision = LocalPackageMetadata.sourceProperties(buildToolsDir).getProperty("Pkg.Revision"),
+                typeDetails = LocalPackageMetadata.genericDetailsXml
+            )
+        )
+    }
 }
 
 androidPlatform("22_r02")
@@ -313,7 +397,17 @@ unzipSdkTask("x86_64", "26", "system-images/android-26/default", "r01", prepareT
     )
 }
 unzipSdkTask("android_m2repository", "r44", "extras/android", "")
-unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
+unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin) { sdkDir ->
+    val platformToolsDir = sdkDir.resolve("platform-tools")
+    platformToolsDir.resolve("package.xml").writeText(
+        LocalPackageMetadata.localPackageXml(
+            path = "platform-tools",
+            displayName = "Android SDK Platform-Tools",
+            revision = LocalPackageMetadata.sourceProperties(platformToolsDir).getProperty("Pkg.Revision"),
+            typeDetails = LocalPackageMetadata.genericDetailsXml
+        )
+    )
+}
 unzipSdkTask("commandlinetools-$toolsOsShort", "${commandLineToolsVersion}_latest", "", "")
 
 val clean = tasks.register<Delete>("clean") {
