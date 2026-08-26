@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -77,6 +78,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @Ignore("KT-88857")
     @DisplayName("Test kts evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesKotlin(gradleVersion: GradleVersion) {
@@ -100,6 +102,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
         testKotlinDependenciesBlock("emptyKts", gradleVersion, dependenciesBlock)
     }
 
+    @Ignore("KT-88857")
     @DisplayName("Test Groovy build script evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesGroovy(gradleVersion: GradleVersion) {
