@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
+import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.logMultiple
@@ -62,7 +65,8 @@ import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.utils.mapEachBit
 import java.util.BitSet
 
-internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLoweringPass {
+@PhasePrerequisites(FinallyBlocksLowering::class)
+internal class ComputeTypesPass(val context: LoweringContext) : BodyLoweringPass {
     private val unitType = context.irBuiltIns.unitType
 
     private fun IrClass.superClassesHierarchy(): List<IrClass> {
