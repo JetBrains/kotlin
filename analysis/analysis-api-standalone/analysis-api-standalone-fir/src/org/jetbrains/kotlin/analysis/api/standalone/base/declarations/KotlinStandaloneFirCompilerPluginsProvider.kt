@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 @OptIn(ExperimentalCompilerApi::class)
+@KaImplementationDetail
 class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: CompilerConfiguration) : KotlinCompilerPluginsProvider {
     private val extensionStorage = compilerConfiguration.extensionsStorage?.apply {
         for (registrar in compilerConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
@@ -134,6 +135,7 @@ private class KotlinStandaloneAnnotationsResolver(
     }
 }
 
+@KaImplementationDetail
 class KotlinStandaloneAnnotationsResolverFactory(
     private val project: Project,
     private val files: Collection<KtFile>,

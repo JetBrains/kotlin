@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.permissions
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
 
+@KaImplementationDetail
 class KotlinStandaloneAnalysisPermissionOptions : KotlinAnalysisPermissionOptions {
     override val defaultIsAnalysisAllowedOnEdt: Boolean get() = true
     override val defaultIsAnalysisAllowedInWriteAction: Boolean get() = true

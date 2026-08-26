@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 
+@KaImplementationDetail
 class KotlinStandaloneDeclarationProvider internal constructor(
     private val index: KotlinStandaloneDeclarationIndex,
     val scope: GlobalSearchScope,
@@ -195,6 +197,7 @@ class KotlinStandaloneDeclarationProvider internal constructor(
  * @param postponeIndexing Whether to postpone indexing until the first access.
  *  This is useful for tests to reduce the startup time and potentially avoid redundant indexing (which might be heavy, especially if stubs are used).
  */
+@KaImplementationDetail
 class KotlinStandaloneDeclarationProviderFactory(
     private val project: Project,
     private val environment: CoreApplicationEnvironment,
@@ -250,6 +253,7 @@ class KotlinStandaloneDeclarationProviderFactory(
         index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
 }
 
+@KaImplementationDetail
 class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger {
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
         providers.mergeSpecificProviders<_, KotlinStandaloneDeclarationProvider>(KotlinCompositeDeclarationProvider.factory) { targetProviders ->

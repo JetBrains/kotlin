@@ -3,10 +3,12 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 
 /**
  * @param DATA Additional information provided to the registrar by the setup process.
  */
+@KaImplementationDetail
 interface AnalysisApiServiceRegistrar<in DATA> {
     fun registerApplicationServices(application: MockApplication, disposable: Disposable, data: DATA)
 
@@ -17,22 +19,27 @@ interface AnalysisApiServiceRegistrar<in DATA> {
     fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: DATA)
 }
 
+@KaImplementationDetail
 fun <T> List<AnalysisApiServiceRegistrar<T>>.registerApplicationServices(application: MockApplication, disposable: Disposable, data: T) {
     ApplicationServiceRegistration.register(application, disposable, this, data)
 }
 
+@KaImplementationDetail
 fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectExtensionPoints(project: MockProject, data: T) {
     forEach { it.registerProjectExtensionPoints(project, data) }
 }
 
+@KaImplementationDetail
 fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectServices(project: MockProject, data: T) {
     forEach { it.registerProjectServices(project, data) }
 }
 
+@KaImplementationDetail
 fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectModelServices(project: MockProject, disposable: Disposable, data: T) {
     forEach { it.registerProjectModelServices(project, disposable, data) }
 }
 
+@KaImplementationDetail
 abstract class AnalysisApiSimpleServiceRegistrar : AnalysisApiServiceRegistrar<Any> {
     open fun registerApplicationServices(application: MockApplication, disposable: Disposable) {}
 

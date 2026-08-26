@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.modification
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerByEventFactoryBase
 
+@KaImplementationDetail
 class KotlinStandaloneModificationTrackerFactory(project: Project) : KotlinModificationTrackerByEventFactoryBase(project)
