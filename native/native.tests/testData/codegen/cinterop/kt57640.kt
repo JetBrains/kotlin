@@ -215,6 +215,15 @@ private fun testAssignmentBaseToDerived() {
     assertFalse(delegate17_Base is BarProtocol)
     assertFalse(delegate17_Base is Derived)
     assertEquals(base, delegate17_Base)
+
+    val derivedFoo = derived as FooProtocol
+    val derivedBar = derived as BarProtocol
+    // TODO KT-85681: we might want to make it throw a `ClassCastException`.
+    val delegate14_Foo: FooProtocol? = derivedFoo.delegate
+    // TODO KT-85681
+    val delegate15_Bar: BarProtocol? = derivedBar.delegate
+    // TODO KT-85681
+    val delegate16_Bar: BarProtocol? = derived.delegate()
 }
 
 private fun testAssignmentDerivedWithPropertyOverrideToDerivedWithPropertyOverride() {
@@ -337,6 +346,19 @@ private fun testAssignmentBaseToDerivedWithPropertyOverride() {
     assertFalse(delegate17_Base is BarProtocol)
     assertFalse(delegate17_Base is DerivedWithPropertyOverride)
     assertEquals(base, delegate17_Base)
+
+    val derived_Foo = derived as FooProtocol
+    val derivedBar = derived as BarProtocol
+    // TODO KT-85681
+    val delegate19_DerivedWithPropertyOverride: DerivedWithPropertyOverride? = derived.delegate()
+    // TODO KT-85681
+    val delegate14_Foo: FooProtocol? = derived_Foo.delegate
+    // TODO KT-85681
+    val delegate18_Foo: FooProtocol? = derived_Foo.delegate() // static type is FooProtocol?, not DerivedWithPropertyOverride?, this deserves a diagnostic test
+    // TODO KT-85681
+    val delegate15_Bar: BarProtocol? = derivedBar.delegate
+    // TODO KT-85681
+    val delegate19_Bar: BarProtocol? = derivedBar.delegate() // static type is BarProtocol?, not DerivedWithPropertyOverride?, this deserves a diagnostic test
 }
 
 private fun testGrandDerived() {
