@@ -259,7 +259,6 @@ fun serializeModuleIntoKlib(
 ) {
     val moduleJsExportNames = moduleFragment.collectJsExportNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
-    val empty = ByteArray(0)
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
         serializeModuleIntoKlib(
             moduleName = moduleFragment.name.asString(),
@@ -278,7 +277,7 @@ fun serializeModuleIntoKlib(
             metadataSerializer = metadataSerializer,
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
                 { ioFile, compiledFile ->
-                    icConsumer.processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+                    icConsumer.processPackagePart(ioFile, compiledFile.metadata)
                     with(compiledFile.irData!!) {
                         icConsumer.processIrFile(
                             ioFile,

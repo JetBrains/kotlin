@@ -23,7 +23,7 @@ interface IncrementalResultsConsumer {
     fun processHeader(headerMetadata: ByteArray)
 
     /** processes new package part metadata and binary tree for compiled source file */
-    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
+    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray)
 
     fun processPackageMetadata(packageName: String, metadata: ByteArray)
 
@@ -58,8 +58,8 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         this.headerMetadata = headerMetadata
     }
 
-    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray) {
-        packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
+    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray) {
+        packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata))
     }
 
     val packageMetadata: Map<String, ByteArray>
