@@ -11440,6 +11440,51 @@
                                         "deprecatedMessage": null
                                     },
                                     {
+                                        "name": "Xenable-advanced-optimizations",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Enable experimental advanced optimization passes (e.g. effect analysis).",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
                                         "name": "Xfriend-modules",
                                         "shortName": null,
                                         "deprecatedName": null,

@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JS_IR
 // ONLY_IR_DCE
 // CHECK_OPTIMIZED_JS
+// ENABLE_UNUSED_PROPERTY_DCE
 
 object Global { var x = 10 }
 

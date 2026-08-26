@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.EffectsKind
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.computeEffectsKind
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
@@ -90,10 +91,10 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     out.writeText(value)
 }
 
-class SetFieldRemover(val usefulDeclarations: Set<IrDeclaration>) : IrElementTransformerVoid() {
+class SetFieldRemover(val context: JsCommonBackendContext, val usefulDeclarations: Set<IrDeclaration>) : IrElementTransformerVoid() {
     override fun visitSetField(expression: IrSetField): IrExpression {
         if (expression.symbol.owner !in usefulDeclarations) {
-            val effects = expression.value.computeEffectsKind()
+            val effects = expression.value.computeEffectsKind(context)
             return if (effects == EffectsKind.WRITE) {
                 super.visitSetField(expression)
                 expression.value
