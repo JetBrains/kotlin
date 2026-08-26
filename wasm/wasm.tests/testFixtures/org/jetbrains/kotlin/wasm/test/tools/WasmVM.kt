@@ -28,7 +28,7 @@ internal sealed class WasmVM(
         useNewExceptionHandling: Boolean = false,
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
-        // HACK (KT-87723): which export the WASI VMs invoke - the box test entry point or the unit test runner
+        /** Which export the WASI VMs invoke: the box test entry point or the unit test runner. */
         wasiEntryPoint: String = WasiComponentizer.BOX_ENTRY_POINT,
     ): String
 
@@ -118,8 +118,8 @@ internal sealed class WasmVM(
             toolArgs: List<String>,
             wasiEntryPoint: String,
         ): String {
-            // HACK (KT-87723): the stdlib imports `wasi:*` 0.2 interfaces, which are only available to a component
-            val component = WasiComponentizer.componentize(File(workingDirectory, entryFile))
+            // the stdlib imports `wasi:*` 0.2 interfaces, which are only available to a component
+            val component = WasiComponentizer.componentize(File(workingDirectory, entryFile), wasiEntryPoint)
             return tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",

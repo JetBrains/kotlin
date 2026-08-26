@@ -25,7 +25,6 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
 import plugins.publishing.copyAttributes
-import java.net.URI
 import kotlin.io.path.copyTo
 
 plugins {
@@ -1064,70 +1063,60 @@ tasks.withType<Kotlin2JsCompile>().configureEach {
 }
 
 // =====================================================================================================================
-// HACK (KT-87723): run the stdlib WASI tests as a WASI 0.2 *component* instead of a core module.
+// Runs the stdlib WASI tests as a WASI 0.2 component: the standard library imports `wasi:*` 0.2 interfaces directly,
+// which no host provides to a plain core module.
 //
-// Quick-and-dirty stand-in for the future KGP integration, only wired into `wasmWasiWasmtimeTest`:
-//   1. the compiler-generated unit test entry point export `startUnitTests` is renamed to the kebab-case WIT name
-//      `run-unit-tests` (both are exactly 14 bytes, so this is a plain byte patch of the linked .wasm). WIT and the
-//      component model only allow kebab-case names, and `wasmtime --invoke` parses WAVE, which rejects camelCase.
-//   2. `wasm-tools component embed` embeds a *test-only* world: same imports as `wasip2`, but exporting
-//      `run-unit-tests` instead of `wasi:cli/run`, because test binaries have no `main`.
-//   3. `wasm-tools component new` builds the component; the `wasi_snapshot_preview1` `args_get`/`args_sizes_get`
-//      imports that kotlin-test still uses for the test CLI arguments are satisfied by the preview1 adapter. The
-//      stock reactor adapter is used by default (the freelist allocators no longer hand out memory that the adapter
-//      still holds on to); pass -Pkotlin.wasm.wasiAdapterPath=... to use a customized one.
-//   4. the resulting component overwrites the linked .wasm in place (so no KGP change is needed for the test input),
-//      and the wasmtime executable is replaced by a wrapper script that rewrites `--invoke startUnitTests` into
-//      `--invoke run-unit-tests()`.
+// Interim solution until KGP does this itself (KT-87723); the corresponding test infrastructure for the compiler box
+// tests is `WasiComponentizer` in `wasm/wasm.tests`. Two steps:
+//   1. `wasm-tools component embed` embeds a world that is like the stdlib's `wasip2` world, but exports the unit test
+//      runner entry point instead of `wasi:cli/run`, since test binaries have no `main`,
+//   2. `wasm-tools component new` builds the component from that.
 //
-// Needs `wasm-tools` on PATH (or -Pkotlin.wasm.wasmToolsPath=/path/to/wasm-tools), and network access on the first run
-// (to fetch the preview1 adapter). Unix only. Disable with -Pkotlin.stdlib.wasi.componentHack=false.
-// Delete this whole block once KGP produces components properly.
+// The wasmtime executable is replaced by a wrapper script, because the test task is set up by KGP: it invokes the
+// entry point on the linked core module, whereas the component has to be run instead.
+//
+// Unix only. Disable with -Pkotlin.stdlib.wasi.componentHack=false.
 // =====================================================================================================================
 @OptIn(ExperimentalWasmDsl::class)
 run {
     val hackEnabled = providers.gradleProperty("kotlin.stdlib.wasi.componentHack").orNull != "false"
     if (!hackEnabled || org.gradle.internal.os.OperatingSystem.current().isWindows) return@run
 
-    val entryPointCoreName = "startUnitTests"
-    val entryPointWitName = "run-unit-tests" // same length as above on purpose: allows a plain byte patch
-    val testWorld = "kotlin-stdlib:wasip2/wasip2-test"
+    // the name the compiler exports the unit test runner under on WASI (`wasmWasiUnitTestsExportName`)
+    val entryPoint = "start-unit-tests"
+    val world = "kotlin-stdlib:wasip2/wasip2-test"
 
     val wasmtimeSpec = the<WasmtimeEnvSpec>()
     // resolved before `command` is overridden below, so this is the real wasmtime binary
     val realWasmtime = File(wasmtimeSpec.executable.get())
 
-    val wasmtimeVersion = wasmtimeSpec.version.get()
-    val customAdapter = providers.gradleProperty("kotlin.wasm.wasiAdapterPath").map { File(it) }.orNull
     val stdlibWitDir = layout.projectDirectory.dir("wasm/wasi/internal/wit").asFile
-    val hackDir = layout.buildDirectory.dir("wasip2-component-hack").get().asFile
+    val outputDir = layout.buildDirectory.dir("wasip2-component").get().asFile
+    val component = outputDir.resolve("test-component.wasm")
 
     // The wrapper lives in the build directory (and not next to the real wasmtime, which is a task output directory
-    // that gets wiped on re-extraction) and is (re)written by a task, so that it survives configuration cache hits.
-    val wrapper = hackDir.resolve("wasmtime-component-hack.sh")
+    // that gets wiped on re-extraction) and is written by a task, so that it survives configuration cache hits.
+    val wrapper = outputDir.resolve("wasmtime-component-wrapper.sh")
     val wrapperText =
         """
         #!/usr/bin/env bash
-        # Generated by libraries/stdlib/build.gradle.kts (KT-87723 hack) - safe to delete.
+        # Generated by libraries/stdlib/build.gradle.kts - safe to delete.
+        #
+        # Runs the component built by `wasmWasiWasmtimeTest` instead of the core module KGP passes, and invokes the
+        # entry point with WAVE call syntax, which `wasmtime --invoke` expects for a component.
         set -eu
-        real="${realWasmtime.absolutePath}"
-        if [ ! -x "${'$'}real" ]; then
-          echo "component hack wrapper: ${'$'}real is missing (wasmtime version bumped?);" \
-               "re-run with --no-configuration-cache" >&2
-          exit 1
-        fi
         args=()
         for arg in "${'$'}@"; do
-          if [ "${'$'}arg" = "$entryPointCoreName" ]; then
-            args+=("$entryPointWitName()")
-          else
-            args+=("${'$'}arg")
-          fi
+          case "${'$'}arg" in
+            $entryPoint) args+=("$entryPoint()") ;;
+            *.wasm) args+=("${component.absolutePath}") ;;
+            *) args+=("${'$'}arg") ;;
+          esac
         done
-        exec "${'$'}real" "${'$'}{args[@]}"
+        exec "${realWasmtime.absolutePath}" "${'$'}{args[@]}"
         """.trimIndent()
 
-    val writeWasmtimeWrapper = tasks.register("writeWasmtimeComponentHackWrapper") {
+    val writeWasmtimeWrapper = tasks.register("writeWasmtimeComponentWrapper") {
         val wrapperFile = wrapper
         val text = wrapperText
         outputs.upToDateWhen { false }
@@ -1138,7 +1127,7 @@ run {
         }
     }
 
-    // absolute path, so the install directory of wasmtime is left alone entirely
+    // absolute path, so the installation directory of wasmtime is left alone entirely
     wasmtimeSpec.command.set(wrapper.absolutePath)
 
     // WasmtimeSetupTask chmod's `command` after extracting the distribution, so the wrapper has to exist by then
@@ -1155,124 +1144,46 @@ run {
         doFirst {
             val wasmToolsExecutable = wasmToolsExecutablePath.get()
 
-            fun runCommand(vararg command: String) {
-                val process = ProcessBuilder(*command).redirectErrorStream(true).start()
+            fun runWasmTools(vararg arguments: String) {
+                val command = listOf(wasmToolsExecutable) + arguments
+                val process = ProcessBuilder(command).redirectErrorStream(true).start()
                 val output = process.inputStream.bufferedReader().readText()
                 val exitCode = process.waitFor()
-                check(exitCode == 0) { "Command failed with exit code $exitCode:\n${command.joinToString(" ")}\n$output" }
+                check(exitCode == 0) {
+                    "Command failed with exit code $exitCode:\n${command.joinToString(" ")}\n$output"
+                }
                 if (output.isNotBlank()) taskLogger.info(output)
             }
 
-            fun ByteArray.containsAscii(value: String): Boolean {
-                val valueBytes = value.toByteArray(Charsets.US_ASCII)
-                var i = 0
-                outer@ while (i <= size - valueBytes.size) {
-                    for (j in valueBytes.indices) {
-                        if (this[i + j] != valueBytes[j]) {
-                            i++
-                            continue@outer
-                        }
-                    }
-                    return true
-                }
-                return false
-            }
+            outputDir.mkdirs()
 
-            fun ByteArray.patchAscii(from: String, to: String): Int {
-                require(from.length == to.length)
-                val fromBytes = from.toByteArray(Charsets.US_ASCII)
-                val toBytes = to.toByteArray(Charsets.US_ASCII)
-                var patched = 0
-                var i = 0
-                outer@ while (i <= size - fromBytes.size) {
-                    for (j in fromBytes.indices) {
-                        if (this[i + j] != fromBytes[j]) {
-                            i++
-                            continue@outer
-                        }
-                    }
-                    toBytes.copyInto(this, i)
-                    patched++
-                    i += fromBytes.size
-                }
-                return patched
-            }
-
-            val linkedFile = testModule.get().asFile
-            hackDir.mkdirs()
-
-            // 0. the linked file is overwritten with the component below, so keep the pristine core module around:
-            //    that way changes to the adapter or to the WIT are picked up without having to relink
-            val coreModule = hackDir.resolve("test-module-core.wasm")
-            val linkedBytes = linkedFile.readBytes()
-            // core module header: 00 61 73 6d 01 00 00 00, component header: 00 61 73 6d 0d 00 01 00
-            val linkedIsCore = linkedBytes.size >= 8 && linkedBytes[4] == 0x01.toByte() && linkedBytes[6] == 0x00.toByte()
-            if (linkedIsCore) linkedFile.copyTo(coreModule, overwrite = true)
-            check(coreModule.exists()) {
-                "${linkedFile.absolutePath} is already a component and ${coreModule.absolutePath} is missing; " +
-                        "delete the former and re-run to get a freshly linked core module"
-            }
-            val bytes = if (linkedIsCore) linkedBytes else coreModule.readBytes()
-
-            // 1. rename the unit test entry point export to a name that is valid in WIT
-            val patchedCount = bytes.patchAscii(entryPointCoreName, entryPointWitName)
-            check(patchedCount > 0) { "Export '$entryPointCoreName' not found in ${linkedFile.absolutePath}" }
-            val renamedModule = hackDir.resolve("test-module-renamed.wasm")
-            renamedModule.writeBytes(bytes)
-
-            // 2. the stdlib WIT plus a test-only world exporting the unit test entry point instead of wasi:cli/run
-            val witDir = hackDir.resolve("wit")
+            val witDir = outputDir.resolve("wit")
             witDir.deleteRecursively()
             stdlibWitDir.copyRecursively(witDir)
-            witDir.resolve("zz-test-world-hack.wit").writeText(
+            witDir.resolve("test-world.wit").writeText(
                 """
                 package kotlin-stdlib:wasip2@2.5.0;
 
-                // HACK (KT-87723): `wasip2`, but exporting the unit test entry point instead of `wasi:cli/run`,
-                // since stdlib test binaries have no `main`.
+                // Like the `wasip2` world, but exporting the unit test runner entry point instead of `wasi:cli/run`,
+                // since test binaries have no `main`. Exports of the module that the world does not mention are dropped.
                 world wasip2-test {
                     include wasi:io/imports@0.2.12;
                     include wasi:random/imports@0.2.12;
                     include wasi:clocks/imports@0.2.12;
                     include wasi:cli/imports@0.2.12;
 
-                    export $entryPointWitName: func();
+                    export $entryPoint: func();
                 }
                 """.trimIndent()
             )
 
-            // 3. a preview1 adapter is only needed while something still imports `wasi_snapshot_preview1`;
-            //    a WASI 0.2 native module is componentized as is
-            val needsAdapter = bytes.containsAscii("wasi_snapshot_preview1")
-            val adapter = if (!needsAdapter) null else {
-                (customAdapter ?: hackDir.resolve("wasi_snapshot_preview1.reactor.wasm").also { downloaded ->
-                    if (!downloaded.exists()) {
-                        val url = "https://github.com/bytecodealliance/wasmtime/releases/download/" +
-                                "v$wasmtimeVersion/wasi_snapshot_preview1.reactor.wasm"
-                        taskLogger.lifecycle("Downloading $url")
-                        URI(url).toURL().openStream().use { input ->
-                            downloaded.outputStream().buffered().use { output -> input.copyTo(output) }
-                        }
-                    }
-                }).also { check(it.isFile) { "preview1 adapter ${it.absolutePath} does not exist" } }
-            }
-            taskLogger.lifecycle(adapter?.let { "Using preview1 adapter ${it.absolutePath}" } ?: "No preview1 adapter needed")
-
-            val embeddedModule = hackDir.resolve("test-module-embedded.wasm")
-            val component = hackDir.resolve("test-component.wasm")
-            runCommand(
-                wasmToolsExecutable, "component", "embed", witDir.absolutePath, renamedModule.absolutePath,
-                "--world", testWorld, "-o", embeddedModule.absolutePath,
+            val embedded = outputDir.resolve("test-module-embedded.wasm")
+            runWasmTools(
+                "component", "embed", witDir.absolutePath, testModule.get().asFile.absolutePath,
+                "--world", world, "-o", embedded.absolutePath,
             )
-            runCommand(
-                wasmToolsExecutable, "component", "new", embeddedModule.absolutePath,
-                *adapter?.let { arrayOf("--adapt", "wasi_snapshot_preview1=${it.absolutePath}") } ?: emptyArray(),
-                "-o", component.absolutePath,
-            )
-
-            // 4. run the tests on the component instead of on the core module
-            component.copyTo(linkedFile, overwrite = true)
-            taskLogger.lifecycle("Componentized ${linkedFile.absolutePath} (world $testWorld)")
+            runWasmTools("component", "new", embedded.absolutePath, "-o", component.absolutePath)
+            taskLogger.lifecycle("Built ${component.absolutePath} (world $world)")
         }
     }
 }

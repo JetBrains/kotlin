@@ -5,6 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm
 
+/**
+ * Name under which the compiler exports the unit test runner entry point of a WASI test binary.
+ *
+ * Kebab-case, since WASI binaries are Component Model components (or become ones), whose export names have to be WIT
+ * labels; see `wasmWasiUnitTestsExportName` in the Wasm backend.
+ */
+internal const val WASI_UNIT_TESTS_ENTRY_POINT = "start-unit-tests"
+
 internal fun wasmtimeInvokeArgs(functionName: String) = listOf(
     "--invoke",
     functionName

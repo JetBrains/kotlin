@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.backend.wasm.importedStringConstants
 import org.jetbrains.kotlin.backend.wasm.wasmStartExportName
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
+import org.jetbrains.kotlin.backend.wasm.wasmJsUnitTestsExportName
 import org.jetbrains.kotlin.backend.wasm.wasmWasiPreview2StartExportName
+import org.jetbrains.kotlin.backend.wasm.wasmWasiUnitTestsExportName
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
@@ -603,7 +605,8 @@ class WasmCompiledModuleFragment(
     private fun createStartUnitTestsFunction(definedDeclarations: DefinedDeclarationsResolver, exports: MutableList<WasmExport<*>>) {
         if (!definedDeclarations.functions.containsKey(Synthetics.Functions.runRootSuitesBuiltIn.value)) return
 
-        val startUnitTestsFunction = WasmFunction.Defined("startUnitTests", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
+        val exportName = if (isWasmJsTarget) wasmJsUnitTestsExportName else wasmWasiUnitTestsExportName
+        val startUnitTestsFunction = WasmFunction.Defined(exportName, Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
             forEachLinkerData { linkerData ->
                 linkerData.testFunctionDeclarators.forEach { declarator ->
@@ -612,7 +615,7 @@ class WasmCompiledModuleFragment(
             }
             buildCall(Synthetics.Functions.runRootSuitesBuiltIn, serviceCodeLocation)
         }
-        exports.add(WasmExport.Function("startUnitTests", startUnitTestsFunction))
+        exports.add(WasmExport.Function(exportName, startUnitTestsFunction))
         definedDeclarations.functions[Synthetics.Functions.startUnitTestsFunction.value] = startUnitTestsFunction
     }
 

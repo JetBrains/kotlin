@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.WASI_UNIT_TESTS_ENTRY_POINT
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtimeInvokeArgs
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
@@ -62,7 +63,7 @@ internal class KotlinWasmtime(
         )
 
         val args = mutableListOf<String>().apply {
-            addAll(wasmtimeInvokeArgs("startUnitTests"))
+            addAll(wasmtimeInvokeArgs(WASI_UNIT_TESTS_ENTRY_POINT))
             add(compiledFile.absolutePath)
             addAll(cliArgs.toList())
         }

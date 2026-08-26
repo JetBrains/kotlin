@@ -183,6 +183,17 @@ data class WasmModuleDependencyImport(val name: String, val fileName: String)
 internal const val wasmInitializeExportName = "_initialize"
 internal const val wasmStartExportName = "_start"
 internal const val wasmWasiPreview2StartExportName = "wasi:cli/run@0.2.12#run"
+
+/** Entry point of the unit test runner, called from JavaScript. */
+internal const val wasmJsUnitTestsExportName = "startUnitTests"
+
+/**
+ * Entry point of the unit test runner on WASI.
+ *
+ * Unlike [wasmJsUnitTestsExportName], this is kebab-case: WASI modules are turned into Component Model components,
+ * whose export names have to be WIT labels, and `wasmtime --invoke` parses WAVE, which rejects camelCase names.
+ */
+internal const val wasmWasiUnitTestsExportName = "start-unit-tests"
 internal const val jsBuiltinsModulePrefix = "wasm:"
 internal const val importedStringConstants = "'"
 

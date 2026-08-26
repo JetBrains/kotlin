@@ -22,13 +22,17 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 /**
- * The `test.mjs` launcher script for running the WASI unit-test runner (`startUnitTests()`):
- * imports the compiled module and starts unit tests, exiting with code 1 on any uncaught exception.
+ * The `test.mjs` launcher script for running the WASI unit-test runner
+ * ([WasiComponentizer.UNIT_TESTS_ENTRY_POINT]): imports the compiled module and starts unit tests, exiting with
+ * code 1 on any uncaught exception.
+ *
+ * The entry point is exported under a kebab-case name on WASI, which is not a valid JavaScript identifier, so it is
+ * accessed with an index expression.
  */
 private fun startUnitTestsWasiScript(): String = """
     try {
         let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-        jsModule.startUnitTests();
+        jsModule['${WasiComponentizer.UNIT_TESTS_ENTRY_POINT}']();
     } catch(e) {
         console.log('Failed with exception!');
         console.log(e);
