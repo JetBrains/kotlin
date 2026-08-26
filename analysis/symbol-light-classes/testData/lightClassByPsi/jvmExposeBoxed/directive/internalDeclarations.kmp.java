@@ -17,7 +17,7 @@ public final class ValueInt /* ValueInt*/ {
   public  ValueInt(int);//  .ctor(int)
 
   @kotlin.jvm.JvmExposeBoxed()
-  public final void internalMember();//  internalMember()
+  public final void internalMember$light_idea_test_case();//  internalMember$light_idea_test_case()
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()

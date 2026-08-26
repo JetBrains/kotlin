@@ -826,14 +826,16 @@ internal fun hasMangledNameDueValueClassesInSignature(
 /**
  * Applies [JvmName] and `internal` mangling to [defaultName].
  *
- * @return `null` if the name is mangled because of value classes, as such a suffix is out of the endpoint's scope
+ * @param ignoreValueClassMangling whether to compute the name as if value classes did not require mangling
+ * @return the computed Java method name, or `null` if value-class mangling is required and
+ * [ignoreValueClassMangling] is `false`
  */
 context(_: KaSession)
-internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String): String? {
+internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreValueClassMangling: Boolean): String? {
     symbol.jvmNameFromAnnotation?.let { return it }
 
     // 'JvmName' above wins over value class mangling, so the check has to be performed afterwards
-    if (hasMangledNameDueToValueClasses(symbol)) return null
+    if (!ignoreValueClassMangling && hasMangledNameDueToValueClasses(symbol)) return null
 
     // Top-level declarations are placed into a file facade class, and their names are never mangled.
     // Note: script declarations are members of a script class, so they are affected by mangling

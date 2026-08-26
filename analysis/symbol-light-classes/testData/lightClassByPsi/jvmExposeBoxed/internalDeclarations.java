@@ -30,13 +30,13 @@ public final class ValueInt /* ValueInt*/ {
   public  ValueInt(int);//  .ctor(int)
 
   @kotlin.jvm.JvmExposeBoxed()
-  public final int getInternalProperty();//  getInternalProperty()
+  public final int getInternalProperty$light_idea_test_case();//  getInternalProperty$light_idea_test_case()
 
   @kotlin.jvm.JvmExposeBoxed()
-  public final int getPublishedApiProperty();//  getPublishedApiProperty()
+  public final int getPublishedApiProperty$light_idea_test_case();//  getPublishedApiProperty$light_idea_test_case()
 
   @kotlin.jvm.JvmExposeBoxed()
-  public final void internalFun();//  internalFun()
+  public final void internalFun$light_idea_test_case();//  internalFun$light_idea_test_case()
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()

@@ -439,7 +439,11 @@ internal class KaFirJavaInteroperabilityComponent(
     override fun javaMethodName(function: KaFunctionSymbol): String? = withValidityAssertion {
         context(analysisSession) {
             val defaultName = defaultJavaMethodName(function) ?: return null
-            lightClassBridge.computeJavaMethodName(function, defaultName)?.takeIf(StringUtil::isJavaIdentifier)
+            lightClassBridge.computeJavaMethodName(
+                symbol = function,
+                defaultName = defaultName,
+                ignoreValueClassMangling = false
+            )?.takeIf(StringUtil::isJavaIdentifier)
         }
     }
 

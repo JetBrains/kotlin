@@ -17,8 +17,10 @@ interface KaInternalsLightClassBridge {
     /**
      * Applies [JvmName] and `internal` mangling to [defaultName].
      *
-     * @return `null` if the name is mangled because of value classes, as such a suffix is out of the endpoint's scope
+     * @param ignoreValueClassMangling whether to compute the name as if value classes did not require mangling
+     * @return the computed Java method name, or `null` if value-class mangling is required and
+     * [ignoreValueClassMangling] is `false`
      */
     context(_: KaSession)
-    fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String): String?
+    fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreValueClassMangling: Boolean): String?
 }
