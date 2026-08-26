@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.kmp.parser.KotlinParser
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.kmp.tree.buildLanguageSpecificLightTree
 
+@Suppress("UnstableApiUsage")
 class MultiplatformParsing2Fir(
     override val session: FirSession,
     private val scopeProvider: FirScopeProvider,
@@ -61,8 +62,10 @@ class MultiplatformParsing2Fir(
             .build()
 
         parser.parse(syntaxTreeBuilder)
-        return buildLanguageSpecificLightTree(syntaxTreeBuilder, charSequence) {
-            KotlinLightTreeStructure(it)
-        }
+        return buildLanguageSpecificLightTree(
+            syntaxTreeBuilder, charSequence,
+            buildLanguageSpecificTreeStructure = { KotlinLightTreeStructure(it) },
+            isComment = { false },
+        )
     }
 }
