@@ -56,7 +56,7 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val resolvedModuleDescriptors = KlibResolvedModuleDescriptorsFactoryImpl(nativeFactories.DefaultDeserializedDescriptorFactory).createResolved2(
                 // Note: The order of libraries is not important except for stdlib, which should go the first.
-                libraries = config.resolvedLibraries.getFullList(),
+                libraries = config.loadedKlibs.all,
                 storageManager = projectContext.storageManager,
                 builtIns = module.builtIns,
                 languageVersionSettings = config.languageVersionSettings,
