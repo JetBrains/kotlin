@@ -114,4 +114,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val ADDITIONAL_EXPORTED_DECLARATION_NAMES by key<Set<FqName>>()
 
     val EXPORT_UNTYPED_AS_UNKNOWN by key<Boolean>()
+
+    val DCE_UNUSED_PROPERTIES by key<Boolean>("Enable DCE for unused properties")
 }
