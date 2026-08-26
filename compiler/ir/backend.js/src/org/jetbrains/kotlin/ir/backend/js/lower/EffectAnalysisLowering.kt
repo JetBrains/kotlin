@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
 import org.jetbrains.kotlin.ir.backend.js.effects
+import org.jetbrains.kotlin.ir.backend.js.enableEffectAnalysis
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -43,6 +44,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
     }
 
     override fun lower(irFile: IrFile) {
+        if (!context.configuration.enableEffectAnalysis) return
         if (context is JsIrBackendContext && context.incrementalCacheEnabled) return
         context.effectAnalysisFinished = false
         super.lower(irFile)
