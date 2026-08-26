@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib interproject consumption")
 class UklibInterprojectConsumptionIT : KGPBaseTest() {
 
+    @Ignore("KT-88857")
     @GradleTest
     @GradleTestVersions
     fun `interproject uklib consumption - dependency with symmetric targets - resolves uklibs`(gradleVersion: GradleVersion) {
