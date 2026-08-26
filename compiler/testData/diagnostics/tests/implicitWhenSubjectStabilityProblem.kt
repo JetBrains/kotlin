@@ -9,7 +9,7 @@ fun test(): Int {
    	block()
 
     return when (a) { // Must be implicit
-        <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> -> 2
+        is String -> 2
         else -> 3
     }
 }
