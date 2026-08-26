@@ -1544,6 +1544,7 @@ abstract class FirDataFlowAnalyzer(
                 // When that happens, we want to report `unstableProperty.functionOnA()` as
                 // `SMARTCAST_IMPOSSIBLE`, rather than `UNRESOLVED_REFERENCE`.
                 logicSystem.addOneWayAlias(flow, propertyVariable, initializerVariable)
+                logicSystem.copyImplicationsForOneWayAlias(flow, propertyVariable, initializerVariable)
             } else if (initializerVariable != null && (!property.isEffectivelyLocal || !property.isVar)) {
                 // Case 1:
                 //   val b = x is String // initializer is synthetic, condition is boolean
