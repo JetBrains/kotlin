@@ -1,17 +1,16 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kmp
 
-import com.intellij.util.containers.addIfNotNull
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.kmp.infra.TestSyntaxElement
 import org.jetbrains.kotlin.kmp.infra.checkSyntaxElements
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
 import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
@@ -53,43 +52,51 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
         var totalSyntaxElementNumber = 0L
         var totalNumberOfFilesWithSyntaxErrors = 0L
         var totalNumberOfFilesWithSyntaxErrorsAndTreeDiscrepancy = 0L
-        val comparisonFailures = mutableListOf<() -> Unit>()
 
-        files@ for (testDataDir in testDataDirs) {
+        for (testDataDir in testDataDirs) {
             testDataDir.walkTopDown()
                 .filter { it.isFile && it.extension.let { ext -> (ext == "kt" || ext == "kts") && !it.path.endsWith(".fir.kt") } }
                 .forEach { file ->
                     val refinedText = clearTextFromDiagnosticMarkup(file.readText())
                         .replace("\r\n", "\n") // Test infrastructure normalizes line endings
+                    val path = file.toPath()
 
                     (
-                        val comparisonFailure = failure, val oldNanos, val newNanos, val oldSyntaxElement, val _ = newSyntaxElement, val linesCount
-                    ) =
-                        getComparisonResult(
-                            refinedText,
-                            file.toPath()
-                        )
+                        val areStructurallyEqual,
+                        val oldNanos,
+                        val newNanos,
+                        val oldSyntaxElement,
+                        val newSyntaxElement,
+                        val sourceLinesMapping,
+                    ) = getComparisonResult(refinedText, path)
+
                     oldTotalElapsedNanos += oldNanos
                     newTotalElapsedNanos += newNanos
                     filesCounter++
                     totalCharsNumber += refinedText.length
                     (val syntaxElementNumber = number, val hasSyntaxError = hasErrorElement) = oldSyntaxElement.countSyntaxElements()
                     totalSyntaxElementNumber += syntaxElementNumber
+                    totalLinesNumber += sourceLinesMapping.linesCount
 
                     if (hasSyntaxError) {
                         totalNumberOfFilesWithSyntaxErrors++
-                        if (comparisonFailure != null) {
-                            if (!ignoreFilesWithSyntaxError) {
-                                comparisonFailures.add(comparisonFailure)
-                            } else {
-                                totalNumberOfFilesWithSyntaxErrorsAndTreeDiscrepancy++
-                            }
-                        }
-                    } else {
-                        comparisonFailures.addIfNotNull(comparisonFailure)
                     }
 
-                    totalLinesNumber += linesCount
+                    if (!areStructurallyEqual) {
+                        if (hasSyntaxError && ignoreFilesWithSyntaxError) {
+                            totalNumberOfFilesWithSyntaxErrorsAndTreeDiscrepancy++
+                        } else {
+                            // Use text dumps comparison if only the comparison is failed
+                            // Because dumping and string comparison work slower
+                            assertEquals(
+                                oldSyntaxElement.dump(sourceLinesMapping, refinedText),
+                                newSyntaxElement.dump(sourceLinesMapping, refinedText),
+                                "Different ${recognizerSyntaxElementName}s on file: $path"
+                            )
+
+                            fail("Should not be here. Text dumping should correspond tree comparison logic, fix it.")
+                        }
+                    }
                 }
         }
 
@@ -103,9 +110,6 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
         println("Number of chars: $totalCharsNumber")
         println("Number of lines: $totalLinesNumber")
         println("Number of ${recognizerSyntaxElementName}s: $totalSyntaxElementNumber")
-        if (comparisonFailures.isNotEmpty()) {
-            println("Number of tree mismatches: ${comparisonFailures.size}")
-        }
         if (printOldRecognizerTimeInfo) {
             println("Old ${recognizerName + oldRecognizerSuffix} total time: ${TimeUnit.NANOSECONDS.toMillis(oldTotalElapsedNanos)} ms")
         }
@@ -114,12 +118,11 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
             println("New/Old $recognizerName time ratio: %.4f".format(newOldLexerTimeRatio))
         }
 
-        comparisonFailures.add {
-            val minimalNumberOfKotlinTestDataFiles = 35600
-            assertTrue(filesCounter > minimalNumberOfKotlinTestDataFiles, "Number of tested files (kt, kts) should be more than $minimalNumberOfKotlinTestDataFiles")
-        }
-
-        assertAll(comparisonFailures)
+        val minimalNumberOfKotlinTestDataFiles = 35600
+        assertTrue(
+            filesCounter > minimalNumberOfKotlinTestDataFiles,
+            "Number of tested files (kt, kts) should be more than $minimalNumberOfKotlinTestDataFiles"
+        )
     }
 
     private fun getComparisonResult(kotlinCodeSample: String, path: Path? = null): ComparisonResult {
@@ -133,38 +136,22 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
         val newSyntaxElement = recognizeNewSyntaxElement(path?.toString() ?: "", kotlinCodeSample)
         val newElapsedNanos = System.nanoTime() - newStartNanos
 
-        val areStructurallyEqual = checkSyntaxElements(oldSyntaxElement, newSyntaxElement)
-        // Use text dumps comparison if only the comparison is failed
-        // Because dumping and string comparison work slower
-        val comparisonFailure: (() -> Unit)? = if (!areStructurallyEqual) {
-            {
-                assertEquals(
-                    oldSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
-                    newSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
-                    path?.let { "Different ${recognizerSyntaxElementName}s on file: $it" }
-                )
-                fail("Should not be here. Text dumping should correspond tree comparison logic, fix it.")
-            }
-        } else {
-            null
-        }
-
         return ComparisonResult(
-            comparisonFailure,
+            checkSyntaxElements(oldSyntaxElement, newSyntaxElement),
             oldElapsedNanos,
             newElapsedNanos,
             oldSyntaxElement,
             newSyntaxElement,
-            sourceLinesMapping.linesCount
+            sourceLinesMapping
         )
     }
 
     data class ComparisonResult(
-        val failure: (() -> Unit)?,
+        val areStructurallyEqual: Boolean,
         val oldNanos: Long,
         val newNanos: Long,
         val oldSyntaxElement: TestSyntaxElement<*>,
         val newSyntaxElement: TestSyntaxElement<*>,
-        val linesCount: Int,
+        val sourceLinesMapping: KtSourceFileLinesMapping,
     )
 }
