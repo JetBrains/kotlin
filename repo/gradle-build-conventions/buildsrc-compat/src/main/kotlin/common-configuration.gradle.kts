@@ -28,6 +28,7 @@ project.configureJavaCompile()
 project.configureKotlinCompilationOptions()
 project.configureArtifacts()
 project.configureTests()
+project.registerApiSurfaceTasks()
 project.checkNoApiDependenciesOnK1Modules()
 project.configureMigratedRootSettings()
 project.configureJsCacheRedirector()
@@ -41,6 +42,51 @@ project.configureTestLifecycleTasksModelBuilder()
 //  - idea seems unable to exclude common buildDir from indexing
 // therefore it is disabled by default
 // buildDir = File(commonBuildDir, project.name)
+
+/**
+ * Registers the `checkApiSurface` and `updateApiSurface` lifecycle tasks of a project.
+ *
+ * A module that tracks its own API surface — an ABI dump, the foreign classes its public API leaks, the conventions
+ * its declarations follow — hangs the verifying half of each such check on `checkApiSurface` and the rewriting half
+ * on `updateApiSurface`. Whoever owns a check does that wiring itself, from inside the project, so aggregates over
+ * several modules can depend on the two task paths without inspecting anyone else's task container. Gradle's project
+ * isolation forbids that inspection, and an unconfigured project answers it with an empty task container, which
+ * silently turns such an aggregate into a no-op.
+ *
+ * Both tasks are deliberately kept out of `check`. `updateApiSurface` rewrites files in the source tree, and
+ * `checkApiSurface` duplicates work that `check` already does through the checks' own `check` wiring.
+ *
+ * The tasks are registered for every project of the build, so a module that starts tracking its API surface only
+ * needs to declare the checks themselves.
+ */
+fun Project.registerApiSurfaceTasks() {
+    val checkApiSurface = tasks.register("checkApiSurface") {
+        group = "verification"
+        description = "Verifies the API surface dumps of this project against its sources"
+    }
+
+    val updateApiSurface = tasks.register("updateApiSurface") {
+        group = "verification"
+        description = "Rewrites the API surface dumps of this project from its sources"
+    }
+
+    // The ABI dump tasks come from the Kotlin Gradle plugin's 'abiValidation', and their classes are internal to it,
+    // so they cannot be picked up by type the way the checks owned by this repository are. Both names are stable
+    // parts of the plugin's contract; see 'KotlinAbiCheckTaskImpl.NAME' and 'KotlinAbiUpdateTask.NAME'.
+    checkApiSurface.configure { dependsOn(registeredTaskNames("checkKotlinAbi")) }
+    updateApiSurface.configure { dependsOn(registeredTaskNames("updateKotlinAbi")) }
+}
+
+/**
+ * Those of [names] that this project has registered, as a dependency value for a lifecycle task.
+ *
+ * Resolved from a provider, so the lookup happens once the execution graph is built. By then the build script of
+ * this project has run, and its task names are final.
+ */
+private fun Project.registeredTaskNames(vararg names: String): Provider<List<String>> {
+    val projectTasks = tasks
+    return provider { names.filter { it in projectTasks.names } }
+}
 
 /**
  * Validates that the project does not expose K1 frontend modules

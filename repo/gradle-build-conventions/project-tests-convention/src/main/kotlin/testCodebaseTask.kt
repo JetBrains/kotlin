@@ -84,5 +84,14 @@ fun ProjectTestsExtension.testCodebaseTask(
         project.tasks.named("check") {
             dependsOn(testCodebaseProvider)
         }
+
+        // Part of the project's API surface: the codebase tests hold the conventions its declarations follow and
+        // compare the committed dumps under 'dumpDirs' against the sources. There is nothing to rewrite here — the
+        // dumps are maintained by hand — so the same task answers for both halves of the surface lifecycle.
+        for (apiSurfaceTaskName in listOf("checkApiSurface", "updateApiSurface")) {
+            project.tasks.named(apiSurfaceTaskName) {
+                dependsOn(testCodebaseProvider)
+            }
+        }
     }
 }
