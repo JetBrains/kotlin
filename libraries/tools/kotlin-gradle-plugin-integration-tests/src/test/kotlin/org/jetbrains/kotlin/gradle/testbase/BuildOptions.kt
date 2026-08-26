@@ -103,7 +103,9 @@ data class BuildOptions(
     val jvmClasspathMetadata: Boolean? = null,
     val separateCompilation: Boolean? = null,
     val expandTypeAliasesInClasspathSnapshots: Boolean? = null,
-    val fusReportDirectory: () -> Path? = { null }
+    val fusReportDirectory: () -> Path? = { null },
+    val gradleDaemonMemoryLimitInMb: Int? = null,
+    val kotlinDaemonMemoryLimitInMb: Int? = null,
 ) {
     enum class ConfigurationCacheValue {
 
