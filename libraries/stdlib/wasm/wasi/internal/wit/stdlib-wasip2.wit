@@ -24,14 +24,23 @@ world wasip2 {
 SEE BELOW
 */
 
-// NOTE: Duplicated imports between the standard library and user WIT are handled fine.
-//       This means that the only possible conflict between this WIT and the user WIT is the cli/run export.
-
-world wasip2 {
+// ONLY imports, exactly what the standard library needs to supply its functionality.
+world wasip2-imports {
     include wasi:io/imports@0.2.12;
     include wasi:random/imports@0.2.12;
     include wasi:clocks/imports@0.2.12;
     include wasi:cli/imports@0.2.12;
+}
 
+// NOTE: Duplicated imports between the standard library and user WIT are handled fine.
+//       This means that the only possible conflict between this WIT and the user WIT is the cli/run export.
+
+// For cases where the run function should be exported as well, typically when there is a main function (which will automatically be transformed to wasi:cli/run by the compiler)
+world wasip2-run-export {
     export wasi:cli/run@0.2.12;
+}
+
+// At the moment, this is equivalent to just the imports
+world wasip2-bindgen {
+    include wasip2-imports;
 }

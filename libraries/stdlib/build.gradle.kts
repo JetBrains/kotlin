@@ -1067,10 +1067,11 @@ tasks.withType<Kotlin2JsCompile>().configureEach {
 // which no host provides to a plain core module.
 //
 // Interim solution until KGP does this itself (KT-87723); the corresponding test infrastructure for the compiler box
-// tests is `WasiComponentizer` in `wasm/wasm.tests`. Two steps:
-//   1. `wasm-tools component embed` embeds a world that is like the stdlib's `wasip2` world, but exports the unit test
-//      runner entry point instead of `wasi:cli/run`, since test binaries have no `main`,
-//   2. `wasm-tools component new` builds the component from that.
+// tests is `WasiComponentizer` in `wasm/wasm.tests`. The WIT is embedded in two steps, since `wasm-tools component
+// new` unions all embedded worlds:
+//   1. the stdlib's `wasip2-imports` world, describing what the standard library imports,
+//   2. an export-only world for the unit test runner entry point, which therefore needs nothing from the stdlib WIT
+//      package (test binaries have no `main`, so `wasi:cli/run` is not exported).
 //
 // The wasmtime executable is replaced by a wrapper script, because the test task is set up by KGP: it invokes the
 // entry point on the linked core module, whereas the component has to be run instead.
@@ -1084,7 +1085,8 @@ run {
 
     // the name the compiler exports the unit test runner under on WASI (`wasmWasiUnitTestsExportName`)
     val entryPoint = "start-unit-tests"
-    val world = "kotlin-stdlib:wasip2/wasip2-test"
+    val importsWorld = "kotlin-stdlib:wasip2/wasip2-imports"
+    val entryPointsPackage = "kotlin-test:wasi-entry-points"
 
     val wasmtimeSpec = the<WasmtimeEnvSpec>()
     // resolved before `command` is overridden below, so this is the real wasmtime binary
@@ -1157,33 +1159,29 @@ run {
 
             outputDir.mkdirs()
 
-            val witDir = outputDir.resolve("wit")
-            witDir.deleteRecursively()
-            stdlibWitDir.copyRecursively(witDir)
-            witDir.resolve("test-world.wit").writeText(
+            val entryPointsWit = outputDir.resolve("wasi-entry-points.wit")
+            entryPointsWit.writeText(
                 """
-                package kotlin-stdlib:wasip2@2.5.0;
+                package $entryPointsPackage@1.0.0;
 
-                // Like the `wasip2` world, but exporting the unit test runner entry point instead of `wasi:cli/run`,
-                // since test binaries have no `main`. Exports of the module that the world does not mention are dropped.
-                world wasip2-test {
-                    include wasi:io/imports@0.2.12;
-                    include wasi:random/imports@0.2.12;
-                    include wasi:clocks/imports@0.2.12;
-                    include wasi:cli/imports@0.2.12;
-
+                world $entryPoint {
                     export $entryPoint: func();
                 }
                 """.trimIndent()
             )
 
-            val embedded = outputDir.resolve("test-module-embedded.wasm")
+            val withImports = outputDir.resolve("test-module-imports-embedded.wasm")
+            val withEntryPoint = outputDir.resolve("test-module-entry-point-embedded.wasm")
             runWasmTools(
-                "component", "embed", witDir.absolutePath, testModule.get().asFile.absolutePath,
-                "--world", world, "-o", embedded.absolutePath,
+                "component", "embed", stdlibWitDir.absolutePath, testModule.get().asFile.absolutePath,
+                "--world", importsWorld, "-o", withImports.absolutePath,
             )
-            runWasmTools("component", "new", embedded.absolutePath, "-o", component.absolutePath)
-            taskLogger.lifecycle("Built ${component.absolutePath} (world $world)")
+            runWasmTools(
+                "component", "embed", entryPointsWit.absolutePath, withImports.absolutePath,
+                "--world", "$entryPointsPackage/$entryPoint", "-o", withEntryPoint.absolutePath,
+            )
+            runWasmTools("component", "new", withEntryPoint.absolutePath, "-o", component.absolutePath)
+            taskLogger.lifecycle("Built ${component.absolutePath} (exporting $entryPoint)")
         }
     }
 }

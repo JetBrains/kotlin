@@ -101,7 +101,9 @@ companion object Import : stdlib.wit.bindings.Poll {
     kotlin.wasm.unsafe.withScopedMemoryAllocator { allocator ->
 
       val address = allocator.allocate(in_.size * 4 /*, align_wasm32=4*/).address.toInt()
-      for ([index, el] in in_.withIndex()) {
+      for (iter in in_.withIndex()) {
+        val index = iter.index
+        val el = iter.value
         val base = address + (index * 4)
         var handle = el.__handle.value;
         (base + 0).ptr.storeInt(handle)
@@ -440,7 +442,7 @@ companion object Import : stdlib.wit.bindings.Streams {
     /**
     Check readiness for writing. This function never blocks.
 
-    Returns the number of bytes permitted for the nextThis function never blocCheck readiness for writing. This function nev call to `write`,
+    Returns the number of bytes permitted for the next call to `write`,
     or an error. Calling `write` with more bytes than this function has
     permitted will trap.
 
@@ -498,7 +500,9 @@ companion object Import : stdlib.wit.bindings.Streams {
         var handle = this.__handle.value;
 
         val address = allocator.allocate(contents.size * 1 /*, align_wasm32=1*/).address.toInt()
-        for ([index, el] in contents.withIndex()) {
+        for (iter in contents.withIndex()) {
+          val index = iter.index
+          val el = iter.value
           val base = address + (index * 1)
           (base + 0).ptr.storeByte(el.toInt().toByte())
 
@@ -546,7 +550,9 @@ companion object Import : stdlib.wit.bindings.Streams {
         var handle = this.__handle.value;
 
         val address = allocator.allocate(contents.size * 1 /*, align_wasm32=1*/).address.toInt()
-        for ([index, el] in contents.withIndex()) {
+        for (iter in contents.withIndex()) {
+          val index = iter.index
+          val el = iter.value
           val base = address + (index * 1)
           (base + 0).ptr.storeByte(el.toInt().toByte())
 
@@ -2060,7 +2066,9 @@ companion object Import : stdlib.wit.bindings.Types {
         var handle = this.__handle.value;
 
         val address = allocator.allocate(buffer.size * 1 /*, align_wasm32=1*/).address.toInt()
-        for ([index, el] in buffer.withIndex()) {
+        for (iter in buffer.withIndex()) {
+          val index = iter.index
+          val el = iter.value
           val base = address + (index * 1)
           (base + 0).ptr.storeByte(el.toInt().toByte())
 
@@ -3282,11 +3290,15 @@ companion object Import : stdlib.wit.bindings.Udp {
         var handle = this.__handle.value;
 
         val address3 = allocator.allocate(datagrams.size * (32+3*4) /*, align_wasm32=4*/).address.toInt()
-        for ([index4, el] in datagrams.withIndex()) {
-          val base = address3 + (index4 * (32+3*4))
+        for (iter4 in datagrams.withIndex()) {
+          val index5 = iter4.index
+          val el = iter4.value
+          val base = address3 + (index5 * (32+3*4))
           
           val address = allocator.allocate(el.data.size * 1 /*, align_wasm32=1*/).address.toInt()
-          for ([index, el] in el.data.withIndex()) {
+          for (iter in el.data.withIndex()) {
+            val index = iter.index
+            val el = iter.value
             val base = address + (index * 1)
             (base + 0).ptr.storeByte(el.toInt().toByte())
 

@@ -34,6 +34,8 @@ internal abstract class WitResource: AutoCloseable{
   protected constructor() { __handle = ResourceHandle(ResourceHandle.DOES_NOT_OWN_REP) }
 }
 
+
+
 internal fun MemoryAllocator.STRING_TO_MEM(s: String): Int =
 writeToLinearMemory(s.encodeToByteArray()).address.toInt()
 
