@@ -436,4 +436,4 @@ private fun BuildResult.extractNativeCustomEnvironment(taskPath: String, toolNam
 
 
 fun BuildResult.extractOutputForTask(taskPath: String): String =
-    output.split("\n(?=[^\n]*> Task :)".toRegex()).first { it.contains("> Task $taskPath") }
+    output.split("\n(?=[^\n]*> Task :)".toRegex()).filter { it.contains("> Task $taskPath") }.joinToString("\n")
