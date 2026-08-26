@@ -392,14 +392,14 @@ class NativeSecondStageCompilationConfig(
     ).resolvedLibraries
 
     /**
-     * Returns the list of libraries in reverse topological order.
+     * The list of libraries in reverse topological order.
      */
     // TODO(KT-61096): This is a form of DCE to avoid loading ALL platform libraries from the Kotlin/Native distribution.
     //  We should not use it. Instead, we should load all libraries, then run the IR linkage cycle and figure out which
     //  platform libraries were actually not "touched" and filter them out. There should not be relevant `IrModuleFragment`s
     //  down the pipeline after the IR linkage phase.
-    fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots {
+    val librariesWithDependencies: List<KotlinLibrary> by lazy {
+        resolvedLibraries.filterRoots {
             // Let's leave only those dependencies (roots) that have been explicitly specified by the used in compiler's CLI.
             //
             // The implicit dependencies (those that are loaded from the Kotlin/Native distribution: stdlib & platform libraries)

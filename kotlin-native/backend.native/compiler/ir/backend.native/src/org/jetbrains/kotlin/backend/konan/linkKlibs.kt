@@ -177,7 +177,7 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor):
 }
 
 private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDescriptor, linker: KonanIrLinker) {
-    // The set of libraries to deserialize and their order come from `config.librariesWithDependencies()`.
+    // The set of libraries to deserialize and their order come from `config.librariesWithDependencies`.
     // The module descriptors are needed only as a per-library input for the IR linker.
     val moduleByLibrary = mutableMapOf<KotlinLibrary, ModuleDescriptor>()
     for (module in moduleDescriptor.allDependencyModules) {
@@ -195,7 +195,7 @@ private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDes
     // Only the IR of these libraries is deserialized in full.
     val fullyDeserializedLibraries = config.exportedAndIncludedLibraries + listOfNotNull(libraryToCache)
 
-    for (library in config.librariesWithDependencies().reversed()) {
+    for (library in config.librariesWithDependencies.reversed()) {
         val module = moduleByLibrary.getValue(library)
         val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library != libraryToCache
         when {
