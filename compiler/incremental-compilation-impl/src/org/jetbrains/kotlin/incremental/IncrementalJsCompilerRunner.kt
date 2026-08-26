@@ -205,7 +205,6 @@ class IncrementalJsCompilerRunner(
         val incrementalResults = services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
 
         val jsCache = caches.platformCache
-        jsCache.header = incrementalResults.headerMetadata
 
         jsCache.compareAndUpdate(incrementalResults, changesCollector)
         jsCache.clearCacheForRemovedClasses(changesCollector)

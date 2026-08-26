@@ -295,9 +295,6 @@ fun serializeModuleIntoKlib(
                     }
                 }
             },
-            processKlibHeader = {
-                incrementalResultsConsumer?.processHeader(it)
-            },
         )
     }
     val fullSerializedIr = serializerOutput.serializedIr ?: error("Metadata-only KLIBs are not supported in Kotlin/JS")

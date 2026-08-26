@@ -45,11 +45,8 @@ open class IncrementalJsCache(
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
         private const val INLINE_FUNCTIONS = "inline-functions"
-        private const val HEADER_FILE_NAME = "header.meta"
         private const val PACKAGE_META_FILE = "packages-meta"
         private const val SOURCE_TO_JS_OUTPUT = "source-to-js-output"
-
-        fun hasHeaderFile(cachesDir: File) = File(cachesDir, HEADER_FILE_NAME).exists()
     }
 
     private val protoData = ProtoDataProvider(serializerProtocol)
@@ -62,15 +59,6 @@ open class IncrementalJsCache(
     private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
-
-    private val headerFile: File
-        get() = File(cachesDir, HEADER_FILE_NAME)
-
-    var header: ByteArray
-        get() = headerFile.readBytes()
-        set(value) {
-            icContext.transaction.writeBytes(headerFile.toPath(), value)
-        }
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         removedAndCompiledSources.forEach { sourceFile ->
