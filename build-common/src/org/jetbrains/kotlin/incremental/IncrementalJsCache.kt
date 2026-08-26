@@ -100,10 +100,8 @@ open class IncrementalJsCache(
 
         for ([srcFile, data] in translatedFiles) {
             dirtySources.remove(srcFile)
-            (val binaryMetadata = metadata, val binaryAst, val inlineData) = data
-
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
-            val newProtoMap = protoData(srcFile, binaryMetadata)
+            val newProtoMap = protoData(srcFile, data.metadata)
 
             for ([classId, protoData] in newProtoMap) {
                 registerOutputForFile(srcFile, classId.asSingleFqName())
@@ -117,7 +115,7 @@ open class IncrementalJsCache(
                 changesCollector.collectProtoChanges(oldProtoMap[classId], newProtoMap[classId])
             }
 
-            translationResults.put(srcFile, binaryMetadata, binaryAst, inlineData)
+            translationResults.put(srcFile, data.metadata)
         }
 
         for ([packageName, metadata] in incrementalResults.packageMetadata) {
@@ -178,12 +176,6 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
     override fun save(output: DataOutput, value: TranslationResultValue) {
         output.writeInt(value.metadata.size)
         output.write(value.metadata)
-
-        output.writeInt(value.binaryAst.size)
-        output.write(value.binaryAst)
-
-        output.writeInt(value.inlineData.size)
-        output.write(value.inlineData)
     }
 
     override fun read(input: DataInput): TranslationResultValue {
@@ -191,15 +183,7 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
         val metadata = ByteArray(metadataSize)
         input.readFully(metadata)
 
-        val binaryAstSize = input.readInt()
-        val binaryAst = ByteArray(binaryAstSize)
-        input.readFully(binaryAst)
-
-        val inlineDataSize = input.readInt()
-        val inlineData = ByteArray(inlineDataSize)
-        input.readFully(inlineData)
-
-        return TranslationResultValue(metadata = metadata, binaryAst = binaryAst, inlineData = inlineData)
+        return TranslationResultValue(metadata = metadata)
     }
 }
 
@@ -216,12 +200,12 @@ private class TranslationResultMap(
 
     @TestOnly
     override fun dumpValue(value: TranslationResultValue): String =
-        "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
+        "Metadata: ${value.metadata.md5()}"
 
     @Synchronized
-    fun put(sourceFile: File, newMetadata: ByteArray, newBinaryAst: ByteArray, newInlineData: ByteArray) {
+    fun put(sourceFile: File, newMetadata: ByteArray) {
         this[sourceFile] =
-            TranslationResultValue(metadata = newMetadata, binaryAst = newBinaryAst, inlineData = newInlineData)
+            TranslationResultValue(metadata = newMetadata)
     }
 
     @Synchronized
