@@ -34,12 +34,10 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
-import kotlin.test.Ignore
 
 @MppGradlePluginTests
 class MppCrossCompilationIT : KGPBaseTest() {
 
-    @Ignore("KT-88857")
     @DisplayName("Cross compilation enabled with dependecy, dependency with cinterops")
     @GradleTest
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
