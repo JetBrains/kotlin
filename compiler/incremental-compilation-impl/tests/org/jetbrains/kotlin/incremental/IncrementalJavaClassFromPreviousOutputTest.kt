@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayOutputStream
 import java.io.File
-import javax.tools.ToolProvider
 
 /**
  * A `.class` file of the previous build is read by the session which may see the output directory, while the
@@ -109,12 +108,9 @@ class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalK2JvmCompi
                 add("-cp"); add(classpath.path)
             }
             add("-d"); add(destination.path)
-            addAll(sourceFiles.map { it.path })
-        }.toTypedArray()
+        }
 
-        val errors = ByteArrayOutputStream()
-        val exitCode = ToolProvider.getSystemJavaCompiler().run(null, null, errors, *options)
-        check(exitCode == 0) { "javac failed: $errors" }
+        compileJavaFiles(sourceFiles, options).assertSuccessful()
         return destination
     }
 }
