@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -390,28 +389,6 @@ class NativeSecondStageCompilationConfig(
             distribution = distribution,
             resolveManifestDependenciesLenient = true
     ).resolvedLibraries
-
-    /**
-     * Returns the list of libraries in reverse topological order.
-     */
-    // TODO(KT-61096): This is a form of DCE to avoid loading ALL platform libraries from the Kotlin/Native distribution.
-    //  We should not use it. Instead, we should load all libraries, then run the IR linkage cycle and figure out which
-    //  platform libraries were actually not "touched" and filter them out. There should not be relevant `IrModuleFragment`s
-    //  down the pipeline after the IR linkage phase.
-    fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots {
-            // Let's leave only those dependencies (roots) that have been explicitly specified by the used in compiler's CLI.
-            //
-            // The implicit dependencies (those that are loaded from the Kotlin/Native distribution: stdlib & platform libraries)
-            // should be skipped. There might be 100+ platform libraries per a target, and we don't want ALL of them to participate
-            // in the expensive IR-linkage process.
-            //
-            // Later upon the subsequent `getFullList()` call, some of the implicit dependencies will be added. But only if they
-            // are mentioned in `depends=` manifest property in root libraries. Which means only a small really required subset
-            // of them will be added.
-            it.library.isExplicitlySpecifiedByUserInCLIArgument
-        }.getFullList()
-    }
 
     override val loadedKlibs = loadNativeKlibs(configuration, target).let { original ->
         // Avoid having duplicates of the same `KotlinLibrary` loaded by the KLIB resolver and `KlibLoader`.
