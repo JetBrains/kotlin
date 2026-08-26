@@ -613,7 +613,7 @@ class NativeSecondStageCompilationConfig(
 
     private fun createCacheSupport() = CacheSupport(
             configuration = configuration,
-            allLibraries = resolvedLibraries.getFullList(), // Note: There is the need to have RTO of libs in certain cases inside CacheSupport.
+            allKlibs = CachedKlibs(loadedKlibs.all),
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,
