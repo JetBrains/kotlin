@@ -817,6 +817,10 @@ open class FirDeclarationsResolveTransformer(
                 accessor.replaceReturnTypeRef(propertyTypeRef)
             }
 
+            if (shouldResolveEverything) {
+                accessor.resolveLocalFunctionAnnotations()
+            }
+
             if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
                 transformFunctionContent(accessor, resolutionModeForBody = ResolutionMode.ContextIndependent, shouldResolveEverything)
             } else {
@@ -1023,10 +1027,8 @@ open class FirDeclarationsResolveTransformer(
 
         val containingDeclaration = context.containerIfAny
         return context.withNamedFunction(namedFunction, session) {
-            // this is required to resolve annotations on functions of local classes
             if (shouldResolveEverything) {
-                namedFunction.transformReceiverParameter(this, data)
-                doTransformTypeParameters(namedFunction)
+                namedFunction.resolveLocalFunctionAnnotations()
             }
 
             if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || namedFunction.status.visibility == Visibilities.Local)) {
@@ -1045,6 +1047,41 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
         }
+    }
+
+    /**
+     * If [FirFunction.isLocal] is `true`, resolves all annotations in the function signature.
+     *
+     * It's necessary to call this before the function parameters are added to the scope so that annotation arguments are not resolved
+     * to them.
+     *
+     * Resolves own annotations and annotations in receiver, type parameters, return type, and context and value parameters.
+     * Annotations inside parameter default values are not resolved here because they do in fact observe the function parameters.
+     *
+     * Non-local functions don't have this problem because their annotations are resolved in a different phase.
+     */
+    private fun FirFunction.resolveLocalFunctionAnnotations() {
+        if (!isLocal) return
+
+        transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+        transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+
+        @OptIn(PrivateForInline::class)
+        fun transformValueParameterAnnotations(parameters: List<FirValueParameter>) {
+            for (parameter in parameters) {
+                context.withContainer(parameter) {
+                    parameter
+                        .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+                        .transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+                }
+            }
+        }
+
+        transformValueParameterAnnotations(contextParameters)
+        transformValueParameterAnnotations(valueParameters)
+
+        doTransformTypeParameters(this)
     }
 
     private fun <F : FirFunction> transformFunctionWithGivenSignature(function: F, shouldResolveEverything: Boolean): F {
@@ -1119,8 +1156,6 @@ open class FirDeclarationsResolveTransformer(
         dataFlowAnalyzer.enterFunction(function)
 
         if (shouldResolveEverything) {
-            // Annotations here are required only in the case of a local class member function.
-            // Separate annotation transformers are responsible in the case of non-local functions.
             function
                 .transformReturnTypeRef(this, ResolutionMode.ContextIndependent)
                 .transformContextParameters(this, ResolutionMode.ContextIndependent)
@@ -1163,6 +1198,8 @@ open class FirDeclarationsResolveTransformer(
                     }
                 }
             }
+
+            constructor.resolveLocalFunctionAnnotations()
 
             return transformConstructorContent(constructor, data)
         }
