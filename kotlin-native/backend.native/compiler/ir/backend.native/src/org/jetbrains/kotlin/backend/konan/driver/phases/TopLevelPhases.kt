@@ -589,7 +589,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
-    return context.context.irModules.values.filter { context.llvmModuleSpecification.containsModule(it) }
+    return context.context.irModules.filter { context.llvmModuleSpecification.containsModule(it) }
 }
 
 // Save all files for codegen in reverse topological order.

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import java.nio.file.Path
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
@@ -58,8 +57,13 @@ data class LinkKlibsInput(
         val moduleDescriptor: ModuleDescriptor,
 )
 
+/**
+ * @property irModules The list of IR module fragments in the reverse topological order. This list only contains IR modules
+ *   that are treated as "useful", i.e. each of them either was explicitly passed via CLI argument to the compiler or was loaded
+ *   from the Kotlin/Native distribution implicitly and has at least one declaration that has been loaded/linked from it.
+ */
 internal class LinkKlibsOutput(
-        val irModules: Map<Path, IrModuleFragment>,
+        val irModules: List<IrModuleFragment>,
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbols: BackendNativeSymbols,
@@ -136,9 +140,8 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
-    val irModulesForLinkKlibsOutput: Map<Path, IrModuleFragment> = sortedUsefulModuleDependencies.allDependencies
+    val irModulesForLinkKlibsOutput: List<IrModuleFragment> = sortedUsefulModuleDependencies.allDependencies
             .filter { it.name != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
-            .associateBy { it.kotlinLibrary!!.path }
 
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
@@ -151,10 +154,10 @@ internal fun LinkKlibsContext.linkKlibs(
                 irLinker = irLinker
         )
     } else {
-        val libraryPath: Path = libraryToCache.klib.path
-        val libraryModule = irModulesForLinkKlibsOutput[libraryPath] ?: error("No module for the library being cached: $libraryPath")
+        val [libraryModules, otherModules] = irModulesForLinkKlibsOutput.partition { it.kotlinLibrary == libraryToCache.klib }
+        val libraryModule = libraryModules.firstOrNull() ?: error("No module for the library being cached: ${libraryToCache.klib}")
         LinkKlibsOutput(
-                irModules = irModulesForLinkKlibsOutput.filterKeys { it != libraryPath },
+                irModules = otherModules,
                 irModule = libraryModule,
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
