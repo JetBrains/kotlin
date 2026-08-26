@@ -82,9 +82,6 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
         )
     }
 
-    override fun registerProjectExtensionPoints(project: MockProject) {
-    }
-
     override fun registerProjectServices(project: MockProject) {
         PluginStructureProvider.registerProjectServices(project, PLUGIN_RELATIVE_PATH)
     }

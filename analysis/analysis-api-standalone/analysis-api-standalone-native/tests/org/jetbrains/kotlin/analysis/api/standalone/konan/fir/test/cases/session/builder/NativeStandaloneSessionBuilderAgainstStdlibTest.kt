@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.analysis.api.standalone.konan.fir.test.cases.sessio
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.AbstractStandaloneSessionBuilderAgainstStdlibTest
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.konanCommonLibraryPath
-import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class NativeStandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneSessionBuilderAgainstStdlibTest() {
     @Test

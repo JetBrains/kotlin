@@ -39,9 +39,8 @@ abstract class KtSimpleNameReference(
         if (expression.getParentOfTypeAndBranch<KtWhenConditionInRange>(strict = true) { operationReference } != null) return false
 
         val elementType = expression.getReferencedNameElementType()
-        if (elementType == KtTokens.PLUSPLUS || elementType == KtTokens.MINUSMINUS) return false
 
-        return true
+        return elementType != KtTokens.PLUSPLUS && elementType != KtTokens.MINUSMINUS
     }
 
     enum class ShorteningMode {
