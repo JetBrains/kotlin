@@ -9571,6 +9571,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CompanionObjectInExternalInterface : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<CompanionObjectInExternalInterface>
+            get() = CompanionObjectInExternalInterface::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface InlineExternalDeclaration : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<InlineExternalDeclaration>
             get() = InlineExternalDeclaration::class
