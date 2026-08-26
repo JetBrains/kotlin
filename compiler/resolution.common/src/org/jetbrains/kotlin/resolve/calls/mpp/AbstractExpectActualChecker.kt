@@ -475,7 +475,18 @@ object AbstractExpectActualChecker {
 
             // If default params came from common supertypes of actual class and expect class then it's a valid code.
             // Here we filter out such default params.
-            if ((actualOverriddenDeclarations - expectOverriddenDeclarations).flatMap { it.valueParameters }.any { it.hasDefaultValue }) {
+            // In the HMPP compilation scheme there could be two different real classes for the same supertype (one from platform
+            // dependencies, one from common), so to filter out declarations which are present in both expect and actual
+            // supertype scopes, we need to compare members by their dispatch receiver.
+            val actualOverriddenDeclarationsNotFromExpect = actualOverriddenDeclarations.filter { actualOverridden ->
+                // We want to preserve the original declaration, but only if it's explictly declared in the actual class
+                if (actualOverridden == actualDeclaration && !actualDeclaration.isFakeOverride(actualContainingClass)) return@filter true
+                val actualOverriddenContainingClassConstructor = actualOverridden.dispatchReceiverType?.typeConstructor() ?: return@filter true
+                expectOverriddenDeclarations.none { expectOverridden ->
+                    expectOverridden.dispatchReceiverType?.typeConstructor() == actualOverriddenContainingClassConstructor
+                }
+            }
+            if (actualOverriddenDeclarationsNotFromExpect.flatMap { it.valueParameters }.any { it.hasDefaultValue }) {
                 add(ExpectActualIncompatibility.ActualFunctionWithOptionalParameters)
             }
         }

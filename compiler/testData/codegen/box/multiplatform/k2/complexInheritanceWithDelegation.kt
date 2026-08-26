@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-88769
-// IGNORE_HMPP: ANY
 
 // MODULE: lib-common
 interface A {
@@ -22,7 +21,7 @@ expect class C : B {
 }
 
 // MODULE: app-platform(lib-platform)()(app-common)
-actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE{PLATFORM}!>C<!> : B, A by AImpl {}
+actual class C : B, A by AImpl {}
 
 fun box(): String {
     return C().foo(1)
