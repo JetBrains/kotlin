@@ -59,6 +59,14 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
     }
 }
 
+/**
+ * A reference to a declaration with context parameters binds a value per context argument, which the code below is not prepared for:
+ * it assumes that the only bound value, if any, is the receiver. Such references are not optimized here: the delegate is constructed
+ * as usual.
+ */
+private val IrRichPropertyReference.hasNoBoundContextValues: Boolean
+    get() = boundContextArgumentCount == 0
+
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
 
     // A stable bound receiver doesn't need to be stored in a field and can be reevaluated every time an accessor is called.
@@ -183,9 +191,9 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
-        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty() ?: return null
+        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty()?.takeIf { it.hasNoBoundContextValues } ?: return null
         val oldField = backingField ?: return null
-        val boundValueOrNull = delegate.singleBoundValueOrNull?.transform(this@PropertyReferenceDelegationTransformer, null)
+        val boundValueOrNull = delegate.boundValues.singleOrNull()?.transform(this@PropertyReferenceDelegationTransformer, null)
         backingField = boundValueOrNull?.takeIf { !it.canInline(parents.toSet()) }?.let {
             context.irFactory.buildField {
                 updateFrom(oldField)
@@ -266,10 +274,11 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         val delegate = declaration.delegate
         val delegateInitializer = delegate?.initializer
         if (delegateInitializer !is IrRichPropertyReference ||
+            !delegateInitializer.hasNoBoundContextValues ||
             !declaration.getter.returnsResultOfStdlibCall ||
             declaration.setter?.returnsResultOfStdlibCall == false
         ) return super.visitLocalDelegatedProperty(declaration)
-        val receiver = delegateInitializer.singleBoundValueOrNull?.let { receiver ->
+        val receiver = delegateInitializer.boundValues.singleOrNull()?.let { receiver ->
             with(delegate) {
                 buildVariable(parent, startOffset, endOffset, origin, name, receiver.type)
             }.apply {
