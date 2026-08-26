@@ -14,8 +14,7 @@ import kotlin.wasm.unsafe.*
  * a return area as a (pointer, length) pair, and each element is a (pointer, length) pair of UTF-8 bytes. The memory
  * for the list itself is allocated by the guest's exported `cabi_realloc`.
  *
- * Deliberately not the preview1 `args_get`/`args_sizes_get`: those would force every test binary to be componentized
- * with a `wasi_snapshot_preview1` adapter (see KT-87723), even though the standard library is WASI 0.2 native.
+ * NOTE: This cannot simply be done by implementing commandline arguments for the WASI subtarget in general, as those wouldn't easily be accessible from this generic `getArguments` interface.
  */
 @ExperimentalWasmInterop
 @WasmImport("wasi:cli/environment@0.2.12", "get-arguments")
@@ -36,6 +35,9 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
         val element = Pointer((elementsPtr + index * POINTER_AND_LENGTH_SIZE).toUInt())
         loadString(Pointer(element.loadInt().toUInt()), (element + Int.SIZE_BYTES).loadInt())
     }.drop(1)
+
+    // the return area is freed automatically by withScopedMmeoryALlocator
+    // TODO free the list/strings themselves (allocated by cabi_realloc) (depending on exactly how the cabi post return functions will look like, probably need to do it manually here
 }
 
 @OptIn(UnsafeWasmMemoryApi::class)
