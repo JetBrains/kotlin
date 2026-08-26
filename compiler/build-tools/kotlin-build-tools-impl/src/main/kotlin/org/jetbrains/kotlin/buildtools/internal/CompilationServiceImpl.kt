@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
@@ -306,6 +307,9 @@ internal object CompilationServiceImpl : CompilationService {
             checkJvmFirRequirements(arguments)
         }
 
+        // This is deprecated either way, so I won't bother
+        val events = mutableListOf<IcEvent>()
+
         val exitCode = daemon.compile(
             sessionId,
             arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
@@ -315,6 +319,7 @@ internal object CompilationServiceImpl : CompilationService {
                 loggerAdapter.kotlinLogger,
                 compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir,
                 DoNothingBuildMetricsReporter,
+                events,
             )
         ).get()
 

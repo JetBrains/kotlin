@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.report.data
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
@@ -20,4 +21,6 @@ interface BuildOperationRecord {
     val didWork: Boolean
     val skipMessage: String?
     val icLogLines: List<String>
+    val icEvents: List<IcEvent>
+        get() = emptyList()
 }

@@ -49,5 +49,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
         val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR", default = false)
         val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT", default = null)
+        val XX_KGP_IC_EVENTS: Option<Boolean> = Option("XX_KGP_IC_EVENTS", default = true)
+        val XX_KGP_IC_EVENTS_OUT: Option<ByteArray?> = Option("XX_KGP_IC_EVENTS_OUT", default = null)
     }
 }

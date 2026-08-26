@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.report
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
@@ -19,7 +20,8 @@ import java.util.HashSet
 internal class TaskExecutionResult(
     val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
     val taskInfo: TaskExecutionInfo = TaskExecutionInfo(),
-    val icLogLines: List<String> = emptyList()
+    val icLogLines: List<String> = emptyList(),
+    val icEvents: List<IcEvent> = emptyList()
 )
 
 internal class TaskExecutionInfo(

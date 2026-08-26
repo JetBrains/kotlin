@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.build.report
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
@@ -17,6 +18,7 @@ interface ICReporter {
     }
 
     fun report(message: () -> String, severity: ReportSeverity)
+    fun reportIcEvent(event: IcEvent)
 
     fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode)
     fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String)
@@ -31,6 +33,7 @@ fun ICReporter.debug(message: () -> String) = report(message, severity = ICRepor
 
 object DoNothingICReporter : ICReporter {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {}
+    override fun reportIcEvent(event: IcEvent) {}
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
     override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
     override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}

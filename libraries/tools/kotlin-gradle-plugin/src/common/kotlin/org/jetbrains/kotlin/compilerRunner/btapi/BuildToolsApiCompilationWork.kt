@@ -12,6 +12,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
@@ -83,6 +84,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         DoNothingBuildMetricsReporter
     }
 
+    private val icEvents = arrayListOf<IcEvent>()
+
     // the files are backed up in the task action before any changes to the outputs
     private fun initializeBackup(log: KotlinLogger): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
         TaskOutputsBackup(
@@ -130,6 +133,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     KotlinCompilerExecutionStrategy.IN_PROCESS,
                     log,
                     compilerMessageRenderer,
+                    icEvents,
                 )
                 compilationResult.first to KotlinCompilerExecutionStrategy.IN_PROCESS
             } else {
@@ -143,6 +147,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 KotlinCompilerExecutionStrategy.DAEMON,
                 log,
                 compilerMessageRenderer,
+                icEvents,
             )
             if (daemonCompilationResult.first != CompilationResult.COMPILER_INTERNAL_ERROR) {
                 daemonCompilationResult.first to KotlinCompilerExecutionStrategy.DAEMON
@@ -204,6 +209,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     KotlinCompilerExecutionStrategy.IN_PROCESS,
                     log,
                     compilerMessageRenderer,
+                    icEvents,
                 ).first to KotlinCompilerExecutionStrategy.IN_PROCESS
             }
             log.info(effectiveExecutionStrategy.asFinishLogMessage)
@@ -241,8 +247,12 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     .reportToIde(it, workArguments.kotlinPluginVersion, logger = printingLogger)
             }
             metrics.endMeasure(RUN_COMPILATION_IN_WORKER)
-            val result =
-                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo, icLogLines = printingLogger.capturedLines)
+            val result = TaskExecutionResult(
+                buildMetrics = metrics.getMetrics(),
+                taskInfo = taskInfo,
+                icLogLines = printingLogger.capturedLines,
+                icEvents = icEvents.toList()
+            )
             TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
         }

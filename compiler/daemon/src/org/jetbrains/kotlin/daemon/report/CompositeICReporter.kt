@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.RemoteICReporter
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 internal class CompositeICReporter(private val reporters: Iterable<RemoteICReporter>) : RemoteICReporter {
     override fun report(message: () -> String, severity: ReportSeverity) {
         reporters.forEach { it.report(message, severity) }
+    }
+
+    override fun reportIcEvent(event: IcEvent) {
+        reporters.forEach { it.reportIcEvent(event) }
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {

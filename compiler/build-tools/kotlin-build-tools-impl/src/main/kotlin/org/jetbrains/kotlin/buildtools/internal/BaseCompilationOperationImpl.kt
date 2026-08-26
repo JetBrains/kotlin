@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
@@ -127,6 +128,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             CompilationResultCategory.BUILD_METRICS.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] },
             // Daemon would report log lines only if debug logging is enabled or metrics are requested
             CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] || isDebugLoggingEnabled },
+            CompilationResultCategory.IC_EVENT.code.takeIf { this[XX_KGP_IC_EVENTS] || isDebugLoggingEnabled },
         ).toTypedArray()
 
         return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments)
@@ -212,13 +214,14 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
 
         val metricsReporter = getMetricsReporter()
+        val events = arrayListOf<IcEvent>()
         val exitCode = daemon.compile(
             sessionId,
             arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
             daemonCompileOptions,
             BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
             DaemonCompilationResults(
-                loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
+                loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter, events
             ),
             compilationId
         ).get()
@@ -235,6 +238,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             ExitCode.COMPILATION_ERROR
         }).asCompilationResult.also {
             populateMetricsCollector(metricsReporter)
+            collectIcEvents(events)
         }
     }
 
@@ -242,6 +246,14 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
             this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
                 ObjectOutputStream(this).writeObject(metricsReporter)
+            }.toByteArray()
+        }
+    }
+
+    protected fun collectIcEvents(events: List<IcEvent>) {
+        if (this[XX_KGP_IC_EVENTS]) {
+            this[XX_KGP_IC_EVENTS_OUT] = ByteArrayOutputStream().apply {
+                ObjectOutputStream(this).writeObject(events)
             }.toByteArray()
         }
     }

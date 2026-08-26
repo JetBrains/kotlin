@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -27,6 +28,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
         executionStrategy: KotlinCompilerExecutionStrategy,
         log: KotlinLogger,
         compilerMessageRenderer: ProblemsApiCompilerMessageRenderer,
+        icEvents: MutableList<IcEvent>,
     ): Pair<CompilationResult, ExecutionPolicy> {
         try {
             val kotlinToolchains = buildSession.kotlinToolchains
@@ -46,7 +48,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
             }
             return metrics.measure(RUN_COMPILATION) {
                 buildSession.executeOperation(compilationOperation, executionConfig, log) to executionConfig
-            }.also { extractMetrics(metrics, compilationOperation) }
+            }.also { extractMetrics(metrics, icEvents, compilationOperation) }
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)
         }
@@ -68,6 +70,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
 
 private fun extractMetrics(
     metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    icEvents: MutableList<IcEvent>,
     compilationOperation: BaseCompilationOperation,
 ) {
     if (metrics is BuildMetricsReporterImpl) {
@@ -83,4 +86,17 @@ private fun extractMetrics(
         } catch (_: Exception) {
         }
     }
+
+    @Suppress("DEPRECATION_ERROR")
+    val key = BuildOperation.createCustomOption<ByteArray>("XX_KGP_IC_EVENTS_OUT")
+    try {
+        ByteArrayInputStream(compilationOperation[key]).use {
+            @Suppress("UNCHECKED_CAST")
+            val eventsFromBta =
+                ObjectInputStream(it).readObject() as List<IcEvent>
+            icEvents.addAll(eventsFromBta)
+        }
+    } catch (_: Exception) {
+    }
+
 }

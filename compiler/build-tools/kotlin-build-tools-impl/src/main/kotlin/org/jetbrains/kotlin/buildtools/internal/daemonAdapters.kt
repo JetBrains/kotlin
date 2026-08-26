@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -81,7 +82,8 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
 internal class DaemonCompilationResults(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
-    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val icEvents: MutableList<IcEvent>,
 ) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
@@ -116,6 +118,10 @@ internal class DaemonCompilationResults(
                     kotlinLogger.debug(line)
                 }
             }
+            CompilationResultCategory.IC_EVENT.code -> @Suppress("UNCHECKED_CAST") (value as? List<IcEvent>)?.let {
+                icEvents.addAll(it)
+            }
+
             else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
         }
     }

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.io.IcEvent
+import org.jetbrains.kotlin.build.report.io.IcEventType
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -148,16 +150,46 @@ abstract class IncrementalCompilerRunner<
         reporter.debug {
             "Source changes: $changedFiles"
         }
+
+        val known = changedFiles as? DeterminableFiles.Known
+
+        reporter.reportIcEvent(
+            IcEvent.SourceChanges(
+                6,
+                changedFiles.javaClass.simpleName,
+                known?.modified?.map { it.path }.orEmpty(),
+                known?.removed?.map { it.path }.orEmpty(),
+            )
+        )
+
         if (configurationInputs != null) {
             reporter.debug {
                 "Configuration inputs: $configurationInputs"
             }
         }
+
+        reporter.reportIcEvent(
+            IcEvent.ConfigInputs(
+                7,
+                configurationInputs?.icConfigurationInputsSnapshot.orEmpty(),
+                configurationInputs?.compilerArgumentsInputsSnapshot.orEmpty(),
+            )
+        )
+
         val hashedConfigurationInputs = configurationInputs?.computeHashedConfigurationInputs()
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
         val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)) {
             is ICResult.Completed -> {
                 reporter.debug { "Incremental compilation completed" }
+
+                reporter.reportIcEvent(
+                    IcEvent.BasicICEvent(
+                        IcEventType.IC_COMPLETED,
+                        8,
+                        "DEBUG",
+                    )
+                )
+
                 result.exitCode
             }
             is ICResult.RequiresRebuild -> {
@@ -341,6 +373,13 @@ abstract class IncrementalCompilerRunner<
             } ?: mainOutputDirs
 
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
+
+            reporter.reportIcEvent(
+                IcEvent.CleaningOutputDirs(
+                    9,
+                    outputDirsToClean.map { it.path }.toList(),
+                )
+            )
             cleanOrCreateDirectories(outputDirsToClean)
         }
         val icContext = createIncrementalCompilationContext(fileLocations, NonRecoverableCompilationTransaction())

@@ -34,6 +34,7 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
@@ -139,6 +140,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             didWork = result is TaskExecutionResult,
             skipMessage = (result as? TaskSkippedResult)?.skipMessage,
             icLogLines = taskExecutionResult?.icLogLines ?: emptyList(),
+            icEvents = taskExecutionResult?.icEvents ?: emptyList(),
             changedFiles = taskExecutionResult?.taskInfo?.changedFiles,
             compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments ?: emptyArray(),
             kotlinLanguageVersion = taskExecutionResult?.taskInfo?.kotlinLanguageVersion,
@@ -398,6 +400,7 @@ internal class TaskRecord(
     override val didWork: Boolean,
     override val skipMessage: String?,
     override val icLogLines: List<String>,
+    override val icEvents: List<IcEvent>,
     val kotlinLanguageVersion: KotlinVersion?,
     val changedFiles: SourcesChanges? = null,
     val compilerArguments: Array<String> = emptyArray(),

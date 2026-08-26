@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.build.report
 
+import org.jetbrains.kotlin.build.report.io.IcEvent
 import java.io.File
 
 abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter {
@@ -21,6 +22,8 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
             debug { "${pathsAsString(file)} is marked dirty: $reason" }
         }
     }
+
+    override fun reportIcEvent(event: IcEvent) {}
 
     protected fun relativizeIfPossible(files: Iterable<File>): List<File> =
         files.map { it.relativeOrAbsolute() }
