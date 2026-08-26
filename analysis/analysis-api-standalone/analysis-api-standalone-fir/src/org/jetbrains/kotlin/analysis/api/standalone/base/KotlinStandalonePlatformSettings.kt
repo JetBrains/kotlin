@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 
+@KaImplementationDetail
 open class KotlinStandalonePlatformSettings : KotlinPlatformSettings {
     override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
         get() = KotlinDeserializedDeclarationsOrigin.BINARIES

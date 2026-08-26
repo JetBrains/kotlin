@@ -10,6 +10,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.openapi.util.UserDataHolder
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 import kotlin.reflect.KProperty
@@ -23,6 +24,7 @@ import kotlin.reflect.KProperty
  *
  * This whole object is a workaround for improper application sharing, see [KT-64167](https://youtrack.jetbrains.com/issue/KT-64167).
  */
+@KaImplementationDetail
 object ApplicationServiceRegistration {
     private val lock = ReentrantReadWriteLock()
 

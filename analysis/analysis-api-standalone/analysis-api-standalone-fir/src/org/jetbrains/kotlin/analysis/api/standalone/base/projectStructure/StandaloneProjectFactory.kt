@@ -71,6 +71,7 @@ import org.picocontainer.PicoContainer
 import java.nio.file.Path
 import java.nio.file.Paths
 
+@KaImplementationDetail
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
