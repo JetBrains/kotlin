@@ -44,7 +44,6 @@ open class IncrementalJsCache(
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
         private const val INLINE_FUNCTIONS = "inline-functions"
-        private const val SOURCE_TO_JS_OUTPUT = "source-to-js-output"
     }
 
     private val protoData = ProtoDataProvider(serializerProtocol)
@@ -53,14 +52,10 @@ open class IncrementalJsCache(
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
-    private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
-        removedAndCompiledSources.forEach { sourceFile ->
-            sourceToJsOutputsMap.remove(sourceFile)
-        }
         super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
     }
