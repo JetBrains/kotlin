@@ -1,3 +1,4 @@
+@discardableResult
 public func foo(
     arg: Swift.Int32
 ) -> Swift.String {

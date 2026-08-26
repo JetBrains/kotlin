@@ -4,10 +4,12 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@discardableResult
 public func testSuspendFunction() async throws -> Swift.Int32 {
     return try await ExportedKotlinPackages.flattened.testSuspendFunction()
 }
 extension ExportedKotlinPackages.flattened {
+    @discardableResult
     public static func testSuspendFunction() async throws -> Swift.Int32 {
         try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = flattened_testSuspendFunction(Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())

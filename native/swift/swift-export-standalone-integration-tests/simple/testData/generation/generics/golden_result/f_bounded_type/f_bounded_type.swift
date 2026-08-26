@@ -3,6 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public protocol MyComparable: KotlinRuntime.KotlinBase, f_bounded_type._MyComparable {
+    @discardableResult
     func compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32
@@ -45,6 +46,7 @@ open class SelfReferencing: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func compareTo(
         other: f_bounded_type.SelfReferencing
     ) -> Swift.Int32 {
@@ -57,6 +59,7 @@ open class SelfReferencing: KotlinRuntime.KotlinBase {
 }
 @_documentation(visibility: internal)
 extension f_bounded_type.MyComparable where Self : f_bounded_type.__MyComparable {
+    @discardableResult
     public func compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32 {

@@ -46,18 +46,23 @@ extension ExportedKotlinPackages.u30 {
     }
 }
 extension ExportedKotlinPackages.u31 {
+    @discardableResult
     public static func u30_times() -> Swift.String {
         return U31_0times()
     }
+    @discardableResult
     public static func `_`() -> Swift.String {
         return U31__()
     }
+    @discardableResult
     public static func __() -> Swift.String {
         return U31___()
     }
+    @discardableResult
     public static func ascii() -> Swift.String {
         return U31_ascii()
     }
+    @discardableResult
     public static func `for`(
         int: Swift.Int32,
         `for`: Swift.Int32,
@@ -65,12 +70,15 @@ extension ExportedKotlinPackages.u31 {
     ) -> Swift.String {
         return U31_for__TypesOfArguments__Swift_Int32_Swift_Int32_Swift_Int32__(int, `for`, for_u20_long)
     }
+    @discardableResult
     public static func with_u20_space() -> Swift.String {
         return U31_withU20space()
     }
+    @discardableResult
     public static func u221e() -> Swift.String {
         return U31_U221E()
     }
+    @discardableResult
     public static func 🤷() -> Swift.String {
         return U31_UD83EDD37()
     }

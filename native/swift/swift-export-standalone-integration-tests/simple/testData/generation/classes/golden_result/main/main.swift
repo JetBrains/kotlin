@@ -114,6 +114,7 @@ public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func foo() -> Swift.Int32 {
         return CLASS_WITH_SAME_NAME_foo(self.__externalRCRef())
     }
@@ -150,6 +151,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
@@ -197,6 +199,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, a, b, c.__externalRCRef()); return () }()
     }
+    @discardableResult
     public func copy(
         a: Swift.Int32,
         b: Swift.String,
@@ -224,6 +227,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func copy(
         o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
@@ -259,6 +263,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func my_func() -> Swift.Bool {
             return Foo_Companion_my_func(self.__externalRCRef())
         }
@@ -288,6 +293,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func my_func() -> Swift.Bool {
             return Foo_INSIDE_CLASS_my_func(self.__externalRCRef())
         }
@@ -325,6 +331,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func foo() -> Swift.Bool {
         return Foo_foo(self.__externalRCRef())
     }
@@ -448,6 +455,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
+            @discardableResult
             public func foo() -> Swift.Int32 {
                 return OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(self.__externalRCRef())
             }
@@ -470,6 +478,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func bar() -> Swift.Int32 {
             return OBJECT_NO_PACKAGE_Bar_bar(self.__externalRCRef())
         }
@@ -530,6 +539,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func foo() -> Swift.Int32 {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
@@ -555,12 +565,14 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
     public func hasPrevious() -> Swift.Bool {
         return OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self.__externalRCRef())
     }
+    @discardableResult
     public func next() -> Swift.Never {
         return { OBJECT_WITH_GENERIC_INHERITANCE_next(self.__externalRCRef()); fatalError() }()
     }
     public func nextIndex() -> Swift.Int32 {
         return OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self.__externalRCRef())
     }
+    @discardableResult
     public func previous() -> Swift.Never {
         return { OBJECT_WITH_GENERIC_INHERITANCE_previous(self.__externalRCRef()); fatalError() }()
     }
@@ -705,6 +717,7 @@ extension ExportedKotlinPackages.namespace.deeper {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func foo() -> Swift.Int32 {
             return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
         }
@@ -736,6 +749,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 ) {
                     super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
                 }
+                @discardableResult
                 public func foo() -> Swift.Bool {
                     return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(self.__externalRCRef())
                 }
@@ -764,6 +778,7 @@ extension ExportedKotlinPackages.namespace.deeper {
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
+            @discardableResult
             public func foo() -> Swift.Bool {
                 return namespace_deeper_Foo_INSIDE_CLASS_foo(self.__externalRCRef())
             }
@@ -802,6 +817,7 @@ extension ExportedKotlinPackages.namespace.deeper {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func foo() -> Swift.Bool {
             return namespace_deeper_Foo_foo(self.__externalRCRef())
         }
@@ -855,6 +871,7 @@ extension ExportedKotlinPackages.namespace.deeper {
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
+            @discardableResult
             public func bar() -> Swift.Int32 {
                 return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self.__externalRCRef())
             }
@@ -915,6 +932,7 @@ extension ExportedKotlinPackages.namespace.deeper {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func foo() -> Swift.Int32 {
             return namespace_deeper_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
         }
@@ -1079,6 +1097,7 @@ extension ExportedKotlinPackages.namespace {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func foo() -> Swift.Bool {
             return namespace_Foo_foo(self.__externalRCRef())
         }
@@ -1114,9 +1133,11 @@ extension ExportedKotlinPackages.why_we_need_module_names {
             return { why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self.__externalRCRef()); return () }()
         }
     }
+    @discardableResult
     public static func bar() -> Swift.Int32 {
         return why_we_need_module_names_bar()
     }
+    @discardableResult
     public static func foo() -> main.CLASS_WITH_SAME_NAME {
         return main.CLASS_WITH_SAME_NAME.__createClassWrapper(externalRCRef: why_we_need_module_names_foo())
     }

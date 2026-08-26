@@ -2,16 +2,19 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@discardableResult
 public func consume_block_with_byte_id(
     block: @escaping (Swift.Int8) -> Swift.Int8
 ) -> Swift.Int8 {
     return __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(Unmanaged.passRetained((block as (Swift.Int8) -> Swift.Int8) as AnyObject).toOpaque())
 }
+@discardableResult
 public func consume_block_with_uint_id(
     block: @escaping (Swift.UInt32) -> Swift.UInt32
 ) -> Swift.UInt32 {
     return __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__(Unmanaged.passRetained((block as (Swift.UInt32) -> Swift.UInt32) as AnyObject).toOpaque())
 }
+@discardableResult
 public func produce_block_with_byte_byte() -> (Swift.Int8, Swift.Int8, Swift.Int8) -> Swift.Int8 {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___produce_block_with_byte_byte(), options: .asBestFittingWrapper)

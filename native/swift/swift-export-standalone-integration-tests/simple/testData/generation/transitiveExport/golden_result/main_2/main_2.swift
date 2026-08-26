@@ -6,9 +6,11 @@ import KotlinStdlib
 import feature
 
 extension ExportedKotlinPackages.foo {
+    @discardableResult
     public static func bar() -> ExportedKotlinPackages.kotlin.Array {
         return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: foo_bar())
     }
+    @discardableResult
     public static func foo() -> ExportedKotlinPackages.oh.my.kotlin.FeatureB {
         return ExportedKotlinPackages.oh.my.kotlin.FeatureB.__createClassWrapper(externalRCRef: foo_foo())
     }

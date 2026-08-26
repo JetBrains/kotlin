@@ -52,6 +52,7 @@ public final class Accessor: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func _get(
         i: Swift.Int32
     ) -> Swift.Int32 {
@@ -65,6 +66,7 @@ public final class Accessor: KotlinRuntime.KotlinBase {
         }
     }
 }
+@discardableResult
 public func asNumberList(
     x: ExportedKotlinPackages.kotlin.Number...
 ) -> [ExportedKotlinPackages.kotlin.Number]? {
@@ -92,6 +94,7 @@ public func setTag(
 ) -> Swift.Void {
     return { __root___setTag__TypesOfArguments__Swift_Array_Swift_String___(tags); return () }()
 }
+@discardableResult
 public func simple(
     s: Swift.String...
 ) -> Swift.String {

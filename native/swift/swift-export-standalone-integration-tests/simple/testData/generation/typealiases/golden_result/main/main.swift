@@ -149,6 +149,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
@@ -174,6 +175,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func copy(
         o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
@@ -208,6 +210,7 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func foo() -> Swift.Int32 {
         return DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
     }
@@ -315,12 +318,14 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
     public func hasPrevious() -> Swift.Bool {
         return OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self.__externalRCRef())
     }
+    @discardableResult
     public func next() -> Swift.Never {
         return { OBJECT_WITH_GENERIC_INHERITANCE_next(self.__externalRCRef()); fatalError() }()
     }
     public func nextIndex() -> Swift.Int32 {
         return OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self.__externalRCRef())
     }
+    @discardableResult
     public func previous() -> Swift.Never {
         return { OBJECT_WITH_GENERIC_INHERITANCE_previous(self.__externalRCRef()); fatalError() }()
     }
@@ -419,6 +424,7 @@ public func consume_closure(
 ) -> Swift.Void {
     return { __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
+@discardableResult
 public func deeper_closure_typealiase(
     block: @escaping main.deeper_closure_typealias
 ) -> main.deeper_closure_typealias {
@@ -427,11 +433,13 @@ public func deeper_closure_typealiase(
         return { return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); return () }() }
     }()
 }
+@discardableResult
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {
     return __root___increment__TypesOfArguments__Swift_Int32__(integer)
 }
+@discardableResult
 public func produce_closure() -> main.closure {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___produce_closure(), options: .asBestFittingWrapper)

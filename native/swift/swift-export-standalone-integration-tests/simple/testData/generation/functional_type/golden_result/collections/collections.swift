@@ -3,26 +3,31 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import data
 
+@discardableResult
 public func consume_block_with_dictRef_id(
     block: @escaping ([Swift.String: data.Foo]) -> [Swift.String: data.Foo]
 ) -> [Swift.String: data.Foo] {
     return __root___consume_block_with_dictRef_id__TypesOfArguments__U28Swift_Dictionary_Swift_String_data_Foo_U29202D_U20Swift_Dictionary_Swift_String_data_Foo___(Unmanaged.passRetained((block as (Swift.Dictionary<Swift.String,data.Foo>) -> Swift.Dictionary<Swift.String,data.Foo>) as AnyObject).toOpaque()) as! Swift.Dictionary<Swift.String,data.Foo>
 }
+@discardableResult
 public func consume_block_with_dict_id(
     block: @escaping ([Swift.Int32: Swift.Int32]) -> [Swift.Int32: Swift.Int32]
 ) -> [Swift.Int32: Swift.Int32] {
     return __root___consume_block_with_dict_id__TypesOfArguments__U28Swift_Dictionary_Swift_Int32_Swift_Int32_U29202D_U20Swift_Dictionary_Swift_Int32_Swift_Int32___(Unmanaged.passRetained((block as (Swift.Dictionary<Swift.Int32,Swift.Int32>) -> Swift.Dictionary<Swift.Int32,Swift.Int32>) as AnyObject).toOpaque()) as! Swift.Dictionary<Swift.Int32,Swift.Int32>
 }
+@discardableResult
 public func consume_block_with_listRef_id(
     block: @escaping ([data.Foo]) -> [data.Foo]
 ) -> [data.Foo] {
     return __root___consume_block_with_listRef_id__TypesOfArguments__U28Swift_Array_data_Foo_U29202D_U20Swift_Array_data_Foo___(Unmanaged.passRetained((block as (Swift.Array<data.Foo>) -> Swift.Array<data.Foo>) as AnyObject).toOpaque()) as! Swift.Array<data.Foo>
 }
+@discardableResult
 public func consume_block_with_list_id(
     block: @escaping ([Swift.Int32]) -> [Swift.Int32]
 ) -> [Swift.Int32] {
     return __root___consume_block_with_list_id__TypesOfArguments__U28Swift_Array_Swift_Int32_U29202D_U20Swift_Array_Swift_Int32___(Unmanaged.passRetained((block as (Swift.Array<Swift.Int32>) -> Swift.Array<Swift.Int32>) as AnyObject).toOpaque()) as! Swift.Array<Swift.Int32>
 }
+@discardableResult
 public func consume_block_with_set_id(
     block: @escaping (Swift.Set<Swift.Int32>) -> Swift.Set<Swift.Int32>
 ) -> Swift.Set<Swift.Int32> {

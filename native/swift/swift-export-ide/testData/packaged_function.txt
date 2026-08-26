@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 
 extension ExportedKotlinPackages.namespace {
+    @discardableResult
     public static func foo(
         arg: Swift.Int32
     ) -> ExportedKotlinPackages.namespace.Foo {

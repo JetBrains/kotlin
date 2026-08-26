@@ -23,11 +23,13 @@ extension ExportedKotlinPackages.list2 {
     }
     public protocol __MyList: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__List {
     }
+    @discardableResult
     public static func testListOptAny(
         l: any ExportedKotlinPackages.list2.MyList
     ) -> any ExportedKotlinPackages.list2.MyList {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__(l.__externalRCRef()), conformsTo: ExportedKotlinPackages.list2.MyList.Type.self) as! any ExportedKotlinPackages.list2.MyList
     }
+    @discardableResult
     public static func testStarList(
         l: any ExportedKotlinPackages.list2.MyList
     ) -> any ExportedKotlinPackages.list2.MyList {

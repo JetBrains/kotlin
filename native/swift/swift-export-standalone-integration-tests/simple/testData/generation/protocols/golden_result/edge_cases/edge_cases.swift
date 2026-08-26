@@ -22,10 +22,12 @@ public protocol SomeInterface: KotlinRuntime.KotlinBase, edge_cases._SomeInterfa
         _ context: (any edge_cases.Baz, any ExportedKotlinPackages.conflictingTypealiases.Foo),
         _ receiver: Swift.String
     ) -> Swift.Int32
+    @discardableResult
     func `repeat`(
         _ receiver: Swift.String,
         count: Swift.Int32
     ) -> [Swift.String]
+    @discardableResult
     func repeatWithContext(
         _ context: (any edge_cases.Baz, any ExportedKotlinPackages.conflictingTypealiases.Foo),
         _ receiver: Swift.String,
@@ -161,12 +163,14 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         let (_1, _2) = context
         return SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__Swift_String_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, _1.__externalRCRef(), _2.__externalRCRef())
     }
+    @discardableResult
     public func `repeat`(
         _ receiver: Swift.String,
         count: Swift.Int32
     ) -> [Swift.String] {
         return SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32__(self.__externalRCRef(), receiver, count) as! Swift.Array<Swift.String>
     }
+    @discardableResult
     public func repeatWithContext(
         _ context: (any edge_cases.Baz, any ExportedKotlinPackages.conflictingTypealiases.Foo),
         _ receiver: Swift.String,

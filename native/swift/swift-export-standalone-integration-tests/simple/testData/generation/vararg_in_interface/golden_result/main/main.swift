@@ -9,15 +9,18 @@ public protocol Driver: KotlinRuntime.KotlinBase, main._Driver {
     ) -> Swift.Void
 }
 public protocol ExtensionVararg: KotlinRuntime.KotlinBase, main._ExtensionVararg {
+    @discardableResult
     func join(
         _ receiver: Swift.String,
         parts: Swift.String...
     ) -> Swift.String
 }
 public protocol KeywordLabels: KotlinRuntime.KotlinBase, main._KeywordLabels {
+    @discardableResult
     func count(
         `inout`: Swift.Int32...
     ) -> Swift.Int32
+    @discardableResult
     func double(
         `inout`: Swift.Int32
     ) -> Swift.Int32
@@ -103,6 +106,7 @@ extension main.Driver {
 }
 @_documentation(visibility: internal)
 extension main.ExtensionVararg where Self : main.__ExtensionVararg {
+    @discardableResult
     public func join(
         _ receiver: Swift.String,
         parts: Swift.String...
@@ -114,11 +118,13 @@ extension main.ExtensionVararg {
 }
 @_documentation(visibility: internal)
 extension main.KeywordLabels where Self : main.__KeywordLabels {
+    @discardableResult
     public func count(
         `inout`: Swift.Int32...
     ) -> Swift.Int32 {
         return KeywordLabels_count__TypesOfArguments__Swift_Array_Swift_Int32__Vararg___(self.__externalRCRef(), `inout`.map { it in NSNumber(value: it) })
     }
+    @discardableResult
     public func double(
         `inout`: Swift.Int32
     ) -> Swift.Int32 {

@@ -27,6 +27,7 @@ public func consume_producing_opt_closure(
 ) -> Swift.Void {
     return { __root___consume_producing_opt_closure__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Optional_U2829202D_U20Swift_Void____(arg.map { it in Unmanaged.passRetained((it as () -> Swift.Optional<() -> Swift.Void>) as AnyObject).toOpaque() } ?? nil); return () }()
 }
+@discardableResult
 public func produce_opt_closure(
     arg: Swift.Void
 ) -> (() -> Swift.String)? {

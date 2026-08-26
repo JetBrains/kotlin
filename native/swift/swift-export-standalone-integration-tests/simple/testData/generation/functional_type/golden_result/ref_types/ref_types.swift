@@ -13,16 +13,19 @@ public func consume_block_with_reftype_consumer(
 ) -> Swift.Void {
     return { __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__(Unmanaged.passRetained((block as (data.Foo) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
+@discardableResult
 public func consume_block_with_reftype_factory(
     block: @escaping () -> data.Foo
 ) -> data.Foo {
     return data.Foo.__createClassWrapper(externalRCRef: __root___consume_block_with_reftype_factory__TypesOfArguments__U2829202D_U20data_Foo__(Unmanaged.passRetained((block as () -> data.Foo) as AnyObject).toOpaque()))
 }
+@discardableResult
 public func consume_block_with_reftype_unzip(
     block: @escaping (data.Bar) -> data.Foo
 ) -> data.Foo {
     return data.Foo.__createClassWrapper(externalRCRef: __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_BarU29202D_U20data_Foo__(Unmanaged.passRetained((block as (data.Bar) -> data.Foo) as AnyObject).toOpaque()))
 }
+@discardableResult
 public func consume_block_with_reftype_zip(
     block: @escaping (data.Foo, data.Foo) -> data.Bar
 ) -> data.Bar {

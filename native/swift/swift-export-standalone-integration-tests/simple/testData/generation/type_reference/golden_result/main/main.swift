@@ -85,6 +85,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
@@ -189,6 +190,7 @@ public final class Demo: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(__kt, arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()); return () }()
     }
+    @discardableResult
     public func combine(
         arg1: main.Class_without_package,
         arg2: ExportedKotlinPackages.namespace.deeper.Class_with_package,
@@ -197,6 +199,7 @@ public final class Demo: KotlinRuntime.KotlinBase {
     ) -> main.Demo {
         return main.Demo.__createClassWrapper(externalRCRef: Demo_combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
+    @discardableResult
     public func combine_inner_classses(
         arg1: main.Class_without_package.INNER_CLASS,
         arg2: ExportedKotlinPackages.namespace.deeper.Class_with_package.INNER_CLASS,
@@ -205,6 +208,7 @@ public final class Demo: KotlinRuntime.KotlinBase {
     ) -> main.Demo.INNER_CLASS {
         return main.Demo.INNER_CLASS.__createClassWrapper(externalRCRef: Demo_combine_inner_classses__TypesOfArguments__main_Class_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_CLASS_main_Object_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_CLASS__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
+    @discardableResult
     public func combine_inner_objects(
         arg1: main.Class_without_package.INNER_OBJECT,
         arg2: ExportedKotlinPackages.namespace.deeper.Class_with_package.INNER_OBJECT,
@@ -383,36 +387,47 @@ public func nullable_input_ref(
 ) -> Swift.Void {
     return { __root___nullable_input_ref__TypesOfArguments__Swift_Optional_main_Class_without_package___(i.map { it in it.__externalRCRef() } ?? nil); return () }()
 }
+@discardableResult
 public func nullable_output_prim() -> Swift.Int32? {
     return __root___nullable_output_prim().map { it in it.int32Value }
 }
+@discardableResult
 public func nullable_output_ref() -> main.Class_without_package? {
     return { switch __root___nullable_output_ref() { case nil: .none; case let res?: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
 }
+@discardableResult
 public func produce_ABSTRACT_CLASS() -> main.ABSTRACT_CLASS {
     return main.ABSTRACT_CLASS.__createClassWrapper(externalRCRef: __root___produce_ABSTRACT_CLASS())
 }
+@discardableResult
 public func produce_DATA_CLASS() -> main.DATA_CLASS {
     return main.DATA_CLASS.__createClassWrapper(externalRCRef: __root___produce_DATA_CLASS())
 }
+@discardableResult
 public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT.__createClassWrapper(externalRCRef: __root___produce_DATA_OBJECT())
 }
+@discardableResult
 public func produce_INTERFACE() -> any main.INTERFACE {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_INTERFACE(), conformsTo: main.INTERFACE.Type.self) as! any main.INTERFACE
 }
+@discardableResult
 public func produce_OPEN_CLASS() -> main.OPEN_CLASS {
     return main.OPEN_CLASS.__createClassWrapper(externalRCRef: __root___produce_OPEN_CLASS())
 }
+@discardableResult
 public func produce_class() -> main.Class_without_package {
     return main.Class_without_package.__createClassWrapper(externalRCRef: __root___produce_class())
 }
+@discardableResult
 public func produce_class_wp() -> ExportedKotlinPackages.namespace.deeper.Class_with_package {
     return ExportedKotlinPackages.namespace.deeper.Class_with_package.__createClassWrapper(externalRCRef: __root___produce_class_wp())
 }
+@discardableResult
 public func produce_object() -> main.Object_without_package {
     return main.Object_without_package.__createClassWrapper(externalRCRef: __root___produce_object())
 }
+@discardableResult
 public func produce_object_wp() -> ExportedKotlinPackages.namespace.deeper.Object_with_package {
     return ExportedKotlinPackages.namespace.deeper.Object_with_package.__createClassWrapper(externalRCRef: __root___produce_object_wp())
 }
@@ -699,9 +714,11 @@ extension ExportedKotlinPackages.ignored {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+    @discardableResult
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
         return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_produce_ENUM(), options: .asBestFittingWrapper)
     }
+    @discardableResult
     public static func produce_VALUE_CLASS() -> ExportedKotlinPackages.ignored.VALUE_CLASS {
         return ExportedKotlinPackages.ignored.VALUE_CLASS.__createClassWrapper(externalRCRef: ignored_produce_VALUE_CLASS())
     }

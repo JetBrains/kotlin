@@ -19,11 +19,13 @@ public var variable: Swift.Int32 {
         ExportedKotlinPackages.org.kotlin.foo.variable = newValue
     }
 }
+@discardableResult
 public func fun_with_keywoards(
     `repeat`: Swift.Int32
 ) -> Swift.Int32 {
     return ExportedKotlinPackages.org.kotlin.foo.fun_with_keywoards(`repeat`: `repeat`)
 }
+@discardableResult
 public func function(
     arg: Swift.Int32
 ) -> Swift.Int32 {
@@ -43,6 +45,7 @@ extension Swift.Int32 {
     }
 }
 extension Swift.String {
+    @discardableResult
     public func y() -> Swift.Int32 {
         let receiver = self
         return ExportedKotlinPackages.org.kotlin.foo.y(receiver)
@@ -82,11 +85,13 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             return { org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(newValue); return () }()
         }
     }
+    @discardableResult
     public static func fun_with_keywoards(
         `repeat`: Swift.Int32
     ) -> Swift.Int32 {
         return org_kotlin_foo_fun_with_keywoards__TypesOfArguments__Swift_Int32__(`repeat`)
     }
+    @discardableResult
     public static func function(
         arg: Swift.Int32
     ) -> Swift.Int32 {
@@ -102,6 +107,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     ) -> Swift.Void {
         return { org_kotlin_foo_renamedParameter__TypesOfArguments__Swift_String__(input); return () }()
     }
+    @discardableResult
     public static func y(
         _ receiver: Swift.String
     ) -> Swift.Int32 {

@@ -41,9 +41,11 @@ public final class Baz: KotlinRuntime.KotlinBase {
     /// Just a regular function
     ///
     /// - myinfo: Just some info with a custom tag
+    @discardableResult
     public func someNormalFunction() -> Swift.String {
         return Baz_someNormalFunction(self.__externalRCRef())
     }
+    @discardableResult
     public func someUndocumentedFunction() -> Swift.Int32 {
         return Baz_someUndocumentedFunction(self.__externalRCRef())
     }
@@ -140,6 +142,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     /// - Returns: A boolean
     ///
     /// - See: `foo`
+    @discardableResult
     public func bar(
         _ context: (a: Swift.String, b: Swift.Int32)
     ) -> Swift.Bool {
@@ -154,6 +157,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     /// - Returns: An int value
     ///
     /// - See: `bar` for another function
+    @discardableResult
     public func baz(
         _ receiver: Swift.String
     ) -> Swift.Int32 {

@@ -5,9 +5,11 @@ import KotlinRuntime
 
 extension ExportedKotlinPackages.org.jetbrains.a {
     public final class MyLibraryA: KotlinRuntime.KotlinBase {
+        @discardableResult
         public func returnInt() -> Swift.Int32 {
             return org_jetbrains_a_MyLibraryA_returnInt(self.__externalRCRef())
         }
+        @discardableResult
         public func returnMe() -> ExportedKotlinPackages.org.jetbrains.a.MyLibraryA {
             return ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.__createClassWrapper(externalRCRef: org_jetbrains_a_MyLibraryA_returnMe(self.__externalRCRef()))
         }
@@ -28,6 +30,7 @@ extension ExportedKotlinPackages.org.jetbrains.a {
             return org_jetbrains_a_topLevelProperty_get()
         }
     }
+    @discardableResult
     public static func topLevelFunction() -> Swift.Int32 {
         return org_jetbrains_a_topLevelFunction()
     }

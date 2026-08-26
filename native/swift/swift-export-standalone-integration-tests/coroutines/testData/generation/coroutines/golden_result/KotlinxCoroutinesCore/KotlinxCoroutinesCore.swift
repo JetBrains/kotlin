@@ -46,6 +46,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
     public func resetReplayCache() -> Swift.Void {
         return { kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache(self.__externalRCRef()); return () }()
     }
+    @discardableResult
     public func tryEmit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
@@ -68,6 +69,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow where 
             return { kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), newValue.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
     }
+    @discardableResult
     public func compareAndSet(
         expect: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         update: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -84,6 +86,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self :
             return kotlinx_coroutines_flow_SharedFlow_replayCache_get(self.__externalRCRef()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
         }
     }
+    @discardableResult
     public func collect(
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Never {
@@ -160,6 +163,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         ) async throws -> Swift.Void
         @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
         func resetReplayCache() -> Swift.Void
+        @discardableResult
         func tryEmit(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
@@ -169,6 +173,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             get
             set
         }
+        @discardableResult
         func compareAndSet(
             expect: (any KotlinRuntimeSupport._KotlinBridgeable)?,
             update: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -178,6 +183,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         var replayCache: [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
             get
         }
+        @discardableResult
         func collect(
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Never

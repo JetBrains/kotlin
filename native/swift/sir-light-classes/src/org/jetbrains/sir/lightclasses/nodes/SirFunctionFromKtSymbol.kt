@@ -95,6 +95,7 @@ internal open class SirFunctionFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirFunctionFromKtSymbol.translatedAttributes)
+            addIfNotNull(translatedDiscardableResultAttribute)
             if (overrideStatus is OverrideStatus.Conflicts) {
                 add(SirAttribute.NonOverride)
             }

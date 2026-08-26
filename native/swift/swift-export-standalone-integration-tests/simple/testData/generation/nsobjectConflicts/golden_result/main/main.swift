@@ -39,6 +39,7 @@ public final class ClassB: KotlinRuntime.KotlinBase {
     ) -> Swift.Void {
         return { ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), intoOk.__externalRCRef()); return () }()
     }
+    @discardableResult
     public func mutableCopyOk() -> any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: ClassB_mutableCopy(self.__externalRCRef()))
     }

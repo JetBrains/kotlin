@@ -4,6 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.some {
+    @discardableResult
     public static func foo() -> Swift.ClosedRange<Swift.Int32> {
         return { let _ref = some_foo(); return kotlin_ranges_intRange_getStart_int_another(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_another(_ref) }()
     }

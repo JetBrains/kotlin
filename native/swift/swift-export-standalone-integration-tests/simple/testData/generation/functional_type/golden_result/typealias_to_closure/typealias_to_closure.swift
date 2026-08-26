@@ -4,6 +4,7 @@ import KotlinRuntimeSupport
 
 public typealias CallbackWithInnerClosure = (@escaping () -> Swift.Int32) -> Swift.Int32
 public typealias Closure = (Swift.Int32, Swift.Int32) -> Swift.Void
+@discardableResult
 public func foo_flow_with_callback(
     callback: @escaping typealias_to_closure.CallbackWithInnerClosure
 ) -> typealias_to_closure.CallbackWithInnerClosure {
@@ -12,6 +13,7 @@ public func foo_flow_with_callback(
         return { _1 in return typealias_to_closure_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_U2829202D_U20Swift_Int32__(pointerToBlock.__externalRCRef(), Unmanaged.passRetained((_1 as () -> Swift.Int32) as AnyObject).toOpaque()) }
     }()
 }
+@discardableResult
 public func typealias_demo(
     input: @escaping typealias_to_closure.Closure
 ) -> typealias_to_closure.Closure {

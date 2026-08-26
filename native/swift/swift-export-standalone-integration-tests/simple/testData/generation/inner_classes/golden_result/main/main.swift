@@ -32,6 +32,7 @@ public final class Outer: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func foo() -> Swift.Int32 {
             return Outer_Inner_foo(self.__externalRCRef())
         }
