@@ -78,8 +78,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         Object boundReceiver = f.getBoundReceiver();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
             if (name.equals("<init>")) {
-                if (container.getJClass().getAnnotation(Metadata.class) == null &&
-                    !ConvertFromJavaKt.isMappedBuiltin((KClass<?>) container)) {
+                if (isJavaClass(container)) {
                     Constructor<?> constructor = container.findJavaConstructor(signature);
                     return new JavaKConstructor(container, constructor, boundReceiver);
                 }
@@ -92,7 +91,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 KmFunction kmFunction = container.findFunctionMetadata(name, signature);
                 return new KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, KCallableOverriddenStorage.EMPTY);
             }
-            else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+            else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass() &&
+                     (!SystemPropertiesKt.getUseK1ImplementationForMembers() || isJavaClass(container))) {
                 ReflectKFunction result = (ReflectKFunction) CollectionsKt.firstOrNull(
                         ((KClassImpl<?>) container).getData().getValue().getMembersByName(name),
                         it -> it instanceof ReflectKFunction && ((ReflectKFunction) it).getSignature().equals(signature)
@@ -176,7 +176,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKProperty1(container, signature, boundReceiver, kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                else if (container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+                else if (!SystemPropertiesKt.getUseK1ImplementationForMembers() &&
+                         container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
                     return findProperty((KClassImpl<?>) container, name, signature, boundReceiver);
                 }
                 return new DescriptorKProperty1(container, name, signature, boundReceiver);
@@ -197,7 +198,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKMutableProperty1(container, signature, boundReceiver, kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                else if (container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+                else if (!SystemPropertiesKt.getUseK1ImplementationForMembers() &&
+                         container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
                     return findProperty((KClassImpl<?>) container, name, signature, boundReceiver);
                 }
                 return new DescriptorKMutableProperty1(container, name, signature, boundReceiver);
@@ -219,6 +221,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     private static KDeclarationContainerImpl getOwner(CallableReference reference) {
         KDeclarationContainer owner = reference.getOwner();
         return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
+    }
+
+    private static boolean isJavaClass(KDeclarationContainerImpl container) {
+        return container.getJClass().getAnnotation(Metadata.class) == null &&
+               !ConvertFromJavaKt.isMappedBuiltin((KClass<?>) container);
     }
 
     private static ReflectKProperty<?> findProperty(KClassImpl<?> container, String name, String signature, Object boundReceiver) {

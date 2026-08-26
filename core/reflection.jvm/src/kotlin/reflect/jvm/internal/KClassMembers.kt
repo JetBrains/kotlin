@@ -63,7 +63,7 @@ private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: Mutable
 
 internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
     val kClass = this@computeDeclaredMembersByName
-    if (useK1Implementation || isComplicatedBuiltinSubclass) {
+    if (useK1Implementation || isComplicatedBuiltinSubclass || (useK1ImplementationForMembers && kmClass != null)) {
         addAll(getDescriptorBasedFunctions(memberScope, DECLARED, name))
         addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
         addAll(getDescriptorBasedFunctions(staticScope, DECLARED, name))
@@ -90,6 +90,9 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         data.value.additionalFunctions.filterTo(this) { it.name == name }
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
+        if (useK1ImplementationForMembers) {
+            addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
+        }
         for (method in jClass.declaredMethods) {
             if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
@@ -98,6 +101,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
 
         for (field in jClass.declaredFields) {
             if (field.isEnumConstant || field.isSynthetic || field.name != name) continue
+            if (useK1ImplementationForMembers && !Modifier.isStatic(field.modifiers)) continue
             when {
                 Modifier.isStatic(field.modifiers) -> when {
                     Modifier.isFinal(field.modifiers) ->
@@ -114,15 +118,18 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
             }
         }
 
-        val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
-        if (propertiesFromSupertypes.isNotEmpty()) {
-            val handledProperties = hashSetOf<KProperty1<*, *>>()
-            addPropertyOverrideByMethod(propertiesFromSupertypes, this, handledProperties) {
-                getDeclaredNonStaticMethodsFromJavaClass(it)
+        if (!useK1ImplementationForMembers) {
+            val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
+            if (propertiesFromSupertypes.isNotEmpty()) {
+                val handledProperties = hashSetOf<KProperty1<*, *>>()
+                addPropertyOverrideByMethod(propertiesFromSupertypes, this, handledProperties) {
+                    getDeclaredNonStaticMethodsFromJavaClass(it)
+                }
+                // K1 also had logic about properties in supertypes, see `LazyJavaClassMemberScope.computeNonDeclaredProperties`.
+                // However, the only test where it can be observed
+                // `compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt` never worked in K1 reflection because of
+                // other problems: KT-81029.
             }
-            // K1 also had logic about properties in supertypes, see `LazyJavaClassMemberScope.computeNonDeclaredProperties`.
-            // However, the only test where it can be observed `compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt`
-            // never worked in K1 reflection because of other problems: KT-81029.
         }
 
         if (jClass.isEnum && name == ENUM_ENTRIES_PROPERTY_NAME) {
@@ -130,7 +137,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
             add(JavaEnumEntriesKProperty(kClass as KClassImpl<out Enum<*>>))
         }
 
-        if (jClass.isAnnotation) {
+        if (jClass.isAnnotation && !useK1ImplementationForMembers) {
             for (method in jClass.declaredMethods) {
                 if (method.name == name && !method.isSynthetic) {
                     add(JavaAnnotationMethodKProperty1<Any?, Any?>(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))

@@ -161,7 +161,10 @@ private fun check(p: KProperty1<*, *>, isMutable: Boolean, name: String) {
 
         val valueParam = setter.parameters[1]
         assertEquals(null, valueParam.name)
-        if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
+        val systemProperties = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+        if (systemProperties.getMethod("getUseK1Implementation").invoke(null) == true ||
+            systemProperties.getMethod("getUseK1ImplementationForMembers").invoke(null) == true
+        ) {
             // Setter parameter type is flexible in K1 implementation for some reason.
             checkType(valueParam.type, flexible = true)
         } else {
