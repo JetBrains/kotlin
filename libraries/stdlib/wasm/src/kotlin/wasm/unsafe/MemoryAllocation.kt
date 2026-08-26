@@ -157,6 +157,10 @@ private object FreeList {
     }
 }
 
+// TODO IMPORTANT ======================
+//      In the end, the cleanest will probably be to have the scoped allocator still exist, but so ave the arena like allocator as a private class here, and then the scoped allocator just wraps it.
+// TODO IMPORTANT ======================
+
 @PublishedApi
 @UnsafeWasmMemoryApi
 internal var currentAllocator: ArenaLikeAllocator? = null
