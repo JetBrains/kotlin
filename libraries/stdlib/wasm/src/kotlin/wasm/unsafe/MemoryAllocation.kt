@@ -77,6 +77,7 @@ internal fun createAllocatorInTheNewScope(): ArenaLikeAllocator {
 
 @UnsafeWasmMemoryApi
 private class MemorySlot(val ptr: Pointer, val size: UInt) {
+    // TODO in the usages, this is only ever used where we know the direction of the only possible successful one-way merge. So could optimize it based on that
     fun tryMerge(b: MemorySlot): MemorySlot? {
         val a = this
 
@@ -125,7 +126,62 @@ private object FreeList {
     // NOTE: freeing is when things are merged back together
 
     @PublishedApi
-    internal fun free(slot: MemorySlot): Unit = TODO("merge stuff")
+    internal fun free(allocatedSlot: MemorySlot): Unit {
+        // need to find the slots that this lies in between, in terms of start address
+        // NOTE: we assume the allocatedSlot does not overlap with anything in the free list, that wouldn't make sense, by definition, allocatedSlot is not free
+        val minusInsertionPointMinusOne = list.binarySearch {
+            // because we assume it can't overlap, we know that size is irrelevant here: we'll get the index of the insertion point from this function, and inserting there will not lead to overlap
+            (it.ptr.address.toLong() - allocatedSlot.ptr.address.toLong()).toInt()
+        }
+
+        require(minusInsertionPointMinusOne != 0) { "Slot to free can't already be in the free list" }
+
+        // convert back to actual insertion point
+        val insertionPointIndex = -(minusInsertionPointMinusOne + 1)
+
+        // before we insert, try to merge
+        val leftElement = list.getOrNull(insertionPointIndex - 1)
+        val rightElement = list.getOrNull(insertionPointIndex)
+        check(
+            (leftElement?.ptr?.address ?: UInt.MIN_VALUE) < allocatedSlot.ptr.address &&
+                    allocatedSlot.ptr.address < (rightElement?.ptr?.address ?: UInt.MAX_VALUE)
+        ) { "Binary search has gone wrong" }
+
+        // once we start merging anything, the left and right slots might become adjacent, and need to be merged themselves
+        fun tryMergeLeftAndRight() {
+            // need to access left and right again here, as they can change during the function
+            val leftElement = list.getOrNull(insertionPointIndex - 1)
+            val rightElement = list.getOrNull(insertionPointIndex)
+
+            if (leftElement == null || rightElement == null)
+                return
+
+            val successfulMerge = leftElement.tryMerge(rightElement)
+            if (successfulMerge != null) {
+                list[insertionPointIndex - 1] = successfulMerge
+                list.removeAt(insertionPointIndex)
+                return
+            }
+        }
+
+        val successfulMergeLeft = leftElement?.tryMerge(allocatedSlot)
+        if (successfulMergeLeft != null) {
+            list[insertionPointIndex - 1] = successfulMergeLeft
+            // now that we merged, left and right might be adjacent
+            tryMergeLeftAndRight()
+            return
+        }
+
+        val successfulMergeRight = rightElement?.tryMerge(allocatedSlot)
+        if (successfulMergeRight != null) {
+            list[insertionPointIndex] = successfulMergeRight
+            tryMergeLeftAndRight()
+            return
+        }
+
+        // otherwise, we couldn't merge with either side, so by definition there's no overlap, and we just need to insert a new slot
+        list.add(insertionPointIndex, allocatedSlot)
+    }
 
     @PublishedApi
     internal fun allocate(size: UInt): MemorySlot {
@@ -216,12 +272,11 @@ internal class ArenaLikeAllocator(
     @PublishedApi
     internal fun destroy() {
         // TODO once we figure out the cabi realloc frees, also actually free this
-        /*
+        //      Wait, we can just already free this no? What speaks against that?
         for (allocation in allocations) {
             FreeList.free(allocation)
         }
         allocations.clear()
-         */
     }
 }
 
