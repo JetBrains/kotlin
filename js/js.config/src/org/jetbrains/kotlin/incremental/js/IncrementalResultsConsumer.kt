@@ -19,9 +19,6 @@ package org.jetbrains.kotlin.incremental.js
 import java.io.File
 
 interface IncrementalResultsConsumer {
-    /** processes new header metadata (serialized [JsProtoBuf.Header]) */
-    fun processHeader(headerMetadata: ByteArray)
-
     /** processes new package part metadata and binary tree for compiled source file */
     fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray)
 
@@ -48,15 +45,8 @@ interface IncrementalNextRoundChecker {
 }
 
 open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
-    lateinit var headerMetadata: ByteArray
-        private set
-
     val packageParts: Map<File, TranslationResultValue>
         field = hashMapOf<File, TranslationResultValue>()
-
-    override fun processHeader(headerMetadata: ByteArray) {
-        this.headerMetadata = headerMetadata
-    }
 
     override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray) {
         packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata))

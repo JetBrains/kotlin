@@ -96,7 +96,6 @@ fun <SourceFile> serializeModuleIntoKlib(
     createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
-    processKlibHeader: (ByteArray) -> Unit = {},
 ): SerializerOutput {
     val serializedIr = irModuleFragment?.let {
         createModuleSerializer(
@@ -138,8 +137,6 @@ fun <SourceFile> serializeModuleIntoKlib(
         fragmentNames = compiledKotlinFiles.map { it.fqName }.distinct().sorted(),
         emptyPackages = emptyList(),
     ).toByteArray()
-
-    processKlibHeader(header)
 
     val [fragmentNames, fragmentParts] = compiledKotlinFiles
         .groupBy { it.fqName }
