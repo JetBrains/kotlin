@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.atMostOne
 
 interface DependenciesTracker {
@@ -95,7 +97,15 @@ internal class DependenciesTrackerImpl(
     private val usedWeakBitcodeOfFile = mutableSetOf<LibraryFile>()
 
     // This is a set of all "useful" libraries, sorted in the reverse-topological order.
-    private val usefulLibrariesInRTO: Set<KotlinLibrary> by lazy { context.irModules.map { it.kotlinLibrary!! }.toSet() }
+    private val usefulLibrariesInRTO: Set<KotlinLibrary> by lazy {
+        buildSet {
+            // TODO(KT-88867): Drop this workaround when KT-88867 is fixed.
+            if (config.configuration.konanProducedArtifactKind?.isCache == true) {
+                addIfNotNull(config.libraryToCache?.klib)
+            }
+            context.irModules.mapTo(this) { it.kotlinLibrary!! }
+        }
+    }
 
     private fun findStdlibFile(fqName: FqName, fileName: String): LibraryFile {
         val stdlib = (context.standardLlvmSymbolsOrigin as? DeserializedKlibModuleOrigin)?.library
