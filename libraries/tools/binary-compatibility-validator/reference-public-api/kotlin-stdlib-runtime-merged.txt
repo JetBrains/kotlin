@@ -5501,6 +5501,9 @@ public final class kotlin/reflect/TypesJVMKt {
 
 public abstract interface class kotlin/sequences/Sequence {
 	public abstract fun iterator ()Ljava/util/Iterator;
+	public static fun of ()Lkotlin/sequences/Sequence;
+	public static fun of (Ljava/lang/Object;)Lkotlin/sequences/Sequence;
+	public static fun of ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 }
 
 public abstract class kotlin/sequences/SequenceScope {
