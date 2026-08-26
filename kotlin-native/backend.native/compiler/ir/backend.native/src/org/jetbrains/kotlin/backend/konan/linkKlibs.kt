@@ -157,7 +157,7 @@ internal fun LinkKlibsContext.linkKlibs(
         val [libraryModules, otherModules] = irModulesForLinkKlibsOutput.partition { it.kotlinLibrary == libraryToCache.klib }
         val libraryModule = libraryModules.firstOrNull() ?: error("No module for the library being cached: ${libraryToCache.klib}")
         LinkKlibsOutput(
-                irModules = otherModules,
+                irModules = otherModules, // TODO(KT-88867): Keep the full list of all IR module fragments in `irModules`
                 irModule = libraryModule,
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
