@@ -475,12 +475,12 @@ class ConstraintInjector(
             /**
              * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
              */
-            isFromFlexibleNotEqualityPosition: Boolean
+            isUpperConstraintMadeFlexibleNotEqualityPosition: Boolean
         ) =
             addConstraint(
                 typeVariable, superType, UPPER,
                 isFromNullabilityConstraint = false, isNoInfer,
-                isFromFlexibleTypeVariablePositionAtUpperConstraint = isFromFlexibleNotEqualityPosition,
+                isFromFlexibleTypeVariablePositionAtUpperConstraint = isUpperConstraintMadeFlexibleNotEqualityPosition,
             )
 
         override fun addLowerConstraint(
