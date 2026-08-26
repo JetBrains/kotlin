@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.InvalidUserDataException
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -38,6 +39,24 @@ internal class FragmentConsistencyChecks<T>(
         consistencyConditionHint = languageVersionCheckHint
     )
 
+    private val unstableFeaturesHint = "The dependent $unitName must enable all unstable language features that its dependency has."
+
+    private val unstableFeaturesCheck = ConsistencyCheck<T, Set<LanguageFeature>?>(
+        name = "unstable language feature set",
+        getValue = { unit ->
+            unit.languageSettings().getValueIfExists {
+                @Suppress("DEPRECATION_ERROR")
+                enabledLanguageFeatures
+                    .mapNotNull { parseLanguageFeature(it) }
+                    .filterTo(mutableSetOf()) { it.forcesPreReleaseBinaries }
+            }
+        },
+        leftExtendsRightConsistently = { left, right ->
+            if (left == null || right == null) true else left.containsAll(right)
+        },
+        consistencyConditionHint = unstableFeaturesHint
+    )
+
     private val optInAnnotationsInUseHint = "The dependent $unitName must use all opt-in annotations that its dependency uses."
 
     private val optInAnnotationsCheck = ConsistencyCheck<T, Set<String>?>(
@@ -49,7 +68,7 @@ internal class FragmentConsistencyChecks<T>(
         consistencyConditionHint = optInAnnotationsInUseHint
     )
 
-    val allChecks = listOf(languageVersionCheck, optInAnnotationsCheck)
+    val allChecks = listOf(languageVersionCheck, unstableFeaturesCheck, optInAnnotationsCheck)
 
     private fun <T> LanguageSettings.getValueIfExists(
         getValue: LanguageSettings.() -> T?
@@ -62,6 +81,8 @@ internal class FragmentConsistencyChecks<T>(
         }
     }
 }
+
+internal fun parseLanguageFeature(featureName: String) = LanguageFeature.fromString(featureName)
 
 internal class FragmentConsistencyChecker<T>(
     private val unitsName: String,

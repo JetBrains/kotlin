@@ -108,6 +108,8 @@ class CompilerOptionsProjectTest {
                 apiVersion = settingsVersion.versionString
                 progressiveMode = false
                 optIn("another.CustomOptInAnnotation")
+                @Suppress("DEPRECATION_ERROR")
+                enableLanguageFeature("UnitConversionsOnArbitraryExpressions")
             }
         }
         project.evaluate()
@@ -118,6 +120,7 @@ class CompilerOptionsProjectTest {
             "-api-version ${settingsVersion.versionString}",
             "-Xdebug",
             "-opt-in my.custom.OptInAnnotation,another.CustomOptInAnnotation",
+            "-XXLanguage:+UnitConversionsOnArbitraryExpressions",
         )
         assertTrue(
             expected.all { it in arguments },

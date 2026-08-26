@@ -23,6 +23,24 @@ interface LanguageSettingsBuilder : LanguageSettings {
     override var progressiveMode: Boolean
 
     /**
+     * @suppress
+     */
+    @Deprecated(
+        "Configures internal Kotlin compiler argument and should not be used in the projects",
+        level = DeprecationLevel.ERROR
+    )
+    fun enableLanguageFeature(name: String)
+
+    /**
+     * @suppress
+     */
+    @Deprecated(
+        "Configures internal Kotlin compiler argument and should not be used in the projects",
+        level = DeprecationLevel.ERROR
+    )
+    override val enabledLanguageFeatures: Set<String>
+
+    /**
      * Adds an additional opt-in requirement marker with the given fully qualified name.
      *
      * See also [org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions.optIn].
