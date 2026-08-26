@@ -172,7 +172,6 @@ private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(symbol: KaCl
     symbol.annotations.forEach { it.classIdForOptInOrNull?.let { yield(it) } }
 }
 
-@OptIn(KaExperimentalApi::class)
 context(session: KaSession)
 private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(
     type: KaType,
@@ -185,7 +184,7 @@ private suspend fun SequenceScope<ClassId>.allRequiredOptInClassIds(
     }
     when (type) {
         is KaFunctionType -> {
-            type.contextReceivers.forEach { allRequiredOptInClassIds(it.type) }
+            type.contextParameterTypes.forEach { allRequiredOptInClassIds(it) }
             type.receiverType?.let { allRequiredOptInClassIds(it) }
             type.parameterTypes.forEach { allRequiredOptInClassIds(it) }
             allRequiredOptInClassIds(type.returnType)

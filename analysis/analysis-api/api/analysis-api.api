@@ -1566,6 +1566,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaFlexibleType : o
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaFunctionType : org/jetbrains/kotlin/analysis/api/types/KaClassType, org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner {
 	public fun <init> ()V
 	public abstract fun getArity ()I
+	public abstract fun getContextParameterTypes ()Ljava/util/List;
 	public abstract fun getHasReceiver ()Z
 	public abstract fun getParameterTypes ()Ljava/util/List;
 	public abstract fun getReceiverType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
