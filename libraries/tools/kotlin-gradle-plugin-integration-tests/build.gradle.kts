@@ -57,7 +57,10 @@ fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: Stri
 
 createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
 createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
-createConfigurationToBeConsumedInTests("composeCompilerRuntimeTestUtils", ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils")
+createConfigurationToBeConsumedInTests(
+    "composeCompilerRuntimeTestUtils",
+    ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"
+)
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
@@ -486,6 +489,8 @@ tasks.withType<Test>().configureEach {
         systemProperty("buildScriptInjectionsClasspath", buildScriptInjectionsClasspath.joinToString(":"))
     }
 
+    val testKitBuildCacheDirectory = layout.buildDirectory.dir("testKitCache/caches/build-cache-1")
+
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase.
     // Names should follow "jdk\\d+Home" regex where number is a major JDK version.
     // On any change 'jdkHelpers.kt' should be updated as well.
@@ -497,6 +502,14 @@ tasks.withType<Test>().configureEach {
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }
+
+        /*
+        Ensure that each test starts run starts with a fresh build-cache directory to ensure
+        that tests can assert that a first build is 'executed' and a second build is 'from-cache'.
+        Not cleaning this directory before launching the tests may result in a test being green for the first
+        time, but then tripping the 'task is executed' assertion in subsequent runs
+        */
+        testKitBuildCacheDirectory.get().asFile.deleteRecursively()
     }
 
     androidSdkProvisioner {
